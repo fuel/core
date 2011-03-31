@@ -68,7 +68,14 @@ abstract class Controller_Rest extends \Controller {
 		// If they call user, go to $this->post_user();
 		$controller_method = strtolower(\Input::method()) . '_' . $resource;
 
-		call_user_func(array($this, $controller_method));
+		if (is_callable(array($this, $controller_method)))
+		{
+			call_user_func(array($this, $controller_method));
+		}
+		else
+		{
+			$this->response();
+		}
 	}
 
 	/*
