@@ -309,6 +309,22 @@ class Inflector {
 	}
 
 	/**
+	 * Returns the namespace of the given class name.
+	 *
+	 * @param   string  $class_name  the class name
+	 * @return  string  the string without the namespace
+	 */
+	public static function get_namespace($class_name)
+	{
+		$class_name = trim($class_name, '\\');
+		if ($last_separator = strrpos($class_name, '\\'))
+		{
+			return substr($class_name, 0, $last_separator + 1);
+		}
+		return '';
+	}
+
+	/**
 	 * Takes a class name and determines the table name.  The table name is a
 	 * pluralized version of the class name.
 	 *
