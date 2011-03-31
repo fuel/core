@@ -85,8 +85,11 @@ class Validation_Error extends \Exception {
 	 * @param	string	Message to use, or false to try and load it from Lang class
 	 * @return	string
 	 */
-	public function get_message($msg = false)
+	public function get_message($msg = false, $open = null, $close = null)
 	{
+		$open   = \Config::get('validation.open_single_error', '');
+		$close  = \Config::get('validation.close_single_error', '');
+
 		if ($msg === false)
 		{
 			$msg = $this->field->fieldset()->validation()->get_message($this->callback);
@@ -96,13 +99,13 @@ class Validation_Error extends \Exception {
 		}
 		if ($msg == false)
 		{
-			return 'Validation rule '.$this->callback.' failed for '.$this->field->label;
+			return $open.'Validation rule '.$this->callback.' failed for '.$this->field->label.$close;
 		}
 
 		// to safe some performance when there are no variables in the $msg
 		if (strpos(':', $msg) !== false)
 		{
-			return $msg;
+			return $open.$msg.$close;
 		}
 
 		$find			= array(':field', ':label', ':value', ':rule');
@@ -113,7 +116,7 @@ class Validation_Error extends \Exception {
 			$replace[]	= $val;
 		}
 
-		return str_replace($find, $replace, $msg);
+		return $open.str_replace($find, $replace, $msg).$close;
 	}
 
 	public function __toString()
