@@ -229,6 +229,18 @@ class Request {
 	{
 		$this->uri = new \URI($uri);
 
+		// check if a module was requested
+		if (count($this->uri->segments) && $modpath = \Fuel::module_exists($this->uri->segments[0]))
+		{
+			// check if the module has custom routes
+			if (file_exists($modpath .= 'config/routes.php'))
+			{
+				// load and add the routes
+				\Config::load(\Fuel::load($modpath), 'routes');
+				\Router::add(\Config::get('routes'));
+			}
+		}
+
 		$this->route = \Router::process($this, $route);
 
 		if ( ! $this->route)
