@@ -202,6 +202,7 @@ class Form {
 		if (is_array($field))
 		{
 			$attributes = $field;
+			! array_key_exists('value', $attributes) and $attributes['value'] = '';
 		}
 		else
 		{
