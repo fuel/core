@@ -251,7 +251,7 @@ abstract class Email_Driver {
 	 */
 	public function from($address, $name = '')
 	{
-		$address = '<'.$address.'>'
+		$address = '<'.$address.'>';
 		if ( ! empty($name))
 		{
 			$address = $name.' '.$address;
