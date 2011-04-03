@@ -73,7 +73,7 @@ abstract class ViewModel {
 			$this->_template = strtolower(str_replace('_', '/', preg_replace('#^([a-z0-9_]*\\\\)?(View_)?#i', '', $class)));
 		}
 
-		$this->_template	= $this->set_template();
+		$this->set_template();
 		$this->_method		= $method;
 		$this->_auto_encode = \View::$auto_encode;
 
@@ -93,7 +93,7 @@ abstract class ViewModel {
 	 */
 	protected function set_template()
 	{
-		return \View::factory($this->_template);
+		$this->_template = \View::factory($this->_template);
 	}
 
 	/**

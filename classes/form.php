@@ -449,6 +449,7 @@ class Form {
 		if (is_array($field))
 		{
 			$attributes = $field;
+			$attributes['selected'] = empty($attributes['value']) ? '' : $attributes['value'];
 		}
 		else
 		{
@@ -456,8 +457,6 @@ class Form {
 			$attributes['selected'] = $values;
 			$attributes['options'] = $options;
 		}
-
-		$value = empty($attributes['value']) ? '' : $attributes['value'];
 		unset($attributes['value']);
 
 		if ( ! isset($attributes['options']) || ! is_array($attributes['options']))
