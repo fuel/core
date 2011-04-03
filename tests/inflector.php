@@ -29,7 +29,7 @@ class Tests_Inflector extends TestCase {
 	 */
 	public function test_ascii()
 	{
-		$output = Inflector::ascii('Ingl‚àö¬©s');
+		$output = Inflector::ascii('Inglés');
 		$expected = "Ingles";
 		$this->assertEquals($expected, $output);
 	}
