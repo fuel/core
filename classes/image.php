@@ -35,7 +35,7 @@ class Image {
 	}
 
 	/**
-	 * Creates a new instance of the email driver
+	 * Creates a new instance of the image driver
 	 *
 	 * @param  array   $config
 	 * @return Image_Driver
@@ -46,7 +46,7 @@ class Image {
 		$class = 'Image_'.$protocol;
 		if ($protocol == 'Driver' || ! class_exists($class))
 		{
-			throw new \Fuel_Exception('Protocol '.$protocol.' is not a valid protocol for emailing.');
+			throw new \Fuel_Exception('Driver '.$protocol.' is not a valid driver for image manipulation.');
 		}
 		$return = new $class($config);
 		if ($filename !== null)
