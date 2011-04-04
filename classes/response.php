@@ -131,7 +131,7 @@ class Response {
 
 	public function __construct($body = null, $status = 200)
 	{
-		$this->content = $body;
+		$this->body = $body;
 		$this->status = $status;
 	}
 
