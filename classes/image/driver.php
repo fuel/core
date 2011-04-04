@@ -24,7 +24,7 @@ abstract class Image_Driver {
 	protected $image_extension = null;
 	protected $config          = array();
 	protected $queued_actions  = array();
-	protected $accepted_extension;
+	protected $accepted_extensions;
 
 	public function __construct($config)
 	{
@@ -629,7 +629,7 @@ abstract class Image_Driver {
 	protected function check_extension($filename, $writevar = true)
 	{
 		$return = false;
-		foreach ($this->accepted_extension AS $ext)
+		foreach ($this->accepted_extensions AS $ext)
 		{
 			if (substr($filename, strlen($ext) * -1) == $ext)
 			{
