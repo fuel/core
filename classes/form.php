@@ -635,7 +635,7 @@ class Form {
 		switch($field->type)
 		{
 			case 'hidden':
-				$build_field = static::hidden($field);
+				$build_field = static::hidden($field->name, $field->value, $field->attributes);
 				break;
 			case 'radio': case 'checkbox':
 				if (isset($field->options))
