@@ -227,7 +227,7 @@ class Request {
 	 */
 	public function __construct($uri, $route = true)
 	{
-		$this->uri = new \URI($uri);
+		$this->uri = new \Uri($uri);
 
 		// check if a module was requested
 		if (count($this->uri->segments) && $modpath = \Fuel::module_exists($this->uri->segments[0]))
