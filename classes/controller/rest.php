@@ -337,7 +337,7 @@ abstract class Controller_Rest extends \Controller {
 
 	// FORMATING FUNCTIONS ---------------------------------------------------------
 	// Format XML for output
-	private function _format_xml($data = array(), $structure = null, $basenode = 'xml')
+	protected function _format_xml($data = array(), $structure = null, $basenode = 'xml')
 	{
 		// turn off compatibility mode as simple xml throws a wobbly if you don't.
 		if (ini_get('zend.ze1_compatibility_mode') == 1)
@@ -391,7 +391,7 @@ abstract class Controller_Rest extends \Controller {
 	}
 
 	// Format Raw XML for output
-	private function _format_rawxml($data = array(), $structure = null, $basenode = 'xml')
+	protected function _format_rawxml($data = array(), $structure = null, $basenode = 'xml')
 	{
 		// turn off compatibility mode as simple xml throws a wobbly if you don't.
 		if (ini_get('zend.ze1_compatibility_mode') == 1)
@@ -445,7 +445,7 @@ abstract class Controller_Rest extends \Controller {
 	}
 
 	// Format HTML for output
-//	private function _format_html($data = array())
+//	protected function _format_html($data = array())
 //	{
 //		// Multi-dimentional array
 //		if (isset($data[0]))
@@ -472,7 +472,7 @@ abstract class Controller_Rest extends \Controller {
 //		return self::table->generate();
 //	}
 	// Format HTML for output
-	private function _format_csv($data = array())
+	protected function _format_csv($data = array())
 	{
 		// Multi-dimentional array
 		if (isset($data[0]))
@@ -497,19 +497,19 @@ abstract class Controller_Rest extends \Controller {
 	}
 
 	// Encode as JSON
-	private function _format_json($data = array())
+	protected function _format_json($data = array())
 	{
 		return json_encode($data);
 	}
 
 	// Encode as Serialized array
-	private function _format_serialize($data = array())
+	protected function _format_serialize($data = array())
 	{
 		return serialize($data);
 	}
 
 	// Encode raw PHP
-	private function _format_php($data = array())
+	protected function _format_php($data = array())
 	{
 		return var_export($data, true);
 	}
