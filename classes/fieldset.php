@@ -316,9 +316,9 @@ class Fieldset
 	/**
 	 * Alias for $this->form()->build() for this fieldset
 	 */
-	public function build()
+	public function build($action = null)
 	{
-		return $this->form()->build();
+		return $this->form()->build($action);
 	}
 
 	/**
