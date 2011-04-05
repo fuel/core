@@ -48,6 +48,11 @@ class Input {
 		{
 			return static::server('REMOTE_ADDR');
 		}
+		else
+		{
+			// detection failed, return a dummy IP
+			return '0.0.0.0';
+		}
 	}
 
 	/**
