@@ -433,6 +433,8 @@ class Form {
 			$attributes['id'] = static::get_class_config('auto_id_prefix', '').$attributes['name'];
 		}
 
+		unset($attributes['type']);
+
 		return html_tag('textarea', static::attr_to_string($attributes), $value);
 	}
 
@@ -501,6 +503,8 @@ class Form {
 		}
 		$input .= str_repeat("\t", 0);
 
+		unset($attributes['type']);
+
 		return html_tag('select', static::attr_to_string($attributes), $input);
 	}
 
@@ -520,7 +524,10 @@ class Form {
 			$id = $attributes['id'];
 		}
 
-		$attributes['for'] = $id;
+		if (! empty($id))
+		{
+			$attributes['for'] = $id;
+		}
 		unset($attributes['label']);
 		unset($attributes['id']);
 
