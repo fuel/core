@@ -684,10 +684,14 @@ class Form {
 				}
 				break;
 			case 'select':
-				$build_field = static::select($field->name, $field->value, $field->options, $field->attributes);
+				$attributes = $field->attributes;
+				unset($attributes['type']);
+				$build_field = static::select($field->name, $field->value, $field->options, $attributes);
 				break;
 			case 'textarea':
-				$build_field = static::textarea($field->name, $field->value, $field->attributes);
+				$attributes = $field->attributes;
+				unset($attributes['type']);
+				$build_field = static::textarea($field->name, $field->value, $attributes);
 				break;
 			default:
 				$build_field = static::input($field->name, $field->value, $field->attributes);
