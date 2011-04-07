@@ -118,7 +118,7 @@ class Fieldset_Field
 	 */
 	public function set_label($label)
 	{
-		$this->label = (string) $label;
+		$this->label = $label;
 		$this->set_attribute('label', $label);
 	}
 

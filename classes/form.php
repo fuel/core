@@ -516,8 +516,10 @@ class Form {
 	{
 		if (is_array($label))
 		{
+			$attributes = $label;
 			$label = $attributes['label'];
 			$id = $attributes['id'];
+			isset($attributes['id']) && $id = $attributes['id'];
 		}
 
 		$attributes['for'] = $id;
