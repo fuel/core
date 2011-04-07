@@ -50,6 +50,7 @@ class Input {
 		}
 		else
 		{
+			// detection failed, return a dummy IP
 			return '0.0.0.0';
 		}
 	}
