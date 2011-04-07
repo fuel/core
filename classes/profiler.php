@@ -42,11 +42,14 @@ class Profiler {
 
 	public static function start($dbname, $sql)
 	{
-		static::$query = array(
-			'sql' => $sql,
-			'time' => static::$profiler->getMicroTime(),
-		);
-		return true;
+		if (static::$profiler)
+		{
+			static::$query = array(
+				'sql' => $sql,
+				'time' => static::$profiler->getMicroTime(),
+			);
+			return true;
+		}
 	}
 
 	public static function stop($text)
