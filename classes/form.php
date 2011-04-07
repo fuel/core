@@ -604,15 +604,20 @@ class Form {
 		$attributes = $this->get_config('form_attributes');
 		$action && $attributes['action'] = $action;
 
-		$output = static::open($attributes).PHP_EOL;
+		$open = static::open($attributes).PHP_EOL;
 		$fields = $this->field();
+		$fields_output = '';
 		foreach ($fields as $f)
 		{
-			$output .= $this->build_field($f).PHP_EOL;
+			$fields_output .= $this->build_field($f).PHP_EOL;
 		}
-		$output .= static::close();
+		$close = static::close();
 
-		return $output;
+		$template =  $this->get_config('form_template', "\t\t{form_open}\n{fields}\n\t\t{form_close}\n");
+		$template = str_replace(array('{form_open}', '{fields}', '{form_close}'),
+			array($open, $fields_output, $close),
+			$template);
+		return $template;
 	}
 
 	/**
