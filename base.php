@@ -74,6 +74,12 @@ if ( ! function_exists('array_to_attr'))
 
 		foreach ($attr as $property => $value)
 		{
+			// Ignore null values
+			if (is_null($value))
+			{
+				continue;
+			}
+
 			// If the key is numeric then it must be something like selected="selected"
 			if (is_numeric($property))
 			{
