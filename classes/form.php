@@ -518,8 +518,7 @@ class Form {
 		{
 			$attributes = $label;
 			$label = $attributes['label'];
-			$id = $attributes['id'];
-			isset($attributes['id']) && $id = $attributes['id'];
+			isset($attributes['id']) and $id = $attributes['id'];
 		}
 
 		$attributes['for'] = $id;
