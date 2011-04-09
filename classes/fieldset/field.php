@@ -87,7 +87,7 @@ class Fieldset_Field
 	{
 		$this->name = (string) $name;
 		$this->fieldset = $fieldset;
-		if(isset($attributes['options'])) { $this->set_options($attributes['options']);} 
+		isset($attributes['options']) and  $this->set_options($attributes['options']);
 
 		// Don't allow name in attributes
 		unset($attributes['name']);
