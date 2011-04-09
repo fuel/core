@@ -51,8 +51,23 @@ class Migrate {
 
 		$run = false;
 
+		// mk sure the desired version is actually 0, and is not a typo, because 't' == 0 and '' == 0, etc
+		// therefore if $version >= 0 were used then using "oil refine migrate --v=t" , would delete the whole schema (go to version 0)
+		if ($version === '0')
+		{
+			if (\Migrate::version($version) === false)
+			{
+				throw new \Oil\Exception('Migration ' . $version .' could not be found.');
+			}
+
+			else
+			{
+				static::_update_version($version);
+				\Cli::write('Migrated to version: ' . $version .'.', 'green');
+			}
+		}
 		// Specific version
-		if ($version > 0)
+		elseif ($version > 0)
 		{
 			if (\Migrate::version($version) === false)
 			{
@@ -103,12 +118,12 @@ class Migrate {
 	{
 		\Config::load('migrations', true);
 		
-		if (($version = \Config::get('migrations.version') - 1) === 0)
+		if (($version = \Config::get('migrations.version') - 1) === -1)
 		{
-			throw new \Oil\Exception('You are already on the first migration.');
+			throw new \Oil\Exception('You are already on version 0.');
 		}
 
-		if (\Migrate::version($version))
+		if (\Migrate::version($version) !== false)
 		{
 			static::_update_version($version);
 			\Cli::write("Migrated to version: {$version}.", 'green');
