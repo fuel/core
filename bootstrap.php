@@ -144,6 +144,9 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Session_Memcached'  => COREPATH.'classes/session/memcached.php',
 	'Fuel\\Core\\Session_Redis'      => COREPATH.'classes/session/redis.php',
 
+	'Fuel\\Core\\Redis'				 => COREPATH.'classes/redis.php',
+	'Fuel\\Core\\Redis_Exception'	 => COREPATH.'classes/redis/exception.php',
+
 	'Fuel\\Core\\Str'  => COREPATH.'classes/str.php',
 
 	'Fuel\\Core\\TestCase'  => COREPATH.'classes/testcase.php',
