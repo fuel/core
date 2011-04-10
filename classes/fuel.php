@@ -228,7 +228,7 @@ class Fuel {
 
 		if (static::$path_cache !== null && array_key_exists($cache_id.$path, static::$path_cache))
 		{
-			return static::$path_cache[$cache_id.$path];
+			return static::$path_cache[$path];
 		}
 
 		$found = $multiple ? array() : false;
