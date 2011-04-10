@@ -298,6 +298,15 @@ class Form {
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
 		}
+		error_log("value: ".$attributes['value']." - checked: ".$attributes['checked']);
+		if (! empty($attributes['checked']) and $attributes['checked'] == $attributes['value'])
+		{
+			$attributes['checked'] = 'checked';
+		}
+		else
+		{
+			unset($attributes['checked']);
+		}
 		$attributes['type'] = 'radio';
 
 		return static::input($attributes);
@@ -321,6 +330,14 @@ class Form {
 		{
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
+		}
+		if (! empty($attributes['checked']))
+		{
+			$attributes['checked'] = 'checked';
+		}
+		else
+		{
+			unset($attributes['checked']);
 		}
 		$attributes['type'] = 'checkbox';
 

@@ -303,11 +303,19 @@ class Fieldset
 				{
 					if ($value = $input[$f->name])
 					{
+						if($f->type == 'checkbox')
+						{
+							$f->set_checked();
+						}
 						$f->set_value($value);
 					}
 				}
 				elseif (is_object($input) and property_exists($input, $f->name))
 				{
+					if($f->type == 'checkbox')
+					{
+						$f->set_checked();
+					}
 					$f->set_value($input->{$f->name});
 				}
 			}
@@ -315,6 +323,11 @@ class Fieldset
 			{
 				if (($value = $this->input($f->name, null)) !== null)
 				{
+					error_log('name: '.$f->name.' type: '.$f->type.' value: '.$value);
+					if($f->type == 'checkbox')
+					{
+						$f->set_checked();
+					}
 					$f->set_value($value);
 				}
 			}
