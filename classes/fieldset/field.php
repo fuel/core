@@ -150,9 +150,10 @@ class Fieldset_Field
 	 *
 	 * @param	string
 	 */
-	public function set_checked()
+	public function set_checked($value = null)
 	{
-		$this->set_attribute('checked', 'checked');
+		$value = is_null($value) ? $this->value : $value;
+		$this->set_attribute('checked', $value);
 	}
 
 	/**

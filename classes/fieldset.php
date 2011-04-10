@@ -323,10 +323,9 @@ class Fieldset
 			{
 				if (($value = $this->input($f->name, null)) !== null)
 				{
-					error_log('name: '.$f->name.' type: '.$f->type.' value: '.$value);
-					if($f->type == 'checkbox')
+					if($f->type == 'checkbox' or $f->type == 'radio')
 					{
-						$f->set_checked();
+						$f->set_checked($value);
 					}
 					$f->set_value($value);
 				}
