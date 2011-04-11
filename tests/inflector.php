@@ -42,7 +42,7 @@ class Tests_Inflector extends TestCase {
 	public function test_camelize()
 	{
 		$output = Inflector::camelize('apples_and_oranges');
-		$expected = 'Apples_And_Oranges';
+		$expected = 'ApplesAndOranges';
 		$this->assertEquals($expected, $output);
 	}
 
