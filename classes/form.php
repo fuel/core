@@ -597,15 +597,20 @@ class Form {
 		$attributes = $this->get_config('form_attributes');
 		$action && $attributes['action'] = $action;
 
-		$output = static::open($attributes).PHP_EOL;
+		$open = static::open($attributes).PHP_EOL;
 		$fields = $this->field();
+		$fields_output = '';
 		foreach ($fields as $f)
 		{
-			$output .= $this->build_field($f).PHP_EOL;
+			$fields_output .= $this->build_field($f).PHP_EOL;
 		}
-		$output .= static::close();
+		$close = static::close();
 
-		return $output;
+		$template =  $this->get_config('form_template', "\t\t{form_open}\n{fields}\n\t\t{form_close}\n");
+		$template = str_replace(array('{form_open}', '{fields}', '{form_close}'),
+			array($open, $fields_output, $close),
+			$template);
+		return $template;
 	}
 
 	/**
@@ -635,7 +640,7 @@ class Form {
 		switch($field->type)
 		{
 			case 'hidden':
-				$build_field = static::hidden($field);
+				$build_field = static::hidden($field->name, $field->value, $field->attributes);
 				break;
 			case 'radio': case 'checkbox':
 				if (isset($field->options))
@@ -677,10 +682,14 @@ class Form {
 				}
 				break;
 			case 'select':
-				$build_field = static::select($field->name, $field->value, $field->options, $field->attributes);
+				$attributes = $field->attributes;
+				unset($attributes['type']);
+				$build_field = static::select($field->name, $field->value, $field->options, $attributes);
 				break;
 			case 'textarea':
-				$build_field = static::textarea($field->name, $field->value, $field->attributes);
+				$attributes = $field->attributes;
+				unset($attributes['type']);
+				$build_field = static::textarea($field->name, $field->value, $attributes);
 				break;
 			default:
 				$build_field = static::input($field->name, $field->value, $field->attributes);
