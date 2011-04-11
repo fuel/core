@@ -17,6 +17,7 @@ class Profiler {
 	{
 		static::$profiler = new PhpQuickProfiler(FUEL_START_TIME);
 		static::$profiler->queries = array();
+		static::$profiler->queryCount = 0;
 	}
 
 	public static function mark($label)
@@ -41,11 +42,14 @@ class Profiler {
 
 	public static function start($dbname, $sql)
 	{
-		static::$query = array(
-			'sql' => $sql,
-			'time' => static::$profiler->getMicroTime(),
-		);
-		return true;
+		if (static::$profiler)
+		{
+			static::$query = array(
+				'sql' => $sql,
+				'time' => static::$profiler->getMicroTime(),
+			);
+			return true;
+		}
 	}
 
 	public static function stop($text)
