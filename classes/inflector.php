@@ -184,7 +184,7 @@ class Inflector {
 	 */
 	public static function camelize($underscored_word)
 	{
-		return preg_replace('/(^|_)(.)/e', "strtoupper('\\1\\2')", strval($underscored_word));
+		return preg_replace('/(^|_)(.)/e', "strtoupper('\\2')", strval($underscored_word));
 	}
 
 	/**
@@ -349,7 +349,7 @@ class Inflector {
 	 */
 	public static function classify($table_name)
 	{
-		return static::camelize(static::singularize($table_name));
+		return preg_replace('/(^|_)(.)/e', "strtoupper('\\1\\2')", static::singularize($table_name));
 	}
 
 	/**
