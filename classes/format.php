@@ -238,7 +238,7 @@ class Format {
 	// Format XML for output
 	protected function _from_xml($string)
 	{
-		return (array) simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA);
+		return $string ? (array) simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : array();
 	}
 
 	protected function _from_yaml($string)
