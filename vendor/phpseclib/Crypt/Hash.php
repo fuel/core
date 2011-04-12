@@ -143,7 +143,7 @@ class Crypt_Hash {
      * @return Crypt_Hash
      * @access public
      */
-    function __construct($hash = 'sha1')
+    public function __construct($hash = 'sha1')
     {
         if ( !defined('CRYPT_HASH_MODE') ) {
             switch (true) {
@@ -169,7 +169,7 @@ class Crypt_Hash {
      * @access public
      * @param String $key
      */
-    function setKey($key)
+    public function setKey($key)
     {
         $this->key = $key;
     }
@@ -180,7 +180,7 @@ class Crypt_Hash {
      * @access public
      * @param String $hash
      */
-    function setHash($hash)
+    public function setHash($hash)
     {
         switch ($hash) {
             case 'md5-96':
@@ -288,7 +288,7 @@ class Crypt_Hash {
      * @param String $text
      * @return String
      */
-    function hash($text)
+    public function hash($text)
     {
         $mode = is_array($this->hash) ? CRYPT_HASH_MODE_INTERNAL : CRYPT_HASH_MODE;
 
@@ -337,10 +337,45 @@ class Crypt_Hash {
      * @access private
      * @return Integer
      */
-    function getLength()
+    public function getLength()
     {
         return $this->l;
     }
+
+	/* PBKDF2 Implementation (described in RFC 2898)
+	 *
+	 *  @param string p password
+	 *  @param string s salt
+	 *  @param int c iteration count (use 1000 or higher)
+	 *  @param int kl derived key length
+	 *  @param string a hash algorithm
+	 *
+	 *  @return string derived key
+	 */
+	public function pbkdf2( $p, $s, $c, $kl, $a = 'sha256' )
+	{
+		$hl = strlen(hash($a, null, true)); # Hash length
+		$kb = ceil($kl / $hl);              # Key blocks to compute
+		$dk = '';                           # Derived key
+
+		# Create key
+		for ( $block = 1; $block <= $kb; $block ++ )
+		{
+			# Initial hash for this block
+			$ib = $b = hash_hmac($a, $s . pack('N', $block), $p, true);
+
+			# Perform block iterations
+			for ( $i = 1; $i < $c; $i ++ )
+			{
+				# XOR each iterate
+				$ib ^= ($b = hash_hmac($a, $b, $p, true));
+			}
+			$dk .= $ib; # Append iterated block
+		}
+
+		# Return derived key of correct length
+		return substr($dk, 0, $kl);
+	}
 
     /**
      * Wrapper for MD5
@@ -348,7 +383,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    function _md5($m)
+    private function _md5($m)
     {
         return pack('H*', md5($m));
     }
@@ -359,7 +394,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    function _sha1($m)
+    private function _sha1($m)
     {
         return pack('H*', sha1($m));
     }
@@ -372,7 +407,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    function _md2($m)
+    private function _md2($m)
     {
         static $s = array(
              41,  46,  67, 201, 162, 216, 124,   1,  61,  54,  84, 161, 236, 240, 6,
@@ -445,7 +480,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    function _sha256($m)
+    private function _sha256($m)
     {
         if (extension_loaded('suhosin')) {
             return pack('H*', sha256($m));
@@ -550,7 +585,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    function _sha512($m)
+    private function _sha512($m)
     {
         if (!class_exists('Math_BigInteger')) {
             require_once('Math/BigInteger.php');
@@ -736,7 +771,7 @@ class Crypt_Hash {
      * @see _sha256()
      * @return Integer
      */
-    function _rightRotate($int, $amt)
+    private function _rightRotate($int, $amt)
     {
         $invamt = 32 - $amt;
         $mask = (1 << $invamt) - 1;
@@ -752,7 +787,7 @@ class Crypt_Hash {
      * @see _sha256()
      * @return Integer
      */
-    function _rightShift($int, $amt)
+    private function _rightShift($int, $amt)
     {
         $mask = (1 << (32 - $amt)) - 1;
         return ($int >> $amt) & $mask;
@@ -766,7 +801,7 @@ class Crypt_Hash {
      * @see _sha256()
      * @return Integer
      */
-    function _not($int)
+    private function _not($int)
     {
         return ~$int & 0xFFFFFFFF;
     }
@@ -783,7 +818,7 @@ class Crypt_Hash {
      * @see _sha256()
      * @access private
      */
-    function _add()
+    private function _add()
     {
         static $mod;
         if (!isset($mod)) {
@@ -809,7 +844,7 @@ class Crypt_Hash {
      * @return String
      * @access private
      */
-    function _string_shift(&$string, $index = 1)
+    private function _string_shift(&$string, $index = 1)
     {
         $substr = substr($string, 0, $index);
         $string = substr($string, $index);
