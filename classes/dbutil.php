@@ -56,7 +56,7 @@ class DBUtil {
 	 */
 	public static function drop_table($table)
 	{
-		return DB::query('DROP TABLE IF EXISTS '.DB::quote_identifier($table), \DB::DELETE)->execute();
+		return DB::query('DROP TABLE IF EXISTS '.DB::quote_identifier(DB::table_prefix($table)), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -69,7 +69,7 @@ class DBUtil {
 	 */
 	public static function rename_table($table, $new_table_name)
 	{
-		return DB::query('RENAME TABLE '.DB::quote_identifier($table).' TO '.DB::quote_identifier($new_table_name),DB::UPDATE)->execute();
+		return DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
 	}
 
 	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true)
@@ -78,7 +78,7 @@ class DBUtil {
 
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$sql .= DB::quote_identifier($table).' (';
+		$sql .= DB::quote_identifier(DB::table_prefix($table)).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{
@@ -132,9 +132,9 @@ class DBUtil {
 	 */
 	public static function truncate_table($table)
 	{
-		return DB::query('TRUNCATE TABLE '.DB::quote_identifier($table), \DB::DELETE)->execute();
+		return DB::query('TRUNCATE TABLE '.DB::quote_identifier(DB::table_prefix($table)), \DB::DELETE)->execute();
 	}
-	
+
 	/**
 	 * Analyzes a table.
 	 *
@@ -145,7 +145,7 @@ class DBUtil {
 	{
 		return static::table_maintenance('ANALYZE TAB:E', $table);
 	}
-	
+
 	/**
 	 * Checks a table.
 	 *
@@ -156,7 +156,7 @@ class DBUtil {
 	{
 		return static::table_maintenance('CHECK TABLE', $table);
 	}
-	
+
 	/**
 	 * Optimizes a table.
 	 *
@@ -167,7 +167,7 @@ class DBUtil {
 	{
 		return static::table_maintenance('OPTIMIZE TABLE', $table);
 	}
-	
+
 	/**
 	 * Repairs a table.
 	 *
@@ -178,7 +178,7 @@ class DBUtil {
 	{
 		return static::table_maintenance('REPAIR TABLE', $table);
 	}
-	
+
 	/*
 	 * Executes table maintenance. Will throw Fuel_Exception when the operation is not supported.
 	 *
@@ -188,7 +188,7 @@ class DBUtil {
 	 */
 	protected static function table_maintenance($operation, $table)
 	{
-		$result = \DB::query($operation.' '.\DB::quote_identifier($table), \DB::SELECT)->execute();
+		$result = \DB::query($operation.' '.\DB::quote_identifier(DB::table_prefix($table)), \DB::SELECT)->execute();
 		$type = $result->get('Msg_type');
 		$message = $result->get('Msg_text');
 		$table = $result->get('Table');
@@ -196,7 +196,7 @@ class DBUtil {
 		{
 			return true;
 		}
-		
+
 		if($type === 'error')
 		{
 			\Log::error('Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
