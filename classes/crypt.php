@@ -55,42 +55,23 @@ class Crypt {
 		\Config::load('crypt', true);
 		static::$config = \Config::get('crypt', array ());
 
-		// generate a crypto key if we don't have one
-		if ( ! isset(static::$config['crypto_key']))
+		// generate random crypto keys if we don't have them
+		$update = false;
+		foreach(array('crypto_key', 'crypto_iv', 'crypto_hmac') as $key)
 		{
-			$crypto_key = '';
-			for ($i = 0; $i < 8; $i++) {
-				$crypto_key.= static::safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
+			if ( ! isset(static::$config[$key]))
+			{
+				$crypto = '';
+				for ($i = 0; $i < 8; $i++) {
+					$crypto .= static::safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
+				}
+				static::$config[$key] = $crypto;
+				$update = true;
 			}
-			static::$config['crypto_key'] = $crypto_key;
 		}
 
-		// generate a crypto iv if we don't have one
-		if ( ! isset(static::$config['crypto_iv']))
-		{
-			$crypto_iv = '';
-			for ($i = 0; $i < 8; $i++) {
-				$crypto_iv .= static::safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
-			}
-			static::$config['crypto_iv'] = $crypto_iv;
-		}
-
-		// generate a hmac hash key if we don't have one
-		if ( ! isset(static::$config['crypto_hmac']))
-		{
-			$crypto_hmac = '';
-			for ($i = 0; $i < 8; $i++) {
-				$crypto_hmac.= static::safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
-			}
-			static::$config['crypto_hmac'] = $crypto_hmac;
-		}
-
-
-		// update the config if new keys were generated
-		if (isset($crypto_key) || isset($crypto_iv) || isset($crypto_hmac))
-		{
-			\Config::save('crypt', static::$config);
-		}
+		// update the config
+		$update && \Config::save('crypt', static::$config);
 
 		static::$crypter->enableContinuousBuffer();
 
