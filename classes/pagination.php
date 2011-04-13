@@ -138,7 +138,7 @@ class Pagination {
 		}
 
 		$pagination = '';
-		$pagination .= '&nbsp;'.static::prev_link('&laquo Previous').'&nbsp;&nbsp;';
+		$pagination .= '&nbsp;'.static::prev_link('&laquo; Previous').'&nbsp;&nbsp;';
 		$pagination .= static::page_links();
 		$pagination .= '&nbsp;'.static::next_link('Next &raquo;');
 
