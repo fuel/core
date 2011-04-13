@@ -161,7 +161,7 @@ class Crypt {
 		$value = substr($value, 0, strlen($value)-43);
 
 		// only return the value if it wasn't tampered with
-		return (static::safe_b64encode(static::secure_compare(static::$hasher->hash($value), $hmac)) ? $value : false;
+		return (static::secure_compare(static::safe_b64encode(static::$hasher->hash($value)), $hmac)) ? $value : false;
 	}
 
 	private function secure_compare($a, $b) {
