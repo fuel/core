@@ -225,6 +225,12 @@ class Format {
 		return serialize($this->_data);
 	}
 
+	// Return as a string representing the PHP structure
+	public function to_php()
+	{
+	    return var_export($this->_data, TRUE);
+	}
+
 	public function to_yaml()
 	{
 		if ( ! function_exists('spyc_load'))
