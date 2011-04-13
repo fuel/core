@@ -66,38 +66,6 @@ namespace PHPSecLib;
  * @link       http://phpseclib.sourceforge.net
  */
 
-/**
- * Include Math_BigInteger
- *
- * Used to do Diffie-Hellman key exchange and DSA/RSA signature verification.
- */
-require_once('Math/BigInteger.php');
-
-/**
- * Include Crypt_Random
- */
-require_once('Crypt/Random.php');
-
-/**
- * Include Crypt_Hash
- */
-require_once('Crypt/Hash.php');
-
-/**
- * Include Crypt_TripleDES
- */
-require_once('Crypt/TripleDES.php');
-
-/**
- * Include Crypt_RC4
- */
-require_once('Crypt/RC4.php');
-
-/**
- * Include Crypt_AES
- */
-require_once('Crypt/AES.php');
-
 /**#@+
  * Execution Bitmap Masks
  *
@@ -576,7 +544,7 @@ class Net_SSH2 {
      * @return Net_SSH2
      * @access public
      */
-    function Net_SSH2($host, $port = 22, $timeout = 10)
+    function __construct($host, $port = 22, $timeout = 10)
     {
         $this->message_numbers = array(
             1 => 'NET_SSH2_MSG_DISCONNECT',

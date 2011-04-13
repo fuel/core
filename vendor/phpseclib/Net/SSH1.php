@@ -71,38 +71,6 @@ namespace PHPSecLib;
  * @link       http://phpseclib.sourceforge.net
  */
 
-/**
- * Include Math_BigInteger
- *
- * Used to do RSA encryption.
- */
-require_once('Math/BigInteger.php');
-
-/**
- * Include Crypt_Null
- */
-//require_once('Crypt/Null.php');
-
-/**
- * Include Crypt_DES
- */
-require_once('Crypt/DES.php');
-
-/**
- * Include Crypt_TripleDES
- */
-require_once('Crypt/TripleDES.php');
-
-/**
- * Include Crypt_RC4
- */
-require_once('Crypt/RC4.php');
-
-/**
- * Include Crypt_Random
- */
-require_once('Crypt/Random.php');
-
 /**#@+
  * Protocol Flags
  *
@@ -391,7 +359,7 @@ class Net_SSH1 {
      * @return Net_SSH1
      * @access public
      */
-    function Net_SSH1($host, $port = 22, $timeout = 10, $cipher = NET_SSH1_CIPHER_3DES)
+    function __construct($host, $port = 22, $timeout = 10, $cipher = NET_SSH1_CIPHER_3DES)
     {
         $this->fsock = @fsockopen($host, $port, $errno, $errstr, $timeout);
         if (!$this->fsock) {

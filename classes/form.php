@@ -346,9 +346,9 @@ class Form {
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
 		}
-		$attributes['type'] = 'button';
+		isset($attributes['type']) ||  $attributes['type'] = 'button';
 
-		return static::input($attributes);
+		return html_tag('button', static::attr_to_string($attributes), $value);
 	}
 
 	/**
