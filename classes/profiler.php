@@ -32,7 +32,7 @@ class Profiler {
 
 	public static function console($text)
 	{
-		Console::log($test);
+		Console::log($text);
 	}
 
 	public static function output()
