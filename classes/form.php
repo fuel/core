@@ -516,8 +516,9 @@ class Form {
 	{
 		if (is_array($label))
 		{
+			$attributes = $label;
 			$label = $attributes['label'];
-			$id = $attributes['id'];
+			isset($attributes['id']) and $id = $attributes['id'];
 		}
 
 		$attributes['for'] = $id;
@@ -643,7 +644,7 @@ class Form {
 				$build_field = static::hidden($field->name, $field->value, $field->attributes);
 				break;
 			case 'radio': case 'checkbox':
-				if (isset($field->options))
+				if ($field->options())
 				{
 					$build_field = array();
 					$attributes = $field->attributes;
@@ -669,7 +670,7 @@ class Form {
 							$attributes['id'] = null;
 						}
 
-						$build_tag[static::label($label, $attributes['id'])] = $field->type == 'radio'
+						$build_field[static::label($label, $attributes['id'])] = $field->type == 'radio'
 							? static::radio($attributes)
 							: static::checkbox($attributes);
 					}
@@ -715,8 +716,8 @@ class Form {
 
 		if (is_array($build_field))
 		{
-			$template = $field->template ?: $this->get_config('multi_field_template', null);
-			if ($template && preg_match('#\{fields\}(.*)\{fields\}#uD', $template, $match) > 0)
+			$template = $field->template ?: $this->get_config('multi_field_template', "{fields}\t\t\t{label} {field}{fields}");
+			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Du', $template, $match) > 0)
 			{
 				$build_fields = '';
 				foreach ($build_field as $label => $bf)
@@ -725,7 +726,7 @@ class Form {
 					$bf_temp = str_replace('{label}', $label, $bf_temp);
 					$build_fields .= $bf_temp;
 				}
-				$template = str_replace($match[1], $build_fields, $template);
+				$template = str_replace($match[0], $build_fields, $template);
 				if ($required_mark)
 				{
 					$template = str_replace('{required}', $required_mark, $template);

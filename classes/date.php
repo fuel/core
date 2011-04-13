@@ -144,7 +144,7 @@ class Date {
 			return false;
 		}
 		$timestamp = mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],
-						$time['tm_mon'], $time['tm_mday'], $time['tm_year']+1901 );
+						$time['tm_mon'] + 1, $time['tm_mday'], $time['tm_year'] + 1900);
 
 		return static::factory($timestamp + static::$server_gmt_offset);
 	}
