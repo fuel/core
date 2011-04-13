@@ -282,9 +282,11 @@ class File {
 			throw new \File_Exception('Invalid basepath, cannot update a file at this location.');
 		}
 
-		$file = static::open_file(@fopen($new_file, 'w'), true, $area);
-		fwrite($file, $contents);
-		static::close_file($file, $area);
+		if ($file = static::open_file(@fopen($new_file, 'w'), true, $area) !== false) 
+		{
+			fwrite($file, $contents);
+			static::close_file($file, $area);
+		}
 
 		return true;
 	}
