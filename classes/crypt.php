@@ -71,7 +71,7 @@ class Crypt {
 		}
 
 		// update the config
-		$update && \Config::save('crypt', static::$config);
+		$update || \Config::save('crypt', static::$config);
 
 		static::$crypter->enableContinuousBuffer();
 
