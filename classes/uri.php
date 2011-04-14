@@ -194,6 +194,14 @@ class Uri {
 		return static::create();
 	}
 
+    /**
+     * Gets the base URL
+     */
+    public static function base()
+    {
+        return \Config::get('base_url');
+    }
+
 	/**
 	 * @var	string	The URI string
 	 */
