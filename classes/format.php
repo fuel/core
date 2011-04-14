@@ -98,7 +98,7 @@ class Format {
 	}
 
 	// Format XML for output
-	public function to_xml($data = null, $structure = NULL, $basenode = 'xml')
+	public function to_xml($data = null, $structure = null, $basenode = 'xml')
 	{
 		if ($data == null)
 		{
@@ -111,7 +111,7 @@ class Format {
 			ini_set('zend.ze1_compatibility_mode', 0);
 		}
 
-		if ($structure == NULL)
+		if ($structure == null)
 		{
 			$structure = simplexml_load_string("<?xml version='1.0' encoding='utf-8'?><$basenode />");
 		}
@@ -126,28 +126,26 @@ class Format {
 		{
 			// no numeric keys in our xml please!
 			if (is_numeric($key))
-			{
-				// make string key...
-				//$key = "item_". (string) $key;
-				$key = "item";
-			}
+            {
+                // make string key...           
+                $key = (Inflector::singularize($basenode) != $basenode) ? Inflector::singularize($basenode) : 'item';
+            }
 
 			// replace anything not alpha numeric
 			$key = preg_replace('/[^a-z_\-0-9]/i', '', $key);
 
-			// if there is another array found recrusively call this function
-			if (is_array($value) OR is_object($value))
-			{
-				$node = $structure->addChild($key);
-				// recrusive call.
-				$this->to_xml($value, $node, $basenode);
-			}
-			else
-			{
-				// Actual boolean values need to be converted to numbers
-				is_bool($value) AND $value = (int) $value;
+            // if there is another array found recrusively call this function
+            if (is_array($value) || is_object($value))
+            {
+                $node = $structure->addChild($key);
 
-				// add single node.
+                // recrusive call.
+                $this->to_xml($value, $node, $key);
+            }
+
+            else
+            {
+                // add single node.
 				$value = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, "UTF-8");
 
 				$structure->addChild($key, $value);
