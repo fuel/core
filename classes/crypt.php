@@ -164,7 +164,7 @@ class Crypt {
 		return (static::secure_compare(static::safe_b64encode(static::$hasher->hash($value)), $hmac)) ? $value : false;
 	}
 
-	private function secure_compare($a, $b) {
+	private static function secure_compare($a, $b) {
 
 		// make sure we're only comparing equal length strings
 		if (strlen($a) !== strlen($b)) {
