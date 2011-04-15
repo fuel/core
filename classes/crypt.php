@@ -55,11 +55,11 @@ class Crypt {
 		\Config::load('crypt', true);
 		static::$config = \Config::get('crypt', array ());
 
-		// generate random crypto keys if we don't have them
+		// generate random crypto keys if we don't have them or they are incorrect length
 		$update = false;
 		foreach(array('crypto_key', 'crypto_iv', 'crypto_hmac') as $key)
 		{
-			if ( ! isset(static::$config[$key]))
+			if ( empty(static::$config[$key]) || (strlen(static::$config[$key]) % 4) != 0)
 			{
 				$crypto = '';
 				for ($i = 0; $i < 8; $i++) {
@@ -70,8 +70,18 @@ class Crypt {
 			}
 		}
 
-		// update the config
-		$update || \Config::save('crypt', static::$config);
+		// update the config if needed
+		if ($update === true)
+		{
+			try
+			{
+				\Config::save('crypt', static::$config);
+			}
+			catch (\File_Exception $e)
+			{
+				throw new \Exception('Crypt keys are invalid or missing, and app/config/crypt.php could not be written.');
+			}
+		}
 
 		static::$crypter->enableContinuousBuffer();
 
