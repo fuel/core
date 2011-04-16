@@ -29,7 +29,7 @@ class Install {
 
 	public static function run()
 	{
-		$writable_paths = array(APPPATH . 'cache', APPPATH . 'logs', APPPATH . 'tmp');
+		$writable_paths = array(APPPATH.'cache', APPPATH.'logs', APPPATH.'tmp', APPPATH.'config');
 
 		foreach ($writable_paths as $path)
 		{
