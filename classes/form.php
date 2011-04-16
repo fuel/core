@@ -346,9 +346,9 @@ class Form {
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
 		}
-		$attributes['type'] = 'button';
+		isset($attributes['type']) ||  $attributes['type'] = 'button';
 
-		return static::input($attributes);
+		return html_tag('button', static::attr_to_string($attributes), $value);
 	}
 
 	/**
@@ -500,6 +500,11 @@ class Form {
 			}
 		}
 		$input .= str_repeat("\t", 0);
+
+		if (empty($attributes['id']) && static::get_class_config('auto_id', false) == true)
+		{
+			$attributes['id'] = static::get_class_config('auto_id_prefix', '').$attributes['name'];
+		}
 
 		return html_tag('select', static::attr_to_string($attributes), $input);
 	}

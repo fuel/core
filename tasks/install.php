@@ -29,22 +29,18 @@ class Install {
 
 	public static function run()
 	{
-		$writable_paths = array(
-			APPPATH . 'cache',
-			APPPATH . 'logs',
-			APPPATH . 'tmp'
-		);
+		$writable_paths = array(APPPATH.'cache', APPPATH.'logs', APPPATH.'tmp', APPPATH.'config');
 
 		foreach ($writable_paths as $path)
 		{
 			if (@chmod($path, 0777))
 			{
-				\Cli::write("\t" . \Cli::color('Made writable: ' . \Fuel::clean_path($path), 'green'));
+				\Cli::write("\t".'Made writable: '.$path, 'green');
 			}
 
 			else
 			{
-				\Cli::write("\t" . \Cli::color('Failed to make writable: ' . \Fuel::clean_path($path), 'red'));
+				\Cli::write("\t".'Failed to make writable: '.$path, 'red');
 			}
 		}
 	}

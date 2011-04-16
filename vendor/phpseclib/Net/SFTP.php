@@ -54,11 +54,6 @@ namespace PHPSecLib;
  * @link       http://phpseclib.sourceforge.net
  */
 
-/**
- * Include Net_SSH2
- */
-require_once('Net/SSH2.php');
-
 /**#@+
  * @access public
  * @see Net_SFTP::getLog()
@@ -225,9 +220,9 @@ class Net_SFTP extends Net_SSH2 {
      * @return Net_SFTP
      * @access public
      */
-    function Net_SFTP($host, $port = 22, $timeout = 10)
+    function __construct($host, $port = 22, $timeout = 10)
     {
-        parent::Net_SSH2($host, $port, $timeout);
+        parent::__construct($host, $port, $timeout);
         $this->packet_types = array(
             1  => 'NET_SFTP_INIT',
             2  => 'NET_SFTP_VERSION',
