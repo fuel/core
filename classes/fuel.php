@@ -118,8 +118,6 @@ class Fuel {
 
 		\Router::add(\Config::get('routes'));
 
-		\View::$auto_encode = \Config::get('security.auto_encode_view_data');
-
 		if ( ! static::$is_cli)
 		{
 			if (\Config::get('base_url') === null)
@@ -141,6 +139,8 @@ class Fuel {
 		{
 			static::add_package($package);
 		}
+
+		\View::$auto_encode = \Config::get('security.auto_encode_view_data');
 
 		// Set some server options
 		setlocale(LC_ALL, static::$locale);
