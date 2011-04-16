@@ -59,7 +59,7 @@ class Route {
 		}
 		else
 		{
-			$this->search = str_replace(array(':any', ':segment'), array('.+', '[^/]+([^/]*)'), $this->path);
+			$this->search = str_replace(array(':any', ':segment'), array('.+', '[^/]*'), $this->path);
 			$this->search = preg_replace('|:([a-z\_]+)|uD', '(?P<$1>.+?)', $this->search);
 		}
 	}

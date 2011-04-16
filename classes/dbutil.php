@@ -143,7 +143,7 @@ class DBUtil {
 	 */
 	public static function analyze_table($table)
 	{
-		return static::table_maintenance('ANALYZE TAB:E', $table);
+		return static::table_maintenance('ANALYZE TABLE', $table);
 	}
 
 	/**

@@ -100,7 +100,7 @@ abstract class Controller_Rest extends \Controller {
 		if (method_exists('Format', 'to_'.$this->request->format))
 		{
 			// Set the correct format header
-			$this->response->set_header('Content-Type: '.$this->_supported_formats[$this->request->format]);
+			$this->response->set_header('Content-Type', $this->_supported_formats[$this->request->format]);
 
 			$this->response->body(Format::factory($data)->{'to_'.$this->request->format}());
 		}
