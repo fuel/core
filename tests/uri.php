@@ -29,12 +29,14 @@ class Tests_Uri extends TestCase {
 	 */
 	public function test_create()
 	{
+		$prefix = (Config::get('index_file')) ? Config::get('index_file').'/' : '';
+
 		$output = Uri::create('controller/method');
-		$expected = "index.php/controller/method";
+		$expected = $prefix."controller/method";
 		$this->assertEquals($expected, $output);
 
 		$output = Uri::create('controller/:some', array('some' => 'thing', 'and' => 'more'), array('what' => ':and'));
-		$expected = "index.php/controller/thing?what=more";
+		$expected = $prefix."controller/thing?what=more";
 		$this->assertEquals($expected, $output);
 	}
 
