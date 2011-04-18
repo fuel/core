@@ -86,10 +86,6 @@ if ( ! function_exists('array_to_attr'))
 				$property = $value;
 			}
 
-			if (in_array($property, array('value', 'alt', 'title')))
-			{
-				$value = htmlentities($value, ENT_QUOTES, \Fuel::$encoding);
-			}
 			$attr_str .= $property.'="'.$value.'" ';
 		}
 
