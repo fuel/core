@@ -30,6 +30,8 @@ class Lang {
 
 	public static $fallback = 'en';
 
+	public static $context = 'front';
+
 	public static function load($file, $group = null)
 	{
 		$lang = array();
@@ -90,6 +92,12 @@ class Lang {
 			return  static::_parse_params($return, $params);
 		}
 
+		if(!isset(static::$lines[$line]))
+		{
+			parent::set($line,$line);
+			static::save();
+		}
+
 		isset(static::$lines[$line]) and $line = static::$lines[$line];
 
 		return static::_parse_params($line, $params);
@@ -128,6 +136,26 @@ class Lang {
 		{
 			return $string;
 		}
+	}
+
+	public static function save()
+	{
+		
+				$content = <<<CONF
+<?php
+
+CONF;
+		$content .= 'return '.str_replace('  ', "\t", var_export(static::$lines, true)).';';
+		$content .= <<<CONF
+
+
+CONF;
+		$language = \Config::get('language');
+		$path = \Fuel::find_file('lang/'.$language, self::$context, '.php');
+
+		$path = pathinfo($path[0]);
+
+		return File::update($path['dirname'], $path['basename'], $content);
 	}
 }
 
