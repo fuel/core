@@ -110,6 +110,8 @@ abstract class ViewModel {
 		}
 
 		$this->_auto_encode = (bool) $setting;
+
+		return $this;
 	}
 
 	/**
@@ -156,7 +158,7 @@ abstract class ViewModel {
 	 */
 	public function __set($name, $val)
 	{
-		$this->set($name, $val, \View::$auto_encode);
+		return $this->set($name, $val, \View::$auto_encode);
 	}
 
 	/**
@@ -169,6 +171,8 @@ abstract class ViewModel {
 	public function set($name, $val, $encode = null)
 	{
 		$this->_template->set($name, $val, $encode);
+
+		return $this;
 	}
 
 	/**
@@ -183,6 +187,8 @@ abstract class ViewModel {
 	{
 		\Error::notice('The ViewModel::set_safe() method is depricated and will be removed at 1.0. Use set(name, var, true) instead.');
 		$this->_template->set($name, $val, true);
+
+		return $this;
 	}
 
 	/**
@@ -195,6 +201,8 @@ abstract class ViewModel {
 	{
 		\Error::notice('The ViewModel::set_safe() method is depricated and will be removed at 1.0. Use set(name, var, false) instead.');
 		$this->_template->set($name, $val, false);
+
+		return $this;
 	}
 
 	/**
