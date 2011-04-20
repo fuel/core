@@ -40,7 +40,7 @@ class Arr {
 		foreach ($array as $key => $val)
 		{
 			$curr_key[] = $key;
-			if (is_array($val) and array_values($val) !== $val)
+			if (is_array($val))
 			{
 				static::flatten_assoc($val, $glue, false);
 			}
