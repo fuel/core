@@ -24,9 +24,10 @@ class Arr {
 	 * @param	array	The array to flatten
 	 * @param	string	What to glue the keys together with
 	 * @param	bool	Whether to reset and start over on a new array
+	 * @param	int		Number of levels (array dimensions) remaining to flatten
 	 * @return	array
 	 */
-	public static function flatten_assoc($array, $glue = ':', $reset = true)
+	public static function flatten_assoc($array, $glue = ':', $reset = true, $level = 1)
 	{
 		static $return = array();
 		static $curr_key = array();
@@ -40,9 +41,9 @@ class Arr {
 		foreach ($array as $key => $val)
 		{
 			$curr_key[] = $key;
-			if (is_array($val))
+			if (is_array($val) and $level > 0)
 			{
-				static::flatten_assoc($val, $glue, false);
+				static::flatten_assoc($val, $glue, false, $level-1);
 			}
 			else
 			{
