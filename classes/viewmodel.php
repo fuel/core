@@ -80,7 +80,7 @@ abstract class ViewModel {
 		$this->before();
 
 		// Set this as the controller output if this is the first ViewModel loaded
-		if ( ! \Request::active()->controller_instance->response->body instanceof ViewModel)
+		if (empty(\Request::active()->controller_instance->response->body))
 		{
 			\Request::active()->controller_instance->response->body = $this;
 		}
