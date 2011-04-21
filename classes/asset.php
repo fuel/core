@@ -147,10 +147,11 @@ class Asset {
 			$type = $item['type'];
 			$filename = $item['file'];
 			$attr = $item['attr'];
-
+			$folder = $item['folder'];
+			
 			if (strpos($filename, '://') === false)
 			{
-				if ( ! ($file = static::find_file($filename, static::$_folders[$type])))
+				if ( ! ($file = static::find_file($filename, static::$_folders[$folder])))
 				{
 					throw new \Fuel_Exception('Could not find asset: '.$filename);
 				}
@@ -301,6 +302,27 @@ class Asset {
 		return '';
 	}
 
+	public static function item($type = 'css', $folder = 'js', $files = array(), $attr = array(), $group = NULL, $raw = false)
+	{
+		static $temp_group = 4000000;
+
+		$render = false;
+		if ($group === NULL)
+		{
+			$group = (string) (++$temp_group);
+			$render = true;
+		}
+
+		static::_parse_assets($type, $files, $attr, $group, $folder);
+
+		if ($render)
+		{
+			return static::render($group, $raw);
+		}
+
+		return '';
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -315,7 +337,7 @@ class Asset {
 	 * @param	string	The asset group name
 	 * @return	string
 	 */
-	protected static function _parse_assets($type, $assets, $attr, $group)
+	protected static function _parse_assets($type, $assets, $attr, $group, $folder=NULL)
 	{
 		if ( ! is_array($assets))
 		{
@@ -327,10 +349,12 @@ class Asset {
 			static::$_groups[$group][] = array(
 				'type'	=>	$type,
 				'file'	=>	$asset,
-				'attr'	=>	(array) $attr
+				'attr'	=>	(array) $attr,
+				'folder' => $folder === NULL ? $type : $folder
 			);
 		}
 	}
+
 
 	// --------------------------------------------------------------------
 
