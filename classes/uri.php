@@ -264,6 +264,25 @@ class Uri {
 	{
 		return $this->get();
 	}
+	
+	public function without_params()
+	{
+		$segments = \Request::active()->uri->get_segments();
+		
+		$params = \Request::active()->route->method_params;
+		if(count($params)) array_splice($segments,-count($params));
+		return implode('/',$segments);
+	}
+	
+	public function without_action()
+	{
+		$segments = \Request::active()->uri->get_segments();
+		$params = \Request::active()->route->method_params;
+		if(count($params)) array_splice($segments,-count($params));
+
+		if(\Request::active()->route->action != 'index') array_splice($segments,-1);
+		return implode('/',$segments);
+	}
 }
 
 /* End of file uri.php */
