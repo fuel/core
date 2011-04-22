@@ -97,9 +97,9 @@ CONF;
 /* End of file $file.php */
 CONF;
 
-		($path = \Fuel::find_file('config', $file, '.php')) or $path[0] = APPPATH.'config'.DS.$file.'.php';
+		($path = \Fuel::find_file('config', $file, '.php')) or $path = APPPATH.'config'.DS.$file.'.php';
 
-		$path = pathinfo($path[0]);
+		$path = pathinfo($path);
 
 		return File::update($path['dirname'], $path['basename'], $content);
 	}

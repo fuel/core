@@ -118,8 +118,6 @@ class Fuel {
 
 		\Router::add(\Config::get('routes'));
 
-		\View::$auto_encode = \Config::get('security.auto_encode_view_data');
-
 		if ( ! static::$is_cli)
 		{
 			if (\Config::get('base_url') === null)
@@ -141,6 +139,8 @@ class Fuel {
 		{
 			static::add_package($package);
 		}
+
+		\View::$auto_encode = \Config::get('security.auto_encode_view_data');
 
 		// Set some server options
 		setlocale(LC_ALL, static::$locale);
@@ -215,13 +215,33 @@ class Fuel {
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
 		$cache_id = '';
-		$paths = static::$_paths;
 
-		// get extra information of the active request
-		if (class_exists('Request', false) and $active = \Request::active())
+		// the file requested namespaced?
+		if($pos = strripos(ltrim($file, '\\'), '\\'))
 		{
-			$cache_id = md5($active->uri->uri);
-			$paths = array_merge($active->paths, $paths);
+			$file = ltrim($file, '\\');
+
+			// get the namespace path
+			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
+			{
+				// and strip the classes directory as we need the module root
+				$paths = array(substr($path,0, -8));
+
+				// strip the namespace from the filename
+				$file = substr($file, $pos+1);
+			}
+		}
+		else
+		{
+			// not namespaced, use Fuel's search paths
+			$paths = static::$_paths;
+
+			// get extra information of the active request
+			if (class_exists('Request', false) and $active = \Request::active())
+			{
+				$cache_id = md5($active->uri->uri);
+				$paths = array_merge($active->paths, $paths);
+			}
 		}
 
 		$path = $directory.DS.strtolower($file).$ext;

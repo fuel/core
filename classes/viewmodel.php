@@ -80,7 +80,7 @@ abstract class ViewModel {
 		$this->before();
 
 		// Set this as the controller output if this is the first ViewModel loaded
-		if ( ! \Request::active()->controller_instance->response->body instanceof ViewModel)
+		if (empty(\Request::active()->controller_instance->response->body))
 		{
 			\Request::active()->controller_instance->response->body = $this;
 		}
@@ -110,6 +110,8 @@ abstract class ViewModel {
 		}
 
 		$this->_auto_encode = (bool) $setting;
+
+		return $this;
 	}
 
 	/**
@@ -135,6 +137,16 @@ abstract class ViewModel {
 	 */
 	public function __get($name)
 	{
+		return $this->get($name);
+	}
+
+	/**
+	 * Gets a variable from the template
+	 *
+	 * @param	string
+	 */
+	public function get($name)
+	{
 		return $this->_template->{$name};
 	}
 
@@ -146,7 +158,21 @@ abstract class ViewModel {
 	 */
 	public function __set($name, $val)
 	{
-		\View::$auto_encode ? $this->set_safe($name, $val) : $this->set_raw($name, $val);
+		return $this->set($name, $val, \View::$auto_encode);
+	}
+
+	/**
+	 * Sets a variable on the template
+	 *
+	 * @param	string
+	 * @param	mixed
+	 * @param	bool|null
+	 */
+	public function set($name, $val, $encode = null)
+	{
+		$this->_template->set($name, $val, $encode);
+
+		return $this;
 	}
 
 	/**
@@ -159,7 +185,10 @@ abstract class ViewModel {
 	 */
 	public function set_safe($name, $val)
 	{
+		\Error::notice('The ViewModel::set_safe() method is depricated and will be removed at 1.0. Use set(name, var, true) instead.');
 		$this->_template->set($name, $val, true);
+
+		return $this;
 	}
 
 	/**
@@ -170,7 +199,10 @@ abstract class ViewModel {
 	 */
 	public function set_raw($name, $val)
 	{
+		\Error::notice('The ViewModel::set_safe() method is depricated and will be removed at 1.0. Use set(name, var, false) instead.');
 		$this->_template->set($name, $val, false);
+
+		return $this;
 	}
 
 	/**

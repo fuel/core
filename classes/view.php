@@ -37,6 +37,7 @@ class View {
 	// Array of global view data
 	protected static $_global_data = array();
 
+	// Output encoding setting
 	public static $auto_encode = true;
 
 	// View filename
@@ -44,6 +45,9 @@ class View {
 
 	// Array of local variables
 	protected $_data = array();
+
+	// File extension used for views
+	protected $extension = 'php';
 
 	/**
 	 * Returns a new View object. If you do not define the "file" parameter,
@@ -298,7 +302,7 @@ class View {
 	 */
 	public function set_filename($file)
 	{
-		if (($path = \Fuel::find_file('views', $file, '.php', false, false)) === false)
+		if (($path = \Fuel::find_file('views', $file, '.'.$this->extension, false, false)) === false)
 		{
 			throw new \View_Exception('The requested view could not be found: '.\Fuel::clean_path($file));
 		}
