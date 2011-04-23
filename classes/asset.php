@@ -153,7 +153,7 @@ class Asset {
 					throw new \Fuel_Exception('Could not find asset: '.$filename);
 				}
 
-				$file = static::$_asset_url.$file;
+				$file = static::$_asset_url.$file.(static::$_add_mtime ? '?'.filemtime($file) : '');
 			}
 			else
 			{
@@ -169,7 +169,7 @@ class Asset {
 					}
 					$attr['rel'] = 'stylesheet';
 					$attr['type'] = 'text/css';
-					$attr['href'] = $file.(static::$_add_mtime ? '?'.filemtime($file) : '');
+					$attr['href'] = $file;
 
 					$css .= html_tag('link', $attr).PHP_EOL;
 				break;
@@ -179,12 +179,12 @@ class Asset {
 						return html_tag('script', array('type' => 'text/javascript'), PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
 					$attr['type'] = 'text/javascript';
-					$attr['src'] = $file.(static::$_add_mtime ? '?'.filemtime($file) : '');
+					$attr['src'] = $file;
 
 					$js .= html_tag('script', $attr, '').PHP_EOL;
 				break;
 				case 'img':
-					$attr['src'] = $file.(static::$_add_mtime ? '?'.filemtime($file) : '');
+					$attr['src'] = $file;
 					$attr['alt'] = isset($attr['alt']) ? $attr['alt'] : '';
 
 					$img .= html_tag('img', $attr );
