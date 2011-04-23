@@ -99,7 +99,7 @@ class Tests_Arr extends TestCase {
 	public function test_element_when_dot_notated_key_is_not_array($person)
 	{
 		$expected = "Unknown Name";
-		$output = Arr::element($person, 'name.first', 'Unknown Name');
+		$output = Arr::element($person, 'foo.first', 'Unknown Name');
 		$this->assertEquals($expected, $output);
 	}
 
@@ -268,9 +268,19 @@ class Tests_Arr extends TestCase {
 	 */
 	public function test_average()
 	{
-		$people = array("Jack", "Jill");
-		$output = Arr::insert_after_value($people, "Humpty", "Joe");
-		$this->assertFalse($output);
+		$arr = array(13, 8, 6);
+		$this->assertEquals(9, Arr::average($arr));
+	}
+
+	/**
+	 * Tests Arr::average()
+	 * 
+	 * @test
+	 */
+	public function test_average_of_empty_array()
+	{
+		$arr = array();
+		$this->assertEquals(0, Arr::average($arr));
 	}
 
 	/**
@@ -284,6 +294,109 @@ class Tests_Arr extends TestCase {
 
 		$output = Arr::filter_prefixed($arr);
 		$this->assertEquals(array('bar' => 'yay'), $output);
+	}
+
+	/**
+	 * Tests Arr::sort()
+	 * 
+	 * @test
+	 * @expectedException Fuel_Exception
+	 */
+	public function test_sort_of_non_array()
+	{
+		Arr::sort('not an array', 'foo.key');
+	}
+
+	public function sort_provider()
+	{
+		return array(
+			array(
+				// Unsorted Array
+				array(
+					array(
+						'info' => array(
+							'pet' => array(
+								'type' => 'dog'
+							)
+						),
+					),
+					array(
+						'info' => array(
+							'pet' => array(
+								'type' => 'fish'
+							)
+						),
+					),
+					array(
+						'info' => array(
+							'pet' => array(
+								'type' => 'cat'
+							)
+						),
+					),
+				),
+
+				// Sorted Array
+				array(
+					array(
+						'info' => array(
+							'pet' => array(
+								'type' => 'cat'
+							)
+						),
+					),
+					array(
+						'info' => array(
+							'pet' => array(
+								'type' => 'dog'
+							)
+						),
+					),
+					array(
+						'info' => array(
+							'pet' => array(
+								'type' => 'fish'
+							)
+						),
+					),
+				)
+			)
+		);
+	}
+
+	/**
+	 * Tests Arr::sort()
+	 * 
+	 * @test
+	 * @dataProvider sort_provider
+	 */
+	public function test_sort_asc($data, $expected)
+	{
+		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'asc'), $expected);
+	}
+
+	/**
+	 * Tests Arr::sort()
+	 * 
+	 * @test
+	 * @dataProvider sort_provider
+	 */
+	public function test_sort_desc($data, $expected)
+	{
+		$expected = array_reverse($expected);
+		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'desc'), $expected);
+	}
+
+	/**
+	 * Tests Arr::sort()
+	 * 
+	 * @test
+	 * @dataProvider sort_provider
+	 * @expectedException Fuel_Exception
+	 */
+	public function test_sort_invalid_direction($data, $expected)
+	{
+		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'downer'), $expected);
 	}
 
 }
