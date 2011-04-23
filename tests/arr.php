@@ -273,6 +273,19 @@ class Tests_Arr extends TestCase {
 		$this->assertFalse($output);
 	}
 
+	/**
+	 * Tests Arr::element()
+	 * 
+	 * @test
+	 */
+	public function test_filter_prefixed()
+	{
+		$arr = array('foo' => 'baz', 'prefix_bar' => 'yay');
+
+		$output = Arr::filter_prefixed($arr);
+		$this->assertEquals(array('bar' => 'yay'), $output);
+	}
+
 }
 
 /* End of file arr.php */
