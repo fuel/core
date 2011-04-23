@@ -48,7 +48,7 @@ class DBUtil {
 	}
 
 	/**
-	 * Creates a table.  Will throw a Database_Exception if it cannot.
+	 * Drops a table.  Will throw a Database_Exception if it cannot.
 	 *
 	 * @throws	Fuel\Database_Exception
 	 * @param	string	$table	the table name
