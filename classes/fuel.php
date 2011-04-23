@@ -232,6 +232,15 @@ class Fuel {
 	{
 		$cache_id = '';
 
+		$paths = static::$_paths;
+
+		// get extra information of the active request
+		if (class_exists('Request', false) and $active = \Request::active())
+		{
+			$cache_id = md5($active->uri->uri);
+			$paths = array_merge($active->paths, $paths);
+		}
+
 		// the file requested namespaced?
 		if($pos = strripos(ltrim($file, '\\'), '\\'))
 		{
@@ -245,18 +254,6 @@ class Fuel {
 
 				// strip the namespace from the filename
 				$file = substr($file, $pos+1);
-			}
-		}
-		else
-		{
-			// not namespaced, use Fuel's search paths
-			$paths = static::$_paths;
-
-			// get extra information of the active request
-			if (class_exists('Request', false) and $active = \Request::active())
-			{
-				$cache_id = md5($active->uri->uri);
-				$paths = array_merge($active->paths, $paths);
 			}
 		}
 
