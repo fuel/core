@@ -19,25 +19,48 @@ namespace Fuel\Core;
  * @group Str
  */
 class Tests_Str extends TestCase {
-	
+
+	public function truncate_provider()
+	{
+		return array(
+			array(15, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+		);
+	}
+
 	/**
 	 * Test for Str::truncate()
 	 * 
 	 * @test
+	 * @dataProvider truncate_provider
 	 */
-	public function test_truncate()
+	public function test_truncate_plain($limit, $string)
 	{
-		$limit  = 15;
-		$string = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
-		
 		$output = Str::truncate($string, $limit);
 		$expected = 'Lorem ipsum dol...';
 		$this->assertEquals($expected, $output);
-		
+	}
+
+	/**
+	 * Test for Str::truncate()
+	 * 
+	 * @test
+	 * @dataProvider truncate_provider
+	 */
+	public function test_truncate_custom_continuation($limit, $string)
+	{
 		$output = Str::truncate($string, $limit, '..');
 		$expected = 'Lorem ipsum dol..';
 		$this->assertEquals($expected, $output);
-		
+	}
+
+	/**
+	 * Test for Str::truncate()
+	 * 
+	 * @test
+	 * @dataProvider truncate_provider
+	 */
+	public function test_truncate_not_html($limit, $string)
+	{
 		$string = '<h1>'.$string.'</h1>';
 		
 		$output = Str::truncate($string, $limit, '...', false);
@@ -48,7 +71,37 @@ class Tests_Str extends TestCase {
 		$expected = '<h1>Lorem ipsum dol...</h1>';
 		$this->assertEquals($expected, $output);
 	}
-	
+
+	/**
+	 * Test for Str::truncate()
+	 * 
+	 * @test
+	 * @dataProvider truncate_provider
+	 */
+	public function test_truncate_is_html($limit, $string)
+	{
+		$string = '<h1>'.$string.'</h1>';
+		
+		$output = Str::truncate($string, $limit, '...', true);
+		$expected = '<h1>Lorem ipsum dol...</h1>';
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Test for Str::truncate()
+	 * 
+	 * @test
+	 * @dataProvider truncate_provider
+	 */
+	public function test_truncate_multiple_tags($limit, $string)
+	{
+		$limit = 400;
+		$string = '<p><strong>'.$string.'</strong></p>';
+		
+		$output = Str::truncate($string, $limit, '...', true);
+		$this->assertEquals($string, $output);
+	}
+
 	/**
 	 * Test for Str::increment()
 	 * 
