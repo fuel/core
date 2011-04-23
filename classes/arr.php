@@ -118,7 +118,6 @@ class Arr {
 
 	/**
 	 * Returns the elements of the given array or a default if it is not set.
-	 * WARNING: original array is edited by reference, only boolean success is returned
 	 *
 	 * @param   array  the array to fetch from
 	 * @param   array  the keys to fetch from the array
