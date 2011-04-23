@@ -214,16 +214,18 @@ class Date {
 	 * @param	int		UNIX timestamp from current server
 	 * @return	string	Time ago
 	 */
-	public static function time_ago($timestamp)
+	public static function time_ago($timestamp, $from_timestamp = null)
 	{
         if ( $timestamp === null )
 		{
 			return;
 		}
 		
+		$from_timestamp == null and $from_timestamp = time();
+		
 		\Lang::load('date', true);
 		
-		$difference = time() - $timestamp;
+		$difference = $from_timestamp - $timestamp;
 		$periods	= array('second', 'minute', 'hour', 'day', 'week', 'month', 'years', 'decade');
  		$lengths	= array(60, 60, 24, 7, 4.35, 12, 10);
 
