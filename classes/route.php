@@ -106,8 +106,6 @@ class Route {
 			$path = preg_replace('@^'.$this->search.'$@uD', $this->translation, $uri);
 		}
 
-		$method_params = array();
-
 		// Clean out all the non-named stuff out of $named_params
 		foreach($named_params as $key => $val)
 		{
@@ -126,15 +124,14 @@ class Route {
 	/**
 	 * Parses an actual route - extracted out of parse() to make it recursive.
 	 *
-	 * @access private
-	 * @param string The URI object
-	 * @return array OR boolean
+	 * @param   string  The URI object
+	 * @return  array|boolean
 	 */
-	private function _parse_search($uri, $route = null)
+	protected function _parse_search($uri, $route = null)
 	{
 		if ($route === null)
 		{
-			$route =& $this;
+			$route = $this;
 		}
 
 		if (is_array($route->translation))
