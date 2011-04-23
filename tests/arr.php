@@ -20,35 +20,132 @@ namespace Fuel\Core;
  */
 class Tests_Arr extends TestCase {
 
+	public function person_provider()
+	{
+		return array(
+			array(
+				array(
+					"name" => "Jack",
+					"age" => "21",
+					"weight" => 200,
+					"location" => array(
+						"city" => "Pittsburgh",
+						"state" => "PA",
+						"country" => "US"
+					),
+				),
+			),
+		);
+	}
+
+	/**
+	 * Tests Arr::element()
+	 * 
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_element_with_element_found($person)
+	{
+		$expected = "Jack";
+		$output = Arr::element($person, "name", "Unknown Name");
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Tests Arr::element()
+	 * 
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_element_with_element_not_found($person)
+	{
+		$expected = "Unknown job";
+		$output = Arr::element($person, "job", "Unknown job");
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Tests Arr::element()
+	 * 
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_element_with_dot_separated_key($person)
+	{
+		$expected = "Pittsburgh";
+		$output = Arr::element($person, "location.city", "Unknown City");
+		$this->assertEquals($expected, $output);
+
+	}
+
 	/**
 	 * Tests Arr::element()
 	 * 
 	 * @test
 	 */
-	public function test_element()
+	public function test_element_when_array_is_not_an_array()
 	{
-		$person = array(
-				"name" => "Jack",
-				"age" => "21",
-				"location" => array(
-					"city" => "Pittsburgh",
-					"state" => "PA",
-					"country" => "US"
-			)
+		$expected = "Unknown Name";
+		$output = Arr::element('Jack', 'name', 'Unknown Name');
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Tests Arr::element()
+	 * 
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_element_when_dot_notated_key_is_not_array($person)
+	{
+		$expected = "Unknown Name";
+		$output = Arr::element($person, 'name.first', 'Unknown Name');
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Tests Arr::elements()
+	 * 
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_elements_with_all_elements_found($person)
+	{
+		$expected = array(
+			'name' => 'Jack',
+			'weight' => 200,
 		);
-
-		$expected = "Jack";
-		$output = Arr::element($person, "name", "Unknown Name");
+		$output = Arr::elements($person, array('name', 'weight'), 'Unknown');
 		$this->assertEquals($expected, $output);
+	}
 
-		$expected = "Unknown job";
-		$output = Arr::element($person, "job", "Unknown job");
+
+	/**
+	 * Tests Arr::elements()
+	 * 
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_elements_with_all_elements_not_found($person)
+	{
+		$expected = array(
+			'name' => 'Jack',
+			'height' => 'Unknown',
+		);
+		$output = Arr::elements($person, array('name', 'height'), 'Unknown');
 		$this->assertEquals($expected, $output);
+	}
 
-		$expected = "Pittsburgh";
-		$output = Arr::element($person, "location.city", "Unknown City");
-		$this->assertEquals($expected, $output);
-
+	/**
+	 * Tests Arr::elements()
+	 * 
+	 * @test
+	 * @dataProvider person_provider
+	 * @expectedException Fuel_Exception
+	 */
+	public function test_elements_throws_exception_when_keys_is_not_an_array($person)
+	{
+		$output = Arr::elements($person, 'name', 'Unknown');
 	}
 
 	/**
@@ -97,18 +194,58 @@ class Tests_Arr extends TestCase {
 	}
 
 	/**
+	 * Tests Arr::insert()
+	 * 
+	 * @test
+	 */
+	public function test_insert_with_index_out_of_range()
+	{
+		$people = array("Jack", "Jill");
+
+		$output = Arr::insert($people, "Humpty", 4);
+
+		$this->assertFalse($output);
+	}
+
+	/**
 	 * Tests Arr::insert_after_key()
 	 * 
 	 * @test
 	 */
-	public function test_insert_after_key()
+	public function test_insert_after_key_that_exists()
 	{
 		$people = array("Jack", "Jill");
 
 		$expected = array("Jack", "Jill", "Humpty");
 		$output = Arr::insert_after_key($people, "Humpty", 1);
 
-		$this->assertEquals(true, $output);
+		$this->assertTrue($output);
+		$this->assertEquals($expected, $people);
+	}
+
+	/**
+	 * Tests Arr::insert_after_key()
+	 * 
+	 * @test
+	 */
+	public function test_insert_after_key_that_does_not_exist()
+	{
+		$people = array("Jack", "Jill");
+		$output = Arr::insert_after_key($people, "Humpty", 6);
+		$this->assertFalse($output);
+	}
+
+	/**
+	 * Tests Arr::insert_after_value()
+	 * 
+	 * @test
+	 */
+	public function test_insert_after_value_that_exists()
+	{
+		$people = array("Jack", "Jill");
+		$expected = array("Jack", "Humpty", "Jill");
+		$output = Arr::insert_after_value($people, "Humpty", "Jack");
+		$this->assertTrue($output);
 		$this->assertEquals($expected, $people);
 	}
 
@@ -117,15 +254,23 @@ class Tests_Arr extends TestCase {
 	 * 
 	 * @test
 	 */
-	public function test_insert_after_value()
+	public function test_insert_after_value_that_does_not_exists()
 	{
 		$people = array("Jack", "Jill");
+		$output = Arr::insert_after_value($people, "Humpty", "Joe");
+		$this->assertFalse($output);
+	}
 
-		$expected = array("Jack", "Humpty", "Jill");
-		$output = Arr::insert_after_key($people, "Humpty", "Jack");
-
-		$this->assertEquals(true, $output);
-		$this->assertEquals($expected, $people);
+	/**
+	 * Tests Arr::average()
+	 * 
+	 * @test
+	 */
+	public function test_average()
+	{
+		$people = array("Jack", "Jill");
+		$output = Arr::insert_after_value($people, "Humpty", "Joe");
+		$this->assertFalse($output);
 	}
 
 }
