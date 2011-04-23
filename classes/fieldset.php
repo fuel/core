@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -358,11 +356,11 @@ class Fieldset
 	}
 
 	/**
-	 * Alias for $this->validation()->error()
+	 * Alias for $this->validation()->errors()
 	 */
-	public function error($field = null)
+	public function errors($field = null)
 	{
-		return $this->validation()->error($field);
+		return $this->validation()->errors($field);
 	}
 
 	/**

@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -347,7 +345,7 @@ class Cli {
 	 * @param	integer	Number of lines to output
 	 * @return	void
 	 */
-	function new_line($num = 1)
+	public static function new_line($num = 1)
 	{
         // Do it once or more, write with empty string gives us a new line
         for($i = 0; $i < $num; $i++)
@@ -361,7 +359,7 @@ class Cli {
 	 *
 	 * @return	void
 	 */
-    function clear_screen()
+    public static function clear_screen()
     {
 		static::is_windows()
 
