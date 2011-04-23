@@ -216,7 +216,7 @@ class Date {
 	 */
 	public static function time_ago($timestamp, $from_timestamp = null)
 	{
-        if ( $timestamp === null )
+        if ($timestamp === null)
 		{
 			return;
 		}
@@ -236,7 +236,7 @@ class Date {
 
         $difference = round($difference);
 
-		if ( $difference != 1 )
+		if ($difference != 1)
 		{
 			$periods[$j] = \Inflector::pluralize($periods[$j]);
 		}
