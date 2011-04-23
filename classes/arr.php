@@ -249,7 +249,7 @@ class Arr {
 
 		foreach ($b as $key=>$val)
 		{
-			$c[$key] = $array[$key];
+			$c[] = $array[$key];
 		}
 
 		return $c;

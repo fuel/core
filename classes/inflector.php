@@ -87,7 +87,7 @@ class Inflector {
 	 * @return	string	the singular version of $word
 	 * @link	http://snipplr.com/view/4627/a-function-to-add-a-prefix-to-numbers-ex-1st-2nd-3rd-4th-5th/
 	 */
-	function ordinalize($number)
+	public static function ordinalize($number)
 	{
 		if ( ! is_numeric($number))
 		{
