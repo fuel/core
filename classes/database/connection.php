@@ -4,7 +4,7 @@
  * by a name. Queries are typically handled by [Database_Query], rather than
  * using the database object directly.
  *
- * @package    Kohana/Database
+ * @package    Fuel/Database
  * @category   Base
  * @author     Kohana Team
  * @copyright  (c) 2008-2010 Kohana Team
