@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -86,10 +84,6 @@ if ( ! function_exists('array_to_attr'))
 				$property = $value;
 			}
 
-			if (in_array($property, array('value', 'alt', 'title')))
-			{
-				$value = htmlentities($value, ENT_QUOTES, \Fuel::$encoding);
-			}
 			$attr_str .= $property.'="'.$value.'" ';
 		}
 

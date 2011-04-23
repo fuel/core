@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -193,6 +191,24 @@ class Uri {
 	{
 		return static::create();
 	}
+
+	/**
+	 * Gets the base URL, including the index_file
+	 *
+	 * @return  the base uri
+	 */
+	public static function base($include_index = true)
+	{
+		$url = \Config::get('base_url');
+
+		if ($include_index and \Config::get('index_file'))
+		{
+			$url .= \Config::get('index_file').'/';
+		}
+
+		return $url;
+	}
+
 
 	/**
 	 * @var	string	The URI string

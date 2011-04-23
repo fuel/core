@@ -2,7 +2,7 @@
 /**
  * Database object creation helper methods.
  *
- * @package    Kohana/Database
+ * @package    Fuel/Database
  * @category   Base
  * @author     Kohana Team
  * @copyright  (c) 2009 Kohana Team

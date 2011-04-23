@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -70,7 +68,7 @@ class Error {
 
 	/**
 	 * PHP Exception handler
-	 * 
+	 *
 	 * @param   Exception  $e  the exception
 	 * @return  bool
 	 */
@@ -91,7 +89,7 @@ class Error {
 
 	/**
 	 * PHP Error handler
-	 * 
+	 *
 	 * @param   int     $severity  the severity code
 	 * @param   string  $message   the error message
 	 * @param   string  $filepath  the path to the file throwing the error
@@ -124,13 +122,13 @@ class Error {
 	/**
 	 * Shows an error.  It will stop script execution if the error code is not
 	 * in the errors.continue_on whitelist.
-	 * 
+	 *
 	 * @param   Exception  $e  the exception to show
 	 * @return  void
 	 */
 	public static function show_php_error(\Exception $e)
 	{
-		
+
 		$fatal = (bool)( ! in_array($e->getCode(), \Config::get('errors.continue_on')));
 
 		$data = static::prepare_exception($e, $fatal);
@@ -162,21 +160,20 @@ class Error {
 	/**
 	 * Shows a small notice error, only when not in production or when forced.
 	 * This is used by several libraries to notify the developer of certain things.
-	 * 
+	 *
 	 * @param   string  $msg          the message to display
 	 * @param   bool    $always_show  whether to force display the notice or not
 	 * @return  void
 	 */
 	public static function notice($msg, $always_show = false)
 	{
-		if ( ! $always_show && (\Fuel::$env == \Fuel::PRODUCTION || \Config::get('errors.notices', true) === false))
+		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::element(debug_backtrace(), 1));
+		logger(Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
+
+		if (\Fuel::$is_test || ( ! $always_show && (\Fuel::$env == \Fuel::PRODUCTION || \Config::get('errors.notices', true) === false)))
 		{
 			return;
 		}
-
-		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::element(debug_backtrace(), 1));
-
-		logger(Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
 
 		$data['message']	= $msg;
 		$data['type']		= 'Notice';
@@ -190,14 +187,14 @@ class Error {
 	/**
 	 * Shows the errors/production view and exits.  This only gets
 	 * called when an error occurs in production mode.
-	 * 
+	 *
 	 * @return  void
 	 */
 	public static function show_production_error()
 	{
 		exit(\View::factory('errors'.DS.'production'));
 	}
-	
+
 	protected static function prepare_exception(\Exception $e, $fatal = true)
 	{
 		$data = array();
@@ -209,7 +206,7 @@ class Error {
 		$data['backtrace']	= $e->getTrace();
 
 		$data['severity'] = ( ! isset(static::$levels[$data['severity']])) ? $data['severity'] : static::$levels[$data['severity']];
-		
+
 		foreach ($data['backtrace'] as $key => $trace)
 		{
 			if ( ! isset($trace['file']))

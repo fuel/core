@@ -16,7 +16,7 @@ $core_path		= trim($_SERVER['core_path'], '/').'/';
 /**
  * Website docroot
  */
-define('DOCROOT', __DIR__.DIRECTORY_SEPARATOR);
+define('DOCROOT', realpath(__DIR__.DIRECTORY_SEPARATOR.$_SERVER['doc_root']).DIRECTORY_SEPARATOR);
 
 ( ! is_dir($app_path) and is_dir(DOCROOT.$app_path)) and $app_path = DOCROOT.$app_path;
 ( ! is_dir($core_path) and is_dir(DOCROOT.$core_path)) and $core_path = DOCROOT.$core_path;
