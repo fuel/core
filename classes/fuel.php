@@ -129,11 +129,6 @@ class Fuel {
 
 		static::$_paths = array(APPPATH, COREPATH);
 
-		// Load in the routes
-		\Config::load('routes', true);
-
-		\Router::add(\Config::get('routes'));
-
 		if ( ! static::$is_cli)
 		{
 			if (\Config::get('base_url') === null)
@@ -155,6 +150,10 @@ class Fuel {
 		{
 			static::add_package($package);
 		}
+
+		// Load in the routes
+		\Config::load('routes', true);
+		\Router::add(\Config::get('routes'));
 
 		\View::$auto_encode = \Config::get('security.auto_encode_view_data');
 
