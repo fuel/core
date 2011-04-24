@@ -123,7 +123,7 @@ class Fieldset
 		}
 		if (isset($config['form_instance']) && $config['form_instance'] instanceof Form)
 		{
-			$this->validation = $config['form_instance'];
+			$this->form = $config['form_instance'];
 		}
 	}
 
