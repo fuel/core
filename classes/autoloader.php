@@ -241,7 +241,7 @@ class Autoloader {
 				{
 					$class_no_ns = substr($class, $pos + 1);
 
-					$file_path = strtolower($path.substr($namespace, strlen($ns) + 1).DS.str_replace('_', DS, $class_no_ns).'.php');
+					$file_path = $path.strtolower(substr($namespace, strlen($ns) + 1).DS.str_replace('_', DS, $class_no_ns).'.php');
 					if (is_file($file_path))
 					{
 						// Fuel::$path_cache[$class] = $file_path;
