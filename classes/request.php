@@ -94,7 +94,7 @@ class Request {
 	 */
 	public static function active()
 	{
-		class_exists('Log', false) && logger(Fuel::L_INFO, 'Called', __METHOD__);
+		class_exists('Log', false) and logger(Fuel::L_INFO, 'Called', __METHOD__);
 
 		return static::$active;
 	}
@@ -228,7 +228,7 @@ class Request {
 		$this->uri = new \Uri($uri);
 
 		// check if a module was requested
-		if (count($this->uri->segments) && $modpath = \Fuel::module_exists($this->uri->segments[0]))
+		if (count($this->uri->segments) and $modpath = \Fuel::module_exists($this->uri->segments[0]))
 		{
 			// check if the module has custom routes
 			if (file_exists($modpath .= 'config/routes.php'))
