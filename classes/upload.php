@@ -193,7 +193,7 @@ class Upload {
 		$callback = func_get_args();
 
 		// if the arguments are valid, register the callback
-		if (isset($callback[0]) && is_string($callback[0]) && isset($callback[1]) && is_callable($callback[1]))
+		if (isset($callback[0]) and is_string($callback[0]) and isset($callback[1]) and is_callable($callback[1]))
 		{
 			// make sure we have an entry for this callback
 			if (array_key_exists($callback[0], static::$callbacks))
