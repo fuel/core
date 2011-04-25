@@ -339,18 +339,6 @@ abstract class Controller_Rest extends \Controller {
 		exit('Not authorized.');
 	}
 
-	// Force it into an array
-	protected function _force_loopable($data)
-	{
-		// Force it to be something useful
-		if ( ! is_array($data) and ! is_object($data))
-		{
-			$data = (array) $data;
-		}
-
-		return $data;
-	}
-
 }
 
 /* End of file rest.php */
