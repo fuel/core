@@ -50,6 +50,10 @@ class Uri {
 		{
 			$uri = $_SERVER['PATH_INFO'];
 		}
+		elseif (isset($_SERVER['ORIG_PATH_INFO']) and ! empty($_SERVER['ORIG_PATH_INFO']))
+		{
+			$uri = $_SERVER['ORIG_PATH_INFO'];
+		}
 		else
 		{
 			if (isset($_SERVER['REQUEST_URI']))
