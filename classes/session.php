@@ -85,7 +85,7 @@ class Session {
 		$config = \Config::get('session', array());
 
 		// When a string was passed it's just the driver type
-		if ( ! empty($custom) && ! is_array($custom))
+		if ( ! empty($custom) and ! is_array($custom))
 		{
 			$custom = array('driver' => $custom);
 		}
