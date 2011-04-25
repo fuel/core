@@ -102,15 +102,15 @@ class Error {
 		{
 			logger(Fuel::L_ERROR, $severity.' - '.$message.' in '.$filepath.' on line '.$line);
 
-			if (\Fuel::$env != \Fuel::PRODUCTION && ($severity & error_reporting()) == $severity)
+			if (\Fuel::$env != \Fuel::PRODUCTION and ($severity & error_reporting()) == $severity)
 			{
 				static::$count++;
 				static::show_php_error(new \ErrorException($message, $severity, 0, $filepath, $line));
 			}
 		}
 		elseif (\Fuel::$env != \Fuel::PRODUCTION
-				&& static::$count == (\Config::get('error_throttling', 10) + 1)
-				&& ($severity & error_reporting()) == $severity)
+				and static::$count == (\Config::get('error_throttling', 10) + 1)
+				and ($severity & error_reporting()) == $severity)
 		{
 			static::$count++;
 			static::notice('Error throttling threshold was reached, no more full error reports are shown.', true);
@@ -170,7 +170,7 @@ class Error {
 		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::element(debug_backtrace(), 1));
 		logger(Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
 
-		if (\Fuel::$is_test || ( ! $always_show && (\Fuel::$env == \Fuel::PRODUCTION || \Config::get('errors.notices', true) === false)))
+		if (\Fuel::$is_test or ( ! $always_show and (\Fuel::$env == \Fuel::PRODUCTION or \Config::get('errors.notices', true) === false)))
 		{
 			return;
 		}
