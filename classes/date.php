@@ -221,7 +221,7 @@ class Date {
 			return;
 		}
 
-		! is_int($timestamp) and $timestamp = static::create_from_string($timestamp);
+		! is_numeric($timestamp) and $timestamp = static::create_from_string($timestamp);
 
 		$from_timestamp == null and $from_timestamp = time();
 		
