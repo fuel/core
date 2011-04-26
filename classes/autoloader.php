@@ -220,7 +220,7 @@ class Autoloader {
 			if (file_exists($file_path))
 			{
 				require $file_path;
-				if ( ! class_exists($class, false) && class_exists($class_name = 'Fuel\\Core\\'.$class, false))
+				if ( ! class_exists($class, false) and class_exists($class_name = 'Fuel\\Core\\'.$class, false))
 				{
 					static::alias_to_namespace($class_name);
 				}

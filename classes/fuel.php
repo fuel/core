@@ -180,7 +180,7 @@ class Fuel {
 	 */
 	public static function finish()
 	{
-		if (static::$caching && static::$paths_changed === true)
+		if (static::$caching and static::$paths_changed === true)
 		{
 			static::cache('Fuel::path_cache', static::$path_cache);
 		}
@@ -258,7 +258,7 @@ class Fuel {
 
 		$path = $directory.DS.strtolower($file).$ext;
 
-		if (static::$path_cache !== null && array_key_exists($cache_id.$path, static::$path_cache))
+		if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
 		{
 			return static::$path_cache[$cache_id.$path];
 		}

@@ -117,11 +117,11 @@ class Fieldset
 		$this->name = (string) $name;
 		$this->config = $config;
 
-		if (isset($config['validation_instance']) && $config['validation_instance'] instanceof Validation)
+		if (isset($config['validation_instance']) and $config['validation_instance'] instanceof Validation)
 		{
 			$this->validation = $config['validation_instance'];
 		}
-		if (isset($config['form_instance']) && $config['form_instance'] instanceof Form)
+		if (isset($config['form_instance']) and $config['form_instance'] instanceof Form)
 		{
 			$this->form = $config['form_instance'];
 		}
@@ -168,7 +168,7 @@ class Fieldset
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
-		if (empty($name) || (is_array($name) && empty($name['name'])))
+		if (empty($name) || (is_array($name) and empty($name['name'])))
 		{
 			throw new \Fuel_Exception('Cannot create field without name.');
 		}
@@ -228,7 +228,7 @@ class Fieldset
 	 */
 	public function add_model($class, $instance = null, $method = 'set_form_fields')
 	{
-		if ((is_string($class) && is_callable($callback = array('\\'.$class, $method)))
+		if ((is_string($class) and is_callable($callback = array('\\'.$class, $method)))
 			|| is_callable($callback = array($class, $method)))
 		{
 			$instance ? call_user_func($callback, $this, $instance) : call_user_func($callback, $this);
