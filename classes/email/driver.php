@@ -459,16 +459,17 @@ abstract class Email_Driver {
 	}
 
 	/**
-	 * Email validation from the valid_email method of Codeigniters Email Class.
+	 * Email address validation.
 	 *
-	 * @author	CodeIgniter
-	 * @link	http://codeigniter.com/
 	 * @param	string	$address The email address to check for validity
 	 */
 	protected function _valid_email($address)
 	{
-		// Instead of checking if validity is to be checked elsewhere, check it here :)
-		return ($this->validity_check && !preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $address)) ? FALSE : TRUE;
+		if ($this->validity_check)
+		{
+			return filter_var($address, FILTER_VALIDATE_EMAIL);
+		}
+		return true;
 	}
 
 	/**
