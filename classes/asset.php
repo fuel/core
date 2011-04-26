@@ -148,7 +148,7 @@ class Asset {
 			$filename = $item['file'];
 			$attr = $item['attr'];
 
-			if (strpos($filename, '://') === false)
+			if ( ! preg_match('|^(\w+:)?//|', $filename))
 			{
 				if ( ! ($file = static::find_file($filename, static::$_folders[$type])))
 				{
