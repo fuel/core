@@ -15,7 +15,7 @@
 namespace Fuel\Core;
 
 /**
- * Identifies the platform, browser, robot, or mobile devise of the browsing agent
+ * Identifies the platform, browser, robot, or mobile device from the user agent string
  *
  * This class uses PHP's get_browser() to get details from the browsers user agent
  * string. If not available, it can use a coded alternative using the php_browscap.ini
@@ -92,36 +92,36 @@ class Agent {
 	);
 
 	/**
-	 * array of global config defaults
+	 * @var	array	global config defaults
 	 */
 	protected static $defaults = array(
 		'browscap' => array(
 			'enabled' => true,
-			'interval' => 10080,
+			'url' => 'http://browsers.garykeith.com/stream.asp?BrowsCapINI',
+			'method' => 'wrapper',
+			'file' => '',
 		),
-		'path' => '',		// will be set to default in _init()
-		'expiry' => 604800,
+		'cache' => array(
+			'driver' => '',
+			'expiry' => 604800,
+			'identifier' => 'fuel.agent',
+		),
 	);
 
 	/**
-	 * array of global config items
+	 * @var	array	global config items
 	 */
 	protected static $config = array(
 	);
 
 	/**
-	 * browscap ini download url
-	 */
-	protected static $browscap_url = 'http://browsers.garykeith.com/stream.asp?BrowsCapINI';
-
-	/**
-	 * detected user agent string
-	 *
-	 * @var string
+	 * @var	string	detected user agent string
 	 */
 	protected static $user_agent = '';
 
-	// ---------------------------------------------------------------------
+	// --------------------------------------------------------------------
+	// public static methods
+	// --------------------------------------------------------------------
 
 	/**
 	 * map the user agent string to browser specifications
@@ -138,11 +138,7 @@ class Agent {
 
 		static::$config = array_merge(static::$defaults, \Config::get('agent', array()));
 
-		if (empty(static::$config['path']) or ! is_dir(static::$config['path']))
-		{
-			static::$config['path'] = APPPATH.'cache'.DS;
-		}
-
+		// validate the browscap configuration
 		if ( ! is_array(static::$config['browscap']))
 		{
 			static::$config['browscap'] = static::$defaults['browscap'];
@@ -153,32 +149,65 @@ class Agent {
 			{
 				static::$config['browscap']['enabled'] = true;
 			}
-			if ( ! array_key_exists('interval', static::$config['browscap']) or ! is_numeric(static::$config['browscap']['interval']))
+
+			if ( ! array_key_exists('url', static::$config['browscap']) or ! is_string(static::$config['browscap']['url']))
 			{
-				static::$config['browscap']['interval'] = static::$defaults['browscap']['interval'];
+				static::$config['browscap']['url'] = static::$defaults['browscap']['url'];
+			}
+
+			if ( ! array_key_exists('file', static::$config['browscap']) or ! is_string(static::$config['browscap']['file']))
+			{
+				static::$config['browscap']['file'] = static::$defaults['browscap']['file'];
+			}
+
+			if ( ! array_key_exists('method', static::$config['browscap']) or ! is_string(static::$config['browscap']['method']))
+			{
+				static::$config['browscap']['method'] = static::$defaults['browscap']['method'];
 			}
 		}
 
-		if (empty(static::$config['expiry']) or ! is_numeric(static::$config['expiry']))
+		// validate the cache configuration
+		if ( ! is_array(static::$config['cache']))
 		{
-			static::$config['expiry'] = static::$defaults['expiry'];
+			static::$config['cache'] = static::$defaults['cache'];
+		}
+		else
+		{
+			if ( ! array_key_exists('driver', static::$config['cache']) or ! is_string(static::$config['cache']['driver']))
+			{
+				static::$config['cache']['driver'] = static::$defaults['cache']['driver'];
+			}
+
+			if ( ! array_key_exists('expiry', static::$config['cache']) or ! is_numeric(static::$config['cache']['expiry']) or static::$config['cache']['expiry'] < 7200)
+			{
+				static::$config['cache']['expiry'] = static::$defaults['cache']['expiry'];
+			}
+
+			if ( ! array_key_exists('identifier', static::$config['cache']) or ! is_string(static::$config['cache']['identifier']))
+			{
+				static::$config['cache']['identifier'] = static::$defaults['cache']['identifier'];
+			}
 		}
 
 		// check if we have the browser info in cache
-		if (false === $browser = static::_get_from_cache())
+		if (false === $browser = static::get_from_cache())
 		{
 			// if not, try the build in get_browser() method
-			if (false === $browser = @get_browser())
+			if (ini_get('browscap') == '' or false === $browser = get_browser())
 			{
-				// else emulate get_browser()
-				$browser = static::_get_from_browscap();
+				// if all else fails, emulate get_browser()
+				$browser = static::get_from_browscap();
 			}
 		}
 
-		$browser and static::$properties = $browser;
+		if ($browser)
+		{
+			// save it for future reference
+			static::$properties = $browser;
 
-		// store the result in local cache
-		static::_add_to_cache($browser !== false);
+			// store the result in local cache
+			static::add_to_cache();
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -246,10 +275,9 @@ class Agent {
 	/**
 	 * check if the current browser is a robot or crawler
 	 *
-	 * @param	mixed $robot optional, check (one of) if given robotname(s) is true
 	 * @return	bool
 	 */
-	public static function is_robot($robot = null)
+	public static function is_robot()
 	{
 		return static::$properties['Crawler'];
 	}
@@ -259,7 +287,6 @@ class Agent {
 	/**
 	 * check if the current browser is mobile device
 	 *
-	 * @param	mixed $mobile optional, check (one of) if given mobile name(s) is true
 	 * @return	bool
 	 */
 	public static function is_mobile()
@@ -270,25 +297,14 @@ class Agent {
 	// --------------------------------------------------------------------
 
 	/**
-	 * check if the current browser is mobile device
-	 *
-	 * @param	mixed $referer optional, check if the referer matches the regex
-	 * @return	bool
-	 */
-	public static function is_referer($referer = null)
-	{
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * check if the current browser accepts a specific language
 	 *
-	 * @param	string $language optional, ISO language code, defaults to 'en'
+	 * @param	string $language	optional ISO language code, defaults to 'en'
 	 * @return	bool
 	 */
 	public static function accepts_language($language = 'en')
 	{
+		return (in_array(strtolower($language), static::languages(), true)) ? true : false;
 	}
 
 	// --------------------------------------------------------------------
@@ -296,11 +312,12 @@ class Agent {
 	/**
 	 * check if the current browser accepts a specific character set
 	 *
-	 * @param	string $language optional, character set, defaults to 'utf-8'
+	 * @param	string $charset	optional character set, defaults to 'utf-8'
 	 * @return	bool
 	 */
-	public static function accept_charset($charset = 'utf-8')
+	public static function accepts_charset($charset = 'utf-8')
 	{
+		return (in_array(strtolower($charset), static::charsets(), true)) ? true : false;
 	}
 
 	// --------------------------------------------------------------------
@@ -328,6 +345,8 @@ class Agent {
 	}
 
 	// --------------------------------------------------------------------
+	// internal static methods
+	// --------------------------------------------------------------------
 
 	/**
 	 * add the detected browser info to the cache for this user agent string
@@ -335,22 +354,24 @@ class Agent {
 	 * @param	bool	indicates if we were able to get the browser information
 	 * @return	void
 	 */
-	protected static function _add_to_cache($found)
+	protected static function add_to_cache()
 	{
+		$cache = \Cache::factory(static::$config['cache']['identifier'].'.cache');
+
 		// save the cached user agent strings
 		try
 		{
-			$cache = Cache::get('fuel.agent.cache');
+			$content = $cache->get();
 		}
 		catch (\Exception $e)
 		{
-			$cache = array();
+			$content = array();
 		}
 
-		$cache[static::$user_agent] = static::$properties;
+		$content[static::$user_agent] = static::$properties;
 
 		// save the updated cache file
-		$browscap = Cache::set('fuel.agent.cache', $cache, $found ? static::$config['expiry'] : 86400);
+		$cache->set($content, static::$config['cache']['expiry']);
 	}
 
 	// --------------------------------------------------------------------
@@ -360,19 +381,21 @@ class Agent {
 	 *
 	 * @return	mixed	array if a match is found, of false if not cached yet
 	 */
-	protected static function _get_from_cache()
+	protected static function get_from_cache()
 	{
+		$cache = \Cache::factory(static::$config['cache']['identifier'].'.cache');
+
 		// save the cached user agent strings
 		try
 		{
-			$cache = Cache::get('fuel.agent.cache');
+			$content = $cache->get();
 		}
 		catch (\Exception $e)
 		{
 			return false;
 		}
 
-		return array_key_exists(static::$user_agent, $cache) ? $cache[static::$user_agent] : false;
+		return array_key_exists(static::$user_agent, $cache) ? $content[static::$user_agent] : false;
 	}
 
 	// --------------------------------------------------------------------
@@ -382,17 +405,19 @@ class Agent {
 	 *
 	 * @return	mixed	array if a match is found, of false if not cached yet
 	 */
-	protected static function _get_from_browscap()
+	protected static function get_from_browscap()
 	{
+		$cache = \Cache::factory(static::$config['cache']['identifier'].'.browscap');
+
 		// load the cached browscap data
 		try
 		{
-			$browscap = Cache::get('fuel.agent.browscap');
+			$browscap = $cache->get();
 		}
 		// browscap not cached
 		catch (\Exception $e)
 		{
-			$browscap = static::_parse_browscap();
+			$browscap = static::parse_browscap();
 		}
 
 		$search = array('\*', '\?');
@@ -443,16 +468,51 @@ class Agent {
 	 *
 	 * @return	array	array with parsed download info, or empty if the download is disabled of failed
 	 */
-	protected static function _parse_browscap()
+	protected static function parse_browscap()
 	{
-		// temp filename for the download
-		$file = tempnam(sys_get_temp_dir(), 'fuel');
+		// get the browscap.ini file
+		switch (static::$config['browscap']['method'])
+		{
+			case 'local':
+				if ( ! file_exists(static::$config['browscap']['file']) or filesize(static::$config['browscap']['file']) == 0)
+				{
+					throw new \Exception('Agent class: could not open the local browscap.ini file.');
+				}
+				$data = file_get_contents(static::$config['browscap']['file']);
+			break;
 
-		// download the file
-$file = '/tmp/php_browscap.ini';
+			// socket connections are not implemented yet!
+			case 'sockets':
+				$data = false;
+			break;
 
-		// parse the downloaded file
-		$browsers = @parse_ini_file($file, true, INI_SCANNER_RAW) or $browsers = array();
+			case 'curl':
+				$curl = curl_init();
+				curl_setopt($curl, CURLOPT_BINARYTRANSFER, 1);
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+				curl_setopt($curl, CURLOPT_MAXREDIRS, 5);
+				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($curl, CURLOPT_HEADER, 0);
+				curl_setopt($curl, CURLOPT_USERAGENT, 'FuelPHP framework - Agent class');
+				curl_setopt($curl, CURLOPT_URL, static::$config['browscap']['url']);
+				$data = curl_exec($curl);
+				curl_close($curl);
+			break;
+
+			case 'wrapper':
+				$data = file_get_contents(static::$config['browscap']['url']);
+			default:
+
+			break;
+		}
+
+		if ($data === false)
+		{
+			logger(\Fuel::L_ERROR, 'Failed to download browscap.ini file.', 'Agent::parse_browscap');
+		}
+
+		// parse the downloaded data
+		$browsers = @parse_ini_string($data, true, INI_SCANNER_RAW) or $browsers = array();
 
 		// remove the version and default entries
 		array_shift($browsers);
@@ -511,7 +571,11 @@ $file = '/tmp/php_browscap.ini';
 		}
 
 		// save the result to the cache
-		$browscap = Cache::set('fuel.agent.browscap', $result, static::$config['expiry']);
+		if ( ! empty($result))
+		{
+			$cache = \Cache::factory(static::$config['cache']['identifier'].'.browscap');
+			$cache->set($result, static::$config['cache']['expiry']);
+		}
 
 		return $result;
 	}

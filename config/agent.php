@@ -28,36 +28,67 @@ return array(
 		'enabled' => true,
 
 		/**
-		 * Refresh interval.
-		 *
-		 * when enabled, the agent class downloads a new version of the browscap
-		 * file and parses it so it can be used for lookups. This process can
-		 * take quite long, so you don't want to do this to often, and probably
-		 * out of hours. The interval is defined in minutes.
-		 *
-		 *	Default: 10080 (every 7 days)
+		 * Location from where the updated browscap file can be downloaded.
 		 */
-		'interval' => 10080,
+		'url' => 'http://browsers.garykeith.com/stream.asp?BrowsCapINI',
 
+		/**
+		 * Method used to download the updated browscap file
+		 *
+		 * 	Default: 'wrapper'
+		 *
+		 * possible values are: 'local', 'wrapper', 'curl'
+		 */
+		 'method' => 'local',
+
+		/**
+		 * Filename for the local browscap.ini file (for method 'local').
+		 *
+		 * 	Default: ''
+		 */
+		 'file' => '/tmp/php_browscap.ini',
 	),
 
 	/**
-	 * Location of the agent class cache files.
+	 * Cache configuration.
 	 *
-	 *	Default: APPPATH.'cache/'
+	 * The agent class caches all matched agent strings for future reference
+	 * so the browscap file doesn't need to be loaded, as it's quite large.
 	 *
+	 * Also, the parsed and condensed browscap ini file is stored in cache as
+	 * well, so when a new user agent string needs to be looked up, no further
+	 * parsing is needed.
 	 */
-	'path' => APPPATH.'cache'.DS,
+	'cache' => array(
 
-	/**
-	 * Cache expiry.
-	 *
-	 * Number of seconds after which a cached agent result expires.
-	 *
-	 *	Default: 604800 (every 7 days)
-	 *
-	 */
-	'expiry' => 604800,
+		/**
+		 * Storage driver to use to cache agent class entries. If not defined,
+		 * the default driver defined in config/cache.php will be used.
+		 *
+		 * 	Default: ''
+		 */
+		'driver' => '',
+
+		/**
+		 * Cache expiry.
+		 *
+		 * Number of seconds after which a cached agent result expires.
+		 *
+		 *	Default: 604800 (every 7 days)
+		 *
+		 * Note that to prevent abuse of the site publishing the browsecap files,
+		 * you can not set the expiry time lower than 7200 (2 hours)
+		 */
+		'expiry' => 604800,
+
+		/**
+		 * Identifier used to store agent class cache elements
+		 *
+		 *	Default: 'fuel.agent'
+		 *
+		 */
+		'identifier' => 'fuel.agent',
+	),
 
 );
 
