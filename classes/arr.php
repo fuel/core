@@ -279,7 +279,7 @@ class Arr {
 	 * @param   array    the array containing the replacement keys
 	 * @return  array    the array with the new keys
 	 */
-	function replace_keys($source, $replace)
+	public static function replace_keys($source, $replace)
 	{
 		if ( ! is_array($source) or ! is_array($replace))
 		{
