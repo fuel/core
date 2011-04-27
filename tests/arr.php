@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 /**
  * Arr class tests
- * 
+ *
  * @group Core
  * @group Arr
  */
@@ -40,7 +40,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::element()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
@@ -53,7 +53,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::element()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
@@ -66,7 +66,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::element()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
@@ -80,7 +80,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::element()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_element_when_array_is_not_an_array()
@@ -92,7 +92,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::element()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
@@ -105,7 +105,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::elements()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
@@ -122,7 +122,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::elements()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
@@ -138,7 +138,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::elements()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider person_provider
 	 * @expectedException Fuel_Exception
@@ -150,7 +150,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::flatten_assoc()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_flatten_assoc()
@@ -179,7 +179,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::insert()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_insert()
@@ -195,7 +195,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::insert()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_insert_with_index_out_of_range()
@@ -209,7 +209,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::insert_after_key()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_insert_after_key_that_exists()
@@ -225,7 +225,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::insert_after_key()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_insert_after_key_that_does_not_exist()
@@ -237,7 +237,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::insert_after_value()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_insert_after_value_that_exists()
@@ -251,7 +251,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::insert_after_value()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_insert_after_value_that_does_not_exists()
@@ -263,7 +263,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::average()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_average()
@@ -274,7 +274,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::average()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_average_of_empty_array()
@@ -285,7 +285,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::element()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_filter_prefixed()
@@ -298,7 +298,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::sort()
-	 * 
+	 *
 	 * @test
 	 * @expectedException Fuel_Exception
 	 */
@@ -366,7 +366,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::sort()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider sort_provider
 	 */
@@ -377,7 +377,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::sort()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider sort_provider
 	 */
@@ -389,7 +389,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::sort()
-	 * 
+	 *
 	 * @test
 	 * @dataProvider sort_provider
 	 * @expectedException Fuel_Exception
@@ -397,6 +397,41 @@ class Tests_Arr extends TestCase {
 	public function test_sort_invalid_direction($data, $expected)
 	{
 		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'downer'), $expected);
+	}
+
+	public function replace_provider()
+	{
+		return array(
+			array(
+				// source array
+				array(
+					'keyA' => 'value A',
+					'keyB' => 'value B',
+					'keyC' => 'value C',
+				),
+				// replacement key mapping
+				array(
+					'keyB' => 'key2',
+				),
+				// expected result array
+				array(
+					'keyA' => 'value A',
+					'key2' => 'value B',
+					'keyC' => 'value C',
+				),
+			),
+		);
+	}
+
+	/**
+	 * Tests Arr::replace_keys()
+	 *
+	 * @test
+	 * @dataProvider replace_provider
+	 */
+	public function test_replace_keys($data, $replacements, $expected)
+	{
+		$this->assertEquals(Arr::replace_keys($data, $replacements), $expected);
 	}
 
 }

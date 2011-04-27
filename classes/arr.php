@@ -271,6 +271,38 @@ class Arr {
 
 		return (array_sum($array) / $count);
 	}
+
+	/**
+	 * Replaces key names in an array by names in $replace
+	 *
+	 * @param   array    the array containing the key/value combinations
+	 * @param   array    the array containing the replacement keys
+	 * @return  array    the array with the new keys
+	 */
+	function replace_keys($source, $replace)
+	{
+		if ( ! is_array($source) or ! is_array($replace))
+		{
+			return false;
+		}
+
+		$result = array();
+
+		foreach ($source as $key => $value)
+		{
+			if (array_key_exists($key, $replace))
+			{
+				$result[$replace[$key]] = $value;
+			}
+			else
+			{
+				$result[$key] = $value;
+			}
+		}
+
+		return $result;
+	}
+
 }
 
 /* End of file arr.php */
