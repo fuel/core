@@ -90,6 +90,9 @@ class Fieldset_Field
 		// Don't allow name in attributes
 		unset($attributes['name']);
 
+		// Take rules out of attributes
+		unset($attributes['rules']);
+
 		// Set certain types through specific setter
 		foreach (array('label', 'type', 'value', 'options') as $prop)
 		{
