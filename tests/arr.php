@@ -399,6 +399,37 @@ class Tests_Arr extends TestCase {
 		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'downer'), $expected);
 	}
 
+	public function filter_provider()
+	{
+		return array(
+			
+		);
+	}
+
+	/**
+	 * Tests Arr::filter_keys()
+	 * 
+	 * @test
+	 */
+	public function test_filter_keys()
+	{
+		$data = array(
+			'epic' => 'win',
+			'weak' => 'sauce',
+			'foo' => 'bar'
+		);
+		$expected = array(
+			'epic' => 'win',
+			'foo' => 'bar'
+		);
+		$expected_remove = array(
+			'weak' => 'sauce',
+		);
+		$keys = array('epic', 'foo');
+		$this->assertEquals(Arr::filter_keys($data, $keys), $expected);
+		$this->assertEquals(Arr::filter_keys($data, $keys, true), $expected_remove);
+	}
+
 }
 
 /* End of file arr.php */
