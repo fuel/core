@@ -43,6 +43,7 @@ require COREPATH.'classes'.DS.'autoloader.php';
 Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
 Autoloader::add_classes(array(
+	'Fuel\\Core\\Agent'  => COREPATH.'classes/agent.php',
 	'Fuel\\Core\\Arr'    => COREPATH.'classes/arr.php',
 	'Fuel\\Core\\Asset'  => COREPATH.'classes/asset.php',
 
