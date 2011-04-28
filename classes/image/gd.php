@@ -28,9 +28,11 @@ class Image_Gd extends Image_Driver {
 		$return = false;
 		$image_extension == 'jpg' and $image_extension = 'jpeg';
 
-		$this->image_data !== null and imagedestroy($this->image_data);
-		$this->image_data = null;
-
+		if ( ! $return_data) {
+			$this->image_data !== null and imagedestroy($this->image_data);
+			$this->image_data = null;
+		}
+		
 		// Check if the function exists
 		if (function_exists('imagecreatefrom'.$image_extension))
 		{
@@ -92,7 +94,7 @@ class Image_Gd extends Image_Driver {
 
 	protected function _watermark($filename, $position, $padding = 5)
 	{
-		$values = parent::_watermark($filename, $x, $y);
+		$values = parent::_watermark($filename, $position, $padding);
 		if ($values == false)
 		{
 			throw new \Fuel_Exception("Watermark image not found or invalid filetype.");
