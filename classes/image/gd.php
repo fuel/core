@@ -68,7 +68,7 @@ class Image_Gd extends Image_Driver {
 		$this->image_data = $image;
 	}
 
-	protected function _resize($width, $height, $keepar, $pad)
+	protected function _resize($width, $height = null, $keepar = true, $pad = true)
 	{
 		extract(parent::_resize($width, $height, $keepar, $pad));
 		$sizes = $this->sizes();
@@ -90,7 +90,7 @@ class Image_Gd extends Image_Driver {
 		$this->image_data = imagerotate($this->image_data, $degrees, $color, false);
 	}
 
-	protected function _watermark($filename, $x, $y)
+	protected function _watermark($filename, $position, $padding = 5)
 	{
 		$values = parent::_watermark($filename, $x, $y);
 		if ($values == false)
@@ -135,7 +135,7 @@ class Image_Gd extends Image_Driver {
 		}
 	}
 
-	protected function _border($size, $color)
+	protected function _border($size, $color = null)
 	{
 		extract(parent::_border($size, $color));
 		$sizes = $this->sizes();

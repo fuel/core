@@ -85,7 +85,7 @@ class Image_Imagemagick extends Image_Driver {
 		$this->clear_sizes();
 	}
 
-	protected function _watermark($filename, $x, $y)
+	protected function _watermark($filename, $position, $padding = 5)
 	{
 		extract(parent::_watermark($filename, $x, $y));
 
@@ -102,7 +102,7 @@ class Image_Imagemagick extends Image_Driver {
 		);
 	}
 
-	protected function _border($size, $color)
+	protected function _border($size, $color = null)
 	{
 		extract(parent::_border($size, $color));
 
