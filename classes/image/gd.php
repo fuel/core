@@ -28,18 +28,14 @@ class Image_Gd extends Image_Driver {
 		$return = false;
 		$image_extension == 'jpg' and $image_extension = 'jpeg';
 
-		if (is_resource($this->image_data))
-		{
-			imagedestroy($this->image_data);
-			$this->image_data = null;
-		}
+		$this->image_data !== null and imagedestroy($this->image_data);
+		$this->image_data = null;
 
 		// Check if the function exists
 		if (function_exists('imagecreatefrom'.$image_extension))
 		{
 			// Create a new transparent image.
 			$sizes = $this->sizes($image_fullpath);
-			$this->debug("Loading <code>".$image_fullpath."</code> with size of ".$sizes->width."x".$sizes->height);
 			$tmpImage = call_user_func('imagecreatefrom'.$image_extension, $image_fullpath);
 			$image = $this->create_transparent_image($sizes->width, $sizes->height, $tmpImage);
 			if ( ! $return_data)
@@ -51,6 +47,7 @@ class Image_Gd extends Image_Driver {
 			{
 				$return = $image;
 			}
+			$this->debug('', "<strong>Loaded</strong> <code>".$image_fullpath."</code> with size of ".$sizes->width."x".$sizes->height);
 		}
 		else
 		{
@@ -76,6 +73,8 @@ class Image_Gd extends Image_Driver {
 		extract(parent::_resize($width, $height, $keepar, $pad));
 		$sizes = $this->sizes();
 
+		$this->debug("Resizing image to $width, $height with" . ($keepar ? '' : 'out') . " keeping AR and with" . ($pad ? '' : 'out') . " padding.");
+
 		// Add the original image.
 		$image = $this->create_transparent_image($cwidth, $cheight);
 		call_user_func($this->gdresizefunc, $image, $this->image_data, $x, $y, 0, 0, $width, $height, $sizes->width, $sizes->height);
@@ -86,7 +85,8 @@ class Image_Gd extends Image_Driver {
 	{
 		extract(parent::_rotate($degrees));
 		$degrees = 360 - $degrees;
-		$color = $this->create_color($this->image_data, $this->config['bgcolor'], 1000);
+		$bgcolor = $this->config['bgcolor'] !== null ? $this->config['bgcolor'] : '#000';
+		$color = $this->create_color($this->image_data, $bgcolor, 100);
 		$this->image_data = imagerotate($this->image_data, $degrees, $color, false);
 	}
 
@@ -267,6 +267,8 @@ class Image_Gd extends Image_Driver {
 		}
 
 		call_user_func_array('image'.$filetype, $vars);
+		if ($this->config['persistence'] === false)
+			$this->reload();
 		return $this;
 	}
 
@@ -291,6 +293,10 @@ class Image_Gd extends Image_Driver {
 		}
 
 		call_user_func_array('image'.$filetype, $vars);
+		
+		if ($this->config['persistence'] === false)
+			$this->reload();
+
 		return $this;
 	}
 
@@ -340,11 +346,13 @@ class Image_Gd extends Image_Driver {
 
 	protected function add_background()
 	{
-		if ($this->config['bgcolor'] != null)
+		if ($this->config['bgcolor'] != null || ($this->new_extension == 'jpg' || $this->new_extension == 'jpeg'))
 		{
+			$bgcolor = $this->config['bgcolor'] == null ? '#000' : $this->config['bgcolor'];
+			$this->debug("Adding background color $bgcolor");
 			$sizes = $this->sizes();
 			$bgimg = $this->create_transparent_image($sizes->width, $sizes->height);
-			$color = $this->create_color($bgimg, $this->config['bgcolor'], 100);
+			$color = $this->create_color($bgimg, $bgcolor, 100);
 			imagefill($bgimg, 0, 0, $color);
 			$this->image_merge($bgimg, $this->image_data, 0, 0, 100);
 			$this->image_data = $bgimg;
@@ -364,7 +372,14 @@ class Image_Gd extends Image_Driver {
 		$image = imagecreatetruecolor($width, $height);
 		$color = $this->create_color($image, null, 0);
 		imagesavealpha($image, true);
-
+		if ($this->image_extension == 'gif' || $this->image_extension == 'png')
+		{
+			// Get the current transparent color if possible...
+			$transcolor = imagecolortransparent($image);
+			if ($transcolor > 0)
+				$color = $transcolor;
+			imagecolortransparent($image, $color);
+		}
 		// Set the blending mode to false, add the bgcolor, then switch it back.
 		imagealphablending($image, false);
 		imagefilledrectangle($image, 0, 0, $width, $height, $color);
