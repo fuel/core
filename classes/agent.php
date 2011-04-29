@@ -514,17 +514,21 @@ class Agent {
 		// parse the downloaded data
 		$browsers = @parse_ini_string($data, true, INI_SCANNER_RAW) or $browsers = array();
 
-		// remove the version and default entries
-		array_shift($browsers);
+		// remove the version and timestamp entry
 		array_shift($browsers);
 
-		$index = array();
 		$result = array();
+
+		// reverse sort on key string length
+		uksort($browsers, function($a, $b) { return strlen($a) < strlen($b) ? 1 : -1; } );
+
+		$index = array();
+		$count = 0;
 
 		// reduce the array keys
 		foreach($browsers as $browser => $properties)
 		{
-			$index[$browser] = count($result);
+			$index[$browser] = $count++;
 
 			// fix any type issues
 			foreach ($properties as $var => $value)
