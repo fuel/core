@@ -493,14 +493,15 @@ class Agent {
 				curl_setopt($curl, CURLOPT_MAXREDIRS, 5);
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 				curl_setopt($curl, CURLOPT_HEADER, 0);
-				curl_setopt($curl, CURLOPT_USERAGENT, 'FuelPHP framework - Agent class');
+				curl_setopt($curl, CURLOPT_USERAGENT, 'Fuel PHP framework - Agent class (http://fuelphp.com)');
 				curl_setopt($curl, CURLOPT_URL, static::$config['browscap']['url']);
 				$data = curl_exec($curl);
 				curl_close($curl);
 			break;
 
 			case 'wrapper':
-				$data = @file_get_contents(static::$config['browscap']['url']);
+				ini_set('user_agent', 'Fuel PHP framework - Agent class (http://fuelphp.com)');
+				$data = file_get_contents(static::$config['browscap']['url']);
 			default:
 
 			break;
