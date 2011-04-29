@@ -13,9 +13,9 @@
 /**
  * Loads in a core class and optionally an app class override if it exists.
  *
- * @param	string	$path
- * @param	string	$folder
- * @return	void
+ * @param   string  $path
+ * @param   string  $folder
+ * @return  void
  */
 if ( ! function_exists('import'))
 {
