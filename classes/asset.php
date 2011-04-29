@@ -140,7 +140,6 @@ class Asset {
 		$css = '';
 		$js = '';
 		$img = '';
-		
 		foreach ($group as $key => $item)
 		{
 			$type = $item['type'];
@@ -151,7 +150,7 @@ class Asset {
 			{
 				if ( ! ($file = static::find_file($filename, static::$_folders[$type])))
 				{
-					throw new \Fuel_Exception('Could not find asset: '.$file);
+					throw new \Fuel_Exception('Could not find asset: '.$filename);
 				}
 
 				$file = static::$_asset_url.$file.(static::$_add_mtime ? '?'.filemtime($file) : '');
@@ -348,7 +347,8 @@ class Asset {
 		foreach (static::$_asset_paths as $path)
 		{
 			empty($folder) or $folder = trim($folder, '/').'/';
-			if (is_file(DOCROOT.$path.$folder.ltrim($file, '/')))
+
+			if (is_file($path.$folder.ltrim($file, '/')))
 			{
 				return $path.$folder.ltrim($file, '/');
 			}
