@@ -39,7 +39,7 @@ return array(
 		 *
 		 * possible values are: 'local', 'wrapper', 'curl'
 		 */
-		 'method' => 'local',
+		 'method' => 'wrapper',
 
 		/**
 		 * Filename for the local browscap.ini file (for method 'local').

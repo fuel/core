@@ -478,7 +478,7 @@ class Agent {
 				{
 					throw new \Exception('Agent class: could not open the local browscap.ini file.');
 				}
-				$data = file_get_contents(static::$config['browscap']['file']);
+				$data = @file_get_contents(static::$config['browscap']['file']);
 			break;
 
 			// socket connections are not implemented yet!
@@ -500,7 +500,7 @@ class Agent {
 			break;
 
 			case 'wrapper':
-				$data = file_get_contents(static::$config['browscap']['url']);
+				$data = @file_get_contents(static::$config['browscap']['url']);
 			default:
 
 			break;
