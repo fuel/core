@@ -230,15 +230,36 @@ class Fuel {
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
 		$cache_id = '';
+		$paths = array();
 
 		$found = $multiple ? array() : false;
 
 		// absolute path requested?
-		if (strpos($file, '/') === 0)
+		if (strpos($file, '/') === 0 or strpos($file, ':') === 1)
 		{
-			$cache_id = md5($file);
+			$cache_id = $file;
 			$found = file_exists($file);
 		}
+
+		// the file requested namespaced?
+		elseif($pos = strripos(ltrim($file, '\\'), '\\'))
+		{
+			$file = ltrim($file, '\\');
+
+			// get the namespace path
+			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
+			{
+				$cache_id .= substr($file, 0, $pos);
+
+				// and strip the classes directory as we need the module root
+				$paths = array(substr($path,0, -8));
+
+				// strip the namespace from the filename
+				$file = substr($file, $pos+1);
+			}
+		}
+
+		// use the cascading filesystem to find the file
 		else
 		{
 			$paths = static::$_paths;
@@ -253,43 +274,32 @@ class Fuel {
 			// the file requested namespaced?
 			if($pos = strripos(ltrim($file, '\\'), '\\'))
 			{
-				$file = ltrim($file, '\\');
-
-				// get the namespace path
-				if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
-				{
-					$cache_id .= substr($file, 0, $pos);
-
-					// and strip the classes directory as we need the module root
-					$paths = array(substr($path,0, -8));
-
-					// strip the namespace from the filename
-					$file = substr($file, $pos+1);
-				}
 			}
 
-			$path = $directory.DS.strtolower($file).$ext;
+		}
 
-			$cache_id = md5($cache_id);
+		$path = $directory.DS.strtolower($file).$ext;
 
-			if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
+		$cache_id = md5($cache_id);
+
+		if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
+		{
+			return static::$path_cache[$cache_id.$path];
+		}
+
+		foreach ($paths as $dir)
+		{
+			$file_path = $dir.$path;
+
+			if (is_file($file_path))
 			{
-				return static::$path_cache[$cache_id.$path];
-			}
-
-			foreach ($paths as $dir)
-			{
-				$file_path = $dir.$path;
-				if (is_file($file_path))
+				if ( ! $multiple)
 				{
-					if ( ! $multiple)
-					{
-						$found = $file_path;
-						break;
-					}
-
-					$found[] = $file_path;
+					$found = $file_path;
+					break;
 				}
+
+				$found[] = $file_path;
 			}
 		}
 
@@ -298,7 +308,7 @@ class Fuel {
 			$cache and static::$path_cache[$cache_id.$path] = $found;
 			static::$paths_changed = true;
 		}
-
+if (!$found) die();
 		return $found;
 	}
 
