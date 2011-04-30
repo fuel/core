@@ -34,6 +34,7 @@ class Email {
 	 * Creates a new instance of the email driver
 	 *
 	 * @param	array	$config
+	 * @return  Email_Driver
 	 */
 	public static function factory($config = array())
 	{

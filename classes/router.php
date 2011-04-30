@@ -139,6 +139,23 @@ class Router {
 				$match->method_params = $segments;
 				return $match;
 			}
+
+			$segments = $match->segments;
+
+			// do we have a module controller with the same name as the module?
+			if ($match->controller != $match->module)
+			{
+				array_shift($segments);
+				$match->controller = $match->module;
+
+				if (class_exists(ucfirst($match->module).'\\Controller_'.ucfirst($match->controller)))
+				{
+					$match->action = count($segments) ? array_shift($segments) : 'index';
+					$match->method_params = $segments;
+					return $match;
+				}
+			}
+
 		}
 
 		$segments = $match->segments;
