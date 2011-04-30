@@ -308,7 +308,7 @@ class Fuel {
 			$cache and static::$path_cache[$cache_id.$path] = $found;
 			static::$paths_changed = true;
 		}
-if (!$found) die();
+
 		return $found;
 	}
 
