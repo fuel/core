@@ -54,6 +54,11 @@ return array(
 	'clear_queue' => false,
 
 	/**
+	 * Determines whether to automatically reload the image (true) or keep the changes (false) when saving or outputting.
+	 */
+	'persistence' => false,
+
+	/**
 	 * Used to debug the class, defaults to false.
 	 */
 	'debug' => false,

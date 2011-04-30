@@ -568,7 +568,7 @@ class Ftp
 			// Recursively read the local directory
 			while (false !== ($file = readdir($fp)))
 			{
-				if (@is_dir($local_path.$file) && substr($file, 0, 1) != '.')
+				if (@is_dir($local_path.$file) and substr($file, 0, 1) != '.')
 				{
 					$this->mirror($local_path.$file."/", $remote_path.$file."/");
 				}

@@ -13,9 +13,9 @@
 /**
  * Loads in a core class and optionally an app class override if it exists.
  *
- * @param	string	$path
- * @param	string	$folder
- * @return	void
+ * @param   string  $path
+ * @param   string  $folder
+ * @return  void
  */
 if ( ! function_exists('import'))
 {
@@ -104,7 +104,7 @@ if ( ! function_exists('html_tag'))
 {
 	function html_tag($tag, $attr = array(), $content = false)
 	{
-		$has_content = (bool) ($content !== false && $content !== null);
+		$has_content = (bool) ($content !== false and $content !== null);
 		$html = '<'.$tag;
 
 		$html .= ( ! empty($attr)) ? ' '.(is_array($attr) ? array_to_attr($attr) : $attr) : '';
