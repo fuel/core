@@ -326,6 +326,28 @@ class Form {
 	}
 
 	/**
+	 * Create a file upload input field
+	 *
+	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
+	 * @param	array
+	 * @return
+	 */
+	public static function file($field, Array $attributes = array())
+	{
+		if (is_array($field))
+		{
+			$attributes = $field;
+		}
+		else
+		{
+			$attributes['name'] = (string) $field;
+		}
+		$attributes['type'] = 'file';
+
+		return static::input($attributes);
+	}
+
+	/**
 	 * Create a button
 	 *
 	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
