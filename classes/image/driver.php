@@ -298,9 +298,9 @@ abstract class Image_Driver {
 		$sizes   = $this->sizes();
 		$width   = $this->convert_number($width, true);
 		$height  = $this->convert_number($height, false);
-		$widthr  = bcdiv($sizes->width, $width);
-		$heightr = bcdiv($sizes->height, $height);
-		$compare = bccomp($widthr, $heightr);
+		$widthr  = bcdiv($sizes->width, $width, 10);
+		$heightr = bcdiv($sizes->height, $height, 10);
+		$compare = bccomp($widthr, $heightr, 10);
 		$x = $y = 0;
 		if ($compare < 1)
 		{
