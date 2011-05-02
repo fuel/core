@@ -254,15 +254,18 @@ abstract class Image_Driver {
 		if ($keepar)
 		{
 			// See which is the biggest ratio
-			$width_ratio  = $width / $sizes->width;
-			$height_ratio = $height / $sizes->height;
-			if ($width_ratio > $height_ratio)
+			$width_ratio  = bcdiv($width, $sizes->width, 10);
+			$height_ratio = bcdiv($height, $sizes->height, 10);
+			$compare = bccomp($width_ratio, $height_ratio, 10);
+			if ($compare > -1)
 			{
-				$width = floor($sizes->width * $height_ratio);
+				$height = ceil((real) bcmul($sizes->height, $height_ratio, 10));
+				$width = ceil((real) bcmul($sizes->width, $height_ratio, 10));
 			}
 			else
 			{
-				$height = floor($sizes->height * $width_ratio);
+				$height = ceil((real) bcmul($sizes->height, $width_ratio, 10));
+				$width = ceil((real) bcmul($sizes->width, $width_ratio, 10));
 			}
 		}
 		if ($pad)
@@ -295,16 +298,19 @@ abstract class Image_Driver {
 		$sizes   = $this->sizes();
 		$width   = $this->convert_number($width, true);
 		$height  = $this->convert_number($height, false);
-		$widthr  = $sizes->width / $width;
-		$heightr = $sizes->height / $height;
+		$widthr  = bcdiv($sizes->width, $width);
+		$heightr = bcdiv($sizes->height, $height);
+		$compare = bccomp($widthr, $heightr);
 		$x = $y = 0;
-		if ($widthr < $heightr)
+		if ($compare < 1)
 		{
-			$this->_resize($width, $height * $widthr, true, false);
+			$t_height = ceil((float) bcmul($height, $widthr, 10));
+			$this->_resize($width, $t_height, true, false);
 		}
 		else
 		{
-			$this->_resize($width * $heightr, $height, true, false);
+			$t_width = ceil((float) bcmul($width, $heightr, 10));
+			$this->_resize($t_width, $height, true, false);
 		}
 		$sizes = $this->sizes();
 		$y = floor(($sizes->height - $height) / 2);
