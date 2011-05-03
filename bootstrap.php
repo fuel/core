@@ -123,6 +123,7 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Input'						=> COREPATH.'classes/input.php',
 	'Fuel\\Core\\Lang'						=> COREPATH.'classes/lang.php',
 	'Fuel\\Core\\Log'						=> COREPATH.'classes/log.php',
+	'Fuel\\Core\\LDAP'						=> COREPATH.'classes/ldap.php',
 	'Fuel\\Core\\Migrate'					=> COREPATH.'classes/migrate.php',
 	'Fuel\\Core\\Model'						=> COREPATH.'classes/model.php',
 	'Fuel\\Core\\Output'					=> COREPATH.'classes/output.php',
