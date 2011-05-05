@@ -71,6 +71,39 @@ class Config {
 			}
 			$config = static::$items[$config];
 		}
+
+		if($pos = strripos(ltrim($file, '\\'), '\\'))
+		{
+		  $file = ltrim($file, '\\');
+		  // get the namespace path
+		
+		  if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
+		  {
+		    // and strip the classes directory as we need the module root
+		    $path = substr($path,0, -8);
+		
+		    // strip the namespace from the filename
+		    $file = substr($file, $pos+1);
+			
+		    // build the final path
+		    $path .= 'config'.DS.$file.'.php';
+		  }
+		  
+		  // no module exists for that namespace, do nothing
+		  else
+		  {	
+		    return false;
+		  }
+		}
+		
+		// no namespace request, set the path to the app config directory
+		else
+		{
+		  $path = APPPATH.'config'.DS.$file.'.php';
+		}
+
+		$path = pathinfo($path);
+		
 		$content = <<<CONF
 <?php
 /**
@@ -92,10 +125,6 @@ CONF;
 
 /* End of file $file.php */
 CONF;
-
-		($path = \Fuel::find_file('config', $file, '.php')) or $path = APPPATH.'config'.DS.$file.'.php';
-
-		$path = pathinfo($path);
 
 		return File::update($path['dirname'], $path['basename'], $content);
 	}
