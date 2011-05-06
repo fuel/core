@@ -230,43 +230,65 @@ class Fuel {
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
 		$cache_id = '';
+		$paths = array();
 
-		$paths = static::$_paths;
+		$found = $multiple ? array() : false;
 
-		// get extra information of the active request
-		if (class_exists('Request', false) and $active = \Request::active())
+		// absolute path requested?
+		if (strpos($file, '/') === 0 or strpos($file, ':') === 1)
 		{
-			$cache_id = md5($active->uri->uri);
-			$paths = array_merge($active->paths, $paths);
+			$cache_id = $file;
+			$found = file_exists($file);
 		}
 
 		// the file requested namespaced?
-		if($pos = strripos(ltrim($file, '\\'), '\\'))
+		elseif($pos = strripos($nsfile = ltrim($file, '\\'), '\\'))
 		{
-			$file = ltrim($file, '\\');
-
 			// get the namespace path
-			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
+			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($nsfile, 0, $pos))))
 			{
+				$cache_id .= substr($nsfile, 0, $pos);
+
 				// and strip the classes directory as we need the module root
 				$paths = array(substr($path,0, -8));
 
 				// strip the namespace from the filename
-				$file = substr($file, $pos+1);
+				$file = substr($nsfile, $pos+1);
 			}
 		}
 
+		// if not found, use the cascading filesystem to find the file
+		if (empty($cache_id))
+		{
+			$paths = static::$_paths;
+
+			// get extra information of the active request
+			if (class_exists('Request', false) and $active = \Request::active())
+			{
+				$cache_id = $active->uri->uri;
+				$paths = array_merge($active->paths, $paths);
+			}
+
+			// the file requested namespaced?
+			if($pos = strripos(ltrim($file, '\\'), '\\'))
+			{
+			}
+
+		}
+
 		$path = $directory.DS.strtolower($file).$ext;
+
+		$cache_id = md5($cache_id);
 
 		if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
 		{
 			return static::$path_cache[$cache_id.$path];
 		}
 
-		$found = $multiple ? array() : false;
 		foreach ($paths as $dir)
 		{
 			$file_path = $dir.$path;
+
 			if (is_file($file_path))
 			{
 				if ( ! $multiple)

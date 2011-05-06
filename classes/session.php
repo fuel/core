@@ -59,15 +59,7 @@ class Session {
 
 		if (\Config::get('session.auto_initialize', true))
 		{
-			// need to catch errors here, the error handler isn't running yet
-			try
-			{
-				static::instance();
-			}
-			catch (Exception $e)
-			{
-				\Error::show_php_error($e);die();
-			}
+			static::instance();
 		}
 	}
 

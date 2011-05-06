@@ -399,39 +399,28 @@ class Tests_Arr extends TestCase {
 		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'downer'), $expected);
 	}
 
-	public function replace_provider()
-	{
-		return array(
-			array(
-				// source array
-				array(
-					'keyA' => 'value A',
-					'keyB' => 'value B',
-					'keyC' => 'value C',
-				),
-				// replacement key mapping
-				array(
-					'keyB' => 'key2',
-				),
-				// expected result array
-				array(
-					'keyA' => 'value A',
-					'key2' => 'value B',
-					'keyC' => 'value C',
-				),
-			),
-		);
-	}
-
 	/**
-	 * Tests Arr::replace_keys()
-	 *
+	 * Tests Arr::filter_keys()
+	 * 
 	 * @test
-	 * @dataProvider replace_provider
 	 */
-	public function test_replace_keys($data, $replacements, $expected)
+	public function test_filter_keys()
 	{
-		$this->assertEquals(Arr::replace_keys($data, $replacements), $expected);
+		$data = array(
+			'epic' => 'win',
+			'weak' => 'sauce',
+			'foo' => 'bar'
+		);
+		$expected = array(
+			'epic' => 'win',
+			'foo' => 'bar'
+		);
+		$expected_remove = array(
+			'weak' => 'sauce',
+		);
+		$keys = array('epic', 'foo');
+		$this->assertEquals(Arr::filter_keys($data, $keys), $expected);
+		$this->assertEquals(Arr::filter_keys($data, $keys, true), $expected_remove);
 	}
 
 }

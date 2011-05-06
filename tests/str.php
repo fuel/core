@@ -184,5 +184,32 @@ class Tests_Str extends TestCase {
 
 		$this->assertEquals($expected, $output);
 	}
-
+	
+	/**
+	 * Test for Str::random()
+	 * 
+	 * @test
+	 */
+	public function test_random()
+	{
+		// testing length
+		$output = Str::random('alnum', 34);
+		$this->assertEquals(34, strlen($output));
+		
+		// testing alnum
+		$output = Str::random('alnum', 15);
+		$this->assertTrue(ctype_alnum($output));
+		
+		// testing numeric
+		$output = Str::random('numeric', 20);
+		$this->assertTrue(ctype_digit($output));
+		
+		// testing alpha
+		$output = Str::random('alpha', 35);
+		$this->assertTrue(ctype_alpha($output));
+		
+		// testing nozero
+		$output = Str::random('nozero', 22);
+		$this->assertFalse(strpos($output, '0'));	
+	}
 }

@@ -83,6 +83,31 @@ class Arr {
 	}
 
 	/**
+	 * Filters an array by an array of keys
+	 *
+	 * @param   array   the array to filter.
+	 * @param   array   the keys to filter
+	 * @param   bool    if true, removes the matched elements.
+	 * @return  array
+	 */
+	public static function filter_keys($array, $keys, $remove = false)
+	{
+		$return = array();
+		foreach ($keys as $key)
+		{
+			if (isset($array[$key]) and  ! $remove)
+			{
+				$return[$key] = $array[$key];
+			}
+			elseif (isset($array[$key]) and $remove)
+			{
+				unset($array[$key]);
+			}
+		}
+		return $remove ? $array : $return;
+	}
+
+	/**
 	 * Returns the element of the given array or a default if it is not set.
 	 *
 	 * @param   array  the array to fetch from
