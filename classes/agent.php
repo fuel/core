@@ -33,11 +33,11 @@ class Agent {
 	 * @var  array  information about the current browser
 	 */
 	protected static $properties = array(
-		'Browser'             => "Unknown",
+		'Browser'             => 'unknown',
 		'Version'             => 0,
 		'MajorVer'            => 0,
 		'MinorVer'            => 0,
-		'Platform'            => 'Unknown',
+		'Platform'            => 'unknown',
 		'Alpha'               => false,
 		'Beta'                => false,
 		'Win16'               => false,
@@ -164,6 +164,7 @@ class Agent {
 			{
 				static::$config['browscap']['method'] = static::$defaults['browscap']['method'];
 			}
+			static::$config['browscap']['method'] = strtolower(static::$config['browscap']['method']);
 		}
 
 		// validate the cache configuration
@@ -417,7 +418,7 @@ class Agent {
 		// browscap not cached
 		catch (\Exception $e)
 		{
-			$browscap = static::parse_browscap();
+			$browscap = static::$config['browscap']['enabled'] ? static::parse_browscap() : array();
 		}
 
 		$search = array('\*', '\?');
