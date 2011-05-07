@@ -85,7 +85,7 @@ class DBUtil {
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 		$engine = ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
-		$sql .= "\n);";
+		$sql .= "\n)".$engine.";";
 
 		return DB::query($sql, DB::UPDATE)->execute();
 	}
