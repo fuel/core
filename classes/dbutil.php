@@ -88,6 +88,22 @@ class DBUtil {
 
 		return DB::query($sql, DB::UPDATE)->execute();
 	}
+	
+	/**
+	 * Adds fields to a table a table.  Will throw a Database_Exception if it cannot.
+	 *
+	 * @throws	Fuel\Database_Exception
+	 * @param	string	$table			the table name
+	 * @param	array	$fields			the new fields
+	 * @return	int		the number of affected
+	 */
+	public static function add_fields($table, $fields)
+	{
+		$sql = 'ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table)).' ADD (';
+		$sql .= static::process_fields($fields);
+		$sql .= "\n);";
+		return DB::query($sql, DB::UPDATE)->execute();
+	}
 
 	protected static function process_fields($fields)
 	{
