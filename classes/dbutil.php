@@ -70,7 +70,7 @@ class DBUtil {
 		return DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
 	}
 
-	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true)
+	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false)
 	{
 		$sql = 'CREATE TABLE';
 
@@ -84,7 +84,8 @@ class DBUtil {
 			$primary_keys = DB::quote_identifier($primary_keys);
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
-		$sql .= "\n);";
+		$engine = ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
+		$sql .= "\n)".$engine.";";
 
 		return DB::query($sql, DB::UPDATE)->execute();
 	}
