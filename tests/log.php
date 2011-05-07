@@ -19,5 +19,70 @@ namespace Fuel\Core;
  * @group Log
  */
 class Test_Log extends TestCase {
- 	public function test_foo() {}
+ 	
+	/**
+	 * Test for Log::info()
+	 * 
+	 * @test
+	 */
+	public function test_info()
+	{
+		$output = Log::info('testing log info');
+		$this->assertTrue($output);
+	}
+	
+	/**
+	 * Test for Log::debug()
+	 * 
+	 * @test
+	 */	
+	public function test_debug()
+	{
+		$output = Log::debug('testing log debug');
+		$this->assertTrue($output);
+	}
+
+	/**
+	 * Test for Log::error()
+	 * 
+	 * @test
+	 */
+	public function test_error()
+	{
+		$output = Log::error('testing log error');
+		$this->assertTrue($output);
+	}
+	
+	/**
+	 * Test for Log::info()
+	 * 
+	 * @test
+	 */
+	public function test_info_method()
+	{
+		$output = Log::info('testing log info', 'Log::info');
+		$this->assertTrue($output);
+	}
+	
+	/**
+	 * Test for Log::debug()
+	 * 
+	 * @test
+	 */
+	public function test_debug_method()
+	{
+		$output = Log::debug('testing log debug', 'Log::debug');
+		$this->assertTrue($output);
+	}
+	
+	/**
+	 * Test for Log::error()
+	 * 
+	 * @test
+	 */
+	public function test_error_method()
+	{
+		$output = Log::error('testing log error', 'Log::error');
+		$this->assertTrue($output);
+	}
 }
