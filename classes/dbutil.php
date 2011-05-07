@@ -88,7 +88,7 @@ class DBUtil {
 
 		return DB::query($sql, DB::UPDATE)->execute();
 	}
-	
+		
 	/**
 	 * Adds fields to a table a table.  Will throw a Database_Exception if it cannot.
 	 *
@@ -103,6 +103,26 @@ class DBUtil {
 		$sql .= static::process_fields($fields);
 		$sql .= "\n);";
 		return DB::query($sql, DB::UPDATE)->execute();
+	}
+	
+	/**
+	 * Drops fields from a table a table.  Will throw a Database_Exception if it cannot.
+	 *
+	 * @throws	Fuel\Database_Exception
+	 * @param	string			$table			the table name
+	 * @param	string|array	$fields			the fields
+	 * @return	int				the number of affected
+	 */
+	public static function drop_fields($table, $fields)
+	{
+		if( ! is_array($fields))
+		{
+			$fields = array($fields);
+		}
+		$fields = array_map(function($field){
+			return DB::quote_identifier($field);
+		}, $fields);
+		return DB::query('ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table)).' DROP '.implode(', DROP ', $fields))->execute();
 	}
 
 	protected static function process_fields($fields)
