@@ -41,7 +41,7 @@ class Migrate {
 		}
 
 		// Not a lot of point in this
-		if ($version === $current_version)
+		else if ($version === $current_version)
 		{
 			throw new \Oil\Exception('Migration: ' . $version .' already in use.');
 			return;
@@ -50,7 +50,7 @@ class Migrate {
 		$run = false;
 
 		// Specific version
-		if ($version > 0)
+		if (is_numeric($version) and $version >= 0)
 		{
 			if (\Migrate::version($version) === false)
 			{
