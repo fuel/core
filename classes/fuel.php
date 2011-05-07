@@ -242,25 +242,23 @@ class Fuel {
 		}
 
 		// the file requested namespaced?
-		elseif($pos = strripos(ltrim($file, '\\'), '\\'))
+		elseif($pos = strripos($nsfile = ltrim($file, '\\'), '\\'))
 		{
-			$file = ltrim($file, '\\');
-
 			// get the namespace path
-			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
+			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($nsfile, 0, $pos))))
 			{
-				$cache_id .= substr($file, 0, $pos);
+				$cache_id .= substr($nsfile, 0, $pos);
 
 				// and strip the classes directory as we need the module root
 				$paths = array(substr($path,0, -8));
 
 				// strip the namespace from the filename
-				$file = substr($file, $pos+1);
+				$file = substr($nsfile, $pos+1);
 			}
 		}
 
-		// use the cascading filesystem to find the file
-		else
+		// if not found, use the cascading filesystem to find the file
+		if (empty($cache_id))
 		{
 			$paths = static::$_paths;
 
@@ -308,7 +306,7 @@ class Fuel {
 			$cache and static::$path_cache[$cache_id.$path] = $found;
 			static::$paths_changed = true;
 		}
-if (!$found) die();
+
 		return $found;
 	}
 
