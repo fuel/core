@@ -109,32 +109,41 @@ class Fieldset
 	/**
 	 * Class constructor
 	 *
-	 * @param	string
-	 * @param	array
+	 * @param  string
+	 * @param  array
 	 */
 	protected function __construct($name, Array $config = array())
 	{
-		$this->name = (string) $name;
-		$this->config = $config;
-
-		if (isset($config['validation_instance']) and $config['validation_instance'] instanceof Validation)
+		if (isset($config['validation_instance']))
 		{
 			$this->validation = $config['validation_instance'];
+			unset($config['validation_instance']);
 		}
-		if (isset($config['form_instance']) and $config['form_instance'] instanceof Form)
+		if (isset($config['form_instance']))
 		{
 			$this->form = $config['form_instance'];
+			unset($config['form_instance']);
 		}
+
+		$this->name = (string) $name;
+		$this->config = $config;
 	}
 
 	/**
 	 * Get related Validation instance or create it
 	 *
-	 * @return	Validation
+	 * @param   bool|Validation
+	 * @return  Validation
 	 */
-	public function validation()
+	public function validation($instance = true)
 	{
-		if (empty($this->validation))
+		if ($instance instanceof Validation)
+		{
+			$this->validation = $instance;
+			return $instance;
+		}
+
+		if (empty($this->validation) and $instance === true)
 		{
 			$this->validation = Validation::factory($this);
 		}
@@ -145,11 +154,18 @@ class Fieldset
 	/**
 	 * Get related Form instance or create it
 	 *
-	 * @return	Form
+	 * @param   bool|Form
+	 * @return  Form
 	 */
-	public function form()
+	public function form($instance = true)
 	{
-		if (empty($this->form))
+		if ($instance instanceof Form)
+		{
+			$this->validation = $instance;
+			return $instance;
+		}
+
+		if (empty($this->form) and $instance === true)
 		{
 			$this->form = Form::factory($this);
 		}
