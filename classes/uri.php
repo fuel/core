@@ -164,7 +164,7 @@ class Uri {
 			foreach ($get_variables as $key => $val)
 			{
 				$url .= $char.$key.'='.$val;
-				$char = '&';
+				$char = '&amp;';
 			}
 		}
 
