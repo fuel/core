@@ -35,11 +35,19 @@ class Validation {
 
 	public static function factory($fieldset = 'default')
 	{
-		if ( ! $fieldset instanceof Fieldset)
+		if (is_string($fieldset))
 		{
-			$fieldset = (string) $fieldset;
-			($set = \Fieldset::instance($fieldset)) && $fieldset = $set;
+			($set = \Fieldset::instance($fieldset)) and $fieldset = $set;
 		}
+
+		if ($fieldset instanceof Fieldset)
+		{
+			if ($fieldset->validation(false) != null)
+			{
+				throw new Fuel_Exception('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
+			}
+		}
+
 		return new static($fieldset);
 	}
 
@@ -97,12 +105,16 @@ class Validation {
 
 	protected function __construct($fieldset)
 	{
-		if ( ! $fieldset instanceof Fieldset)
+		if ($fieldset instanceof Fieldset)
 		{
-			$fieldset = Fieldset::factory($fieldset, array('validation_instance' => $this));
+			$fieldset->validation($this);
+			$this->fieldset = $fieldset;
+		}
+		else
+		{
+			$this->fieldset = Fieldset::factory($fieldset, array('validation_instance' => $this));
 		}
 
-		$this->fieldset = $fieldset;
 		$this->callables = array($this);
 	}
 
