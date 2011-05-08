@@ -29,9 +29,9 @@ class DBUtil {
 	 * @param	string	$database	the character set
 	 * @return	int		the number of affected rows
 	 */
-	public static function create_database($database, $charset = false)
+	public static function create_database($database, $charset = null)
 	{
-		$charset === false and $charset = \Config::get('db.default_charset', '');
+		! $charset and $charset = \Config::get('db.default_charset', '');
 		
 		if( ! empty($charset))
 		{
