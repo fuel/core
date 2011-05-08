@@ -28,9 +28,17 @@ class DBUtil {
 	 * @param	string	$database	the database name
 	 * @return	int		the number of affected rows
 	 */
-	public static function create_database($database)
+	public static function create_database($database, $charset = false)
 	{
-		return DB::query('CREATE DATABASE '.DB::quote_identifier($database), \DB::UPDATE)->execute();
+		if($charset === false and ($charset = \Config::get('db.default_charset', '')) !== '')
+		{
+			$charset = '';
+		}
+		else
+		{
+			$charset = ' DEFAULT CHARACTER SET '.substr($charset, 0, stripos($charset, '_')).' COLLATE '.$charset;
+		}
+		return DB::query('CREATE DATABASE '.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
 	}
 
 	/**
