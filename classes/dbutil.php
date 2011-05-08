@@ -89,6 +89,42 @@ class DBUtil {
 
 		return DB::query($sql, DB::UPDATE)->execute();
 	}
+		
+	/**
+	 * Adds fields to a table a table.  Will throw a Database_Exception if it cannot.
+	 *
+	 * @throws	Fuel\Database_Exception
+	 * @param	string	$table			the table name
+	 * @param	array	$fields			the new fields
+	 * @return	int		the number of affected
+	 */
+	public static function add_fields($table, $fields)
+	{
+		$sql = 'ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table)).' ADD (';
+		$sql .= static::process_fields($fields);
+		$sql .= "\n);";
+		return DB::query($sql, DB::UPDATE)->execute();
+	}
+	
+	/**
+	 * Drops fields from a table a table.  Will throw a Database_Exception if it cannot.
+	 *
+	 * @throws	Fuel\Database_Exception
+	 * @param	string			$table			the table name
+	 * @param	string|array	$fields			the fields
+	 * @return	int				the number of affected
+	 */
+	public static function drop_fields($table, $fields)
+	{
+		if( ! is_array($fields))
+		{
+			$fields = array($fields);
+		}
+		$fields = array_map(function($field){
+			return DB::quote_identifier($field);
+		}, $fields);
+		return DB::query('ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table)).' DROP '.implode(', DROP ', $fields))->execute();
+	}
 
 	protected static function process_fields($fields)
 	{
@@ -103,6 +139,7 @@ class DBUtil {
 			$sql .= array_key_exists('NAME', $attr) ? ' '.DB::quote_identifier($attr['NAME']).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
 			$sql .= array_key_exists('CONSTRAINT', $attr) ? '('.$attr['CONSTRAINT'].')' : '';
+			$sql .= array_key_exists('CHARSET', $attr) ? ' CHARACTER SET '.substr($attr['CHARSET'], 0, stripos($attr['CHARSET'], '_')).' COLLATE '.$attr['CHARSET'] : '';
 
 			if (array_key_exists('UNSIGNED', $attr) and $attr['UNSIGNED'] === true)
 			{
