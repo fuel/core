@@ -242,18 +242,18 @@ class Fuel {
 		}
 
 		// the file requested namespaced?
-		elseif($pos = strripos($nsfile = ltrim($file, '\\'), '\\'))
+		elseif($pos = strripos($file, '::'))
 		{
 			// get the namespace path
-			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($nsfile, 0, $pos))))
+			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
 			{
-				$cache_id .= substr($nsfile, 0, $pos);
+				$cache_id .= substr($file, 0, $pos);
 
 				// and strip the classes directory as we need the module root
 				$paths = array(substr($path,0, -8));
 
 				// strip the namespace from the filename
-				$file = substr($nsfile, $pos+1);
+				$file = substr($file, $pos+2);
 			}
 		}
 
