@@ -31,7 +31,7 @@ class DBUtil {
 	 */
 	public static function create_database($database, $charset = null)
 	{
-		! $charset and $charset = \Config::get('db.default_charset', '');
+		$charset or $charset = \Config::get('db.default_charset', '');
 		
 		if( ! empty($charset))
 		{
