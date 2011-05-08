@@ -53,7 +53,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver {
 			// do we have the PHP memcached extension available
 			if ( ! class_exists('Memcached') )
 			{
-				throw new \Cache_Exception('Memcached sessions are configured, but your PHP installation doesn\'t have the Memcached extension loaded.');
+				throw new \Cache_Exception('Memcached cache are configured, but your PHP installation doesn\'t have the Memcached extension loaded.');
 			}
 
 			// instantiate the memcached object
@@ -65,7 +65,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver {
 			// check if we can connect to the server(s)
 			if ($this->memcached->getVersion() === false)
 			{
-				throw new \Cache_Exception('Memcached sessions are configured, but there is no connection possible. Check your configuration.');
+				throw new \Cache_Exception('Memcached cache are configured, but there is no connection possible. Check your configuration.');
 			}
 		}
 	}
@@ -262,7 +262,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver {
 		// get the memcached key for the cache identifier
 		$key = $this->_get_key();
 
-		// fetch the session data from the Memcached server
+		// fetch the cached data from the Memcached server
 		$payload = $this->memcached->get($key);
 
 		try
@@ -319,12 +319,12 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver {
 					// do we have a host?
 					if ( ! isset($server['host']) OR ! is_string($server['host']))
 					{
-						throw new \Fuel_Exception('Invalid Memcached server definition in the session configuration.');
+						throw new \Fuel_Exception('Invalid Memcached server definition in the cache configuration.');
 					}
 					// do we have a port number?
 					if ( ! isset($server['port']) OR ! is_numeric($server['port']) OR $server['port'] < 1025 OR $server['port'] > 65535)
 					{
-						throw new \Fuel_Exception('Invalid Memcached server definition in the session configuration.');
+						throw new \Fuel_Exception('Invalid Memcached server definition in the cache configuration.');
 					}
 					// do we have a relative server weight?
 					if ( ! isset($server['weight']) OR ! is_numeric($server['weight']) OR $server['weight'] < 0)

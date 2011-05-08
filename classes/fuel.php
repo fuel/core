@@ -242,10 +242,8 @@ class Fuel {
 		}
 
 		// the file requested namespaced?
-		elseif($pos = strripos(ltrim($file, '\\'), '\\'))
+		elseif($pos = strripos($file, '::'))
 		{
-			$file = ltrim($file, '\\');
-
 			// get the namespace path
 			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
 			{
@@ -255,12 +253,12 @@ class Fuel {
 				$paths = array(substr($path,0, -8));
 
 				// strip the namespace from the filename
-				$file = substr($file, $pos+1);
+				$file = substr($file, $pos+2);
 			}
 		}
 
-		// use the cascading filesystem to find the file
-		else
+		// if not found, use the cascading filesystem to find the file
+		if (empty($cache_id))
 		{
 			$paths = static::$_paths;
 
@@ -308,7 +306,7 @@ class Fuel {
 			$cache and static::$path_cache[$cache_id.$path] = $found;
 			static::$paths_changed = true;
 		}
-if (!$found) die();
+
 		return $found;
 	}
 

@@ -29,12 +29,20 @@ class Form {
 
 	public static function factory($fieldset = 'default', array $config = array())
 	{
-		if ( ! $fieldset instanceof Fieldset)
+		if (is_string($fieldset))
 		{
-			$fieldset = (string) $fieldset;
-			($set = \Fieldset::instance($fieldset)) && $fieldset = $set;
+			($set = \Fieldset::instance($fieldset)) and $fieldset = $set;
 		}
-		return new static($fieldset);
+
+		if ($fieldset instanceof Fieldset)
+		{
+			if ($fieldset->form(false) != null)
+			{
+				throw new Fuel_Exception('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
+			}
+		}
+
+		return new static($fieldset, $config);
 	}
 
 	public static function instance($name = null)
@@ -326,6 +334,28 @@ class Form {
 	}
 
 	/**
+	 * Create a file upload input field
+	 *
+	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
+	 * @param	array
+	 * @return
+	 */
+	public static function file($field, Array $attributes = array())
+	{
+		if (is_array($field))
+		{
+			$attributes = $field;
+		}
+		else
+		{
+			$attributes['name'] = (string) $field;
+		}
+		$attributes['type'] = 'file';
+
+		return static::input($attributes);
+	}
+
+	/**
 	 * Create a button
 	 *
 	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
@@ -571,14 +601,22 @@ class Form {
 	 */
 	protected $fieldset;
 
-	protected function __construct($fieldset)
+	protected function __construct($fieldset, array $config = array())
 	{
-		if ( ! $fieldset instanceof Fieldset)
+		if ($fieldset instanceof Fieldset)
 		{
-			$fieldset = Fieldset::factory($fieldset, array('validation_instance' => $this));
+			$fieldset->form($this);
+			$this->fieldset = $fieldset;
+		}
+		else
+		{
+			$this->fieldset = Fieldset::factory($fieldset, array('form_instance' => $this));
 		}
 
-		$this->fieldset = $fieldset;
+		foreach ($config as $key => $val)
+		{
+			$this->set_config($key, $val);
+		}
 	}
 
 	/**
