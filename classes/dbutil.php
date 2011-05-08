@@ -100,10 +100,20 @@ class DBUtil {
 	 */
 	public static function add_fields($table, $fields)
 	{
-		$sql = 'ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table)).' ADD (';
-		$sql .= static::process_fields($fields);
-		$sql .= "\n);";
-		return DB::query($sql, DB::UPDATE)->execute();
+		return static::alter_fields('ADD', $table, $fields);
+	}
+
+	/**
+	 * Modifies fields in a table.  Will throw a Database_Exception if it cannot.
+	 *
+	 * @throws	Fuel\Database_Exception
+	 * @param	string	$table			the table name
+	 * @param	array	$fields			the modified fields
+	 * @return	int		the number of affected
+	 */
+	public static function modify_fields($table, $fields)
+	{
+		return static::alter_fields('CHANGE', $table, $fields);
 	}
 	
 	/**
@@ -116,14 +126,26 @@ class DBUtil {
 	 */
 	public static function drop_fields($table, $fields)
 	{
-		if( ! is_array($fields))
+		return static::alter_fields('DROP', $table, $fields);
+	}
+
+	protected static function alter_fields($type, $table, $fields)
+	{
+		$sql = 'ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table)).' '.$type.' ';
+		if ($type === 'DROP')
 		{
-			$fields = array($fields);
+			if( ! is_array($fields))
+			{
+				$fields = array($fields);
+			}
+			$fields = array_map(function($field){
+				return DB::quote_identifier($field);
+			}, $fields);
+			$sql .= implode(', ', $fields);
+		} else {
+			$sql .= static::process_fields($fields);
 		}
-		$fields = array_map(function($field){
-			return DB::quote_identifier($field);
-		}, $fields);
-		return DB::query('ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table)).' DROP '.implode(', DROP ', $fields))->execute();
+		return DB::query($sql, DB::UPDATE)->execute();
 	}
 
 	protected static function process_fields($fields)
