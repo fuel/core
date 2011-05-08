@@ -35,7 +35,14 @@ class DBUtil {
 		
 		if( ! empty($charset))
 		{
-			$charset = ' DEFAULT CHARACTER SET '.substr($charset, 0, stripos($charset, '_')).' COLLATE '.$charset;
+			if(stripos($charset, '_') !== false)
+			{
+				$charset = ' DEFAULT CHARACTER SET '.substr($charset, 0, stripos($charset, '_')).' COLLATE '.$charset;
+			}
+			else
+			{
+				$charset = ' DEFAULT CHARACTER SET '.$charset;
+			}
 		}
 		return DB::query('CREATE DATABASE '.DB::quote_identifier($database), \DB::UPDATE)->execute();
 	}
