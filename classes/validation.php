@@ -440,7 +440,7 @@ class Validation {
 	 */
 	public function _validation_required($val)
 	{
-		return ($val !== false && $val !== null && $val !== '');
+		return ($val !== false && $val !== null && $val !== '' && $val !== array());
 	}
 
 	/**
