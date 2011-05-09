@@ -229,7 +229,7 @@ class Fuel {
 	 */
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
-		$cache_id = '';
+		$cache_id = $multiple ? 'M.' : 'S.';
 		$paths = array();
 
 		$found = $multiple ? array() : false;
