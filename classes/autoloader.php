@@ -233,15 +233,15 @@ class Autoloader {
 		else
 		{
 			// need to stick the trimed \ back on...
-			$namespace = '\\'.ucfirst(strtolower(substr($class, 0, $pos)));
+			$namespace = '\\'.ucfirst(substr($class, 0, $pos));
 
 			foreach (static::$namespaces as $ns => $path)
 			{
 				if (strncmp($ns, $namespace, $ns_len = strlen($ns)) === 0)
 				{
 					$class_no_ns = substr($class, $pos + 1);
-
-					$file_path = $path.strtolower(substr($namespace, strlen($ns) + 1).DS.str_replace('_', DS, $class_no_ns).'.php');
+					
+					$file_path = $path.strtolower(str_replace('_', DS, $class_no_ns).'.php');
 					if (is_file($file_path))
 					{
 						// Fuel::$path_cache[$class] = $file_path;
