@@ -29,17 +29,23 @@ namespace Fuel\Core;
 class Request {
 
 	/**
-	 * @var  Request  Holds the main request instance
+	 * Holds the main request instance
+	 *
+	 * @var  Request
 	 */
 	protected static $main = false;
 
 	/**
-	 * @var  Request  Holds the global active request instance
+	 * Holds the global active request instance
+	 *
+	 * @var  Request
 	 */
 	protected static $active = false;
 
 	/**
-	 * @var  Request  Holds the previous request
+	 * Holds the previous request
+	 *
+	 * @var  Request
 	 */
 	protected static $previous = false;
 
@@ -116,6 +122,7 @@ class Request {
 	 *
 	 *     Request::show_404();
 	 *
+	 * @param   bool         Whether to return the 404 output or just output and exit
 	 * @return  void|string  Void if $return is false, the output if $return is true
 	 */
 	public static function show_404($return = false)
@@ -178,57 +185,79 @@ class Request {
 
 
 	/**
-	 * @var  Response  Holds the response object of the request.
+	 * Holds the response object of the request.
+	 * 
+	 * @var  Response
 	 */
 	public $response = null;
 
 	/**
-	 * @var  Uri  The request's URI object
+	 * The Request's URI object.
+	 *
+	 * @var  Uri
 	 */
 	public $uri = null;
 
 	/**
-	 * @var  Route  The request's route object
+	 * The request's route object
+	 * 
+	 * @var  Route
 	 */
 	public $route = null;
 
 	/**
-	 * @var  string  The current module
+	 * The current module
+	 * 
+	 * @var  string
 	 */
 	public $module = '';
 
 	/**
-	 * @var  string  The current controller directory
+	 * The current controller directory
+	 * 
+	 * @var  string
 	 */
 	public $directory = '';
 
 	/**
-	 * @var  string  The request's controller
+	 * The request's controller
+	 * 
+	 * @var  string
 	 */
 	public $controller = '';
 
 	/**
-	 * @var  string  The request's controller action
+	 * The request's controller action
+	 * 
+	 * @var  string
 	 */
 	public $action = '';
 
 	/**
-	 * @var  array  The request's method params
+	 * The request's method params
+	 * 
+	 * @var  array
 	 */
 	public $method_params = array();
 
 	/**
-	 * @var  array  The request's named params
+	 * The request's named params
+	 * 
+	 * @var  array
 	 */
 	public $named_params = array();
 
 	/**
-	 * @var  Controller  Controller instance once instantiated
+	 * Controller instance once instantiated
+	 * 
+	 * @var  Controller
 	 */
 	public $controller_instance;
 
 	/**
-	 * @var  array  search paths for the current active request
+	 * Search paths for the current active request
+	 * 
+	 * @var  array
 	 */
 	public $paths = array();
 
