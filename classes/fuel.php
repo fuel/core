@@ -229,7 +229,7 @@ class Fuel {
 	 */
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
-		$cache_id = $multiple ? 'M.' : 'S.';
+		$cache_id = '';
 		$paths = array();
 
 		$found = $multiple ? array() : false;
@@ -258,7 +258,7 @@ class Fuel {
 		}
 
 		// if not found, use the cascading filesystem to find the file
-		if (empty($paths))
+		if (empty($cache_id))
 		{
 			$paths = static::$_paths;
 
@@ -272,7 +272,7 @@ class Fuel {
 
 		$path = $directory.DS.strtolower($file).$ext;
 
-		$cache_id = md5($cache_id);
+		$cache_id = md5(($multiple ? 'M.' : 'S.').$cache_id);
 
 		if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
 		{
