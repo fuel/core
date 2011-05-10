@@ -258,7 +258,7 @@ class Fuel {
 		}
 
 		// if not found, use the cascading filesystem to find the file
-		if (empty($cache_id))
+		if (empty($paths))
 		{
 			$paths = static::$_paths;
 
@@ -268,12 +268,6 @@ class Fuel {
 				$cache_id = $active->uri->uri;
 				$paths = array_merge($active->paths, $paths);
 			}
-
-			// the file requested namespaced?
-			if($pos = strripos(ltrim($file, '\\'), '\\'))
-			{
-			}
-
 		}
 
 		$path = $directory.DS.strtolower($file).$ext;
