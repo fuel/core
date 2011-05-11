@@ -190,7 +190,7 @@ class Fuel {
 		if (static::$profiling)
 		{
 			// Grab the output buffer and flush it, we will rebuffer later
-			$output = ob_end_flush();
+			$output = ob_get_clean();
 
 			\Profiler::mark('End of Fuel Execution');
 			if (preg_match("|</body>.*?</html>|is", $output))
