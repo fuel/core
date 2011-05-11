@@ -610,7 +610,7 @@ class Form {
 		}
 		else
 		{
-			$this->fieldset = Fieldset::factory($fieldset, array('form_instance' => $this));
+			$this->fieldset = \Fieldset::factory($fieldset, array('form_instance' => $this));
 		}
 
 		foreach ($config as $key => $val)

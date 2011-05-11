@@ -45,7 +45,7 @@ class Fieldset
 			return $exists;
 		}
 
-		static::$_instances[$name] = new Fieldset($name, $config);
+		static::$_instances[$name] = new static($name, $config);
 
 		if ($name == 'default')
 		{
@@ -205,7 +205,7 @@ class Fieldset
 			return $field;
 		}
 
-		$field = new Fieldset_Field($name, $label, $attributes, $rules, $this);
+		$field = new \Fieldset_Field($name, $label, $attributes, $rules, $this);
 		$this->fields[$name] = $field;
 
 		return $field;
