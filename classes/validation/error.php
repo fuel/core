@@ -108,7 +108,7 @@ class Validation_Error extends \Exception {
 
 		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
 		$find     = array(':field', ':label', ':value', ':rule');
-		$replace  = array($this->field->name, $this->field->label, $value, $this->callback);
+		$replace  = array($this->field->name, is_array($this->field->label) ? $this->field->label['label'] : $this->field->label, $value, $this->callback);
 		foreach($this->params as $key => $val)
 		{
 			$find[]		= ':param:'.($key + 1);
