@@ -88,8 +88,7 @@ class DBUtil {
 		}
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
-		$sql .= static::process_charset($charset, true);
-		";";
+		$sql .= static::process_charset($charset, true) . ";";
 
 		return DB::query($sql, DB::UPDATE)->execute();
 	}
