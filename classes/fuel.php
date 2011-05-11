@@ -126,6 +126,12 @@ class Fuel {
 		}
 
 		\Config::load($config);
+		
+		// Set the timezone if it was configured
+		if($timezone = \Config::get('default_timezone', false))
+		{
+			date_default_timezone_set($timezone);
+		}
 
 		static::$_paths = array(APPPATH, COREPATH);
 
