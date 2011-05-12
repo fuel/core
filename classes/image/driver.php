@@ -252,7 +252,8 @@ abstract class Image_Driver {
 		if ($keepar)
 		{
 			// See which is the biggest ratio
-			if (function_exists('bcdiv')) {
+			if (function_exists('bcdiv'))
+			{
 				$width_ratio  = bcdiv($width, $sizes->width, 10);
 				$height_ratio = bcdiv($height, $sizes->height, 10);
 				$compare = bccomp($width_ratio, $height_ratio, 10);
@@ -266,7 +267,9 @@ abstract class Image_Driver {
 					$height = ceil((real) bcmul($sizes->height, $width_ratio, 10));
 					$width = ceil((real) bcmul($sizes->width, $width_ratio, 10));
 				}
-			} else {
+			}
+			else
+			{
 				$width_ratio  = $width / $sizes->width;
 				$height_ratio = $height / $sizes->height;
 				if ($width_ratio >= $height_ratio)
@@ -312,7 +315,8 @@ abstract class Image_Driver {
 		$width   = $this->convert_number($width, true);
 		$height  = $this->convert_number($height, false);
 		$x = $y = 0;
-		if (function_exists('bcdiv')) {
+		if (function_exists('bcdiv'))
+		{
 			$widthr  = bcdiv($sizes->width, $width, 10);
 			$heightr = bcdiv($sizes->height, $height, 10);
 			$compare = bccomp($widthr, $heightr, 10);
@@ -326,7 +330,9 @@ abstract class Image_Driver {
 				$t_width = ceil((float) bcmul($width, $heightr, 10));
 				$this->_resize($t_width, $height, true, false);
 			}
-		} else {
+		}
+		else
+		{
 			$widthr  = $sizes->width / $width;
 			$heightr = $sizes->height / $height;
 			if ($widthr < $heightr)
