@@ -4,10 +4,19 @@ namespace Fuel\Core;
 
 abstract class Controller_Rest extends \Controller {
 
-	protected $rest_format = null; // Set this in a controller to use a default format
-	protected $methods = array(); // contains a list of method properties such as limit, log and level
+	/**
+	 * @var  null|string  Set this in a controller to use a default format
+	 */
+	protected $rest_format = null;
 
-	// List all supported methods, the first will be the default format
+	/**
+	 * @var  array  contains a list of method properties such as limit, log and level
+	 */
+	protected $methods = array();
+
+	/**
+	 * @var  array  List all supported methods
+	 */
 	protected $_supported_formats = array(
 		'xml' => 'application/xml',
 		'rawxml' => 'application/xml',
@@ -40,14 +49,16 @@ abstract class Controller_Rest extends \Controller {
 		$this->request->lang = $this->_detect_lang();
 	}
 
-	/*
-	 * Remap
+	/**
+	 * Router
 	 *
 	 * Requests are not made to methods directly The request will be for an "object".
 	 * this simply maps the object and method to the correct Controller method.
+	 *
+	 * @param  string
+	 * @param  array
 	 */
-
-	public function router($resource, $arguments)
+	public function router($resource, array $arguments)
 	{
 		$pattern = '/\.(' . implode('|', array_keys($this->_supported_formats)) . ')$/';
 
@@ -71,7 +82,7 @@ abstract class Controller_Rest extends \Controller {
 		// If method is not available, set status code to 404
 		if (method_exists($this, $controller_method))
 		{
-			call_user_func(array($this, $controller_method));
+			call_user_func_array(array($this, $controller_method), $arguments);
 		}
 		else
 		{
@@ -80,12 +91,14 @@ abstract class Controller_Rest extends \Controller {
 		}
 	}
 
-	/*
-	 * response
+	/**
+	 * Response
 	 *
 	 * Takes pure data and optionally a status code, then creates the response
+	 *
+	 * @param  array
+	 * @param  int
 	 */
-
 	protected function response($data = array(), $http_code = 200)
 	{
 		if (empty($data))
@@ -100,7 +113,7 @@ abstract class Controller_Rest extends \Controller {
 		if (method_exists('Format', 'to_'.$this->request->format))
 		{
 			// Set the correct format header
-			$this->response->set_header('Content-Type: '.$this->_supported_formats[$this->request->format]);
+			$this->response->set_header('Content-Type', $this->_supported_formats[$this->request->format]);
 
 			$this->response->body(Format::factory($data)->{'to_'.$this->request->format}());
 		}
@@ -112,13 +125,14 @@ abstract class Controller_Rest extends \Controller {
 		}
 	}
 
-	/*
+	/**
 	 * Detect format
 	 *
 	 * Detect which format should be used to output the data
+	 *
+	 * @return  string
 	 */
-
-	private function _detect_format()
+	protected function _detect_format()
 	{
 		// A format has been passed as an argument in the URL and it is supported
 		if (\Input::get_post('format') and $this->_supported_formats[\Input::get_post('format')])
@@ -144,13 +158,13 @@ abstract class Controller_Rest extends \Controller {
 					// HTML or XML have shown up as a match
 					else
 					{
-						// If it is truely HTML, it wont want any XML
+						// If it is truly HTML, it wont want any XML
 						if ($format == 'html' and strpos(\Input::server('HTTP_ACCEPT'), 'xml') === false)
 						{
 							return $format;
 						}
 
-						// If it is truely XML, it wont want any HTML
+						// If it is truly XML, it wont want any HTML
 						elseif ($format == 'xml' and strpos(\Input::server('HTTP_ACCEPT'), 'html') === false)
 						{
 							return $format;
@@ -159,8 +173,9 @@ abstract class Controller_Rest extends \Controller {
 				}
 			}
 		} // End HTTP_ACCEPT checking
+
 		// Well, none of that has worked! Let's see if the controller has a default
-		if (!empty($this->rest_format))
+		if ( ! empty($this->rest_format))
 		{
 			return $this->rest_format;
 		}
@@ -169,13 +184,14 @@ abstract class Controller_Rest extends \Controller {
 		return \Config::get('rest.default_format');
 	}
 
-	/*
+	/**
 	 * Detect language(s)
 	 *
 	 * What language do they want it in?
+	 *
+	 * @return  null|array|string
 	 */
-
-	private function _detect_lang()
+	protected function _detect_lang()
 	{
 		if (!$lang = \Input::server('HTTP_ACCEPT_LANGUAGE'))
 		{
@@ -205,7 +221,7 @@ abstract class Controller_Rest extends \Controller {
 
 	// SECURITY FUNCTIONS ---------------------------------------------------------
 
-	private function _check_login($username = '', $password = null)
+	protected function _check_login($username = '', $password = null)
 	{
 		if (empty($username))
 		{
@@ -228,7 +244,7 @@ abstract class Controller_Rest extends \Controller {
 		return true;
 	}
 
-	private function _prepare_basic_auth()
+	protected function _prepare_basic_auth()
 	{
 		$username = null;
 		$password = null;
@@ -249,13 +265,13 @@ abstract class Controller_Rest extends \Controller {
 			}
 		}
 
-		if (!self::_check_login($username, $password))
+		if ( ! static::_check_login($username, $password))
 		{
-			self::_force_login();
+			static::_force_login();
 		}
 	}
 
-	private function _prepare_digest_auth()
+	protected function _prepare_digest_auth()
 	{
 		$uniqid = uniqid(""); // Empty argument for backward compatibility
 		// We need to test which server authentication variable to use
@@ -278,16 +294,16 @@ abstract class Controller_Rest extends \Controller {
 		  a wrong auth. informations. */
 		if (empty($digest_string))
 		{
-			self::_force_login($uniqid);
+			static::_force_login($uniqid);
 		}
 
 		// We need to retrieve authentication informations from the $auth_data variable
 		preg_match_all('@(username|nonce|uri|nc|cnonce|qop|response)=[\'"]?([^\'",]+)@', $digest_string, $matches);
 		$digest = array_combine($matches[1], $matches[2]);
 
-		if (!array_key_exists('username', $digest) or !self::_check_login($digest['username']))
+		if ( ! array_key_exists('username', $digest) or ! static::_check_login($digest['username']))
 		{
-			self::_force_login($uniqid);
+			static::_force_login($uniqid);
 		}
 
 		$valid_logins = & \Config::get('rest.valid_logins');
@@ -306,7 +322,7 @@ abstract class Controller_Rest extends \Controller {
 		}
 	}
 
-	private function _force_login($nonce = '')
+	protected function _force_login($nonce = '')
 	{
 		header('HTTP/1.0 401 Unauthorized');
 		header('HTTP/1.1 401 Unauthorized');
@@ -321,18 +337,6 @@ abstract class Controller_Rest extends \Controller {
 		}
 
 		exit('Not authorized.');
-	}
-
-	// Force it into an array
-	private function _force_loopable($data)
-	{
-		// Force it to be something useful
-		if ( ! is_array($data) and ! is_object($data))
-		{
-			$data = (array) $data;
-		}
-
-		return $data;
 	}
 
 }

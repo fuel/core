@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -14,48 +12,58 @@
 
 namespace Fuel\Core;
 
-
-
+/**
+ * The Asset class allows you to easily work with your apps assets.
+ * It allows you to specify multiple paths to be searched for the
+ * assets.
+ *
+ * You can configure the paths by copying the core/config/asset.php
+ * config file into your app/config folder and changing the settings.
+ *
+ * @package     Fuel
+ * @subpackage  Core
+ */
 class Asset {
 
 	/**
-	 * @var	array	The asset paths
+	 * @var  array  the asset paths to be searched
 	 */
 	protected static $_asset_paths = array();
 
 	/**
-	 * @var	string	The URL to be prepended to all assets
+	 * @var  string  the URL to be prepended to all assets
 	 */
 	protected static $_asset_url = '/';
 
 	/**
-	 * @var	string	The folder names
+	 * @var  bool  whether to append the file mtime to the url
+	 */
+	protected static $_add_mtime = true;
+
+	/**
+	 * @var  string  the folder names
 	 */
 	protected static $_folders = array(
-		'css'	=>	'css/',
-		'js'	=>	'js/',
-		'img'	=>	'img/',
+		'css'  =>  'css/',
+		'js'   =>  'js/',
+		'img'  =>  'img/',
 	);
 
 	/**
-	 * @var	array	Holds the groups of assets
+	 * @var  array  Holds the groups of assets
 	 */
 	protected static $_groups = array();
 
 	/**
-	 * @var	bool	Get this baby going
+	 * @var  bool  Get this baby going
 	 */
 	public static $initialized = false;
 
-	// --------------------------------------------------------------------
-
 	/**
-	 * Init
+	 * This is called automatically by the Autoloader.  It loads in the config
+	 * and gets things going.
 	 *
-	 * Loads in the config and sets the variables
-	 *
-	 * @access	public
-	 * @return	void
+	 * @return  void
 	 */
 	public static function _init()
 	{
@@ -74,6 +82,7 @@ class Asset {
 			static::add_path($path);
 		}
 
+		static::$_add_mtime = \Config::get('asset.add_mtime', true);
 		static::$_asset_url = \Config::get('asset.url');
 
 		static::$_folders = array(
@@ -85,32 +94,23 @@ class Asset {
 		static::$initialized = true;
 	}
 
-	// --------------------------------------------------------------------
-
 	/**
-	 * Add Path
+	 * Adds the given path to the front of the asset paths array.  It adds paths
+	 * in a way so that asset paths are used First in Last Out.
 	 *
-	 * Adds the given path to the front of the asset paths array
-	 *
-	 * @access	public
-	 * @param	string	The path to add
-	 * @return	void
+	 * @param   string  the path to add
+	 * @return  void
 	 */
 	public static function add_path($path)
 	{
 		array_unshift(static::$_asset_paths, str_replace('../', '', $path));
 	}
 
-	// --------------------------------------------------------------------
-
 	/**
-	 * Remove Path
-	 *
 	 * Removes the given path from the asset paths array
 	 *
-	 * @access	public
-	 * @param	string	The path to remove
-	 * @return	void
+	 * @param   string  the path to remove
+	 * @return  void
 	 */
 	public static function remove_path($path)
 	{
@@ -120,17 +120,15 @@ class Asset {
 		}
 	}
 
-	// --------------------------------------------------------------------
-
 	/**
-	 * Render
+	 * Renders the given group.  Each tag will be separated by a line break.
+	 * You can optionally tell it to render the files raw.  This means that
+	 * all CSS and JS files in the group will be read and the contents included
+	 * in the returning value.
 	 *
-	 * Renders the group of assets and returns the tags.
-	 *
-	 * @access	public
-	 * @param	mixed	The group to render
-	 * @param	bool	Whether to return the raw file or not
-	 * @return	string	The group's output
+	 * @param   mixed   the group to render
+	 * @param   bool    whether to return the raw file or not
+	 * @return  string  the group's output
 	 */
 	public static function render($group, $raw = false)
 	{
@@ -142,21 +140,20 @@ class Asset {
 		$css = '';
 		$js = '';
 		$img = '';
-		
 		foreach ($group as $key => $item)
 		{
 			$type = $item['type'];
 			$filename = $item['file'];
 			$attr = $item['attr'];
 
-			if (strpos($filename, '://') === false)
+			if ( ! preg_match('|^(\w+:)?//|', $filename))
 			{
 				if ( ! ($file = static::find_file($filename, static::$_folders[$type])))
 				{
-					throw new \Fuel_Exception('Could not find asset: '.$file);
+					throw new \Fuel_Exception('Could not find asset: '.$filename);
 				}
 
-				$file = static::$_asset_url.$file;
+				$file = static::$_asset_url.$file.(static::$_add_mtime ? '?'.filemtime($file) : '');
 			}
 			else
 			{
@@ -175,7 +172,7 @@ class Asset {
 					$attr['href'] = $file;
 
 					$css .= html_tag('link', $attr).PHP_EOL;
-					break;
+				break;
 				case 'js':
 					if ($raw)
 					{
@@ -185,13 +182,13 @@ class Asset {
 					$attr['src'] = $file;
 
 					$js .= html_tag('script', $attr, '').PHP_EOL;
-					break;
+				break;
 				case 'img':
 					$attr['src'] = $file;
 					$attr['alt'] = isset($attr['alt']) ? $attr['alt'] : '';
 
 					$img .= html_tag('img', $attr );
-					break;
+				break;
 			}
 
 		}
@@ -350,7 +347,8 @@ class Asset {
 		foreach (static::$_asset_paths as $path)
 		{
 			empty($folder) or $folder = trim($folder, '/').'/';
-			if (is_file(DOCROOT.$path.$folder.ltrim($file, '/')))
+
+			if (is_file($path.$folder.ltrim($file, '/')))
 			{
 				return $path.$folder.ltrim($file, '/');
 			}

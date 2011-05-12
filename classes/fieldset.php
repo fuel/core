@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -111,32 +109,41 @@ class Fieldset
 	/**
 	 * Class constructor
 	 *
-	 * @param	string
-	 * @param	array
+	 * @param  string
+	 * @param  array
 	 */
 	protected function __construct($name, Array $config = array())
 	{
-		$this->name = (string) $name;
-		$this->config = $config;
-
-		if (isset($config['validation_instance']) && $config['validation_instance'] instanceof Validation)
+		if (isset($config['validation_instance']))
 		{
 			$this->validation = $config['validation_instance'];
+			unset($config['validation_instance']);
 		}
-		if (isset($config['form_instance']) && $config['form_instance'] instanceof Form)
+		if (isset($config['form_instance']))
 		{
-			$this->validation = $config['form_instance'];
+			$this->form = $config['form_instance'];
+			unset($config['form_instance']);
 		}
+
+		$this->name = (string) $name;
+		$this->config = $config;
 	}
 
 	/**
 	 * Get related Validation instance or create it
 	 *
-	 * @return	Validation
+	 * @param   bool|Validation
+	 * @return  Validation
 	 */
-	public function validation()
+	public function validation($instance = true)
 	{
-		if (empty($this->validation))
+		if ($instance instanceof Validation)
+		{
+			$this->validation = $instance;
+			return $instance;
+		}
+
+		if (empty($this->validation) and $instance === true)
 		{
 			$this->validation = Validation::factory($this);
 		}
@@ -147,11 +154,18 @@ class Fieldset
 	/**
 	 * Get related Form instance or create it
 	 *
-	 * @return	Form
+	 * @param   bool|Form
+	 * @return  Form
 	 */
-	public function form()
+	public function form($instance = true)
 	{
-		if (empty($this->form))
+		if ($instance instanceof Form)
+		{
+			$this->validation = $instance;
+			return $instance;
+		}
+
+		if (empty($this->form) and $instance === true)
 		{
 			$this->form = Form::factory($this);
 		}
@@ -170,7 +184,7 @@ class Fieldset
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
-		if (empty($name) || (is_array($name) && empty($name['name'])))
+		if (empty($name) || (is_array($name) and empty($name['name'])))
 		{
 			throw new \Fuel_Exception('Cannot create field without name.');
 		}
@@ -230,7 +244,7 @@ class Fieldset
 	 */
 	public function add_model($class, $instance = null, $method = 'set_form_fields')
 	{
-		if ((is_string($class) && is_callable($callback = array('\\'.$class, $method)))
+		if ((is_string($class) and is_callable($callback = array('\\'.$class, $method)))
 			|| is_callable($callback = array($class, $method)))
 		{
 			$instance ? call_user_func($callback, $this, $instance) : call_user_func($callback, $this);
@@ -358,11 +372,11 @@ class Fieldset
 	}
 
 	/**
-	 * Alias for $this->validation()->error()
+	 * Alias for $this->validation()->errors()
 	 */
-	public function error($field = null)
+	public function errors($field = null)
 	{
-		return $this->validation()->error($field);
+		return $this->validation()->errors($field);
 	}
 
 	/**

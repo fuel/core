@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -91,6 +89,9 @@ class Fieldset_Field
 
 		// Don't allow name in attributes
 		unset($attributes['name']);
+
+		// Take rules out of attributes
+		unset($attributes['rules']);
 
 		// Set certain types through specific setter
 		foreach (array('label', 'type', 'value', 'options') as $prop)

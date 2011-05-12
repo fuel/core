@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -30,13 +28,26 @@ namespace Fuel\Core;
  */
 class Validation {
 
+	/**
+	 * @var  Validation  keeps a reference to an instance of Validation while it is being run
+	 */
+	protected static $active;
+
 	public static function factory($fieldset = 'default')
 	{
-		if ( ! $fieldset instanceof Fieldset)
+		if (is_string($fieldset))
 		{
-			$fieldset = (string) $fieldset;
-			($set = \Fieldset::instance($fieldset)) && $fieldset = $set;
+			($set = \Fieldset::instance($fieldset)) and $fieldset = $set;
 		}
+
+		if ($fieldset instanceof Fieldset)
+		{
+			if ($fieldset->validation(false) != null)
+			{
+				throw new Fuel_Exception('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
+			}
+		}
+
 		return new static($fieldset);
 	}
 
@@ -44,6 +55,22 @@ class Validation {
 	{
 		$fieldset = \Fieldset::instance($name);
 		return $fieldset === false ? false : $fieldset->validation();
+	}
+
+	/**
+	 * Fetch the currently active validation instance
+	 */
+	public static function active()
+	{
+		return static::$active;
+	}
+
+	/**
+	 * Set or unset the currently active validation instance
+	 */
+	protected static function set_active($instance = null)
+	{
+		static::$active = $instance;
 	}
 
 	/**
@@ -78,12 +105,16 @@ class Validation {
 
 	protected function __construct($fieldset)
 	{
-		if ( ! $fieldset instanceof Fieldset)
+		if ($fieldset instanceof Fieldset)
 		{
-			$fieldset = Fieldset::factory($fieldset, array('validation_instance' => $this));
+			$fieldset->validation($this);
+			$this->fieldset = $fieldset;
+		}
+		else
+		{
+			$this->fieldset = Fieldset::factory($fieldset, array('validation_instance' => $this));
 		}
 
-		$this->fieldset = $fieldset;
 		$this->callables = array($this);
 	}
 
@@ -212,6 +243,8 @@ class Validation {
 			return false;
 		}
 
+		static::set_active($this);
+
 		$this->validated = array();
 		$this->errors = array();
 		$this->input = $input ?: array();
@@ -238,6 +271,8 @@ class Validation {
 				$this->errors[$field->name] = $v;
 			}
 		}
+
+		static::set_active();
 
 		return empty($this->errors);
 	}
@@ -405,7 +440,7 @@ class Validation {
 	 */
 	public function _validation_required($val)
 	{
-		return ($val !== false && $val !== null && $val !== '');
+		return ($val !== false && $val !== null && $val !== '' && $val !== array());
 	}
 
 	/**

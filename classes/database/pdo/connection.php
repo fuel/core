@@ -2,7 +2,7 @@
 /**
  * PDO database connection.
  *
- * @package    Kohana/Database
+ * @package    Fuel/Database
  * @category   Drivers
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team

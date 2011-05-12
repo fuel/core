@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -61,15 +59,7 @@ class Session {
 
 		if (\Config::get('session.auto_initialize', true))
 		{
-			// need to catch errors here, the error handler isn't running yet
-			try
-			{
-				static::instance();
-			}
-			catch (Exception $e)
-			{
-				\Error::show_php_error($e);die();
-			}
+			static::instance();
 		}
 	}
 
@@ -87,7 +77,7 @@ class Session {
 		$config = \Config::get('session', array());
 
 		// When a string was passed it's just the driver type
-		if ( ! empty($custom) && ! is_array($custom))
+		if ( ! empty($custom) and ! is_array($custom))
 		{
 			$custom = array('driver' => $custom);
 		}

@@ -2,9 +2,10 @@
 
 <phpunit colors="true" stopOnFailure="false" bootstrap="bootstrap_phpunit.php">
 	<php>
-		<server name="app_path" value="../app"/>
-		<server name="core_path" value="../core"/>
-		<server name="package_path" value="../packages"/>
+		<server name="doc_root" value="../../"/>
+		<server name="app_path" value="fuel/app"/>
+		<server name="core_path" value="fuel/core"/>
+		<server name="package_path" value="fuel/packages"/>
 	</php>
 	<testsuites>
 		<testsuite name="core">

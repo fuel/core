@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -21,6 +19,44 @@ namespace Fuel\Core;
  * @group Inflector
  */
 class Tests_Inflector extends TestCase {
+
+	public function ordinalize_provider()
+	{
+		return array(
+			array(1, 'st'),
+			array(21, 'st'),
+			array(2, 'nd'),
+			array(22, 'nd'),
+			array(3, 'rd'),
+			array(23, 'rd'),
+			array(4, 'th'),
+			array(24, 'th'),
+			array(111, 'th'),
+			array(112, 'th'),
+			array(113, 'th'),
+		);
+	}
+
+	/**
+	 * Test for Inflector::ordinalize()
+	 *
+	 * @test
+	 * @dataProvider ordinalize_provider
+	 */
+	public function test_ordinalize($number, $ending)
+	{
+		$this->assertEquals($number.$ending, Inflector::ordinalize($number));
+	}
+
+	/**
+	 * Test for Inflector::ordinalize()
+	 *
+	 * @test
+	 */
+	public function test_ordinalize_of_string()
+	{
+		$this->assertEquals('Foo', Inflector::ordinalize('Foo'));
+	}
 
 	/**
 	 * Test for Inflector::ascii()
@@ -100,6 +136,16 @@ class Tests_Inflector extends TestCase {
 	}
 
 	/**
+	 * Test for Inflector::foreign_key()
+	 *
+	 * @test
+	 */
+	public function test_foreign_key_with_model_prefx()
+	{
+		$this->assertEquals('inflector_id', Inflector::foreign_key('Model_Inflector'));
+	}
+
+	/**
 	 * Test for Inflector::friendly_title()
 	 *
 	 * @test
@@ -150,6 +196,16 @@ class Tests_Inflector extends TestCase {
 	}
 
 	/**
+	 * Test for Inflector::pluralize()
+	 *
+	 * @test
+	 */
+	public function test_pluralize_uncountable()
+	{
+		$this->assertEquals('equipment', Inflector::pluralize('equipment'));
+	}
+
+	/**
 	 * Test for Inflector::singularize()
 	 *
 	 * @test
@@ -162,17 +218,56 @@ class Tests_Inflector extends TestCase {
 	}
 
 	/**
-	 * Test for Inflector::tableize()
+	 * Test for Inflector::singularize()
 	 *
 	 * @test
 	 */
-	public function test_tableize()
+	public function test_singularize_uncountable()
 	{
-		$this->assertEquals(Inflector::tableize('\\Model\\User'), 'users');
-		$this->assertEquals(Inflector::tableize('\\Model\\Person'), 'people');
-		$this->assertEquals(Inflector::tableize('\\Model\\Mouse'), 'mice');
-		$this->assertEquals(Inflector::tableize('\\Model\\Ox'), 'oxen');
-		$this->assertEquals(Inflector::tableize('\\Model\\Matrix'), 'matrices');
+		$this->assertEquals('equipment', Inflector::singularize('equipment'));
+	}
+
+	public function tableize_provider()
+	{
+		return array(
+			array('\\Model\\User', 'users'),
+			array('\\Model\\Person', 'people'),
+			array('\\Model\\Mouse', 'mice'),
+			array('\\Model\\Ox', 'oxen'),
+			array('\\Model\\Matrix', 'matrices'),
+			array('Model_User', 'users'),
+		);
+	}
+
+	/**
+	 * Test for Inflector::tableize()
+	 *
+	 * @test
+	 * @dataProvider tableize_provider
+	 */
+	public function test_tableize($class, $table)
+	{
+		$this->assertEquals(Inflector::tableize($class), $table);
+	}
+
+	public function get_namespace_provider()
+	{
+		return array(
+			array('\\Model\\User', 'Model\\'),
+			array('\\Fuel\\Core\\Inflector', 'Fuel\\Core\\'),
+			array('Model_User', ''),
+		);
+	}
+
+	/**
+	 * Test for Inflector::get_namespace()
+	 *
+	 * @test
+	 * @dataProvider get_namespace_provider
+	 */
+	public function test_get_namespace($class, $namespace)
+	{
+		$this->assertEquals(Inflector::get_namespace($class), $namespace);
 	}
 
 	/**

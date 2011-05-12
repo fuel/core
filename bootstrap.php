@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -45,6 +43,7 @@ require COREPATH.'classes'.DS.'autoloader.php';
 Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
 Autoloader::add_classes(array(
+	'Fuel\\Core\\Agent'  => COREPATH.'classes/agent.php',
 	'Fuel\\Core\\Arr'    => COREPATH.'classes/arr.php',
 	'Fuel\\Core\\Asset'  => COREPATH.'classes/asset.php',
 
@@ -127,6 +126,10 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Log'						=> COREPATH.'classes/log.php',
 	'Fuel\\Core\\Migrate'					=> COREPATH.'classes/migrate.php',
 	'Fuel\\Core\\Model'						=> COREPATH.'classes/model.php',
+	
+	'Fuel\\Core\\Mongo_DB'					=> COREPATH.'classes/mongo/db.php',
+	'Fuel\\Core\\Mongo_Exception'			=> COREPATH.'classes/mongo/exception.php',
+	
 	'Fuel\\Core\\Output'					=> COREPATH.'classes/output.php',
 	'Fuel\\Core\\Pagination'				=> COREPATH.'classes/pagination.php',
 	'Fuel\\Core\\Profiler'					=> COREPATH.'classes/profiler.php',
