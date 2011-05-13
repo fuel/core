@@ -153,7 +153,7 @@ class File {
 	{
 		$path = static::instance($area)->get_path($path, $area);
 
-		$file = static::open_file($path, LOCK_SH, $area);
+		$file = static::open_file(@fopen($path, 'r'), LOCK_SH, $area);
 		$return = $as_string ? file_get_contents($path) : readfile($path);
 		static::close_file($file, $area);
 
