@@ -134,6 +134,7 @@ class Autoloader {
 	 */
 	public static function alias_to_namespace($class, $namespace = '')
 	{
+		! empty($namespace) and $namespace = rtrim($namespace, '\\').'\\';
 		$parts = explode('\\', $class);
 		$root_class = $namespace.array_pop($parts);
 		class_alias($class, $root_class);
