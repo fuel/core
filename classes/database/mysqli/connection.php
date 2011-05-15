@@ -26,10 +26,10 @@ class Database_MySQLi_Connection extends \Database_Connection {
 
 	// MySQL uses a backtick for identifiers
 	protected $_identifier = '`';
-	
+
 	// Allows transactions
 	protected $_trans_enabled = FALSE;
-	
+
 	// transaction errors
 	public $trans_errors = FALSE;
 
@@ -94,7 +94,7 @@ class Database_MySQLi_Connection extends \Database_Connection {
 			// Set the character set
 			$this->set_charset($this->_config['charset']);
 		}
-		
+
 		static::$_current_databases[$this->_connection_id] = $database;
 	}
 
@@ -176,8 +176,8 @@ class Database_MySQLi_Connection extends \Database_Connection {
 				// This benchmark is worthless
 				Profiler::delete($benchmark);
 			}
-			
-			if ($type !== \DB::SELECT && $this->_trans_enabled) 
+
+			if ($type !== \DB::SELECT && $this->_trans_enabled)
 			{
 				// If we are using transactions, throwing an exception would defeat the purpose
 				// We need to log the failures for transaction status
@@ -185,7 +185,7 @@ class Database_MySQLi_Connection extends \Database_Connection {
 				{
 					$this->trans_errors = array();
 				}
-				
+
 				$this->trans_errors[] = $this->_connection->errno.': '.$this->_connection->error.' [ '.$sql.' ]';
 			}
 			else
@@ -315,10 +315,10 @@ class Database_MySQLi_Connection extends \Database_Connection {
 
 			$column = $this->datatype($type);
 
-			$column['column_name']      = $row['Field'];
-			$column['column_default']   = $row['Default'];
+			$column['name']             = $row['Field'];
+			$column['default']          = $row['Default'];
 			$column['data_type']        = $type;
-			$column['is_nullable']      = ($row['Null'] == 'YES');
+			$column['null']             = ($row['Null'] == 'YES');
 			$column['ordinal_position'] = ++$count;
 
 			switch ($column['type'])
@@ -388,14 +388,14 @@ class Database_MySQLi_Connection extends \Database_Connection {
 		// SQL standard is to use single-quotes for all values
 		return "'$value'";
 	}
-	
+
 	public function transactional($use_trans = TRUE)
 	{
 		if (is_bool($use_trans)) {
 			$this->_trans_enabled = $use_trans;
 		}
 	}
-	
+
 	public function start_transaction()
 	{
 		$this->transactional();
