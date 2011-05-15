@@ -61,7 +61,7 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where {
 	 * @param   boolean  enable or disable distinct columns
 	 * @return  $this
 	 */
-	public function distinct($value)
+	public function distinct($value = true)
 	{
 		$this->_distinct = (bool) $value;
 
