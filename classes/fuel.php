@@ -157,8 +157,6 @@ class Fuel {
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
-		\View::$auto_encode = \Config::get('security.auto_encode_view_data');
-
 		// Set some server options
 		setlocale(LC_ALL, static::$locale);
 

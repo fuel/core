@@ -47,6 +47,14 @@ class View {
 	// File extension used for views
 	protected $extension = 'php';
 
+	/*
+	 * initialisation and auto configuration
+	 */
+	public static function _init()
+	{
+		static::$auto_encode = \Config::get('security.auto_encode_view_data', true);
+	}
+
 	/**
 	 * Returns a new View object. If you do not define the "file" parameter,
 	 * you must call [static::set_filename].
