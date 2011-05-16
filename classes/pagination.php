@@ -102,10 +102,9 @@ class Pagination {
 	 */
 	protected static function initialize()
 	{
-
 		static::$total_pages = ceil(static::$total_items / static::$per_page) ?: 1;
 
-		is_null(static::$current_page) and static::$current_page = (int) \URI::segment(static::$uri_segment);
+		static::$current_page = (int) \URI::segment(static::$uri_segment);
 
 		if (static::$current_page > static::$total_pages)
 		{
@@ -142,7 +141,7 @@ class Pagination {
 
 		return $pagination;
 	}
-	
+
 	// --------------------------------------------------------------------
 
 	/**
@@ -157,15 +156,15 @@ class Pagination {
 		{
 			return '';
 		}
-		
+
 		$pagination = '';
-		
+
 		// Let's get the starting page number, this is determined using num_links
 		$start = ((static::$current_page - static::$num_links) > 0) ? static::$current_page - (static::$num_links - 1) : 1;
 
 		// Let's get the ending page number
 		$end   = ((static::$current_page + static::$num_links) < static::$total_pages) ? static::$current_page + static::$num_links : static::$total_pages;
-		
+
 		for($i = $start; $i <= $end; $i++)
 		{
 			if (static::$current_page == $i)
@@ -178,7 +177,7 @@ class Pagination {
 				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/') . $url, $i);
 			}
 		}
-		
+
 		return $pagination;
 	}
 
