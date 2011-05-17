@@ -129,12 +129,23 @@ class Request {
 	{
 		logger(Fuel::L_INFO, 'Called', __METHOD__);
 
-		// This ensures that show_404 is only called once.
+		// This ensures that show_404 doesn't recurse indefinately
 		static $call_count = 0;
 		$call_count++;
 
-		if ($call_count > 1)
+		if ($call_count == 1)
 		{
+			// first call, route the 404 route
+			$route_request = true;
+		}
+		elseif ($call_count == 2)
+		{
+			// second call, try the 404 route without routing
+			$route_request = false;
+		}
+		else
+		{
+			// third call, there's something seriously wrong now
 			throw new \Fuel_Exception('It appears your _404_ route is incorrect.  Multiple Recursion has happened.');
 		}
 
@@ -152,7 +163,7 @@ class Request {
 		}
 		else
 		{
-			$request = \Request::factory(\Config::get('routes._404_'))->execute();
+			$request = \Request::factory(\Config::get('routes._404_'), $route_request)->execute();
 
 			if ($return)
 			{
@@ -169,7 +180,7 @@ class Request {
 	 * the active request is finished.
 	 *
 	 * Usage:
-	 * 
+	 *
 	 *    Request::reset_request();
 	 *
 	 * @return  void
@@ -186,7 +197,7 @@ class Request {
 
 	/**
 	 * Holds the response object of the request.
-	 * 
+	 *
 	 * @var  Response
 	 */
 	public $response = null;
@@ -200,63 +211,63 @@ class Request {
 
 	/**
 	 * The request's route object
-	 * 
+	 *
 	 * @var  Route
 	 */
 	public $route = null;
 
 	/**
 	 * The current module
-	 * 
+	 *
 	 * @var  string
 	 */
 	public $module = '';
 
 	/**
 	 * The current controller directory
-	 * 
+	 *
 	 * @var  string
 	 */
 	public $directory = '';
 
 	/**
 	 * The request's controller
-	 * 
+	 *
 	 * @var  string
 	 */
 	public $controller = '';
 
 	/**
 	 * The request's controller action
-	 * 
+	 *
 	 * @var  string
 	 */
 	public $action = '';
 
 	/**
 	 * The request's method params
-	 * 
+	 *
 	 * @var  array
 	 */
 	public $method_params = array();
 
 	/**
 	 * The request's named params
-	 * 
+	 *
 	 * @var  array
 	 */
 	public $named_params = array();
 
 	/**
 	 * Controller instance once instantiated
-	 * 
+	 *
 	 * @var  Controller
 	 */
 	public $controller_instance;
 
 	/**
 	 * Search paths for the current active request
-	 * 
+	 *
 	 * @var  array
 	 */
 	public $paths = array();
