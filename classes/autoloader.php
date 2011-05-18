@@ -31,6 +31,14 @@ class Autoloader {
 	protected static $namespaces = array();
 
 	/**
+	 * Holds all the PSR-0 compliant namespaces.  These namespaces should
+	 * be loaded according to the PSR-0 standard.
+	 * 
+	 * @var  array
+	 */
+	protected static $psr_namespaces = array();
+
+	/**
 	 * @var  array  list off namespaces of which classes will be aliased to global namespace
 	 */
 	protected static $core_namespaces = array('Fuel\\Core');
@@ -53,9 +61,13 @@ class Autoloader {
 	 * @param   string  the path
 	 * @return  void
 	 */
-	public static function add_namespace($namespace, $path)
+	public static function add_namespace($namespace, $path, $psr = false)
 	{
 		static::$namespaces[$namespace] = $path;
+		if ($psr)
+		{
+			static::$psr_namespaces[$namespace] = $path;
+		}
 	}
 
 	/**
@@ -233,13 +245,19 @@ class Autoloader {
 		// This handles a namespaces class that a path does not exist for
 		else
 		{
-			// need to stick the trimed \ back on...
-			$namespace = '\\'.ucfirst(substr($class, 0, $pos));
+			$namespace = substr($class, 0, $pos);
 
 			foreach (static::$namespaces as $ns => $path)
 			{
+				$ns = ltrim($ns, '\\');
+
 				if (strncmp($ns, $namespace, $ns_len = strlen($ns)) === 0)
 				{
+					if (array_key_exists($ns, static::$psr_namespaces))
+					{
+						static::psr_loader($path, $class);
+						return;
+					}
 					$class_no_ns = substr($class, $pos + 1);
 
 					$file_path = $path.strtolower(substr($namespace, strlen($ns) + 1).DS.str_replace('_', DS, $class_no_ns).'.php');
@@ -263,6 +281,21 @@ class Autoloader {
 		}
 
 		return $loaded;
+	}
+
+	protected static function psr_loader($path, $class)
+	{
+		$class = ltrim($class, '\\');
+		$file  = '';
+		$namespace = '';
+		if ($last_ns_pos = strripos($class, '\\')) {
+			$namespace = substr($class, 0, $last_ns_pos);
+			$class = substr($class, $last_ns_pos + 1);
+			$file = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+		}
+		$file .= str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
+
+		require $path.$file;
 	}
 
 	/**
