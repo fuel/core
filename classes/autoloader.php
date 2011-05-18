@@ -33,7 +33,7 @@ class Autoloader {
 	/**
 	 * Holds all the PSR-0 compliant namespaces.  These namespaces should
 	 * be loaded according to the PSR-0 standard.
-	 * 
+	 *
 	 * @var  array
 	 */
 	protected static $psr_namespaces = array();
@@ -251,20 +251,18 @@ class Autoloader {
 			{
 				$ns = ltrim($ns, '\\');
 
-				if (strncmp($ns, $namespace, $ns_len = strlen($ns)) === 0)
+				if (strncmp($ns, $namespace, strlen($ns)) === 0)
 				{
 					if (array_key_exists($ns, static::$psr_namespaces))
 					{
 						static::psr_loader($path, $class);
-						return;
+						return true;
 					}
 					$class_no_ns = substr($class, $pos + 1);
 
 					$file_path = $path.strtolower(substr($namespace, strlen($ns) + 1).DS.str_replace('_', DS, $class_no_ns).'.php');
 					if (is_file($file_path))
 					{
-						// Fuel::$path_cache[$class] = $file_path;
-						// Fuel::$paths_changed = true;
 						require $file_path;
 						static::_init_class($class);
 						$loaded = true;
@@ -283,17 +281,23 @@ class Autoloader {
 		return $loaded;
 	}
 
+	/**
+	 * A PSR-0 compatible class loader
+	 *
+	 * @param  string  path to the class
+	 * @param  string  classname
+	 */
 	protected static function psr_loader($path, $class)
 	{
 		$class = ltrim($class, '\\');
 		$file  = '';
-		$namespace = '';
-		if ($last_ns_pos = strripos($class, '\\')) {
+		if ($last_ns_pos = strripos($class, '\\'))
+		{
 			$namespace = substr($class, 0, $last_ns_pos);
 			$class = substr($class, $last_ns_pos + 1);
-			$file = str_replace('\\', DIRECTORY_SEPARATOR, $namespace) . DIRECTORY_SEPARATOR;
+			$file = str_replace('\\', DS, $namespace).DS;
 		}
-		$file .= str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
+		$file .= str_replace('_', DS, $class).'.php';
 
 		require $path.$file;
 	}
