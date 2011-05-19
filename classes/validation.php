@@ -136,7 +136,7 @@ class Validation {
 	 * @param	string		Rules as a piped string
 	 * @return	Validation	$this to allow chaining
 	 */
-	public function add_field($name, $label, $rules = array())
+	public function add_field($name, $label, $rules)
 	{
 		$field = $this->add($name, $label);
 
