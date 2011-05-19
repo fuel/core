@@ -430,7 +430,7 @@ class Upload {
 		// anything to save?
 		if (empty($files))
 		{
-			throw new Exception('No uploaded files are selected.');
+			throw new \Exception('No uploaded files are selected.');
 		}
 
 		// make sure we have a valid path
