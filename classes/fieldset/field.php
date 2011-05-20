@@ -122,6 +122,8 @@ class Fieldset_Field
 	{
 		$this->label = $label;
 		$this->set_attribute('label', $label);
+
+		return $this;
 	}
 
 	/**
@@ -133,6 +135,8 @@ class Fieldset_Field
 	{
 		$this->type = (string) $type;
 		$this->set_attribute('type', $type);
+
+		return $this;
 	}
 
 	/**
@@ -152,12 +156,15 @@ class Fieldset_Field
 				{
 					$this->set_attribute('checked', 'checked');
 				}
-				return;
+
+				return $this;
 			}
 		}
 
 		$this->value = $value;
 		$this->set_attribute('value', $value);
+
+		return $this;
 	}
 
 	/**
@@ -168,6 +175,8 @@ class Fieldset_Field
 	public function set_template($template = null)
 	{
 		$this->template = $template;
+
+		return $this;
 	}
 
 	/**
@@ -293,16 +302,6 @@ class Fieldset_Field
 		}
 
 		return $this;
-	}
-
-	/**
-	 * Get the options available for this field
-	 *
-	 * @return	array
-	 */
-	public function options()
-	{
-		return $this->options;
 	}
 
 	/**
