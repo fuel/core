@@ -116,12 +116,12 @@ class Fieldset
 	{
 		if (isset($config['validation_instance']))
 		{
-			$this->validation = $config['validation_instance'];
+			$this->validation($config['validation_instance']);
 			unset($config['validation_instance']);
 		}
 		if (isset($config['form_instance']))
 		{
-			$this->form = $config['form_instance'];
+			$this->form($config['form_instance']);
 			unset($config['form_instance']);
 		}
 
@@ -161,7 +161,7 @@ class Fieldset
 	{
 		if ($instance instanceof Form)
 		{
-			$this->validation = $instance;
+			$this->form = $instance;
 			return $instance;
 		}
 
@@ -368,7 +368,7 @@ class Fieldset
 	 */
 	public function validated($field = null)
 	{
-		return $this->validation->validated($field);
+		return $this->validation()->validated($field);
 	}
 
 	/**
