@@ -102,7 +102,7 @@ class Format {
 		{
 			$data = $this->_data;
 		}
-		
+
 		// turn off compatibility mode as simple xml throws a wobbly if you don't.
 		if (ini_get('zend.ze1_compatibility_mode') == 1)
 		{
@@ -119,13 +119,13 @@ class Format {
 		{
 			$data = (array) $data;
 		}
-		
+
 		foreach ($data as $key => $value)
 		{
 			// no numeric keys in our xml please!
 			if (is_numeric($key))
             {
-                // make string key...           
+                // make string key...
                 $key = (Inflector::singularize($basenode) != $basenode) ? Inflector::singularize($basenode) : 'item';
             }
 
@@ -186,7 +186,7 @@ class Format {
 	public function to_csv()
 	{
 		$data = $this->_data;
-		
+
 		// Multi-dimentional array
 		if (is_array($data) and isset($data[0]))
 		{
@@ -212,7 +212,10 @@ class Format {
 	// Encode as JSON
 	public function to_json()
 	{
-		return json_encode($this->_data);
+		// To allow exporting ArrayAccess objects like Orm\Model instances they need to be
+		// converted to an array first
+		$data = $this->_data instanceof \ArrayAccess ? $this->to_array($this->_data) : $this->_data;
+		return json_encode($data);
 	}
 
 	// Encode as Serialized array
@@ -233,7 +236,7 @@ class Format {
 		{
 			import('spyc/spyc', 'vendor');
 		}
-		
+
 		return \Spyc::YAMLDump($this->_data);
 	}
 
@@ -302,7 +305,7 @@ class Format {
 					continue 2;
 				}
 			}
-			
+
 			// The substr removes " from start and end
 			$data_fields = explode('","', trim($row, '"'));
 
@@ -312,7 +315,7 @@ class Format {
 			}
 
 		}
-		
+
 		return $data;
 	}
 
@@ -327,7 +330,7 @@ class Format {
 	{
 		return unserialize(trim($string));
 	}
-	
+
 }
 
 /* End of file view.php */
