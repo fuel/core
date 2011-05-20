@@ -693,10 +693,15 @@ class Form {
 					foreach ($field->options as $value => $label)
 					{
 						$attributes['name'] = $field->name;
-						$field->type == 'checkbox' && $attributes['name'] .= '['.$i.']';
+						$field->type == 'checkbox' and $attributes['name'] .= '['.$i.']';
 
 						$attributes['value'] = $value;
 						$attributes['label'] = $label;
+
+						if (is_array($field->value) ? in_array($value, $field->value) : $value == $field->value)
+						{
+							$attributes['checked'] = 'checked';
+						}
 
 						if (empty($attributes['id']) && $this->get_config('auto_id', false) == true)
 						{

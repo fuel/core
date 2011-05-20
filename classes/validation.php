@@ -411,7 +411,7 @@ class Validation {
 	 */
 	public function add_model($class, $instance = null, $method = 'set_form_fields')
 	{
-		$this->fieldset->add_model($class);
+		$this->fieldset->add_model($class, $instance, $method);
 
 		return $this;
 	}

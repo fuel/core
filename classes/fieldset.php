@@ -315,21 +315,21 @@ class Fieldset
 			{
 				if (is_array($input) or $input instanceof \ArrayAccess)
 				{
-					if ($value = $input[$f->name])
+					if (array_key_exists($f->name, $input))
 					{
-						$f->set_value($value);
+						$f->set_value($input[$f->name], true);
 					}
 				}
 				elseif (is_object($input) and property_exists($input, $f->name))
 				{
-					$f->set_value($input->{$f->name});
+					$f->set_value($input->{$f->name}, true);
 				}
 			}
 			else
 			{
 				if (($value = $this->input($f->name, null)) !== null)
 				{
-					$f->set_value($value);
+					$f->set_value($value, true);
 				}
 			}
 		}

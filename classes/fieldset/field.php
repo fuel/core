@@ -138,10 +138,24 @@ class Fieldset_Field
 	/**
 	 * Change the field's current or default value
 	 *
-	 * @param	string
+	 * @param  string
+	 * @param  bool
 	 */
-	public function set_value($value)
+	public function set_value($value, $repopulate = false)
 	{
+		// Repopulation is handled slightly different in some cases
+		if ($repopulate)
+		{
+			if (($this->type == 'radio' or $this->type == 'checkbox') and empty($this->options))
+			{
+				if ($this->value == $value)
+				{
+					$this->set_attribute('checked', 'checked');
+				}
+				return;
+			}
+		}
+
 		$this->value = $value;
 		$this->set_attribute('value', $value);
 	}
