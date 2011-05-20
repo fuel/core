@@ -147,13 +147,14 @@ class Form {
 	 */
 	public static function open($attributes = array(), Array $hidden = array())
 	{
-		$attributes = ! is_array($attributes) ? array('action' => (string) $attributes) : $attributes;
+		$attributes = ! is_array($attributes) ? array('action' => $attributes) : $attributes;
 
 		// If there is still no action set, Form-post
-		if( ! array_key_exists('action', $attributes))
+		if( ! array_key_exists('action', $attributes) or $attributes['action'] === null)
 		{
 			$attributes['action'] = \Uri::current();
 		}
+
 
 		// If not a full URL, create one
 		elseif ( ! strpos($attributes['action'], '://'))
@@ -685,15 +686,15 @@ class Form {
 				$build_field = static::hidden($field->name, $field->value, $field->attributes);
 				break;
 			case 'radio': case 'checkbox':
-				if ($field->options())
+				if ($field->options)
 				{
 					$build_field = array();
-					$attributes = $field->attributes;
 					$i = 0;
 					foreach ($field->options as $value => $label)
 					{
+						$attributes = $field->attributes;
 						$attributes['name'] = $field->name;
-						$field->type == 'checkbox' and $attributes['name'] .= '['.$i.']';
+						$field->type == 'checkbox' and $attributes['name'] .= '['.++$i.']';
 
 						$attributes['value'] = $value;
 						$attributes['label'] = $label;
@@ -738,6 +739,9 @@ class Form {
 				unset($attributes['type']);
 				$build_field = static::textarea($field->name, $field->value, $attributes);
 				break;
+			case 'button':
+				$build_field = static::button($field->name, $field->value, $field->attributes);
+				break;
 			default:
 				$build_field = static::input($field->name, $field->value, $field->attributes);
 				break;
@@ -770,6 +774,7 @@ class Form {
 				{
 					$bf_temp = str_replace('{field}', $bf, $match[1]);
 					$bf_temp = str_replace('{label}', $label, $bf_temp);
+					$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
 					$build_fields .= $bf_temp;
 				}
 				$template = str_replace($match[0], $build_fields, $template);
