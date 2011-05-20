@@ -304,6 +304,16 @@ class Form {
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
 		}
+
+		if(! empty($attributes['checked']) and $attributes['checked'] == $attributes['value'])
+		{
+			$attributes['checked'] = 'checked';
+		}
+		else
+		{
+			unset($attributes['checked']);
+		}
+
 		$attributes['type'] = 'radio';
 
 		return static::input($attributes);
@@ -328,7 +338,6 @@ class Form {
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
 		}
-		$attributes['type'] = 'checkbox';
 
 		return static::input($attributes);
 	}
@@ -718,9 +727,18 @@ class Form {
 				}
 				else
 				{
+					$attributes = $field->attributes;
+					if(! empty($attributes['checked']) and $attributes['checked'] == $field->value)
+					{
+						$attributes['checked'] = 'checked';
+					}
+					else
+					{
+						unset($attributes['checked']);
+					}
 					$build_field = $field->type == 'radio'
-						? static::radio($field->name, $field->value, $field->attributes)
-						: static::checkbox($field->name, $field->value, $field->attributes);
+						? static::radio($field->name, $field->value, $attributes)
+						: static::checkbox($field->name, $field->value, $attributes);
 				}
 				break;
 			case 'select':

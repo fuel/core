@@ -147,6 +147,17 @@ class Fieldset_Field
 	}
 
 	/**
+	 * Change the field's checked value (checkboxes and radio buttons)
+	 *
+	 * @param	string
+	 */
+	public function set_checked($value = null)
+	{
+		$value = is_null($value) ? $this->value : $value;
+		$this->set_attribute('checked', $value);
+	}
+
+	/**
 	 * Template the output
 	 *
 	 * @param	string

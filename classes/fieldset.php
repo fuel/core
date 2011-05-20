@@ -317,11 +317,19 @@ class Fieldset
 				{
 					if ($value = $input[$f->name])
 					{
+						if($f->type == 'checkbox' or $f->type == 'radio')
+						{
+							$f->set_checked($value);
+						}
 						$f->set_value($value);
 					}
 				}
 				elseif (is_object($input) and property_exists($input, $f->name))
 				{
+					if($f->type == 'checkbox' or $f->type == 'radio')
+					{
+						$f->set_checked($input->{$f->name});
+					}
 					$f->set_value($input->{$f->name});
 				}
 			}
@@ -329,6 +337,10 @@ class Fieldset
 			{
 				if (($value = $this->input($f->name, null)) !== null)
 				{
+					if($f->type == 'checkbox' or $f->type == 'radio')
+					{
+						$f->set_checked($value);
+					}
 					$f->set_value($value);
 				}
 			}
