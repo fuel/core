@@ -17,20 +17,18 @@ namespace Fuel\Core;
  *
  * Help convert between various formats such as XML, JSON, CSV, etc.
  *
- * @package		Fuel
- * @category	Core
- * @author		Phil Sturgeon - Fuel Development Team
- * @copyright	(c) 2008-2010 Kohana Team
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com/docs/classes/format.html
+ * @package    Fuel
+ * @category   Core
+ * @author     Fuel Development Team
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com/docs/classes/format.html
  */
 class Format {
 
-	// Array to convert
+	/**
+	 * @var  array|mixed  input to convert
+	 */
 	protected $_data = array();
-
-	// View filename
-	protected $_from_type = null;
 
 	/**
 	 * Returns an instance of the Format object.
@@ -70,6 +68,14 @@ class Format {
 
 	// FORMATING OUTPUT ---------------------------------------------------------
 
+	/**
+	 * To array conversion
+	 *
+	 * Goes through the input and makes sure everything is either a scalar value or array
+	 *
+	 * @param   mixed  $data
+	 * @return  array
+	 */
 	public function to_array($data = null)
 	{
 		if ($data === null)
@@ -95,7 +101,14 @@ class Format {
 		return $array;
 	}
 
-	// Format XML for output
+	/**
+	 * To XML conversion
+	 *
+	 * @param   mixed        $data
+	 * @param   null         $structure
+	 * @param   null|string  $basenode
+	 * @return  string
+	 */
 	public function to_xml($data = null, $structure = null, $basenode = 'xml')
 	{
 		if ($data == null)
@@ -124,26 +137,26 @@ class Format {
 		{
 			// no numeric keys in our xml please!
 			if (is_numeric($key))
-            {
-                // make string key...
-                $key = (Inflector::singularize($basenode) != $basenode) ? Inflector::singularize($basenode) : 'item';
-            }
+			{
+				// make string key...
+				$key = (Inflector::singularize($basenode) != $basenode) ? Inflector::singularize($basenode) : 'item';
+			}
 
 			// replace anything not alpha numeric
 			$key = preg_replace('/[^a-z_\-0-9]/i', '', $key);
 
-            // if there is another array found recrusively call this function
-            if (is_array($value) || is_object($value))
-            {
-                $node = $structure->addChild($key);
+			// if there is another array found recrusively call this function
+			if (is_array($value) || is_object($value))
+			{
+				$node = $structure->addChild($key);
 
-                // recrusive call.
-                $this->to_xml($value, $node, $key);
-            }
+				// recrusive call.
+				$this->to_xml($value, $node, $key);
+			}
 
-            else
-            {
-                // add single node.
+			else
+			{
+				// add single node.
 				$value = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, "UTF-8");
 
 				$structure->addChild($key, $value);
@@ -154,38 +167,18 @@ class Format {
 		return $structure->asXML();
 	}
 
-	// Format HTML for output
-//	private function to_html($data = array())
-//	{
-//		// Multi-dimentional array
-//		if (isset($data[0]))
-//		{
-//			$headings = array_keys($data[0]);
-//		}
-//
-//		// Single array
-//		else
-//		{
-//			$headings = array_keys($data);
-//			$data = array($data);
-//		}
-//
-//		$this->load->library('table');
-//
-//		$this->table->set_heading($headings);
-//
-//		foreach ($data as &$row)
-//		{
-//			$this->table->add_row($row);
-//		}
-//
-//		return $this->table->generate();
-//	}
-
-	// Format HTML for output
-	public function to_csv()
+	/**
+	 * To CSV conversion
+	 *
+	 * @param   mixed   $data
+	 * @return  string
+	 */
+	public function to_csv($data = null)
 	{
-		$data = $this->_data;
+		if ($data == null)
+		{
+			$data = $this->_data;
+		}
 
 		// Multi-dimentional array
 		if (is_array($data) and isset($data[0]))
@@ -209,43 +202,95 @@ class Format {
 		return rtrim($output, "\n");
 	}
 
-	// Encode as JSON
-	public function to_json()
+	/**
+	 * To JSON conversion
+	 *
+	 * @param   mixed  $data
+	 * @return  string
+	 */
+	public function to_json($data = null)
 	{
+		if ($data == null)
+		{
+			$data = $this->_data;
+		}
+
 		// To allow exporting ArrayAccess objects like Orm\Model instances they need to be
 		// converted to an array first
-		$data = $this->_data instanceof \ArrayAccess ? $this->to_array($this->_data) : $this->_data;
+		$data = $data instanceof \ArrayAccess ? $this->to_array($data) : $data;
 		return json_encode($data);
 	}
 
-	// Encode as Serialized array
-	public function to_serialized()
+	/**
+	 * Serialize
+	 *
+	 * @param   mixed  $data
+	 * @return  string
+	 */
+	public function to_serialized($data = null)
 	{
-		return serialize($this->_data);
+		if ($data == null)
+		{
+			$data = $this->_data;
+		}
+
+		return serialize($data);
 	}
 
-	// Return as a string representing the PHP structure
-	public function to_php()
+	/**
+	 * Return as a string representing the PHP structure
+	 *
+	 * @param   mixed  $data
+	 * @return  string
+	 */
+	public function to_php($data = null)
 	{
-	    return var_export($this->_data, TRUE);
+		if ($data == null)
+		{
+			$data = $this->_data;
+		}
+
+		return var_export($data, TRUE);
 	}
 
-	public function to_yaml()
+	/**
+	 * Convert to YAML
+	 *
+	 * @param   mixed   $data
+	 * @return  string
+	 */
+	public function to_yaml($data = null)
 	{
+		if ($data == null)
+		{
+			$data = $this->_data;
+		}
+
 		if ( ! function_exists('spyc_load'))
 		{
 			import('spyc/spyc', 'vendor');
 		}
 
-		return \Spyc::YAMLDump($this->_data);
+		return \Spyc::YAMLDump($data);
 	}
 
-	// Format XML for output
+	/**
+	 * Import XML data
+	 *
+	 * @param   string  $string
+	 * @return  array
+	 */
 	protected function _from_xml($string)
 	{
 		return $string ? (array) simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : array();
 	}
 
+	/**
+	 * Import YAML data
+	 *
+	 * @param   string  $string
+	 * @return  array
+	 */
 	protected function _from_yaml($string)
 	{
 		if ( ! function_exists('spyc_load'))
@@ -256,7 +301,12 @@ class Format {
 		return \Spyc::YAMLLoadString($string);
 	}
 
-	// Format HTML for output
+	/**
+	 * Import CSV data
+	 *
+	 * @param   string  $string
+	 * @return  array
+	 */
 	protected function _from_csv($string)
 	{
 		$data = array();
@@ -266,8 +316,8 @@ class Format {
 
 		// TODO: This means any headers with , will be split, but this is less likley thay a value containing it
 		$headings = array_map(function($value) {
-		    return trim($value, '"');
-		}, explode(',', array_shift($rows)));
+				return trim($value, '"');
+			}, explode(',', array_shift($rows)));
 
 		$join_row = null;
 
@@ -319,13 +369,23 @@ class Format {
 		return $data;
 	}
 
-	// Encode as JSON
+	/**
+	 * Import JSON data
+	 *
+	 * @param   string  $string
+	 * @return  mixed
+	 */
 	private function _from_json($string)
 	{
 		return json_decode(trim($string));
 	}
 
-	// Encode as Serialized array
+	/**
+	 * Import Serialized data
+	 *
+	 * @param   string  $string
+	 * @return  mixed
+	 */
 	private function _from_serialize($string)
 	{
 		return unserialize(trim($string));
