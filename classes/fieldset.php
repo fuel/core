@@ -315,7 +315,7 @@ class Fieldset
 			{
 				if (is_array($input) or $input instanceof \ArrayAccess)
 				{
-					if (array_key_exists($f->name, $input))
+					if (isset($input[$f->name]))
 					{
 						$f->set_value($input[$f->name], true);
 					}
