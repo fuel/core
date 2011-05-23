@@ -243,7 +243,7 @@ class Str {
  */
             public static function alternator()
             {
-                static $i;
+                static $i = 0;
 
                 if (func_num_args() == 0)
                 {
