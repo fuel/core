@@ -468,7 +468,7 @@ class Form {
 	/**
 	 * Select
 	 *
-	 * Generates a <select> element based on the given parameters
+	 * Generates a html select element based on the given parameters
 	 *
 	 * @param	array
 	 * @return	string
