@@ -13,7 +13,7 @@
 return array(
 	'form_template'			=> "\t\t{form_open}\n{fields}\n\t\t{form_close}\n",
 	'field_template'		=> "\t\t\t{label} {field}\n",
-	'multi_field_template'	=> "{fields}\t\t\t{label}{required} {field}{fields}",
+	'multi_field_template'	=> "\t\t\t{label}\n {fields}\t\t\t{label}{required} {field}{fields}",
 	'required_mark'			=> '*',
 );
 
