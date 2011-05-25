@@ -12,6 +12,10 @@
 
 namespace Fuel\Core;
 
+
+class View_Exception extends Fuel_Exception {}
+
+
 /**
  * View class
  *
@@ -114,7 +118,7 @@ class View {
 	 *
 	 * @param   string  variable name
 	 * @return  mixed
-	 * @throws  Exception
+	 * @throws  OutOfBoundsException
 	 */
 	public function & __get($key)
 	{
@@ -128,8 +132,7 @@ class View {
 		}
 		else
 		{
-//			throw new Exception('View variable is not set: :var',
-//				array(':var' => $key));
+			throw new \OutOfBoundsException('View variable is not set: var'.$key);
 		}
 	}
 

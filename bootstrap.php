@@ -164,7 +164,7 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Validation_Error'  => COREPATH.'classes/validation/error.php',
 
 	'Fuel\\Core\\View'            => COREPATH.'classes/view.php',
-	'Fuel\\Core\\View_Exception'  => COREPATH.'classes/view/exception.php',
+	'Fuel\\Core\\View_Exception'  => COREPATH.'classes/view.php',
 
 	'Fuel\\Core\\ViewModel'  => COREPATH.'classes/viewmodel.php',
 ));
