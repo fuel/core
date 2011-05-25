@@ -153,9 +153,9 @@ class Arr {
 	{
 		$return = array();
 
-		if ( ! is_array($keys) or ! is_array($keys))
+		if ( ! is_array($array) or ! is_array($keys))
 		{
-			throw new \InvalidArgumentException('Arr::elements() - $keys must be an array.');
+			throw new \InvalidArgumentException('Arr::elements() - $keys and $array must be arrays.');
 		}
 
 		foreach ($keys as $key)
