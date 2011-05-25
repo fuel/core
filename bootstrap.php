@@ -107,8 +107,8 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Fieldset_Field'  => COREPATH.'classes/fieldset/field.php',
 
 	'Fuel\\Core\\File'                   => COREPATH.'classes/file.php',
+	'Fuel\\Core\\FileAccessException'    => COREPATH.'classes/file.php',
 	'Fuel\\Core\\File_Area'              => COREPATH.'classes/file/area.php',
-	'Fuel\\Core\\File_Exception'         => COREPATH.'classes/file/exception.php',
 	'Fuel\\Core\\File_Driver_File'       => COREPATH.'classes/file/driver/file.php',
 	'Fuel\\Core\\File_Driver_Directory'  => COREPATH.'classes/file/driver/directory.php',
 
@@ -164,7 +164,6 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Validation_Error'  => COREPATH.'classes/validation/error.php',
 
 	'Fuel\\Core\\View'            => COREPATH.'classes/view.php',
-	'Fuel\\Core\\View_Exception'  => COREPATH.'classes/view.php',
 
 	'Fuel\\Core\\ViewModel'  => COREPATH.'classes/viewmodel.php',
 ));
