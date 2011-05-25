@@ -48,7 +48,8 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Asset'  => COREPATH.'classes/asset.php',
 
 	'Fuel\\Core\\Cache'                     => COREPATH.'classes/cache.php',
-	'Fuel\\Core\\Cache_Exception'           => COREPATH.'classes/cache/exception.php',
+	'Fuel\\Core\\CacheNotFoundException'    => COREPATH.'classes/cache.php',
+	'Fuel\\Core\\CacheExpiredException'     => COREPATH.'classes/cache.php',
 	'Fuel\\Core\\Cache_Handler_Driver'      => COREPATH.'classes/cache/handler/driver.php',
 	'Fuel\\Core\\Cache_Handler_Json'        => COREPATH.'classes/cache/handler/json.php',
 	'Fuel\\Core\\Cache_Handler_Serialized'  => COREPATH.'classes/cache/handler/serialized.php',
@@ -126,10 +127,10 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Log'						=> COREPATH.'classes/log.php',
 	'Fuel\\Core\\Migrate'					=> COREPATH.'classes/migrate.php',
 	'Fuel\\Core\\Model'						=> COREPATH.'classes/model.php',
-	
+
 	'Fuel\\Core\\Mongo_DB'					=> COREPATH.'classes/mongo/db.php',
 	'Fuel\\Core\\Mongo_Exception'			=> COREPATH.'classes/mongo/exception.php',
-	
+
 	'Fuel\\Core\\Output'					=> COREPATH.'classes/output.php',
 	'Fuel\\Core\\Pagination'				=> COREPATH.'classes/pagination.php',
 	'Fuel\\Core\\Profiler'					=> COREPATH.'classes/profiler.php',
