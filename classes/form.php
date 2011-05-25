@@ -38,7 +38,7 @@ class Form {
 		{
 			if ($fieldset->form(false) != null)
 			{
-				throw new Fuel_Exception('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
+				throw new \DomainException('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
 			}
 		}
 
@@ -221,7 +221,7 @@ class Form {
 
 		if ( ! in_array($attributes['type'], static::$_valid_inputs))
 		{
-			throw new \Fuel_Exception(sprintf('"%s" is not a valid input type.', $attributes['type']));
+			throw new \InvalidArgumentException(sprintf('"%s" is not a valid input type.', $attributes['type']));
 		}
 
 		if (static::get_class_config('prep_value', true) && empty($attributes['dont_prep']))
@@ -490,7 +490,7 @@ class Form {
 
 		if ( ! isset($attributes['options']) || ! is_array($attributes['options']))
 		{
-			throw new \Fuel_Exception(sprintf('Select element "%s" is either missing the "options" or "options" is not array.', $attributes['name']));
+			throw new \InvalidArgumentException(sprintf('Select element "%s" is either missing the "options" or "options" is not array.', $attributes['name']));
 		}
 		// Get the options then unset them from the array
 		$options = $attributes['options'];

@@ -44,7 +44,7 @@ class Validation {
 		{
 			if ($fieldset->validation(false) != null)
 			{
-				throw new Fuel_Exception('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
+				throw new \DomainException('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
 			}
 		}
 
@@ -207,7 +207,7 @@ class Validation {
 	{
 		if ( ! (is_object($class) || class_exists($class)))
 		{
-			throw new \Fuel_Exception('Input for add_callable is not a valid object or class.');
+			throw new \InvalidArgumentException('Input for add_callable is not a valid object or class.');
 		}
 
 		array_unshift($this->callables, $class);
