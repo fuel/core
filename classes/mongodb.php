@@ -252,7 +252,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where(array('foo' => 'bar'))->get('foobar');
 	*/
-
 	public function where($wheres = array())
 	 {
 	 	foreach ($wheres as $wh => $val)
@@ -271,7 +270,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->or_where(array( array('foo'=>'bar', 'bar'=>'foo' ))->get('foobar');
 	*/
-
 	public function or_where($wheres = array())
 	{
 		if (count($wheres) > 0)
@@ -314,7 +312,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
 	*/
-
 	public function where_in_all($field = "", $in = array())
 	{
 		$this->_where_init($field);
@@ -331,7 +328,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_not_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
 	*/
-
 	public function where_not_in($field = "", $in = array())
 	{
 		$this->_where_init($field);
@@ -348,7 +344,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_gt('foo', 20);
 	*/
-
 	public function where_gt($field = "", $x)
 	{
 		$this->_where_init($field);
@@ -365,7 +360,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_gte('foo', 20);
 	*/
-
 	public function where_gte($field = "", $x)
 	{
 		$this->_where_init($field);
@@ -382,7 +376,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_lt('foo', 20);
 	*/
-
 	public function where_lt($field = "", $x)
 	{
 		$this->_where_init($field);
@@ -399,7 +392,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_lte('foo', 20);
 	*/
-
 	public function where_lte($field = "", $x)
 	{
 		$this->_where_init($field);
@@ -416,7 +408,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_between('foo', 20, 30);
 	*/
-
 	public function where_between($field = "", $x, $y)
 	{
 		$this->_where_init($field);
@@ -434,7 +425,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_between_ne('foo', 20, 30);
 	*/
-
 	public function where_between_ne($field = "", $x, $y)
 	{
 		$this->_where_init($field);
@@ -452,7 +442,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_not_equal('foo', 1)->get('foobar');
 	*/
-
 	public function where_ne($field = '', $x)
 	{
 		$this->_where_init($field);
@@ -469,8 +458,7 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_near('foo', array('50','50'))->get('foobar');
 	*/
-
-	function where_near($field = '', $co = array())
+	public function where_near($field = '', $co = array())
 	{
 		$this->__where_init($field);
 		$this->where[$what]['$near'] = $co;  // @TODO : can't work, $what is undefined
@@ -506,7 +494,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->like('foo', 'bar', 'im', FALSE, TRUE);
 	*/
-
 	public function like($field = "", $value = "", $flags = "i", $enable_start_wildcard = TRUE, $enable_end_wildcard = TRUE)
 	 {
 	 	$field = (string) trim($field);
@@ -540,7 +527,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->where_between('foo', 20, 30);
 	*/
-
 	public function order_by($fields = array())
 	{
 		foreach ($fields as $col => $val)
@@ -566,7 +552,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->limit($x);
 	*/
-
 	public function limit($x = 99999)
 	{
 		if ($x !== NULL && is_numeric($x) && $x >= 1)
@@ -585,7 +570,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->offset($x);
 	*/
-
 	public function offset($x = 0)
 	{
 		if ($x !== NULL && is_numeric($x) && $x >= 1)
@@ -604,7 +588,6 @@ class MongoDb {
 	*
 	*	@usage $mongodb->get_where('foo', array('bar' => 'something'));
 	*/
-
 	public function get_where($collection = "", $where = array(), $limit = 99999)
 	{
 		return ($this->where($where)->limit($limit)->get($collection));
@@ -619,30 +602,29 @@ class MongoDb {
 	*
 	*	@usage $mongodb->get('foo', array('bar' => 'something'));
 	*/
-
 	 public function get($collection = "")
 	 {
-	 	if (empty($collection))
-	 	{
-	 		throw new \MongoDbException("In order to retreive documents from MongoDB");
-	 	}
+		if (empty($collection))
+		{
+			throw new \MongoDbException("In order to retreive documents from MongoDB");
+		}
 
-	 	$results = array();
+		$results = array();
 
-	 	$documents = $this->db->{$collection}->find($this->wheres, $this->selects)->limit((int) $this->limit)->skip((int) $this->offset)->sort($this->sorts);
+		$documents = $this->db->{$collection}->find($this->wheres, $this->selects)->limit((int) $this->limit)->skip((int) $this->offset)->sort($this->sorts);
 
-	 	$returns = array();
+		$returns = array();
 
-	 	if ($documents && count($documents) > 0)
-	 	{
-		 	foreach ($documents as $doc)
-		 	{
-		 		$returns[] = $doc;
-		 	}
-	 	}
+		if ($documents && count($documents) > 0)
+		{
+			foreach ($documents as $doc)
+			{
+				$returns[] = $doc;
+			}
+		}
 
 		return (object)$returns;
-	 }
+	}
 
 	/**
 	*	--------------------------------------------------------------------------------
@@ -673,9 +655,7 @@ class MongoDb {
 	*	Insert a new document into the passed collection
 	*
 	*	@usage $mongodb->insert('foo', $data = array());
-string|bool
 	*/
-
 	public function insert($collection = "", $insert = array())
 	{
 		if (empty($collection))
@@ -715,7 +695,6 @@ string|bool
 	*
 	*	@usage $mongodb->update('foo', $data = array());
 	*/
-
 	public function update($collection = "", $data = array(), $options = array())
 	{
 		if (empty($collection))
@@ -751,7 +730,6 @@ string|bool
 	*
 	*	@usage $mongodb->update_all('foo', $data = array());
 	*/
-
 	public function update_all($collection = "", $data = array())
 	{
 		if (empty($collection))
@@ -785,7 +763,6 @@ string|bool
 	*
 	*	@usage $mongodb->delete('foo', $data = array());
 	*/
-
 	public function delete($collection = "")
 	{
 		if (empty($collection))
@@ -815,7 +792,6 @@ string|bool
 	*
 	*	@usage $mongodb->delete_all('foo', $data = array());
 	*/
-
 	 public function delete_all($collection = "")
 	 {
 		if (empty($collection))
@@ -846,7 +822,6 @@ string|bool
 	*
 	*	@usage $mongodb->command(array('geoNear'=>'buildings', 'near'=>array(53.228482, -0.547847), 'num' => 10, 'nearSphere'=>TRUE));
 	*/
-
 	public function command($query = array())
 	{
 		try
@@ -872,7 +847,6 @@ string|bool
 	*
 	*	@usage $mongodb->add_index($collection, array('first_name' => 'ASC', 'last_name' => -1), array('unique' => TRUE));
 	*/
-
 	public function add_index($collection = "", $keys = array(), $options = array())
 	{
 		if (empty($collection))
@@ -908,8 +882,6 @@ string|bool
 		}
 	}
 
-
-
 	/**
 	*	--------------------------------------------------------------------------------
 	*	REMOVE_INDEX
@@ -921,7 +893,6 @@ string|bool
 	*
 	*	@usage $mongodb->remove_index($collection, array('first_name' => 'ASC', 'last_name' => -1));
 	*/
-
 	public function remove_index($collection = "", $keys = array())
 	{
 		if (empty($collection))
@@ -954,7 +925,6 @@ string|bool
 	*
 	*	@usage $mongodb->remove_all_index($collection);
 	*/
-
 	public function remove_all_indexes($collection = "")
 	{
 		if (empty($collection))
@@ -993,8 +963,7 @@ string|bool
 	*
 	*	Resets the class variables to default settings
 	*/
-
-	private function _clear()
+	protected function _clear()
 	{
 		$this->selects	= array();
 		$this->wheres	= array();
@@ -1010,14 +979,13 @@ string|bool
 	*
 	*	Prepares parameters for insertion in $wheres array().
 	*/
-
-	private function _where_init($param)
+	protected function _where_init($param)
 	{
 		if ( ! isset($this->wheres[$param]))
 		{
 			$this->wheres[ $param ] = array();
 		}
 	}
-
 }
+
 /* End of file classes/mongodb.php */
