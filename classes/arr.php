@@ -120,7 +120,7 @@ class Arr {
 		$key = explode('.', $key);
 		if(count($key) > 1)
 		{
-			if ( ! is_array($array) || ! array_key_exists($key[0], $array))
+			if ( ! is_array($array) or ! array_key_exists($key[0], $array))
 			{
 				return $default;
 			}
@@ -133,7 +133,7 @@ class Arr {
 		else
 		{
 			$key = $key[0];
-			if ( ! is_array($array) || ! array_key_exists($key, $array))
+			if ( ! is_array($array) or ! array_key_exists($key, $array))
 			{
 				return $default;
 			}
@@ -146,16 +146,16 @@ class Arr {
 	 *
 	 * @param   array  the array to fetch from
 	 * @param   array  the keys to fetch from the array
-	 * @param   array  the value returned when not an array or invalid key
+	 * @param   mixed  the value returned when not an array or invalid key
 	 * @return  mixed
 	 */
 	public static function elements($array, $keys, $default = false)
 	{
 		$return = array();
 
-		if ( ! is_array($keys))
+		if ( ! is_array($keys) or ! is_array($keys))
 		{
-			throw new \Fuel_Exception('Arr::elements() - $keys must be an array.');
+			throw new \InvalidArgumentException('Arr::elements() - $keys must be an array.');
 		}
 
 		foreach ($keys as $key)
@@ -249,7 +249,7 @@ class Arr {
 	{
 		if ( ! is_array($array))
 		{
-			throw new \Fuel_Exception('Arr::sort() - $array must be an array.');
+			throw new \InvalidArgumentException('Arr::sort() - $array must be an array.');
 		}
 
 		foreach ($array as $k=>$v)
@@ -268,7 +268,7 @@ class Arr {
 			break;
 
 			default:
-				throw new \Fuel_Exception('Arr::sort() - $order must be asc or desc.');
+				throw new \InvalidArgumentException('Arr::sort() - $order must be asc or desc.');
 			break;
 		}
 
@@ -308,7 +308,7 @@ class Arr {
 	{
 		if ( ! is_array($source) or ! is_array($replace))
 		{
-			return false;
+			throw new \InvalidArgumentException('Arr::replace_keys() - $source and $replace must arrays.');
 		}
 
 		$result = array();
