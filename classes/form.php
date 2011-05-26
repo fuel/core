@@ -694,7 +694,7 @@ class Form {
 					{
 						$attributes = $field->attributes;
 						$attributes['name'] = $field->name;
-						$field->type == 'checkbox' and $attributes['name'] .= '['.++$i.']';
+						$field->type == 'checkbox' and $attributes['name'] .= '['.$i.']';
 
 						$attributes['value'] = $value;
 						$attributes['label'] = $label;
@@ -720,6 +720,8 @@ class Form {
 						$build_field[static::label($label, $attributes['id'])] = $field->type == 'radio'
 							? static::radio($attributes)
 							: static::checkbox($attributes);
+
+						$i++;
 					}
 				}
 				else
