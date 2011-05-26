@@ -401,7 +401,20 @@ class Fuel {
 	{
 		if ( ! is_array($package))
 		{
-			$package = array($package => PKGPATH.$package.DS);
+			$input = $package;
+
+			if (is_dir(PKGPATH.$package.DS))
+			{
+				$package = array($package => PKGPATH.$package.DS);
+			}
+			elseif (defined('SHAREDPKGPATH') and is_dir(SHAREDPKGPATH.$package.DS))
+			{
+				$package = array($package => SHAREDPKGPATH.$package.DS);
+			}
+			else
+			{
+				throw new \Exception("Package {$input} not found");
+			}
 		}
 		foreach ($package as $name => $path)
 		{
