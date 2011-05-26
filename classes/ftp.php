@@ -151,10 +151,9 @@ class Ftp
 	/**
 	 * FTP Login
 	 *
-	 * @access	private
 	 * @return	bool
 	 */
-	private function _login()
+	protected function _login()
 	{
 		return @ftp_login($this->_conn_id, $this->_username, $this->_password);
 	}
@@ -164,10 +163,9 @@ class Ftp
 	/**
 	 * Validates the connection ID
 	 *
-	 * @access	private
 	 * @return	bool
 	 */
-	private function _is_conn()
+	protected function _is_conn()
 	{
 		if ( ! is_resource($this->_conn_id))
 		{
@@ -598,11 +596,10 @@ class Ftp
 	/**
 	 * Set the upload type
 	 *
-	 * @access	private
 	 * @param	string
 	 * @return	string
 	 */
-	private function _settype($ext)
+	protected function _settype($ext)
 	{
 		$text_types = array(
 			'txt',
