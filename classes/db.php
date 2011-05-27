@@ -47,6 +47,11 @@ class DB {
 		return new \Database_Query($sql, $type);
 	}
 	
+	/*
+	 * Returns the last query
+	 *
+	 * @return	string	the last query
+	 */
 	public static function last_query($db = null)
 	{
 		return Database_Connection::instance($db)->last_query;
