@@ -253,6 +253,7 @@ class Image_Gd extends Image_Driver {
 		extract(parent::save($filename, $permissions));
 
 		$this->run_queue();
+		$this->add_background();
 
 		$vars = array(&$this->image_data, $filename);
 		$filetype = $this->image_extension;

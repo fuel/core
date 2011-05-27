@@ -112,37 +112,41 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\File_Driver_File'       => COREPATH.'classes/file/driver/file.php',
 	'Fuel\\Core\\File_Driver_Directory'  => COREPATH.'classes/file/driver/directory.php',
 
-	'Fuel\\Core\\Form'						=> COREPATH.'classes/form.php',
-	'Fuel\\Core\\Ftp'						=> COREPATH.'classes/ftp.php',
-	'Fuel\\Core\\Html'						=> COREPATH.'classes/html.php',
+	'Fuel\\Core\\Form'  => COREPATH.'classes/form.php',
 
-	'Fuel\\Core\\Image'					=> COREPATH.'classes/image.php',
-	'Fuel\\Core\\Image_Driver'			=> COREPATH.'classes/image/driver.php',
-	'Fuel\\Core\\Image_Gd'				=> COREPATH.'classes/image/gd.php',
-	'Fuel\\Core\\Image_Imagemagick'		=> COREPATH.'classes/image/imagemagick.php',
+	'Fuel\\Core\\Ftp'                     => COREPATH.'classes/ftp.php',
+	'Fuel\\Core\\FtpConnectionException'  => COREPATH.'classes/ftp.php',
+	'Fuel\\Core\\FtpFileAccessException'  => COREPATH.'classes/ftp.php',
 
-	'Fuel\\Core\\Inflector'					=> COREPATH.'classes/inflector.php',
-	'Fuel\\Core\\Input'						=> COREPATH.'classes/input.php',
-	'Fuel\\Core\\Lang'						=> COREPATH.'classes/lang.php',
-	'Fuel\\Core\\Log'						=> COREPATH.'classes/log.php',
-	'Fuel\\Core\\Migrate'					=> COREPATH.'classes/migrate.php',
-	'Fuel\\Core\\Model'						=> COREPATH.'classes/model.php',
+	'Fuel\\Core\\Html'  => COREPATH.'classes/html.php',
 
-	'Fuel\\Core\\MongoDb'					=> COREPATH.'classes/mongodb.php',
-	'Fuel\\Core\\MongoDbException'			=> COREPATH.'classes/mongodb.php',
+	'Fuel\\Core\\Image'              => COREPATH.'classes/image.php',
+	'Fuel\\Core\\Image_Driver'       => COREPATH.'classes/image/driver.php',
+	'Fuel\\Core\\Image_Gd'           => COREPATH.'classes/image/gd.php',
+	'Fuel\\Core\\Image_Imagemagick'  => COREPATH.'classes/image/imagemagick.php',
 
-	'Fuel\\Core\\Output'					=> COREPATH.'classes/output.php',
-	'Fuel\\Core\\Pagination'				=> COREPATH.'classes/pagination.php',
-	'Fuel\\Core\\Profiler'					=> COREPATH.'classes/profiler.php',
-	'Fuel\\Core\\Request'					=> COREPATH.'classes/request.php',
+	'Fuel\\Core\\Inflector'  => COREPATH.'classes/inflector.php',
+	'Fuel\\Core\\Input'      => COREPATH.'classes/input.php',
+	'Fuel\\Core\\Lang'       => COREPATH.'classes/lang.php',
+	'Fuel\\Core\\Log'        => COREPATH.'classes/log.php',
+	'Fuel\\Core\\Migrate'    => COREPATH.'classes/migrate.php',
+	'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
 
-	'Fuel\\Core\\Redis'					=> COREPATH.'classes/redis.php',
-	'Fuel\\Core\\Redis_Exception'		=> COREPATH.'classes/redis/exception.php',
+	'Fuel\\Core\\MongoDb'           => COREPATH.'classes/mongodb.php',
+	'Fuel\\Core\\MongoDbException'  => COREPATH.'classes/mongodb.php',
 
-	'Fuel\\Core\\Response'					=> COREPATH.'classes/response.php',
-	'Fuel\\Core\\Route'						=> COREPATH.'classes/route.php',
-	'Fuel\\Core\\Router'					=> COREPATH.'classes/router.php',
-	'Fuel\\Core\\Security'					=> COREPATH.'classes/security.php',
+	'Fuel\\Core\\Output'      => COREPATH.'classes/output.php',
+	'Fuel\\Core\\Pagination'  => COREPATH.'classes/pagination.php',
+	'Fuel\\Core\\Profiler'    => COREPATH.'classes/profiler.php',
+	'Fuel\\Core\\Request'     => COREPATH.'classes/request.php',
+
+	'Fuel\\Core\\Redis'            => COREPATH.'classes/redis.php',
+	'Fuel\\Core\\Redis_Exception'  => COREPATH.'classes/redis/exception.php',
+
+	'Fuel\\Core\\Response'  => COREPATH.'classes/response.php',
+	'Fuel\\Core\\Route'     => COREPATH.'classes/route.php',
+	'Fuel\\Core\\Router'    => COREPATH.'classes/router.php',
+	'Fuel\\Core\\Security'  => COREPATH.'classes/security.php',
 
 	'Fuel\\Core\\Session'            => COREPATH.'classes/session.php',
 	'Fuel\\Core\\Session_Driver'     => COREPATH.'classes/session/driver.php',
@@ -153,9 +157,7 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Session_Redis'      => COREPATH.'classes/session/redis.php',
 
 	'Fuel\\Core\\Str'  => COREPATH.'classes/str.php',
-
 	'Fuel\\Core\\TestCase'  => COREPATH.'classes/testcase.php',
-
 	'Fuel\\Core\\Uri'     => COREPATH.'classes/uri.php',
 	'Fuel\\Core\\Unzip'     => COREPATH.'classes/unzip.php',
 	'Fuel\\Core\\Upload'  => COREPATH.'classes/upload.php',
@@ -163,8 +165,7 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Validation'        => COREPATH.'classes/validation.php',
 	'Fuel\\Core\\Validation_Error'  => COREPATH.'classes/validation/error.php',
 
-	'Fuel\\Core\\View'            => COREPATH.'classes/view.php',
-
+	'Fuel\\Core\\View'  => COREPATH.'classes/view.php',
 	'Fuel\\Core\\ViewModel'  => COREPATH.'classes/viewmodel.php',
 ));
 
