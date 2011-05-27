@@ -214,6 +214,77 @@ class DBUtil {
 	}
 
 	/**
+	 * Adds FKs and an INDEX for each FK to a table.  Will throw a Database_Exception if it cannot.
+	 *
+	 * @throws	Fuel\Database_Exception
+	 * @param	string	$table			the table name
+	 * @param	array	$params			the FKs params
+	 * @return	int		the number of affected
+	 */
+	public static function add_fk($table, $params){
+		return static::alter_fk('ADD', $table, $params);
+	}
+	
+	/**
+	 * Drops FKs from a table.  Will throw a Database_Exception if it cannot.
+	 *
+	 * @throws	Fuel\Database_Exception
+	 * @param	string			$table			the table name
+	 * @param	string|array	$params			the constraints
+	 * @return	int				the number of affected
+	 */
+	public static function drop_fk($table, $params){
+		return static::alter_fk('DROP', $table, $params);
+	}
+	
+	protected static function alter_fk($type, $table, $params){
+		$sql = 'ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table));
+		
+		$sql .= static::process_fk($type, $params);
+		
+		return DB::query($sql, DB::UPDATE)->execute();
+	}
+	
+	protected static function process_fk($type, $params){
+		$sql_fk = array();
+
+		foreach ($params as $constraint => $attr)
+		{
+			$sql = "\n\t";
+			$attr = array_change_key_case($attr, CASE_UPPER);
+			
+			$sql .= array_key_exists('FIELD', $attr) ? $type . ' INDEX ' . DB::quote_identifier($constraint) . '('.DB::quote_identifier($attr['FIELD']).' ASC),'."\n\t" : '';
+			$sql .= $type . ' CONSTRAINT ' . DB::quote_identifier($constraint);
+			$sql .= array_key_exists('FIELD', $attr) ? ' FOREIGN KEY ('.DB::quote_identifier($attr['FIELD']).')' : '';
+			if(array_key_exists('REFERENCES', $attr))
+			{
+				$ref = array_change_key_case($attr['REFERENCES'], CASE_UPPER);
+				$sql .=  array_key_exists('TABLE', $ref) && array_key_exists('FIELD', $ref) ? ' REFERENCES '.DB::quote_identifier($ref['TABLE']).' ('.DB::quote_identifier($ref['FIELD']).')' : '';
+			}
+			$sql .= array_key_exists('ON_DELETE', $attr)? ' ON DELETE ' . self::process_fk_action($attr['ON_DELETE']) : '';
+			$sql .= array_key_exists('ON_UPDATE', $attr)? ' ON UPDATE ' . self::process_fk_action($attr['ON_UPDATE']) : '';
+
+			$sql_fk[] = $sql;
+		}
+
+		return \implode(',', $sql_fk);
+	}
+	
+	protected static function process_fk_action($action){
+		$response = 'NO ACTION';
+		$action = strtoupper($action);
+		switch($action){
+			case 'RESTRICT':
+			case 'CASCADE':
+			case 'SET NULL':
+				$response = $action;  
+				break;
+		}
+		
+		return $response;
+	}
+	
+	/**
 	 * Truncates a table.
 	 *
 	 * @throws    Fuel\Database_Exception
