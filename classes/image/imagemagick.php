@@ -182,6 +182,8 @@ class Image_Imagemagick extends Image_Driver {
 		extract(parent::output($filename, $permissions));
 
 		$this->run_queue();
+		$this->add_background();
+		
 		$old = '"'.$this->image_temp.'"';
 		$new = '"'.$filename.'"';
 		$this->exec('convert', $old.' '.$new);
