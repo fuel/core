@@ -46,6 +46,11 @@ class DB {
 	{
 		return new \Database_Query($sql, $type);
 	}
+	
+	public static function last_query($db = null)
+	{
+		return Database_Connection::instance($db)->last_query;
+	}
 
 	/**
 	 * Create a new [Database_Query_Builder_Select]. Each argument will be
