@@ -530,11 +530,6 @@ abstract class Image_Driver {
 		return $this;
 	}
 
-	public function _round_border($radius, $borderwidth, $color)
-	{
-		$this->rounded($radius);
-	}
-
 	/**
 	 * Executes the rounded event when the queue is ran.
 	 *
@@ -571,6 +566,24 @@ abstract class Image_Driver {
 			'br' => $br,
 			'antialias' => $antialias
 		);
+	}
+	
+	/**
+	 * Turns the image into a grayscale version
+	 * 
+	 * @return	Image_Driver
+	 */
+	public function grayscale()
+	{
+		$this->queue('grayscale');
+		return $this;
+	}
+	
+	/**
+	 * Executes the grayscale event when the queue is ran.
+	 */
+	protected function _grayscale() {
+		
 	}
 
 	/**
