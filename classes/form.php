@@ -767,10 +767,9 @@ class Form {
 		$required_mark = $required ? $this->get_config('required_mark', null) : null;
 		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
 
-
 		if (is_array($build_field))
 		{
-			$template = $field->template ?: $this->get_config('multi_field_template', "\t\t\t{label}\n {fields}\t\t\t{label} {field}{fields}");
+			$template = $field->template ?: $this->get_config('multi_field_template', "\t\t\t{group_label}\n {fields}\t\t\t{label} {field}{fields}");
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Du', $template, $match) > 0)
 			{
 				$build_fields = '';
@@ -781,7 +780,7 @@ class Form {
 					$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
 					$build_fields .= $bf_temp;
 				}
-				$template = str_replace(array($match[0], "{label}"), array($build_fields, $label), $template);
+				$template = str_replace(array($match[0], "{group_label}"), array($build_fields, $label), $template);
 				
 				if ($required_mark)
 				{
