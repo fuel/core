@@ -44,10 +44,11 @@ class Image_Imagick extends Image_Driver {
 		
 		$this->imagick->scaleImage($width, $height, $keepar);
 		
-		if ($pad) {
+		if ($pad)
+		{
 			$tmpimage = new \Imagick();
 			$tmpimage->newImage($cwidth, $cheight, $this->create_color('#000', 0), 'png');
-			$tmpimage->compositeImage($this->imagick, \Imagick::COMPOSITE_DEFAULT, ($cwidth-$width)/2, ($cheight-$height)/2);
+			$tmpimage->compositeImage($this->imagick, \Imagick::COMPOSITE_DEFAULT, ($cwidth-$width) / 2, ($cheight-$height) / 2);
 			$this->imagick = $tmpimage;
 		}
 	}
@@ -64,7 +65,7 @@ class Image_Imagick extends Image_Driver {
 		extract(parent::_watermark($filename, $position, $padding));
 		$wmimage = new \Imagick();
 		$wmimage->readImage($filename);
-		$wmimage->setImageOpacity($this->config['watermark_alpha']/100);
+		$wmimage->setImageOpacity($this->config['watermark_alpha'] / 100);
 		$this->imagick->compositeImage($wmimage, \Imagick::COMPOSITE_DEFAULT, $x, $y);
 	}
 
@@ -89,8 +90,8 @@ class Image_Imagick extends Image_Driver {
 		extract(parent::_rounded($radius, $sides, null));
 		
 		$sizes = $this->sizes();
-		$sizes->width_half = $sizes->width/2;
-		$sizes->height_half = $sizes->height/2;
+		$sizes->width_half = $sizes->width / 2;
+		$sizes->height_half = $sizes->height / 2;
 		
 		if ( ! $tl)
 		{
@@ -158,7 +159,16 @@ class Image_Imagick extends Image_Driver {
 	{
 		extract(parent::save($filename, $permissions));
 		
+		$this->run_queue();
+		$this->add_background();
 		
+		if ($this->imagick->getImageFormat() != $filetype)
+			$this->imagick->setImageFormat($filetype);
+		
+		file_put_contents($filename, $this->imagick->getImageBlob());
+
+		if ($this->config['persistent'] === false)
+			$this->reload();
 		
 		return $this;
 	}
