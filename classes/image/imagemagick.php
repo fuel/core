@@ -186,7 +186,7 @@ class Image_Imagemagick extends Image_Driver {
 
 	public function save($filename, $permissions = null)
 	{
-		extract(parent::output($filename, $permissions));
+		extract(parent::save($filename, $permissions));
 
 		$this->run_queue();
 		$this->add_background();
