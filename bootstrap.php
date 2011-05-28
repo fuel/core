@@ -124,6 +124,7 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Image_Driver'       => COREPATH.'classes/image/driver.php',
 	'Fuel\\Core\\Image_Gd'           => COREPATH.'classes/image/gd.php',
 	'Fuel\\Core\\Image_Imagemagick'  => COREPATH.'classes/image/imagemagick.php',
+	'Fuel\\Core\\Image_Imagick'      => COREPATH.'classes/image/imagick.php',
 
 	'Fuel\\Core\\Inflector'  => COREPATH.'classes/inflector.php',
 	'Fuel\\Core\\Input'      => COREPATH.'classes/input.php',

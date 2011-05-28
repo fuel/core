@@ -200,6 +200,16 @@ class Image {
 	{
 		return static::instance()->rounded($radius, $sides, $antialias);
 	}
+	
+	/**
+	 * Turns the image into a grayscale version
+	 * 
+	 * @return	Image_Driver
+	 */
+	public static function grayscale()
+	{
+		return static::instance()->grayscale();
+	}
 
 	/**
 	 * Saves the image, and optionally attempts to set permissions
