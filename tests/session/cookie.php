@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -14,4 +12,12 @@
 
 namespace Fuel\Core;
 
-class Cache_Exception extends Fuel_Exception {}
+/**
+ * Session_Cookie class tests
+ * 
+ * @group Core
+ * @group Session
+ */
+class Test_Session_Cookie extends TestCase {
+ 	public function test_foo() {}
+}

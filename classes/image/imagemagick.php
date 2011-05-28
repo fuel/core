@@ -1,8 +1,6 @@
 <?php
 
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * Image manipulation class.
@@ -35,7 +33,21 @@ class Image_Imagemagick extends Image_Driver {
 			}
 			while (file_exists($this->image_temp));
 		}
-		$this->exec('convert', '"'.$image_fullpath.'" "'.$this->image_temp.'"');
+		else if (file_exists($this->image_temp))
+		{
+			$this->debug('Removing previous temporary image.');
+			unlink($this->image_temp);
+		}
+		$this->debug('Temp file: '.$this->image_temp);
+		if (!file_exists($this->config['temp_dir']) || !is_dir($this->config['temp_dir']))
+		{
+			throw new \Fuel_Exception("The temp directory that was given does not exist.");
+		}
+		else if (!touch($this->config['temp_dir'] . $this->config['temp_append'] . '_touch'))
+		{
+			throw new \Fuel_Exception("Could not write in the temp directory.");
+		}
+		$this->exec('convert', '"'.$image_fullpath.'"[0] "'.$this->image_temp.'"');
 
 		return $this;
 	}
@@ -71,7 +83,7 @@ class Image_Imagemagick extends Image_Driver {
 		$this->clear_sizes();
 	}
 
-	protected function _watermark($filename, $x, $y)
+	protected function _watermark($filename, $position, $padding = 5)
 	{
 		extract(parent::_watermark($filename, $x, $y));
 
@@ -88,7 +100,7 @@ class Image_Imagemagick extends Image_Driver {
 		);
 	}
 
-	protected function _border($size, $color)
+	protected function _border($size, $color = null)
 	{
 		extract(parent::_border($size, $color));
 
@@ -145,7 +157,7 @@ class Image_Imagemagick extends Image_Driver {
 				$filename = $this->image_temp;
 			}
 
-			$output = $this->exec('identify', '-format "%[fx:w] %[fx:h]" "'.$filename.'"');
+			$output = $this->exec('identify', '-format "%[fx:w] %[fx:h]" "'.$filename.'"[0]');
 			list($width, $height) = explode(" ", $output[0]);
 			$return = (object) array(
 				'width' => $width,
@@ -170,9 +182,14 @@ class Image_Imagemagick extends Image_Driver {
 		extract(parent::output($filename, $permissions));
 
 		$this->run_queue();
+		$this->add_background();
+		
 		$old = '"'.$this->image_temp.'"';
 		$new = '"'.$filename.'"';
 		$this->exec('convert', $old.' '.$new);
+
+		if ($this->config['persistent'] === false)
+			$this->reload();
 
 		return $this;
 	}
@@ -184,7 +201,7 @@ class Image_Imagemagick extends Image_Driver {
 		$this->run_queue();
 		$this->add_background();
 
-		if (substr($this->image_fullpath, -1 * strlen($filetype)) != $filetype)
+		if (substr($this->image_temp, -1 * strlen($filetype)) != $filetype)
 		{
 			$old = '"'.$this->image_temp.'"';
 			if ( ! $this->config['debug'])
@@ -199,6 +216,8 @@ class Image_Imagemagick extends Image_Driver {
 				echo file_get_contents($this->image_temp);
 			}
 		}
+		if ($this->config['persistence'] === false)
+			$this->reload();
 		return $this;
 	}
 
@@ -214,8 +233,9 @@ class Image_Imagemagick extends Image_Driver {
 	{
 		if ($this->config['bgcolor'] != null)
 		{
+			$bgcolor = $this->config['bgcolor'] == null ? '#000' : $this->config['bgcolor'];
 			$image   = '"'.$this->image_temp.'"';
-			$color   = $this->create_color($this->config['bgcolor'], 100);
+			$color   = $this->create_color($bgcolor, 100);
 			$sizes   = $this->sizes();
 			$command = '-size '.$sizes->width.'x'.$sizes->height.' '.'canvas:'.$color.' '.
 				$image.' -composite '.$image;
@@ -249,7 +269,8 @@ class Image_Imagemagick extends Image_Driver {
 			}
 			else
 			{
-				throw new \Fuel_Exception("imagemagick failed to edit the image. Returned with $code.");
+				$message = implode('\n', $output);
+				throw new \Fuel_Exception("imagemagick failed to edit the image. Returned with $code.<br /><br />Command:\n <code>$command</code>");
 			}
 		}
 		return $output;

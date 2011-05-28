@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -50,4 +48,4 @@ return array(
 
 );
 
-/* End of file config/asset.php */
+/* End of file config/rest.php */

@@ -4,7 +4,7 @@
  * by a name. Queries are typically handled by [Database_Query], rather than
  * using the database object directly.
  *
- * @package    Kohana/Database
+ * @package    Fuel/Database
  * @category   Base
  * @author     Kohana Team
  * @copyright  (c) 2008-2010 Kohana Team
@@ -245,7 +245,7 @@ abstract class Database_Connection {
 	public function count_records($table)
 	{
 		// Quote the table name
-		$table = $this->quote_identifier($table);
+		$table = $this->quote_table($table);
 
 		return $this->query(\DB::SELECT, 'SELECT COUNT(*) AS total_row_count FROM '.$table, FALSE)
 			->get('total_row_count');

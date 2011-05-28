@@ -1,8 +1,6 @@
 <?php
 
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * Image manipulation class.
@@ -22,14 +20,19 @@ abstract class Image_Driver {
 	protected $image_directory = null;
 	protected $image_filename  = null;
 	protected $image_extension = null;
+	protected $new_extension   = null;
 	protected $config          = array();
 	protected $queued_actions  = array();
 	protected $accepted_extensions;
 
 	public function __construct($config)
 	{
-		$this->config = Config::load('image');
-		$this->config($config);
+		Config::load('image', 'image');
+		if (is_array($config))
+			$this->config = array_merge(Config::get('image'), $config);
+		else
+			$this->config = Config::get('image');
+		$this->debug("Image Class was initalized using the " . $this->config['driver'] . " driver.");
 	}
 	/**
 	 * Accepts configuration in either an array (as $index) or a pairing using $index and $value
@@ -41,10 +44,14 @@ abstract class Image_Driver {
 	{
 		if (is_array($index))
 		{
+			if (isset($index['driver']))
+				throw new \Fuel_Exception("The driver cannot be changed after initalization!");
 			$this->config = array_merge($this->config, $index);
 		}
 		elseif ($index != null)
 		{
+			if ($index == 'driver')
+				throw new \Fuel_Exception("The driver cannot be changed after initalization!");
 			$this->config[$index] = $value;
 		}
 		return $this;
@@ -81,6 +88,7 @@ abstract class Image_Driver {
 		{
 			throw new \Fuel_Exception("Could not load preset $name, you sure it exists?");
 		}
+		return $this;
 	}
 
 	/**
@@ -222,11 +230,11 @@ abstract class Image_Driver {
 				$sizes = $this->sizes();
 				if ($height == null and $width != null)
 				{
-					$height = $width * ($sizes->width / $sizes->height);
+					$height = $width * ($sizes->height / $sizes->width);
 				}
 				elseif ($height != null and $width == null)
 				{
-					$width = $height * ($sizes->height / $sizes->width);
+					$width = $height * ($sizes->width / $sizes->height);
 				}
 				else
 				{
@@ -244,15 +252,36 @@ abstract class Image_Driver {
 		if ($keepar)
 		{
 			// See which is the biggest ratio
-			$width_ratio  = $width / $sizes->width;
-			$height_ratio = $height / $sizes->height;
-			if ($width_ratio < $height_ratio)
+			if (function_exists('bcdiv'))
 			{
-				$width = floor($sizes->width * $height_ratio);
+				$width_ratio  = bcdiv($width, $sizes->width, 10);
+				$height_ratio = bcdiv($height, $sizes->height, 10);
+				$compare = bccomp($width_ratio, $height_ratio, 10);
+				if ($compare > -1)
+				{
+					$height = ceil((real) bcmul($sizes->height, $height_ratio, 10));
+					$width = ceil((real) bcmul($sizes->width, $height_ratio, 10));
+				}
+				else
+				{
+					$height = ceil((real) bcmul($sizes->height, $width_ratio, 10));
+					$width = ceil((real) bcmul($sizes->width, $width_ratio, 10));
+				}
 			}
 			else
 			{
-				$height = floor($sizes->height * $width_ratio);
+				$width_ratio  = $width / $sizes->width;
+				$height_ratio = $height / $sizes->height;
+				if ($width_ratio >= $height_ratio)
+				{
+					$height = ceil($sizes->height * $height_ratio);
+					$width = ceil($sizes->width * $height_ratio);
+				}
+				else
+				{
+					$height = ceil($sizes->height * $width_ratio);
+					$width = ceil($sizes->width * $width_ratio);
+				}
 			}
 		}
 		if ($pad)
@@ -285,16 +314,37 @@ abstract class Image_Driver {
 		$sizes   = $this->sizes();
 		$width   = $this->convert_number($width, true);
 		$height  = $this->convert_number($height, false);
-		$widthr  = $sizes->width / $width;
-		$heightr = $sizes->height / $height;
 		$x = $y = 0;
-		if ($widthr < $heightr)
+		if (function_exists('bcdiv'))
 		{
-			$this->_resize($width, null, true, false);
+			$widthr  = bcdiv($sizes->width, $width, 10);
+			$heightr = bcdiv($sizes->height, $height, 10);
+			$compare = bccomp($widthr, $heightr, 10);
+			if ($compare < 1)
+			{
+				$t_height = ceil((float) bcmul($height, $widthr, 10));
+				$this->_resize($width, $t_height, true, false);
+			}
+			else
+			{
+				$t_width = ceil((float) bcmul($width, $heightr, 10));
+				$this->_resize($t_width, $height, true, false);
+			}
 		}
 		else
 		{
-			$this->_resize(null, $height, true, false);
+			$widthr  = $sizes->width / $width;
+			$heightr = $sizes->height / $height;
+			if ($widthr < $heightr)
+			{
+				$t_height = ceil($height * $widthr);
+				$this->_resize($width, $t_height, true, false);
+			}
+			else
+			{
+				$t_width = ceil($width * $heightr);
+				$this->_resize($t_width, $height, true, false);
+			}
 		}
 		$sizes = $this->sizes();
 		$y = floor(($sizes->height - $height) / 2);
@@ -537,6 +587,10 @@ abstract class Image_Driver {
 			throw new \Fuel_Exception("Could not find directory \"$directory\"");
 		}
 
+		if ( ! $this->check_extension($filename, true))
+		{
+			$filename .= "." . $this->image_extension;
+		}
 		// Touch the file
 		if ( ! touch($filename))
 		{
@@ -547,11 +601,6 @@ abstract class Image_Driver {
 		if ($permissions != null and ! chmod($filename, $permissions))
 		{
 			throw new \Fuel_Exception("Could not set permissions on the file.");
-		}
-
-		if ( ! $this->check_extension($filename, true))
-		{
-			$filename .= "." . $this->image_extension;
 		}
 
 		$this->debug("", "Saving image as <code>$filename</code>");
@@ -594,6 +643,7 @@ abstract class Image_Driver {
 			{
 				header('Content-Type: image/' . $filetype);
 			}
+			$this->new_extension = $filetype;
 		}
 		else
 		{
@@ -631,7 +681,7 @@ abstract class Image_Driver {
 		$return = false;
 		foreach ($this->accepted_extensions AS $ext)
 		{
-			if (substr($filename, strlen($ext) * -1) == $ext)
+			if (strtolower(substr($filename, strlen($ext) * -1)) == strtolower($ext))
 			{
 				$writevar and $this->image_extension = $ext;
 				$return = $ext;
@@ -707,6 +757,16 @@ abstract class Image_Driver {
 		{
 			$this->queued_actions = array();
 		}
+	}
+
+	/**
+	 * Reloads the image.
+	 */
+	public function reload()
+	{
+		$this->debug("Reloading was called!");
+		$this->load($this->image_fullpath);
+		return $this;
 	}
 
 	/**
