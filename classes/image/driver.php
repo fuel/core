@@ -582,7 +582,8 @@ abstract class Image_Driver {
 	/**
 	 * Executes the grayscale event when the queue is ran.
 	 */
-	protected function _grayscale() {
+	protected function _grayscale()
+	{
 		
 	}
 

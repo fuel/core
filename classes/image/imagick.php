@@ -239,4 +239,4 @@ class Image_Imagick extends Image_Driver {
 	}
 }
 
-// End of file imagic.php
+// End of file imagick.php
