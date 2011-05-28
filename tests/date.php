@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -90,6 +88,46 @@ class Tests_Date extends TestCase {
 		$this->assertEquals($expected, $output);
 	}
 
+	/**
+	 * Test for Date::time_ago()
+	 * 
+	 * @test
+	 */
+	public function test_time_ago_null_timestamp()
+	{
+		$output = Date::time_ago(null);
+		
+		$this->assertEquals(null, $output);
+	}
+
+	/**
+	 * Test for Date::time_ago()
+	 * 
+	 * @test
+	 */
+	public function test_time_ago_one_month()
+	{
+		$march_30_2011 = 1301461200;
+		$april_30_2011 = 1304139600;
+		$output = Date::time_ago($march_30_2011, $april_30_2011);
+		
+		$this->assertEquals('1 month ago', $output);
+	}
+
+	/**
+	 * Test for Date::time_ago()
+	 * 
+	 * @test
+	 */
+	public function test_time_ago_two_months()
+	{
+		$march_30_2011 = 1301461200;
+		$may_30_2011 = 1306731600;
+		
+		$output = Date::time_ago($march_30_2011, $may_30_2011);
+		
+		$this->assertEquals('2 months ago', $output);
+	}
 }
 
 /* End of file DateTest.php */

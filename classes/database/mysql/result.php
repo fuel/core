@@ -2,7 +2,7 @@
 /**
  * MySQL database result.
  *
- * @package    Kohana/Database
+ * @package    Fuel/Database
  * @category   Query/Result
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team

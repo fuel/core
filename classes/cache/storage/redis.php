@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -57,16 +55,16 @@ class Cache_Storage_Redis extends Cache_Storage_Driver {
 			{
 				$this->redis = \Redis::instance($this->config['database']);
 			}
-			catch (Exception $e)
+			catch (\Exception $e)
 			{
-				throw new \Cache_Exception('Can not connect to the Redis engine. The error message says "'.$e->getMessage().'".');
+				throw new \Fuel_Exception('Can not connect to the Redis engine. The error message says "'.$e->getMessage().'".');
 			}
 
 			// get the redis version
 			preg_match('/redis_version:(.*?)\n/', $this->redis->info(), $info);
 			if (version_compare(trim($info[1]), '1.2') < 0)
 			{
-				throw new \Cache_Exception('Version 1.2 or higher of the Redis NoSQL engine is required to use the redis cache driver.');
+				throw new \Fuel_Exception('Version 1.2 or higher of the Redis NoSQL engine is required to use the redis cache driver.');
 			}
 		}
 	}
@@ -78,7 +76,6 @@ class Cache_Storage_Redis extends Cache_Storage_Driver {
 	 *
 	 * @param	string
 	 * @return	string
-	 * @throws	Cache_Exception
 	 */
 	protected function identifier_to_key( $identifier )
 	{
@@ -110,15 +107,15 @@ class Cache_Storage_Redis extends Cache_Storage_Driver {
 	/**
 	 * Remove the prepended cache properties and save them in class properties
 	 *
-	 * @param	string
-	 * @throws	Cache_Exception
+	 * @param   string
+	 * @throws  UnexpectedValueException
 	 */
 	protected function unprep_contents($payload)
 	{
 		$properties_end = strpos($payload, '{{/'.self::PROPS_TAG.'}}');
 		if ($properties_end === FALSE)
 		{
-			throw new \Cache_Exception('Incorrect formatting');
+			throw new \UnexpectedValueException('Cache has bad formatting');
 		}
 
 		$this->contents = substr($payload, $properties_end + strlen('{{/'.self::PROPS_TAG.'}}'));
@@ -126,7 +123,7 @@ class Cache_Storage_Redis extends Cache_Storage_Driver {
 		$props = json_decode($props, true);
 		if ($props === NULL)
 		{
-			throw new \Cache_Exception('Properties retrieval failed');
+			throw new \UnexpectedValueException('Cache properties retrieval failed');
 		}
 
 		$this->created			= $props['created'];
@@ -203,7 +200,6 @@ class Cache_Storage_Redis extends Cache_Storage_Driver {
 	 *
 	 * @param	limit purge to subsection
 	 * @return	bool
-	 * @throws	Cache_Exception
 	 */
 	public function delete_all($section)
 	{
@@ -301,7 +297,7 @@ class Cache_Storage_Redis extends Cache_Storage_Driver {
 		{
 			$this->unprep_contents($payload);
 		}
-		catch(Cache_Exception $e)
+		catch (\UnexpectedValueException $e)
 		{
 
 			return false;

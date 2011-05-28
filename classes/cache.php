@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -14,6 +12,12 @@
 
 namespace Fuel\Core;
 
+
+// Exception thrown when the Cache wasn't found
+class CacheNotFoundException extends \OutOfBoundsException {}
+
+// Exception thrown when the Cache was found but expired (auto deleted)
+class CacheExpiredException extends \CacheNotFoundException {}
 
 
 class Cache {
@@ -44,7 +48,7 @@ class Cache {
 		$defaults = \Config::get('cache', array());
 
 		// $config can be either an array of config settings or the name of the storage driver
-		if ( ! empty($config) && ! is_array($config) && ! is_null($config))
+		if ( ! empty($config) and ! is_array($config) and ! is_null($config))
 		{
 			$config = array('driver' => $config);
 		}
@@ -109,10 +113,9 @@ class Cache {
 	 * Front for reading the cache, ensures interchangebility of storage drivers. Actual reading
 	 * is being done by the _get() method which needs to be extended.
 	 *
-	 * @access	public
-	 * @param	mixed			The identifier of the cache, can be anything but empty
-	 * @param	bool
-	 * @return	mixed
+	 * @param   mixed  The identifier of the cache, can be anything but empty
+	 * @param   bool
+	 * @return  mixed
 	 */
 	public static function get($identifier, $use_expiration = true)
 	{
@@ -126,8 +129,8 @@ class Cache {
 	 * Frontend for deleting item from the cache, interchangable storage methods. Actual operation
 	 * handled by delete() call on storage driver class
 	 *
-	 * @access	public
-	 * @param	mixed			The identifier of the cache, can be anything but empty
+	 * @param   mixed  The identifier of the cache, can be anything but empty
+	 * @return  null
 	 */
 	public static function delete($identifier)
 	{
@@ -141,9 +144,9 @@ class Cache {
 	 * Flushes the whole cache for a specific storage driver or just a part of it when $section is set
 	 * (might not work with all storage drivers), defaults to the default storage driver
 	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
+	 * @param   null|string
+	 * @param   null|string
+	 * @return  bool
 	 */
 	public static function delete_all($section = null, $driver = null)
 	{

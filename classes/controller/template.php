@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -36,12 +34,15 @@ abstract class Controller_Template extends \Controller {
 	public $auto_render = true;
 
 	// Load the template and create the $this->template object
-	public function before()
+	public function before($data = null)
 	{
 		if ($this->auto_render === true)
 		{
 			// Load the template
 			$this->template = \View::factory($this->template);
+			
+			// Set the data to the template if provided
+			$data and $this->template->set_global($data);
 		}
 
 		return parent::before();

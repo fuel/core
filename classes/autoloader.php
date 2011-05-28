@@ -1,52 +1,81 @@
 <?php
+/**
+ * Fuel is a fast, lightweight, community driven PHP5 framework.
+ *
+ * @package    Fuel
+ * @version    1.0
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com
+ */
 
+/**
+ * The Autloader is responsible for all class loading.  It allows you to define
+ * different load paths based on namespaces.  It also lets you set explicit paths
+ * for classes to be loaded from.
+ *
+ * @package     Fuel
+ * @subpackage  Core
+ */
 class Autoloader {
 
 	/**
-	 * @var array	$classes	holds all the classes and paths
+	 * @var  array  $classes  holds all the classes and paths
 	 */
 	protected static $classes = array();
 
 	/**
-	 * @var array	Holds all the namespace paths
+	 * @var  array  holds all the namespace paths
 	 */
 	protected static $namespaces = array();
 
 	/**
-	 * @var	array	List off namespaces of which classes will be aliased to global namespace
+	 * Holds all the PSR-0 compliant namespaces.  These namespaces should
+	 * be loaded according to the PSR-0 standard.
+	 *
+	 * @var  array
+	 */
+	protected static $psr_namespaces = array();
+
+	/**
+	 * @var  array  list off namespaces of which classes will be aliased to global namespace
 	 */
 	protected static $core_namespaces = array('Fuel\\Core');
 
 	/**
-	 * @var array	The default path to look in if the class is not in a package
+	 * @var  array  the default path to look in if the class is not in a package
 	 */
 	protected static $default_path = null;
 
 	/**
-	 * @var bool	whether to initialize a loaded class
+	 * @var  bool  whether to initialize a loaded class
 	 */
 	protected static $auto_initialize = null;
 
-
 	/**
-	 * Adds a namespace and path
+	 * Adds a namespace search path.  Any class in the given namespace will be
+	 * looked for in the given path.
 	 *
-	 * @access	public
-	 * @param	string	the namespace
-	 * @param	string	the path
-	 * @return	void
+	 * @param   string  the namespace
+	 * @param   string  the path
+	 * @return  void
 	 */
-	public static function add_namespace($namespace, $path)
+	public static function add_namespace($namespace, $path, $psr = false)
 	{
 		static::$namespaces[$namespace] = $path;
+		if ($psr)
+		{
+			static::$psr_namespaces[$namespace] = $path;
+		}
 	}
 
 	/**
-	 * Adds an array of namespaces
+	 * Adds an array of namespace paths. See {add_namespace}.
 	 *
-	 * @access	public
-	 * @param	array	the namespaces
-	 * @return	void
+	 * @param   array  the namespaces
+	 * @param   bool   whether to prepend the namespace to the search path
+	 * @return  void
 	 */
 	public static function add_namespaces(array $namespaces, $prepend = false)
 	{
@@ -61,10 +90,10 @@ class Autoloader {
 	}
 
 	/**
-	 * Returns the namespace's path or false when it doesn't exist
+	 * Returns the namespace's path or false when it doesn't exist.
 	 *
-	 * @param	string
-	 * @return	array|bool
+	 * @param   string      the namespace to get the path for
+	 * @return  array|bool  the namespace path or false
 	 */
 	public static function namespace_path($namespace)
 	{
@@ -77,10 +106,12 @@ class Autoloader {
 	}
 
 	/**
-	 * Adds a class path
+	 * Adds a classes load path.  Any class added here will not be searched for
+	 * but explicitly loaded from the path.
 	 *
-	 * @param	string	$class	the class name
-	 * @param	string	$path	the path to the class file
+	 * @param   string  the class name
+	 * @param   string  the path to the class file
+	 * @return  void
 	 */
 	public static function add_class($class, $path)
 	{
@@ -88,9 +119,10 @@ class Autoloader {
 	}
 
 	/**
-	 * Adds multiple class paths
+	 * Adds multiple class paths to the load path. See {@see Autoloader::add_class}.
 	 *
-	 * @param	array	$classes	the class names and paths
+	 * @param   array  the class names and paths
+	 * @return  void
 	 */
 	public static function add_classes($classes)
 	{
@@ -101,13 +133,20 @@ class Autoloader {
 	}
 
 	/**
-	 * Aliases a class to a namespace, the root by default
+	 * Aliases the given class into the given Namespace.  By default it will
+	 * add it to the global namespace.
+	 *
+	 * <code>
+	 * Autoloader::alias_to_namespace('Foo\\Bar');
+	 * Autoloader::alias_to_namespace('Foo\\Bar', '\\Baz');
+	 * </code>
 	 *
 	 * @param	string	$class		the class name
 	 * @param	string	$namespace	the namespace to alias to
 	 */
 	public static function alias_to_namespace($class, $namespace = '')
 	{
+		! empty($namespace) and $namespace = rtrim($namespace, '\\').'\\';
 		$parts = explode('\\', $class);
 		$root_class = $namespace.array_pop($parts);
 		class_alias($class, $root_class);
@@ -194,7 +233,7 @@ class Autoloader {
 			if (file_exists($file_path))
 			{
 				require $file_path;
-				if ( ! class_exists($class, false) && class_exists($class_name = 'Fuel\\Core\\'.$class, false))
+				if ( ! class_exists($class, false) and class_exists($class_name = 'Fuel\\Core\\'.$class, false))
 				{
 					static::alias_to_namespace($class_name);
 				}
@@ -206,20 +245,24 @@ class Autoloader {
 		// This handles a namespaces class that a path does not exist for
 		else
 		{
-			// need to stick the trimed \ back on...
-			$namespace = '\\'.ucfirst(strtolower(substr($class, 0, $pos)));
+			$namespace = substr($class, 0, $pos);
 
 			foreach (static::$namespaces as $ns => $path)
 			{
-				if (strncmp($ns, $namespace, $ns_len = strlen($ns)) === 0)
+				$ns = ltrim($ns, '\\');
+
+				if (strncmp($ns, $namespace, strlen($ns)) === 0)
 				{
+					if (array_key_exists($ns, static::$psr_namespaces))
+					{
+						static::psr_loader($path, $class);
+						return true;
+					}
 					$class_no_ns = substr($class, $pos + 1);
 
-					$file_path = strtolower($path.substr($namespace, strlen($ns) + 1).DS.str_replace('_', DS, $class_no_ns).'.php');
+					$file_path = $path.strtolower(substr($namespace, strlen($ns) + 1).DS.str_replace('_', DS, $class_no_ns).'.php');
 					if (is_file($file_path))
 					{
-						// Fuel::$path_cache[$class] = $file_path;
-						// Fuel::$paths_changed = true;
 						require $file_path;
 						static::_init_class($class);
 						$loaded = true;
@@ -236,6 +279,27 @@ class Autoloader {
 		}
 
 		return $loaded;
+	}
+
+	/**
+	 * A PSR-0 compatible class loader
+	 *
+	 * @param  string  path to the class
+	 * @param  string  classname
+	 */
+	protected static function psr_loader($path, $class)
+	{
+		$class = ltrim($class, '\\');
+		$file  = '';
+		if ($last_ns_pos = strripos($class, '\\'))
+		{
+			$namespace = substr($class, 0, $last_ns_pos);
+			$class = substr($class, $last_ns_pos + 1);
+			$file = str_replace('\\', DS, $namespace).DS;
+		}
+		$file .= str_replace('_', DS, $class).'.php';
+
+		require $path.$file;
 	}
 
 	/**

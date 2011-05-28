@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -67,7 +65,7 @@ class Security {
 	 */
 	public static function clean($var, $filters = null)
 	{
-		is_null($filters) && $filters = \Config::get('security.input_filter', array());
+		is_null($filters) and $filters = \Config::get('security.input_filter', array());
 		$filters = is_array($filters) ? $filters : array($filters);
 
 		foreach ($filters as $filter)
@@ -177,8 +175,9 @@ class Security {
 			// Throw exception when it wasn't whitelisted and can't be converted to String
 			if ( ! method_exists($value, '__toString'))
 			{
-				throw new \Fuel_Exception('Object class was not whitelisted in security.whitelisted_classes and could '.
-					'not be converted to string.');
+				throw new \RuntimeException('Object class "'.get_class($value).'" could not be converted to string or '.
+					'sanitized as ArrayAcces. Whitelist it in security.whitelisted_classes in app/config/config.php '.
+					'to allow it to be passed unchecked.');
 			}
 
 			$value = static::htmlentities((string) $value);

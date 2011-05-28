@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -14,4 +12,12 @@
 
 namespace Fuel\Core;
 
-class Redis_Exception extends Fuel_Exception {}
+/**
+ * Database_Result class tests
+ * 
+ * @group Core
+ * @group Database
+ */
+class Test_Database_Result extends TestCase {
+ 	public function test_foo() {}
+}

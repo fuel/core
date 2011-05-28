@@ -10,3 +10,4 @@ fuel/app/logs/*/*/*
 fuel/app/cache/*/*
 nbproject/
 .idea
+*.tmproj
