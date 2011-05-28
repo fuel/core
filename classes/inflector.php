@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -46,7 +44,7 @@ class Inflector {
 		'/(bu|campu)s$/'           => '\1\2ses',    // bus, campus
 		'/(alias|status|virus)/'   => '\1es',       // alias
 		'/(octop)us$/'             => '\1i',        // octopus
-		'/(ax|cri|test)is$/'       => '\1es',       // axis, crisis
+		'/(ax|cris|test)is$/'      => '\1es',       // axis, crisis
 		'/s$/'                     => 's',          // no change (compatibility)
 		'/$/'                      => 's',
 	);
@@ -78,7 +76,7 @@ class Inflector {
 		'/(s)tatuses$/'         => '\1\2tatus',
 		'/(c)hildren$/'         => '\1\2hild',
 		'/(n)ews$/'             => '\1\2ews',
-		'/s$/'                  => '',
+		'/([^u])s$/'            => '\1',
 	);
 
 
@@ -89,7 +87,7 @@ class Inflector {
 	 * @return	string	the singular version of $word
 	 * @link	http://snipplr.com/view/4627/a-function-to-add-a-prefix-to-numbers-ex-1st-2nd-3rd-4th-5th/
 	 */
-	function ordinalize($number)
+	public static function ordinalize($number)
 	{
 		if ( ! is_numeric($number))
 		{

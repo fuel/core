@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -76,7 +74,7 @@ class File_Area {
 	 * @param	string				path to file or directory
 	 * @param	array				optional config
 	 * @return	File_Driver_File
-	 * @throws	File_Exception		when outside basedir restriction or disallowed file extension
+	 * @throws	FileAccessException		when outside basedir restriction or disallowed file extension
 	 */
 	public function get_driver($path, Array $config = array(), $content = array())
 	{
@@ -90,7 +88,7 @@ class File_Area {
 			$info = pathinfo($path);
 			if ( ! empty($this->extensions) && array_key_exists($info['extension'], $this->extensions))
 			{
-				throw new \File_Exception('File operation not allowed: disallowed file extension.');
+				throw new \FileAccessException('File operation not allowed: disallowed file extension.');
 			}
 
 			// create specific driver when available
@@ -108,7 +106,7 @@ class File_Area {
 		}
 
 		// still here? path is invalid
-		throw new \File_Exception('Invalid path for file or directory.');
+		throw new \FileAccessException('Invalid path for file or directory.');
 	}
 
 	/**
@@ -136,7 +134,7 @@ class File_Area {
 	 *
 	 * @param	string
 	 * @return	string
-	 * @throws	File_Exception	when outside basedir restriction or disallowed file extension
+	 * @throws	FileAccessException	when outside basedir restriction or disallowed file extension
 	 */
 	public function get_path($path)
 	{
@@ -147,14 +145,14 @@ class File_Area {
 		// basedir prefix is required when it is set (may cause unexpected errors when realpath doesn't work)
 		if ( ! empty($this->basedir) && substr($path, 0, strlen($this->basedir)) != $this->basedir)
 		{
-			throw new \File_Exception('File operation not allowed: given path is outside the basedir for this area.');
+			throw new \FileAccessException('File operation not allowed: given path is outside the basedir for this area.');
 		}
 
 		// check file extension
 		$info = pathinfo($path);
 		if ( ! empty(static::$extensions) && array_key_exists($info['extension'], static::$extensions))
 		{
-			throw new \File_Exception('File operation not allowed: disallowed file extension.');
+			throw new \FileAccessException('File operation not allowed: disallowed file extension.');
 		}
 
 		return $path;

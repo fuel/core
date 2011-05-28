@@ -33,11 +33,11 @@
 <body>
 	<div id="wrapper">
 		<h1><?php echo $severity; ?>!</h1>
-		
+
 		<p class="intro"><?php echo $type; ?> [ <?php echo $severity; ?> ]: <?php echo $message; ?></p>
-		
+
 		<h2 class="first"><?php echo $filepath; ?> @ line <?php echo $error_line; ?></h2>
-		
+
 <?php if (is_array($debug_lines)): ?>
 <pre class="fuel_debug_source"><?php foreach ($debug_lines as $line_num => $line_content): ?>
 <span<?php echo ($line_num == $error_line) ? ' class="fuel_line fuel_current_line"' : ' class="fuel_line"'; ?>><span class="fuel_line_number"><?php echo str_pad($line_num, (strlen(count($debug_lines))), ' ', STR_PAD_LEFT); ?></span><span class="fuel_line_content"><?php echo $line_content . PHP_EOL; ?>
@@ -67,7 +67,7 @@
 		<ol>
 		<?php
 		$id = 0;
-		foreach($non_fatal as $err): 
+		foreach($non_fatal as $err):
 			$id++;
 			extract($err);
 			$debug_lines = \Debug::file_lines($orig_filepath, $error_line);
@@ -83,6 +83,12 @@
 		<?php endforeach; ?>
 		</ol>
 <?php endif; ?>
+
+<?php if ( ! empty($contents)): ?>
+		<h2>Prior Contents (<a href="#" onclick="javascript:fuel_toggle('prior_contents');return false;">show</a>)</h2>
+		<pre id="prior_contents" class="fuel_debug_source" style="display: none;""><?php echo e($contents); ?></pre>
+<?php endif; ?>
+
 		<p class="footer">
 			<a href="http://fuelphp.com">Fuel PHP</a> is released under the MIT license.
 		</p>

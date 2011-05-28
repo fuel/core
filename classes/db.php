@@ -2,7 +2,7 @@
 /**
  * Database object creation helper methods.
  *
- * @package    Kohana/Database
+ * @package    Fuel/Database
  * @category   Base
  * @author     Kohana Team
  * @copyright  (c) 2009 Kohana Team
@@ -45,6 +45,16 @@ class DB {
 	public static function query($sql, $type = null)
 	{
 		return new \Database_Query($sql, $type);
+	}
+	
+	/*
+	 * Returns the last query
+	 *
+	 * @return	string	the last query
+	 */
+	public static function last_query($db = null)
+	{
+		return Database_Connection::instance($db)->last_query;
 	}
 
 	/**

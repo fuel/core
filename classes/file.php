@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -14,6 +12,8 @@
 
 namespace Fuel\Core;
 
+
+class FileAccessException extends Fuel_Exception {}
 
 
 // ------------------------------------------------------------------------
@@ -101,11 +101,11 @@ class File {
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
-			throw new \File_Exception('Invalid basepath, cannot create file at this location.');
+			throw new \FileAccessException('Invalid basepath, cannot create file at this location.');
 		}
 		elseif (file_exists($new_file))
 		{
-			throw new \File_Exception('File exists already, cannot be created.');
+			throw new \FileAccessException('File exists already, cannot be created.');
 		}
 
 		$file = static::open_file(@fopen($new_file, 'c'), true, $area);
@@ -131,11 +131,11 @@ class File {
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
-			throw new \File_Exception('Invalid basepath, cannot create directory at this location.');
+			throw new \FileAccessException('Invalid basepath, cannot create directory at this location.');
 		}
 		elseif (file_exists($new_dir))
 		{
-			throw new \File_Exception('Directory exists already, cannot be created.');
+			throw new \FileAccessException('Directory exists already, cannot be created.');
 		}
 
 		$recursive = (strpos($name, '/') !== false || strpos($name, '\\') !== false);
@@ -155,7 +155,7 @@ class File {
 	{
 		$path = static::instance($area)->get_path($path, $area);
 
-		$file = static::open_file($path, LOCK_SH, $area);
+		$file = static::open_file(@fopen($path, 'r'), LOCK_SH, $area);
 		$return = $as_string ? file_get_contents($path) : readfile($path);
 		static::close_file($file, $area);
 
@@ -178,12 +178,12 @@ class File {
 
 		if ( ! is_dir($path))
 		{
-			throw new \File_Exception('Invalid path, directory cannot be read.');
+			throw new \FileAccessException('Invalid path, directory cannot be read.');
 		}
 
 		if ( ! $fp = @opendir($path))
 		{
-			throw new \File_Exception('Could not open directory for reading.');
+			throw new \FileAccessException('Could not open directory for reading.');
 		}
 
 		// Use default when not set
@@ -279,12 +279,12 @@ class File {
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
-			throw new \File_Exception('Invalid basepath, cannot update a file at this location.');
+			throw new \FileAccessException('Invalid basepath, cannot update a file at this location.');
 		}
 
 		if ( ! $file = static::open_file(@fopen($new_file, 'w'), true, $area) )
 		{
-			throw new \File_Exception('No write access, cannot update a file.');
+			throw new \FileAccessException('No write access, cannot update a file.');
 		}
 		fwrite($file, $contents);
 		static::close_file($file, $area);
@@ -307,11 +307,11 @@ class File {
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
-			throw new \File_Exception('Invalid basepath, cannot append to a file at this location.');
+			throw new \FileAccessException('Invalid basepath, cannot append to a file at this location.');
 		}
 		elseif ( ! file_exists($new_file))
 		{
-			throw new \File_Exception('File does not exist, cannot be appended.');
+			throw new \FileAccessException('File does not exist, cannot be appended.');
 		}
 
 		$file = static::open_file(@fopen($new_file, 'a'), true, $area);
@@ -360,11 +360,11 @@ class File {
 
 		if ( ! is_file($path))
 		{
-			throw new \Fuel_Exception('Cannot copy file: given path is not a file.');
+			throw new \FileAccessException('Cannot copy file: given path is not a file.');
 		}
 		elseif (file_exists($new_path))
 		{
-			throw new \Fuel_Exception('Cannot copy file: new path already exists.');
+			throw new \FileAccessException('Cannot copy file: new path already exists.');
 		}
 		$return = copy($path, $new_path);
 
@@ -378,7 +378,7 @@ class File {
 	 * @param	string					new base directory (full path)
 	 * @param	string|File_Area|null	file area name, object or null for non-specific
 	 * @return	bool
-	 * @throws	File_Exception			when something went wrong
+	 * @throws	FileAccessException			when something went wrong
 	 */
 	public static function copy_dir($path, $new_path, $area = null)
 	{
@@ -387,11 +387,11 @@ class File {
 
 		if ( ! is_dir($path))
 		{
-			throw new \Fuel_Exception('Cannot copy directory: given path is not a directory.');
+			throw new \FileAccessException('Cannot copy directory: given path is not a directory.');
 		}
 		elseif (file_exists($new_path))
 		{
-			throw new \Fuel_Exception('Cannot copy directory: new path already exists.');
+			throw new \FileAccessException('Cannot copy directory: new path already exists.');
 		}
 
 		$files = static::read_dir($path, -1, array(), $area);
@@ -410,7 +410,7 @@ class File {
 			// abort if something went wrong
 			if ($check)
 			{
-				throw new \File_Exception('Directory copy aborted prematurely, part of the operation failed.');
+				throw new \FileAccessException('Directory copy aborted prematurely, part of the operation failed.');
 			}
 		}
 	}
@@ -428,7 +428,7 @@ class File {
 
 		if ( ! is_file($path))
 		{
-			throw new \Fuel_Exception('Cannot delete file: given path "'.$path.'" is not a file.');
+			throw new \FileAccessException('Cannot delete file: given path "'.$path.'" is not a file.');
 		}
 
 		return unlink($path);
@@ -448,7 +448,7 @@ class File {
 		$path = rtrim(static::instance($area)->get_path($path, $area), '\\/').DS;
 		if ( ! is_dir($path))
 		{
-			throw new \Fuel_Exception('Cannot delete directory: given path is not a directory.');
+			throw new \FileAccessException('Cannot delete directory: given path is not a directory.');
 		}
 
 		$files = static::read_dir($path, -1, array(), $area);
@@ -476,7 +476,7 @@ class File {
 			// abort if something went wrong
 			if ( ! $check)
 			{
-				throw new \Fuel_Exception('Directory deletion aborted prematurely, part of the operation failed.');
+				throw new \FileAccessException('Directory deletion aborted prematurely, part of the operation failed.');
 			}
 		}
 
@@ -522,7 +522,7 @@ class File {
 		{
 			if (microtime(true) - $lock_mtime > 5)
 			{
-				throw new \File_Exception('Could not secure file lock, timed out after 5 seconds.');
+				throw new \FileAccessException('Could not secure file lock, timed out after 5 seconds.');
 			}
 		}
 

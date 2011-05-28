@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -12,214 +10,85 @@
  * @link       http://fuelphp.com
  */
 
-/**
- * Agent config
- *
- * NOTE: This config has been taken from the CodeIgniter framework and slightly modified,
- * but on the whole all credit goes to them. Over time this will be worked on.
- *
- * @package		Fuel
- * @category	Core
- * @author		ExpressionEngine Dev Team
- * @modified	Mike Branderhorst
- * @copyright	(c) 2008-2010 EllisLab, Inc.
- * @license		http://codeigniter.com/user_guide/license.html
- * @link		http://fuelphp.com/docs/classes/agent.html
- */
-
-/**
- * User Agent Types
- * 
- * This file contains four arrays of user agent data. It is used by the
- * User Agent Class to help identify browser, platform, robot, and
- * mobile device data. The array keys are used to identify the device
- * and the array values are used to set the actual name of the item.
- */
-
 return array(
 
-	'platforms' => array(
+	/**
+	 * Manual browscap parsing configuration.
+	 *
+	 * This will be used when your PHP installation has no browscap defined
+	 * in your php.ini, httpd.conf or .htaccess, and you can't configure one.
+	 */
+	'browscap' => array(
 
-		'windows nt 6.1'	=> 'Windows 7 / Server 2008',
-		'windows nt 6.0'	=> 'Windows Vista',
-		'windows nt 5.2'	=> 'Windows 2003',
-		'windows nt 5.0'	=> 'Windows 2000',
-		'windows nt 5.1'	=> 'Windows XP',
-		'windows nt 4.0'	=> 'Windows NT 4.0',
-		'winnt4.0'			=> 'Windows NT 4.0',
-		'winnt 4.0'			=> 'Windows NT',
-		'winnt'				=> 'Windows NT',
-		'windows 98'		=> 'Windows 98',
-		'win98'				=> 'Windows 98',
-		'windows 95'		=> 'Windows 95',
-		'win95'				=> 'Windows 95',
-		'windows'			=> 'Unknown Windows OS',
-		'os x'				=> 'Mac OS X',
-		'ppc mac'			=> 'Power PC Mac',
-		'freebsd'			=> 'FreeBSD',
-		'ppc'				=> 'Macintosh',
-		'linux'				=> 'Linux',
-		'debian'			=> 'Debian',
-		'sunos'				=> 'Sun Solaris',
-		'beos'				=> 'BeOS',
-		'apachebench'		=> 'ApacheBench',
-		'aix'				=> 'AIX',
-		'irix'				=> 'Irix',
-		'osf'				=> 'DEC OSF',
-		'hp-ux'				=> 'HP-UX',
-		'netbsd'			=> 'NetBSD',
-		'bsdi'				=> 'BSDi',
-		'openbsd'			=> 'OpenBSD',
-		'gnu'				=> 'GNU/Linux',
-		'unix'				=> 'Unknown Unix OS',
+		/**
+		 * Whether of not manual parsing is enabled.
+		 *
+		 * set to false to disable this functionality.
+		 */
+		'enabled' => true,
 
+		/**
+		 * Location from where the updated browscap file can be downloaded.
+		 */
+		'url' => 'http://browsers.garykeith.com/stream.asp?BrowsCapINI',
+
+		/**
+		 * Method used to download the updated browscap file
+		 *
+		 * 	Default: 'wrapper'
+		 *
+		 * possible values are: 'local', 'wrapper', 'curl'
+		 */
+		 'method' => 'wrapper',
+
+		/**
+		 * Filename for the local browscap.ini file (for method 'local').
+		 *
+		 * 	Default: ''
+		 */
+		 'file' => '/tmp/php_browscap.ini',
 	),
 
-	// The order of this array should NOT be changed. Many browsers return
-	// multiple browser types so we want to identify the sub-type first.
+	/**
+	 * Cache configuration.
+	 *
+	 * The agent class caches all matched agent strings for future reference
+	 * so the browscap file doesn't need to be loaded, as it's quite large.
+	 *
+	 * Also, the parsed and condensed browscap ini file is stored in cache as
+	 * well, so when a new user agent string needs to be looked up, no further
+	 * parsing is needed.
+	 */
+	'cache' => array(
 
-	'browsers' => array(
+		/**
+		 * Storage driver to use to cache agent class entries. If not defined,
+		 * the default driver defined in config/cache.php will be used.
+		 *
+		 * 	Default: ''
+		 */
+		'driver' => '',
 
-		'Flock'				=> 'Flock',
-		'Chrome'			=> 'Chrome',
-		'Opera'				=> 'Opera',
-//		'MSIE 9.0'			=> 'Internet Explorer 9',
-//		'MSIE 8.0'			=> 'Internet Explorer 8',
-//		'MSIE 7.0'			=> 'Internet Explorer 7 / 8 (compatibility)',
-		'MSIE'				=> 'Internet Explorer',
-		'Internet Explorer'	=> 'Internet Explorer',
-		'Shiira'			=> 'Shiira',
-		'Firefox'			=> 'Firefox',
-		'Chimera'			=> 'Chimera',
-		'Phoenix'			=> 'Phoenix',
-		'Firebird'			=> 'Firebird',
-		'Camino'			=> 'Camino',
-		'Netscape'			=> 'Netscape',
-		'OmniWeb'			=> 'OmniWeb',
-		'Safari'			=> 'Safari',
-		'Mozilla'			=> 'Mozilla',
-		'Konqueror'			=> 'Konqueror',
-		'icab'				=> 'iCab',
-		'Lynx'				=> 'Lynx',
-		'Links'				=> 'Links',
-		'hotjava'			=> 'HotJava',
-		'amaya'				=> 'Amaya',
-		'IBrowse'			=> 'IBrowse',
+		/**
+		 * Cache expiry.
+		 *
+		 * Number of seconds after which a cached agent result expires.
+		 *
+		 *	Default: 604800 (every 7 days)
+		 *
+		 * Note that to prevent abuse of the site publishing the browsecap files,
+		 * you can not set the expiry time lower than 7200 (2 hours)
+		 */
+		'expiry' => 604800,
 
+		/**
+		 * Identifier used to store agent class cache elements
+		 *
+		 *	Default: 'fuel.agent'
+		 *
+		 */
+		'identifier' => 'fuel.agent',
 	),
-
-	'mobiles' => array(
-
-		// legacy array, old values commented out
-
-		'mobileexplorer'	=> 'Mobile Explorer',
-//		'openwave'			=> 'Open Wave',
-//		'opera mini'		=> 'Opera Mini',
-//		'operamini'			=> 'Opera Mini',
-//		'elaine'			=> 'Palm',
-		'palmsource'		=> 'Palm',
-//		'digital paths'		=> 'Palm',
-//		'avantgo'			=> 'Avantgo',
-//		'xiino'				=> 'Xiino',
-		'palmscape'			=> 'Palmscape',
-//		'nokia'				=> 'Nokia',
-//		'ericsson'			=> 'Ericsson',
-//		'blackberry'		=> 'BlackBerry',
-//		'motorola'			=> 'Motorola'
-
-		// Phones and Manufacturers
-
-		'motorola'			=> "Motorola",
-		'nokia'				=> "Nokia",
-		'palm'				=> "Palm",
-		'iphone'			=> "Apple iPhone",
-		'ipod'				=> "Apple iPod Touch",
-		'ipad'				=> "Apple iPad",
-		'sony'				=> "Sony Ericsson",
-		'ericsson'			=> "Sony Ericsson",
-		'blackberry'		=> "BlackBerry",
-		'cocoon'			=> "O2 Cocoon",
-		'blazer'			=> "Treo",
-		'lg'				=> "LG",
-		'amoi'				=> "Amoi",
-		'xda'				=> "XDA",
-		'mda'				=> "MDA",
-		'vario'				=> "Vario",
-		'htc'				=> "HTC",
-		'samsung'			=> "Samsung",
-		'sharp'				=> "Sharp",
-		'sie-'				=> "Siemens",
-		'alcatel'			=> "Alcatel",
-		'benq'				=> "BenQ",
-		'ipaq'				=> "HP iPaq",
-		'mot-'				=> "Motorola",
-		'playstation portable'	=> "PlayStation Portable",
-		'hiptop'			=> "Danger Hiptop",
-		'nec-'				=> "NEC",
-		'panasonic'			=> "Panasonic",
-		'philips'			=> "Philips",
-		'sagem'				=> "Sagem",
-		'sanyo'				=> "Sanyo",
-		'spv'				=> "SPV",
-		'zte'				=> "ZTE",
-		'sendo'				=> "Sendo",
-
-		// Operating Systems
-
-		'symbian'			=> "Symbian",
-		'SymbianOS'			=> "SymbianOS",
-		'elaine'			=> "Palm",
-		'palm'				=> "Palm",
-		'series60'			=> "Symbian S60",
-		'windows ce'		=> "Windows CE",
-
-		// Browsers
-
-		'obigo'				=> "Obigo",
-		'netfront'			=> "Netfront Browser",
-		'openwave'			=> "Openwave Browser",
-		'mobilexplorer'		=> "Mobile Explorer",
-		'operamini'			=> "Opera Mini",
-		'opera mini'		=> "Opera Mini",
-
-		// Other
-
-		'digital paths'		=> "Digital Paths",
-		'avantgo'			=> "AvantGo",
-		'xiino'				=> "Xiino",
-		'novarra'			=> "Novarra Transcoder",
-		'vodafone'			=> "Vodafone",
-		'docomo'			=> "NTT DoCoMo",
-		'o2'				=> "O2",
-
-		// Fallback
-
-		'mobile'			=> "Generic Mobile",
-		'wireless'			=> "Generic Mobile",
-		'j2me'				=> "Generic Mobile",
-		'midp'				=> "Generic Mobile",
-		'cldc'				=> "Generic Mobile",
-		'up.link'			=> "Generic Mobile",
-		'up.browser'		=> "Generic Mobile",
-		'smartphone'		=> "Generic Mobile",
-		'cellphone'			=> "Generic Mobile",
-
-	),
-
-	// There are hundreds of bots but these are the most common.
-	
-	'robots' => array(
-
-		'googlebot'			=> 'Googlebot',
-		'msnbot'			=> 'MSNBot',
-		'slurp'				=> 'Inktomi Slurp',
-		'yahoo'				=> 'Yahoo',
-		'askjeeves'			=> 'AskJeeves',
-		'fastcrawler'		=> 'FastCrawler',
-		'infoseek'			=> 'InfoSeek Robot 1.0',
-		'lycos'				=> 'Lycos',
-
-	)
 
 );
 
