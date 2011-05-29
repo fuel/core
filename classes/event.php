@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -47,10 +45,10 @@ class Event {
 		$callback = func_get_args();
 
 		// if the arguments are valid, register the event
-		if (isset($callback[0]) && is_string($callback[0]) && isset($callback[1]) && is_callable($callback[1]))
+		if (isset($callback[0]) and is_string($callback[0]) and isset($callback[1]) and is_callable($callback[1]))
 		{
 			// make sure we have an array for this event
-			isset(static::$_events[$callback[0]]) OR static::$_events[$callback[0]] = array();
+			isset(static::$_events[$callback[0]]) or static::$_events[$callback[0]] = array();
 
 			// store the callback on the call stack
 			array_unshift(static::$_events[$callback[0]], $callback);

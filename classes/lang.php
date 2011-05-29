@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -35,7 +33,9 @@ class Lang {
 		$lang = array();
 
 		// Use the current language, failing that use the fallback language
-		foreach (array(\Config::get('language'), static::$fallback) as $language)
+		$langconf = (is_array(\Config::get('language'))) ? \Config::get('language') : array(\Config::get('language'));
+
+		foreach (array_merge($langconf, (array)static::$fallback) as $language)
 		{
 			if ($path = \Fuel::find_file('lang/'.$language, $file, '.php', true))
 			{

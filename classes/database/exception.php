@@ -2,7 +2,7 @@
 /**
  * Database exceptions.
  *
- * @package    Kohana/Database
+ * @package    Fuel/Database
  * @category   Exceptions
  * @author     Kohana Team
  * @copyright  (c) 2009 Kohana Team

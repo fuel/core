@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -114,7 +112,7 @@ class File_Driver_Directory {
 	 */
 	public function update()
 	{
-		throw new \File_Exception('Update method is unavailable on directories.');
+		throw new \BadMethodCallException('Update method is unavailable on directories.');
 	}
 
 	/**

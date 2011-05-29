@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package		Fuel
@@ -89,11 +87,6 @@ class Response {
 		$response = new static;
 
 		$response->status = $redirect_code;
-
-		if (strpos($url, '://') === false)
-		{
-			$url = Uri::create($url);
-		}
 
 		if ($method == 'location')
 		{

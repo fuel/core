@@ -1,8 +1,6 @@
 <?php
 
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * Class used to server up the email
@@ -36,6 +34,7 @@ class Email {
 	 * Creates a new instance of the email driver
 	 *
 	 * @param	array	$config
+	 * @return  Email_Driver
 	 */
 	public static function factory($config = array())
 	{

@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -231,7 +229,7 @@ class Html
 	{
 		\Config::load('doctypes', true);
 		static::$doctypes = \Config::get('doctypes');
-		if(is_array(static::$doctypes) && isset(static::$doctypes[$type]))
+		if(is_array(static::$doctypes) and isset(static::$doctypes[$type]))
 		{
 			if($type == "html5")
 			{

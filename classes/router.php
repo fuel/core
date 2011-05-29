@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package		Fuel
@@ -91,7 +89,7 @@ class Router {
 		if ( ! $match)
 		{
 			// Since we didn't find a match, we will create a new route.
-			$match = new Route($request->uri->get(), $request->uri->get());
+			$match = new Route(preg_quote($request->uri->get()), $request->uri->get());
 			$match->parse($request);
 		}
 
@@ -141,6 +139,23 @@ class Router {
 				$match->method_params = $segments;
 				return $match;
 			}
+
+			$segments = $match->segments;
+
+			// do we have a module controller with the same name as the module?
+			if ($match->controller != $match->module)
+			{
+				array_shift($segments);
+				$match->controller = $match->module;
+
+				if (class_exists(ucfirst($match->module).'\\Controller_'.ucfirst($match->controller)))
+				{
+					$match->action = count($segments) ? array_shift($segments) : 'index';
+					$match->method_params = $segments;
+					return $match;
+				}
+			}
+
 		}
 
 		$segments = $match->segments;
