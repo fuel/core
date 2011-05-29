@@ -90,11 +90,6 @@ class Response {
 
 		$response->status = $redirect_code;
 
-		if (strpos($url, '://') === false)
-		{
-			$url = Uri::create($url);
-		}
-
 		if ($method == 'location')
 		{
 			$response->set_header('Location', $url);
