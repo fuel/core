@@ -211,7 +211,7 @@ class Security {
 		$value = $value ?: \Input::post(static::$csrf_token_key, 'fail');
 
 		// always reset token once it's been checked and still the same
-		if ( ! empty($value) and static::fetch_token() == static::$csrf_old_token)
+		if (static::fetch_token() == static::$csrf_old_token and ! empty($value))
 		{
 			static::set_token(true);
 		}
