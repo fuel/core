@@ -1,6 +1,6 @@
 <?php
 /**
- * Email config for use with the email package.
+ * Image config for use with the image package.
  */
 
 return array(
@@ -89,4 +89,4 @@ return array(
 	)
 );
 
-/* End of file email.php */
+/* End of file image.php */

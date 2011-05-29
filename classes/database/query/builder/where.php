@@ -25,14 +25,11 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder {
 	/**
 	 * Alias of and_where()
 	 *
-	 * @param   mixed   column name or array($column, $alias) or object
-	 * @param   string  logic operator
-	 * @param   mixed   column value
 	 * @return  $this
 	 */
-	public function where($column, $op = null, $value = null)
+	public function where()
 	{
-		return $this->and_where($column, $op, $value);
+		return call_user_func_array(array($this, 'and_where'), func_get_args());
 	}
 
 	/**
@@ -61,6 +58,11 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder {
 		}
 		else
 		{
+			if(func_num_args() === 2)
+			{
+				$value = $op;
+				$op = '=';
+			}
 			$this->_where[] = array('AND' => array($column, $op, $value));
 		}
 
@@ -93,6 +95,11 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder {
 		}
 		else
 		{
+			if(func_num_args() === 2)
+			{
+				$value = $op;
+				$op = '=';
+			}
 			$this->_where[] = array('OR' => array($column, $op, $value));
 		}
 		return $this;

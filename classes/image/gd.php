@@ -223,6 +223,35 @@ class Image_Gd extends Image_Driver {
 		$bl and $this->round_corner($this->image_data, $radius, $antialias, false, true);
 		$br and $this->round_corner($this->image_data, $radius, $antialias, false, false);
 	}
+	
+	protected function _grayscale()
+	{
+		$sizes = $this->sizes();
+		
+		// Create the 256 color palette
+		$bwpalette = array();
+		for ($i = 0; $i < 256; $i++)
+			$bwpalette[$i] = imagecolorallocate($this->image_data, $i, $i, $i);
+		
+		for ($x = 0; $x < $sizes->width; $x++)
+		{
+			for ($y = 0; $y < $sizes->height; $y++)
+			{
+				$color = imagecolorat($this->image_data, $x, $y);
+				$red   = ($color >> 16) & 0xFF;
+				$green = ($color >> 8) & 0xFF;
+				$blue  = $color & 0xFF;
+				
+				// If its black or white, theres no use in setting the pixel
+				if (($red == 0 && $green == 0 && $blue == 0) || ($red == 255 && $green == 255 && $blue == 255))
+					continue;
+				
+				// Now set the color
+				$shade = (($red*0.299)+($green*0.587)+($blue*0.114));
+				imagesetpixel($this->image_data, $x, $y, $bwpalette[$shade]);
+			}
+		}
+	}
 
 	public function sizes($filename = null)
 	{
@@ -253,6 +282,7 @@ class Image_Gd extends Image_Driver {
 		extract(parent::save($filename, $permissions));
 
 		$this->run_queue();
+		$this->add_background();
 
 		$vars = array(&$this->image_data, $filename);
 		$filetype = $this->image_extension;
