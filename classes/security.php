@@ -22,20 +22,34 @@ namespace Fuel\Core;
  */
 class Security {
 
-	protected static $csrf_token_key = false;
-	protected static $csrf_token = false;
-	protected static $csrf_new_token = false;
+	/**
+	 * @var  string  the token as submitted in the cookie from the previous request
+	 */
+	protected static $csrf_old_token = false;
 
 	/**
+	 * @var  string  the array key for cookie & post vars to check for the token
+	 */
+	protected static $csrf_token_key = false;
+
+	/**
+	 * @var  string  the token for the next request
+	 */
+	protected static $csrf_token = false;
+
+	/**
+	 * Class init
+	 *
 	 * Fetches CSRF settings and current token
 	 */
 	public static function _init()
 	{
 		static::$csrf_token_key = \Config::get('security.csrf_token_key', 'fuel_csrf_token');
+		static::$csrf_old_token = \Input::cookie(static::$csrf_token_key, false);
 
-		if (\Config::get('security.csrf_autoload', false))
+		if (\Config::get('security.csrf_autoload', true))
 		{
-			static::fetch_token();
+			static::check_token();
 		}
 	}
 
@@ -189,23 +203,26 @@ class Security {
 	/**
 	 * Check CSRF Token
 	 *
-	 * @param	string	CSRF token to be checked, checks post when empty
-	 * @return	bool
+	 * @param   string  CSRF token to be checked, checks post when empty
+	 * @return  bool
 	 */
 	public static function check_token($value = null)
 	{
 		$value = $value ?: \Input::post(static::$csrf_token_key, 'fail');
 
-		// always reset token once it's been checked
-		static::regenerate_token();
+		// always reset token once it's been checked and still the same
+		if ( ! empty($value) and static::fetch_token() == static::$csrf_old_token)
+		{
+			static::set_token(true);
+		}
 
-		return $value === static::fetch_token();
+		return $value === static::$csrf_old_token;
 	}
 
 	/**
-	 * Fetch CSRF Token from cookie
+	 * Fetch CSRF Token for the next request
 	 *
-	 * @return	string
+	 * @return  string
 	 */
 	public static function fetch_token()
 	{
@@ -214,32 +231,26 @@ class Security {
 			return static::$csrf_token;
 		}
 
-		static::$csrf_token = \Input::cookie(static::$csrf_token_key, null);
-		if (static::$csrf_token === null || \Config::get('security.csrf_expiration', 0) <= 0)
-		{
-			// set new token for next session when necessary
-			static::regenerate_token();
-		}
+		static::set_token();
 
 		return static::$csrf_token;
 	}
 
-	/**
-	 * Regenerate token
-	 *
-	 * Generates a new token if the old one expired or was checked.
-	 */
-	public static function regenerate_token()
+	protected static function set_token($reset = false)
 	{
-		if (static::$csrf_new_token !== false)
+		// re-use old token when found (= not expired) and expiration is used (otherwise always reset)
+		if ( ! $reset and static::$csrf_old_token and \Config::get('security.csrf_expiration', 0) > 0)
 		{
-			return;
+			static::$csrf_token = static::$csrf_old_token;
 		}
+		// set new token for next session when necessary
+		else
+		{
+			static::$csrf_token = md5(uniqid().time());
 
-		static::$csrf_new_token = md5(uniqid().time());
-
-		$expiration = \Config::get('security.csrf_expiration', 0);
-		\Cookie::set(static::$csrf_token_key, static::$csrf_new_token, $expiration);
+			$expiration = \Config::get('security.csrf_expiration', 0);
+			\Cookie::set(static::$csrf_token_key, static::$csrf_token, $expiration);
+		}
 	}
 
 	/**
