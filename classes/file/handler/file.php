@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 
 
-class File_Driver_File {
+class File_Handler_File {
 
 	/**
 	 * @var	string	path to the file
@@ -57,10 +57,6 @@ class File_Driver_File {
 		}
 
 		return $obj;
-	}
-
-	public function __destruct()
-	{
 	}
 
 	/**
@@ -136,7 +132,8 @@ class File_Driver_File {
 	 */
 	public function update($new_content)
 	{
-
+		$info = pathinfo($this->path);
+		return $this->area->update($info['dirname'], $info['basename'], $new_content, $this);
 	}
 
 	/**
@@ -148,6 +145,16 @@ class File_Driver_File {
 	{
 		// should also destroy object but not possible in PHP right?
 		return $this->area->delete($this->path);
+	}
+	
+	/**
+	 * Get the url.
+	 *
+	 * @return	bool
+	 */
+	public function get_url()
+	{
+		return $this->area->get_url($this->path);
 	}
 }
 

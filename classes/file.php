@@ -79,11 +79,21 @@ class File {
 	 * @param	string					path to the file or directory
 	 * @param	array					configuration items
 	 * @param	string|File_Area|null	file area name, object or null for non-specific
-	 * @return	File_Driver_File
+	 * @return	File_Handler_File
 	 */
 	public static function get($path, Array $config = array(), $area = null)
 	{
-		return static::instance($area)->get_driver($path, $config);
+		return static::instance($area)->get_handler($path, $config);
+	}
+	
+	/**
+	 * Get the url.
+	 *
+	 * @return	bool
+	 */
+	public static function get_url($path, Array $config = array(), $area = null)
+	{
+		return static::get($path, $config, $area)->get_url();
 	}
 
 	/**
