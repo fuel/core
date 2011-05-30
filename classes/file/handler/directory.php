@@ -17,6 +17,16 @@ namespace Fuel\Core;
 class File_Handler_Directory {
 
 	/**
+	 * @var	string	path to the file
+	 */
+	protected $path;
+
+	/**
+	 * @var	File_Area
+	 */
+	protected $area;
+
+	/**
 	 * @var	array	listing of files and directories within this directory
 	 */
 	protected $content = array();
@@ -124,6 +134,16 @@ class File_Handler_Directory {
 	{
 		// should also destroy object but not possible in PHP right?
 		return $this->area->delete_dir($this->path, $recursive, $delete_top);
+	}
+	
+	/**
+	 * Get the url.
+	 *
+	 * @return	bool
+	 */
+	public function get_url()
+	{
+		throw new \BadMethodCallException('Get_url method is unavailable on directories.');
 	}
 }
 
