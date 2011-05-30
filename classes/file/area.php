@@ -157,6 +157,33 @@ class File_Area {
 
 		return $path;
 	}
+	
+	/**
+	 * Translate relative path to accessible path, throws error when operation is not allowed
+	 *
+	 * @param	string
+	 * @return	string
+	 * @throws	LogicException	when no url is set or no basedir is set and file is outside DOCROOT
+	 */
+	public function get_url($path)
+	{
+		if(empty($this->url))
+		{
+			throw new \LogicException('File operation now allowed: cannot create a file url without an area url.');
+		}
+		
+		$path = $this->get_path($path);
+		
+		$basedir = $this->basedir;
+		empty($basedir) and $basedir = DOCROOT;
+		
+		if(stripos($path, $basedir) !== 0)
+		{
+			throw new \LogicException('File operation not allowed: cannot create file url whithout a basedir and file outside DOCROOT.');
+		}
+
+		return rtrim($this->url, '/').'/'.ltrim(substr($path, strlen($basedir)),'/');
+	}
 
 	/* -------------------------------------------------------------------------------------
 	 * Allow all File methods to be used from an area directly

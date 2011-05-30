@@ -150,6 +150,16 @@ class File_Handler_File {
 		// should also destroy object but not possible in PHP right?
 		return $this->area->delete($this->path);
 	}
+	
+	/**
+	 * Get the url.
+	 *
+	 * @return	bool
+	 */
+	public function get_url()
+	{
+		return $this->area->get_url($this->path);
+	}
 }
 
 /* End of file file.php */

@@ -85,6 +85,16 @@ class File {
 	{
 		return static::instance($area)->get_handler($path, $config);
 	}
+	
+	/**
+	 * Get the url.
+	 *
+	 * @return	bool
+	 */
+	public static function get_url($path, Array $config = array(), $area = null)
+	{
+		return static::get($path, $config, $area)->get_url();
+	}
 
 	/**
 	 * Create an empty file
