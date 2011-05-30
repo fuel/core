@@ -580,7 +580,7 @@ class File {
 		if (is_string($path))
 		{
 			$path = static::instance($area)->get_path($path);
-			$resource = fopen($resource, 'r+');
+			$resource = fopen($path, 'r+');
 		}
 		else
 		{
