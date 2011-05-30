@@ -14,6 +14,9 @@ namespace Fuel\Core;
 
 
 class FileAccessException extends Fuel_Exception {}
+class OutsideAreaException extends \OutOfBoundsException {}
+class InvalidPathException extends \OutOfBoundsException {}
+
 
 
 // ------------------------------------------------------------------------
@@ -106,16 +109,16 @@ class File {
 	 */
 	public static function create($basepath, $name, $contents = null, $area = null)
 	{
-		$basepath	= rtrim(static::instance($area)->get_path($basepath, $area), '\\/').DS;
-		$new_file	= static::instance($area)->get_path($basepath.$name, $area);
+		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
+		$new_file	= static::instance($area)->get_path($basepath.$name);
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
-			throw new \FileAccessException('Invalid basepath, cannot create file at this location.');
+			throw new \InvalidPathException('Invalid basepath, cannot create file at this location.');
 		}
 		elseif (file_exists($new_file))
 		{
-			throw new \FileAccessException('File exists already, cannot be created.');
+			throw new \InvalidPathException('File exists already, cannot be created.');
 		}
 
 		$file = static::open_file(@fopen($new_file, 'c'), true, $area);
@@ -141,7 +144,7 @@ class File {
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
-			throw new \FileAccessException('Invalid basepath, cannot create directory at this location.');
+			throw new \InvalidPathException('Invalid basepath, cannot create directory at this location.');
 		}
 		elseif (file_exists($new_dir))
 		{
@@ -188,7 +191,7 @@ class File {
 
 		if ( ! is_dir($path))
 		{
-			throw new \FileAccessException('Invalid path, directory cannot be read.');
+			throw new \InvalidPathException('Invalid path, directory cannot be read.');
 		}
 
 		if ( ! $fp = @opendir($path))
@@ -289,7 +292,7 @@ class File {
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
-			throw new \FileAccessException('Invalid basepath, cannot update a file at this location.');
+			throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
 		}
 
 		if ( ! $file = static::open_file(@fopen($new_file, 'w'), true, $area) )
@@ -317,7 +320,7 @@ class File {
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
-			throw new \FileAccessException('Invalid basepath, cannot append to a file at this location.');
+			throw new \InvalidPathException('Invalid basepath, cannot append to a file at this location.');
 		}
 		elseif ( ! file_exists($new_file))
 		{
@@ -370,7 +373,7 @@ class File {
 
 		if ( ! is_file($path))
 		{
-			throw new \FileAccessException('Cannot copy file: given path is not a file.');
+			throw new \InvalidPathException('Cannot copy file: given path is not a file.');
 		}
 		elseif (file_exists($new_path))
 		{
@@ -397,11 +400,11 @@ class File {
 
 		if ( ! is_dir($path))
 		{
-			throw new \FileAccessException('Cannot copy directory: given path is not a directory.');
+			throw new \InvalidPathExceptio('Cannot copy directory: given path is not a directory.');
 		}
 		elseif (file_exists($new_path))
 		{
-			throw new \FileAccessException('Cannot copy directory: new path already exists.');
+			throw new \FIleAcessException('Cannot copy directory: new path already exists.');
 		}
 
 		$files = static::read_dir($path, -1, array(), $area);
@@ -438,7 +441,7 @@ class File {
 
 		if ( ! is_file($path))
 		{
-			throw new \FileAccessException('Cannot delete file: given path "'.$path.'" is not a file.');
+			throw new \InvalidPathException('Cannot delete file: given path "'.$path.'" is not a file.');
 		}
 
 		return unlink($path);
@@ -458,7 +461,7 @@ class File {
 		$path = rtrim(static::instance($area)->get_path($path, $area), '\\/').DS;
 		if ( ! is_dir($path))
 		{
-			throw new \FileAccessException('Cannot delete directory: given path is not a directory.');
+			throw new \InvalidPathException('Cannot delete directory: given path is not a directory.');
 		}
 
 		$files = static::read_dir($path, -1, array(), $area);
