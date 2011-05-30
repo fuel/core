@@ -145,7 +145,7 @@ class File_Area {
 		// basedir prefix is required when it is set (may cause unexpected errors when realpath doesn't work)
 		if ( ! empty($this->basedir) && substr($path, 0, strlen($this->basedir)) != $this->basedir)
 		{
-			throw new \FileAccessException('File operation not allowed: given path is outside the basedir for this area.');
+			throw new \OutsideAreaException('File operation not allowed: given path is outside the basedir for this area.');
 		}
 
 		// check file extension
