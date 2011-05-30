@@ -17,8 +17,6 @@ class FileAccessException extends Fuel_Exception {}
 class OutsideAreaException extends \OutOfBoundsException {}
 class InvalidPathException extends \OutOfBoundsException {}
 
-
-
 // ------------------------------------------------------------------------
 
 /**
@@ -139,8 +137,8 @@ class File {
 	 */
 	public static function create_dir($basepath, $name, $chmod = 0777, $area = null)
 	{
-		$basepath	= rtrim(static::instance($area)->get_path($basepath, $area), '\\/').DS;
-		$new_dir	= static::instance($area)->get_path($basepath.$name, $area);
+		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
+		$new_dir	= static::instance($area)->get_path($basepath.$name);
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
@@ -166,7 +164,7 @@ class File {
 	 */
 	public static function read($path, $as_string = false, $area = null)
 	{
-		$path = static::instance($area)->get_path($path, $area);
+		$path = static::instance($area)->get_path($path);
 
 		$file = static::open_file(@fopen($path, 'r'), LOCK_SH, $area);
 		$return = $as_string ? file_get_contents($path) : readfile($path);
@@ -187,7 +185,7 @@ class File {
 	 */
 	public static function read_dir($path, $depth = 0, $filter = null, $area = null)
 	{
-		$path = rtrim(static::instance($area)->get_path($path, $area), '\\/').DS;
+		$path = rtrim(static::instance($area)->get_path($path), '\\/').DS;
 
 		if ( ! is_dir($path))
 		{
@@ -287,8 +285,8 @@ class File {
 	 */
 	public static function update($basepath, $name, $contents = null, $area = null)
 	{
-		$basepath	= rtrim(static::instance($area)->get_path($basepath, $area), '\\/').DS;
-		$new_file	= static::instance($area)->get_path($basepath.$name, $area);
+		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
+		$new_file	= static::instance($area)->get_path($basepath.$name);
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
@@ -315,8 +313,8 @@ class File {
 	 */
 	public static function append($basepath, $name, $contents = null, $area = null)
 	{
-		$basepath	= rtrim(static::instance($area)->get_path($basepath, $area), '\\/').DS;
-		$new_file	= static::instance($area)->get_path($basepath.$name, $area);
+		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
+		$new_file	= static::instance($area)->get_path($basepath.$name);
 
 		if ( ! is_dir($basepath) || ! is_writable($basepath))
 		{
@@ -344,8 +342,8 @@ class File {
 	 */
 	public static function rename($path, $new_path, $area = null)
 	{
-		$path = static::instance($area)->get_path($path, $area);
-		$new_path = static::instance($area)->get_path($new_path, $area);
+		$path = static::instance($area)->get_path($path);
+		$new_path = static::instance($area)->get_path($new_path);
 
 		return rename($path, $new_path);
 	}
@@ -368,8 +366,8 @@ class File {
 	 */
 	public static function copy($path, $new_path, $area = null)
 	{
-		$path = static::instance($area)->get_path($path, $area);
-		$new_path = static::instance($area)->get_path($new_path, $area);
+		$path = static::instance($area)->get_path($path);
+		$new_path = static::instance($area)->get_path($new_path);
 
 		if ( ! is_file($path))
 		{
@@ -395,8 +393,8 @@ class File {
 	 */
 	public static function copy_dir($path, $new_path, $area = null)
 	{
-		$path = rtrim(static::instance($area)->get_path($path, $area), '\\/').DS;
-		$new_path = rtrim(static::instance($area)->get_path($new_path, $area), '\\/').DS;
+		$path = rtrim(static::instance($area)->get_path($path), '\\/').DS;
+		$new_path = rtrim(static::instance($area)->get_path($new_path), '\\/').DS;
 
 		if ( ! is_dir($path))
 		{
@@ -437,7 +435,7 @@ class File {
 	 */
 	public static function delete($path, $area = null)
 	{
-		$path = rtrim(static::instance($area)->get_path($path, $area), '\\/');
+		$path = rtrim(static::instance($area)->get_path($path), '\\/');
 
 		if ( ! is_file($path))
 		{
@@ -458,7 +456,7 @@ class File {
 	 */
 	public static function delete_dir($path, $recursive = true, $delete_top = true, $area = null)
 	{
-		$path = rtrim(static::instance($area)->get_path($path, $area), '\\/').DS;
+		$path = rtrim(static::instance($area)->get_path($path), '\\/').DS;
 		if ( ! is_dir($path))
 		{
 			throw new \InvalidPathException('Cannot delete directory: given path is not a directory.');
@@ -507,11 +505,16 @@ class File {
 	 * @param	constant				either valid lock constant or true=LOCK_EX / false=LOCK_UN
 	 * @param	string|File_Area|null	file area name, object or null for non-specific
 	 */
-	public static function open_file($resource, $lock = true, $area = null)
+	public static function open_file($path, $lock = true, $area = null)
 	{
-		if (is_string($resource))
+		if (is_string($path))
 		{
+			$path = static::instance($area)->get_path($path);
 			$resource = fopen($resource, 'r+');
+		}
+		else
+		{
+			$resource = $path;
 		}
 
 		// Make sure the parameter is a valid resource
