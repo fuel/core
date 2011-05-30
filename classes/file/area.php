@@ -145,7 +145,7 @@ class File_Area {
 		// basedir prefix is required when it is set (may cause unexpected errors when realpath doesn't work)
 		if ( ! empty($this->basedir) && substr($path, 0, strlen($this->basedir)) != $this->basedir)
 		{
-			throw new \FileAccessException('File operation not allowed: given path is outside the basedir for this area.');
+			throw new \OutsideAreaException('File operation not allowed: given path is outside the basedir for this area.');
 		}
 
 		// check file extension
@@ -243,6 +243,21 @@ class File_Area {
 	public function update($basepath, $name, $new_content)
 	{
 		return \File::update($basepath, $name, $new_content, $this);
+	}
+	
+	public function get_permissions($path)
+	{
+		return \File::get_permissions($path, $this);
+	}
+	
+	public function get_time($path, $type)
+	{
+		return \File::get_time($path, $type, $this);
+	}
+	
+	public function get_size($path)
+	{
+		return \File::get_size($path, $this);
 	}
 }
 

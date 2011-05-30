@@ -108,6 +108,8 @@ Autoloader::add_classes(array(
 
 	'Fuel\\Core\\File'                   => COREPATH.'classes/file.php',
 	'Fuel\\Core\\FileAccessException'    => COREPATH.'classes/file.php',
+	'Fuel\\Core\\OutsideAreaException'   => COREPATH.'classes/file.php',
+	'Fuel\\Core\\InvalidPathException'   => COREPATH.'classes/file.php',
 	'Fuel\\Core\\File_Area'              => COREPATH.'classes/file/area.php',
 	'Fuel\\Core\\File_Handler_File'       => COREPATH.'classes/file/handler/file.php',
 	'Fuel\\Core\\File_Handler_Directory'  => COREPATH.'classes/file/handler/directory.php',
