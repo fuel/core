@@ -156,6 +156,17 @@ class File_Handler_Directory {
 	{
 		return $this->area->get_permissions($this->path);
 	}
+	
+	/**
+	 * Get directory's the created or modified timestamp.
+	 *
+	 * @param	string	$type	modified or created
+	 * @return	int		Unix Timestamp
+	 */
+	public function get_time($type = 'modified')
+	{
+		return $this->area->get_time($this->path, $type);
+	}
 }
 
 /* End of file directory.php */

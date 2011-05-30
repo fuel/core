@@ -351,6 +351,37 @@ class File {
 		return substr(sprintf('%o', fileperms($path)), -4);
 
 	}
+	
+	/**
+	 * Get a file's or directory's created or modified timestamp.
+	 *
+	 * @param	string	$path	path to the file or directory
+	 * @param	string	$type	modified or created
+	  * @param	mixed	$area	file area name, object or null for base area
+	 * @return	int		Unix Timestamp
+	 */
+	public static function get_time($path, $type = 'modified', $area = null)
+	{
+		$path = static::instance($area)->get_path($path);
+		
+		if ( ! file_exists($path))
+		{
+			throw new \InvalidPathException('Path is not a directory or a file, cannot get creation timestamp.');
+		}
+		
+		if($type === 'modified')
+		{
+			return filemtime($path);
+		}
+		elseif($type === 'created')
+		{
+			return filectime($path);
+		}
+		else
+		{
+			throw new \UnexpectedValueException('File::time $type must be "modified" or "created".');
+		}
+	}
 
 	/**
 	 * Rename directory or file

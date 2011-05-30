@@ -249,6 +249,11 @@ class File_Area {
 	{
 		return \File::get_permissions($path, $this);
 	}
+	
+	public function get_time($path, $type)
+	{
+		return \File::get_time($path, $type, $this);
+	}
 }
 
 /* End of file area.php */
