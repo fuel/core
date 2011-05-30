@@ -56,16 +56,6 @@ class Form {
 	 * ---------------------------------------------------------------------------- */
 
 	/**
-	 * @var	array	default form config array
-	 */
-	protected static $class_config = array(
-		'prep_value'		=> true,
-		'auto_id'			=> true,
-		'auto_id_prefix'	=> 'form_',
-		'form_method'		=> 'post'
-	);
-
-	/**
 	 * Valid types for input tags (including HTML5)
 	 */
 	protected static $_valid_inputs = array(
@@ -86,8 +76,6 @@ class Form {
 	public static function _init()
 	{
 		\Config::load('form', true);
-
-		static::$class_config = \Config::get('form');
 	}
 
 	/**
@@ -95,6 +83,7 @@ class Form {
 	 *
 	 * @param	string
 	 * @param	mixed	new value or null to unset
+	 * @depricated
 	 */
 	public static function set_class_config($config, $value = null)
 	{
@@ -103,11 +92,13 @@ class Form {
 		{
 			if ($value === null)
 			{
-				unset(static::$class_config[$key]);
+				$class_config = \Config::get('form');
+				unset($class_config[$key]);
+				\Config::set('form', $class_config);
 			}
 			else
 			{
-				static::$class_config[$key] = $value;
+				\Config::set('form.'.$key, $value);
 			}
 		}
 	}
@@ -118,12 +109,13 @@ class Form {
 	 * @param	string|array	a single key or multiple in an array, empty to fetch all
 	 * @param	mixed			default output when config wasn't set
 	 * @return	mixed|array		a single config value or multiple in an array when $key input was an array
+	 * @depricated
 	 */
 	public static function get_class_config($key = null, $default = null)
 	{
 		if ($key === null)
 		{
-			return static::$class_config;
+			return \Config::get('form');
 		}
 
 		if (is_array($key))
@@ -131,12 +123,12 @@ class Form {
 			$output = array();
 			foreach ($key as $k)
 			{
-				$output[$k] = array_key_exists($k, static::$class_config) ? static::$class_config[$k] : $default;
+				$output[$k] = \Config::get('form.'.$k, $default);
 			}
 			return $output;
 		}
 
-		return array_key_exists($key, static::$class_config) ? static::$class_config[$key] : $default;
+		return \Config::get('form.'.$key, $default);
 	}
 
 	/**
@@ -168,7 +160,7 @@ class Form {
 		}
 
 		// If method is empty, use POST
-		! empty($attributes['method']) || $attributes['method'] = static::get_class_config('form_method', 'post');
+		! empty($attributes['method']) || $attributes['method'] = \Config::get('form.form_method', 'post');
 
 		$form = '<form';
 		foreach ($attributes as $prop => $value)
@@ -224,15 +216,15 @@ class Form {
 			throw new \InvalidArgumentException(sprintf('"%s" is not a valid input type.', $attributes['type']));
 		}
 
-		if (static::get_class_config('prep_value', true) && empty($attributes['dont_prep']))
+		if (\Config::get('form.prep_value', true) && empty($attributes['dont_prep']))
 		{
 			$attributes['value'] = static::prep_value($attributes['value']);
 			unset($attributes['dont_prep']);
 		}
 
-		if (empty($attributes['id']) && static::get_class_config('auto_id', false) == true)
+		if (empty($attributes['id']) && \Config::get('form.auto_id', false) == true)
 		{
-			$attributes['id'] = static::get_class_config('auto_id_prefix', '').$attributes['name'];
+			$attributes['id'] = \Config::get('form.auto_id_prefix', 'form_').$attributes['name'];
 		}
 
 		return html_tag('input', static::attr_to_string($attributes));
@@ -451,15 +443,15 @@ class Form {
 		$value = empty($attributes['value']) ? '' : $attributes['value'];
 		unset($attributes['value']);
 
-		if (static::get_class_config('prep_value', true) && empty($attributes['dont_prep']))
+		if (\Config::get('form.prep_value', true) && empty($attributes['dont_prep']))
 		{
 			$value = static::prep_value($value);
 			unset($attributes['dont_prep']);
 		}
 
-		if (empty($attributes['id']) && static::get_class_config('auto_id', false) == true)
+		if (empty($attributes['id']) && \Config::get('form.auto_id', false) == true)
 		{
-			$attributes['id'] = static::get_class_config('auto_id_prefix', '').$attributes['name'];
+			$attributes['id'] = \Config::get('form.auto_id_prefix', '').$attributes['name'];
 		}
 
 		return html_tag('textarea', static::attr_to_string($attributes), $value);
@@ -511,7 +503,7 @@ class Form {
 					$opt_attr = array('value' => $opt_key);
 					(in_array($opt_key, $selected)) && $opt_attr[] = 'selected';
 					$optgroup .= str_repeat("\t", 2);
-					$opt_attr['value'] = (static::get_class_config('prep_value', true) && empty($attributes['dont_prep'])) ?
+					$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
 						static::prep_value($opt_attr['value']) : $opt_attr['value'];
 					$optgroup .= html_tag('option', $opt_attr, $opt_val).PHP_EOL;
 				}
@@ -523,16 +515,16 @@ class Form {
 				$opt_attr = array('value' => $key);
 				(in_array($key, $selected)) && $opt_attr[] = 'selected';
 				$input .= str_repeat("\t", 1);
-				$opt_attr['value'] = (static::get_class_config('prep_value', true) && empty($attributes['dont_prep'])) ?
+				$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
 					static::prep_value($opt_attr['value']) : $opt_attr['value'];
 				$input .= html_tag('option', $opt_attr, $val).PHP_EOL;
 			}
 		}
 		$input .= str_repeat("\t", 0);
 
-		if (empty($attributes['id']) && static::get_class_config('auto_id', false) == true)
+		if (empty($attributes['id']) && \Config::get('form.auto_id', false) == true)
 		{
-			$attributes['id'] = static::get_class_config('auto_id_prefix', '').$attributes['name'];
+			$attributes['id'] = \Config::get('form.auto_id_prefix', '').$attributes['name'];
 		}
 
 		return html_tag('select', static::attr_to_string($attributes), $input);
@@ -781,7 +773,7 @@ class Form {
 					$build_fields .= $bf_temp;
 				}
 				$template = str_replace(array($match[0], "{group_label}"), array($build_fields, $label), $template);
-				
+
 				if ($required_mark)
 				{
 					$template = str_replace('{required}', $required_mark, $template);
@@ -835,14 +827,14 @@ class Form {
 			{
 				$output[$k] = $this->fieldset->get_config($k, null) === null
 							? $this->fieldset->get_config($k, $default)
-							: static::get_class_config($k, $default);
+							: \Config::get('form.'.$k, $default);
 			}
 			return $output;
 		}
 
 		return $this->fieldset->get_config($key, null) !== null
 			? $this->fieldset->get_config($key, $default)
-			: static::get_class_config($key, $default);
+			: \Config::get('form.'.$key, $default);
 	}
 
 	/**
