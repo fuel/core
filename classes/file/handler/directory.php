@@ -167,6 +167,16 @@ class File_Handler_Directory {
 	{
 		return $this->area->get_time($this->path, $type);
 	}
+	
+	/**
+	 * Get the size.
+	 *
+	 * @return	bool
+	 */
+	public function get_size()
+	{
+		throw new \BadMethodCallException('Get_size method is unavailable on directories.');
+	}
 }
 
 /* End of file directory.php */

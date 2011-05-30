@@ -357,7 +357,7 @@ class File {
 	 *
 	 * @param	string	$path	path to the file or directory
 	 * @param	string	$type	modified or created
-	  * @param	mixed	$area	file area name, object or null for base area
+	 * @param	mixed	$area	file area name, object or null for base area
 	 * @return	int		Unix Timestamp
 	 */
 	public static function get_time($path, $type = 'modified', $area = null)
@@ -381,6 +381,25 @@ class File {
 		{
 			throw new \UnexpectedValueException('File::time $type must be "modified" or "created".');
 		}
+	}
+	
+	/**
+	 * Get a file's size.
+	 *
+	 * @param	string	$path	path to the file or directory
+	 * @param	mixed	$area	file area name, object or null for base area
+	 * @return	int		the file's size in bytes
+	 */
+	public static function get_size($path, $area = null)
+	{
+		$path = static::instance($area)->get_path($path);
+		
+		if ( ! file_exists($path))
+		{
+			throw new \InvalidPathException('Path is not a directory or a file, cannot get size.');
+		}
+		
+		return filesize($path);
 	}
 
 	/**

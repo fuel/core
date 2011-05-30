@@ -254,6 +254,11 @@ class File_Area {
 	{
 		return \File::get_time($path, $type, $this);
 	}
+	
+	public function get_size($path)
+	{
+		return \File::get_size($path, $this);
+	}
 }
 
 /* End of file area.php */
