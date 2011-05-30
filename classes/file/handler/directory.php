@@ -33,8 +33,8 @@ class File_Handler_Directory {
 
 	protected function __construct($path, Array &$config, File_Area $area, $content = array())
 	{
-		$this->path		= rtrim($path, '\\/').DS;
-		$this->resource = false;
+		$this->path	= rtrim($path, '\\/').DS;
+		$this->area	= $area;
 
 		foreach ($content as $key => $value)
 		{
@@ -57,12 +57,13 @@ class File_Handler_Directory {
 	/**
 	 * Read directory
 	 *
-	 * @param	whether or not to read recursive
+	 * @param	$dept		whether or not to read recursive
+	 * @param	$filters	whether or not to read recursive
 	 * @return	array
 	 */
-	public function read($depth = 0)
+	public function read($depth = 0, $filters = null)
 	{
-		return $this->area->read_dir($this->path, $depth, null, $this->area);
+		return $this->area->read_dir($this->path, $depth, $filters, $this->area);
 	}
 
 	/**

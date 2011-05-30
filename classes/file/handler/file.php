@@ -59,10 +59,6 @@ class File_Handler_File {
 		return $obj;
 	}
 
-	public function __destruct()
-	{
-	}
-
 	/**
 	 * Read file
 	 *
