@@ -244,6 +244,11 @@ class File_Area {
 	{
 		return \File::update($basepath, $name, $new_content, $this);
 	}
+	
+	public function get_permissions($path)
+	{
+		return \File::get_permissions($path, $this);
+	}
 }
 
 /* End of file area.php */

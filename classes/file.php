@@ -57,7 +57,7 @@ class File {
 	/**
 	 * Instance
 	 *
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	File_Area
 	 */
 	public static function instance($area = null)
@@ -79,7 +79,7 @@ class File {
 	 *
 	 * @param	string					path to the file or directory
 	 * @param	array					configuration items
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	File_Handler_File
 	 */
 	public static function get($path, Array $config = array(), $area = null)
@@ -102,7 +102,7 @@ class File {
 	 *
 	 * @param	string					directory where to create file
 	 * @param	string					filename
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	bool
 	 */
 	public static function create($basepath, $name, $contents = null, $area = null)
@@ -159,7 +159,7 @@ class File {
 	 *
 	 * @param	string					file to read
 	 * @param	bool					whether to use readfile() or file_get_contents()
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	IO|string				file contents
 	 */
 	public static function read($path, $as_string = false, $area = null)
@@ -180,7 +180,7 @@ class File {
 	 * @param	string					directory to read
 	 * @param	int						depth to recurse directory, 1 is only current and 0 or smaller is unlimited
 	 * @param	array|null				array of partial regexes or non-array for default
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	array					directory contents in an array
 	 */
 	public static function read_dir($path, $depth = 0, $filter = null, $area = null)
@@ -280,7 +280,7 @@ class File {
 	 *
 	 * @param	string					directory where to write the file
 	 * @param	string					filename
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	bool
 	 */
 	public static function update($basepath, $name, $contents = null, $area = null)
@@ -308,7 +308,7 @@ class File {
 	 *
 	 * @param	string					directory where to write the file
 	 * @param	string					filename
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	bool
 	 */
 	public static function append($basepath, $name, $contents = null, $area = null)
@@ -330,6 +330,26 @@ class File {
 		static::close_file($file, $area);
 
 		return true;
+	}
+	
+	/**
+	 * Get the octal permissions for a file or directory
+	 *
+	 * @param	string	$path	path to the file or directory
+	 * @param	mixed	$area	file area name, object or null for base area
+	 * $return	string	octal file permissions
+	 */
+	public static function get_permissions($path, $area = null)
+	{
+		$path = static::instance($area)->get_path($path);
+		
+		if ( ! file_exists($path))
+		{
+			throw new \InvalidPathException('Path is not a directory or a file, cannot get permissions.');
+		}
+		
+		return substr(sprintf('%o', fileperms($path)), -4);
+
 	}
 
 	/**
@@ -430,7 +450,7 @@ class File {
 	 * Delete file
 	 *
 	 * @param	string					path to file to delete
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	bool
 	 */
 	public static function delete($path, $area = null)
@@ -451,7 +471,7 @@ class File {
 	 * @param	string					path to directory to delete
 	 * @param	bool					whether to also delete contents of subdirectories
 	 * @param	bool					whether to delete the parent dir itself when empty
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 * @return	bool
 	 */
 	public static function delete_dir($path, $recursive = true, $delete_top = true, $area = null)
@@ -503,7 +523,7 @@ class File {
 	 *
 	 * @param	resource|string			file resource or path
 	 * @param	constant				either valid lock constant or true=LOCK_EX / false=LOCK_UN
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 */
 	public static function open_file($path, $lock = true, $area = null)
 	{
@@ -549,7 +569,7 @@ class File {
 	 * Close file resource & unlock
 	 *
 	 * @param	resource				open file resource
-	 * @param	string|File_Area|null	file area name, object or null for non-specific
+	 * @param	string|File_Area|null	file area name, object or null for base area
 	 */
 	public static function close_file($resource, $area = null)
 	{

@@ -156,6 +156,16 @@ class File_Handler_File {
 	{
 		return $this->area->get_url($this->path);
 	}
+	
+	/**
+	 * Get the file permissions.
+	 *
+	 * @return	string	file permissions
+	 */
+	public function get_permissions()
+	{
+		return $this->area->get_permissions($this->path);
+	}
 }
 
 /* End of file file.php */
