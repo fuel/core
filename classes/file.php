@@ -15,7 +15,7 @@ namespace Fuel\Core;
 
 class FileAccessException extends Fuel_Exception {}
 class OutsideAreaException extends \OutOfBoundsException {}
-class InvalidPathException extends \OutOfBoundsException {}
+class InvalidPathException extends FileAccessException {}
 
 // ------------------------------------------------------------------------
 
