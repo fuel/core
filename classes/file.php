@@ -468,11 +468,11 @@ class File {
 
 		if ( ! is_dir($path))
 		{
-			throw new \InvalidPathExceptio('Cannot copy directory: given path is not a directory.');
+			throw new \InvalidPathException('Cannot copy directory: given path is not a directory.');
 		}
 		elseif (file_exists($new_path))
 		{
-			throw new \FIleAcessException('Cannot copy directory: new path already exists.');
+			throw new \FileAccessException('Cannot copy directory: new path already exists.');
 		}
 
 		$files = static::read_dir($path, -1, array(), $area);
