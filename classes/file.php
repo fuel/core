@@ -116,7 +116,7 @@ class File {
 		}
 		elseif (file_exists($new_file))
 		{
-			throw new \InvalidPathException('File exists already, cannot be created.');
+			throw new \FileAccessException('File exists already, cannot be created.');
 		}
 
 		$file = static::open_file(@fopen($new_file, 'c'), true, $area);
