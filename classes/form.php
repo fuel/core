@@ -793,6 +793,18 @@ class Form {
 	}
 
 	/**
+	 * Add a CSRF token and a validation rule to check it
+	 */
+	public function add_csrf()
+	{
+		$this->add(\Config::get('security.csrf_token_key', 'fuel_csrf_token'), 'CSRF Token')
+			->set_type('hidden')
+			->add_rule(array('Security', 'check_token'));
+
+		return $this;
+	}
+
+	/**
 	 * Sets a config value on the fieldset
 	 *
 	 * @param	string
@@ -838,6 +850,34 @@ class Form {
 	}
 
 	/**
+	 * Set form attribute
+	 *
+	 * @param  string
+	 * @param  mixed
+	 */
+	public function set_attribute($key, $value)
+	{
+		$attributes = $this->get_config('form_attributes', array());
+		$attributes[$key] = $value;
+		$this->set_config('form_attributes', $attributes);
+
+		return $this;
+	}
+
+	/**
+	 * Get form attribute
+	 *
+	 * @param  string
+	 * @param  mixed
+	 */
+	public function get_attribute($key, $default = null)
+	{
+		$attributes = $this->get_config('form_attributes', array());
+
+		return array_key_exists($key, $attributes) ? $attributes[$key] : $default;
+	}
+
+	/**
 	 * Magic method toString that will build this as a form
 	 *
 	 * @return	string
@@ -873,6 +913,14 @@ class Form {
 	public function field($name = null)
 	{
 		return $this->fieldset->field($name);
+	}
+
+	/**
+	 * Alias for $this->fieldset->populate() for this fieldset
+	 */
+	public function populate($input, $repopulate = false)
+	{
+		$this->fieldset->populate($input, $repopulate);
 	}
 
 	/**
