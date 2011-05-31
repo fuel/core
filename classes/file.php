@@ -165,6 +165,11 @@ class File {
 	public static function read($path, $as_string = false, $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
+		
+		if( ! file_exists($path) || ! is_file($path))
+		{
+			throw new \InvalidPathException('Cannot read file, file does not exists.';)
+		}
 
 		$file = static::open_file(@fopen($path, 'r'), LOCK_SH, $area);
 		$return = $as_string ? file_get_contents($path) : readfile($path);
