@@ -156,6 +156,38 @@ class File_Handler_File {
 	{
 		return $this->area->get_url($this->path);
 	}
+	
+	/**
+	 * Get the file's permissions.
+	 *
+	 * @return	string	file permissions
+	 */
+	public function get_permissions()
+	{
+		return $this->area->get_permissions($this->path);
+	}
+	
+	/**
+	 * Get the file's created or modified timestamp.
+	 *
+	 * @param	string	$type	modified or created
+	 * @return	int		Unix Timestamp
+	 */
+	public function get_time($type = 'modified')
+	{
+		return $this->area->get_time($this->path, $type);
+	}
+	
+	/**
+	 * Get the file's size.
+	 *
+	 * @param	string	$type	modified or created
+	 * @return	int		Unix Timestamp
+	 */
+	public function get_size()
+	{
+		return $this->area->get_size($this->path);
+	}
 }
 
 /* End of file file.php */
