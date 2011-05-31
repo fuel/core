@@ -110,7 +110,7 @@ class File {
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file	= static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) || ! is_writable($basepath))
+		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{
 			throw new \InvalidPathException('Invalid basepath, cannot create file at this location.');
 		}
@@ -140,7 +140,7 @@ class File {
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_dir	= static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) || ! is_writable($basepath))
+		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{
 			throw new \InvalidPathException('Invalid basepath, cannot create directory at this location.');
 		}
@@ -149,7 +149,7 @@ class File {
 			throw new \FileAccessException('Directory exists already, cannot be created.');
 		}
 
-		$recursive = (strpos($name, '/') !== false || strpos($name, '\\') !== false);
+		$recursive = (strpos($name, '/') !== false or strpos($name, '\\') !== false);
 
 		return mkdir($new_dir, $chmod, $recursive);
 	}
@@ -165,6 +165,11 @@ class File {
 	public static function read($path, $as_string = false, $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
+		
+		if( ! file_exists($path) or ! is_file($path))
+		{
+			throw new \InvalidPathException('Cannot read file, file does not exists.');
+		}
 
 		$file = static::open_file(@fopen($path, 'r'), LOCK_SH, $area);
 		$return = $as_string ? file_get_contents($path) : readfile($path);
@@ -232,17 +237,17 @@ class File {
 					$not = substr($f, 0, 1) == '!'; // whether it's a negative condition
 					$f = $not ? substr($f, 1) : $f;
 					// on negative condition a match leads to a continue
-					if (($match = preg_match('/'.$f.'/uiD', $file) > 0) && $not)
+					if (($match = preg_match('/'.$f.'/uiD', $file) > 0) and $not)
 					{
 						$continue = true;
 					}
 
 					$positive = $positive ?: ! $not;			// whether a positive condition was encountered
-					$matched  = $matched ?: ($match && ! $not);	// whether one of the filters has matched
+					$matched  = $matched ?: ($match and ! $not);	// whether one of the filters has matched
 				}
 
 				// continue when negative matched or when positive filters and nothing matched
-				if ($continue || $positive && ! $matched)
+				if ($continue or $positive and ! $matched)
 				{
 					continue;
 				}
@@ -251,7 +256,7 @@ class File {
 			if (@is_dir($path.$file))
 			{
 				// Use recursion when depth not depleted or not limited...
-				if ($depth < 1 || $new_depth > 0)
+				if ($depth < 1 or $new_depth > 0)
 				{
 					$dirs[$file] = static::read_dir($path.$file.DS, $new_depth, $filter, $area);
 				}
@@ -288,7 +293,7 @@ class File {
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file	= static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) || ! is_writable($basepath))
+		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{
 			throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
 		}
@@ -316,7 +321,7 @@ class File {
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file	= static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) || ! is_writable($basepath))
+		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{
 			throw new \InvalidPathException('Invalid basepath, cannot append to a file at this location.');
 		}
@@ -481,7 +486,7 @@ class File {
 			if (is_array($file))
 			{
 				$check = static::create_dir($new_path.path.DS, $file, fileperms($path.$file.DS) ?: 0777, $area);
-				$check && static::copy_dir($path.$file.DS, $new_path.$file.DS, $area);
+				$check and static::copy_dir($path.$file.DS, $new_path.$file.DS, $area);
 			}
 			else
 			{
@@ -561,7 +566,7 @@ class File {
 			}
 		}
 
-		if ( ! $not_empty && $delete_top)
+		if ( ! $not_empty and $delete_top)
 		{
 			return rmdir($path);
 		}
