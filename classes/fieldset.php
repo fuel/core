@@ -356,7 +356,7 @@ class Fieldset
 				continue;
 			}
 
-			if (strtolower($this->form()->get_attribute('method', 'get')) == 'get')
+			if (strtolower($this->form()->get_attribute('method', 'post')) == 'get')
 			{
 				if (($value = \Input::get($f->name, null)) !== null)
 				{
