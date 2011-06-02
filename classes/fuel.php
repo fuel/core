@@ -61,7 +61,9 @@ class Fuel {
 
 	public static $profiling = false;
 
-	public static $locale;
+	public static $locale = 'en_US';
+
+	public static $timezone = 'UTC';
 
 	public static $encoding = 'UTF-8';
 
@@ -127,6 +129,14 @@ class Fuel {
 
 		\Config::load($config);
 
+		// set a default timezone if one is defined
+		static::$timezone = \Config::get('default_timezone', static::$timezone);
+		date_default_timezone_set(static::$timezone);
+
+		// set the encoding and locale to use
+		static::$encoding = \Config::get('encoding', static::$encoding);
+		static::$locale = \Config::get('locale', static::$locale);
+		
 		static::$_paths = array(APPPATH, COREPATH);
 
 		if ( ! static::$is_cli)
@@ -143,8 +153,7 @@ class Fuel {
 		\Security::clean_input();
 
 		static::$env = \Config::get('environment');
-		static::$locale = \Config::get('locale');
-
+		
 		\Event::register('shutdown', 'Fuel::finish');
 
 		//Load in the packages
