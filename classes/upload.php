@@ -414,7 +414,7 @@ class Upload {
 				{
 					if (isset(static::$files[$param]))
 					{
-						$files = array(static::$files[$param]);
+						$files[$param] = static::$files[$param];
 					}
 				}
 			}
