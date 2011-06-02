@@ -68,11 +68,13 @@ class Cookie {
 	 *     // Set the "theme" cookie
 	 *     Cookie::set('theme', 'red');
 	 *
-	 * @param   string   name of cookie
-	 * @param   string   value of cookie
-	 * @param   integer  lifetime in seconds
-	 * @param   string   path of the cookie
-	 * @param   string   domain of the cookie
+	 * @param   string    name of cookie
+	 * @param   string    value of cookie
+	 * @param   integer   lifetime in seconds
+	 * @param   string    path of the cookie
+	 * @param   string    domain of the cookie
+	 * @param   boolean   if true, the cookie should only be transmitted over a secure HTTPS connection
+	 * @param   boolean   if true, the cookie will be made accessible only through the HTTP protocol
 	 * @return  boolean
 	 */
 	public static function set($name, $value, $expiration = null, $path = null, $domain = null, $secure = null, $http_only = null)
@@ -89,10 +91,10 @@ class Cookie {
 		}
 
 		// use the class defaults for the other parameters if not provided
-		is_null($path) && $path = static::$config['path'];
-		is_null($domain) && $domain = static::$config['domain'];
-		is_null($secure) && $secure = static::$config['secure'];
-		is_null($http_only) && $http_only = static::$config['http_only'];
+		is_null($path) and $path = static::$config['path'];
+		is_null($domain) and $domain = static::$config['domain'];
+		is_null($secure) and $secure = static::$config['secure'];
+		is_null($http_only) and $http_only = static::$config['http_only'];
 
 		return setcookie($name, $value, $expiration, $path, $domain, $secure, $http_only);
 	}
