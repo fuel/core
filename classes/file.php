@@ -428,7 +428,7 @@ class File {
 	 */
 	public static function rename_dir($path, $new_path, $area = null)
 	{
-		return rename($path, $new_path, $area);
+		return static::rename($path, $new_path, $area);
 	}
 
 	/**
