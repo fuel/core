@@ -89,7 +89,10 @@ class File_Handler_File {
 
 		$new_path = $info['dirname'].DS.$new_name.$extension;
 
-		return $this->area->rename($this->path, $new_path);
+		$return =  $this->area->rename($this->path, $new_path);
+		$return and $this->path = $new_path;
+		
+		return $return;
 	}
 
 	/**
@@ -105,7 +108,10 @@ class File_Handler_File {
 
 		$new_path = rtrim($new_path, '\\/').DS.$info['basename'];
 
-		return $this->area->rename($this->path, $new_path);
+		$return = $this->area->rename($this->path, $new_path);
+		$return and $this->path = $new_path;
+		
+		return $return;
 	}
 
 	/**

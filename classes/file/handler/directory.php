@@ -79,8 +79,11 @@ class File_Handler_Directory {
 		$new_name = str_replace(array('..', '/', '\\'), array('', '', ''), $new_name);
 
 		$new_path = $info['dirname'].DS.$new_name;
-
-		return $this->area->rename_dir($this->path, $new_path);
+		
+		$return =  $this->area->rename_dir($this->path, $new_path);
+		$return and $this->path = $new_path;
+		
+		return $return;
 	}
 
 	/**
@@ -96,7 +99,10 @@ class File_Handler_Directory {
 
 		$new_path = rtrim($new_path, '\\/').DS.$info['basename'];
 
-		return $this->area->rename_dir($this->path, $new_path);
+		$return =  $this->area->rename_dir($this->path, $new_path);
+		$return and $this->path = $new_path;
+		
+		return $return;
 	}
 
 	/**
