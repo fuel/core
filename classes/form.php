@@ -761,23 +761,21 @@ class Form {
 
 		if (is_array($build_field))
 		{
-			$template = $field->template ?: $this->get_config('multi_field_template', "\t\t\t{group_label}\n {fields}\t\t\t{label} {field}{fields}");
+			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t\t{group_label}\n {fields}\t\t\t{label} {field}{fields}');
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Du', $template, $match) > 0)
 			{
 				$build_fields = '';
 				foreach ($build_field as $lbl => $bf)
 				{
-					$bf_temp = str_replace('{field}', $bf, $match[1]);
-					$bf_temp = str_replace('{label}', $lbl, $bf_temp);
+					$bf_temp = str_replace('{label}', $lbl, $match[1]);
 					$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
+					$bf_temp = str_replace('{field}', $bf, $bf_temp);
 					$build_fields .= $bf_temp;
 				}
-				$template = str_replace(array($match[0], "{group_label}"), array($build_fields, $label), $template);
+				
+				$template = str_replace($match[0], '{fields}', $template);
+				$template = str_replace(array('{group_label}', '{required}', '{fields}'), array($label, $required_mark, $build_fields), $template);
 
-				if ($required_mark)
-				{
-					$template = str_replace('{required}', $required_mark, $template);
-				}
 				return $template;
 			}
 
@@ -785,9 +783,9 @@ class Form {
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $field->template ?: $this->get_config('field_template', "\t\t\t{label} {field}\n");
-		$template = str_replace(array('{field}', '{label}', '{required}'),
-			array($build_field, $label, $required_mark),
+		$template = $field->template ?: $this->get_config('field_template', '\t\t\t{label} {field}\n');
+		$template = str_replace(array('{label}', '{required}', '{field}'),
+			array($label, $required_mark, $build_field),
 			$template);
 		return $template;
 	}
