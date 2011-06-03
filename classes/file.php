@@ -41,11 +41,12 @@ class File {
 
 	public static function _init()
 	{
+		\Config::load('file', true);
+	
 		static::$base_area = \File_Area::factory(\Config::get('file.base_config', array()));
-
 		foreach (\Config::get('file.areas', array()) as $name => $config)
 		{
-			static::$areas[$name] = \File_Area::factory($config);
+			static::$areas[$name] = \File_Area::factory($config) + static::$base_area;
 		}
 	}
 
