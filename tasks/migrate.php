@@ -101,7 +101,7 @@ class Migrate {
 	{
 		\Config::load('migrations', true);
 		
-		if (($version = \Config::get('migrations.version') - 1) === 0)
+		if (($version = \Config::get('migrations.version') - 1) < 0)
 		{
 			throw new \Oil\Exception('You are already on the first migration.');
 		}

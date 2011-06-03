@@ -19,6 +19,7 @@ class Image_Imagemagick extends Image_Driver {
 	private $image_temp = null;
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
 	private $size_cache = null;
+	private $im_path = null;
 
 	public function load($filename)
 	{
@@ -143,6 +144,12 @@ class Image_Imagemagick extends Image_Driver {
 			') -alpha off -compose CopyOpacity -composite '.$image;
 		$this->exec('convert', $command);
 	}
+	
+	protected function _grayscale()
+	{
+		$image = '"'.$this->image_temp.'"';
+		$this->exec('convert', $image." -colorspace Gray ".$image);
+	}
 
 	public function sizes($filename = null, $usecache = true)
 	{
@@ -179,7 +186,7 @@ class Image_Imagemagick extends Image_Driver {
 
 	public function save($filename, $permissions = null)
 	{
-		extract(parent::output($filename, $permissions));
+		extract(parent::save($filename, $permissions));
 
 		$this->run_queue();
 		$this->add_background();
@@ -253,7 +260,13 @@ class Image_Imagemagick extends Image_Driver {
 	 */
 	private function exec($program, $params, $passthru = false)
 	{
-		$command = realpath($this->config['imagemagick_dir'].$program.".exe")." ".$params;
+		//  Determine the path
+		$this->im_path = realpath($this->config['imagemagick_dir'].$program);
+		if ( ! $this->im_path)
+			$this->im_path = realpath($this->config['imagemagick_dir'].$program.'.exe');
+		if ( ! $this->im_path)
+			throw new \Fuel_Exception("imagemagick executables not found in ".$this->config['imagemagick_dir']);
+		$command = $this->im_path." ".$params;
 		$this->debug("Running command: <code>$command</code>");
 		$code = 0;
 		$output = null;
@@ -262,16 +275,8 @@ class Image_Imagemagick extends Image_Driver {
 
 		if ($code != 0)
 		{
-			// Try to come up with a common error?
-			if ( ! file_exists(realpath($this->config['imagemagick_dir'].$program.".exe")))
-			{
-				throw new \Fuel_Exception("imagemagick executable not found in ".$this->config['imagemagick_dir']);
-			}
-			else
-			{
-				$message = implode('\n', $output);
-				throw new \Fuel_Exception("imagemagick failed to edit the image. Returned with $code.<br /><br />Command:\n <code>$command</code>");
-			}
+			$message = implode('\n', $output);
+			throw new \Fuel_Exception("imagemagick failed to edit the image. Returned with $code.<br /><br />Command:\n <code>$command</code>");
 		}
 		return $output;
 	}

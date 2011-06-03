@@ -302,32 +302,70 @@ class Fieldset
 	}
 
 	/**
-	 * Set all fields to the given and/or posted input
+	 * Populate the form's values using an input array or object
 	 *
-	 * @param   array|Model
-	 * @return  Fieldset     this, to allow chaining
+	 * @param   array|object
+	 * @param   bool
+	 * @return  Fieldset  this, to allow chaining
 	 */
-	public function repopulate($input = null)
+	public function populate($input, $repopulate = false)
 	{
 		foreach ($this->fields as $f)
 		{
-			if ($input)
+			if (is_array($input) or $input instanceof \ArrayAccess)
 			{
-				if (is_array($input) or $input instanceof \ArrayAccess)
+				if (isset($input[$f->name]))
 				{
-					if (isset($input[$f->name]))
-					{
-						$f->set_value($input[$f->name], true);
-					}
+					$f->set_value($input[$f->name], true);
 				}
-				elseif (is_object($input) and property_exists($input, $f->name))
+			}
+			elseif (is_object($input) and property_exists($input, $f->name))
+			{
+				$f->set_value($input->{$f->name}, true);
+			}
+		}
+
+		// Optionally overwrite values using post/get
+		if ($repopulate)
+		{
+			$this->repopulate();
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Set all fields to the input from get or post (depends on the form method attribute)
+	 *
+	 * @param   array|object  input for initial population of fields, this is deprecated - you should use populate() instea
+	 * @return  Fieldset  this, to allow chaining
+	 */
+	public function repopulate($deprecated = null)
+	{
+		// The following usage will be deprecated in Fuel 1.1
+		if ( ! is_null($deprecated))
+		{
+			return $this->populate($deprecated, true);
+		}
+
+		foreach ($this->fields as $f)
+		{
+			// Don't repopulate the CSRF field
+			if ($f->name === \Config::get('security.csrf_token_key', 'fuel_csrf_token'))
+			{
+				continue;
+			}
+
+			if (strtolower($this->form()->get_attribute('method', 'post')) == 'get')
+			{
+				if (($value = \Input::get($f->name, null)) !== null)
 				{
-					$f->set_value($input->{$f->name}, true);
+					$f->set_value($value, true);
 				}
 			}
 			else
 			{
-				if (($value = $this->input($f->name, null)) !== null)
+				if (($value = \Input::post($f->name, null)) !== null)
 				{
 					$f->set_value($value, true);
 				}
@@ -340,7 +378,7 @@ class Fieldset
 	/**
 	 * Magic method toString that will build this as a form
 	 *
-	 * @return	string
+	 * @return  string
 	 */
 	public function __toString()
 	{

@@ -108,9 +108,11 @@ Autoloader::add_classes(array(
 
 	'Fuel\\Core\\File'                   => COREPATH.'classes/file.php',
 	'Fuel\\Core\\FileAccessException'    => COREPATH.'classes/file.php',
+	'Fuel\\Core\\OutsideAreaException'   => COREPATH.'classes/file.php',
+	'Fuel\\Core\\InvalidPathException'   => COREPATH.'classes/file.php',
 	'Fuel\\Core\\File_Area'              => COREPATH.'classes/file/area.php',
-	'Fuel\\Core\\File_Driver_File'       => COREPATH.'classes/file/driver/file.php',
-	'Fuel\\Core\\File_Driver_Directory'  => COREPATH.'classes/file/driver/directory.php',
+	'Fuel\\Core\\File_Handler_File'       => COREPATH.'classes/file/handler/file.php',
+	'Fuel\\Core\\File_Handler_Directory'  => COREPATH.'classes/file/handler/directory.php',
 
 	'Fuel\\Core\\Form'  => COREPATH.'classes/form.php',
 
@@ -124,6 +126,7 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Image_Driver'       => COREPATH.'classes/image/driver.php',
 	'Fuel\\Core\\Image_Gd'           => COREPATH.'classes/image/gd.php',
 	'Fuel\\Core\\Image_Imagemagick'  => COREPATH.'classes/image/imagemagick.php',
+	'Fuel\\Core\\Image_Imagick'      => COREPATH.'classes/image/imagick.php',
 
 	'Fuel\\Core\\Inflector'  => COREPATH.'classes/inflector.php',
 	'Fuel\\Core\\Input'      => COREPATH.'classes/input.php',

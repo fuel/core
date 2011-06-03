@@ -41,6 +41,9 @@ class Session_Memcached extends Session_Driver {
 		$this->config = array_merge($config, is_array($config['memcached']) ? $config['memcached'] : static::$_defaults);
 
 		$this->config = $this->_validate_config($this->config);
+
+		// adjust the expiration time to the maximum possible for memcached
+		$this->config['expiration_time'] = min($this->config['expiration_time'], 2592000);
 	}
 
 	// --------------------------------------------------------------------

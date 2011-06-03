@@ -37,9 +37,9 @@ class File_Area {
 	protected $use_locks = false;
 
 	/**
-	 * @var	array	contains file driver per file extension
+	 * @var	array	contains file handler per file extension
 	 */
-	protected $file_drivers = array();
+	protected $file_handlers = array();
 
 	protected function __construct(Array $config = array())
 	{
@@ -69,14 +69,14 @@ class File_Area {
 	}
 
 	/**
-	 * Driver factory for given path
+	 * Handler factory for given path
 	 *
 	 * @param	string				path to file or directory
 	 * @param	array				optional config
-	 * @return	File_Driver_File
+	 * @return	File_Handler_File
 	 * @throws	FileAccessException		when outside basedir restriction or disallowed file extension
 	 */
-	public function get_driver($path, Array $config = array(), $content = array())
+	public function get_handler($path, Array $config = array(), $content = array())
 	{
 		$path = $this->get_path($path);
 
@@ -91,18 +91,18 @@ class File_Area {
 				throw new \FileAccessException('File operation not allowed: disallowed file extension.');
 			}
 
-			// create specific driver when available
-			if (array_key_exists($info['extension'], $this->file_drivers))
+			// create specific handler when available
+			if (array_key_exists($info['extension'], $this->file_handlers))
 			{
-				$class = '\\'.$this->file_drivers[$info['extension']];
+				$class = '\\'.$this->file_handlers[$info['extension']];
 				return $class::factory($path, $config, $this);
 			}
 
-			return \File_Driver_File::factory($path, $config, $this);
+			return \File_Handler_File::factory($path, $config, $this);
 		}
 		elseif (is_dir($path))
 		{
-			return \File_Driver_Directory::factory($path, $config, $this, $content);
+			return \File_Handler_Directory::factory($path, $config, $this, $content);
 		}
 
 		// still here? path is invalid
@@ -145,7 +145,7 @@ class File_Area {
 		// basedir prefix is required when it is set (may cause unexpected errors when realpath doesn't work)
 		if ( ! empty($this->basedir) && substr($path, 0, strlen($this->basedir)) != $this->basedir)
 		{
-			throw new \FileAccessException('File operation not allowed: given path is outside the basedir for this area.');
+			throw new \OutsideAreaException('File operation not allowed: given path is outside the basedir for this area.');
 		}
 
 		// check file extension
@@ -156,6 +156,33 @@ class File_Area {
 		}
 
 		return $path;
+	}
+	
+	/**
+	 * Translate relative path to accessible path, throws error when operation is not allowed
+	 *
+	 * @param	string
+	 * @return	string
+	 * @throws	LogicException	when no url is set or no basedir is set and file is outside DOCROOT
+	 */
+	public function get_url($path)
+	{
+		if(empty($this->url))
+		{
+			throw new \LogicException('File operation now allowed: cannot create a file url without an area url.');
+		}
+		
+		$path = $this->get_path($path);
+		
+		$basedir = $this->basedir;
+		empty($basedir) and $basedir = DOCROOT;
+		
+		if(stripos($path, $basedir) !== 0)
+		{
+			throw new \LogicException('File operation not allowed: cannot create file url whithout a basedir and file outside DOCROOT.');
+		}
+
+		return rtrim($this->url, '/').'/'.ltrim(substr($path, strlen($basedir)),'/');
 	}
 
 	/* -------------------------------------------------------------------------------------
@@ -180,7 +207,7 @@ class File_Area {
 	public function read_dir($path, $depth = 0, $filter = null)
 	{
 		$content = \File::read_dir($path, $depth, $filter, $this);
-		return $this->get_driver($path, array(), $content);
+		return $this->get_handler($path, array(), $content);
 	}
 
 	public function rename($path, $new_path)
@@ -211,6 +238,26 @@ class File_Area {
 	public function delete_dir($path, $recursive = true, $delete_top = true)
 	{
 		return \File::delete($path, $recursive, $delete_top, $this);
+	}
+	
+	public function update($basepath, $name, $new_content)
+	{
+		return \File::update($basepath, $name, $new_content, $this);
+	}
+	
+	public function get_permissions($path)
+	{
+		return \File::get_permissions($path, $this);
+	}
+	
+	public function get_time($path, $type)
+	{
+		return \File::get_time($path, $type, $this);
+	}
+	
+	public function get_size($path)
+	{
+		return \File::get_size($path, $this);
 	}
 }
 
