@@ -361,6 +361,7 @@ class Form {
 		if (is_array($field))
 		{
 			$attributes = $field;
+			$value = isset($attributes['value']) ? $attributes['value'] : $value;
 		}
 		else
 		{
