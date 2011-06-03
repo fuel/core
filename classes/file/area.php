@@ -86,7 +86,7 @@ class File_Area {
 
 			// check file extension
 			$info = pathinfo($path);
-			if ( ! empty($this->extensions) && array_key_exists($info['extension'], $this->extensions))
+			if ( ! empty($this->extensions) && ! array_key_exists($info['extension'], $this->extensions))
 			{
 				throw new \FileAccessException('File operation not allowed: disallowed file extension.');
 			}
@@ -94,7 +94,7 @@ class File_Area {
 			// create specific handler when available
 			if (array_key_exists($info['extension'], $this->file_handlers))
 			{
-				$class = '\\'.$this->file_handlers[$info['extension']];
+				$class = '\\'.ltrim($this->file_handlers[$info['extension']], '\\');
 				return $class::factory($path, $config, $this);
 			}
 
