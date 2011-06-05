@@ -141,6 +141,13 @@ class Tests_Html extends TestCase {
 	 */
 	public function test_anchor()
 	{
+		$index_url = \Config::get('index_file', '');
+		
+		if (!empty($index_url))
+		{
+			$index_url .= '/';
+		}
+		
 		// External uri
 		$output = Html::anchor('http://google.com', 'Go to Google');
 		$expected = '<a href="http://google.com">Go to Google</a>';
@@ -156,7 +163,7 @@ class Tests_Html extends TestCase {
 		
 		// Internal uri
 		$output = Html::anchor('controller/method', 'Method');
-		$expected = '<a href="index.php/controller/method">Method</a>';
+		$expected = '<a href="' . $index_url . 'controller/method">Method</a>';
 		$this->assertEquals($expected, $output);
 	}
 	
@@ -171,13 +178,20 @@ class Tests_Html extends TestCase {
 	 */
 	public function test_img()
 	{
+		$index_url = \Config::get('index_file', '');
+		
+		if (!empty($index_url))
+		{
+			$index_url .= '/';
+		}
+		
 		// Internal uri
 		$output = Html::img('image.png');
-		$expected = '<img src="index.php/image.png" alt="image" />';
+		$expected = '<img src="'. $index_url . 'image.png" alt="image" />';
 		$this->assertEquals($expected, $output);
 		
 		$output = Html::img('image.png', array('alt' => 'Image'));
-		$expected = '<img alt="Image" src="index.php/image.png" />';
+		$expected = '<img alt="Image" src="'. $index_url . 'image.png" />';
 		$this->assertEquals($expected, $output);
 		
 		// External uri
