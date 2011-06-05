@@ -131,7 +131,7 @@ if ( ! function_exists('in_arrayi'))
 }
 
 /**
- * Render's a view and returns the output.
+ * Renders a view and returns the output.
  *
  * @param	string	The view name/path
  * @param	array	The data for the view
