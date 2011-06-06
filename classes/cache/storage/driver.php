@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -170,7 +168,7 @@ abstract class Cache_Storage_Driver {
 			}
 			else
 			{
-				throw new \Cache_Exception('This property doesn\'t exist or can\'t be read.');
+				throw new \BadMethodCallException('This property doesn\'t exist or can\'t be read.');
 			}
 		}
 		// Allow setting any properties set in static::$_settable
@@ -183,13 +181,13 @@ abstract class Cache_Storage_Driver {
 			}
 			else
 			{
-				throw new \Cache_Exception('This property doesn\'t exist or can\'t be set.');
+				throw new \BadMethodCallException('This property doesn\'t exist or can\'t be set.');
 			}
 			return $this;
 		}
 		else
 		{
-			throw new \Cache_Exception('Illegal method call: ' . $method);
+			throw new \BadMethodCallException('Illegal method call: ' . $method);
 		}
 	}
 
@@ -207,7 +205,7 @@ abstract class Cache_Storage_Driver {
 		// Identifier may not be empty, but can be false or 0
 		if ($identifier === '' || $identifier === null)
 		{
-			throw new \Cache_Exception('The identifier cannot be empty, must contain a value of any kind other than null or an empty string.');
+			throw new \Fuel_Exception('The identifier cannot be empty, must contain a value of any kind other than null or an empty string.');
 		}
 
 		// In case of string or int just return it as a string
@@ -216,7 +214,7 @@ abstract class Cache_Storage_Driver {
 			// cleanup to only allow alphanum chars, dashes, dots & underscores
 			if (preg_match('/^([a-z0-9_\.\-]*)$/iuD', $identifier) === 0)
 			{
-				throw new \Cache_Exception('Cache identifier can only contain alphanumeric characters, underscores, dashes & dots.');
+				throw new \Fuel_Exception('Cache identifier can only contain alphanumeric characters, underscores, dashes & dots.');
 			}
 
 			return (string) $identifier;
@@ -272,7 +270,7 @@ abstract class Cache_Storage_Driver {
 		{
 			if ( ! is_numeric($this->expiration))
 			{
-				throw new \Cache_Exception('Expiration must be a valid number.');
+				throw new \InvalidArgumentException('Expiration must be a valid number.');
 			}
 			$this->expiration = time() + intval($this->expiration);
 		}
@@ -310,7 +308,7 @@ abstract class Cache_Storage_Driver {
 	{
 		if ( ! $this->_get())
 		{
-			throw new \Cache_Exception('not found');
+			throw new \CacheNotFoundException('not found');
 		}
 
 		if ($use_expiration)
@@ -318,14 +316,14 @@ abstract class Cache_Storage_Driver {
 			if ( ! is_null($this->expiration) and $this->expiration < 0)
 			{
 				$this->delete();
-				throw new \Cache_Exception('expired');
+				throw new \CacheExpiredException('expired');
 			}
 
 			// Check dependencies and handle as expired on failure
 			if ( ! $this->check_dependencies($this->dependencies))
 			{
 				$this->delete();
-				throw new \Cache_Exception('expired');
+				throw new \CacheExpiredException('expired');
 			}
 		}
 

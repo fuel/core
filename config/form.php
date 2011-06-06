@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -13,9 +11,13 @@
  */
 
 return array(
+	'prep_value'			=> true,
+	'auto_id'				=> true,
+	'auto_id_prefix'		=> 'form_',
+	'form_method'			=> 'post',
 	'form_template'			=> "\t\t{form_open}\n{fields}\n\t\t{form_close}\n",
 	'field_template'		=> "\t\t\t{label} {field}\n",
-	'multi_field_template'	=> "{fields}\t\t\t{label}{required} {field}{fields}",
+	'multi_field_template'	=> "\t\t\t{group_label}{required}\n {fields}\t\t\t{label} {field}{fields}",
 	'required_mark'			=> '*',
 );
 

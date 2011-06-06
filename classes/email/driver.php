@@ -1,8 +1,6 @@
 <?php
 
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * Base driver for Emails.
@@ -373,7 +371,7 @@ abstract class Email_Driver {
 				$origbcc = $this->bcc_recipients;
 				$this->_bcc_batch_running = false;
 				while ($offset < $count && $return)
-				{ // TODO: Add to codeigniter version
+				{ 
 					// Loop while we still have batches of blind carbon copies to send.
 					// Note that the first run outputs any to and cc addresses also.
 					$length = $count >= $offset + $this->bcc_batch_size ? $this->bcc_batch_size : $count % $this->bcc_batch_size;
@@ -461,16 +459,17 @@ abstract class Email_Driver {
 	}
 
 	/**
-	 * Email validation from the valid_email method of Codeigniters Email Class.
+	 * Email address validation.
 	 *
-	 * @author	CodeIgniter
-	 * @link	http://codeigniter.com/
 	 * @param	string	$address The email address to check for validity
 	 */
 	protected function _valid_email($address)
 	{
-		// Instead of checking if validity is to be checked elsewhere, check it here :)
-		return ($this->validity_check && !preg_match("/^([a-z0-9\+_\-]+)(\.[a-z0-9\+_\-]+)*@([a-z0-9\-]+\.)+[a-z]{2,6}$/ix", $address)) ? FALSE : TRUE;
+		if ($this->validity_check)
+		{
+			return filter_var($address, FILTER_VALIDATE_EMAIL);
+		}
+		return true;
 	}
 
 	/**

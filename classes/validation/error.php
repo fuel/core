@@ -1,7 +1,5 @@
 <?php
 /**
- * Fuel
- *
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
  * @package    Fuel
@@ -108,8 +106,15 @@ class Validation_Error extends \Exception {
 			return $open.$msg.$close;
 		}
 
-		$find			= array(':field', ':label', ':value', ':rule');
-		$replace		= array($this->field->name, $this->field->label, $this->value, $this->callback);
+		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
+		$find     = array(':field', ':label', ':value', ':rule');
+		$label    = is_array($this->field->label) ? $this->field->label['label'] : $this->field->label;
+		if (\Config::get('validation.quote_labels', false))
+		{
+			// put the label in quotes if it contains spaces
+			strpos($label, ' ') !== false and $label = '"'.$label.'"';
+		}
+		$replace  = array($this->field->name, $label, $value, $this->callback);
 		foreach($this->params as $key => $val)
 		{
 			$find[]		= ':param:'.($key + 1);

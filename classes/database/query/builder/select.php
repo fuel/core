@@ -2,7 +2,7 @@
 /**
  * Database query builder for SELECT statements.
  *
- * @package    Kohana/Database
+ * @package    Fuel/Database
  * @category   Query
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team
@@ -61,7 +61,7 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where {
 	 * @param   boolean  enable or disable distinct columns
 	 * @return  $this
 	 */
-	public function distinct($value)
+	public function distinct($value = true)
 	{
 		$this->_distinct = (bool) $value;
 
