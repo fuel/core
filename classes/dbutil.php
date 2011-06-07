@@ -92,7 +92,7 @@ class DBUtil {
 
 		return DB::query($sql, DB::UPDATE)->execute();
 	}
-		
+
 	/**
 	 * Adds fields to a table a table.  Will throw a Database_Exception if it cannot.
 	 *
@@ -118,7 +118,7 @@ class DBUtil {
 	{
 		return static::alter_fields('CHANGE', $table, $fields);
 	}
-	
+
 	/**
 	 * Drops fields from a table a table.  Will throw a Database_Exception if it cannot.
 	 *
@@ -173,7 +173,7 @@ class DBUtil {
 			}
 
 			$sql .= array_key_exists('DEFAULT', $attr) ? ' DEFAULT '. (($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : DB::escape($attr['DEFAULT'])) : '';
-			$sql .= array_key_exists('NULL', $attr) ? (($attr['NULL'] === true) ? ' NULL' : ' NOT NULL') : '';
+			$sql .= (array_key_exists('NULL', $attr) && ($attr['NULL'] === true)) ? ' NULL' : ' NOT NULL';
 
 			if (array_key_exists('AUTO_INCREMENT', $attr) and $attr['AUTO_INCREMENT'] === true)
 			{
@@ -184,7 +184,7 @@ class DBUtil {
 
 		return \implode(',', $sql_fields);
 	}
-	
+
 	/**
 	 * Formats the default charset.
 	 *
@@ -199,7 +199,7 @@ class DBUtil {
 		{
 			return '';
 		}
-		
+
 		if(($pos = stripos($charset, '_')) !== false)
 		{
 			$charset = ' CHARACTER SET '.substr($charset, 0, $pos).' COLLATE '.$charset;
@@ -208,9 +208,9 @@ class DBUtil {
 		{
 			$charset = ' CHARACTER SET '.$charset;
 		}
-		
+
 		$is_default and $charset = ' DEFAULT'.$charset;
-		
+
 		return $charset;
 	}
 
@@ -298,7 +298,7 @@ class DBUtil {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * Load the db config, the Database_Connection might not have fired jet.
 	 *
