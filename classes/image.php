@@ -48,6 +48,10 @@ class Image {
 	public static function factory($config = array(), $filename = null)
 	{
 		!is_array($config) and $config = array();
+		if (empty($config)) {
+			Config::load('image', 'image');
+			$config = Config::get('image');
+		}
 		$protocol = ucfirst( ! empty($config['driver']) ? $config['driver'] : 'gd');
 		$class = 'Image_'.$protocol;
 		if ($protocol == 'Driver' || ! class_exists($class))
