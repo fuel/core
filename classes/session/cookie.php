@@ -16,7 +16,7 @@ namespace Fuel\Core;
 
 // --------------------------------------------------------------------
 
-class Session_Cookie extends Session_Driver {
+class Session_Cookie extends \Session_Driver {
 
 	/**
 	 * array of driver config defaults
