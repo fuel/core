@@ -172,14 +172,10 @@ class Str {
 	  * @param	int		the number of characters
 	  * @return string	the random string
 	  */
-	public static function bytes_readable($size, $retstring = null){
+	public static function bytes_readable($size, $format = null){
 
 		$sizes = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
-
-		if ($retstring === null){
-			$retstring = '%01.2f %s';
-		}
-
+		$format = $format ?: '%01.2f %s';
 		$lastsizestring = end($sizes);
 
 		foreach ($sizes as $sizestring){
@@ -187,14 +183,16 @@ class Str {
 			if($size < 1024){
 				break;
 			}
+
 			if($sizestring != $lastsizestring) {
 				$size /= 1024;
 			}
+
 		}
 
-		if($sizestring == $sizes[0]){ $retstring = '%01d %s'; }
+		if($sizestring == $sizes[0]){ $format = '%01d %s'; }
 
-		return sprintf($retstring, $size) .' '. $sizestring;
+		return sprintf($format, $size, $sizestring);
 
 	}
 
