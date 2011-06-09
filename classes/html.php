@@ -141,7 +141,7 @@ class Html
 
 		$output = '<script type="text/javascript">';
 		$output .= '(function() {';
-		$output .= 'var fuel_email_user = "'.$email[0].'";';
+		$output .= 'var user = "'.$email[0].'";';
 		$output .= 'var at = "@";';
 		$output .= 'var server = "'.$email[1].'";';
 		$output .= "document.write('<a href=\"' + 'mail' + 'to:' + user + at + server + '$subject\"$attr>$text</a>');";
