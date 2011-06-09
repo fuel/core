@@ -50,7 +50,7 @@ class Image {
 		!is_array($config) and $config = array();
 
 		\Config::load('image', 'image');
-		$config = array_merge(\Config::get('image'), $config);
+		$config = array_merge(\Config::get('image', array()), $config);
 
 		$protocol = ucfirst( ! empty($config['driver']) ? $config['driver'] : 'gd');
 		$class = 'Image_'.$protocol;
