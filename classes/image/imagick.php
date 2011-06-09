@@ -14,7 +14,7 @@
 
 namespace Fuel\Core;
 
-class Image_Imagick extends Image_Driver {
+class Image_Imagick extends \Image_Driver {
 
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
 	private $imagick = null;

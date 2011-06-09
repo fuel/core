@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 
 
-class Cache_Storage_Redis extends Cache_Storage_Driver {
+class Cache_Storage_Redis extends \Cache_Storage_Driver {
 
 	/**
 	 * @const	string	Tag used for opening & closing cache properties
