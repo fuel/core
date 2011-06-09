@@ -75,9 +75,13 @@ class Crypt {
 			{
 				\Config::save('crypt', static::$config);
 			}
-			catch (\File_Exception $e)
+			catch (\FileAccessException $e)
 			{
-				throw new \Exception('Crypt keys are invalid or missing, and app/config/crypt.php could not be written.');
+				// failed to write the config file, inform the user
+				echo \View::factory('errors/crypt_keys', array(
+					'keys' => static::$config
+				));
+				die();
 			}
 		}
 
