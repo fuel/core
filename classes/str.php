@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 /**
  * String handling with encoding support
- * 
+ *
  * PHP needs to be compiled with --enable-mbstring
  * or a fallback without encoding support is used
  */
@@ -108,12 +108,12 @@ class Str {
 
 	/**
 	 * lcfirst
-	 * 
+	 *
 	 * Does not strtoupper first
 	 *
 	 * @param string $str required
 	 * @param string $encoding default UTF-8
-	 * @return string 
+	 * @return string
 	 */
 	public static function lcfirst($str, $encoding = null)
 	{
@@ -129,10 +129,10 @@ class Str {
 	 * ucfirst
 	 *
 	 * Does not strtolower first
-	 * 
+	 *
 	 * @param string $str required
 	 * @param string $encoding default UTF-8
-	 * @return string 
+	 * @return string
 	 */
 	public static function ucfirst($str, $encoding = null)
 	{
@@ -146,15 +146,15 @@ class Str {
 
 	/**
 	 * ucwords
-	 * 
+	 *
 	 * First strtolower then ucwords
-	 * 
+	 *
 	 * ucwords normally doesn't strtolower first
 	 * but MB_CASE_TITLE does, so ucwords now too
-	 * 
+	 *
 	 * @param string $str required
 	 * @param string $encoding default UTF-8
-	 * @return string 
+	 * @return string
 	 */
 	public static function ucwords($str, $encoding = null)
 	{
@@ -164,7 +164,38 @@ class Str {
 			? mb_convert_case($str, MB_CASE_TITLE, $encoding)
 			: ucwords(strtolower($str));
 	}
-	
+
+	/**
+	  * Returns a human readable filesize
+	  *
+	  * @param	string	the type of string
+	  * @param	int		the number of characters
+	  * @return string	the random string
+	  */
+	public static function bytes_readable($size, $format = null){
+
+		$sizes = array('B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB');
+		$format = $format ?: '%01.2f %s';
+		$lastsizestring = end($sizes);
+
+		foreach ($sizes as $sizestring){
+
+			if($size < 1024){
+				break;
+			}
+
+			if($sizestring != $lastsizestring) {
+				$size /= 1024;
+			}
+
+		}
+
+		if($sizestring == $sizes[0]){ $format = '%01d %s'; }
+
+		return sprintf($format, $size, $sizestring);
+
+	}
+
 	/**
 	  * Creates a random string of characters
 	  *
@@ -176,7 +207,7 @@ class Str {
 	{
 		switch($type)
 		{
-			case 'basic': 
+			case 'basic':
 				return mt_rand();
 				break;
 
