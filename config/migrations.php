@@ -25,7 +25,15 @@ return array(
 	|	Default: APPPATH.'migrations/'
 	|
 	*/
-	'path' => APPPATH.'migrations/'
+	'path' => APPPATH.'migrations/',
+
+	/*
+	| Table name
+	|
+	|	Default: 'migration'
+	|
+	*/
+	'table' => 'migration',
 
 );
 
