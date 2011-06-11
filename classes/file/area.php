@@ -138,9 +138,17 @@ class File_Area {
 	 */
 	public function get_path($path)
 	{
-		// attempt to get the realpath(), otherwise just use path with any double dots taken out when basedir is set (for security)
-		$path = ( ! empty($this->basedir) ? realpath($this->basedir.DS.$path) : realpath($path) )
-				?: ( ! empty($this->basedir) ? $this->basedir.DS.str_replace('..', '', $path) : $path);
+		// path already prefixed by the basedir? then just take deal with the double dots...
+		if (substr($path, 0, strlen($this->basedir)) == $this->basedir)
+		{
+			$path = realpath($path);
+		}
+		else
+		{
+			// attempt to get the realpath(), otherwise just use path with any double dots taken out when basedir is set (for security)
+			$path = ( ! empty($this->basedir) ? realpath($this->basedir.DS.$path) : realpath($path) )
+					?: ( ! empty($this->basedir) ? $this->basedir.DS.str_replace('..', '', $path) : $path);
+		}
 
 		// basedir prefix is required when it is set (may cause unexpected errors when realpath doesn't work)
 		if ( ! empty($this->basedir) && substr($path, 0, strlen($this->basedir)) != $this->basedir)
@@ -157,7 +165,7 @@ class File_Area {
 
 		return $path;
 	}
-	
+
 	/**
 	 * Translate relative path to accessible path, throws error when operation is not allowed
 	 *
@@ -171,12 +179,12 @@ class File_Area {
 		{
 			throw new \LogicException('File operation now allowed: cannot create a file url without an area url.');
 		}
-		
+
 		$path = $this->get_path($path);
-		
+
 		$basedir = $this->basedir;
 		empty($basedir) and $basedir = DOCROOT;
-		
+
 		if(stripos($path, $basedir) !== 0)
 		{
 			throw new \LogicException('File operation not allowed: cannot create file url whithout a basedir and file outside DOCROOT.');
@@ -239,22 +247,22 @@ class File_Area {
 	{
 		return \File::delete($path, $recursive, $delete_top, $this);
 	}
-	
+
 	public function update($basepath, $name, $new_content)
 	{
 		return \File::update($basepath, $name, $new_content, $this);
 	}
-	
+
 	public function get_permissions($path)
 	{
 		return \File::get_permissions($path, $this);
 	}
-	
+
 	public function get_time($path, $type)
 	{
 		return \File::get_time($path, $type, $this);
 	}
-	
+
 	public function get_size($path)
 	{
 		return \File::get_size($path, $this);
