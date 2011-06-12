@@ -138,8 +138,8 @@ class File_Area {
 	 */
 	public function get_path($path)
 	{
-		// path already prefixed by the basedir? then just take deal with the double dots...
-		if (substr($path, 0, strlen($this->basedir)) == $this->basedir)
+		// do we have a basedir, and is the path already prefixed by the basedir? then just deal with the double dots...
+		if ( ! empty($this->basedir) && substr($path, 0, strlen($this->basedir)) == $this->basedir)
 		{
 			$path = realpath($path);
 		}
