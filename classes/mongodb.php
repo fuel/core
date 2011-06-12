@@ -155,7 +155,7 @@ class MongoDb {
 		{
 			try
 			{
-				$this->connection->{$database}->drop(); // @TODO : can't work, $this in static context
+				static::instance()->connection->{$database}->drop();
 				return true;
 			}
 			catch (\Exception $e)
@@ -190,7 +190,7 @@ class MongoDb {
 		{
 			try
 			{
-				$this->connection->{$db}->{$col}->drop();  // @TODO : can't work, $this in static context
+				static::instance()->connection->{$db}->{$col}->drop();
 				return true;
 			}
 			catch (\Exception $e)
