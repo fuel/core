@@ -30,11 +30,6 @@ class InvalidPathException extends FileAccessException {}
 class File {
 
 	/**
-	 * @var	File_Area	points to the base area
-	 */
-	protected static $base_area = null;
-
-	/**
 	 * @var	array	loaded area's
 	 */
 	protected static $areas = array();
@@ -43,7 +38,8 @@ class File {
 	{
 		\Config::load('file', true);
 
-		static::$base_area = \File_Area::factory(\Config::get('file.base_config', array()));
+		static::$areas[null] = \File_Area::factory(\Config::get('file.base_config', array()));
+
 		foreach (\Config::get('file.areas', array()) as $name => $config)
 		{
 			static::$areas[$name] = \File_Area::factory($config);
@@ -66,10 +62,6 @@ class File {
 		if ($area instanceof File_Area)
 		{
 			return $area;
-		}
-		elseif ($area === null)
-		{
-			return static::$base_area;
 		}
 
 		return array_key_exists($area, static::$areas) ? static::$areas[$area] : false;
