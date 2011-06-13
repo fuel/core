@@ -548,7 +548,7 @@ class File {
 			{
 				if ($recursive)
 				{
-					$check = static::delete_dir($path.$dir, $area);
+					$check = static::delete_dir($path.$dir, true, true, $area);
 				}
 				else
 				{
