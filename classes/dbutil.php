@@ -218,7 +218,7 @@ class DBUtil {
 	 *
 	 * @throws	Fuel\Database_Exception
 	 * @param	string	$table			the table name
-	 * @param	array	$params			the FKs params
+	 * @param	array	$params			the FK constraint params
 	 * @return	int		the number of affected
 	 */
 	public static function add_fk($table, $params){
@@ -230,13 +230,22 @@ class DBUtil {
 	 *
 	 * @throws	Fuel\Database_Exception
 	 * @param	string			$table			the table name
-	 * @param	string|array	$params			the constraints
+	 * @param	string|array	$params			the FK constraint identifiers
 	 * @return	int				the number of affected
 	 */
 	public static function drop_fk($table, $params){
 		return static::alter_fk('DROP', $table, $params);
 	}
 	
+	/**
+	 * Builds the ALTER TABLE sql string to modify (add or drop) FK constraints adn executes the query.
+	 * 
+	 * @throws	Fuel\Database_Exception
+	 * @param	string			$type			the alter table sql string type (ADD or DROP)
+	 * @param	string			$table			the table name
+	 * @param	string|array	$params			the FK constraint params
+	 * @return	int				the number of affected
+	 */
 	protected static function alter_fk($type, $table, $params){
 		$sql = 'ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table));
 		
@@ -245,6 +254,14 @@ class DBUtil {
 		return DB::query($sql, DB::UPDATE)->execute();
 	}
 	
+	/**
+	 * Processes the FK constraint params array to build the SQL to add or drop multiple FK constraints.
+	 * It cannot process mixed alter table types (all params ar for ADD or all params are for DROP)
+	 * 
+	 * @param	string			$type			the alter table sql string type (ADD or DROP)
+	 * @param	string|array	$params			the FK constraint params
+	 * @return	string			the SQL string to attach to an ALTER TABLE instruction
+	 */
 	protected static function process_fk($type, $params){
 		$sql_fk = array();
 
@@ -270,6 +287,12 @@ class DBUtil {
 		return \implode(',', $sql_fk);
 	}
 	
+	/**
+	 * Processes the FK constraint action (for use with ON UPDATE or ON DELETE).
+	 * 
+	 * @param	string			$action			the FK action to be processed
+	 * @return	string			the processed FK action (defaults to NO ACTION)
+	 */
 	protected static function process_fk_action($action){
 		$response = 'NO ACTION';
 		$action = strtoupper($action);
