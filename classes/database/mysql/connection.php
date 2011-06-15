@@ -52,6 +52,7 @@ class Database_MySQL_Connection extends \Database_Connection {
 		extract($this->_config['connection'] + array(
 			'database'   => '',
 			'hostname'   => '',
+			'port'       => '',
 			'username'   => '',
 			'password'   => '',
 			'persistent' => FALSE,
@@ -59,6 +60,9 @@ class Database_MySQL_Connection extends \Database_Connection {
 
 		// Prevent this information from showing up in traces
 		unset($this->_config['connection']['username'], $this->_config['connection']['password']);
+
+		// If port is set in config append to hostname
+		$hostname = (! empty($port))? "$hostname:$port" : $hostname;
 
 		try
 		{
