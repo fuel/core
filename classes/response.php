@@ -143,7 +143,7 @@ class Response {
 	 */
 	public function set_header($name, $value)
 	{
-		$this->headers[$name] = $value;
+		$this->response->headers[$name] = $value;
 	}
 
 	/**
