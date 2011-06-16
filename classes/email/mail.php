@@ -17,7 +17,7 @@
 
 namespace Fuel\Core;
 
-class Email_Mail extends Email_Driver {
+class Email_Mail extends \Email_Driver {
 
 	public function __construct($config = array()) {
 		parent::__construct($config);

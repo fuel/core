@@ -30,11 +30,6 @@ class InvalidPathException extends FileAccessException {}
 class File {
 
 	/**
-	 * @var	File_Area	points to the base area
-	 */
-	protected static $base_area = null;
-
-	/**
 	 * @var	array	loaded area's
 	 */
 	protected static $areas = array();
@@ -42,11 +37,12 @@ class File {
 	public static function _init()
 	{
 		\Config::load('file', true);
-	
-		static::$base_area = \File_Area::factory(\Config::get('file.base_config', array()));
+
+		static::$areas[null] = \File_Area::factory(\Config::get('file.base_config', array()));
+
 		foreach (\Config::get('file.areas', array()) as $name => $config)
 		{
-			static::$areas[$name] = \File_Area::factory($config) + static::$base_area;
+			static::$areas[$name] = \File_Area::factory($config);
 		}
 	}
 
@@ -67,10 +63,6 @@ class File {
 		{
 			return $area;
 		}
-		elseif ($area === null)
-		{
-			return static::$base_area;
-		}
 
 		return array_key_exists($area, static::$areas) ? static::$areas[$area] : false;
 	}
@@ -87,7 +79,7 @@ class File {
 	{
 		return static::instance($area)->get_handler($path, $config);
 	}
-	
+
 	/**
 	 * Get the url.
 	 *
@@ -166,7 +158,7 @@ class File {
 	public static function read($path, $as_string = false, $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
-		
+
 		if( ! file_exists($path) or ! is_file($path))
 		{
 			throw new \InvalidPathException('Cannot read file, file does not exists.');
@@ -337,7 +329,7 @@ class File {
 
 		return true;
 	}
-	
+
 	/**
 	 * Get the octal permissions for a file or directory
 	 *
@@ -348,16 +340,16 @@ class File {
 	public static function get_permissions($path, $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
-		
+
 		if ( ! file_exists($path))
 		{
 			throw new \InvalidPathException('Path is not a directory or a file, cannot get permissions.');
 		}
-		
+
 		return substr(sprintf('%o', fileperms($path)), -4);
 
 	}
-	
+
 	/**
 	 * Get a file's or directory's created or modified timestamp.
 	 *
@@ -369,12 +361,12 @@ class File {
 	public static function get_time($path, $type = 'modified', $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
-		
+
 		if ( ! file_exists($path))
 		{
 			throw new \InvalidPathException('Path is not a directory or a file, cannot get creation timestamp.');
 		}
-		
+
 		if($type === 'modified')
 		{
 			return filemtime($path);
@@ -388,7 +380,7 @@ class File {
 			throw new \UnexpectedValueException('File::time $type must be "modified" or "created".');
 		}
 	}
-	
+
 	/**
 	 * Get a file's size.
 	 *
@@ -399,12 +391,12 @@ class File {
 	public static function get_size($path, $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
-		
+
 		if ( ! file_exists($path))
 		{
 			throw new \InvalidPathException('Path is not a directory or a file, cannot get size.');
 		}
-		
+
 		return filesize($path);
 	}
 
@@ -548,7 +540,7 @@ class File {
 			{
 				if ($recursive)
 				{
-					$check = static::delete_dir($path.$dir, $area);
+					$check = static::delete_dir($path.$dir, true, true, $area);
 				}
 				else
 				{

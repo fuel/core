@@ -12,9 +12,7 @@
  * @link		http://fuelphp.com
  */
 
-
-class MongoDbException extends Fuel_Exception {}
-
+namespace Fuel\Core;
 
 /**
  * This code is based on Redisent, a Redis interface for the modest.
@@ -28,7 +26,9 @@ class MongoDbException extends Fuel_Exception {}
  * @license 	http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-namespace Fuel\Core;
+
+class MongoDbException extends Fuel_Exception {}
+
 
 class MongoDb {
 
@@ -155,7 +155,7 @@ class MongoDb {
 		{
 			try
 			{
-				$this->connection->{$database}->drop(); // @TODO : can't work, $this in static context
+				static::instance()->connection->{$database}->drop();
 				return true;
 			}
 			catch (\Exception $e)
@@ -190,7 +190,7 @@ class MongoDb {
 		{
 			try
 			{
-				$this->connection->{$db}->{$col}->drop();  // @TODO : can't work, $this in static context
+				static::instance()->connection->{$db}->{$col}->drop();
 				return true;
 			}
 			catch (\Exception $e)

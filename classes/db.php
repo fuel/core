@@ -54,7 +54,7 @@ class DB {
 	 */
 	public static function last_query($db = null)
 	{
-		return Database_Connection::instance($db)->last_query;
+		return \Database_Connection::instance($db)->last_query;
 	}
 
 	/**
