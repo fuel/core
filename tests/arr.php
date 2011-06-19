@@ -141,7 +141,7 @@ class Tests_Arr extends TestCase {
 	 *
 	 * @test
 	 * @dataProvider person_provider
-	 * @expectedException Fuel_Exception
+	 * @expectedException InvalidArgumentException
 	 */
 	public function test_elements_throws_exception_when_keys_is_not_an_array($person)
 	{
@@ -300,11 +300,11 @@ class Tests_Arr extends TestCase {
 	 * Tests Arr::sort()
 	 *
 	 * @test
-	 * @expectedException Fuel_Exception
+	 * @expectedException InvalidArgumentException
 	 */
 	public function test_sort_of_non_array()
 	{
-		Arr::sort('not an array', 'foo.key');
+		$sorted = Arr::sort('not an array', 'foo.key');
 	}
 
 	public function sort_provider()
@@ -392,7 +392,7 @@ class Tests_Arr extends TestCase {
 	 *
 	 * @test
 	 * @dataProvider sort_provider
-	 * @expectedException Fuel_Exception
+	 * @expectedException InvalidArgumentException
 	 */
 	public function test_sort_invalid_direction($data, $expected)
 	{
