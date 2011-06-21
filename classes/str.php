@@ -232,6 +232,28 @@ class Str {
 				break;
 		}
 	}
+        
+        
+                     /**
+ * Alternator
+ *
+ * @access  public
+ * @param   string (as many parameters as needed)
+ * @return  string
+ */
+            public static function alternator()
+            {
+                static $i = 0;
+
+                if (func_num_args() == 0)
+                {
+                    return '';
+                }
+                
+                $args = func_get_args();
+                return $args[($i++ % count($args))];
+            }
+
 }
 
 /* End of file str.php */
