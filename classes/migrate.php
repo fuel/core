@@ -133,7 +133,7 @@ class Migrate
 		// But first let's make sure that everything is the way it should be
 		for ($i = $start; $i != $stop; $i += $step)
 		{
-			$f = glob(sprintf(\Config::get('migrations.path') . '%03d_*.php', $i));
+			$f = glob(\Config::get('migrations.path') . str_pad($version, 3, '0', STR_PAD_LEFT) . "_*.php");
 
 			// Only one migration per step is permitted
 			if (count($f) > 1)
