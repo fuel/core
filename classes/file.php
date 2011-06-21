@@ -677,10 +677,10 @@ class File {
 			$info['charset'] = isset($fileinfo[1]) ? $fileinfo[1] : '';
 		}
 
-		$info['size'] = static::get_size($path, $area);
-		$info['permissions'] = static::get_permissions($path, $area);
-		$info['time_created'] = static::get_time($path, $type = 'created', $area);
-		$info['time_modified'] = static::get_time($path, $type = 'modified', $area);
+		$info['size'] = static::get_size($info['realpath'], $area);
+		$info['permissions'] = static::get_permissions($info['realpath'], $area);
+		$info['time_created'] = static::get_time($info['realpath'], $type = 'created', $area);
+		$info['time_modified'] = static::get_time($info['realpath'], $type = 'modified', $area);
 
 		return $info;
 	}
