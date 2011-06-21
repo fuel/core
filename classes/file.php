@@ -657,7 +657,7 @@ class File {
 
 		if ( ! $info['realpath'] = static::instance($area)->get_path($path) or ! file_exists($info['realpath']))
 		{
-			throw new \InvalidArgumentException('Filename given is not a valid file.');
+			throw new \InvalidPathException('Filename given is not a valid file.');
 		}
 
 		$info = array_merge($info, pathinfo($info['realpath']));
@@ -697,18 +697,20 @@ class File {
 	{
 		$info = static::file_info($path, $area);
 
-		is_null($mime) and $mime = $info['mimetype'];
-		is_null($name) and $name = $info['basename'];
+		empty($mime) and $mime = $info['mimetype'];
+		empty($name) and $name = $info['basename'];
+
+		if ( ! $file = static::open_file(@fopen($info['realpath'], 'rb'), LOCK_SH, $area))
+		{
+			throw new \FileAccessException('Filename given could not be opened for download.');
+		}
+
+		ob_end_clean();
 
 		header('Content-type: '.$mime);
 		header('Content-disposition: filename="'.$name.'"');
 		header('Content-length: '.$info['size']);
 		header('Cache-control: private');
-
-		if ( ! $file = static::open_file(@fopen($info['realpath'], 'rb'), LOCK_SH, $area))
-		{
-			return false;
-		}
 
 		while( ! feof($file)) {
 			echo fread($file, 2048);
