@@ -761,7 +761,7 @@ class Form {
 		if (is_array($build_field))
 		{
 			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t\t{group_label}\n {fields}\t\t\t{label} {field}{fields}');
-			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Du', $template, $match) > 0)
+			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
 				foreach ($build_field as $lbl => $bf)
