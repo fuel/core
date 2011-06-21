@@ -662,7 +662,7 @@ class File {
 
 		$info = array_merge($info, pathinfo($info['realpath']));
 
-		if ( ! $fileinfo = new \finfo(FILEINFO_MIME))
+		if ( ! $fileinfo = new \finfo(FILEINFO_MIME, \Config::get('file.magic_file', null)))
 		{
 			throw new \InvalidArgumentException('Can not retrieve information about this file.');
 		}
