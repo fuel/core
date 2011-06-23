@@ -194,7 +194,7 @@ class Num {
 		// Verify the size format and store the matching parts
 		if (!preg_match($pattern, $size, $matches))
 		{
-			throw new Exception('The byte unit size, "' . $size . '", is improperly formatted.');
+			throw new Exception('The byte unit size, "'.$size.'", is improperly formatted.');
 		}
 
 		// Find the float value of the size
@@ -237,7 +237,7 @@ class Num {
 		{
             if (doubleval($bytes) >= $mag)
 			{
-                return number_format($bytes / $mag, $decimals) . ' ' . $unit;
+                return number_format($bytes / $mag, $decimals).' '.$unit;
 			}
 		}
 
@@ -459,7 +459,7 @@ class Num {
 	 */
 	public static function is_alphanumeric($string)
 	{
-		return preg_match('/[0-9a-zA-Z]/', $string);
+		return ctype_alnum($string);
 	}
 }
 
