@@ -104,6 +104,12 @@ class Pagination {
 
 		foreach ($config as $key => $value)
 		{
+			if ($key == 'template')
+			{
+				static::$template = array_merge(static::$template, $config['template']);
+				continue;
+			}
+
 			static::${$key} = $value;
 		}
 
@@ -190,7 +196,7 @@ class Pagination {
 		{
 			if (static::$current_page == $i)
 			{
-				$pagination .= static::$template['active_start'].$i.static::$template['active_end'];
+				$pagination .= static::$template['active_start'] . $i . static::$template['active_end'];
 			}
 			else
 			{
@@ -199,7 +205,7 @@ class Pagination {
 			}
 		}
 
-		return static::$template['page_start'].$pagination.static::$template['page_end'];
+		return static::$template['page_start'] . $pagination . static::$template['page_end'];
 	}
 
 	// --------------------------------------------------------------------
@@ -220,12 +226,12 @@ class Pagination {
 
 		if (static::$current_page == static::$total_pages)
 		{
-			return $value.static::$template['next_mark'];
+			return $value . static::$template['next_mark'];
 		}
 		else
 		{
 			$next_page = static::$current_page + 1;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']);
+			return \Html::anchor(rtrim(static::$pagination_url, '/') . '/' . $next_page, $value . static::$template['next_mark']);
 		}
 	}
 
@@ -247,13 +253,13 @@ class Pagination {
 
 		if (static::$current_page == 1)
 		{
-			return static::$template['previous_mark'].$value;
+			return static::$template['previous_mark'] . $value;
 		}
 		else
 		{
 			$previous_page = static::$current_page - 1;
 			$previous_page = ($previous_page == 1) ? '' : '/' . $previous_page;
-			return \Html::anchor(rtrim(static::$pagination_url, '/') . $previous_page, static::$template['previous_mark'].$value);
+			return \Html::anchor(rtrim(static::$pagination_url, '/') . $previous_page, static::$template['previous_mark'] . $value);
 		}
 	}
 }
