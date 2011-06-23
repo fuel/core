@@ -83,6 +83,32 @@ class Num {
 	}
 
 	/**
+	 * Formats a number with a level of precision.
+	 *
+	 * @link    http://code.google.com/p/portaleconomiachaco/source/browse/sistemahorticola/views/helpers/number.php?spec=svn467&r=462
+	 * @param   float     A floating point number.
+	 * @param   integer   The precision of the returned number.
+	 * @return  float
+	 */
+	public static function precision($number, $precision = 3)
+	{
+		return sprintf("%01.{$precision}f", $number);
+	}
+
+	/**
+	 * Formats a number into a percentage string.
+	 *
+	 * @link    http://code.google.com/p/portaleconomiachaco/source/browse/sistemahorticola/views/helpers/number.php?spec=svn467&r=462
+	 * @param   float     A floating point number
+	 * @param   integer   The precision of the returned number
+	 * @return  string    Percentage string
+	 */
+	public static function percentage($number, $precision = 2)
+	{
+		return static::precision($number, $precision).'%';
+	}
+
+	/**
 	 * Determines the difference between two timestamps.
 	 *
 	 * The difference is returned in a human readable format such as "1 hour",
@@ -159,7 +185,7 @@ class Num {
 
 		return $since;
 	}
-
+	
 	/**
 	 * Converts a file size number to a byte value. File sizes are defined in
 	 * the format: SB, where S is the size (1, 8.5, 300, etc.) and B is the
@@ -237,7 +263,7 @@ class Num {
 		{
             if (doubleval($bytes) >= $mag)
 			{
-                return number_format($bytes / $mag, $decimals).' '.$unit;
+                return static::precision($bytes / $mag, $decimals).' '.$unit;
 			}
 		}
 
