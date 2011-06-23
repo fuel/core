@@ -21,6 +21,7 @@ namespace Fuel\Core;
  * Techniques and inspiration were taken from all over, including:
  *	Kohana Framework: kohanaframework.org
  *	Wordpress: wordpress.org
+ *	CakePHP: cakephp.org
  * 
  * @package		Fuel
  * @category	Core
@@ -268,6 +269,51 @@ class Num {
 		}
 
         return false;
+	}
+
+	/**
+	 * Converts a number into a more readable human-type number.
+	 *
+	 * Usage:
+	 * <code>
+	 * echo Num::quantity(7000); // 7K
+	 * echo Num::quantity(7500); // 8K
+	 * echo Num::quantity(7500, 1); // 7.5K
+	 * </code>
+	 *
+	 * @link    http://bakery.cakephp.org/articles/xsaint/2011/05/12/number_plus_helper
+	 * @param   integer
+	 * @param   integer
+	 * @return  string
+	 */
+	public static function quantity($num = null, $decimals = 0)
+	{
+		if($num)
+		{
+			switch(true)
+			{
+				case ($num >= 1000 && $num < 1000000):
+				{
+					return static::precision(static::precision($num, 0) / 1000, $decimals).'K';
+				}
+				break;
+				case ($num >= 1000000 && $num < 1000000000):
+				{
+					return static::precision(static::precision($num, 0) / 1000000, $decimals).'M';
+				}
+				break;
+				case ($num >= 1000000000):
+				{
+					return static::precision(static::precision($num, 0) / 1000000000, $decimals).'B';
+				}
+				break;
+				default:
+				{
+					return $num;
+				}
+			}
+		}
+		return $num;
 	}
 
 	/**
