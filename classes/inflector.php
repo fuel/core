@@ -42,7 +42,7 @@ class Inflector {
 		'/(c)hild$/'               => '\1hildren',  // child
 		'/(buffal|tomat)o$/'       => '\1\2oes',    // buffalo, tomato
 		'/(bu|campu)s$/'           => '\1\2ses',    // bus, campus
-		'/(alias|status|virus)/'   => '\1es',       // alias
+		'/(alias|status|virus)$/'  => '\1es',       // alias
 		'/(octop)us$/'             => '\1i',        // octopus
 		'/(ax|cris|test)is$/'      => '\1es',       // axis, crisis
 		'/s$/'                     => 's',          // no change (compatibility)
@@ -50,6 +50,7 @@ class Inflector {
 	);
 
 	protected static $singular_rules = array(
+		'/(x|ch|ss|sh)$/'       => '\1',
 		'/(matr)ices$/'         => '\1ix',
 		'/(vert|ind)ices$/'     => '\1ex',
 		'/^(ox)en/'             => '\1',
