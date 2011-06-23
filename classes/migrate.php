@@ -26,23 +26,27 @@ class Migrate
 
 	protected static $prefix = '\\Fuel\Migrations\\';
 
+	protected static $table = 'migration';
+
 	public static function _init()
 	{
 		logger(Fuel::L_DEBUG, 'Migrate class initialized');
 
 		\Config::load('migrations', true);
 
-		\DBUtil::create_table('migration', array(
+		static::$table = \Config::get('migrations.table', static::$table);
+
+		\DBUtil::create_table(static::$table, array(
 			'current' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0)
 		));
 
 		// Check if there is a version
-		$current = \DB::select('current')->from('migration')->execute()->get('current');
+		$current = \DB::select('current')->from(static::$table)->execute()->get('current');
 
 		// Not set, so we are on 0
 		if ($current === null)
 		{
-			\DB::insert('migration')->set(array('current' => '0'))->execute();
+			\DB::insert(static::$table)->set(array('current' => '0'))->execute();
 		}
 
 		else
@@ -129,7 +133,7 @@ class Migrate
 		// But first let's make sure that everything is the way it should be
 		for ($i = $start; $i != $stop; $i += $step)
 		{
-			$f = glob(sprintf(\Config::get('migrations.path') . '%03d_*.php', $i));
+			$f = glob(\Config::get('migrations.path') . str_pad($i, 3, '0', STR_PAD_LEFT) . "_*.php");
 
 			// Only one migration per step is permitted
 			if (count($f) > 1)
@@ -256,6 +260,8 @@ class Migrate
 	 */
 	private static function _update_schema_version($old_version, $version)
 	{
-		\DB::update('migration')->set(array('current' => (int) $version))->where('current', '=', (int) $old_version)->execute();
+		\DB::update(static::$table)->set(array('current' => (int) $version))->where('current', '=', (int) $old_version)->execute();
 	}
 }
+
+/* End of file migrate.php */

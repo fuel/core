@@ -27,7 +27,7 @@ class Tests_Uri extends TestCase {
 	 */
 	public function test_create()
 	{
-		$prefix = (Config::get('index_file')) ? Config::get('index_file').'/' : '';
+		$prefix = Uri::create('');
 
 		$output = Uri::create('controller/method');
 		$expected = $prefix."controller/method";
