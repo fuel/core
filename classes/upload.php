@@ -119,6 +119,9 @@ class Upload {
 		// get the config for this upload
 		\Config::load('upload', true);
 
+		// get the language file for this upload
+		\Lang::load('upload', true);
+
 		// make sure we have defaults for those not defined
 		static::$config = array_merge(static::$_defaults, \Config::get('upload', array()));
 
@@ -367,6 +370,9 @@ class Upload {
 
 			// update the valid flag
 			static::$valid = (static::$valid or ($files[$key]['error'] === 0));
+
+			// and add the message text
+			static::$files[$key]['message'] = \Lang::line('upload.'.static::$files[$key]['error']);
 		}
 	}
 
