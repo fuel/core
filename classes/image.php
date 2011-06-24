@@ -48,6 +48,10 @@ class Image {
 	public static function factory($config = array(), $filename = null)
 	{
 		!is_array($config) and $config = array();
+
+		\Config::load('image', 'image');
+		$config = array_merge(\Config::get('image', array()), $config);
+
 		$protocol = ucfirst( ! empty($config['driver']) ? $config['driver'] : 'gd');
 		$class = 'Image_'.$protocol;
 		if ($protocol == 'Driver' || ! class_exists($class))
@@ -199,6 +203,16 @@ class Image {
 	public static function rounded($radius, $sides = null, $antialias = null)
 	{
 		return static::instance()->rounded($radius, $sides, $antialias);
+	}
+	
+	/**
+	 * Turns the image into a grayscale version
+	 * 
+	 * @return	Image_Driver
+	 */
+	public static function grayscale()
+	{
+		return static::instance()->grayscale();
 	}
 
 	/**

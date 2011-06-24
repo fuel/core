@@ -44,7 +44,7 @@ class Validation {
 		{
 			if ($fieldset->validation(false) != null)
 			{
-				throw new Fuel_Exception('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
+				throw new \DomainException('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
 			}
 		}
 
@@ -147,7 +147,16 @@ class Validation {
 			{
 				preg_match('#\[(.*)\]#', $rule, $param);
 				$rule = substr($rule, 0, $pos);
-				call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), explode(',', $param[1])));
+
+				// deal with rules that have comma's in the rule parameter
+				if (in_array($rule, array('match_pattern')))
+				{
+					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), array($param[1])));
+				}
+				else
+				{
+					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), explode(',', $param[1])));
+				}
 			}
 			else
 			{
@@ -207,7 +216,7 @@ class Validation {
 	{
 		if ( ! (is_object($class) || class_exists($class)))
 		{
-			throw new \Fuel_Exception('Input for add_callable is not a valid object or class.');
+			throw new \InvalidArgumentException('Input for add_callable is not a valid object or class.');
 		}
 
 		array_unshift($this->callables, $class);

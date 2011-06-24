@@ -16,7 +16,7 @@ namespace Fuel\Core;
 
 // --------------------------------------------------------------------
 
-class Session_Memcached extends Session_Driver {
+class Session_Memcached extends \Session_Driver {
 
 	/**
 	 * array of driver config defaults
@@ -41,6 +41,9 @@ class Session_Memcached extends Session_Driver {
 		$this->config = array_merge($config, is_array($config['memcached']) ? $config['memcached'] : static::$_defaults);
 
 		$this->config = $this->_validate_config($this->config);
+
+		// adjust the expiration time to the maximum possible for memcached
+		$this->config['expiration_time'] = min($this->config['expiration_time'], 2592000);
 	}
 
 	// --------------------------------------------------------------------
@@ -91,7 +94,7 @@ class Session_Memcached extends Session_Driver {
 		// create a new session
 		$this->keys['session_id']	= $this->_new_session_id();
 		$this->keys['previous_id']	= $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_address']	= \Input::real_ip();
+		$this->keys['ip_hash']		= md5(\Input::ip().\Input::real_ip());
 		$this->keys['user_agent']	= \Input::user_agent();
 		$this->keys['created'] 		= $this->time->get_timestamp();
 		$this->keys['updated'] 		= $this->keys['created'];

@@ -14,7 +14,17 @@ namespace Fuel\Core;
 
 
 
-class File_Driver_Directory {
+class File_Handler_Directory {
+
+	/**
+	 * @var	string	path to the file
+	 */
+	protected $path;
+
+	/**
+	 * @var	File_Area
+	 */
+	protected $area;
 
 	/**
 	 * @var	array	listing of files and directories within this directory
@@ -23,18 +33,18 @@ class File_Driver_Directory {
 
 	protected function __construct($path, Array &$config, File_Area $area, $content = array())
 	{
-		$this->path		= rtrim($path, '\\/').DS;
-		$this->resource = false;
+		$this->path	= rtrim($path, '\\/').DS;
+		$this->area	= $area;
 
 		foreach ($content as $key => $value)
 		{
 			if ( ! is_int($key))
 			{
-				$this->content[$key] = $value === false ? false : $area->get_driver($path.DS.$key, $config, $value);
+				$this->content[$key] = $value === false ? false : $area->get_handler($path.DS.$key, $config, $value);
 			}
 			else
 			{
-				$this->content[$key] = $area->get_driver($path.DS.$value, $config);
+				$this->content[$key] = $area->get_handler($path.DS.$value, $config);
 			}
 		}
 	}
@@ -47,12 +57,13 @@ class File_Driver_Directory {
 	/**
 	 * Read directory
 	 *
-	 * @param	whether or not to read recursive
+	 * @param	$dept		whether or not to read recursive
+	 * @param	$filters	whether or not to read recursive
 	 * @return	array
 	 */
-	public function read($depth = 0)
+	public function read($depth = 0, $filters = null)
 	{
-		return $this->area->read_dir($this->path, $depth, null, $this->area);
+		return $this->area->read_dir($this->path, $depth, $filters, $this->area);
 	}
 
 	/**
@@ -68,8 +79,11 @@ class File_Driver_Directory {
 		$new_name = str_replace(array('..', '/', '\\'), array('', '', ''), $new_name);
 
 		$new_path = $info['dirname'].DS.$new_name;
-
-		return $this->area->rename_dir($this->path, $new_path);
+		
+		$return =  $this->area->rename_dir($this->path, $new_path);
+		$return and $this->path = $new_path;
+		
+		return $return;
 	}
 
 	/**
@@ -85,7 +99,10 @@ class File_Driver_Directory {
 
 		$new_path = rtrim($new_path, '\\/').DS.$info['basename'];
 
-		return $this->area->rename_dir($this->path, $new_path);
+		$return =  $this->area->rename_dir($this->path, $new_path);
+		$return and $this->path = $new_path;
+		
+		return $return;
 	}
 
 	/**
@@ -112,7 +129,7 @@ class File_Driver_Directory {
 	 */
 	public function update()
 	{
-		throw new \File_Exception('Update method is unavailable on directories.');
+		throw new \BadMethodCallException('Update method is unavailable on directories.');
 	}
 
 	/**
@@ -124,6 +141,47 @@ class File_Driver_Directory {
 	{
 		// should also destroy object but not possible in PHP right?
 		return $this->area->delete_dir($this->path, $recursive, $delete_top);
+	}
+	
+	/**
+	 * Get the url.
+	 *
+	 * @return	bool
+	 */
+	public function get_url()
+	{
+		throw new \BadMethodCallException('Get_url method is unavailable on directories.');
+	}
+	
+	/**
+	 * Get the directory permissions.
+	 *
+	 * @return	string	file permissions
+	 */
+	public function get_permissions()
+	{
+		return $this->area->get_permissions($this->path);
+	}
+	
+	/**
+	 * Get directory's the created or modified timestamp.
+	 *
+	 * @param	string	$type	modified or created
+	 * @return	int		Unix Timestamp
+	 */
+	public function get_time($type = 'modified')
+	{
+		return $this->area->get_time($this->path, $type);
+	}
+	
+	/**
+	 * Get the size.
+	 *
+	 * @return	bool
+	 */
+	public function get_size()
+	{
+		throw new \BadMethodCallException('Get_size method is unavailable on directories.');
 	}
 }
 

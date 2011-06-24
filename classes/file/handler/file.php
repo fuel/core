@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 
 
-class File_Driver_File {
+class File_Handler_File {
 
 	/**
 	 * @var	string	path to the file
@@ -59,10 +59,6 @@ class File_Driver_File {
 		return $obj;
 	}
 
-	public function __destruct()
-	{
-	}
-
 	/**
 	 * Read file
 	 *
@@ -93,7 +89,10 @@ class File_Driver_File {
 
 		$new_path = $info['dirname'].DS.$new_name.$extension;
 
-		return $this->area->rename($this->path, $new_path);
+		$return =  $this->area->rename($this->path, $new_path);
+		$return and $this->path = $new_path;
+		
+		return $return;
 	}
 
 	/**
@@ -109,7 +108,10 @@ class File_Driver_File {
 
 		$new_path = rtrim($new_path, '\\/').DS.$info['basename'];
 
-		return $this->area->rename($this->path, $new_path);
+		$return = $this->area->rename($this->path, $new_path);
+		$return and $this->path = $new_path;
+		
+		return $return;
 	}
 
 	/**
@@ -136,7 +138,8 @@ class File_Driver_File {
 	 */
 	public function update($new_content)
 	{
-
+		$info = pathinfo($this->path);
+		return $this->area->update($info['dirname'], $info['basename'], $new_content, $this);
 	}
 
 	/**
@@ -148,6 +151,48 @@ class File_Driver_File {
 	{
 		// should also destroy object but not possible in PHP right?
 		return $this->area->delete($this->path);
+	}
+	
+	/**
+	 * Get the url.
+	 *
+	 * @return	bool
+	 */
+	public function get_url()
+	{
+		return $this->area->get_url($this->path);
+	}
+	
+	/**
+	 * Get the file's permissions.
+	 *
+	 * @return	string	file permissions
+	 */
+	public function get_permissions()
+	{
+		return $this->area->get_permissions($this->path);
+	}
+	
+	/**
+	 * Get the file's created or modified timestamp.
+	 *
+	 * @param	string	$type	modified or created
+	 * @return	int		Unix Timestamp
+	 */
+	public function get_time($type = 'modified')
+	{
+		return $this->area->get_time($this->path, $type);
+	}
+	
+	/**
+	 * Get the file's size.
+	 *
+	 * @param	string	$type	modified or created
+	 * @return	int		Unix Timestamp
+	 */
+	public function get_size()
+	{
+		return $this->area->get_size($this->path);
 	}
 }
 

@@ -43,6 +43,8 @@ class Tests_Date extends TestCase {
 	 */
 	public function test_format()
 	{
+		date_default_timezone_set('UTC');
+		
 		$output = Date::Factory( 1294176140 )->format("%m/%d/%Y");
 		$expected = "01/04/2011";
 

@@ -108,7 +108,13 @@ class Validation_Error extends \Exception {
 
 		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
 		$find     = array(':field', ':label', ':value', ':rule');
-		$replace  = array($this->field->name, is_array($this->field->label) ? $this->field->label['label'] : $this->field->label, $value, $this->callback);
+		$label    = is_array($this->field->label) ? $this->field->label['label'] : $this->field->label;
+		if (\Config::get('validation.quote_labels', false))
+		{
+			// put the label in quotes if it contains spaces
+			strpos($label, ' ') !== false and $label = '"'.$label.'"';
+		}
+		$replace  = array($this->field->name, $label, $value, $this->callback);
 		foreach($this->params as $key => $val)
 		{
 			$find[]		= ':param:'.($key + 1);

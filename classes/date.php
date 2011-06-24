@@ -41,11 +41,6 @@ class Date {
 	protected static $server_gmt_offset = 0;
 
 	/**
-	 * @var string default timezone, must be valid PHP timezone from www.php.net/timezones
-	 */
-	protected static $default_timezone;
-
-	/**
 	 * @var string default pattern for date output
 	 */
 	protected static $default_pattern = 'local';
@@ -71,9 +66,6 @@ class Date {
 	public static function _init()
 	{
 		static::$server_gmt_offset	= \Config::get('server_gmt_offset', 0);
-
-		// Set the default timezone
-		static::$default_timezone	= date_default_timezone_get();
 
 		// Ugly temporary windows fix because windows doesn't support strptime()
 		// Better fix will accept custom pattern parsing but only parse numeric input on windows servers
@@ -106,7 +98,7 @@ class Date {
 	public static function factory($timestamp = null, $timezone = null)
 	{
 		$timestamp	= is_null($timestamp) ? time() + static::$server_gmt_offset : $timestamp;
-		$timezone	= is_null($timezone) ? static::$default_timezone : $timezone;
+		$timezone	= is_null($timezone) ? \Fuel::$timezone : $timezone;
 
 		return new static($timestamp, $timezone);
 	}
@@ -207,7 +199,7 @@ class Date {
 		$days_in_month = array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
 		return $days_in_month[$month-1];
 	}
-	
+
 	/**
 	 * Returns the time ago
 	 *
@@ -224,9 +216,9 @@ class Date {
 		! is_numeric($timestamp) and $timestamp = static::create_from_string($timestamp);
 
 		$from_timestamp == null and $from_timestamp = time();
-		
+
 		\Lang::load('date', true);
-		
+
 		$difference = $from_timestamp - $timestamp;
 		$periods	= array('second', 'minute', 'hour', 'day', 'week', 'month', 'years', 'decade');
 		$lengths	= array(60, 60, 24, 7, 4.35, 12, 10);
@@ -242,11 +234,11 @@ class Date {
 		{
 			$periods[$j] = \Inflector::pluralize($periods[$j]);
 		}
-		
+
 		$text = \Lang::line('date.text', array(
 			'time' => \Lang::line('date.'.$periods[$j], array('t' => $difference))
 		));
-		
+
 		return $text;
 	}
 
@@ -273,7 +265,7 @@ class Date {
 		$pattern = \Config::get('date.patterns.'.$pattern_key, $pattern_key);
 
 		// Temporarily change timezone when different from default
-		if (static::$default_timezone != $this->timezone)
+		if (\Fuel::$timezone != $this->timezone)
 		{
 			date_default_timezone_set($this->timezone);
 		}
@@ -282,9 +274,9 @@ class Date {
 		$output = strftime($pattern, $this->timestamp);
 
 		// Change timezone back to default if changed previously
-		if (static::$default_timezone != $this->timezone)
+		if (\Fuel::$timezone != $this->timezone)
 		{
-			date_default_timezone_set(static::$default_timezone);
+			date_default_timezone_set(\Fuel::$timezone);
 		}
 
 		return $output;

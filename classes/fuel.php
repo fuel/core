@@ -53,7 +53,7 @@ class Fuel {
 	const L_INFO = 3;
 	const L_ALL = 4;
 
-	const VERSION = '1.0-rc2.1';
+	const VERSION = '1.0-rc3';
 
 	public static $initialized = false;
 
@@ -61,7 +61,9 @@ class Fuel {
 
 	public static $profiling = false;
 
-	public static $locale;
+	public static $locale = 'en_US';
+
+	public static $timezone = 'UTC';
 
 	public static $encoding = 'UTF-8';
 
@@ -96,6 +98,8 @@ class Fuel {
 	 */
 	public static function init($config)
 	{
+		\Config::load($config);
+	
 		if (static::$initialized)
 		{
 			throw new \Fuel_Exception("You can't initialize Fuel more than once.");
@@ -108,7 +112,7 @@ class Fuel {
 		// Start up output buffering
 		ob_start();
 
-		static::$profiling = isset($config['profiling']) ? $config['profiling'] : false;
+		static::$profiling = \Config::get('profiling', false);
 
 		if (static::$profiling)
 		{
@@ -116,17 +120,23 @@ class Fuel {
 			\Profiler::mark(__METHOD__.' Start');
 		}
 
-		static::$cache_dir = isset($config['cache_dir']) ? $config['cache_dir'] : APPPATH.'cache/';
-		static::$caching = isset($config['caching']) ? $config['caching'] : false;
-		static::$cache_lifetime = isset($config['cache_lifetime']) ? $config['cache_lifetime'] : 3600;
+		static::$cache_dir = \Config::get('cache_dir', APPPATH.'cache/');
+		static::$caching = \Config::get('caching', false);
+		static::$cache_lifetime = \Config::get('cache_lifetime', 3600);
 
 		if (static::$caching)
 		{
 			static::$path_cache = static::cache('Fuel::path_cache');
 		}
 
-		\Config::load($config);
+		// set a default timezone if one is defined
+		static::$timezone = \Config::get('default_timezone') ?: date_default_timezone_get();
+		date_default_timezone_set(static::$timezone);
 
+		// set the encoding and locale to use
+		static::$encoding = \Config::get('encoding', static::$encoding);
+		static::$locale = \Config::get('locale', static::$locale);
+		
 		static::$_paths = array(APPPATH, COREPATH);
 
 		if ( ! static::$is_cli)
@@ -143,8 +153,7 @@ class Fuel {
 		\Security::clean_input();
 
 		static::$env = \Config::get('environment');
-		static::$locale = \Config::get('locale');
-
+		
 		\Event::register('shutdown', 'Fuel::finish');
 
 		//Load in the packages

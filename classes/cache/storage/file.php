@@ -46,7 +46,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		static::$path = !empty($this->config['path']) ? $this->config['path'] : \Config::get('cache_dir', APPPATH.'cache'.DS);
 		if ( ! is_dir(static::$path) || ! is_writable(static::$path))
 		{
-			throw new \Cache_Exception('Cache directory does not exist or is not writable.');
+			throw new \Fuel_Exception('Cache directory does not exist or is not writable.');
 		}
 	}
 
@@ -57,7 +57,6 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 	 *
 	 * @param	string
 	 * @return	string
-	 * @throws	Cache_Exception
 	 */
 	protected function identifier_to_path( $identifier )
 	{
@@ -92,23 +91,23 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 	/**
 	 * Remove the prepended cache properties and save them in class properties
 	 *
-	 * @param	string
-	 * @throws	Cache_Exception
+	 * @param   string
+	 * @throws  UnexpectedValueException
 	 */
 	protected function unprep_contents($payload)
 	{
 		$properties_end = strpos($payload, '{{/'.self::PROPS_TAG.'}}');
-		if ($properties_end === FALSE)
+		if ($properties_end === false)
 		{
-			throw new \Cache_Exception('Incorrect formatting');
+			throw new \UnexpectedValueException('Cache has bad formatting');
 		}
 
 		$this->contents = substr($payload, $properties_end + strlen('{{/'.self::PROPS_TAG.'}}'));
 		$props = substr(substr($payload, 0, $properties_end), strlen('{{'.self::PROPS_TAG.'}}'));
 		$props = json_decode($props, true);
-		if ($props === NULL)
+		if ($props === null)
 		{
-			throw new \Cache_Exception('Properties retrieval failed');
+			throw new \UnexpectedValueException('Cache properties retrieval failed');
 		}
 
 		$this->created			= $props['created'];
@@ -168,7 +167,6 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 	 *
 	 * @param	limit purge to subsection
 	 * @return	bool
-	 * @throws	Cache_Exception
 	 */
 	public function delete_all($section)
 	{
@@ -212,7 +210,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		if ($handle)
 		{
 			// wait for a lock
-			while( ! flock($handle, LOCK_EX));
+			while ( ! flock($handle, LOCK_EX));
 
 			// write the session data
 			fwrite($handle, $payload);
@@ -259,7 +257,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		{
 			$this->unprep_contents($payload);
 		}
-		catch(Cache_Exception $e)
+		catch (\UnexpectedValueException $e)
 		{
 			return false;
 		}
