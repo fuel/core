@@ -30,11 +30,6 @@ class InvalidPathException extends FileAccessException {}
 class File {
 
 	/**
-	 * @var	File_Area	points to the base area
-	 */
-	protected static $base_area = null;
-
-	/**
 	 * @var	array	loaded area's
 	 */
 	protected static $areas = array();
@@ -42,11 +37,12 @@ class File {
 	public static function _init()
 	{
 		\Config::load('file', true);
-	
-		static::$base_area = \File_Area::factory(\Config::get('file.base_config', array()));
+
+		static::$areas[null] = \File_Area::factory(\Config::get('file.base_config', array()));
+
 		foreach (\Config::get('file.areas', array()) as $name => $config)
 		{
-			static::$areas[$name] = \File_Area::factory($config) + static::$base_area;
+			static::$areas[$name] = \File_Area::factory($config);
 		}
 	}
 
@@ -67,10 +63,6 @@ class File {
 		{
 			return $area;
 		}
-		elseif ($area === null)
-		{
-			return static::$base_area;
-		}
 
 		return array_key_exists($area, static::$areas) ? static::$areas[$area] : false;
 	}
@@ -87,7 +79,7 @@ class File {
 	{
 		return static::instance($area)->get_handler($path, $config);
 	}
-	
+
 	/**
 	 * Get the url.
 	 *
@@ -166,7 +158,7 @@ class File {
 	public static function read($path, $as_string = false, $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
-		
+
 		if( ! file_exists($path) or ! is_file($path))
 		{
 			throw new \InvalidPathException('Cannot read file, file does not exists.');
@@ -337,7 +329,7 @@ class File {
 
 		return true;
 	}
-	
+
 	/**
 	 * Get the octal permissions for a file or directory
 	 *
@@ -348,16 +340,16 @@ class File {
 	public static function get_permissions($path, $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
-		
+
 		if ( ! file_exists($path))
 		{
 			throw new \InvalidPathException('Path is not a directory or a file, cannot get permissions.');
 		}
-		
+
 		return substr(sprintf('%o', fileperms($path)), -4);
 
 	}
-	
+
 	/**
 	 * Get a file's or directory's created or modified timestamp.
 	 *
@@ -369,12 +361,12 @@ class File {
 	public static function get_time($path, $type = 'modified', $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
-		
+
 		if ( ! file_exists($path))
 		{
 			throw new \InvalidPathException('Path is not a directory or a file, cannot get creation timestamp.');
 		}
-		
+
 		if($type === 'modified')
 		{
 			return filemtime($path);
@@ -388,7 +380,7 @@ class File {
 			throw new \UnexpectedValueException('File::time $type must be "modified" or "created".');
 		}
 	}
-	
+
 	/**
 	 * Get a file's size.
 	 *
@@ -399,12 +391,12 @@ class File {
 	public static function get_size($path, $area = null)
 	{
 		$path = static::instance($area)->get_path($path);
-		
+
 		if ( ! file_exists($path))
 		{
 			throw new \InvalidPathException('Path is not a directory or a file, cannot get size.');
 		}
-		
+
 		return filesize($path);
 	}
 
@@ -548,7 +540,7 @@ class File {
 			{
 				if ($recursive)
 				{
-					$check = static::delete_dir($path.$dir, $area);
+					$check = static::delete_dir($path.$dir, true, true, $area);
 				}
 				else
 				{
@@ -639,6 +631,103 @@ class File {
 
 		flock($resource, LOCK_UN);
 	}
+
+	/**
+	 * Get detailed information about a file
+	 *
+	 * @param	string			file path
+	 * @param	string|File_Area|null	file area name, object or null for base area
+	 */
+	public static function file_info($path, $area = null)
+	{
+		$info = array(
+			'original' => $path,
+			'realpath' => '',
+			'dirname' => '',
+			'basename' => '',
+			'filename' => '',
+			'extension' => '',
+			'mimetype' => '',
+			'charset' => '',
+			'size' => 0,
+			'permissions' => '',
+			'time_created' => '',
+			'time_modified' => '',
+		);
+
+		if ( ! $info['realpath'] = static::instance($area)->get_path($path) or ! file_exists($info['realpath']))
+		{
+			throw new \InvalidPathException('Filename given is not a valid file.');
+		}
+
+		$info = array_merge($info, pathinfo($info['realpath']));
+
+		if ( ! $fileinfo = new \finfo(FILEINFO_MIME, \Config::get('file.magic_file', null)))
+		{
+			throw new \InvalidArgumentException('Can not retrieve information about this file.');
+		}
+
+		$fileinfo = explode(';', $fileinfo->file($info['realpath']));
+
+		$info['mimetype'] = isset($fileinfo[0]) ? $fileinfo[0] : 'application/octet-stream';
+
+		if (isset($fileinfo[1]))
+		{
+			$fileinfo = explode('=', $fileinfo[1]);
+			$info['charset'] = isset($fileinfo[1]) ? $fileinfo[1] : '';
+		}
+
+		$info['size'] = static::get_size($info['realpath'], $area);
+		$info['permissions'] = static::get_permissions($info['realpath'], $area);
+		$info['time_created'] = static::get_time($info['realpath'], $type = 'created', $area);
+		$info['time_modified'] = static::get_time($info['realpath'], $type = 'modified', $area);
+
+		return $info;
+	}
+
+	/**
+	 * Download a file
+	 *
+	 * @param	string			file path
+	 * @param	string|null		custom name for the file to be downloaded
+	 * @param	string|null		custom mime type or null for file mime type
+	 * @param	string|File_Area|null	file area name, object or null for base area
+	 */
+	public static function download($path, $name = null, $mime = null, $area = null)
+	{
+		$info = static::file_info($path, $area);
+
+		empty($mime) and $mime = $info['mimetype'];
+		empty($name) and $name = $info['basename'];
+
+		if ( ! $file = static::open_file(@fopen($info['realpath'], 'rb'), LOCK_SH, $area))
+		{
+			throw new \FileAccessException('Filename given could not be opened for download.');
+		}
+
+		ob_end_clean();
+
+		ini_get('zlib.output_compression') and ini_set('zlib.output_compression', 0);
+		! ini_get('safe_mode') and set_time_limit(0);
+
+		header('Content-Type: '.$mime);
+		header('Content-Disposition: attachment; filename="'.$name.'"');
+		header('Content-Description: File Transfer');
+		header('Content-Length: '.$info['size']);
+		header('Content-Transfer-Encoding: binary');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+
+		while( ! feof($file))
+		{
+			echo fread($file, 2048);
+		}
+
+		static::close_file($file, $area);
+
+		exit;
+	}
+
 }
 
 /* End of file file.php */

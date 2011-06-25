@@ -26,6 +26,26 @@ namespace Fuel\Core;
 class Input {
 
 	/**
+	 * Get the public ip address of the user.
+	 *
+	 * @static
+	 * @access	public
+	 * @return	string
+	 */
+	public static function ip()
+	{
+		if (static::server('REMOTE_ADDR') !== null)
+		{
+			return static::server('REMOTE_ADDR');
+		}
+		else
+		{
+			// detection failed, return a dummy IP
+			return '0.0.0.0';
+		}
+	}
+
+	/**
 	 * Get the real ip address of the user.  Even if they are using a proxy.
 	 *
 	 * @static
@@ -238,9 +258,37 @@ class Input {
 		{
 			return $array;
 		}
-		elseif ( ! isset($array[$index]))
+		else
 		{
-			return $default;
+			if (strpos($index, '.') !== false)
+			{
+				$parts = explode('.', $index);
+
+				$return = false;
+				foreach ($parts as $part)
+				{
+					if ($return === false and isset($array[$part]))
+					{
+						$return = $array[$part];
+					}
+					elseif (isset($return[$part]))
+					{
+						$return = $return[$part];
+					}
+					else
+					{
+						return $default;
+					}
+				}
+
+				return $return;
+
+			}
+			elseif ( ! isset($array[$index]))
+			{
+				return $default;
+			}
+
 		}
 
 		return $array[$index];

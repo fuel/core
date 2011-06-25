@@ -119,6 +119,9 @@ class Upload {
 		// get the config for this upload
 		\Config::load('upload', true);
 
+		// get the language file for this upload
+		\Lang::load('upload', true);
+
 		// make sure we have defaults for those not defined
 		static::$config = array_merge(static::$_defaults, \Config::get('upload', array()));
 
@@ -367,6 +370,9 @@ class Upload {
 
 			// update the valid flag
 			static::$valid = (static::$valid or ($files[$key]['error'] === 0));
+
+			// and add the message text
+			static::$files[$key]['message'] = \Lang::line('upload.'.static::$files[$key]['error']);
 		}
 	}
 
@@ -412,9 +418,9 @@ class Upload {
 				// integer => files index to save
 				elseif(is_numeric($param))
 				{
-					if (isset(static::$files[$param]))
+					if (isset(static::$files[$param - 1]))
 					{
-						$files[$param] = static::$files[$param];
+						$files[$param] = static::$files[$param - 1];
 					}
 				}
 			}
@@ -558,13 +564,13 @@ class Upload {
 				// move the uploaded file
 				if (static::$files[$key]['error'] == UPLOAD_ERR_OK)
 				{
-					if( ! @move_uploaded_file($file['file'], $path.$save_as) )
+					if( ! @move_uploaded_file($file['file'], static::$files[$key]['saved_to'].static::$files[$key]['saved_as']) )
 					{
 						static::$files[$key]['error'] = static::UPLOAD_ERR_MOVE_FAILED;
 					}
 					else
 					{
-						@chmod($path.$save_as, static::$config['file_chmod']);
+						@chmod(static::$files[$key]['saved_to'].static::$files[$key]['saved_as'], static::$config['file_chmod']);
 					}
 
 					// after callback defined?

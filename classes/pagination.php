@@ -134,10 +134,12 @@ class Pagination {
 			return '';
 		}
 
+		\Lang::load('pagination', true);
+
 		$pagination = '';
-		$pagination .= '&nbsp;'.static::prev_link('&laquo; Previous').'&nbsp;&nbsp;';
+		$pagination .= '&nbsp;'.static::prev_link('&laquo; '.\Lang::line('pagination.previous')).'&nbsp;';
 		$pagination .= static::page_links();
-		$pagination .= '&nbsp;'.static::next_link('Next &raquo;');
+		$pagination .= '&nbsp;'.static::next_link(\Lang::line('pagination.next').' &raquo;');
 
 		return $pagination;
 	}

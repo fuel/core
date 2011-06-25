@@ -17,7 +17,7 @@
 
 namespace Fuel\Core;
 
-class Email_Smtp extends Email_Driver {
+class Email_Smtp extends \Email_Driver {
 
 	protected $_smtp_connect;
 
