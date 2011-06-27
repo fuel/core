@@ -67,11 +67,11 @@ class Str {
 	 * @param   string  $str  required
 	 * @return  string
 	 */
-	public static function increment($str, $first = 1)
+	public static function increment($str, $first = 1, $separator = '-')
 	{
-		preg_match('/(.+)_([0-9]+)$/', $str, $match);
+		preg_match('/(.+)'.$separator.'([0-9]+)$/', $str, $match);
 
-		return isset($match[2]) ? $match[1].'_'.($match[2] + 1) : $str.'_'.$first;
+		return isset($match[2]) ? $match[1].$separator.($match[2] + 1) : $str.$separator.$first;
 	}
 
 	/**
