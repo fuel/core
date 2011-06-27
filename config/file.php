@@ -51,6 +51,10 @@ return array(
 			'file_handlers'  => array(),
 		), */
 	),
+
+	// fileinfo() magic filename
+	'magic_file' => null,
+
 );
 
 /* End of file file.php */
