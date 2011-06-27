@@ -20,7 +20,6 @@ namespace Fuel\Core;
  * 
  * Techniques and inspiration were taken from all over, including:
  *	Kohana Framework: kohanaframework.org
- *	Wordpress: wordpress.org
  *	CakePHP: cakephp.org
  * 
  * @package		Fuel
@@ -73,7 +72,6 @@ class Num {
 	/**
 	 * Add leading zeros to a number
 	 *
-	 * @link    http://core.svn.wordpress.org/trunk/wp-includes/formatting.php
 	 * @param   integer
 	 * @param   integer
 	 * @return  string
