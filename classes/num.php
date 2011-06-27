@@ -93,7 +93,7 @@ class Num {
 	 */
 	public static function precision($number, $precision = 3)
 	{
-		return sprintf("%01.{$precision}f", $number);
+		return sprintf('%01.'.$precision.'f', $number);
 	}
 
 	/**
@@ -109,84 +109,6 @@ class Num {
 		return static::precision($number, $precision).'%';
 	}
 
-	/**
-	 * Determines the difference between two timestamps.
-	 *
-	 * The difference is returned in a human readable format such as "1 hour",
-	 * "5 mins", "2 days".
-	 *
-	 * @link    http://core.svn.wordpress.org/trunk/wp-includes/formatting.php
-	 * @param   integer
-	 * @param   integer
-	 * @return  string
-	 */
-	public static function human_time_diff($from = 0, $to = null)
-	{
-		if (empty($to))
-		{
-			$to = time();
-		}
-
-		$diff = (int) abs($to - $from);
-
-		if ($diff <= 3600)
-		{
-			$mins = round($diff / 60);
-
-			if ($mins <= 1)
-			{
-				$mins = 1;
-			}
-
-			if($mins == 1)
-			{
-				$since = sprintf('%s min', $mins);
-			}
-			else
-			{
-				$since = sprintf('%s mins', $mins);
-			}
-		}
-		elseif (($diff <= 86400) && ($diff > 3600))
-		{
-			$hours = round($diff / 3600);
-			
-			if ($hours <= 1)
-			{
-				$hours = 1;
-			}
-			
-			if($hours == 1)
-			{
-				$since = sprintf('%s hour', $hours);
-			}
-			else
-			{
-				$since = sprintf('%s hours', $hours);
-			}
-		}
-		elseif ($diff >= 86400)
-		{
-			$days = round($diff / 86400);
-			
-			if ($days <= 1)
-			{
-				$days = 1;
-			}
-			
-			if($days == 1)
-			{
-				$since = sprintf('%s day', $days);
-			}
-			else
-			{
-				$since = sprintf('%s days', $days);
-			}
-		}
-
-		return $since;
-	}
-	
 	/**
 	 * Converts a file size number to a byte value. File sizes are defined in
 	 * the format: SB, where S is the size (1, 8.5, 300, etc.) and B is the
@@ -245,7 +167,6 @@ class Num {
 	 * larger size then what the PHP integer type will hold, then use a string.
 	 * It will be converted to a double, which should always have 64 bit length.
 	 *
-	 * @link    http://core.svn.wordpress.org/trunk/wp-includes/functions.php
 	 * @param   integer
 	 * @param   integer
 	 * @return  boolean|string
@@ -465,24 +386,6 @@ class Num {
 	}
 
 	/**
-	 * Formats a U.S. Social Security Number.
-	 *
-	 * Usage:
-	 * <code>
-	 * echo Num::format_ssn('123456789'); // 123-45-6789
-	 * </code>
-	 *
-	 * @link    http://snippets.symfony-project.org/snippet/157
-	 * @param   string     the unformatted ssn to format
-	 * @param   string     the format to use, defaults to '000-00-0000'
-	 * @see     format
-	 */
-	public static function format_ssn($string, $format = '000-00-0000')
-	{
-		return static::format($string, $format);
-	}
-
-	/**
 	 * Formats a credit card expiration string. Expects 4-digit string (MMYY).
 	 *
 	 * @param   string     the unformatted expiration string to format
@@ -497,7 +400,6 @@ class Num {
 	/**
 	 * Formats (masks) a credit card.
 	 *
-	 * @link    http://snippets.symfony-project.org/snippet/157
 	 * @param   string     the unformatted credit card number to format
 	 * @param   string     the format to use, defaults to '**** **** **** 0000'
 	 * @see     mask_string
@@ -506,24 +408,10 @@ class Num {
 	{
 		return static::mask_string($string, $format);
 	}
-	
-	/**
-	 * Formats a USD currency value with two decimal places and a dollar sign.
-	 *
-	 * @link    http://snippets.symfony-project.org/snippet/157
-	 * @param   string     the unformatted amount to format
-	 * @param   string     the format to use, defaults to '$%0.2f'
-	 * @see     sprintf
-	 */
-	public static function format_usd($money, $dollar = true, $format = '%0.2f')
-	{
-		return ($dollar ? '$' : '').sprintf($format, $money);
-	}
 
 	/**
 	 * Determines if a string has only alpha/numeric characters.
 	 *
-	 * @link    http://snippets.symfony-project.org/snippet/157
 	 * @param   string     the string to check as alpha/numeric
 	 * @return  boolean
 	 * @see     is_numeric
