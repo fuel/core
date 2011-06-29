@@ -67,7 +67,7 @@ class Str {
 	 * @param   string  $str  required
 	 * @return  string
 	 */
-	public static function increment($str, $first = 1, $separator = '-')
+	public static function increment($str, $first = 1, $separator = '_')
 	{
 		preg_match('/(.+)'.$separator.'([0-9]+)$/', $str, $match);
 
