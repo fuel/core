@@ -160,7 +160,9 @@ class Uri {
 			$url .= \Config::get('index_file').'/';
 		}
 
-		$url = $url.ltrim(is_null($uri) ? static::string() : $uri, '/').\Config::get('url_suffix');
+		$url = $url.ltrim(is_null($uri) ? static::string() : $uri, '/');
+
+		substr($url, -1) != '/' and $url .= \Config::get('url_suffix');
 
 		if ( ! empty($get_variables))
 		{
