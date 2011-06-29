@@ -103,6 +103,10 @@ class Uri {
 			}
 		}
 
+		// Strip the defined url suffix from the uri if needed
+		$ext = \Config::get('url_suffix');
+		strrchr($uri, '.') === $ext and $uri = substr($uri,0,-strlen($ext));
+
 		// Do some final clean up of the uri
 		static::$detected_uri = str_replace(array('//', '../'), '/', $uri);
 
@@ -156,7 +160,7 @@ class Uri {
 			$url .= \Config::get('index_file').'/';
 		}
 
-		$url = $url.ltrim(is_null($uri) ? static::string() : $uri, '/');
+		$url = $url.ltrim(is_null($uri) ? static::string() : $uri, '/').\Config::get('url_suffix');
 
 		if ( ! empty($get_variables))
 		{
