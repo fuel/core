@@ -226,7 +226,7 @@ class Inflector {
 	public static function friendly_title($str, $sep = '-', $lowercase = false)
 	{
 		// Allow underscore, otherwise default to dash
-		$sep = $sep != '_' ? '-' : $sep;
+		$sep = $sep === '_' ? '_' : '-';
 
 		// Remove tags
 		$str = \Security::strip_tags($str);
