@@ -153,11 +153,16 @@ class Uri {
 	 */
 	public static function create($uri = null, $variables = array(), $get_variables = array())
 	{
-		$url = \Config::get('base_url');
-
-		if (\Config::get('index_file'))
+		$url = '';
+		
+		if(!preg_match("/^(http|https|ftp):\/\//i", $uri))
 		{
-			$url .= \Config::get('index_file').'/';
+			$url .= \Config::get('base_url');
+
+			if (\Config::get('index_file'))
+			{
+				$url .= \Config::get('index_file').'/';
+			}
 		}
 
 		$url = $url.ltrim(is_null($uri) ? static::string() : $uri, '/');
