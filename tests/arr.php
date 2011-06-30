@@ -37,6 +37,40 @@ class Tests_Arr extends TestCase {
 			),
 		);
 	}
+	
+	/**
+	 * Tests Arr::assoc_to_keyval()
+	 *
+	 * @test
+	 */
+	public function test_assoc_to_keyval()
+	{
+		$assoc = array(
+			array(
+				'color' => 'red',
+				'rank' => 4,
+				'name' => 'Apple',
+				),
+			array(
+				'color' => 'yellow',
+				'rank' => 3,
+				'name' => 'Banana',
+				),
+			array(
+				'color' => 'purple',
+				'rank' => 2,
+				'name' => 'Grape',
+				),
+			);
+		
+		$expected = array(
+			'red' => 'Apple',
+			'yellow' => 'Banana',
+			'purple' => 'Grape',
+			);
+		$output = Arr::assoc_to_keyval($assoc, 'color', 'name');
+		$this->assertEquals($expected, $output);
+	}
 
 	/**
 	 * Tests Arr::element()
