@@ -46,6 +46,10 @@ class Tests_Uri extends TestCase {
 		$output = Uri::create('controller/:some', array('some' => 'thing', 'and' => 'more'), array('what' => ':and'));
 		$expected = $prefix."controller/thing.html?what=more";
 		$this->assertEquals($expected, $output);
+		
+		$output = Uri::create('http://example.com/controller/:some', array('some' => 'thing', 'and' => 'more'), array('what' => ':and'));
+		$expected = "http://example.com/controller/thing.html?what=more";
+		$this->assertEquals($expected, $output);
 
 	}
 
