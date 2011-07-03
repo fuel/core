@@ -22,6 +22,33 @@ namespace Fuel\Core;
 class Arr {
 
 	/**
+	 * Converts a multi-dimensional associative array into an array of key => values with the provided field names
+	 *
+	 * @param   array   the array to convert
+	 * @param   string	the field name of the key field
+	 * @param   string	the field name of the value field
+	 * @return  array
+	 */
+	public static function assoc_to_keyval($assoc = null, $key_field = null, $val_field = null)
+	{
+		if(empty($assoc) OR empty($key_field) OR empty($val_field))
+		{
+			return null;
+		}
+		
+		$output = array();
+		foreach($assoc as $row)
+		{
+			if(isset($row[$key_field]) AND isset($row[$val_field]))
+			{
+				$output[$row[$key_field]] = $row[$val_field];
+			}
+		}
+		
+		return $output;
+	}
+
+	/**
 	 * Flattens a multi-dimensional associative array down into a 1 dimensional
 	 * associative array.
 	 *
