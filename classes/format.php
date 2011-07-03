@@ -149,9 +149,12 @@ class Format {
 			if (is_array($value) || is_object($value))
 			{
 				$node = $structure->addChild($key);
-
-				// recrusive call.
-				$this->to_xml($value, $node, $key);
+				
+				// recursive call if value is not empty
+				if( ! empty($value))
+				{
+					$this->to_xml($value, $node, $key);
+				}
 			}
 
 			else
