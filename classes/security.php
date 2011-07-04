@@ -171,11 +171,6 @@ class Security {
 		{
 			return $value;
 		}
-		// Add reference to $already_cleaned when object
-		elseif (is_object($value))
-		{
-			$already_cleaned[] = $value;
-		}
 
 		if (is_string($value))
 		{
@@ -187,6 +182,9 @@ class Security {
 			{
 				$value[$k] = static::htmlentities($v);
 			}
+
+			// Add to $already_cleaned variable when object
+			is_object($value) and $already_cleaned[] = $value;
 		}
 		elseif (is_object($value))
 		{
@@ -195,6 +193,9 @@ class Security {
 			{
 				if (is_a($value, $class))
 				{
+					// Add to $already_cleaned variable
+					$already_cleaned[] = $value;
+
 					return $value;
 				}
 			}
