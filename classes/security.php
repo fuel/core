@@ -164,6 +164,19 @@ class Security {
 
 	public static function htmlentities($value)
 	{
+		static $already_cleaned = array();
+
+		// Prevent looping & encoding twice
+		if (in_array($value, $already_cleaned))
+		{
+			return $value;
+		}
+		// Add reference to $already_cleaned when object
+		elseif (is_object($value))
+		{
+			$already_cleaned[] = $value;
+		}
+
 		if (is_string($value))
 		{
 			$value = htmlentities($value, ENT_COMPAT, \Fuel::$encoding, false);
