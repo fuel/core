@@ -19,6 +19,9 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where {
 	// SET ...
 	protected $_set = array();
 
+  // JOIN ...
+	protected $_join = array();
+
 	/**
 	 * Set the table for a update.
 	 *
@@ -91,6 +94,12 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where {
 		// Start an update query
 		$query = 'UPDATE '.$db->quote_table($this->_table);
 
+    if ( ! empty($this->_join))
+		{
+			// Add tables to join
+			$query .= ' '.$this->_compile_join($db, $this->_join);
+		}
+
 		// Add the columns to update
 		$query .= ' SET '.$this->_compile_set($db, $this->_set);
 
@@ -119,6 +128,36 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where {
 		$this->_limit = NULL;
 
 		$this->_parameters = array();
+
+		return $this;
+	}
+	
+	
+	/**
+	 * Adds addition tables to "JOIN ...".
+	 *
+	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   string  join type (LEFT, RIGHT, INNER, etc)
+	 * @return  $this
+	 */
+	public function join($table, $type = NULL)
+	{
+		$this->_join[] = $this->_last_join = new \Database_Query_Builder_Join($table, $type);
+
+		return $this;
+	}
+
+	/**
+	 * Adds "ON ..." conditions for the last created JOIN statement.
+	 *
+	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   string  logic operator
+	 * @param   mixed   column name or array($column, $alias) or object
+	 * @return  $this
+	 */
+	public function on($c1, $op, $c2)
+	{
+		$this->_last_join->on($c1, $op, $c2);
 
 		return $this;
 	}
