@@ -295,7 +295,22 @@ class Request {
 			if (file_exists($modpath .= 'config/routes.php'))
 			{
 				// load and add the routes
-				\Config::load(\Fuel::load($modpath), 'routes');
+				$modname = substr($modpath, strrpos($modpath, '/', -2) + 1, -1);
+				$modroutes = \Config::load(\Fuel::load($modpath), $modname . '_routes');
+				foreach ($modroutes as $name => $route)
+				{
+					if ($name == '_root_')
+					{
+						$name = $modname;
+					}
+					elseif ($name[0] != '_')
+					{
+						$name = $modname . '/' . $name;
+					}
+					
+					\Config::set('routes.' . $name, $route);
+				}
+
 				\Router::add(\Config::get('routes'));
 			}
 		}
