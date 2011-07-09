@@ -35,7 +35,7 @@ class Validation_Error extends \Exception {
 
 	public $field = '';
 	public $value = '';
-	public $callback = '';
+	public $rule = '';
 	public $params = array();
 
 	/**
@@ -48,29 +48,10 @@ class Validation_Error extends \Exception {
 	 */
 	public function __construct($field, $value, $callback, $params)
 	{
-		$this->field = $field;
-		$this->value = $value;
-		$this->params = $params;
-
-		/**
-		 * Simplify callback for rule, class/object and method are seperated by 1 colon
-		 * and objects become their classname without the namespace.
-		 * Rules called on a callable are considered without classname & method prefix
-		 */
-		if (is_array($callback))
-		{
-			foreach ($field->fieldset()->validation()->callables() as $c)
-			{
-				if ($c == $callback[0] && substr($callback[1], 0, 12) == '_validation_')
-				{
-					$callback = substr($callback[1], 12);
-					break;
-				}
-			}
-		}
-		$this->callback = is_string($callback)
-				? str_replace('::', ':', $callback)
-				: preg_replace('#^([a-z_]*\\\\)*#i', '', get_class($callback[0])).':'.$callback[1];
+		$this->field   = $field;
+		$this->value   = $value;
+		$this->params  = $params;
+		$this->rule    = key($callback);
 	}
 
 	/**
@@ -83,21 +64,21 @@ class Validation_Error extends \Exception {
 	 * @param	string	Message to use, or false to try and load it from Lang class
 	 * @return	string
 	 */
-	public function get_message($msg = false, $open = null, $close = null)
+	public function get_message($msg = false, $open = '', $close = '')
 	{
-		$open   = \Config::get('validation.open_single_error', '');
-		$close  = \Config::get('validation.close_single_error', '');
+		$open   = \Config::get('validation.open_single_error', $open);
+		$close  = \Config::get('validation.close_single_error', $close);
 
 		if ($msg === false)
 		{
-			$msg = $this->field->fieldset()->validation()->get_message($this->callback);
+			$msg = $this->field->fieldset()->validation()->get_message($this->rule);
 			$msg = $msg === false
-				? __('validation.'.$this->callback) ?: __('validation.'.Arr::element(explode(':', $this->callback), 0))
+				? __('validation.'.$this->rule) ?: __('validation.'.Arr::element(explode(':', $this->rule), 0))
 				: $msg;
 		}
 		if ($msg == false)
 		{
-			return $open.'Validation rule '.$this->callback.' failed for '.$this->field->label.$close;
+			return $open.'Validation rule '.$this->rule.' failed for '.$this->field->label.$close;
 		}
 
 		// to safe some performance when there are no variables in the $msg
@@ -106,15 +87,15 @@ class Validation_Error extends \Exception {
 			return $open.$msg.$close;
 		}
 
-		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
-		$find     = array(':field', ':label', ':value', ':rule');
 		$label    = is_array($this->field->label) ? $this->field->label['label'] : $this->field->label;
-		if (\Config::get('validation.quote_labels', false))
+		if (\Config::get('validation.quote_labels', false) and strpos($label, ' ') !== false)
 		{
 			// put the label in quotes if it contains spaces
-			strpos($label, ' ') !== false and $label = '"'.$label.'"';
+			$label = '"'.$label.'"';
 		}
-		$replace  = array($this->field->name, $label, $value, $this->callback);
+		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
+		$find     = array(':field', ':label', ':value', ':rule');
+		$replace  = array($this->field->name, $label, $value, $this->rule);
 		foreach($this->params as $key => $val)
 		{
 			$find[]		= ':param:'.($key + 1);
