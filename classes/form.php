@@ -760,6 +760,7 @@ class Form {
 
 		if (is_array($build_field))
 		{
+			$label = $field->label ? static::label($field->label) : '';
 			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t\t{group_label}\n {fields}\t\t\t{label} {field}{fields}');
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
