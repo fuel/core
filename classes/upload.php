@@ -418,9 +418,9 @@ class Upload {
 				// integer => files index to save
 				elseif(is_numeric($param))
 				{
-					if (isset(static::$files[$param - 1]))
+					if (isset(static::$files[$param]))
 					{
-						$files[$param] = static::$files[$param - 1];
+						$files[$param] = static::$files[$param];
 					}
 				}
 			}
