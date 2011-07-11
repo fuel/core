@@ -303,7 +303,7 @@ class Request {
 					{
 						$name = $modname;
 					}
-					elseif ($name[0] != '_')
+					elseif ($name[0] != '_' && substr($name, 0, strlen($modname) + 1) != $modname . '/')
 					{
 						$name = $modname . '/' . $name;
 					}
