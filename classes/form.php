@@ -500,7 +500,7 @@ class Form {
 				foreach ($val as $opt_key => $opt_val)
 				{
 					$opt_attr = array('value' => $opt_key);
-					(in_array($opt_key, $selected)) && $opt_attr[] = 'selected';
+					(in_array($opt_key, $selected, TRUE)) && $opt_attr[] = 'selected';
 					$optgroup .= str_repeat("\t", 2);
 					$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
 						static::prep_value($opt_attr['value']) : $opt_attr['value'];
@@ -512,7 +512,7 @@ class Form {
 			else
 			{
 				$opt_attr = array('value' => $key);
-				(in_array($key, $selected)) && $opt_attr[] = 'selected';
+				(in_array($key, $selected, TRUE)) && $opt_attr[] = 'selected';
 				$input .= str_repeat("\t", 1);
 				$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
 					static::prep_value($opt_attr['value']) : $opt_attr['value'];
