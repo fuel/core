@@ -503,6 +503,61 @@ class File {
 	}
 
 	/**
+	 * Create a new symlink
+	 *
+	 * @param	string				target of symlink
+	 * @param	string				destination of symlink
+	 * @param	bool				true for file, false for directory
+	 * @param	string|File_Area|null		file area name, object or null for base area
+	 * @return	bool
+	 */
+	public static function symlink($path, $link_path, $file = true, $area = null)
+	{
+		$path	   = rtrim(static::instance($area)->get_path($path), '\\/').DS;
+		$link_path = rtrim(static::instance($area)->get_path($link_path), '\\/').DS;
+
+		if ($file and ! is_file($path))
+		{
+			throw new \InvalidPathException('Cannot symlink: given file does not exist.');
+		}
+		if ( ! $file and ! is_dir($path))
+		{
+			throw new \InvalidPathException('Cannot symlink: given directory does not exist.');
+		}
+		elseif (file_exists($link_path))
+		{
+			throw new \FileAccessException('Cannot symlink: link path already exists.');
+		}
+
+		$return = symlink($path, $link_path);
+		return $return;
+	}
+
+	/**
+	 * Alias for File::symlink()
+	 */
+	public static function alias($path, $link_path, $file, $area)
+	{
+		return static::symlink($path, $link_path, $file, $area);
+	}
+
+	/**
+	 * Alias for File::symlink() defaults to directory link.
+	 */
+	public static function symlink_dir($path, $link_path, $area)
+	{
+		return static::symlink($path, $link_path, $file = false, $area);
+	}
+
+	/**
+	 * Alias for File::symlink_dir()
+	 */
+	public static function alias_dir($path, $link_path, $area)
+	{
+		return static::symlink($path, $link_path, $file = false, $area);
+	}
+
+	/**
 	 * Delete file
 	 *
 	 * @param	string					path to file to delete
