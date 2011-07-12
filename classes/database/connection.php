@@ -517,66 +517,7 @@ abstract class Database_Connection {
 	 * @return  string
 	 * @uses    static::table_prefix
 	 */
-	public function quote_identifier($value)
-	{
-		if ($value === '*')
-		{
-			return $value;
-		}
-		elseif (is_object($value))
-		{
-			if ($value instanceof Database_Query)
-			{
-				// Create a sub-query
-				return '('.$value->compile($this).')';
-			}
-			elseif ($value instanceof Database_Expression)
-			{
-				// Use a raw expression
-				return $value->value();
-			}
-			else
-			{
-				// Convert the object to a string
-				return $this->quote_identifier((string) $value);
-			}
-		}
-		elseif (is_array($value))
-		{
-			// Separate the column and alias
-			list ($value, $alias) = $value;
-
-			return $this->quote_identifier($value).' AS '.$this->quote_identifier($alias);
-		}
-
-		if (strpos($value, '"') !== FALSE)
-		{
-			// Quote the column in FUNC("ident") identifiers
-			return preg_replace('/"(.+?)"/e', '$this->quote_identifier("$1")', $value);
-		}
-		elseif (strpos($value, '.') !== FALSE)
-		{
-			// Split the identifier into the individual parts
-			$parts = explode('.', $value);
-
-			if ($prefix = $this->table_prefix())
-			{
-				// Get the offset of the table name, 2nd-to-last part
-				// This works for databases that can have 3 identifiers (Postgre)
-				$offset = count($parts) - 2;
-
-				// Add the table prefix to the table name
-				$parts[$offset] = $prefix.$parts[$offset];
-			}
-
-			// Quote each of the parts
-			return implode('.', array_map(array($this, __FUNCTION__), $parts));
-		}
-		else
-		{
-			return $this->_identifier.$value.$this->_identifier;
-		}
-	}
+	abstract public function quote_identifier($value);
 
 	/**
 	 * Sanitize a string by escaping characters that could cause an SQL

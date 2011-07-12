@@ -196,6 +196,87 @@ class Database_PDO_Connection extends \Database_Connection {
 		throw new \Fuel_Exception('Database method '.__METHOD__.' is not supported by '.__CLASS__);
 	}
 
+	/**
+	 * Quote a database identifier, such as a column name. Adds the
+	 * table prefix to the identifier if a table name is present.
+	 *
+	 *     $column = $db->quote_identifier($column);
+	 *
+	 * You can also use SQL methods within identifiers.
+	 *
+	 *     // The value of "column" will be quoted
+	 *     $column = $db->quote_identifier('COUNT("column")');
+	 *
+	 * Objects passed to this function will be converted to strings.
+	 * [Database_Expression] objects will use the value of the expression.
+	 * [Database_Query] objects will be compiled and converted to a sub-query.
+	 * All other objects will be converted using the `__toString` method.
+	 *
+	 * @param   mixed   any identifier
+	 * @return  string
+	 * @uses    static::table_prefix
+	 */
+	public function quote_identifier($value)
+	{
+		if ($value === '*')
+		{
+			return $value;
+		}
+		elseif (is_object($value))
+		{
+			if ($value instanceof Database_Query)
+			{
+				// Create a sub-query
+				return '('.$value->compile($this).')';
+			}
+			elseif ($value instanceof Database_Expression)
+			{
+				// Use a raw expression
+				return $value->value();
+			}
+			else
+			{
+				// Convert the object to a string
+				return $this->quote_identifier((string) $value);
+			}
+		}
+		elseif (is_array($value))
+		{
+			// Separate the column and alias
+			list ($value, $alias) = $value;
+
+			return $this->quote_identifier($value).' AS '.$this->quote_identifier($alias);
+		}
+
+		if (strpos($value, '"') !== FALSE)
+		{
+			// Quote the column in FUNC("ident") identifiers
+			return preg_replace('/"(.+?)"/e', '$this->quote_identifier("$1")', $value);
+		}
+		elseif (strpos($value, '.') !== FALSE)
+		{
+			// Split the identifier into the individual parts
+			$parts = explode('.', $value);
+
+			if ($prefix = $this->table_prefix())
+			{
+				// Get the offset of the table name, 2nd-to-last part
+				// This works for databases that can have 3 identifiers (Postgre)
+				$offset = count($parts) - 2;
+
+				// Add the table prefix to the table name
+				$parts[$offset] = $prefix.$parts[$offset];
+			}
+
+			// Quote each of the parts
+			return implode('.', array_map(array($this, __FUNCTION__), $parts));
+		}
+		else
+		{
+			return $this->_identifier.$value.$this->_identifier;
+		}
+	}
+
 	public function escape($value)
 	{
 		// Make sure the database is connected
