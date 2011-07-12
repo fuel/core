@@ -479,33 +479,19 @@ abstract class Database_Connection {
 		if (is_array($value))
 		{
 			$table =& $value[0];
+
+			// Attach table prefix to alias
+			$value[1] = $this->table_prefix().$value[1];
 		}
 		else
 		{
 			$table =& $value;
 		}
 
-		if (is_string($table))
+		if (is_string($table) AND strpos($table, '.') === FALSE)
 		{
-			if (strpos($table, '.') === false)
-			{
-				// Add the table prefix for tables
-				$table = $this->table_prefix().$table;
-			}
-			else
-			{
-				// Split the tablename into the individual parts
-				$parts = explode('.', $table);
-
-				// Get the offset of the table name, last part
-				$offset = count($parts) - 1;
-
-				// Add the table prefix to the table name
-				$parts[$offset] = $this->table_prefix().$parts[$offset];
-
-				// and reassemble the tablename
-				$table = implode('.', $parts);
-			}
+			// Add the table prefix for tables
+			$table = $this->table_prefix().$table;
 		}
 
 		return $this->quote_identifier($value);
@@ -572,6 +558,16 @@ abstract class Database_Connection {
 		{
 			// Split the identifier into the individual parts
 			$parts = explode('.', $value);
+
+			if ($prefix = $this->table_prefix())
+			{
+				// Get the offset of the table name, 2nd-to-last part
+				// This works for databases that can have 3 identifiers (Postgre)
+				$offset = count($parts) - 2;
+
+				// Add the table prefix to the table name
+				$parts[$offset] = $prefix.$parts[$offset];
+			}
 
 			// Quote each of the parts
 			return implode('.', array_map(array($this, __FUNCTION__), $parts));
