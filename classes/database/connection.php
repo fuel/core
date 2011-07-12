@@ -479,19 +479,33 @@ abstract class Database_Connection {
 		if (is_array($value))
 		{
 			$table =& $value[0];
-
-			// Attach table prefix to alias
-			$value[1] = $this->table_prefix().$value[1];
 		}
 		else
 		{
 			$table =& $value;
 		}
 
-		if (is_string($table) AND strpos($table, '.') === FALSE)
+		if (is_string($table))
 		{
-			// Add the table prefix for tables
-			$table = $this->table_prefix().$table;
+			if (strpos($table, '.') === false)
+			{
+				// Add the table prefix for tables
+				$table = $this->table_prefix().$table;
+			}
+			else
+			{
+				// Split the tablename into the individual parts
+				$parts = explode('.', $table);
+
+				// Get the offset of the table name, last part
+				$offset = count($parts) - 1;
+
+				// Add the table prefix to the table name
+				$parts[$offset] = $this->table_prefix().$parts[$offset];
+
+				// and reassemble the tablename
+				$table = implode('.', $parts);
+			}
 		}
 
 		return $this->quote_identifier($value);
@@ -517,7 +531,56 @@ abstract class Database_Connection {
 	 * @return  string
 	 * @uses    static::table_prefix
 	 */
-	abstract public function quote_identifier($value);
+	public function quote_identifier($value)
+	{
+		if ($value === '*')
+		{
+			return $value;
+		}
+		elseif (is_object($value))
+		{
+			if ($value instanceof Database_Query)
+			{
+				// Create a sub-query
+				return '('.$value->compile($this).')';
+			}
+			elseif ($value instanceof Database_Expression)
+			{
+				// Use a raw expression
+				return $value->value();
+			}
+			else
+			{
+				// Convert the object to a string
+				return $this->quote_identifier((string) $value);
+			}
+		}
+		elseif (is_array($value))
+		{
+			// Separate the column and alias
+			list ($value, $alias) = $value;
+
+			return $this->quote_identifier($value).' AS '.$this->quote_identifier($alias);
+		}
+
+		if (strpos($value, '"') !== FALSE)
+		{
+			// Quote the column in FUNC("ident") identifiers
+			return preg_replace('/"(.+?)"/e', '$this->quote_identifier("$1")', $value);
+		}
+		elseif (strpos($value, '.') !== FALSE)
+		{
+			// Split the identifier into the individual parts
+			$parts = explode('.', $value);
+
+			// Quote each of the parts
+			return implode('.', array_map(array($this, __FUNCTION__), $parts));
+		}
+		else
+		{
+			return $this->_identifier.$value.$this->_identifier;
+		}
+	}
 
 	/**
 	 * Sanitize a string by escaping characters that could cause an SQL
