@@ -164,6 +164,11 @@ class Security {
 
 	public static function htmlentities($value)
 	{
+		if (!is_string($value) && !is_array($value) && !$value instanceof \Iterator && !is_object($value))
+		{
+			return $value;
+		}
+
 		static $already_cleaned = array();
 
 		// Prevent looping & encoding twice
