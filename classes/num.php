@@ -410,7 +410,7 @@ class Num {
 	 *
 	 * @param   string     the string to check as alpha/numeric
 	 * @return  boolean
-	 * @see     preg_match
+	 * @see     ctype_alnum
 	 */
 	public static function is_alphanumeric($string)
 	{
