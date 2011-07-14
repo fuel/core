@@ -167,7 +167,7 @@ class Security {
 		static $already_cleaned = array();
 
 		// Nothing to escape for non-string scalars, or for already processed values
-		if (is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned))
+		if (is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned, true))
 		{
 			return $value;
 		}
