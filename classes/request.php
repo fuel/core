@@ -311,7 +311,7 @@ class Request {
 
 						default:
 							// prefix the route with the module name if it isn't done yet
-							if (strpos($name, $this->uri->segments[0].'/') !== 0 && $name != $this->uri->segments[0])
+							if (strpos($name, $this->uri->segments[0].'/') !== 0 and $name != $this->uri->segments[0])
 							{
 								$name = $this->uri->segments[0].'/'.$name;
 							}
