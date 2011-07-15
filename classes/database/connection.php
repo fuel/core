@@ -488,8 +488,13 @@ abstract class Database_Connection {
 			$table =& $value;
 		}
 
-		// deal with the table name first
-		if (is_string($table))
+		// deal with the sub-query objects first
+		if ($table instanceof Database_Query)
+		{
+			// Create a sub-query
+			$table = '('.$table->compile($this).')';
+		}
+		elseif (is_string($table))
 		{
 			if (strpos($table, '.') === false)
 			{
@@ -533,6 +538,7 @@ abstract class Database_Connection {
 		}
 		else
 		{
+			// return the value
 			return $value;
 		}
 	}
