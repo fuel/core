@@ -296,7 +296,7 @@ class Request {
 			{
 				// load and add the module routes
 				$modroutes = \Config::load(\Fuel::load($modpath), $this->uri->segments[0] . '_routes');
-				foreach ($modroutes as $name => $route)
+				foreach ($modroutes as $name => $modroute)
 				{
 					switch ($name)
 					{
@@ -318,7 +318,7 @@ class Request {
 						break;
 					}
 
-					\Config::set('routes.' . $name, $route);
+					\Config::set('routes.' . $name, $modroute);
 				}
 
 				// update the loaded list of routes
