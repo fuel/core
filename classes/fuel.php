@@ -84,6 +84,8 @@ class Fuel {
 	public static $is_cli = false;
 	public static $is_test = false;
 
+	public static $volatile_paths = array();
+
 	protected static $_paths = array();
 
 	protected static $packages = array();
@@ -269,12 +271,16 @@ class Fuel {
 			}
 		}
 
+		$paths = array_merge(static::$volatile_paths, $paths);
+
 		$path = $directory.DS.strtolower($file).$ext;
 
 		$cache_id = md5(($multiple ? 'M.' : 'S.').$cache_id);
 
 		if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
 		{
+			static::$volatile_paths = array();
+
 			return static::$path_cache[$cache_id.$path];
 		}
 
@@ -299,6 +305,8 @@ class Fuel {
 			$cache and static::$path_cache[$cache_id.$path] = $found;
 			static::$paths_changed = true;
 		}
+
+		static::$volatile_paths = array();
 
 		return $found;
 	}
