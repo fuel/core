@@ -186,7 +186,8 @@ class Router {
 		}
 
 		// none of the above. I give up. We've found ziltch...
-		$match->action = $match->controller = null;
+		$match->action = null;
+		$match->controller = null;
 
 		return $match;
 	}
