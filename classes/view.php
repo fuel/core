@@ -36,6 +36,9 @@ class View {
 	// Array of global view data
 	protected static $_global_data = array();
 
+	// Current active search paths
+	protected static $request_paths = array();
+
 	// Output encoding setting
 	public static $auto_encode = true;
 
@@ -102,6 +105,12 @@ class View {
 
 			// Add the values to the current data
 			$this->_data = $data + $this->_data;
+		}
+
+		// store the current request search paths to deal with out-of-context rendering
+		if (class_exists('Request', false) and $active = \Request::active() and \Request::main() != $active)
+		{
+			static::$request_paths = $active->get_paths();
 		}
 	}
 
@@ -308,6 +317,10 @@ class View {
 	 */
 	public function set_filename($file)
 	{
+		// set find_file's one-time-only search paths
+		\Fuel::$volatile_paths = static::$request_paths;
+
+		// locate the view file
 		if (($path = \Fuel::find_file('views', $file, '.'.$this->extension, false, false)) === false)
 		{
 			throw new \Fuel_Exception('The requested view could not be found: '.\Fuel::clean_path($file));

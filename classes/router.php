@@ -185,8 +185,11 @@ class Router {
 			return $match;
 		}
 
-		// none of the above. I give up...
-		return false;
+		// none of the above. I give up. We've found ziltch...
+		$match->action = null;
+		$match->controller = null;
+
+		return $match;
 	}
 }
 

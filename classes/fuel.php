@@ -84,6 +84,8 @@ class Fuel {
 	public static $is_cli = false;
 	public static $is_test = false;
 
+	public static $volatile_paths = array();
+
 	protected static $_paths = array();
 
 	protected static $packages = array();
@@ -99,7 +101,7 @@ class Fuel {
 	public static function init($config)
 	{
 		\Config::load($config);
-	
+
 		if (static::$initialized)
 		{
 			throw new \Fuel_Exception("You can't initialize Fuel more than once.");
@@ -136,7 +138,7 @@ class Fuel {
 		// set the encoding and locale to use
 		static::$encoding = \Config::get('encoding', static::$encoding);
 		static::$locale = \Config::get('locale', static::$locale);
-		
+
 		static::$_paths = array(APPPATH, COREPATH);
 
 		if ( ! static::$is_cli)
@@ -153,7 +155,7 @@ class Fuel {
 		\Security::clean_input();
 
 		static::$env = \Config::get('environment');
-		
+
 		\Event::register('shutdown', 'Fuel::finish');
 
 		//Load in the packages
@@ -269,12 +271,16 @@ class Fuel {
 			}
 		}
 
+		$paths = array_merge(static::$volatile_paths, $paths);
+
 		$path = $directory.DS.strtolower($file).$ext;
 
 		$cache_id = md5(($multiple ? 'M.' : 'S.').$cache_id);
 
 		if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
 		{
+			static::$volatile_paths = array();
+
 			return static::$path_cache[$cache_id.$path];
 		}
 
@@ -299,6 +305,8 @@ class Fuel {
 			$cache and static::$path_cache[$cache_id.$path] = $found;
 			static::$paths_changed = true;
 		}
+
+		static::$volatile_paths = array();
 
 		return $found;
 	}
@@ -450,22 +458,26 @@ class Fuel {
 		{
 			$paths = \Config::get('module_paths', array());
 
-			if (empty($paths))
+			if ( ! empty($paths))
 			{
-				return false;
+				foreach ($paths as $modpath)
+				{
+					if (is_dir($mod_check_path = $modpath.strtolower($name).DS))
+					{
+						$path = $mod_check_path;
+						$ns = '\\'.ucfirst($name);
+						\Autoloader::add_namespaces(array(
+							$ns	=> $path.'classes'.DS,
+						), true);
+						break;
+					}
+				}
 			}
 
-			foreach ($paths as $modpath)
+			// throw an exception if a non-existent module has been added
+			if ( ! isset($ns))
 			{
-				if (is_dir($mod_check_path = $modpath.strtolower($name).DS))
-				{
-					$path = $mod_check_path;
-					$ns = '\\'.ucfirst($name);
-					\Autoloader::add_namespaces(array(
-						$ns					=> $path.'classes'.DS,
-					), true);
-					break;
-				}
+				throw new \InvalidArgumentException('Trying to add a non-existent module "'.$name.'"');
 			}
 		}
 		else
