@@ -129,7 +129,7 @@ class View {
 		}
 		else
 		{
-			throw new \OutOfBoundsException('View variable is not set: var'.$key);
+			throw new \OutOfBoundsException('View variable is not set: '.$key);
 		}
 	}
 
