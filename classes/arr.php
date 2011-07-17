@@ -35,7 +35,7 @@ class Arr {
 		{
 			return null;
 		}
-		
+
 		$output = array();
 		foreach($assoc as $row)
 		{
@@ -44,7 +44,7 @@ class Arr {
 				$output[$row[$key_field]] = $row[$val_field];
 			}
 		}
-		
+
 		return $output;
 	}
 
@@ -353,6 +353,55 @@ class Arr {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Merge 2 arrays recursively, differs in 2 important ways from array_merge_recursive()
+	 * - When there's 2 different values and not both arrays, the latter value overwrites the earlier
+	 *   instead of merging both into an array
+	 * - Numeric keys that don't conflict aren't changed, only when a numeric key already exists is the
+	 *   value added using array_push()
+	 *
+	 * @param   array  multiple variables all of which must be arrays
+	 * @return  array
+	 * @throws  \InvalidArgumentException
+	 */
+	public static function merge()
+	{
+		$array  = func_get_arg(0);
+		$arrays = array_slice(func_get_args(), 1);
+
+		if ( ! is_array($array))
+		{
+			throw new \InvalidArgumentException('Arr::merge() - all arguements must be arrays.');
+		}
+
+		foreach ($arrays as $arr)
+		{
+			if ( ! is_array($arr))
+			{
+				throw new \InvalidArgumentException('Arr::merge() - all arguements must be arrays.');
+			}
+
+			foreach ($arr as $k => $v)
+			{
+				// numeric keys are apended
+				if (is_int($k))
+				{
+					array_key_exists($k, $array) ? array_push($array, $v) : $array[$k] = $v;
+				}
+				elseif (is_array($v) and array_key_exists($k, $array) and is_array($array[$k]))
+				{
+					$array[$k] = static::merge($array[$k], $v);
+				}
+				else
+				{
+					$array[$k] = $v;
+				}
+			}
+		}
+
+		return $array;
 	}
 
 }
