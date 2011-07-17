@@ -477,7 +477,7 @@ class Fuel {
 			// throw an exception if a non-existent module has been added
 			if ( ! isset($ns))
 			{
-				throw new \InvalidArgumentException('Trying to add a non-existent module "'.$name.'"');
+				throw new \Fuel_Exception('Trying to add a non-existent module "'.$name.'"');
 			}
 		}
 		else
