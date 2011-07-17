@@ -41,6 +41,7 @@ class Cookie {
 	 */
 	public static function _init()
 	{
+		\Config::load('cookie', true);
 		static::$config = array_merge(static::$config, \Config::get('cookie', array()));
 	}
 
