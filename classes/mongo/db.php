@@ -905,7 +905,7 @@ class Mongo_Db {
 			throw new \Mongo_DbException("Index could not be removed from MongoDB Collection because no keys were specified");
 		}
 
-		if ($this->db->{$collection}->deleteIndex($keys, $options) == TRUE)  // @TODO : can't work, $options is undefined
+		if ($this->db->{$collection}->deleteIndex($keys) == TRUE)
 		{
 			$this->_clear();
 			return $this;
