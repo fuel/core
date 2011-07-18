@@ -203,10 +203,12 @@ class Date {
 	/**
 	 * Returns the time ago
 	 *
-	 * @param	int		UNIX timestamp from current server
+	 * @param	int		Beginning UNIX timestamp
+	 * @param	int		End UNIX timestamp, null means current time
+	 * @param	bool	Set to true in order to round last value
 	 * @return	string	Time ago
 	 */
-	public static function time_ago($timestamp, $from_timestamp = null)
+	public static function time_ago($timestamp, $from_timestamp = null, $round = false)
 	{
 		if ($timestamp === null)
 		{
@@ -220,15 +222,15 @@ class Date {
 		\Lang::load('date', true);
 
 		$difference = $from_timestamp - $timestamp;
-		$periods	= array('second', 'minute', 'hour', 'day', 'week', 'month', 'years', 'decade');
-		$lengths	= array(60, 60, 24, 7, 4.35, 12, 10);
+		$periods	= array('second', 'minute', 'hour', 'day', 'week', 'month', 'year');
+		$lengths	= array(60, 60, 24, 7, 4.3482, 12);
 
-		for ($j = 0; $difference >= $lengths[$j]; $j++)
+		for ($j = 0; $j != count($lengths) AND $difference >= $lengths[$j]; $j++)
 		{
 			$difference /= $lengths[$j];
 		}
 
-        $difference = round($difference);
+		$difference = ($round ? round($difference) : floor($difference));
 
 		if ($difference != 1)
 		{
