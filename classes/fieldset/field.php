@@ -202,7 +202,8 @@ class Fieldset_Field
 				if (method_exists($callback_class, $callback_method))
 				{
 					$callable_rule = true;
-					$this->rules[] = array(array($callback_class, $callback_method), $args);
+					$this->rules[] = array(array($callback => array($callback_class, $callback_method)), $args);
+					break;
 				}
 			}
 		}
@@ -211,6 +212,24 @@ class Fieldset_Field
 		if ( ! $callable_rule)
 		{
 			if (is_callable($callback))
+			{
+				if ($callback instanceof \Closure)
+				{
+					$callback_name = 'closure';
+				}
+				elseif (is_array($callback))
+				{
+					$callback_name = preg_replace('#^([a-z_]*\\\\)*#i', '',
+						is_object($callback[0]) ? get_class($callback[0]) : $callback[0]).':'.$callback[1];
+				}
+				else
+				{
+					$callback_name = str_replace('::', ':', $callback);
+				}
+
+				$this->rules[] = array(array($callback_name => $callback), $args);
+			}
+			elseif (is_array($callback) and is_callable(reset($callback)))
 			{
 				$this->rules[] = array($callback, $args);
 			}

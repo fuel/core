@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 /**
  * Html class tests
- * 
+ *
  * @group Core
  * @group Uri
  */
@@ -22,7 +22,7 @@ class Tests_Uri extends TestCase {
 
 	/**
 	 * Tests Uri::create()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_create()
@@ -36,6 +36,21 @@ class Tests_Uri extends TestCase {
 		$output = Uri::create('controller/:some', array('some' => 'thing', 'and' => 'more'), array('what' => ':and'));
 		$expected = $prefix."controller/thing?what=more";
 		$this->assertEquals($expected, $output);
+
+		Config::set('url_suffix', '.html');
+
+		$output = Uri::create('controller/method');
+		$expected = $prefix."controller/method.html";
+		$this->assertEquals($expected, $output);
+
+		$output = Uri::create('controller/:some', array('some' => 'thing', 'and' => 'more'), array('what' => ':and'));
+		$expected = $prefix."controller/thing.html?what=more";
+		$this->assertEquals($expected, $output);
+		
+		$output = Uri::create('http://example.com/controller/:some', array('some' => 'thing', 'and' => 'more'), array('what' => ':and'));
+		$expected = "http://example.com/controller/thing.html?what=more";
+		$this->assertEquals($expected, $output);
+
 	}
 
 }

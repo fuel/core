@@ -291,11 +291,37 @@ class Request {
 		// check if a module was requested
 		if (count($this->uri->segments) and $modpath = \Fuel::module_exists($this->uri->segments[0]))
 		{
-			// check if the module has custom routes
+			// check if the module has routes
 			if (file_exists($modpath .= 'config/routes.php'))
 			{
-				// load and add the routes
-				\Config::load(\Fuel::load($modpath), 'routes');
+				// load and add the module routes
+				$modroutes = \Config::load(\Fuel::load($modpath), $this->uri->segments[0] . '_routes');
+				foreach ($modroutes as $name => $modroute)
+				{
+					switch ($name)
+					{
+						case '_root_':
+							// map the root to the module default controller/method
+							$name = $this->uri->segments[0];
+						break;
+
+						case '_404_':
+							// do not touch the 404 route
+						break;
+
+						default:
+							// prefix the route with the module name if it isn't done yet
+							if (strpos($name, $this->uri->segments[0].'/') !== 0 and $name != $this->uri->segments[0])
+							{
+								$name = $this->uri->segments[0].'/'.$name;
+							}
+						break;
+					}
+
+					\Config::set('routes.' . $name, $modroute);
+				}
+
+				// update the loaded list of routes
 				\Router::add(\Config::get('routes'));
 			}
 		}

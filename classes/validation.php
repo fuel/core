@@ -299,7 +299,7 @@ class Validation {
 	 */
 	protected function _run_rule($rule, &$value, $params, $field)
 	{
-		$output = call_user_func_array($rule, array_merge(array($value), $params));
+		$output = call_user_func_array(reset($rule), array_merge(array($value), $params));
 
 		if ($output === false && $value !== false)
 		{

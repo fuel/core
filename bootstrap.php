@@ -135,8 +135,8 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Migrate'    => COREPATH.'classes/migrate.php',
 	'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
 
-	'Fuel\\Core\\MongoDb'           => COREPATH.'classes/mongodb.php',
-	'Fuel\\Core\\MongoDbException'  => COREPATH.'classes/mongodb.php',
+	'Fuel\\Core\\Mongo_Db'           => COREPATH.'classes/mongo/db.php',
+	'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
 
 	'Fuel\\Core\\Output'      => COREPATH.'classes/output.php',
 	'Fuel\\Core\\Pagination'  => COREPATH.'classes/pagination.php',

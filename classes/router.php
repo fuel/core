@@ -120,7 +120,7 @@ class Router {
 			// does the module controller exist?
 			if (class_exists(ucfirst($match->module).'\\Controller_'.ucfirst($match->directory).'_'.ucfirst($match->controller)))
 			{
-				$match->action = count($segments) ? array_shift($segments) : 'index';
+				$match->action = count($segments) ? array_shift($segments) : null;
 				$match->method_params = $segments;
 				return $match;
 			}
@@ -135,7 +135,7 @@ class Router {
 			// does the module controller exist?
 			if (class_exists(ucfirst($match->module).'\\Controller_'.ucfirst($match->controller)))
 			{
-				$match->action = count($segments) ? array_shift($segments) : 'index';
+				$match->action = count($segments) ? array_shift($segments) : null;
 				$match->method_params = $segments;
 				return $match;
 			}
@@ -150,7 +150,7 @@ class Router {
 
 				if (class_exists(ucfirst($match->module).'\\Controller_'.ucfirst($match->controller)))
 				{
-					$match->action = count($segments) ? array_shift($segments) : 'index';
+					$match->action = count($segments) ? array_shift($segments) : null;
 					$match->method_params = $segments;
 					return $match;
 				}
@@ -166,7 +166,7 @@ class Router {
 
 		if (class_exists('Controller_'.ucfirst($match->directory).'_'.ucfirst($match->controller)))
 		{
-			$match->action = count($segments) ? array_shift($segments) : 'index';
+			$match->action = count($segments) ? array_shift($segments) : null;
 			$match->method_params = $segments;
 			return $match;
 		}
@@ -180,13 +180,16 @@ class Router {
 		// We first want to check if the controller is in a directory.
 		if (class_exists('Controller_'.ucfirst($match->controller)))
 		{
-			$match->action = count($segments) ? array_shift($segments) : 'index';
+			$match->action = count($segments) ? array_shift($segments) : null;
 			$match->method_params = $segments;
 			return $match;
 		}
 
-		// none of the above. I give up...
-		return false;
+		// none of the above. I give up. We've found ziltch...
+		$match->action = null;
+		$match->controller = null;
+
+		return $match;
 	}
 }
 

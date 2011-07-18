@@ -38,7 +38,7 @@ class Email {
 	 */
 	public static function factory($config = array())
 	{
-		$initconfig = Config::load('email');
+		$initconfig = Config::load('email', null, true);
 
 		if (is_array($config) && is_array($initconfig))
 		{
