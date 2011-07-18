@@ -42,7 +42,7 @@ class Inflector {
 		'/(c)hild$/'               => '\1hildren',  // child
 		'/(buffal|tomat)o$/'       => '\1\2oes',    // buffalo, tomato
 		'/(bu|campu)s$/'           => '\1\2ses',    // bus, campus
-		'/(alias|status|virus)/'   => '\1es',       // alias
+		'/(alias|status|virus)$/'  => '\1es',       // alias
 		'/(octop)us$/'             => '\1i',        // octopus
 		'/(ax|cris|test)is$/'      => '\1es',       // axis, crisis
 		'/s$/'                     => 's',          // no change (compatibility)
@@ -76,7 +76,7 @@ class Inflector {
 		'/(s)tatuses$/'         => '\1\2tatus',
 		'/(c)hildren$/'         => '\1\2hild',
 		'/(n)ews$/'             => '\1\2ews',
-		'/([^u])s$/'            => '\1',
+		'/([^us])s$/'           => '\1',
 	);
 
 
