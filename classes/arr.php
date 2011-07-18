@@ -373,19 +373,19 @@ class Arr {
 
 		if ( ! is_array($array))
 		{
-			throw new \InvalidArgumentException('Arr::merge() - all arguements must be arrays.');
+			throw new \InvalidArgumentException('Arr::merge() - all arguments must be arrays.');
 		}
 
 		foreach ($arrays as $arr)
 		{
 			if ( ! is_array($arr))
 			{
-				throw new \InvalidArgumentException('Arr::merge() - all arguements must be arrays.');
+				throw new \InvalidArgumentException('Arr::merge() - all arguments must be arrays.');
 			}
 
 			foreach ($arr as $k => $v)
 			{
-				// numeric keys are apended
+				// numeric keys are appended
 				if (is_int($k))
 				{
 					array_key_exists($k, $array) ? array_push($array, $v) : $array[$k] = $v;
