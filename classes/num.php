@@ -15,15 +15,15 @@
 namespace Fuel\Core;
 
 /**
- * Number helper class. Provides additional formatting methods for working with
+ * Numeric helper class. Provides additional formatting methods for working with
  * numeric values.
- * 
+ *
  * Credit is left where credit is due.
- * 
+ *
  * Techniques and inspiration were taken from all over, including:
  *	Kohana Framework: kohanaframework.org
  *	CakePHP: cakephp.org
- * 
+ *
  * @package		Fuel
  * @category	Core
  * @author      Chase "Syntaqx" Hutchins
