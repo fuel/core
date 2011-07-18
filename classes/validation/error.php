@@ -98,8 +98,19 @@ class Validation_Error extends \Exception {
 		$replace  = array($this->field->name, $label, $value, $this->rule);
 		foreach($this->params as $key => $val)
 		{
-			$find[]		= ':param:'.($key + 1);
-			$replace[]	= $val;
+			// Convert array to just a string "(array)", can't reliably implode as contents might be arrays/objects
+			if (is_array($val))
+			{
+				$val = '(array)';
+			}
+			// Convert object with __toString or just the classname
+			elseif (is_object($val))
+			{
+				$val = method_exists($val, '__toString') ? (string) $val : get_class($val);
+			}
+
+			$find[]     = ':param:'.($key + 1);
+			$replace[]  = $val;
 		}
 
 		return $open.str_replace($find, $replace, $msg).$close;
