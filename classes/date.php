@@ -18,11 +18,10 @@ namespace Fuel\Core;
  * DateTime replacement that supports internationalization and does correction to GMT
  * when your webserver isn't configured correctly.
  *
- * @package		Fuel
- * @subpackage	Core
- * @category	Core
- * @author		Jelmer Schreuder
- * @link		http://fuelphp.com/docs/classes/date.html
+ * @package     Fuel
+ * @subpackage  Core
+ * @category    Core
+ * @link        http://fuelphp.com/docs/classes/date.html
  *
  * Notes:
  * - Always returns Date objects, will accept both Date objects and UNIX timestamps
@@ -31,37 +30,10 @@ namespace Fuel\Core;
  */
 class Date {
 
-	/* ---------------------------------------------------------------------------
-	 * STATIC PROPERTIES
-	 * --------------------------------------------------------------------------- */
-
 	/**
 	 * @var int server's time() offset from gmt in seconds
 	 */
 	protected static $server_gmt_offset = 0;
-
-	/**
-	 * @var string default pattern for date output
-	 */
-	protected static $default_pattern = 'local';
-
-	/* ---------------------------------------------------------------------------
-	 * DYNAMIC PROPERTIES
-	 * --------------------------------------------------------------------------- */
-
-	/**
-	 * @var int instance timestamp
-	 */
-	protected $timestamp;
-
-	/**
-	 * @var double output timezone
-	 */
-	protected $timezone;
-
-	/* ---------------------------------------------------------------------------
-	 * STATIC METHODS
-	 * --------------------------------------------------------------------------- */
 
 	public static function _init()
 	{
@@ -91,9 +63,9 @@ class Date {
 	/**
 	 * Create Date object from timestamp, timezone is optional
 	 *
-	 * @param	int		UNIX timestamp from current server
-	 * @param	string	valid PHP timezone from www.php.net/timezones
-	 * @return	Date
+	 * @param   int     UNIX timestamp from current server
+	 * @param   string  valid PHP timezone from www.php.net/timezones
+	 * @return  Date
 	 */
 	public static function factory($timestamp = null, $timezone = null)
 	{
@@ -106,7 +78,7 @@ class Date {
 	/**
 	 * Returns the current time with offset
 	 *
-	 * @return Date
+	 * @return  Date
 	 */
 	public static function time($timezone = null)
 	{
@@ -116,9 +88,9 @@ class Date {
 	/**
 	 * Uses the date config file to translate string input to timestamp
 	 *
-	 * @param	string			date/time input
-	 * @param	string			key name of pattern in config file
-	 * @return	Date
+	 * @param   string  date/time input
+	 * @param   string  key name of pattern in config file
+	 * @return  Date
 	 */
 	public static function create_from_string($input, $pattern_key = 'local')
 	{
@@ -142,16 +114,16 @@ class Date {
 	/**
 	 * Fetches an array of Date objects per interval within a range
 	 *
-	 * @param	int|Date	start of the range
-	 * @param	int|Date	end of the range
-	 * @param	int|string	Length of the interval in seconds or valid strtotime time difference
-	 * @return	array		array of Date objects
+	 * @param   int|Date    start of the range
+	 * @param   int|Date    end of the range
+	 * @param   int|string  Length of the interval in seconds or valid strtotime time difference
+	 * @return   array      array of Date objects
 	 */
 	public static function range_to_array($start, $end, $interval = '+1 Day')
 	{
-		$start		= ( ! $start instanceof Date) ? static::factory($start) : $start;
-		$end		= ( ! $end instanceof Date) ? static::factory($end) : $end;
-		$interval	= (is_int($interval)) ? $interval : strtotime($interval, $start->get_timestamp()) - $start->get_timestamp();
+		$start     = ( ! $start instanceof Date) ? static::factory($start) : $start;
+		$end       = ( ! $end instanceof Date) ? static::factory($end) : $end;
+		$interval  = (is_int($interval)) ? $interval : strtotime($interval, $start->get_timestamp()) - $start->get_timestamp();
 
 		if ($interval <= 0)
 		{
@@ -159,8 +131,8 @@ class Date {
 			return false;
 		}
 
-		$range		= array();
-		$current	= $start;
+		$range    = array();
+		$current  = $start;
 		while ($current->get_timestamp() <= $end->get_timestamp())
 		{
 			$range[] = $current;
@@ -172,11 +144,10 @@ class Date {
 
 	/**
 	 * Returns the number of days in the requested month
-	 * (Based on CodeIgniter function)
 	 *
-	 * @param	int	month as a number (1-12)
-	 * @param	int	the year, leave empty for current
-	 * @return	int	the number of days in the month
+	 * @param   int  month as a number (1-12)
+	 * @param   int  the year, leave empty for current
+	 * @return  int  the number of days in the month
 	 */
 	public static function days_in_month($month, $year = null)
 	{
@@ -203,14 +174,14 @@ class Date {
 	/**
 	 * Returns the time ago
 	 *
-	 * @param	int		UNIX timestamp from current server
-	 * @return	string	Time ago
+	 * @param   int     UNIX timestamp from current server
+	 * @return  string  Time ago
 	 */
 	public static function time_ago($timestamp, $from_timestamp = null)
 	{
 		if ($timestamp === null)
 		{
-			return;
+			return '';
 		}
 
 		! is_numeric($timestamp) and $timestamp = static::create_from_string($timestamp);
@@ -242,9 +213,15 @@ class Date {
 		return $text;
 	}
 
-	/* ---------------------------------------------------------------------------
-	 * DYNAMIC METHODS
-	 * --------------------------------------------------------------------------- */
+	/**
+	 * @var  int  instance timestamp
+	 */
+	protected $timestamp;
+
+	/**
+	 * @var  string  output timezone
+	 */
+	protected $timezone;
 
 	protected function __construct($timestamp, $timezone)
 	{
@@ -255,8 +232,8 @@ class Date {
 	/**
 	 * Returns the date formatted according to the current locale
 	 *
-	 * @param	string	either a named pattern from date config file or a pattern
-	 * @return	string
+	 * @param   string  either a named pattern from date config file or a pattern, defaults to 'local'
+	 * @return  string
 	 */
 	public function format($pattern_key = 'local')
 	{
@@ -285,7 +262,7 @@ class Date {
 	/**
 	 * Returns the internal timestamp
 	 *
-	 * @return	string
+	 * @return  int
 	 */
 	public function get_timestamp()
 	{
@@ -295,7 +272,7 @@ class Date {
 	/**
 	 * Returns the internal timezone
 	 *
-	 * @return	string
+	 * @return  string
 	 */
 	public function get_timezone()
 	{
@@ -305,7 +282,8 @@ class Date {
 	/**
 	 * Change the timezone
 	 *
-	 * @param	string	timezone from www.php.net/timezones
+	 * @param   string  timezone from www.php.net/timezones
+	 * @return  Date
 	 */
 	public function set_timezone($timezone)
 	{
@@ -317,11 +295,11 @@ class Date {
 	/**
 	 * Allows you to just put the object in a string and get it inserted in the default pattern
 	 *
-	 * @return	string
+	 * @return  string
 	 */
 	public function __toString()
 	{
-		return $this->format(static::$default_pattern);
+		return $this->format();
 	}
 }
 
