@@ -230,17 +230,16 @@ class Fuel {
 	 */
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
+		// absolute path requested?
+		if (strpos($file, '/') === 0 or strpos($file, ':') === 1)
+		{
+			return is_file($file) ? $file : false;
+		}
+
 		$cache_id = '';
 		$paths = array();
 
 		$found = $multiple ? array() : false;
-
-		// absolute path requested?
-		if (strpos($file, '/') === 0 or strpos($file, ':') === 1)
-		{
-			$cache_id = $file;
-			$found = file_exists($file);
-		}
 
 		// the file requested namespaced?
 		elseif($pos = strripos($file, '::'))
