@@ -242,7 +242,7 @@ class Fuel {
 		$found = $multiple ? array() : false;
 
 		// the file requested namespaced?
-		elseif($pos = strripos($file, '::'))
+		if($pos = strripos($file, '::'))
 		{
 			// get the namespace path
 			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
