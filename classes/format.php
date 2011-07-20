@@ -85,13 +85,12 @@ class Format {
 
 		$array = array();
 
-		foreach ((array) $data as $key => $value)
+		foreach ($data as $key => $value)
 		{
 			if (is_object($value) or is_array($value))
 			{
 				$array[$key] = $this->to_array($value);
 			}
-
 			else
 			{
 				$array[$key] = $value;
@@ -149,7 +148,7 @@ class Format {
 			if (is_array($value) || is_object($value))
 			{
 				$node = $structure->addChild($key);
-				
+
 				// recursive call if value is not empty
 				if( ! empty($value))
 				{
@@ -220,7 +219,7 @@ class Format {
 
 		// To allow exporting ArrayAccess objects like Orm\Model instances they need to be
 		// converted to an array first
-		$data = $data instanceof \ArrayAccess ? $this->to_array($data) : $data;
+		$data = (is_array($data) or is_object($data)) ? $this->to_array($data) : $data;
 		return json_encode($data);
 	}
 
