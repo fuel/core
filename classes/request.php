@@ -371,7 +371,6 @@ class Request {
 		$method_prefix = 'action_';
 
 		$class = $controller_prefix.($this->directory ? ucfirst($this->directory).'_' : '').ucfirst($this->controller);
-		$method = $this->action;
 
 		// If the class doesn't exist then 404
 		if ( ! class_exists($class))
@@ -384,7 +383,8 @@ class Request {
 		logger(Fuel::L_INFO, 'Loading controller '.$class, __METHOD__);
 		$this->controller_instance = $controller = new $class($this, new \Response);
 
-		$method = $method_prefix.($method ?: (property_exists($controller, 'default_action') ? $controller->default_action : 'index'));
+		$this->action = $this->action ?: (property_exists($controller, 'default_action') ? $controller->default_action : 'index');
+		$method = $method_prefix.$this->action;
 
 
 		// Allow to do in controller routing if method router(action, params) exists
