@@ -16,6 +16,12 @@ class Router {
 
 	public static $routes = array();
 
+	/**
+	 * Add one or multiple routes
+	 *
+	 * @param  string
+	 * @param  string|array|Route  either the translation for $path, an array for verb routing or an instance of Route
+	 */
 	public static function add($path, $options = null)
 	{
 		if (is_array($path))
@@ -24,6 +30,11 @@ class Router {
 			{
 				static::add($p, $t);
 			}
+			return;
+		}
+		elseif ($options instanceof Route)
+		{
+			static::$routes[$path] = $options;
 			return;
 		}
 
