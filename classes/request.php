@@ -144,7 +144,7 @@ class Request {
 		else
 		{
 			// third call, there's something seriously wrong now
-			throw new \Fuel_Exception('It appears your _404_ route is incorrect.  Multiple Recursion has happened.');
+			exit('It appears your _404_ route is incorrect.  Multiple Recursion has happened.');
 		}
 
 		if (\Config::get('routes._404_') === null)
@@ -375,7 +375,7 @@ class Request {
 		if ( ! $this->route)
 		{
 			static::reset_request();
-			throw new \Request404Exception;
+			throw new \Request404Exception();
 		}
 
 		$controller_prefix = '\\'.($this->module ? ucfirst($this->module).'\\' : '').'Controller_';
@@ -387,7 +387,7 @@ class Request {
 		if ( ! class_exists($class))
 		{
 			static::reset_request();
-			return $this;
+			throw new \Request404Exception();
 		}
 
 		logger(Fuel::L_INFO, 'Loading controller '.$class, __METHOD__);
