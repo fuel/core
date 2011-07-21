@@ -43,13 +43,6 @@ class Request {
 	protected static $active = false;
 
 	/**
-	 * Holds the previous request
-	 *
-	 * @var  Request
-	 */
-	protected static $previous = false;
-
-	/**
 	 * Generates a new request.  The request is then set to be the active
 	 * request.  If this is the first request, then save that as the main
 	 * request for the app.
@@ -66,20 +59,19 @@ class Request {
 	{
 		logger(Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
-		if (static::$active)
-		{
-			static::$previous = static::$active;
-		}
+		$request = new static($uri, $route);
+		$request->parent = static::$active;
+		static::$active->children[] = $request;
 
-		static::$active = new static($uri, $route);
+		static::$active = $request;
 
 		if ( ! static::$main)
 		{
 			logger(Fuel::L_INFO, 'Setting main Request', __METHOD__);
-			static::$main = static::$active;
+			static::$main = $request;
 		}
 
-		return static::$active;
+		return $request;
 	}
 
 	/**
@@ -187,10 +179,10 @@ class Request {
 	 */
 	public static function reset_request()
 	{
-		// Let's make the previous Request active since we are don't executing this one.
-		if (static::$previous)
+		// Let's make the previous Request active since we are done executing this one.
+		if (static::$active->parent())
 		{
-			static::$active = static::$previous;
+			static::$active = static::$active->parent();
 		}
 	}
 
@@ -273,6 +265,20 @@ class Request {
 	public $paths = array();
 
 	/**
+	 * Request that created this one
+	 *
+	 * @var  Request
+	 */
+	protected $parent = null;
+
+	/**
+	 * Requests created by this request
+	 *
+	 * @var  array
+	 */
+	protected $children = array();
+
+	/**
 	 * Creates the new Request object by getting a new URI object, then parsing
 	 * the uri with the Route class.
 	 *
@@ -330,7 +336,7 @@ class Request {
 
 		if ( ! $this->route)
 		{
-			return false;
+			return;
 		}
 
 		if ($this->route->module !== null)
@@ -437,6 +443,26 @@ class Request {
 	public function response()
 	{
 		return $this->response;
+	}
+
+	/**
+	 * Returns the Request that created this one
+	 *
+	 * @return  Request|null
+	 */
+	public function parent()
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * Returns an array of Requests created by this one
+	 *
+	 * @return  array
+	 */
+	public function children()
+	{
+		return $this->children;
 	}
 
 	/**
