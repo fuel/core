@@ -354,9 +354,10 @@ class Request {
 	 *
 	 *     $request = Request::factory('hello/world')->execute();
 	 *
+	 * @param  array|null  $method_params  An array of parameters to pass to the method being executed
 	 * @return  Request  This request object
 	 */
-	public function execute()
+	public function execute($method_params = null)
 	{
 		logger(Fuel::L_INFO, 'Called', __METHOD__);
 
@@ -386,6 +387,11 @@ class Request {
 		$this->action = $this->action ?: (property_exists($controller, 'default_action') ? $controller->default_action : 'index');
 		$method = $method_prefix.$this->action;
 
+		// Allow override of method params from execute
+		if (is_array($method_params))
+		{
+			$this->method_params = $method_params;
+		}
 
 		// Allow to do in controller routing if method router(action, params) exists
 		if (method_exists($controller, 'router'))
