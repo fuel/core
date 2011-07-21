@@ -138,10 +138,11 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Mongo_Db'           => COREPATH.'classes/mongo/db.php',
 	'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
 
-	'Fuel\\Core\\Output'      => COREPATH.'classes/output.php',
-	'Fuel\\Core\\Pagination'  => COREPATH.'classes/pagination.php',
-	'Fuel\\Core\\Profiler'    => COREPATH.'classes/profiler.php',
-	'Fuel\\Core\\Request'     => COREPATH.'classes/request.php',
+	'Fuel\\Core\\Output'               => COREPATH.'classes/output.php',
+	'Fuel\\Core\\Pagination'           => COREPATH.'classes/pagination.php',
+	'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
+	'Fuel\\Core\\Request'              => COREPATH.'classes/request.php',
+	'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
 
 	'Fuel\\Core\\Redis'            => COREPATH.'classes/redis.php',
 	'Fuel\\Core\\Redis_Exception'  => COREPATH.'classes/redis/exception.php',

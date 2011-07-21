@@ -14,6 +14,12 @@ namespace Fuel\Core;
 
 
 /**
+ * When this is thrown and not caught, the Errors class will call \Request::show_404()
+ */
+class Request404Exception extends \Fuel_Exception {}
+
+
+/**
  * The Request class is used to create and manage new and existing requests.  There
  * is a main request which comes in from the browser or command line, then new
  * requests can be created for HMVC requests.
@@ -368,9 +374,8 @@ class Request {
 
 		if ( ! $this->route)
 		{
-			$this->response = static::show_404(true);
 			static::reset_request();
-			return $this;
+			throw new \Request404Exception;
 		}
 
 		$controller_prefix = '\\'.($this->module ? ucfirst($this->module).'\\' : '').'Controller_';
@@ -381,7 +386,6 @@ class Request {
 		// If the class doesn't exist then 404
 		if ( ! class_exists($class))
 		{
-			$this->response = static::show_404(true);
 			static::reset_request();
 			return $this;
 		}
@@ -424,7 +428,7 @@ class Request {
 		}
 		else
 		{
-			$this->response = static::show_404(true);
+			throw new \Request404Exception();
 		}
 
 		static::reset_request();
