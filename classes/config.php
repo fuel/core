@@ -37,7 +37,7 @@ class Config {
 			$paths = array_reverse($paths);
 			foreach ($paths as $path)
 			{
-				$config = array_merge($config, \Fuel::load($path));
+				$config = \Arr::merge($config, \Fuel::load($path));
 			}
 		}
 
@@ -52,7 +52,7 @@ class Config {
 			{
 				static::$items[$group] = array();
 			}
-			static::$items[$group] = array_merge(static::$items[$group],$config);
+			static::$items[$group] = \Arr::merge(static::$items[$group],$config);
 		}
 
 		if ( ! is_array($file))
