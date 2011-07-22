@@ -31,45 +31,31 @@ namespace Fuel\Core;
 class Num {
 
 	/**
-	 * Valid byte units => power of 2 that defines the unit's size
+	 * Cached byte units
 	 *
-	 * @var		array
+	 * @var   array
 	 */
-	public static $byte_units = array(
-		'B'   => 0,
-		'K'   => 10,
-		'Ki'  => 10,
-		'KB'  => 10,
-		'KiB' => 10,
-		'M'   => 20,
-		'Mi'  => 20,
-		'MB'  => 20,
-		'MiB' => 20,
-		'G'   => 30,
-		'Gi'  => 30,
-		'GB'  => 30,
-		'GiB' => 30,
-		'T'   => 40,
-		'Ti'  => 40,
-		'TB'  => 40,
-		'TiB' => 40,
-		'P'   => 50,
-		'Pi'  => 50,
-		'PB'  => 50,
-		'PiB' => 50,
-		'E'   => 60,
-		'Ei'  => 60,
-		'EB'  => 60,
-		'EiB' => 60,
-		'Z'   => 70,
-		'Zi'  => 70,
-		'ZB'  => 70,
-		'ZiB' => 70,
-		'Y'   => 80,
-		'Yi'  => 80,
-		'YB'  => 80,
-		'YiB' => 80,
-	);
+	protected static $byte_units;
+
+	/**
+	 * Cached configuration values
+	 *
+	 * @var   array
+	 */
+	protected static $config;
+
+	/**
+	 * Class initialization callback
+	 *
+	 * @return   void
+	 */
+	public static function _init()
+	{
+		\Lang::load('byte_units', true);
+
+		static::$config     = \Config::load('num', true);
+		static::$byte_units = \Lang::line('byte_units');
+	}
 
 	/**
 	 * Add leading zeros to a number
@@ -78,7 +64,7 @@ class Num {
 	 * @param   integer
 	 * @return  string
 	 */
-	public function zeroise($number = 0, $threshold = 1)
+	public static function zeroise($number = 0, $threshold = 1)
 	{
 		return sprintf('%0'.$threshold.'s', $number);
 	}
@@ -339,8 +325,9 @@ class Num {
 	 * @return  string the formatted string
 	 * @see     format
 	 */
-	public static function format_phone($string = '', $format = '(000) 000-0000')
+	public static function format_phone($string = '', $format = null)
 	{
+		is_null($format) and $format = static::$config['formatting']['phone'];
 		return static::format($string, $format);
 	}
 
@@ -351,7 +338,7 @@ class Num {
 	 * <code>
 	 * echo Num::smart_format_phone('1234567'); // 123-4567
 	 * echo Num::smart_format_phone('1234567890'); // (123) 456-7890
-	 * echo Num::smart_format_phone('91234567890'); // (123) 456-7890
+	 * echo Num::smart_format_phone('91234567890'); // 9 (123) 456-7890
 	 * echo Num::smart_format_phone('123456'); // => 123456
 	 * </code>
 	 *
@@ -360,25 +347,14 @@ class Num {
 	 */
 	public static function smart_format_phone($string)
 	{
-		switch (strlen($string))
+		$formats = static::$config['formatting']['smart_phone'];
+
+		if(is_array($formats) and isset($formats[strlen($string)]))
 		{
-			case 7:
-			{
-				return static::format($string, '000-0000');
-			}
-			case 10:
-			{
-				return static::format($string, '(000) 000-0000');
-			}
-			case 11:
-			{
-				return static::format($string, '0 (000) 000-0000');
-			}
-			default:
-			{
-				return $string;
-			}
+			return static::format($string, $formats[strlen($string)]);
 		}
+
+		return $string;
 	}
 
 	/**
@@ -388,11 +364,12 @@ class Num {
 	 * @param   string     the format to use, defaults to '00-00'
 	 * @see     format
 	 */
-	public static function format_exp($string, $format = '00-00')
+	public static function format_exp($string, $format = null)
 	{
+		is_null($format) and $format = static::$config['formatting']['exp'];
 		return static::format($string, $format);
 	}
-	
+
 	/**
 	 * Formats (masks) a credit card.
 	 *
@@ -400,8 +377,9 @@ class Num {
 	 * @param   string     the format to use, defaults to '**** **** **** 0000'
 	 * @see     mask_string
 	 */
-	public static function mask_credit_card($string, $format = '**** **** **** 0000')
+	public static function mask_credit_card($string, $format = null)
 	{
+		is_null($format) and $format = static::$config['formatting']['credit_card'];
 		return static::mask_string($string, $format);
 	}
 
