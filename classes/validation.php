@@ -21,10 +21,9 @@ namespace Fuel\Core;
  *
  * Static object to allow static usage of validation through singleton.
  *
- * @package		Fuel
- * @subpackage	Core
- * @category	Core
- * @author		Jelmer Schreuder
+ * @package     Fuel
+ * @subpackage  Core
+ * @category    Core
  */
 class Validation {
 
@@ -74,32 +73,32 @@ class Validation {
 	}
 
 	/**
-	 * @var	Fieldset
+	 * @var  Fieldset
 	 */
 	protected $fieldset;
 
 	/**
-	 * @var	array	available after validation started running: contains given input values
+	 * @var  Array  available after validation started running: contains given input values
 	 */
 	protected $input = array();
 
 	/**
-	 * @var	array	contains values of fields that validated succesfully
+	 * @var  Array  contains values of fields that validated succesfully
 	 */
 	protected $validated = array();
 
 	/**
-	 * @var	array	contains Validation_Error instances of encountered errors
+	 * @var  Array  contains Validation_Error instances of encountered errors
 	 */
 	protected $errors = array();
 
 	/**
-	 * @var	array	contains a list of classnames and objects that may contain validation methods
+	 * @var  Array  contains a list of classnames and objects that may contain validation methods
 	 */
 	protected $callables = array();
 
 	/**
-	 * @var	array	contains validation error messages, will overwrite those from lang files
+	 * @var  Array  contains validation error messages, will overwrite those from lang files
 	 */
 	protected $error_messages = array();
 
@@ -121,7 +120,7 @@ class Validation {
 	/**
 	 * Returns the related fieldset
 	 *
-	 * @return	Fieldset
+	 * @return  Fieldset
 	 */
 	public function fieldset()
 	{
@@ -131,10 +130,10 @@ class Validation {
 	/**
 	 * Simpler alias for Validation->add()
 	 *
-	 * @param	string		Field name
-	 * @param	string		Field label
-	 * @param	string		Rules as a piped string
-	 * @return	Validation	$this to allow chaining
+	 * @param   string      Field name
+	 * @param   string      Field label
+	 * @param   string      Rules as a piped string
+	 * @return  Validation  $this to allow chaining
 	 */
 	public function add_field($name, $label, $rules)
 	{
@@ -171,8 +170,8 @@ class Validation {
 	/**
 	 * This will overwrite lang file messages for this validation instance
 	 *
-	 * @param	string
-	 * @param	string
+	 * @param  string
+	 * @param  string
 	 */
 	public function set_message($rule, $message)
 	{
@@ -189,8 +188,8 @@ class Validation {
 	/**
 	 * Fetches a specific error message for this validation instance
 	 *
-	 * @param	string
-	 * @return	string
+	 * @param   string
+	 * @return  string
 	 */
 	public function get_message($rule)
 	{
@@ -209,8 +208,8 @@ class Validation {
 	 * the method as a string will do. This also allows for overwriting functionality
 	 * from this object because the new class is prepended.
 	 *
-	 * @param	string|Object	Classname or object
-	 * @return	Validation		this, to allow chaining
+	 * @param   string|Object  Classname or object
+	 * @return  Validation     this, to allow chaining
 	 */
 	public function add_callable($class)
 	{
@@ -219,7 +218,11 @@ class Validation {
 			throw new \InvalidArgumentException('Input for add_callable is not a valid object or class.');
 		}
 
-		array_unshift($this->callables, $class);
+		// Prevent adding it twice
+		if ( ! in_array($class, $this->callables, true))
+		{
+			array_unshift($this->callables, $class);
+		}
 
 		return $this;
 	}
@@ -228,7 +231,7 @@ class Validation {
 	 * Fetch the objects for which you don't need to add a full callback but
 	 * just the method name
 	 *
-	 * @return	array
+	 * @return  array
 	 */
 	public function callables()
 	{
@@ -241,9 +244,9 @@ class Validation {
 	 * Performs validation with current fieldset and on given input, will try POST
 	 * when input wasn't given.
 	 *
-	 * @param	array	input that overwrites POST values
-	 * @param	bool	will skip validation of values it can't find or are null
-	 * @return	bool	whether validation succeeded
+	 * @param   Array  input that overwrites POST values
+	 * @param   bool   will skip validation of values it can't find or are null
+	 * @return  bool   whether validation succeeded
 	 */
 	public function run($input = null, $allow_partial = false)
 	{
@@ -291,11 +294,11 @@ class Validation {
 	 *
 	 * Performs a single rule on a field and its value
 	 *
-	 * @throws	Validation_Error
-	 * @param	callback
-	 * @param	mixed	Value by reference, will be edited
-	 * @param	array	Extra parameters
-	 * @param	array	Validation field description
+	 * @param   callback
+	 * @param   mixed     Value by reference, will be edited
+	 * @param   Array     Extra parameters
+	 * @param   Array     Validation field description
+	 * @throws  Validation_Error
 	 */
 	protected function _run_rule($rule, &$value, $params, $field)
 	{
@@ -314,9 +317,9 @@ class Validation {
 	/**
 	 * Fetches the input value from either post or given input
 	 *
-	 * @param	string
-	 * @param	mixed
-	 * @return	mixed
+	 * @param   string
+	 * @param   mixed
+	 * @return  mixed
 	 */
 	public function input($key = null, $default = null)
 	{
@@ -338,9 +341,9 @@ class Validation {
 	 *
 	 * Returns specific validated value or all validated field=>value pairs
 	 *
-	 * @param	string		fieldname
-	 * @param	mixed		value to return when not validated
-	 * @return	array|mixed
+	 * @param   string  fieldname
+	 * @param   mixed   value to return when not validated
+	 * @return  Array|mixed
 	 */
 	public function validated($field = null, $default = false)
 	{
@@ -357,9 +360,9 @@ class Validation {
 	 *
 	 * Return specific error or all errors thrown during validation
 	 *
-	 * @param	string	fieldname
-	 * @param	mixed	value to return when not validated
-	 * @return	array|Validation_Error
+	 * @param   string  fieldname
+	 * @param   mixed   value to return when not validated
+	 * @return  Array|Validation_Error
 	 */
 	public function errors($field = null, $default = false)
 	{
@@ -376,8 +379,8 @@ class Validation {
 	 *
 	 * Returns all errors in a list or with set markup from $options param
 	 *
-	 * @param	array	uses keys open_list, close_list, open_error, close_error & no_errors
-	 * @return	string
+	 * @param   Array  uses keys open_list, close_list, open_error, close_error & no_errors
+	 * @return  string
 	 */
 	public function show_errors($options = array())
 	{
@@ -416,7 +419,7 @@ class Validation {
 	/**
 	 * Alias for $this->fieldset->add_model()
 	 *
-	 * @return	Validation	this, to allow chaining
+	 * @return  Validation  this, to allow chaining
 	 */
 	public function add_model($class, $instance = null, $method = 'set_form_fields')
 	{
@@ -433,8 +436,6 @@ class Validation {
 		return $this->fieldset->field($name);
 	}
 
-	// ------------------------------------------------------------------------
-
 	/**
 	 * Some validation methods
 	 */
@@ -444,8 +445,8 @@ class Validation {
 	 *
 	 * Value may not be empty
 	 *
-	 * @param	mixed
-	 * @return	bool
+	 * @param   mixed
+	 * @return  bool
 	 */
 	public function _validation_required($val)
 	{
@@ -466,10 +467,10 @@ class Validation {
 	/**
 	 * Match value against comparison input
 	 *
-	 * @param	mixed
-	 * @param	mixed
-	 * @param	bool	whether to do type comparison
-	 * @return	bool
+	 * @param   mixed
+	 * @param   mixed
+	 * @param   bool  whether to do type comparison
+	 * @return  bool
 	 */
 	public function _validation_match_value($val, $compare, $strict = false)
 	{
@@ -498,9 +499,9 @@ class Validation {
 	/**
 	 * Match PRCE pattern
 	 *
-	 * @param	string
-	 * @param	string	a PRCE regex pattern
-	 * @return	bool
+	 * @param   string
+	 * @param   string  a PRCE regex pattern
+	 * @return  bool
 	 */
 	public function _validation_match_pattern($val, $pattern)
 	{
@@ -511,9 +512,9 @@ class Validation {
 	 * Match specific other submitted field string value
 	 * (must be both strings, check is type sensitive)
 	 *
-	 * @param	string
-	 * @param	string
-	 * @return	bool
+	 * @param   string
+	 * @param   string
+	 * @return  bool
 	 */
 	public function _validation_match_field($val, $field)
 	{
@@ -523,9 +524,9 @@ class Validation {
 	/**
 	 * Minimum string length
 	 *
-	 * @param	string
-	 * @param	int
-	 * @return	bool
+	 * @param   string
+	 * @param   int
+	 * @return  bool
 	 */
 	public function _validation_min_length($val, $length)
 	{
@@ -535,9 +536,9 @@ class Validation {
 	/**
 	 * Maximum string length
 	 *
-	 * @param	string
-	 * @param	int
-	 * @return	bool
+	 * @param   string
+	 * @param   int
+	 * @return  bool
 	 */
 	public function _validation_max_length($val, $length)
 	{
@@ -547,9 +548,9 @@ class Validation {
 	/**
 	 * Exact string length
 	 *
-	 * @param	string
-	 * @param	int
-	 * @return	bool
+	 * @param   string
+	 * @param   int
+	 * @return  bool
 	 */
 	public function _validation_exact_length($val, $length)
 	{
@@ -559,8 +560,8 @@ class Validation {
 	/**
 	 * Validate email using PHP's filter_var()
 	 *
-	 * @param	string
-	 * @return	bool
+	 * @param   string
+	 * @return  bool
 	 */
 	public function _validation_valid_email($val)
 	{
@@ -570,8 +571,8 @@ class Validation {
 	/**
 	 * Validate email using PHP's filter_var()
 	 *
-	 * @param	string
-	 * @return	bool
+	 * @param   string
+	 * @return  bool
 	 */
 	public function _validation_valid_emails($val)
 	{
@@ -595,8 +596,8 @@ class Validation {
 	/**
 	 * Validate URL using PHP's filter_var()
 	 *
-	 * @param	string
-	 * @return	bool
+	 * @param   string
+	 * @return  bool
 	 */
 	public function _validation_valid_url($val)
 	{
@@ -606,8 +607,8 @@ class Validation {
 	/**
 	 * Validate IP using PHP's filter_var()
 	 *
-	 * @param	string
-	 * @return	bool
+	 * @param   string
+	 * @return  bool
 	 */
 	public function _validation_valid_ip($val)
 	{
@@ -617,9 +618,9 @@ class Validation {
 	/**
 	 * Validate input string with many options
 	 *
-	 * @param	string
-	 * @param	string|array	either a named filter or combination of flags
-	 * @return	bool
+	 * @param   string
+	 * @param   string|Array  either a named filter or combination of flags
+	 * @return  bool
 	 */
 	public function _validation_valid_string($val, $flags = array('alpha', 'utf8'))
 	{
@@ -678,9 +679,9 @@ class Validation {
 	/**
 	 * Checks whether numeric input has a minimum value
 	 *
-	 * @param	string|float|int
-	 * @param	float|int
-	 * @return	bool
+	 * @param   string|float|int
+	 * @param   float|int
+	 * @return  bool
 	 */
 	public function _validation_numeric_min($val, $min_val)
 	{
@@ -690,9 +691,9 @@ class Validation {
 	/**
 	 * Checks whether numeric input has a maximum value
 	 *
-	 * @param	string|float|int
-	 * @param	float|int
-	 * @return	bool
+	 * @param   string|float|int
+	 * @param   float|int
+	 * @return  bool
 	 */
 	public function _validation_numeric_max($val, $max_val)
 	{
