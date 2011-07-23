@@ -133,7 +133,7 @@ class Error {
 	 */
 	public static function show_php_error(\Exception $e)
 	{
-		$fatal = (bool)( ! in_array($e->getCode(), \Config::get('errors.continue_on')));
+		$fatal = (bool)( ! in_array($e->getCode(), \Config::get('errors.continue_on', array())));
 		$data = static::prepare_exception($e, $fatal);
 
 		if ($fatal)
