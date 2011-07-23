@@ -87,11 +87,11 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Database_Mysqli_Connection'     => COREPATH.'classes/database/mysqli/connection.php',
 	'Fuel\\Core\\Database_MySQLi_Result'         => COREPATH.'classes/database/mysqli/result.php',
 
-	'Fuel\\Core\\Email'           => COREPATH.'classes/email.php',
-	'Fuel\\Core\\Email_Driver'    => COREPATH.'classes/email/driver.php',
-	'Fuel\\Core\\Email_Mail'      => COREPATH.'classes/email/mail.php',
-	'Fuel\\Core\\Email_Sendmail'  => COREPATH.'classes/email/sendmail.php',
-	'Fuel\\Core\\Email_Smtp'      => COREPATH.'classes/email/smtp.php',
+//	'Fuel\\Core\\Email'           => COREPATH.'classes/email.php',
+//	'Fuel\\Core\\Email_Driver'    => COREPATH.'classes/email/driver.php',
+//	'Fuel\\Core\\Email_Mail'      => COREPATH.'classes/email/mail.php',
+//	'Fuel\\Core\\Email_Sendmail'  => COREPATH.'classes/email/sendmail.php',
+//	'Fuel\\Core\\Email_Smtp'      => COREPATH.'classes/email/smtp.php',
 
 	'Fuel\\Core\\Fuel_Exception'  => COREPATH.'classes/fuel/exception.php',
 
