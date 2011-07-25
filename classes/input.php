@@ -164,6 +164,8 @@ class Input {
 	 */
 	public static function put($index, $default = null)
 	{
+		static $_PUT;
+
 		if (static::method() !== 'PUT')
 		{
 			return null;
@@ -171,8 +173,8 @@ class Input {
 
 		if ( ! isset($_PUT))
 		{
-			static $_PUT;
 			parse_str(file_get_contents('php://input'), $_PUT);
+			! is_array($_PUT) and $_PUT = array();
 		}
 
 		return static::_fetch_from_array($_PUT, $index, $default);
