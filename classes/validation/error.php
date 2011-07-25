@@ -81,20 +81,8 @@ class Validation_Error extends \Exception {
 			return $open.'Validation rule '.$this->rule.' failed for '.$this->field->label.$close;
 		}
 
-		// to safe some performance when there are no variables in the $msg
-		if (strpos(':', $msg) !== false)
-		{
-			return $open.$msg.$close;
-		}
-
-		if (\Config::get('validation.quote_labels', false) and strpos($label, ' ') !== false)
-		{
-			// put the label in quotes if it contains spaces
-			$label = '"'.$label.'"';
-		}
-
-
-		return $open.$this->_replace_tags($msg).$close;
+		// only parse when there's tags in the message
+		return $open.(strpos(':', $msg) === false ? $msg : $this->_replace_tags($msg)).$close;
 	}
 
 	protected function _replace_tags($msg)
@@ -102,6 +90,11 @@ class Validation_Error extends \Exception {
 		// prepare label & value
 		$label    = is_array($this->field->label) ? $this->field->label['label'] : $this->field->label;
 		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
+		if (\Config::get('validation.quote_labels', false) and strpos($label, ' ') !== false)
+		{
+			// put the label in quotes if it contains spaces
+			$label = '"'.$label.'"';
+		}
 
 		// setup find & replace arrays
 		$find     = array(':field', ':label', ':value', ':rule');
