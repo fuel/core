@@ -36,7 +36,7 @@ class Fuel_Exception extends \Exception {
 			{
 				$line = \Lang::line($args[0], $args[1]);
 
-				if($line != $args[1])
+				if($line !== false and $line != $args[1])
 				{
 					$args = array($line);
 				}
