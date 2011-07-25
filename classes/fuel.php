@@ -168,8 +168,8 @@ class Fuel {
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
-		// Set some server options
-		setlocale(LC_ALL, static::$locale);
+		// Set  locale
+		static::$locale and setlocale(LC_ALL, static::$locale);
 
 		// Always load classes, config & language set in always_load.php config
 		static::always_load();
