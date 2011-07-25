@@ -87,15 +87,27 @@ class Validation_Error extends \Exception {
 			return $open.$msg.$close;
 		}
 
-		$label    = is_array($this->field->label) ? $this->field->label['label'] : $this->field->label;
 		if (\Config::get('validation.quote_labels', false) and strpos($label, ' ') !== false)
 		{
 			// put the label in quotes if it contains spaces
 			$label = '"'.$label.'"';
 		}
+
+
+		return $open.$this->_replace_tags($msg).$close;
+	}
+
+	protected function _replace_tags($msg)
+	{
+		// prepare label & value
+		$label    = is_array($this->field->label) ? $this->field->label['label'] : $this->field->label;
 		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
+
+		// setup find & replace arrays
 		$find     = array(':field', ':label', ':value', ':rule');
 		$replace  = array($this->field->name, $label, $value, $this->rule);
+
+		// add the params to the find & replace arrays
 		foreach($this->params as $key => $val)
 		{
 			// Convert array to just a string "(array)", can't reliably implode as contents might be arrays/objects
@@ -113,7 +125,8 @@ class Validation_Error extends \Exception {
 			$replace[]  = $val;
 		}
 
-		return $open.str_replace($find, $replace, $msg).$close;
+		// execute find & replace and return
+		return str_replace($find, $replace, $msg);
 	}
 
 	public function __toString()
