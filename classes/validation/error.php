@@ -81,21 +81,26 @@ class Validation_Error extends \Exception {
 			return $open.'Validation rule '.$this->rule.' failed for '.$this->field->label.$close;
 		}
 
-		// to safe some performance when there are no variables in the $msg
-		if (strpos(':', $msg) !== false)
-		{
-			return $open.$msg.$close;
-		}
+		// only parse when there's tags in the message
+		return $open.(strpos(':', $msg) === false ? $msg : $this->_replace_tags($msg)).$close;
+	}
 
+	protected function _replace_tags($msg)
+	{
+		// prepare label & value
 		$label    = is_array($this->field->label) ? $this->field->label['label'] : $this->field->label;
+		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
 		if (\Config::get('validation.quote_labels', false) and strpos($label, ' ') !== false)
 		{
 			// put the label in quotes if it contains spaces
 			$label = '"'.$label.'"';
 		}
-		$value    = is_array($this->value) ? implode(', ', $this->value) : $this->value;
+
+		// setup find & replace arrays
 		$find     = array(':field', ':label', ':value', ':rule');
 		$replace  = array($this->field->name, $label, $value, $this->rule);
+
+		// add the params to the find & replace arrays
 		foreach($this->params as $key => $val)
 		{
 			// Convert array to just a string "(array)", can't reliably implode as contents might be arrays/objects
@@ -113,7 +118,8 @@ class Validation_Error extends \Exception {
 			$replace[]  = $val;
 		}
 
-		return $open.str_replace($find, $replace, $msg).$close;
+		// execute find & replace and return
+		return str_replace($find, $replace, $msg);
 	}
 
 	public function __toString()
