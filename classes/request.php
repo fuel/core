@@ -474,23 +474,19 @@ class Request {
 	 *
 	 * @param   string  the new path
 	 * @param   bool    whether to add to the front or the back of the array
-	 * @param   bool    whether to add it, even if it is already present
 	 * @return  void
 	 */
-	public function add_path($path, $prefix = false, $force = false)
+	public function add_path($path, $prefix = false)
 	{
-		if ( ! in_array($path, $this->paths) or $force)
+		if ($prefix)
 		{
-			if ($prefix)
-			{
-				// prefix the path to the paths array
-				array_unshift($this->paths, $path);
-			}
-			else
-			{
-				// add the new path
-				$this->paths[] = $path;
-			}
+			// prefix the path to the paths array
+			array_unshift($this->paths, $path);
+		}
+		else
+		{
+			// add the new path
+			$this->paths[] = $path;
 		}
 	}
 
