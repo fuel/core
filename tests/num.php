@@ -24,39 +24,6 @@ namespace Fuel\Core;
 class Tests_Num extends TestCase {
 
 	/**
-	 * @see     Num::zeroise
-	 */
-	public function test_zeroise($number = 0, $threshold = 1)
-	{
-		$output = Num::zeroise('123', '40');
-		$expected = '0000000000000000000000000000000000000123';
-
-		$this->assetEquals($expected, $output);
-	}
-
-	/**
-	 * @see     Num::precision
-	 */
-	public static function test_precision($number, $precision = 3)
-	{
-		$output = Num::precision('57489.81812327');
-		$expected = '57489.818';
-
-		$this->assertEquals($expected, $output);
-	}
-
-	/**
-	 * @see     Num::percentage
-	 */
-	public static function test_percentage($number, $precision = 2)
-	{
-		$output = Num::percentage('0.45');
-		$expected = '0.45%';
-
-		$this->assertEquals($expected, $output);
-	}
-
-	/**
 	 * @see     Num::bytes
 	 */
 	public static function test_bytes($size = 0)

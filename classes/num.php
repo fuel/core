@@ -58,42 +58,6 @@ class Num {
 	}
 
 	/**
-	 * Add leading zeros to a number
-	 *
-	 * @param   integer
-	 * @param   integer
-	 * @return  string
-	 */
-	public static function zeroise($number = 0, $threshold = 1)
-	{
-		return sprintf('%0'.$threshold.'s', $number);
-	}
-
-	/**
-	 * Formats a number with a level of precision.
-	 *
-	 * @param   float     A floating point number.
-	 * @param   integer   The precision of the returned number.
-	 * @return  float
-	 */
-	public static function precision($number, $precision = 3)
-	{
-		return sprintf('%01.'.$precision.'f', $number);
-	}
-
-	/**
-	 * Formats a number into a percentage string.
-	 *
-	 * @param   float     A floating point number
-	 * @param   integer   The precision of the returned number
-	 * @return  string    Percentage string
-	 */
-	public static function percentage($number, $precision = 2)
-	{
-		return static::precision($number, $precision).'%';
-	}
-
-	/**
 	 * Converts a file size number to a byte value. File sizes are defined in
 	 * the format: SB, where S is the size (1, 8.5, 300, etc.) and B is the
 	 * byte unit (K, MiB, GB, etc.). All valid byte units are defined in
