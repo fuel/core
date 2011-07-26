@@ -138,6 +138,17 @@ class Uri {
 	}
 
 	/**
+	 * Converts the current URI segments to an associative array.  If
+	 * the URI has an odd number of segments, null will be returned.
+	 *
+	 * @return  array|null  the array or null
+	 */
+	public static function to_assoc()
+	{
+		return \Arr::to_assoc(static::segments());
+	}
+
+	/**
 	 * Returns the full uri as a string
 	 *
 	 * @return	string
