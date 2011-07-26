@@ -37,7 +37,7 @@ class Tests_Arr extends TestCase {
 			),
 		);
 	}
-	
+
 	/**
 	 * Tests Arr::assoc_to_keyval()
 	 *
@@ -457,6 +457,29 @@ class Tests_Arr extends TestCase {
 		$this->assertEquals(Arr::filter_keys($data, $keys, true), $expected_remove);
 	}
 
+	/**
+	 * Tests Arr::to_assoc()
+	 *
+	 * @test
+	 */
+	public function test_to_assoc_with_even_number_of_elements()
+	{
+		$arr = array('foo', 'bar', 'baz', 'yay');
+		$expected = array('foo' => 'bar', 'baz' => 'yay');
+		$this->assertEquals($expected, Arr::to_assoc($arr));
+	}
+
+	/**
+	 * Tests Arr::to_assoc()
+	 *
+	 * @test
+	 */
+	public function test_to_assoc_with_odd_number_of_elements()
+	{
+		$arr = array('foo', 'bar', 'baz');
+		$expected = null;
+		$this->assertEquals($expected, Arr::to_assoc($arr));
+	}
 }
 
 /* End of file arr.php */

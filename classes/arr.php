@@ -49,6 +49,33 @@ class Arr {
 	}
 
 	/**
+	 * Converts the given 1 dimensional non-associative array to an associative
+	 * array.
+	 * 
+	 * The array given must have an even number of elements or null will be returned.
+	 * 
+	 *     Arr::to_assoc(array('foo','bar'));
+	 *
+	 * @param   string      $arr  the array to change
+	 * @return  array|null  the new array or null
+	 */
+	public static function to_assoc($arr)
+	{
+		if (($count = count($arr)) % 2 > 0)
+		{
+			return null;
+		}
+		$keys = $vals = array();
+
+		for ($i = 0; $i < $count - 1; $i += 2)
+		{
+			$keys[] = array_shift($arr);
+			$vals[] = array_shift($arr);
+		}
+		return array_combine($keys, $vals);
+	}
+
+	/**
 	 * Flattens a multi-dimensional associative array down into a 1 dimensional
 	 * associative array.
 	 *
