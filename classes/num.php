@@ -212,7 +212,7 @@ class Num {
 		
 		while ((strlen($format) - 1) >= $fpos)
 		{
-			if (static::is_alphanumeric(substr($format, $fpos, 1)))
+			if (ctype_alnum(substr($format, $fpos, 1)))
 			{
 				$result .= substr($string, $spos, 1);
 				$spos++;
@@ -259,7 +259,7 @@ class Num {
 
 		while ((strlen($format) - 1) >= $fpos)
 		{
-			if (static::is_alphanumeric(substr($format, $fpos, 1)))
+			if (ctype_alnum(substr($format, $fpos, 1)))
 			{
 				$result .= substr($string, $spos, 1);
 				$spos++;
@@ -345,18 +345,6 @@ class Num {
 	{
 		is_null($format) and $format = static::$config['formatting']['credit_card'];
 		return static::mask_string($string, $format);
-	}
-
-	/**
-	 * Determines if a string has only alpha/numeric characters.
-	 *
-	 * @param   string     the string to check as alpha/numeric
-	 * @return  boolean
-	 * @see     ctype_alnum
-	 */
-	public static function is_alphanumeric($string)
-	{
-		return ctype_alnum($string);
 	}
 }
 
