@@ -159,9 +159,10 @@ class Fuel {
 		\Event::register('shutdown', 'Fuel::finish');
 
 		//Load in the packages
-		foreach (\Config::get('always_load.packages', array()) as $package)
+		foreach (\Config::get('always_load.packages', array()) as $package => $path)
 		{
-			static::add_package($package);
+			is_string($package) and $path = array($package => $path);
+			static::add_package($path);
 		}
 
 		// Load in the routes
