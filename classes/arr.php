@@ -22,6 +22,60 @@ namespace Fuel\Core;
 class Arr {
 
 	/**
+	 * Converts a multi-dimensional associative array into an array of key => values with the provided field names
+	 *
+	 * @param   array   the array to convert
+	 * @param   string	the field name of the key field
+	 * @param   string	the field name of the value field
+	 * @return  array
+	 */
+	public static function assoc_to_keyval($assoc = null, $key_field = null, $val_field = null)
+	{
+		if(empty($assoc) OR empty($key_field) OR empty($val_field))
+		{
+			return null;
+		}
+
+		$output = array();
+		foreach($assoc as $row)
+		{
+			if(isset($row[$key_field]) AND isset($row[$val_field]))
+			{
+				$output[$row[$key_field]] = $row[$val_field];
+			}
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Converts the given 1 dimensional non-associative array to an associative
+	 * array.
+	 * 
+	 * The array given must have an even number of elements or null will be returned.
+	 * 
+	 *     Arr::to_assoc(array('foo','bar'));
+	 *
+	 * @param   string      $arr  the array to change
+	 * @return  array|null  the new array or null
+	 */
+	public static function to_assoc($arr)
+	{
+		if (($count = count($arr)) % 2 > 0)
+		{
+			return null;
+		}
+		$keys = $vals = array();
+
+		for ($i = 0; $i < $count - 1; $i += 2)
+		{
+			$keys[] = array_shift($arr);
+			$vals[] = array_shift($arr);
+		}
+		return array_combine($keys, $vals);
+	}
+
+	/**
 	 * Flattens a multi-dimensional associative array down into a 1 dimensional
 	 * associative array.
 	 *
@@ -326,6 +380,55 @@ class Arr {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Merge 2 arrays recursively, differs in 2 important ways from array_merge_recursive()
+	 * - When there's 2 different values and not both arrays, the latter value overwrites the earlier
+	 *   instead of merging both into an array
+	 * - Numeric keys that don't conflict aren't changed, only when a numeric key already exists is the
+	 *   value added using array_push()
+	 *
+	 * @param   array  multiple variables all of which must be arrays
+	 * @return  array
+	 * @throws  \InvalidArgumentException
+	 */
+	public static function merge()
+	{
+		$array  = func_get_arg(0);
+		$arrays = array_slice(func_get_args(), 1);
+
+		if ( ! is_array($array))
+		{
+			throw new \InvalidArgumentException('Arr::merge() - all arguments must be arrays.');
+		}
+
+		foreach ($arrays as $arr)
+		{
+			if ( ! is_array($arr))
+			{
+				throw new \InvalidArgumentException('Arr::merge() - all arguments must be arrays.');
+			}
+
+			foreach ($arr as $k => $v)
+			{
+				// numeric keys are appended
+				if (is_int($k))
+				{
+					array_key_exists($k, $array) ? array_push($array, $v) : $array[$k] = $v;
+				}
+				elseif (is_array($v) and array_key_exists($k, $array) and is_array($array[$k]))
+				{
+					$array[$k] = static::merge($array[$k], $v);
+				}
+				else
+				{
+					$array[$k] = $v;
+				}
+			}
+		}
+
+		return $array;
 	}
 
 }

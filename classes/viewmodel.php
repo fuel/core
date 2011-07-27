@@ -41,7 +41,7 @@ abstract class ViewModel {
 		{
 			if ( ! class_exists($class = $viewmodel))
 			{
-				throw new \OutOfBoundsException('ViewModel could not be found.');
+				throw new \OutOfBoundsException('ViewModel "View_'.ucfirst(str_replace(DS, '_', $viewmodel)).'" could not be found.');
 			}
 		}
 

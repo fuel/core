@@ -39,6 +39,40 @@ class Tests_Arr extends TestCase {
 	}
 
 	/**
+	 * Tests Arr::assoc_to_keyval()
+	 *
+	 * @test
+	 */
+	public function test_assoc_to_keyval()
+	{
+		$assoc = array(
+			array(
+				'color' => 'red',
+				'rank' => 4,
+				'name' => 'Apple',
+				),
+			array(
+				'color' => 'yellow',
+				'rank' => 3,
+				'name' => 'Banana',
+				),
+			array(
+				'color' => 'purple',
+				'rank' => 2,
+				'name' => 'Grape',
+				),
+			);
+		
+		$expected = array(
+			'red' => 'Apple',
+			'yellow' => 'Banana',
+			'purple' => 'Grape',
+			);
+		$output = Arr::assoc_to_keyval($assoc, 'color', 'name');
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
 	 * Tests Arr::element()
 	 *
 	 * @test
@@ -141,7 +175,7 @@ class Tests_Arr extends TestCase {
 	 *
 	 * @test
 	 * @dataProvider person_provider
-	 * @expectedException Fuel_Exception
+	 * @expectedException InvalidArgumentException
 	 */
 	public function test_elements_throws_exception_when_keys_is_not_an_array($person)
 	{
@@ -300,11 +334,11 @@ class Tests_Arr extends TestCase {
 	 * Tests Arr::sort()
 	 *
 	 * @test
-	 * @expectedException Fuel_Exception
+	 * @expectedException InvalidArgumentException
 	 */
 	public function test_sort_of_non_array()
 	{
-		Arr::sort('not an array', 'foo.key');
+		$sorted = Arr::sort('not an array', 'foo.key');
 	}
 
 	public function sort_provider()
@@ -392,7 +426,7 @@ class Tests_Arr extends TestCase {
 	 *
 	 * @test
 	 * @dataProvider sort_provider
-	 * @expectedException Fuel_Exception
+	 * @expectedException InvalidArgumentException
 	 */
 	public function test_sort_invalid_direction($data, $expected)
 	{
@@ -423,6 +457,29 @@ class Tests_Arr extends TestCase {
 		$this->assertEquals(Arr::filter_keys($data, $keys, true), $expected_remove);
 	}
 
+	/**
+	 * Tests Arr::to_assoc()
+	 *
+	 * @test
+	 */
+	public function test_to_assoc_with_even_number_of_elements()
+	{
+		$arr = array('foo', 'bar', 'baz', 'yay');
+		$expected = array('foo' => 'bar', 'baz' => 'yay');
+		$this->assertEquals($expected, Arr::to_assoc($arr));
+	}
+
+	/**
+	 * Tests Arr::to_assoc()
+	 *
+	 * @test
+	 */
+	public function test_to_assoc_with_odd_number_of_elements()
+	{
+		$arr = array('foo', 'bar', 'baz');
+		$expected = null;
+		$this->assertEquals($expected, Arr::to_assoc($arr));
+	}
 }
 
 /* End of file arr.php */

@@ -14,6 +14,12 @@ namespace Fuel\Core;
 
 
 /**
+ * When this is thrown and not caught, the Errors class will call \Request::show_404()
+ */
+class Request404Exception extends \Fuel_Exception {}
+
+
+/**
  * The Request class is used to create and manage new and existing requests.  There
  * is a main request which comes in from the browser or command line, then new
  * requests can be created for HMVC requests.
@@ -43,13 +49,6 @@ class Request {
 	protected static $active = false;
 
 	/**
-	 * Holds the previous request
-	 *
-	 * @var  Request
-	 */
-	protected static $previous = false;
-
-	/**
 	 * Generates a new request.  The request is then set to be the active
 	 * request.  If this is the first request, then save that as the main
 	 * request for the app.
@@ -66,20 +65,19 @@ class Request {
 	{
 		logger(Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
-		if (static::$active)
-		{
-			static::$previous = static::$active;
-		}
+		$request = new static($uri, $route);
+		$request->parent = static::$active;
+		static::$active->children[] = $request;
 
-		static::$active = new static($uri, $route);
+		static::$active = $request;
 
 		if ( ! static::$main)
 		{
 			logger(Fuel::L_INFO, 'Setting main Request', __METHOD__);
-			static::$main = static::$active;
+			static::$main = $request;
 		}
 
-		return static::$active;
+		return $request;
 	}
 
 	/**
@@ -146,7 +144,7 @@ class Request {
 		else
 		{
 			// third call, there's something seriously wrong now
-			throw new \Fuel_Exception('It appears your _404_ route is incorrect.  Multiple Recursion has happened.');
+			exit('It appears your _404_ route is incorrect.  Multiple Recursion has happened.');
 		}
 
 		if (\Config::get('routes._404_') === null)
@@ -187,10 +185,10 @@ class Request {
 	 */
 	public static function reset_request()
 	{
-		// Let's make the previous Request active since we are don't executing this one.
-		if (static::$previous)
+		// Let's make the previous Request active since we are done executing this one.
+		if (static::$active->parent())
 		{
-			static::$active = static::$previous;
+			static::$active = static::$active->parent();
 		}
 	}
 
@@ -273,6 +271,20 @@ class Request {
 	public $paths = array();
 
 	/**
+	 * Request that created this one
+	 *
+	 * @var  Request
+	 */
+	protected $parent = null;
+
+	/**
+	 * Requests created by this request
+	 *
+	 * @var  array
+	 */
+	protected $children = array();
+
+	/**
 	 * Creates the new Request object by getting a new URI object, then parsing
 	 * the uri with the Route class.
 	 *
@@ -291,11 +303,37 @@ class Request {
 		// check if a module was requested
 		if (count($this->uri->segments) and $modpath = \Fuel::module_exists($this->uri->segments[0]))
 		{
-			// check if the module has custom routes
+			// check if the module has routes
 			if (file_exists($modpath .= 'config/routes.php'))
 			{
-				// load and add the routes
-				\Config::load(\Fuel::load($modpath), 'routes');
+				// load and add the module routes
+				$modroutes = \Config::load(\Fuel::load($modpath), $this->uri->segments[0] . '_routes');
+				foreach ($modroutes as $name => $modroute)
+				{
+					switch ($name)
+					{
+						case '_root_':
+							// map the root to the module default controller/method
+							$name = $this->uri->segments[0];
+						break;
+
+						case '_404_':
+							// do not touch the 404 route
+						break;
+
+						default:
+							// prefix the route with the module name if it isn't done yet
+							if (strpos($name, $this->uri->segments[0].'/') !== 0 and $name != $this->uri->segments[0])
+							{
+								$name = $this->uri->segments[0].'/'.$name;
+							}
+						break;
+					}
+
+					\Config::set('routes.' . $name, $modroute);
+				}
+
+				// update the loaded list of routes
 				\Router::add(\Config::get('routes'));
 			}
 		}
@@ -304,7 +342,7 @@ class Request {
 
 		if ( ! $this->route)
 		{
-			return false;
+			return;
 		}
 
 		if ($this->route->module !== null)
@@ -336,29 +374,27 @@ class Request {
 
 		if ( ! $this->route)
 		{
-			$this->response = static::show_404(true);
 			static::reset_request();
-			return $this;
+			throw new \Request404Exception();
 		}
 
 		$controller_prefix = '\\'.($this->module ? ucfirst($this->module).'\\' : '').'Controller_';
 		$method_prefix = 'action_';
 
 		$class = $controller_prefix.($this->directory ? ucfirst($this->directory).'_' : '').ucfirst($this->controller);
-		$method = $this->action;
 
 		// If the class doesn't exist then 404
 		if ( ! class_exists($class))
 		{
-			$this->response = static::show_404(true);
 			static::reset_request();
-			return $this;
+			throw new \Request404Exception();
 		}
 
 		logger(Fuel::L_INFO, 'Loading controller '.$class, __METHOD__);
 		$this->controller_instance = $controller = new $class($this, new \Response);
 
-		$method = $method_prefix.($method ?: (property_exists($controller, 'default_action') ? $controller->default_action : 'index'));
+		$this->action = $this->action ?: (property_exists($controller, 'default_action') ? $controller->default_action : 'index');
+		$method = $method_prefix.$this->action;
 
 
 		// Allow to do in controller routing if method router(action, params) exists
@@ -392,7 +428,7 @@ class Request {
 		}
 		else
 		{
-			$this->response = static::show_404(true);
+			throw new \Request404Exception();
 		}
 
 		static::reset_request();
@@ -411,6 +447,26 @@ class Request {
 	public function response()
 	{
 		return $this->response;
+	}
+
+	/**
+	 * Returns the Request that created this one
+	 *
+	 * @return  Request|null
+	 */
+	public function parent()
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * Returns an array of Requests created by this one
+	 *
+	 * @return  array
+	 */
+	public function children()
+	{
+		return $this->children;
 	}
 
 	/**

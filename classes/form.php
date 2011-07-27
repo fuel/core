@@ -488,7 +488,9 @@ class Form {
 		unset($attributes['options']);
 
 		// Get the selected options then unset it from the array
-		$selected = ! isset($attributes['selected']) ? array() : array_values((array) $attributes['selected']);
+		// and make sure they're all strings to avoid type conversions
+		$selected = ! isset($attributes['selected']) ? array() : array_map( function($a) { return (string) $a; }, array_values((array) $attributes['selected']));
+
 		unset($attributes['selected']);
 
 		$input = PHP_EOL;
@@ -500,7 +502,7 @@ class Form {
 				foreach ($val as $opt_key => $opt_val)
 				{
 					$opt_attr = array('value' => $opt_key);
-					(in_array($opt_key, $selected)) && $opt_attr[] = 'selected';
+					(in_array((string)$opt_key, $selected, TRUE)) && $opt_attr[] = 'selected';
 					$optgroup .= str_repeat("\t", 2);
 					$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
 						static::prep_value($opt_attr['value']) : $opt_attr['value'];
@@ -512,7 +514,7 @@ class Form {
 			else
 			{
 				$opt_attr = array('value' => $key);
-				(in_array($key, $selected)) && $opt_attr[] = 'selected';
+				(in_array((string)$key, $selected, TRUE)) && $opt_attr[] = 'selected';
 				$input .= str_repeat("\t", 1);
 				$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
 					static::prep_value($opt_attr['value']) : $opt_attr['value'];
@@ -760,8 +762,9 @@ class Form {
 
 		if (is_array($build_field))
 		{
+			$label = $field->label ? static::label($field->label) : '';
 			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t\t{group_label}\n {fields}\t\t\t{label} {field}{fields}');
-			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Du', $template, $match) > 0)
+			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
 				foreach ($build_field as $lbl => $bf)
@@ -771,7 +774,7 @@ class Form {
 					$bf_temp = str_replace('{field}', $bf, $bf_temp);
 					$build_fields .= $bf_temp;
 				}
-				
+
 				$template = str_replace($match[0], '{fields}', $template);
 				$template = str_replace(array('{group_label}', '{required}', '{fields}'), array($label, $required_mark, $build_fields), $template);
 
@@ -796,6 +799,7 @@ class Form {
 	{
 		$this->add(\Config::get('security.csrf_token_key', 'fuel_csrf_token'), 'CSRF Token')
 			->set_type('hidden')
+			->set_value(\Security::fetch_token())
 			->add_rule(array('Security', 'check_token'));
 
 		return $this;
@@ -899,7 +903,7 @@ class Form {
 	 */
 	public function add_model($class, $instance = null, $method = 'set_form_fields')
 	{
-		$this->fieldset->add_model($class);
+		$this->fieldset->add_model($class, $instance, $method);
 
 		return $this;
 	}

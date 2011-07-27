@@ -9,6 +9,16 @@
  * @copyright	2010 - 2011 Fuel Development Team
  */
 
+/**
+ * NOTICE:
+ *
+ * If you need to make modifications to the default configuration, copy
+ * this file to your app/config folder, and make them in there.
+ *
+ * This will allow you to upgrade fuel without losing your custom config.
+ */
+
+
 return array(
 
 	/*
@@ -25,7 +35,15 @@ return array(
 	|	Default: APPPATH.'migrations/'
 	|
 	*/
-	'path' => APPPATH.'migrations/'
+	'path' => APPPATH.'migrations/',
+
+	/*
+	| Table name
+	|
+	|	Default: 'migration'
+	|
+	*/
+	'table' => 'migration',
 
 );
 

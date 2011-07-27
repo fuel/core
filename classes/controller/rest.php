@@ -13,6 +13,11 @@ abstract class Controller_Rest extends \Controller {
 	 * @var  array  contains a list of method properties such as limit, log and level
 	 */
 	protected $methods = array();
+	
+	/**
+	 * @var  string  the detected response format
+	 */
+	protected $format = null;
 
 	/**
 	 * @var  array  List all supported methods
@@ -21,6 +26,7 @@ abstract class Controller_Rest extends \Controller {
 		'xml' => 'application/xml',
 		'rawxml' => 'application/xml',
 		'json' => 'application/json',
+		'jsonp' => 'application/javascript',
 		'serialized' => 'application/vnd.php.serialized',
 		'php' => 'text/plain',
 		'html' => 'text/html',
@@ -68,12 +74,12 @@ abstract class Controller_Rest extends \Controller {
 			// Remove the extension from arguments too
 			$resource = preg_replace($pattern, '', $resource);
 
-			$this->request->format = $matches[1];
+			$this->format = $matches[1];
 		}
 		else
 		{
 			// Which format should the data be returned in?
-			$this->request->format = $this->_detect_format();
+			$this->format = $this->_detect_format();
 		}
 
 		// If they call user, go to $this->post_user();
@@ -110,12 +116,12 @@ abstract class Controller_Rest extends \Controller {
 		$this->response->status = $http_code;
 
 		// If the format method exists, call and return the output in that format
-		if (method_exists('Format', 'to_'.$this->request->format))
+		if (method_exists('Format', 'to_'.$this->format))
 		{
 			// Set the correct format header
-			$this->response->set_header('Content-Type', $this->_supported_formats[$this->request->format]);
+			$this->response->set_header('Content-Type', $this->_supported_formats[$this->format]);
 
-			$this->response->body(Format::factory($data)->{'to_'.$this->request->format}());
+			$this->response->body(Format::factory($data)->{'to_'.$this->format}());
 		}
 
 		// Format not supported, output directly

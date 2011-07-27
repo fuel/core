@@ -50,12 +50,14 @@ class Uri {
 		{
 			$uri = $_SERVER['PATH_INFO'];
 		}
-		elseif (isset($_SERVER['ORIG_PATH_INFO']) and ! empty($_SERVER['ORIG_PATH_INFO']))
+		// Only use ORIG_PATH_INFO if it contains the path
+		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
 		{
-			$uri = $_SERVER['ORIG_PATH_INFO'];
+			$uri = $path;
 		}
 		else
 		{
+			// Fall back to parsing the REQUEST URI
 			if (isset($_SERVER['REQUEST_URI']))
 			{
 				// Some servers require 'index.php?' as the index page
@@ -103,6 +105,10 @@ class Uri {
 			}
 		}
 
+		// Strip the defined url suffix from the uri if needed
+		$ext = \Config::get('url_suffix');
+		strrchr($uri, '.') === $ext and $uri = substr($uri,0,-strlen($ext));
+
 		// Do some final clean up of the uri
 		static::$detected_uri = str_replace(array('//', '../'), '/', $uri);
 
@@ -132,6 +138,17 @@ class Uri {
 	}
 
 	/**
+	 * Converts the current URI segments to an associative array.  If
+	 * the URI has an odd number of segments, null will be returned.
+	 *
+	 * @return  array|null  the array or null
+	 */
+	public static function to_assoc()
+	{
+		return \Arr::to_assoc(static::segments());
+	}
+
+	/**
 	 * Returns the full uri as a string
 	 *
 	 * @return	string
@@ -149,14 +166,21 @@ class Uri {
 	 */
 	public static function create($uri = null, $variables = array(), $get_variables = array())
 	{
-		$url = \Config::get('base_url');
+		$url = '';
 
-		if (\Config::get('index_file'))
+		if(!preg_match("/^(http|https|ftp):\/\//i", $uri))
 		{
-			$url .= \Config::get('index_file').'/';
+			$url .= \Config::get('base_url');
+
+			if (\Config::get('index_file'))
+			{
+				$url .= \Config::get('index_file').'/';
+			}
 		}
 
 		$url = $url.ltrim(is_null($uri) ? static::string() : $uri, '/');
+
+		substr($url, -1) != '/' and $url .= \Config::get('url_suffix');
 
 		if ( ! empty($get_variables))
 		{

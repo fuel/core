@@ -84,6 +84,8 @@ class Fuel {
 	public static $is_cli = false;
 	public static $is_test = false;
 
+	public static $volatile_paths = array();
+
 	protected static $_paths = array();
 
 	protected static $packages = array();
@@ -99,7 +101,7 @@ class Fuel {
 	public static function init($config)
 	{
 		\Config::load($config);
-	
+
 		if (static::$initialized)
 		{
 			throw new \Fuel_Exception("You can't initialize Fuel more than once.");
@@ -136,7 +138,7 @@ class Fuel {
 		// set the encoding and locale to use
 		static::$encoding = \Config::get('encoding', static::$encoding);
 		static::$locale = \Config::get('locale', static::$locale);
-		
+
 		static::$_paths = array(APPPATH, COREPATH);
 
 		if ( ! static::$is_cli)
@@ -153,21 +155,22 @@ class Fuel {
 		\Security::clean_input();
 
 		static::$env = \Config::get('environment');
-		
+
 		\Event::register('shutdown', 'Fuel::finish');
 
 		//Load in the packages
-		foreach (\Config::get('always_load.packages', array()) as $package)
+		foreach (\Config::get('always_load.packages', array()) as $package => $path)
 		{
-			static::add_package($package);
+			is_string($package) and $path = array($package => $path);
+			static::add_package($path);
 		}
 
 		// Load in the routes
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
-		// Set some server options
-		setlocale(LC_ALL, static::$locale);
+		// Set  locale
+		static::$locale and setlocale(LC_ALL, static::$locale);
 
 		// Always load classes, config & language set in always_load.php config
 		static::always_load();
@@ -228,20 +231,19 @@ class Fuel {
 	 */
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
+		// absolute path requested?
+		if (strpos($file, '/') === 0 or strpos($file, ':') === 1)
+		{
+			return is_file($file) ? $file : false;
+		}
+
 		$cache_id = '';
 		$paths = array();
 
 		$found = $multiple ? array() : false;
 
-		// absolute path requested?
-		if (strpos($file, '/') === 0 or strpos($file, ':') === 1)
-		{
-			$cache_id = $file;
-			$found = file_exists($file);
-		}
-
 		// the file requested namespaced?
-		elseif($pos = strripos($file, '::'))
+		if($pos = strripos($file, '::'))
 		{
 			// get the namespace path
 			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
@@ -269,12 +271,16 @@ class Fuel {
 			}
 		}
 
+		$paths = array_merge(static::$volatile_paths, $paths);
+
 		$path = $directory.DS.strtolower($file).$ext;
 
 		$cache_id = md5(($multiple ? 'M.' : 'S.').$cache_id);
 
 		if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
 		{
+			static::$volatile_paths = array();
+
 			return static::$path_cache[$cache_id.$path];
 		}
 
@@ -299,6 +305,8 @@ class Fuel {
 			$cache and static::$path_cache[$cache_id.$path] = $found;
 			static::$paths_changed = true;
 		}
+
+		static::$volatile_paths = array();
 
 		return $found;
 	}
@@ -450,22 +458,26 @@ class Fuel {
 		{
 			$paths = \Config::get('module_paths', array());
 
-			if (empty($paths))
+			if ( ! empty($paths))
 			{
-				return false;
+				foreach ($paths as $modpath)
+				{
+					if (is_dir($mod_check_path = $modpath.strtolower($name).DS))
+					{
+						$path = $mod_check_path;
+						$ns = '\\'.ucfirst($name);
+						\Autoloader::add_namespaces(array(
+							$ns	=> $path.'classes'.DS,
+						), true);
+						break;
+					}
+				}
 			}
 
-			foreach ($paths as $modpath)
+			// throw an exception if a non-existent module has been added
+			if ( ! isset($ns))
 			{
-				if (is_dir($mod_check_path = $modpath.strtolower($name).DS))
-				{
-					$path = $mod_check_path;
-					$ns = '\\'.ucfirst($name);
-					\Autoloader::add_namespaces(array(
-						$ns					=> $path.'classes'.DS,
-					), true);
-					break;
-				}
+				throw new \Fuel_Exception('Trying to add a non-existent module "'.$name.'"');
 			}
 		}
 		else
@@ -474,6 +486,12 @@ class Fuel {
 			$path = substr($path,0, -8);
 		}
 
+		// Load in the routes if they exist
+		if (is_file($path.'config'.DS.'routes.php'))
+		{
+			\Router::add(include($path.'config'.DS.'routes.php'));
+		}
+		
 		return $path;
 	}
 

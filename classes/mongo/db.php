@@ -12,9 +12,7 @@
  * @link		http://fuelphp.com
  */
 
-
-class MongoDbException extends Fuel_Exception {}
-
+namespace Fuel\Core;
 
 /**
  * This code is based on Redisent, a Redis interface for the modest.
@@ -28,9 +26,11 @@ class MongoDbException extends Fuel_Exception {}
  * @license 	http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-namespace Fuel\Core;
 
-class MongoDb {
+class Mongo_DbException extends Fuel_Exception {}
+
+
+class Mongo_Db {
 
 	protected $db;
 	protected $persist = false;
@@ -56,7 +56,7 @@ class MongoDb {
 		}
 		if ( ! ($config = \Config::get('db.mongo.'.$name)))
 		{
-			throw new \MongoDbException('Invalid instance name given.');
+			throw new \Mongo_DbException('Invalid instance name given.');
 		}
 
 		static::$instances[$name] = new static($config);
@@ -79,7 +79,7 @@ class MongoDb {
 	{
 		if ( ! class_exists('Mongo'))
 		{
-			throw new \MongoDbException("The MongoDB PECL extension has not been installed or enabled");
+			throw new \Mongo_DbException("The MongoDB PECL extension has not been installed or enabled");
 		}
 
 		// Build up a connect options array for mongo
@@ -94,12 +94,12 @@ class MongoDb {
 
 		if (empty($config['hostname']))
 		{
-			throw new \MongoDbException("The host must be set to connect to MongoDB");
+			throw new \Mongo_DbException("The host must be set to connect to MongoDB");
 		}
 
 		if (empty($config['database']))
 		{
-			throw new \MongoDbException("The database must be set to connect to MongoDB");
+			throw new \Mongo_DbException("The database must be set to connect to MongoDB");
 		}
 
 		if ( ! empty($config['username']) and ! empty($config['password']))
@@ -127,7 +127,7 @@ class MongoDb {
 		}
 		catch (\MongoConnectionException $e)
 		{
-			throw new \MongoDbException("Unable to connect to MongoDB: {$e->getMessage()}");
+			throw new \Mongo_DbException("Unable to connect to MongoDB: {$e->getMessage()}");
 		}
 	}
 
@@ -148,19 +148,19 @@ class MongoDb {
 	{
 		if (empty($database))
 		{
-			throw new \MongoDbException('Failed to drop MongoDB database because name is empty');
+			throw new \Mongo_DbException('Failed to drop MongoDB database because name is empty');
 		}
 
 		else
 		{
 			try
 			{
-				$this->connection->{$database}->drop(); // @TODO : can't work, $this in static context
+				static::instance()->connection->{$database}->drop();
 				return true;
 			}
 			catch (\Exception $e)
 			{
-				throw new \MongoDbException("Unable to drop Mongo database `{$database}`: {$e->getMessage()}");
+				throw new \Mongo_DbException("Unable to drop Mongo database `{$database}`: {$e->getMessage()}");
 			}
 
 		}
@@ -178,24 +178,24 @@ class MongoDb {
 	{
 		if (empty($db))
 		{
-			throw new \MongoDbException('Failed to drop MongoDB collection because database name is empty');
+			throw new \Mongo_DbException('Failed to drop MongoDB collection because database name is empty');
 		}
 
 		if (empty($col))
 		{
-			throw new \MongoDbException('Failed to drop MongoDB collection because collection name is empty');
+			throw new \Mongo_DbException('Failed to drop MongoDB collection because collection name is empty');
 		}
 
 		else
 		{
 			try
 			{
-				$this->connection->{$db}->{$col}->drop();  // @TODO : can't work, $this in static context
+				static::instance()->connection->{$db}->{$col}->drop();
 				return true;
 			}
 			catch (\Exception $e)
 			{
-				throw new \MongoDbException("Unable to drop Mongo collection `{$col}`: {$e->getMessage()}");
+				throw new \Mongo_DbException("Unable to drop Mongo collection `{$col}`: {$e->getMessage()}");
 			}
 		}
 	}
@@ -606,7 +606,7 @@ class MongoDb {
 	 {
 		if (empty($collection))
 		{
-			throw new \MongoDbException("In order to retreive documents from MongoDB");
+			throw new \Mongo_DbException("In order to retreive documents from MongoDB");
 		}
 
 		$results = array();
@@ -639,7 +639,7 @@ class MongoDb {
 	public function count($collection = "") {
 		if (empty($collection))
 		{
-			throw new \MongoDbException("In order to retreive a count of documents from MongoDB");
+			throw new \Mongo_DbException("In order to retreive a count of documents from MongoDB");
 		}
 
 		$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count();
@@ -660,12 +660,12 @@ class MongoDb {
 	{
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection selected to insert into");
 		}
 
 		if (count($insert) == 0 || !is_array($insert))
 		{
-			throw new \MongoDbException("Nothing to insert into Mongo collection or insert is not an array");
+			throw new \Mongo_DbException("Nothing to insert into Mongo collection or insert is not an array");
 		}
 
 		try
@@ -682,7 +682,7 @@ class MongoDb {
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \MongoDbException("Insert of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Insert of data into MongoDB failed: {$e->getMessage()}");
 		}
 	}
 
@@ -699,12 +699,12 @@ class MongoDb {
 	{
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection selected to update");
+			throw new \Mongo_DbException("No Mongo collection selected to update");
 		}
 
 		if (count($data) == 0 || ! is_array($data))
 		{
-			throw new \MongoDbException("Nothing to update in Mongo collection or update is not an array");
+			throw new \Mongo_DbException("Nothing to update in Mongo collection or update is not an array");
 		}
 
 		try
@@ -716,7 +716,7 @@ class MongoDb {
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \MongoDbException("Update of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Update of data into MongoDB failed: {$e->getMessage()}");
 		}
 
 	}
@@ -734,12 +734,12 @@ class MongoDb {
 	{
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection selected to update");
+			throw new \Mongo_DbException("No Mongo collection selected to update");
 		}
 
 		if (count($data) == 0 || ! is_array($data))
 		{
-			throw new \MongoDbException("Nothing to update in Mongo collection or update is not an array");
+			throw new \Mongo_DbException("Nothing to update in Mongo collection or update is not an array");
 		}
 
 		try
@@ -750,7 +750,7 @@ class MongoDb {
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \MongoDbException("Update of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Update of data into MongoDB failed: {$e->getMessage()}");
 		}
 	}
 
@@ -767,7 +767,7 @@ class MongoDb {
 	{
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection selected to delete from");
+			throw new \Mongo_DbException("No Mongo collection selected to delete from");
 		}
 
 		try
@@ -778,7 +778,7 @@ class MongoDb {
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \MongoDbException("Delete of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Delete of data into MongoDB failed: {$e->getMessage()}");
 		}
 
 	}
@@ -796,7 +796,7 @@ class MongoDb {
 	 {
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection selected to delete from");
+			throw new \Mongo_DbException("No Mongo collection selected to delete from");
 		}
 
 		try
@@ -807,7 +807,7 @@ class MongoDb {
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \MongoDbException("Delete of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Delete of data into MongoDB failed: {$e->getMessage()}");
 		}
 
 	}
@@ -832,7 +832,7 @@ class MongoDb {
 
 		catch (\MongoCursorException $e)
 		{
-			throw new \MongoDbException("MongoDB command failed to execute: {$e->getMessage()}");
+			throw new \Mongo_DbException("MongoDB command failed to execute: {$e->getMessage()}");
 		}
 	}
 
@@ -851,12 +851,12 @@ class MongoDb {
 	{
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection specified to add index to");
+			throw new \Mongo_DbException("No Mongo collection specified to add index to");
 		}
 
 		if (empty($keys) || ! is_array($keys))
 		{
-			throw new \MongoDbException("Index could not be created to MongoDB Collection because no keys were specified");
+			throw new \Mongo_DbException("Index could not be created to MongoDB Collection because no keys were specified");
 		}
 
 		foreach ($keys as $col => $val)
@@ -878,7 +878,7 @@ class MongoDb {
 		}
 		else
 		{
-			throw new \MongoDbException("An error occured when trying to add an index to MongoDB Collection");
+			throw new \Mongo_DbException("An error occured when trying to add an index to MongoDB Collection");
 		}
 	}
 
@@ -897,22 +897,22 @@ class MongoDb {
 	{
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection specified to remove index from");
+			throw new \Mongo_DbException("No Mongo collection specified to remove index from");
 		}
 
 		if (empty($keys) || ! is_array($keys))
 		{
-			throw new \MongoDbException("Index could not be removed from MongoDB Collection because no keys were specified");
+			throw new \Mongo_DbException("Index could not be removed from MongoDB Collection because no keys were specified");
 		}
 
-		if ($this->db->{$collection}->deleteIndex($keys, $options) == TRUE)  // @TODO : can't work, $options is undefined
+		if ($this->db->{$collection}->deleteIndex($keys) == TRUE)
 		{
 			$this->_clear();
 			return $this;
 		}
 		else
 		{
-			throw new \MongoDbException("An error occured when trying to remove an index from MongoDB Collection");
+			throw new \Mongo_DbException("An error occured when trying to remove an index from MongoDB Collection");
 		}
 	}
 
@@ -929,7 +929,7 @@ class MongoDb {
 	{
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection specified to remove all indexes from");
+			throw new \Mongo_DbException("No Mongo collection specified to remove all indexes from");
 		}
 		$this->db->{$collection}->deleteIndexes();
 		$this->_clear();
@@ -949,7 +949,7 @@ class MongoDb {
 	{
 		if (empty($collection))
 		{
-			throw new \MongoDbException("No Mongo collection specified to remove all indexes from");
+			throw new \Mongo_DbException("No Mongo collection specified to remove all indexes from");
 		}
 
 		return ($this->db->{$collection}->getIndexInfo());

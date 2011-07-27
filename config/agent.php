@@ -10,6 +10,16 @@
  * @link       http://fuelphp.com
  */
 
+/**
+ * NOTICE:
+ *
+ * If you need to make modifications to the default configuration, copy
+ * this file to your app/config folder, and make them in there.
+ *
+ * This will allow you to upgrade fuel without losing your custom config.
+ */
+
+
 return array(
 
 	/**
@@ -30,7 +40,8 @@ return array(
 		/**
 		 * Location from where the updated browscap file can be downloaded.
 		 */
-		'url' => 'http://browsers.garykeith.com/stream.asp?BrowsCapINI',
+		'url' => 'http://browsers.garykeith.com/stream.asp?Lite_PHP_BrowsCapINI',	// only major browsers and search engines
+//		'url' => 'http://browsers.garykeith.com/stream.asp?BrowsCapINI',			// complete file, approx. 4 times the lite version
 
 		/**
 		 * Method used to download the updated browscap file
