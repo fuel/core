@@ -364,7 +364,7 @@ class Fieldset_Field
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
-		return $this->fieldset->add($name, $label, $attributes, $rules);
+		return $this->fieldset()->add($name, $label, $attributes, $rules);
 	}
 
 	/**
@@ -372,7 +372,7 @@ class Fieldset_Field
 	 */
 	public function build()
 	{
-		return $this->fieldset->form()->build_field($this);
+		return $this->fieldset()->form()->build_field($this);
 	}
 
 	/**
@@ -380,7 +380,7 @@ class Fieldset_Field
 	 */
 	public function input()
 	{
-		return $this->fieldset->validation()->input($this->name);
+		return $this->fieldset()->validation()->input($this->name);
 	}
 
 	/**
@@ -388,7 +388,7 @@ class Fieldset_Field
 	 */
 	public function validated()
 	{
-		return $this->fieldset->validation->validated($this->name);
+		return $this->fieldset()->validation()->validated($this->name);
 	}
 
 	/**
@@ -396,7 +396,7 @@ class Fieldset_Field
 	 */
 	public function error()
 	{
-		return $this->fieldset->validation()->error($this->name);
+		return $this->fieldset()->validation()->error($this->name);
 	}
 }
 
