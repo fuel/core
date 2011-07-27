@@ -82,7 +82,7 @@ class Validation_Error extends \Exception {
 		}
 
 		// only parse when there's tags in the message
-		return $open.(strpos(':', $msg) !== false ? $msg : $this->_replace_tags($msg)).$close;
+		return $open.(strpos($msg, ':') === false ? $msg : $this->_replace_tags($msg)).$close;
 	}
 
 	protected function _replace_tags($msg)
