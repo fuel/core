@@ -237,9 +237,9 @@ class Format {
 		}else if(\Input::get('callback')){
 			$cb = \Input::get('callback');
 		}else{
-			$cb = 'callback';
+			$cb = 'response';
 		}
-		return 'var '.$cb.' = '.$json;
+		return $cb.'('.$json.')';
 	}
 
 	/**
