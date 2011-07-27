@@ -396,7 +396,7 @@ class Fieldset_Field
 	 */
 	public function error()
 	{
-		return $this->fieldset()->validation()->error($this->name);
+		return $this->fieldset()->validation()->errors($this->name);
 	}
 }
 
