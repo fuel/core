@@ -224,6 +224,25 @@ class Format {
 	}
 
 	/**
+	 * To JSONP conversion
+	 *
+	 * @param   mixed  $data
+	 * @return  string
+	 */
+	public function to_jsonp($data = null)
+	{
+		$json = $this->to_json($data);
+		if(\Input::post('callback')){
+			$cb = \Input::post('callback');
+		}else if(\Input::get('callback')){
+			$cb = \Input::get('callback');
+		}else{
+			$cb = 'callback';
+		}
+		return 'var '.$cb.' = '.$json;
+	}
+
+	/**
 	 * Serialize
 	 *
 	 * @param   mixed  $data
