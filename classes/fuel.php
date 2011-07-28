@@ -485,12 +485,6 @@ class Fuel {
 			// strip the classes directory, we need the module root
 			$path = substr($path,0, -8);
 		}
-
-		// Load in the routes if they exist
-		if (is_file($path.'config'.DS.'routes.php'))
-		{
-			\Router::add(include($path.'config'.DS.'routes.php'));
-		}
 		
 		return $path;
 	}
