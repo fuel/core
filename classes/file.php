@@ -432,8 +432,8 @@ class File {
 	 */
 	public static function copy($path, $new_path, $area = null)
 	{
-		$path = static::instance($area)->get_path($path);
-		$new_path = static::instance($area)->get_path($new_path);
+		$path      = static::instance($area)->get_path($path);
+		$new_path  = static::instance($area)->get_path($new_path);
 
 		if ( ! is_file($path))
 		{
@@ -443,9 +443,7 @@ class File {
 		{
 			throw new \FileAccessException('Cannot copy file: new path already exists.');
 		}
-		$return = copy($path, $new_path);
-
-		return $return;
+		return copy($path, $new_path);
 	}
 
 	/**
@@ -459,12 +457,12 @@ class File {
 	 */
 	public static function copy_dir($path, $new_path, $area = null)
 	{
-		$path     = rtrim(static::instance($area)->get_path($path), '\\/').DS;
-		$new_path = rtrim(static::instance($area)->get_path($new_path), '\\/').DS;
+		$path      = rtrim(static::instance($area)->get_path($path), '\\/').DS;
+		$new_path  = rtrim(static::instance($area)->get_path($new_path), '\\/').DS;
 
 		if ( ! is_dir($path))
 		{
-			throw new \InvalidPathException('Cannot copy directory: given path is not a directory.');
+			throw new \InvalidPathException('Cannot copy directory: given path is not a directory: '.$path);
 		}
 		elseif ( ! file_exists($new_path))
 		{
@@ -477,8 +475,8 @@ class File {
 		{
 			if (is_array($file))
 			{
-				$check = static::create_dir($new_path.$path.DS, $dir, fileperms($path.$dir.DS) ?: 0777, $area);
-				$check and $check = static::copy_dir($path.$dir.DS, $new_path.$dir.DS, $area);
+				$check = static::create_dir($new_path.DS, $dir, fileperms($path.$dir.DS) ?: 0777, $area);
+				$check and static::copy_dir($path.$dir.DS, $new_path.$dir.DS, $area);
 			}
 			else
 			{
@@ -486,7 +484,7 @@ class File {
 			}
 
 			// abort if something went wrong
-			if ($check)
+			if ( ! $check)
 			{
 				throw new \FileAccessException('Directory copy aborted prematurely, part of the operation failed during copying: '.(is_array($file) ? $dir : $file));
 			}
