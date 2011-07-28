@@ -453,7 +453,7 @@ class File {
 	/**
 	 * Copy directory
 	 *
-	 * @param	string					path to directory to copy
+	 * @param	string					path to directory which contents will be copied
 	 * @param	string					new base directory (full path)
 	 * @param	string|File_Area|null	file area name, object or null for non-specific
 	 * @return	bool
@@ -468,18 +468,19 @@ class File {
 		{
 			throw new \InvalidPathException('Cannot copy directory: given path is not a directory.');
 		}
-		elseif (file_exists($new_path))
+		elseif ( ! file_exists($new_path))
 		{
-			throw new \FileAccessException('Cannot copy directory: new path already exists.');
+			$newpath_dirname = pathinfo($new_path, PATHINFO_DIRNAME);
+			static::create_dir($newpath_dirname, pathinfo($new_path, PATHINFO_BASENAME), fileperms($newpath_dirname) ?: 0777, $area);
 		}
 
 		$files = static::read_dir($path, -1, array(), $area);
-		foreach ($files as $file)
+		foreach ($files as $dir => $file)
 		{
 			if (is_array($file))
 			{
-				$check = static::create_dir($new_path.$path.DS, $file, fileperms($path.$file.DS) ?: 0777, $area);
-				$check and static::copy_dir($path.$file.DS, $new_path.$file.DS, $area);
+				$check = static::create_dir($new_path.$path.DS, $dir, fileperms($path.$dir.DS) ?: 0777, $area);
+				$check and static::copy_dir($path.$dir.DS, $new_path.$dir.DS, $area);
 			}
 			else
 			{
