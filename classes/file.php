@@ -478,7 +478,7 @@ class File {
 			if (is_array($file))
 			{
 				$check = static::create_dir($new_path.$path.DS, $dir, fileperms($path.$dir.DS) ?: 0777, $area);
-				$check and static::copy_dir($path.$dir.DS, $new_path.$dir.DS, $area);
+				$check and $check = static::copy_dir($path.$dir.DS, $new_path.$dir.DS, $area);
 			}
 			else
 			{
@@ -488,7 +488,7 @@ class File {
 			// abort if something went wrong
 			if ($check)
 			{
-				throw new \FileAccessException('Directory copy aborted prematurely, part of the operation failed.');
+				throw new \FileAccessException('Directory copy aborted prematurely, part of the operation failed during copying: '.(is_array($file) ? $dir : $file));
 			}
 		}
 	}
