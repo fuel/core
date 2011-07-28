@@ -673,6 +673,12 @@ class Form {
 			}
 		}
 
+		// Add IDs when auto-id is on
+		if ($this->get_config('auto_id', false) === true and $field->get_attribute('id') == '')
+		{
+			$field->set_attribute('id', $this->get_config('auto_id_prefix', '').$field->name);
+		}
+
 		switch($field->type)
 		{
 			case 'hidden':
@@ -697,11 +703,7 @@ class Form {
 							$attributes['checked'] = 'checked';
 						}
 
-						if (empty($attributes['id']) && $this->get_config('auto_id', false) == true)
-						{
-							$attributes['id'] = $this->get_config('auto_id_prefix', '').$field->name.'_'.$i;
-						}
-						elseif( ! empty($attributes['id']))
+						if( ! empty($attributes['id']))
 						{
 							$attributes['id'] .= '_'.$i;
 						}
