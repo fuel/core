@@ -470,7 +470,7 @@ class Form {
 		{
 			$attributes = $field;
 
-			if(!isset($attributes['selected']) or empty($attributes['selected']))
+			if ( ! isset($attributes['selected']))
 			{
 				$attributes['selected'] = ! isset($attributes['value']) ? null : $attributes['value'];
 			}
