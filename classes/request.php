@@ -400,7 +400,7 @@ class Request {
 		// Allow override of method params from execute
 		if (is_array($method_params))
 		{
-			$this->method_params = $method_params;
+			$this->method_params = array_merge($this->method_params, $method_params);
 		}
 
 		// Allow to do in controller routing if method router(action, params) exists
