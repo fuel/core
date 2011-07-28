@@ -470,7 +470,11 @@ class Form {
 		if (is_array($field))
 		{
 			$attributes = $field;
-			$attributes['selected'] = ! isset($attributes['value']) ? null : $attributes['value'];
+
+			if ( ! isset($attributes['selected']))
+			{
+				$attributes['selected'] = ! isset($attributes['value']) ? null : $attributes['value'];
+			}
 		}
 		else
 		{
