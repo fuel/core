@@ -366,6 +366,7 @@ class Form {
 		else
 		{
 			$attributes['name'] = (string) $field;
+			$value = isset($value) ? $value :  $attributes['name'];
 		}
 
 		return html_tag('button', static::attr_to_string($attributes), $value);
