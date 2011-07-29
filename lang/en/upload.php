@@ -19,4 +19,5 @@ return array(
 	\Upload::UPLOAD_ERR_MAX_FILENAME_LENGTH		=> 'The uploaded file name exceeds the defined maximum length',
 	\Upload::UPLOAD_ERR_MOVE_FAILED				=> 'Unable to move the uploaded file to it\'s final destination',
 	\Upload::UPLOAD_ERR_DUPLICATE_FILE 			=> 'A file with the name of the uploaded file already exists',
+	\Upload::UPLOAD_ERR_MKDIR_FAILED			=> 'Unable to create the file\'s destination directory',
 );
