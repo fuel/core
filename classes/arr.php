@@ -51,9 +51,9 @@ class Arr {
 	/**
 	 * Converts the given 1 dimensional non-associative array to an associative
 	 * array.
-	 * 
+	 *
 	 * The array given must have an even number of elements or null will be returned.
-	 * 
+	 *
 	 *     Arr::to_assoc(array('foo','bar'));
 	 *
 	 * @param   string      $arr  the array to change
@@ -82,9 +82,10 @@ class Arr {
 	 * @param   array   the array to flatten
 	 * @param   string  what to glue the keys together with
 	 * @param   bool    whether to reset and start over on a new array
+	 * @param   bool    whether to flatten only associative array's, or also indexed ones
 	 * @return  array
 	 */
-	public static function flatten_assoc($array, $glue = ':', $reset = true)
+	public static function flatten($array, $glue = ':', $reset = true, $indexed = true)
 	{
 		static $return = array();
 		static $curr_key = array();
@@ -98,7 +99,7 @@ class Arr {
 		foreach ($array as $key => $val)
 		{
 			$curr_key[] = $key;
-			if (is_array($val) and array_values($val) !== $val)
+			if (is_array($val) and ($indexed or array_values($val) !== $val))
 			{
 				static::flatten_assoc($val, $glue, false);
 			}
@@ -109,6 +110,20 @@ class Arr {
 			array_pop($curr_key);
 		}
 		return $return;
+	}
+
+	/**
+	 * Flattens a multi-dimensional associative array down into a 1 dimensional
+	 * associative array.
+	 *
+	 * @param   array   the array to flatten
+	 * @param   string  what to glue the keys together with
+	 * @param   bool    whether to reset and start over on a new array
+	 * @return  array
+	 */
+	public static function flatten_assoc($array, $glue = ':', $reset = true)
+	{
+		return static::flatten($array, $glue, $reset, false);
 	}
 
 	/**

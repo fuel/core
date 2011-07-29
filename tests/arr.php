@@ -62,7 +62,7 @@ class Tests_Arr extends TestCase {
 				'name' => 'Grape',
 				),
 			);
-		
+
 		$expected = array(
 			'red' => 'Apple',
 			'yellow' => 'Banana',
@@ -180,6 +180,25 @@ class Tests_Arr extends TestCase {
 	public function test_elements_throws_exception_when_keys_is_not_an_array($person)
 	{
 		$output = Arr::elements($person, 'name', 'Unknown');
+	}
+
+	/**
+	 * Tests Arr::flatten()
+	 *
+	 * @test
+	 */
+	public function test_flatten()
+	{
+		$indexed = array ( array('a'), array('b'), array('c') );
+
+		$expected = array(
+			"0_0" => "a",
+			"1_0" => "b",
+			"2_0" => "c",
+		);
+
+		$output = Arr::flatten($indexed, '_');
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -435,7 +454,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::filter_keys()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_filter_keys()
