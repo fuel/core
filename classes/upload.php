@@ -125,7 +125,7 @@ class Upload {
 		// make sure we have defaults for those not defined
 		static::$config = array_merge(static::$_defaults, \Config::get('upload', array()));
 
-		static::$config['auto_process'] and self::process();
+		static::$config['auto_process'] and static::process();
 	}
 
 	// ---------------------------------------------------------------------------
