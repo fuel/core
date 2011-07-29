@@ -156,8 +156,9 @@ class Request {
 				return $response;
 			}
 
+			\Event::shutdown();
+
 			$response->send(true);
-			exit;
 		}
 		else
 		{
@@ -168,9 +169,14 @@ class Request {
 				return $request->response;
 			}
 
+			\Event::shutdown();
+
 			$request->response->send(true);
-			exit;
 		}
+
+		\Fuel::finish();
+
+		exit;
 	}
 
 	/**
