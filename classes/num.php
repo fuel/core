@@ -133,7 +133,7 @@ class Num {
 		{
 			if (doubleval($bytes) >= $mag)
 			{
-				return static::precision($bytes / $mag, $decimals).' '.$unit;
+				return sprintf('%01.'.$decimals.'f', ($bytes / $mag)).' '.$unit;
 			}
 		}
 
