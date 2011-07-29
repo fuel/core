@@ -20,10 +20,15 @@ namespace Fuel\Core;
  */
 class Test_Format extends TestCase {
 	
-	protected static $data = array(
-		array('field1' => 'Value 1', 'field2' => 35, 'field3' => 123123),
-		array('field1' => 'Value 1', 'field2' => "Value\nline 2", 'field3' => 'Value 3'),
-	);
+	protected $data;
+	    
+	protected function setUp()
+	{
+		$this->data = array(
+			array('field1' => 'Value 1', 'field2' => 35, 'field3' => 123123),
+			array('field1' => 'Value 1', 'field2' => "Value\nline 2", 'field3' => 'Value 3'),
+		);
+	}
 	
 	/**
 	 * Test for Format::factory($foo, 'csv')->to_array()
@@ -37,7 +42,7 @@ class Test_Format extends TestCase {
 "Value 1","Value
 line 2","Value 3"';
 
-		$this->assertEquals(static::$data, Format::factory($csv, 'csv')->to_array());
+		$this->assertEquals($this->data, Format::factory($csv, 'csv')->to_array());
 	 
 	}
 	
@@ -53,6 +58,6 @@ line 2","Value 3"';
 "Value 1","Value
 line 2","Value 3"';
 		
-		$this->assertEquals($csv, Format::factory(static::$data)->to_csv());
+		$this->assertEquals($csv, Format::factory($this->data)->to_csv());
 	}
 }
