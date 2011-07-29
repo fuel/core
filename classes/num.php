@@ -162,17 +162,17 @@ class Num {
 			{
 				case ($num >= 1000 && $num < 1000000):
 				{
-					return static::precision(static::precision($num, 0) / 1000, $decimals).'K';
+					return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000)).'K';
 				}
 				break;
 				case ($num >= 1000000 && $num < 1000000000):
 				{
-					return static::precision(static::precision($num, 0) / 1000000, $decimals).'M';
+					return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000)).'K';
 				}
 				break;
 				case ($num >= 1000000000):
 				{
-					return static::precision(static::precision($num, 0) / 1000000000, $decimals).'B';
+					return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000000)).'K';
 				}
 				break;
 				default:
