@@ -190,7 +190,7 @@ class File_Area {
 			throw new \LogicException('File operation not allowed: cannot create file url whithout a basedir and file outside DOCROOT.');
 		}
 
-		return rtrim($this->url, '/').'/'.ltrim(substr($path, strlen($basedir)),'/');
+		return rtrim($this->url, '/').'/'.ltrim(str_replace(DS, '/', substr($path, strlen($basedir))),'/');
 	}
 
 	/* -------------------------------------------------------------------------------------
