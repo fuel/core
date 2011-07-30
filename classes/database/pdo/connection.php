@@ -182,7 +182,7 @@ class Database_PDO_Connection extends \Database_Connection {
 		else
 		{
 			// Return the number of rows affected
-			return $result->rowCount();
+			return $result->errorCode() === '00000' ? $result->rowCount() : -1;
 		}
 	}
 

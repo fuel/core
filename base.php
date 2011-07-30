@@ -39,16 +39,12 @@ if ( ! function_exists('logger'))
 		! class_exists('Fuel\\Core\\Log') and import('log');
 		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
 
-		if (Config::get('profiling'))
-		{
-			\Console::log($method.' - '.$msg);
-		}
 		if ($level > \Config::get('log_threshold'))
 		{
 			return false;
 		}
 
-		\Log::write($level, $msg, $method);
+		return \Log::write($level, $msg, $method);
 	}
 }
 
@@ -202,4 +198,4 @@ if ( ! function_exists('fuel_error_handler'))
 	}
 }
 
-/* End of file base.php */
+

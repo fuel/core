@@ -141,12 +141,7 @@ class Tests_Html extends TestCase {
 	 */
 	public function test_anchor()
 	{
-		$index_url = \Config::get('index_file', '');
-		
-		if (!empty($index_url))
-		{
-			$index_url .= '/';
-		}
+		$index_url = Uri::create('');
 		
 		// External uri
 		$output = Html::anchor('http://google.com', 'Go to Google');
@@ -178,12 +173,7 @@ class Tests_Html extends TestCase {
 	 */
 	public function test_img()
 	{
-		$index_url = \Config::get('index_file', '');
-		
-		if (!empty($index_url))
-		{
-			$index_url .= '/';
-		}
+		$index_url = Uri::create('');
 		
 		// Internal uri
 		$output = Html::img('image.png');
@@ -318,4 +308,4 @@ class Tests_Html extends TestCase {
 	}
 }
 
-/* End of file html.php */
+

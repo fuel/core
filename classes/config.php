@@ -37,9 +37,10 @@ class Config {
 			$paths = array_reverse($paths);
 			foreach ($paths as $path)
 			{
-				$config = \Fuel::load($path) + $config;
+				$config = array_merge($config, \Fuel::load($path));
 			}
 		}
+
 		if ($group === null)
 		{
 			static::$items = $reload ? $config : static::$items + $config;
@@ -51,7 +52,7 @@ class Config {
 			{
 				static::$items[$group] = array();
 			}
-			static::$items[$group] = static::$items[$group] + $config;
+			static::$items[$group] = array_merge(static::$items[$group],$config);
 		}
 
 		if ( ! is_array($file))
@@ -115,7 +116,7 @@ CONF;
 		$content .= <<<CONF
 
 
-/* End of file $file.php */
+
 CONF;
 
 		// make sure we have a fallback
@@ -232,4 +233,4 @@ CONF;
 	}
 }
 
-/* End of file config.php */
+

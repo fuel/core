@@ -32,7 +32,7 @@ class DBUtil {
 	public static function create_database($database, $charset = null)
 	{
 		$charset = static::process_charset($charset, true);
-		return DB::query('CREATE DATABASE '.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
+		return \DB::query('CREATE DATABASE '.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
 	}
 
 	/**
@@ -44,7 +44,7 @@ class DBUtil {
 	 */
 	public static function drop_database($database)
 	{
-		return DB::query('DROP DATABASE '.DB::quote_identifier($database), \DB::DELETE)->execute();
+		return \DB::query('DROP DATABASE '.DB::quote_identifier($database), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -56,7 +56,7 @@ class DBUtil {
 	 */
 	public static function drop_table($table)
 	{
-		return DB::query('DROP TABLE IF EXISTS '.DB::quote_identifier(DB::table_prefix($table)), \DB::DELETE)->execute();
+		return \DB::query('DROP TABLE IF EXISTS '.DB::quote_identifier(DB::table_prefix($table)), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -69,7 +69,7 @@ class DBUtil {
 	 */
 	public static function rename_table($table, $new_table_name)
 	{
-		return DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
+		return \DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
 	}
 
 	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null)
@@ -78,21 +78,21 @@ class DBUtil {
 
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$sql .= DB::quote_identifier(DB::table_prefix($table)).' (';
+		$sql .= \DB::quote_identifier(DB::table_prefix($table)).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{
-			$key_name = DB::quote_identifier(implode('_', $primary_keys));
-			$primary_keys = DB::quote_identifier($primary_keys);
+			$key_name = \DB::quote_identifier(implode('_', $primary_keys));
+			$primary_keys = \DB::quote_identifier($primary_keys);
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
 		$sql .= static::process_charset($charset, true).";";
 
-		return DB::query($sql, DB::UPDATE)->execute();
+		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
-		
+
 	/**
 	 * Adds fields to a table a table.  Will throw a Database_Exception if it cannot.
 	 *
@@ -118,7 +118,7 @@ class DBUtil {
 	{
 		return static::alter_fields('CHANGE', $table, $fields);
 	}
-	
+
 	/**
 	 * Drops fields from a table a table.  Will throw a Database_Exception if it cannot.
 	 *
@@ -134,7 +134,7 @@ class DBUtil {
 
 	protected static function alter_fields($type, $table, $fields)
 	{
-		$sql = 'ALTER TABLE '.DB::quote_identifier(DB::table_prefix($table)).' ';
+		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' ';
 		if ($type === 'DROP')
 		{
 			if( ! is_array($fields))
@@ -142,14 +142,14 @@ class DBUtil {
 				$fields = array($fields);
 			}
 			$fields = array_map(function($field){
-				return 'DROP '.DB::quote_identifier($field);
+				return 'DROP '.\DB::quote_identifier($field);
 			}, $fields);
 			$sql .= implode(', ', $fields);
 		} else {
 		  $sql .= $type.' ';
 			$sql .= '('.static::process_fields($fields).')';
 		}
-		return DB::query($sql, DB::UPDATE)->execute();
+		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
 
 	protected static function process_fields($fields)
@@ -161,8 +161,8 @@ class DBUtil {
 			$sql = "\n\t";
 			$attr = array_change_key_case($attr, CASE_UPPER);
 
-			$sql .= DB::quote_identifier($field);
-			$sql .= array_key_exists('NAME', $attr) ? ' '.DB::quote_identifier($attr['NAME']).' ' : '';
+			$sql .= \DB::quote_identifier($field);
+			$sql .= array_key_exists('NAME', $attr) ? ' '.\DB::quote_identifier($attr['NAME']).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
 			$sql .= array_key_exists('CONSTRAINT', $attr) ? '('.$attr['CONSTRAINT'].')' : '';
 			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET']) : '';
@@ -172,8 +172,8 @@ class DBUtil {
 				$sql .= ' UNSIGNED';
 			}
 
-			$sql .= array_key_exists('DEFAULT', $attr) ? ' DEFAULT '. (($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : DB::escape($attr['DEFAULT'])) : '';
-			$sql .= array_key_exists('NULL', $attr) ? (($attr['NULL'] === true) ? ' NULL' : ' NOT NULL') : '';
+			$sql .= array_key_exists('DEFAULT', $attr) ? ' DEFAULT '. (($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT'])) : '';
+			$sql .= (array_key_exists('NULL', $attr) && ($attr['NULL'] === true)) ? ' NULL' : ' NOT NULL';
 
 			if (array_key_exists('AUTO_INCREMENT', $attr) and $attr['AUTO_INCREMENT'] === true)
 			{
@@ -184,7 +184,7 @@ class DBUtil {
 
 		return \implode(',', $sql_fields);
 	}
-	
+
 	/**
 	 * Formats the default charset.
 	 *
@@ -194,12 +194,12 @@ class DBUtil {
 	 */
 	protected static function process_charset($charset = null, $is_default = false)
 	{
-		$charset or $charset = Config::get('db.'.Config::get('environment').'.charset', null);
+		$charset or $charset = \Config::get('db.'.\Config::get('environment').'.charset', null);
 		if(empty($charset))
 		{
 			return '';
 		}
-		
+
 		if(($pos = stripos($charset, '_')) !== false)
 		{
 			$charset = ' CHARACTER SET '.substr($charset, 0, $pos).' COLLATE '.$charset;
@@ -208,9 +208,9 @@ class DBUtil {
 		{
 			$charset = ' CHARACTER SET '.$charset;
 		}
-		
+
 		$is_default and $charset = ' DEFAULT'.$charset;
-		
+
 		return $charset;
 	}
 
@@ -223,7 +223,7 @@ class DBUtil {
 	 */
 	public static function truncate_table($table)
 	{
-		return DB::query('TRUNCATE TABLE '.DB::quote_identifier(DB::table_prefix($table)), \DB::DELETE)->execute();
+		return \DB::query('TRUNCATE TABLE '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -279,7 +279,7 @@ class DBUtil {
 	 */
 	protected static function table_maintenance($operation, $table)
 	{
-		$result = \DB::query($operation.' '.\DB::quote_identifier(DB::table_prefix($table)), \DB::SELECT)->execute();
+		$result = \DB::query($operation.' '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::SELECT)->execute();
 		$type = $result->get('Msg_type');
 		$message = $result->get('Msg_text');
 		$table = $result->get('Table');
@@ -298,7 +298,7 @@ class DBUtil {
 		}
 		return false;
 	}
-	
+
 	/*
 	 * Load the db config, the Database_Connection might not have fired jet.
 	 *
@@ -310,4 +310,3 @@ class DBUtil {
 
 }
 
-/* End of file dbutil.php */

@@ -1,13 +1,30 @@
 <?php
 /**
- * Image config for use with the image package.
+ * Fuel is a fast, lightweight, community driven PHP5 framework.
+ *
+ * @package    Fuel
+ * @version    1.0
+ * @author     Dudeami, https://github.com/dudeami
+ * @license    MIT License
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com
  */
+
+/**
+ * NOTICE:
+ *
+ * If you need to make modifications to the default configuration, copy
+ * this file to your app/config folder, and make them in there.
+ *
+ * This will allow you to upgrade fuel without losing your custom config.
+ */
+
 
 return array(
 	/**
 	 * The driver to be used. Currently gd or imagemagick
 	 */
-	'driver' => 'imagemagick',
+	'driver' => 'gd',
 
 	/**
 	 * Sets the background color of the image.
@@ -36,12 +53,12 @@ return array(
 	/**
 	 * The install location of the imagemagick executables.
 	 */
-	'imagemagick_dir' => 'C:/wamp/imagemagick/',
+	'imagemagick_dir' => '/usr/bin/',
 
 	/**
 	 * Temporary directory to store image files in that are being edited.
 	 */
-	'temp_dir' => 'C:/wamp/tmp/',
+	'temp_dir' => APPPATH.'tmp'.DS,
 
 	/**
 	 * The string of text to append to the image.
@@ -62,7 +79,7 @@ return array(
 	 * Used to debug the class, defaults to false.
 	 */
 	'debug' => false,
-	
+
 	/**
 	 * These presets allow you to call controlled manipulations.
 	 */
@@ -74,7 +91,7 @@ return array(
 		 *
 		 * Note that config values here override the current configuration.
 		 *
-		 * Libraries cannot be changed in here. (TODO - Add this feature)
+		 * Driver cannot be changed in here.
 		 */
 		'example' => array(
 			'quality' => 100,
@@ -89,4 +106,4 @@ return array(
 	)
 );
 
-/* End of file image.php */
+

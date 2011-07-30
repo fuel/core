@@ -87,12 +87,6 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Database_Mysqli_Connection'     => COREPATH.'classes/database/mysqli/connection.php',
 	'Fuel\\Core\\Database_MySQLi_Result'         => COREPATH.'classes/database/mysqli/result.php',
 
-	'Fuel\\Core\\Email'           => COREPATH.'classes/email.php',
-	'Fuel\\Core\\Email_Driver'    => COREPATH.'classes/email/driver.php',
-	'Fuel\\Core\\Email_Mail'      => COREPATH.'classes/email/mail.php',
-	'Fuel\\Core\\Email_Sendmail'  => COREPATH.'classes/email/sendmail.php',
-	'Fuel\\Core\\Email_Smtp'      => COREPATH.'classes/email/smtp.php',
-
 	'Fuel\\Core\\Fuel_Exception'  => COREPATH.'classes/fuel/exception.php',
 
 	'Fuel\\Core\\Date'    => COREPATH.'classes/date.php',
@@ -135,13 +129,14 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Migrate'    => COREPATH.'classes/migrate.php',
 	'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
 
-	'Fuel\\Core\\MongoDb'           => COREPATH.'classes/mongodb.php',
-	'Fuel\\Core\\MongoDbException'  => COREPATH.'classes/mongodb.php',
+	'Fuel\\Core\\Mongo_Db'           => COREPATH.'classes/mongo/db.php',
+	'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
 
-	'Fuel\\Core\\Output'      => COREPATH.'classes/output.php',
-	'Fuel\\Core\\Pagination'  => COREPATH.'classes/pagination.php',
-	'Fuel\\Core\\Profiler'    => COREPATH.'classes/profiler.php',
-	'Fuel\\Core\\Request'     => COREPATH.'classes/request.php',
+	'Fuel\\Core\\Output'               => COREPATH.'classes/output.php',
+	'Fuel\\Core\\Pagination'           => COREPATH.'classes/pagination.php',
+	'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
+	'Fuel\\Core\\Request'              => COREPATH.'classes/request.php',
+	'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
 
 	'Fuel\\Core\\Redis'            => COREPATH.'classes/redis.php',
 	'Fuel\\Core\\Redis_Exception'  => COREPATH.'classes/redis/exception.php',
@@ -172,4 +167,4 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\ViewModel'  => COREPATH.'classes/viewmodel.php',
 ));
 
-/* End of file bootstrap.php */
+

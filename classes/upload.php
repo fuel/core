@@ -47,6 +47,7 @@ class Upload {
 	const UPLOAD_ERR_MAX_FILENAME_LENGTH	= 108;
 	const UPLOAD_ERR_MOVE_FAILED			= 109;
 	const UPLOAD_ERR_DUPLICATE_FILE 		= 110;
+	const UPLOAD_ERR_MKDIR_FAILED			= 111;
 
 	/* ---------------------------------------------------------------------------
 	 * STATIC PROPERTIES
@@ -119,10 +120,13 @@ class Upload {
 		// get the config for this upload
 		\Config::load('upload', true);
 
+		// get the language file for this upload
+		\Lang::load('upload', true);
+
 		// make sure we have defaults for those not defined
 		static::$config = array_merge(static::$_defaults, \Config::get('upload', array()));
 
-		static::$config['auto_process'] and self::process();
+		static::$config['auto_process'] and static::process();
 	}
 
 	// ---------------------------------------------------------------------------
@@ -367,6 +371,9 @@ class Upload {
 
 			// update the valid flag
 			static::$valid = (static::$valid or ($files[$key]['error'] === 0));
+
+			// and add the message text
+			static::$files[$key]['message'] = \Lang::line('upload.'.static::$files[$key]['error']);
 		}
 	}
 
@@ -553,18 +560,31 @@ class Upload {
 							static::$files[$key]['error'] = $result;
 						}
 					}
+
+					// recheck the saved_to path, it might have been altered
+					if ( ! is_dir(static::$files[$key]['saved_to']) and (bool) static::$config['create_path'])
+					{
+						$oldumask = umask(0);
+						@mkdir(static::$files[$key]['saved_to'], static::$config['path_chmod'], true);
+						umask($oldumask);
+					}
+					if ( ! is_dir(static::$files[$key]['saved_to']))
+					{
+						static::$files[$key]['error'] = static::UPLOAD_ERR_MKDIR_FAILED;
+						continue;
+					}
 				}
 
 				// move the uploaded file
 				if (static::$files[$key]['error'] == UPLOAD_ERR_OK)
 				{
-					if( ! @move_uploaded_file($file['file'], $path.$save_as) )
+					if( ! @move_uploaded_file($file['file'], static::$files[$key]['saved_to'].static::$files[$key]['saved_as']) )
 					{
 						static::$files[$key]['error'] = static::UPLOAD_ERR_MOVE_FAILED;
 					}
 					else
 					{
-						@chmod($path.$save_as, static::$config['file_chmod']);
+						@chmod(static::$files[$key]['saved_to'].static::$files[$key]['saved_as'], static::$config['file_chmod']);
 					}
 
 					// after callback defined?
@@ -591,4 +611,4 @@ class Upload {
 
 }
 
-/* End of file upload.php */
+

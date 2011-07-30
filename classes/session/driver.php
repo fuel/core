@@ -541,7 +541,7 @@ abstract class Session_Driver {
 			{
 				// session has expired
 			}
-			elseif ($this->config['match_ip'] && $cookie[0]['ip_address'] !== \Input::real_ip())
+			elseif ($this->config['match_ip'] && $cookie[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
 			{
 				// IP address doesn't match
 			}
@@ -737,4 +737,4 @@ abstract class Session_Driver {
 
 }
 
-/* End of file driver.php */
+

@@ -16,7 +16,7 @@ namespace Fuel\Core;
 
 // --------------------------------------------------------------------
 
-class Session_Cookie extends Session_Driver {
+class Session_Cookie extends \Session_Driver {
 
 	/**
 	 * array of driver config defaults
@@ -30,7 +30,7 @@ class Session_Cookie extends Session_Driver {
 	public function __construct($config = array())
 	{
 		// merge the driver config with the global config
-		$this->config = array_merge($config, is_array($config['cookie']) ? $config['cookie'] : static::$_defaults);
+		$this->config = array_merge($config, isset($config['cookie']) && is_array($config['cookie']) ? $config['cookie'] : static::$_defaults);
 
 		$this->config = $this->_validate_config($this->config);
 	}
@@ -47,7 +47,7 @@ class Session_Cookie extends Session_Driver {
 	{
 		// create a new session
 		$this->keys['session_id']	= $this->_new_session_id();
-		$this->keys['ip_address']	= \Input::real_ip();
+		$this->keys['ip_hash']		= md5(\Input::ip().\Input::real_ip());
 		$this->keys['user_agent']	= \Input::user_agent();
 		$this->keys['created'] 		= $this->time->get_timestamp();
 		$this->keys['updated'] 		= $this->keys['created'];
@@ -169,4 +169,4 @@ class Session_Cookie extends Session_Driver {
 	}
 }
 
-/* End of file cookie.php */
+

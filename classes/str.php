@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 /**
  * String handling with encoding support
- * 
+ *
  * PHP needs to be compiled with --enable-mbstring
  * or a fallback without encoding support is used
  */
@@ -64,22 +64,22 @@ class Str {
 	/**
 	 * Add's _1 to a string or increment the ending number to allow _2, _3, etc
 	 *
-	 * @param string $str required
-	 * @return string
+	 * @param   string  $str  required
+	 * @return  string
 	 */
-	public static function increment($str, $first = 1)
+	public static function increment($str, $first = 1, $separator = '_')
 	{
-		preg_match('/(.+)_([0-9]+)$/', $str, $match);
+		preg_match('/(.+)'.$separator.'([0-9]+)$/', $str, $match);
 
-		return isset($match[2]) ? $match[1].'_'.($match[2] + 1) : $str.'_'.$first;
+		return isset($match[2]) ? $match[1].$separator.($match[2] + 1) : $str.$separator.$first;
 	}
 
 	/**
 	 * lower
 	 *
-	 * @param string $str required
-	 * @param string $encoding default UTF-8
-	 * @return string
+	 * @param   string  $str       required
+	 * @param   string  $encoding  default UTF-8
+	 * @return  string
 	 */
 	public static function lower($str, $encoding = null)
 	{
@@ -93,9 +93,9 @@ class Str {
 	/**
 	 * upper
 	 *
-	 * @param string $str required
-	 * @param string $encoding default UTF-8
-	 * @return string
+	 * @param   string  $str       required
+	 * @param   string  $encoding  default UTF-8
+	 * @return  string
 	 */
 	public static function upper($str, $encoding = null)
 	{
@@ -108,12 +108,12 @@ class Str {
 
 	/**
 	 * lcfirst
-	 * 
+	 *
 	 * Does not strtoupper first
 	 *
-	 * @param string $str required
-	 * @param string $encoding default UTF-8
-	 * @return string 
+	 * @param   string  $str       required
+	 * @param   string  $encoding  default UTF-8
+	 * @return  string
 	 */
 	public static function lcfirst($str, $encoding = null)
 	{
@@ -129,10 +129,10 @@ class Str {
 	 * ucfirst
 	 *
 	 * Does not strtolower first
-	 * 
-	 * @param string $str required
-	 * @param string $encoding default UTF-8
-	 * @return string 
+	 *
+	 * @param   string $str       required
+	 * @param   string $encoding  default UTF-8
+	 * @return   string
 	 */
 	public static function ucfirst($str, $encoding = null)
 	{
@@ -146,15 +146,15 @@ class Str {
 
 	/**
 	 * ucwords
-	 * 
+	 *
 	 * First strtolower then ucwords
-	 * 
+	 *
 	 * ucwords normally doesn't strtolower first
 	 * but MB_CASE_TITLE does, so ucwords now too
-	 * 
-	 * @param string $str required
-	 * @param string $encoding default UTF-8
-	 * @return string 
+	 *
+	 * @param   string   $str       required
+	 * @param   string   $encoding  default UTF-8
+	 * @return  string
 	 */
 	public static function ucwords($str, $encoding = null)
 	{
@@ -164,19 +164,19 @@ class Str {
 			? mb_convert_case($str, MB_CASE_TITLE, $encoding)
 			: ucwords(strtolower($str));
 	}
-	
+
 	/**
 	  * Creates a random string of characters
 	  *
-	  * @param	string	the type of string
-	  * @param	int		the number of characters
-	  * @return string	the random string
+	  * @param   string  the type of string
+	  * @param   int     the number of characters
+	  * @return  string  the random string
 	  */
 	public static function random($type = 'alnum', $length = 16)
 	{
 		switch($type)
 		{
-			case 'basic': 
+			case 'basic':
 				return mt_rand();
 				break;
 
@@ -232,6 +232,25 @@ class Str {
 				break;
 		}
 	}
+
+	/**
+	 * Returns a closure that will alternate between the args which to return.
+	 * If you call the closure with false as the arg it will return the value without
+	 * alternating the next time.
+	 *
+	 * @return  Closure
+	 */
+	public static function alternator()
+	{
+		// the args are the values to alternate
+		$args = func_get_args();
+
+		return function ($next = true) use ($args)
+		{
+			static $i = 0;
+			return $args[($next ? $i++ : $i) % count($args)];
+		};
+	}
 }
 
-/* End of file str.php */
+

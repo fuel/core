@@ -132,4 +132,3 @@ class Tests_Date extends TestCase {
 	}
 }
 
-/* End of file DateTest.php */

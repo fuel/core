@@ -42,7 +42,7 @@ class Inflector {
 		'/(c)hild$/'               => '\1hildren',  // child
 		'/(buffal|tomat)o$/'       => '\1\2oes',    // buffalo, tomato
 		'/(bu|campu)s$/'           => '\1\2ses',    // bus, campus
-		'/(alias|status|virus)/'   => '\1es',       // alias
+		'/(alias|status|virus)$/'  => '\1es',       // alias
 		'/(octop)us$/'             => '\1i',        // octopus
 		'/(ax|cris|test)is$/'      => '\1es',       // axis, crisis
 		'/s$/'                     => 's',          // no change (compatibility)
@@ -76,7 +76,7 @@ class Inflector {
 		'/(s)tatuses$/'         => '\1\2tatus',
 		'/(c)hildren$/'         => '\1\2hild',
 		'/(n)ews$/'             => '\1\2ews',
-		'/([^u])s$/'            => '\1',
+		'/([^us])s$/'           => '\1',
 	);
 
 
@@ -226,29 +226,21 @@ class Inflector {
 	public static function friendly_title($str, $sep = '-', $lowercase = false)
 	{
 		// Allow underscore, otherwise default to dash
-		$sep = $sep != '_' ? '-' : $sep;
+		$sep = $sep === '_' ? '_' : '-';
+
+		// Remove tags
+		$str = \Security::strip_tags($str);
 
 		// Decode all entities to their simpler forms
 		$str = html_entity_decode($str, ENT_QUOTES, 'UTF-8');
 
-		$trans = array(
-			'\s+' => $sep,        // one or more spaces => seperator
-			$sep.'+' => $sep,   // multiple seperators => 1 seperator
-			$sep.'$' => '',	        // ending seperator => (nothing)
-			'^'.$sep => '',         // starting seperator => (nothing)
-			'\.+$' => '',            // ending dot => (nothing)
-			'\?' => ''                // question mark
-		);
-
-		foreach ($trans as $key => $val)
-		{
-			$str = preg_replace("#".$key."#i", $val, $str);
-		}
-
 		// Only allow 7bit characters
 		$str = static::ascii($str);
 
-		$str = \Security::strip_tags($str);
+		// Strip unwanted characters
+		$str = preg_replace("#[^a-z0-9]#i", $sep, $str);
+		$str = preg_replace("#[/_|+ -]+#", $sep, $str);
+		$str = trim($str, $sep);
 
 		if ($lowercase === true)
 		{
@@ -379,4 +371,3 @@ class Inflector {
 	}
 }
 
-/* End of file inflector.php */

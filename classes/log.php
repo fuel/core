@@ -55,6 +55,11 @@ class Log {
 	 */
 	public static function write($level, $msg, $method = null)
 	{
+		if ($level > \Config::get('log_threshold'))
+		{
+			return false;
+		}
+
 		switch ($level)
 		{
 			case \Fuel::L_ERROR:
@@ -66,6 +71,11 @@ class Log {
 			case \Fuel::L_INFO:
 				$level = 'Info';
 			break;
+		}
+
+		if (Config::get('profiling'))
+		{
+			\Console::log($method.' - '.$msg);
 		}
 
 		$filepath = \Config::get('log_path').date('Y/m').'/';
@@ -115,4 +125,4 @@ class Log {
 
 }
 
-/* End of file log.php */
+

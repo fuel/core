@@ -283,4 +283,3 @@ class Tests_Inflector extends TestCase {
 	}
 }
 
-/* End of file inflector.php */

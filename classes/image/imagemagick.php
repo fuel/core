@@ -14,7 +14,7 @@
 
 namespace Fuel\Core;
 
-class Image_Imagemagick extends Image_Driver {
+class Image_Imagemagick extends \Image_Driver {
 
 	private $image_temp = null;
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
@@ -30,7 +30,7 @@ class Image_Imagemagick extends Image_Driver {
 		{
 			do
 			{
-				$this->image_temp = substr($this->config['temp_dir'].$this->config['temp_append'].md5(time() * microtime()), 0, 32).'.png';
+				$this->image_temp = $this->config['temp_dir'].substr($this->config['temp_append'].md5(time() * microtime()), 0, 32).'.png';
 			}
 			while (file_exists($this->image_temp));
 		}
@@ -327,4 +327,3 @@ class Image_Imagemagick extends Image_Driver {
 	}
 }
 
-// End of file imagemagic.php

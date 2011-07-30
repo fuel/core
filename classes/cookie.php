@@ -41,6 +41,7 @@ class Cookie {
 	 */
 	public static function _init()
 	{
+		\Config::load('cookie', true);
 		static::$config = array_merge(static::$config, \Config::get('cookie', array()));
 	}
 
@@ -79,22 +80,15 @@ class Cookie {
 	 */
 	public static function set($name, $value, $expiration = null, $path = null, $domain = null, $secure = null, $http_only = null)
 	{
-		// If nothing is provided, use the standard amount of time
-		if ($expiration === null)
-		{
-			$expiration = static::$config['expiration'];
-		}
-		// If it's set, add the current time so we have an offset
-		else
-		{
-			$expiration = $expiration > 0 ? $expiration + time() : 0;
-		}
-
 		// use the class defaults for the other parameters if not provided
+		is_null($expiration) and $expiration = static::$config['expiration'];
 		is_null($path) and $path = static::$config['path'];
 		is_null($domain) and $domain = static::$config['domain'];
 		is_null($secure) and $secure = static::$config['secure'];
 		is_null($http_only) and $http_only = static::$config['http_only'];
+
+		// add the current time so we have an offset
+		$expiration = $expiration > 0 ? $expiration + time() : 0;
 
 		return setcookie($name, $value, $expiration, $path, $domain, $secure, $http_only);
 	}
@@ -118,4 +112,4 @@ class Cookie {
 	}
 }
 
-/* End of file cookie.php */
+

@@ -24,23 +24,19 @@ class Cache {
 
 	/**
 	 * Loads any default caching settings when available
-	 *
-	 * @access	public
 	 */
 	public static function _init()
 	{
 		\Config::load('cache', true);
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Creates a new cache instance.
 	 *
-	 * @access	public
-	 * @param	mixed			The identifier of the cache, can be anything but empty
-	 * @param	array|string	Either an array of settings or the storage driver to be used
-	 * @return	object			The new request
+	 * @access  public
+	 * @param   mixed                 The identifier of the cache, can be anything but empty
+	 * @param   array|string          Either an array of settings or the storage driver to be used
+	 * @return  Cache_Storage_Driver  The new cache object
 	 */
 	public static function factory($identifier, $config = array())
 	{
@@ -70,18 +66,15 @@ class Cache {
 		return new $class($identifier, $config);
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Front for writing the cache, ensures interchangebility of storage drivers. Actual writing
 	 * is being done by the _set() method which needs to be extended.
 	 *
-	 * @access	public
-	 * @param	mixed			The identifier of the cache, can be anything but empty
-	 * @param	mixed			The content to be cached
-	 * @param	int				The time in seconds until the cache will expire, =< 0 or null means no expiration
-	 * @param	array			Contains the identifiers of caches this one will depend on (not supported by all drivers!)
-	 * @return	object			The new request
+	 * @param   mixed  The identifier of the cache, can be anything but empty
+	 * @param   mixed  The content to be cached
+	 * @param   int    The time in seconds until the cache will expire, =< 0 or null means no expiration
+	 * @param   array  Contains the identifiers of caches this one will depend on (not supported by all drivers!)
+	 * @return  Cache_Storage_Driver  The new Cache object
 	 */
 	public static function set($identifier, $contents = null, $expiration = false, $dependencies = array())
 	{
@@ -89,25 +82,21 @@ class Cache {
 		return $cache->set($contents, $expiration, $dependencies);
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Does get() & set() in one call that takes a callback and it's arguements to generate the contents
 	 *
-	 * @access	public
-	 * @param	mixed			The identifier of the cache, can be anything but empty
-	 * @param	string|array	Valid PHP callback
-	 * @param	array 			Arguements for the above function/method
-	 * @param	int				Cache expiration in minutes
-	 * @param	array			Contains the identifiers of caches this one will depend on (not supported by all drivers!)
+	 * @param   mixed         The identifier of the cache, can be anything but empty
+	 * @param   string|array  Valid PHP callback
+	 * @param   array         Arguements for the above function/method
+	 * @param   int           Cache expiration in minutes
+	 * @param   array         Contains the identifiers of caches this one will depend on (not supported by all drivers!)
+	 * @return  mixed
 	 */
 	public static function call($identifier, $callback, $args = array(), $expiration = null, $dependencies = array())
 	{
 		$cache = static::factory($identifier);
 		return $cache->call($callback, $args, $expiration, $dependencies);
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Front for reading the cache, ensures interchangebility of storage drivers. Actual reading
@@ -123,22 +112,17 @@ class Cache {
 		return $cache->get($use_expiration);
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Frontend for deleting item from the cache, interchangable storage methods. Actual operation
 	 * handled by delete() call on storage driver class
 	 *
-	 * @param   mixed  The identifier of the cache, can be anything but empty
-	 * @return  null
+	 * @param  mixed  The identifier of the cache, can be anything but empty
 	 */
 	public static function delete($identifier)
 	{
 		$cache = static::factory($identifier);
 		return $cache->delete();
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Flushes the whole cache for a specific storage driver or just a part of it when $section is set
@@ -155,4 +139,3 @@ class Cache {
 	}
 }
 
-/* End of file cache.php */

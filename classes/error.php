@@ -13,7 +13,6 @@
 namespace Fuel\Core;
 
 
-
 class Error {
 
 	public static $levels = array(
@@ -53,13 +52,14 @@ class Error {
 			$severity = static::$levels[$last_error['type']];
 			logger(Fuel::L_ERROR, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line']);
 
+			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
 			if (\Fuel::$env != Fuel::PRODUCTION)
 			{
-				static::show_php_error(new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']));
+				static::show_php_error($error);
 			}
 			else
 			{
-				static::show_production_error();
+				static::show_production_error($error);
 			}
 
 			exit(1);
@@ -74,6 +74,11 @@ class Error {
 	 */
 	public static function exception_handler(\Exception $e)
 	{
+		if ($e instanceof Request404Exception)
+		{
+			\Request::show_404();
+		}
+
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
 		logger(Fuel::L_ERROR, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
 
@@ -83,7 +88,7 @@ class Error {
 		}
 		else
 		{
-			static::show_production_error();
+			static::show_production_error($e);
 		}
 	}
 
@@ -128,9 +133,7 @@ class Error {
 	 */
 	public static function show_php_error(\Exception $e)
 	{
-
-		$fatal = (bool)( ! in_array($e->getCode(), \Config::get('errors.continue_on')));
-
+		$fatal = (bool)( ! in_array($e->getCode(), \Config::get('errors.continue_on', array())));
 		$data = static::prepare_exception($e, $fatal);
 
 		if ($fatal)
@@ -191,7 +194,7 @@ class Error {
 	 *
 	 * @return  void
 	 */
-	public static function show_production_error()
+	public static function show_production_error(\Exception $e)
 	{
 		exit(\View::factory('errors'.DS.'production'));
 	}
@@ -231,4 +234,4 @@ class Error {
 
 }
 
-/* End of file error.php */
+

@@ -488,13 +488,59 @@ abstract class Database_Connection {
 			$table =& $value;
 		}
 
-		if (is_string($table) AND strpos($table, '.') === FALSE)
+		// deal with the sub-query objects first
+		if ($table instanceof Database_Query)
 		{
-			// Add the table prefix for tables
-			$table = $this->table_prefix().$table;
+			// Create a sub-query
+			$table = '('.$table->compile($this).')';
+		}
+		elseif (is_string($table))
+		{
+			if (strpos($table, '.') === false)
+			{
+				// Add the table prefix for tables
+				$table = $this->quote_identifier($this->table_prefix().$table);
+			}
+			else
+			{
+				// Split the identifier into the individual parts
+				$parts = explode('.', $table);
+
+				if ($prefix = $this->table_prefix())
+				{
+					// Get the offset of the table name, 2nd-to-last part
+					// This works for databases that can have 3 identifiers (Postgre)
+					if (($offset = count($parts)) == 2)
+					{
+						$offset = 1;
+					}
+					else
+					{
+						$offset = $offset - 2;
+					}
+
+					// Add the table prefix to the table name
+					$parts[$offset] = $prefix.$parts[$offset];
+				}
+
+				// Quote each of the parts
+				$table = implode('.', array_map(array($this, 'quote_identifier'), $parts));
+			}
 		}
 
-		return $this->quote_identifier($value);
+		// process the alias if present
+		if (is_array($value))
+		{
+			// Separate the column and alias
+			list ($value, $alias) = $value;
+
+			return $value.' AS '.$this->quote_identifier($alias);
+		}
+		else
+		{
+			// return the value
+			return $value;
+		}
 	}
 
 	/**

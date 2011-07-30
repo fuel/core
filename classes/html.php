@@ -128,7 +128,7 @@ class Html
 	 * @param	array	attributes for the tag
 	 * @return	string	the javascript code containg email
 	 */
-	public static function mail_to_safe($email, $text, $subject = null, $attr = array())
+	public static function mail_to_safe($email, $text = null, $subject = null, $attr = array())
 	{
 		$text or $text = str_replace('@', '[at]', $email);
 
@@ -140,10 +140,12 @@ class Html
 		$attr = ($attr == '' ? '' : ' ').$attr;
 
 		$output = '<script type="text/javascript">';
+		$output .= '(function() {';
 		$output .= 'var user = "'.$email[0].'";';
 		$output .= 'var at = "@";';
 		$output .= 'var server = "'.$email[1].'";';
 		$output .= "document.write('<a href=\"' + 'mail' + 'to:' + user + at + server + '$subject\"$attr>$text</a>');";
+		$output .= '})();';
 		$output .= '</script>';
 		return $output;
 	}
@@ -345,4 +347,3 @@ class Html
 		return $result;
 	}
 }
-/* End of file html.php */

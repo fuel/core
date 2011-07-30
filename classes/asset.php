@@ -153,7 +153,7 @@ class Asset {
 					throw new \Fuel_Exception('Could not find asset: '.$filename);
 				}
 
-				$file = static::$_asset_url.$file.(static::$_add_mtime ? '?'.filemtime($file) : '');
+				$raw or $file = static::$_asset_url.$file.(static::$_add_mtime ? '?'.filemtime($file) : '');
 			}
 			else
 			{
@@ -358,4 +358,4 @@ class Asset {
 	}
 }
 
-/* End of file asset.php */
+

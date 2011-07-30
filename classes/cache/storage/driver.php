@@ -13,56 +13,55 @@
 namespace Fuel\Core;
 
 
-
 abstract class Cache_Storage_Driver {
 
 	/**
-	 * @var array defines which class properties are gettable with get_... in the __call() method
+	 * @var  array  defines which class properties are gettable with get_... in the __call() method
 	 */
 	protected static $_gettable = array('created', 'expiration', 'dependencies', 'identifier');
 
 	/**
-	 * @var array defines which class properties are settable with set_... in the __call() method
+	 * @var  array  defines which class properties are settable with set_... in the __call() method
 	 */
 	protected static $_settable = array('expiration', 'dependencies', 'identifier');
 
 	/**
-	 * @var string name of the content handler driver
+	 * @var  string  name of the content handler driver
 	 */
 	protected $content_handler = null;
 
 	/**
-	 * @var Cache_Handler_Driver handles and formats the cache's contents
+	 * @var  Cache_Handler_Driver  handles and formats the cache's contents
 	 */
 	protected $handler_object = null;
 
 	/**
-	 * @var string the cache's name, either string or md5'd serialization of something else
+	 * @var  string  the cache's name, either string or md5'd serialization of something else
 	 */
 	protected $identifier = null;
 
 	/**
-	 * @var int timestamp of creation of the cache
+	 * @var  int  timestamp of creation of the cache
 	 */
 	protected $created = null;
 
 	/**
-	 * @var int timestamp when this cache will expire
+	 * @var  int  timestamp when this cache will expire
 	 */
 	protected $expiration = null;
 
 	/**
-	 * @var array contains identifiers of other caches this one depends on
+	 * @var  array  contains identifiers of other caches this one depends on
 	 */
 	protected $dependencies = array();
 
 	/**
-	 * @var mixed the contents of this
+	 * @var  mixed  the contents of this
 	 */
 	protected $contents = null;
 
 	/**
-	 * @var string loaded driver
+	 * @var  string  loaded driver
 	 */
 	protected $driver = null;
 
@@ -76,8 +75,7 @@ abstract class Cache_Storage_Driver {
 	 * - contents
 	 * - content_handler
 	 *
-	 * @access	protected
-	 * @return	bool success of the operation
+	 * @return  bool  success of the operation
 	 */
 	abstract protected function _get();
 
@@ -90,8 +88,6 @@ abstract class Cache_Storage_Driver {
 	 * - dependencies
 	 * - contents
 	 * - content_handler
-	 *
-	 * @access	protected
 	 */
 	abstract protected function _set();
 
@@ -99,8 +95,6 @@ abstract class Cache_Storage_Driver {
 
 	/**
 	 * Should delete this cache instance, should also run reset() afterwards
-	 *
-	 * @access	public
 	 */
 	abstract public function delete();
 
@@ -110,8 +104,7 @@ abstract class Cache_Storage_Driver {
 	 * Flushes the whole cache for a specific storage type or just a part of it when $section is set
 	 * (might not work with all storage drivers), defaults to the default storage type
 	 *
-	 * @access	public
-	 * @param	string
+	 * @param  string
 	 */
 	abstract public function delete_all($section);
 
@@ -122,8 +115,7 @@ abstract class Cache_Storage_Driver {
 	 * This is static to make it possible in the future to check dependencies from other storages then the current one,
 	 * though I don't have a clue yet how to make that possible.
 	 *
-	 * @access	protected
-	 * @return	bool either true or false on any failure
+	 * @return  bool either true or false on any failure
 	 */
 	abstract public function check_dependencies(Array $dependencies);
 
@@ -132,8 +124,8 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Default constructor, any extension should either load this first or act similar
 	 *
-	 * @param	string	the identifier for this cache
-	 * @param	array	additional config values
+	 * @param  string  the identifier for this cache
+	 * @param  array   additional config values
 	 */
 	public function __construct($identifier, $config)
 	{
@@ -151,10 +143,9 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Allows for default getting and setting
 	 *
-	 * @access	public
-	 * @param	string
-	 * @param	array
-	 * @return	void|mixed
+	 * @param   string
+	 * @param   array
+	 * @return  void|mixed
 	 */
 	public function __call($method, $args = array())
 	{
@@ -197,8 +188,8 @@ abstract class Cache_Storage_Driver {
 	 * Converts the identifier to a string when necessary:
 	 * A int is just converted to a string, all others are serialized and then md5'd
 	 *
-	 * @access	public
-	 * @param	mixed
+	 * @param   mixed
+	 * @return  string
 	 */
 	public static function stringify_identifier($identifier)
 	{
@@ -230,8 +221,6 @@ abstract class Cache_Storage_Driver {
 
 	/**
 	 * Resets all properties except for the identifier, should be run by default when a delete() is triggered
-	 *
-	 * @access public
 	 */
 	public function reset()
 	{
@@ -249,11 +238,10 @@ abstract class Cache_Storage_Driver {
 	 * Front for writing the cache, ensures interchangebility of storage engines. Actual writing
 	 * is being done by the _set() method which needs to be extended.
 	 *
-	 * @access	public
-	 * @param	mixed			The content to be cached
-	 * @param	int				The time in seconds until the cache will expire, =< 0 or null means no expiration
-	 * @param	array			Array of names on which this cache depends for
-	 * @return	object			The new request
+	 * @param   mixed                 The content to be cached
+	 * @param   int                   The time in seconds until the cache will expire, =< 0 or null means no expiration
+	 * @param   array                 Array of names on which this cache depends for
+	 * @return  Cache_Storage_Driver  The new request
 	 */
 	final public function set($contents = null, $expiration = false, $dependencies = array())
 	{
@@ -300,9 +288,8 @@ abstract class Cache_Storage_Driver {
 	 * Front for reading the cache, ensures interchangebility of storage engines. Actual reading
 	 * is being done by the _get() method which needs to be extended.
 	 *
-	 * @access	public
-	 * @param	bool
-	 * @return	mixed
+	 * @param   bool
+	 * @return  Cache_Storage_Driver
 	 */
 	final public function get($use_expiration = true)
 	{
@@ -335,11 +322,11 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Does get() & set() in one call that takes a callback and it's arguements to generate the contents
 	 *
-	 * @access	public
-	 * @param	string|array	Valid PHP callback
-	 * @param	array 			Arguements for the above function/method
-	 * @param	int				Cache expiration in minutes
-	 * @param	array			Contains the identifiers of caches this one will depend on
+	 * @param   string|array  Valid PHP callback
+	 * @param   array         Arguements for the above function/method
+	 * @param   int|null      Cache expiration in minutes
+	 * @param   array         Contains the identifiers of caches this one will depend on
+	 * @return  mixed
 	 */
 	final public function call($callback, $args = array(), $expiration = null, $dependencies = array())
 	{
@@ -347,7 +334,7 @@ abstract class Cache_Storage_Driver {
 		{
 			$this->get();
 		}
-		catch (Cache_Exception $e)
+		catch (\CacheNotFoundException $e)
 		{
 			// Create the contents
 			$contents = call_user_func_array($callback, $args);
@@ -363,9 +350,9 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Set the contents with optional handler instead of the default
 	 *
-	 * @access	public
-	 * @param	mixed
-	 * @param	string
+	 * @param   mixed
+	 * @param   string
+	 * @return  Cache_Storage_Driver
 	 */
 	public function set_contents($contents, $handler = NULL)
 	{
@@ -380,8 +367,7 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Fetches contents
 	 *
-	 * @access	public
-	 * @return	mixed
+	 * @return  mixed
 	 */
 	public function get_contents()
 	{
@@ -393,8 +379,8 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Decides a content handler that makes it possible to write non-strings to a file
 	 *
-	 * @access	protected
-	 * @param	string
+	 * @param   string
+	 * @return  Cache_Storage_Driver
 	 */
 	protected function set_content_handler($handler)
 	{
@@ -408,9 +394,8 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Gets a specific content handler
 	 *
-	 * @access	public
-	 * @param	string
-	 * @return	Cache_Handler_Driver
+	 * @param   string
+	 * @return  Cache_Handler_Driver
 	 */
 	public function get_content_handler($handler = null)
 	{
@@ -448,8 +433,7 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Converts the contents the cachable format
 	 *
-	 * @access	protected
-	 * @return	string
+	 * @return  string
 	 */
 	protected function handle_writing($contents)
 	{
@@ -461,8 +445,7 @@ abstract class Cache_Storage_Driver {
 	/**
 	 * Converts the cachable format to the original value
 	 *
-	 * @access	protected
-	 * @return	mixed
+	 * @return  mixed
 	 */
 	protected function handle_reading($contents)
 	{
@@ -470,4 +453,3 @@ abstract class Cache_Storage_Driver {
 	}
 }
 
-/* End of file driver.php */

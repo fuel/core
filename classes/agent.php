@@ -570,7 +570,7 @@ class Agent {
 					}
 					else
 					{
-						throw new \Exception('Agent class: parse error in browsecap.ini file. Unknown parent reference detected for: '.$browser);
+						unset($properties['Parent']);
 					}
 				}
 			}
@@ -587,4 +587,4 @@ class Agent {
 	}
 }
 
-/* End of file agent.php */
+

@@ -168,5 +168,3 @@ class Redis {
 	}
 
 }
-
-// End of file redis.php

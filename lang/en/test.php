@@ -15,4 +15,3 @@ return array(
 	'hello' => 'Hello there :name!'
 );
 
-/* End of file lang/en/test.php */

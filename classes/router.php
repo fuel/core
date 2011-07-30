@@ -16,6 +16,12 @@ class Router {
 
 	public static $routes = array();
 
+	/**
+	 * Add one or multiple routes
+	 *
+	 * @param  string
+	 * @param  string|array|Route  either the translation for $path, an array for verb routing or an instance of Route
+	 */
 	public static function add($path, $options = null)
 	{
 		if (is_array($path))
@@ -24,6 +30,11 @@ class Router {
 			{
 				static::add($p, $t);
 			}
+			return;
+		}
+		elseif ($options instanceof Route)
+		{
+			static::$routes[$path] = $options;
 			return;
 		}
 
@@ -120,7 +131,7 @@ class Router {
 			// does the module controller exist?
 			if (class_exists(ucfirst($match->module).'\\Controller_'.ucfirst($match->directory).'_'.ucfirst($match->controller)))
 			{
-				$match->action = count($segments) ? array_shift($segments) : 'index';
+				$match->action = count($segments) ? array_shift($segments) : null;
 				$match->method_params = $segments;
 				return $match;
 			}
@@ -135,7 +146,7 @@ class Router {
 			// does the module controller exist?
 			if (class_exists(ucfirst($match->module).'\\Controller_'.ucfirst($match->controller)))
 			{
-				$match->action = count($segments) ? array_shift($segments) : 'index';
+				$match->action = count($segments) ? array_shift($segments) : null;
 				$match->method_params = $segments;
 				return $match;
 			}
@@ -150,7 +161,7 @@ class Router {
 
 				if (class_exists(ucfirst($match->module).'\\Controller_'.ucfirst($match->controller)))
 				{
-					$match->action = count($segments) ? array_shift($segments) : 'index';
+					$match->action = count($segments) ? array_shift($segments) : null;
 					$match->method_params = $segments;
 					return $match;
 				}
@@ -166,7 +177,7 @@ class Router {
 
 		if (class_exists('Controller_'.ucfirst($match->directory).'_'.ucfirst($match->controller)))
 		{
-			$match->action = count($segments) ? array_shift($segments) : 'index';
+			$match->action = count($segments) ? array_shift($segments) : null;
 			$match->method_params = $segments;
 			return $match;
 		}
@@ -180,14 +191,17 @@ class Router {
 		// We first want to check if the controller is in a directory.
 		if (class_exists('Controller_'.ucfirst($match->controller)))
 		{
-			$match->action = count($segments) ? array_shift($segments) : 'index';
+			$match->action = count($segments) ? array_shift($segments) : null;
 			$match->method_params = $segments;
 			return $match;
 		}
 
-		// none of the above. I give up...
-		return false;
+		// none of the above. I give up. We've found ziltch...
+		$match->action = null;
+		$match->controller = null;
+
+		return $match;
 	}
 }
 
-/* End of file router.php */
+

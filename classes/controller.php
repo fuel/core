@@ -86,4 +86,3 @@ abstract class Controller {
 	}
 }
 
-/* End of file controller.php */

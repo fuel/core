@@ -233,7 +233,7 @@ class Cli {
 		}
 
 		// If options are provided and the choice is not in the array, tell them to try again
-		if ( ! empty($options) && ! in_array($input, $options))
+		if ( ! empty($options) and ! in_array($input, $options))
 		{
 			static::write('This is not a valid option. Please try again.');
 			static::new_line();
@@ -257,7 +257,7 @@ class Cli {
 			$text = implode(PHP_EOL, $text);
 		}
 
-		if ($foreground OR $background)
+		if ($foreground or $background)
 		{
 			$text = static::color($text, $foreground, $background);
 		}
@@ -435,4 +435,3 @@ class Cli {
 
 }
 
-/* End of file cli.php */

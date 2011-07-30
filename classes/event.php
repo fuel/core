@@ -195,4 +195,3 @@ class Event {
 	}
 }
 
-/* End of file event.php */
