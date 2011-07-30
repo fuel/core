@@ -346,4 +346,4 @@ class Session_File extends \Session_Driver {
 
 }
 
-/* End of file file.php */
+

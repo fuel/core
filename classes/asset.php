@@ -358,4 +358,4 @@ class Asset {
 	}
 }
 
-/* End of file asset.php */
+

@@ -139,4 +139,3 @@ class Cache {
 	}
 }
 
-/* End of file cache.php */

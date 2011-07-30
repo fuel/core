@@ -513,4 +513,3 @@ class Image_Gd extends \Image_Driver {
 
 }
 
-// End of file gd.php

@@ -134,4 +134,4 @@ return array(
 	'force_multipart' => true
 );
 
-/* End of file email.php */
+

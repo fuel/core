@@ -20,7 +20,7 @@ namespace Fuel\Core;
  */
 class Tests_Arr extends TestCase {
 
-	public function person_provider()
+	public static function person_provider()
 	{
 		return array(
 			array(
@@ -501,4 +501,4 @@ class Tests_Arr extends TestCase {
 	}
 }
 
-/* End of file arr.php */
+

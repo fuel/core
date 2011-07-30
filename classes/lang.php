@@ -129,4 +129,4 @@ class Lang {
 	}
 }
 
-/* End of file lang.php */
+

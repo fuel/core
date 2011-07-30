@@ -196,4 +196,3 @@ class File_Handler_File {
 	}
 }
 
-/* End of file file.php */

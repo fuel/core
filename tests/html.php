@@ -308,4 +308,4 @@ class Tests_Html extends TestCase {
 	}
 }
 
-/* End of file html.php */
+

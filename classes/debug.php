@@ -370,4 +370,3 @@ JS;
 
 }
 
-/* End of file debug.php */

@@ -303,4 +303,4 @@ class Security {
 	}
 }
 
-/* End of file security.php */
+

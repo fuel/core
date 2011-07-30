@@ -116,7 +116,7 @@ CONF;
 		$content .= <<<CONF
 
 
-/* End of file $file.php */
+
 CONF;
 
 		// make sure we have a fallback
@@ -233,4 +233,4 @@ CONF;
 	}
 }
 
-/* End of file config.php */
+

@@ -167,4 +167,3 @@ HELP;
 	}
 }
 
-/* End of file tasks/migrate.php */

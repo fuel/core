@@ -31,4 +31,3 @@ class Model {
 
 }
 
-/* End of file model.php */

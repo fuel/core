@@ -44,4 +44,3 @@ class Install {
 	}
 }
 
-/* End of file tasks/install.php */

@@ -234,4 +234,4 @@ class Error {
 
 }
 
-/* End of file error.php */
+

@@ -347,4 +347,3 @@ class Html
 		return $result;
 	}
 }
-/* End of file html.php */

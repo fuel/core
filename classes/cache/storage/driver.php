@@ -453,4 +453,3 @@ abstract class Cache_Storage_Driver {
 	}
 }
 
-/* End of file driver.php */

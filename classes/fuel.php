@@ -53,7 +53,7 @@ class Fuel {
 	const L_INFO = 3;
 	const L_ALL = 4;
 
-	const VERSION = '1.0-rc3';
+	const VERSION = '1.0';
 
 	public static $initialized = false;
 
@@ -661,4 +661,4 @@ class Fuel {
 	}
 }
 
-/* End of file fuel.php */
+

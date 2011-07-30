@@ -371,4 +371,3 @@ class Inflector {
 	}
 }
 
-/* End of file inflector.php */
