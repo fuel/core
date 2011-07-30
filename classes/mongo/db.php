@@ -32,14 +32,14 @@ class Mongo_DbException extends Fuel_Exception {}
 
 class Mongo_Db {
 
-	protected $db;
-	protected $persist = false;
+	protected	$db;
+	protected	$persist = false;
 
-	protected $selects = array();
-	public $wheres = array();	// $wheres is public for sanity reasons - useful for debuggging
-	protected $sorts = array();
-	protected $limit = 999999;
-	protected $offset = 0;
+	protected	$selects = array();
+	public		$wheres = array();	// $wheres is public for sanity reasons - useful for debuggging
+	protected	$sorts = array();
+	protected	$limit = 999999;
+	protected	$offset = 0;
 
 	protected static $instances = array();
 
@@ -54,6 +54,7 @@ class Mongo_Db {
 		{
 			\Config::load('db', true);
 		}
+		
 		if ( ! ($config = \Config::get('db.mongo.'.$name)))
 		{
 			throw new \Mongo_DbException('Invalid instance name given.');
@@ -68,12 +69,11 @@ class Mongo_Db {
 
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	CONSTRUCTOR
-	*	--------------------------------------------------------------------------------
-	*
+	*	The class constructor
 	*	Automatically check if the Mongo PECL extension has been installed/enabled.
 	*	Generate the connection string and establish a connection to the MongoDB.
+	*
+	*	@param	array	$config		an array of config values
 	*/
 	public function __construct(array $config = array())
 	{
@@ -83,7 +83,7 @@ class Mongo_Db {
 		}
 
 		// Build up a connect options array for mongo
-		$options = array("connect" => TRUE);
+		$options = array("connect" => true);
 
 		if ( ! empty($config['persistent']))
 		{
@@ -107,7 +107,7 @@ class Mongo_Db {
 			$connection_string .= "{$config['username']}:{$config['password']}@";
 		}
 
-		if (isset($config['port']) && ! empty($config['port']))
+		if (isset($config['port']) and ! empty($config['port']))
 		{
 			$connection_string .= "{$config['hostname']}:{$config['port']}";
 		}
@@ -131,18 +131,11 @@ class Mongo_Db {
 		}
 	}
 
-	// public function __destruct()
-	// {
-	// 	fclose($this->connection);
-	// }
-
 	/**
-	*	--------------------------------------------------------------------------------
-	*	Drop_db
-	*	--------------------------------------------------------------------------------
-	*
 	*	Drop a Mongo database
-	*	@usage $mongodb->drop_db("foobar");
+	*
+	*	@param	string	$database		the database name
+	*	@usage	$mongodb->drop_db("foobar");
 	*/
 	public static function drop_db($database = null)
 	{
@@ -167,14 +160,13 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	Drop_collection
-	*	--------------------------------------------------------------------------------
-	*
 	*	Drop a Mongo collection
-	*	@usage $mongodb->drop_collection('foo', 'bar');
+	*
+	*	@param	string	$db		the database name
+	*	@param	string	$col		the collection name
+	*	@usage	$mongodb->drop_collection('foo', 'bar');
 	*/
-	public static function drop_collection($db = "", $col = "")
+	public static function drop_collection($db = '', $col = '')
 	{
 		if (empty($db))
 		{
@@ -201,16 +193,14 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	SELECT FIELDS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Determine which fields to include OR which to exclude during the query process.
 	*	Currently, including and excluding at the same time is not available, so the
 	*	$includes array will take precedence over the $excludes array.  If you want to
 	*	only choose fields to exclude, leave $includes an empty array().
 	*
-	*	@usage $mongodb->select(array('foo', 'bar'))->get('foobar');
+	*	@param	array	$includes	which fields to include
+	*	@param	array	$excludes	which fields to exclude
+	*	@usage	$mongodb->select(array('foo', 'bar'))->get('foobar');
 	*/
 	public function select($includes = array(), $excludes = array())
 	{
@@ -242,15 +232,12 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents based on these search parameters.  The $wheres array should
 	*	be an associative array with the field as the key and the value as the search
 	*	criteria.
 	*
-	*	@usage $mongodb->where(array('foo' => 'bar'))->get('foobar');
+	*	@param	array	$wheres		an associative array with conditions, array(field => value)
+	*	@usage	$mongodb->where(array('foo' => 'bar'))->get('foobar');
 	*/
 	public function where($wheres = array())
 	 {
@@ -262,19 +249,16 @@ class Mongo_Db {
 	 }
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	OR_WHERE PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field may be something else
 	*
-	*	@usage $mongodb->or_where(array( array('foo'=>'bar', 'bar'=>'foo' ))->get('foobar');
+	*	@param	array	$wheres		an associative array with conditions, array(field => value)
+	*	@usage	$mongodb->or_where(array( array('foo'=>'bar', 'bar'=>'foo' ))->get('foobar');
 	*/
 	public function or_where($wheres = array())
 	{
 		if (count($wheres) > 0)
 		{
-			if ( ! isset($this->wheres['$or']) || ! is_array($this->wheres['$or']))
+			if ( ! isset($this->wheres['$or']) or ! is_array($this->wheres['$or']))
 			{
 				$this->wheres['$or'] = array();
 			}
@@ -288,15 +272,13 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE_IN PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is in a given $in array().
 	*
-	*	@usage $mongodb->where_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
+	*	@param	string	$field		the field name
+	*	@param	array	$in			an array of values to compare to
+	*	@usage	$mongodb->where_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
 	*/
-	public function where_in($field = "", $in = array())
+	public function where_in($field = '', $in = array())
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$in'] = $in;
@@ -304,15 +286,13 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE_IN_ALL PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is in all of a given $in array().
 	*
-	*	@usage $mongodb->where_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
+	*	@param	string	$field		the field name
+	*	@param	array	$in			an array of values to compare to
+	*	@usage	$mongodb->where_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
 	*/
-	public function where_in_all($field = "", $in = array())
+	public function where_in_all($field = '', $in = array())
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$all'] = $in;
@@ -320,15 +300,13 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE_NOT_IN PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is not in a given $in array().
 	*
-	*	@usage $mongodb->where_not_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
+	*	@param	string	$field		the field name
+	*	@param	array	$in			an array of values to compare to
+	*	@usage	$mongodb->where_not_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
 	*/
-	public function where_not_in($field = "", $in = array())
+	public function where_not_in($field = '', $in = array())
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$nin'] = $in;
@@ -336,15 +314,13 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE GREATER THAN PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is greater than $x
 	*
-	*	@usage $mongodb->where_gt('foo', 20);
+	*	@param	string	$field		the field name
+	*	@param	mixed	$x			the value to compare to
+	*	@usage	$mongodb->where_gt('foo', 20);
 	*/
-	public function where_gt($field = "", $x)
+	public function where_gt($field = '', $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$gt'] = $x;
@@ -352,15 +328,13 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE GREATER THAN OR EQUAL TO PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is greater than or equal to $x
 	*
-	*	@usage $mongodb->where_gte('foo', 20);
+	*	@param	string	$field		the field name
+	*	@param	mixed	$x			the value to compare to
+	*	@usage	$mongodb->where_gte('foo', 20);
 	*/
-	public function where_gte($field = "", $x)
+	public function where_gte($field = '', $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$gte'] = $x;
@@ -368,15 +342,13 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE LESS THAN PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is less than $x
 	*
-	*	@usage $mongodb->where_lt('foo', 20);
+	*	@param	string	$field		the field name
+	*	@param	mixed	$x			the value to compare to
+	*	@usage	$mongodb->where_lt('foo', 20);
 	*/
-	public function where_lt($field = "", $x)
+	public function where_lt($field = '', $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$lt'] = $x;
@@ -384,15 +356,13 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE LESS THAN OR EQUAL TO PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is less than or equal to $x
 	*
-	*	@usage $mongodb->where_lte('foo', 20);
+	*	@param	string	$field		the field name
+	*	@param	mixed	$x			the value to compare to
+	*	@usage	$mongodb->where_lte('foo', 20);
 	*/
-	public function where_lte($field = "", $x)
+	public function where_lte($field = '', $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$lte'] = $x;
@@ -400,15 +370,14 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE BETWEEN PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is between $x and $y
 	*
-	*	@usage $mongodb->where_between('foo', 20, 30);
+	*	@param	string	$field		the field name
+	*	@param	mixed	$x			the value to compare to
+	*	@param	mixed	$y			the high value to compare to
+	*	@usage	$mongodb->where_between('foo', 20, 30);
 	*/
-	public function where_between($field = "", $x, $y)
+	public function where_between($field = '', $x, $y)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$gte'] = $x;
@@ -417,15 +386,14 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE BETWEEN AND NOT EQUAL TO PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is between but not equal to $x and $y
 	*
-	*	@usage $mongodb->where_between_ne('foo', 20, 30);
+	*	@param	string	$field		the field name
+	*	@param	mixed	$x			the low value to compare to
+	*	@param	mixed	$y			the high value to compare to
+	*	@usage	$mongodb->where_between_ne('foo', 20, 30);
 	*/
-	public function where_between_ne($field = "", $x, $y)
+	public function where_between_ne($field = '', $x, $y)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$gt'] = $x;
@@ -434,13 +402,11 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE NOT EQUAL TO PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents where the value of a $field is not equal to $x
 	*
-	*	@usage $mongodb->where_not_equal('foo', 1)->get('foobar');
+	*	@param	string	$field		the field name
+	*	@param	mixed	$x			the value to compare to
+	*	@usage	$mongodb->where_not_equal('foo', 1)->get('foobar');
 	*/
 	public function where_ne($field = '', $x)
 	{
@@ -450,18 +416,16 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE NOT EQUAL TO PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents nearest to an array of coordinates (your collection must have a geospatial index)
 	*
-	*	@usage $mongodb->where_near('foo', array('50','50'))->get('foobar');
+	*	@param	string	$field		the field name
+	*	@param	array	$co			array of 2 coordinates
+	*	@usage	$mongodb->where_near('foo', array('50','50'))->get('foobar');
 	*/
 	public function where_near($field = '', $co = array())
 	{
 		$this->__where_init($field);
-		$this->where[$what]['$near'] = $co;  // @TODO : can't work, $what is undefined
+		$this->where[$field]['$near'] = $co;
 		return $this;
 	}
 
@@ -492,9 +456,9 @@ class Mongo_Db {
 	*	to the search value, representing only searching for a value at the end of
 	*	a line.
 	*
-	*	@usage $mongodb->like('foo', 'bar', 'im', FALSE, TRUE);
+	*	@usage	$mongodb->like('foo', 'bar', 'im', false, TRUE);
 	*/
-	public function like($field = "", $value = "", $flags = "i", $enable_start_wildcard = TRUE, $enable_end_wildcard = TRUE)
+	public function like($field = '', $value = '', $flags = 'i', $enable_start_wildcard = TRUE, $enable_end_wildcard = TRUE)
 	 {
 	 	$field = (string) trim($field);
 	 	$this->where_init($field);
@@ -503,12 +467,12 @@ class Mongo_Db {
 
 	 	if ($enable_start_wildcard !== TRUE)
 	 	{
-	 		$value = "^" . $value;
+	 		$value = '^' . $value;
 	 	}
 
 	 	if ($enable_end_wildcard !== TRUE)
 	 	{
-	 		$value .= "$";
+	 		$value .= '$';
 	 	}
 
 	 	$regex = "/$value/$flags";
@@ -517,21 +481,18 @@ class Mongo_Db {
 	 }
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	ORDER BY PARAMETERS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Sort the documents based on the parameters passed. To set values to descending order,
-	*	you must pass values of either -1, FALSE, 'desc', or 'DESC', else they will be
+	*	you must pass values of either -1, false, 'desc', or 'DESC', else they will be
 	*	set to 1 (ASC).
 	*
-	*	@usage $mongodb->where_between('foo', 20, 30);
+	*	@param	array	$fields		an associative array, array(field => direction)
+	*	@usage	$mongodb->where_between('foo', 20, 30);
 	*/
 	public function order_by($fields = array())
 	{
 		foreach ($fields as $col => $val)
 		{
-			if ($val == -1 || $val === FALSE || strtolower($val) == 'desc')
+			if ($val == -1 or $val === false or strtolower($val) == 'desc')
 			{
 				$this->sorts[$col] = -1;
 			}
@@ -544,17 +505,14 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	LIMIT DOCUMENTS
-	*	--------------------------------------------------------------------------------
-	*
 	*	Limit the result set to $x number of documents
 	*
-	*	@usage $mongodb->limit($x);
+	*	@param	number	$x			the max amount of documents to fetch
+	*	@usage	$mongodb->limit($x);
 	*/
 	public function limit($x = 99999)
 	{
-		if ($x !== NULL && is_numeric($x) && $x >= 1)
+		if ($x !== null and is_numeric($x) and $x >= 1)
 		{
 			$this->limit = (int) $x;
 		}
@@ -568,11 +526,12 @@ class Mongo_Db {
 	*
 	*	Offset the result set to skip $x number of documents
 	*
-	*	@usage $mongodb->offset($x);
+	*	@param	number	$x			the number of documents to skip
+	*	@usage	$mongodb->offset($x);
 	*/
 	public function offset($x = 0)
 	{
-		if ($x !== NULL && is_numeric($x) && $x >= 1)
+		if ($x !== null and is_numeric($x) and $x >= 1)
 		{
 			$this->offset = (int) $x;
 		}
@@ -580,33 +539,29 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	GET_WHERE
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents based upon the passed parameters
 	*
-	*	@usage $mongodb->get_where('foo', array('bar' => 'something'));
+	*	@param	string	$collection		the collection name
+	*	@param	array	$where			an array of conditions, array(field => value)
+	*	@param	number	$limit			the max amount of documents to fetch
+	*	@usage	$mongodb->get_where('foo', array('bar' => 'something'));
 	*/
-	public function get_where($collection = "", $where = array(), $limit = 99999)
+	public function get_where($collection = '', $where = array(), $limit = 99999)
 	{
 		return ($this->where($where)->limit($limit)->get($collection));
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	GET
-	*	--------------------------------------------------------------------------------
-	*
 	*	Get the documents based upon the passed parameters
 	*
-	*	@usage $mongodb->get('foo', array('bar' => 'something'));
+	*	@param	string	$collection		the collection name
+	*	@usage	$mongodb->get('foo', array('bar' => 'something'));
 	*/
 	 public function get($collection = "")
 	 {
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("In order to retreive documents from MongoDB");
+			throw new \Mongo_DbException("In order to retrieve documents from MongoDB");
 		}
 
 		$results = array();
@@ -615,7 +570,7 @@ class Mongo_Db {
 
 		$returns = array();
 
-		if ($documents && count($documents) > 0)
+		if ($documents and ! empty($documents))
 		{
 			foreach ($documents as $doc)
 			{
@@ -623,23 +578,20 @@ class Mongo_Db {
 			}
 		}
 
-		return (object)$returns;
+		return (object) $returns;
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	COUNT
-	*	--------------------------------------------------------------------------------
-	*
 	*	Count the documents based upon the passed parameters
 	*
-	*	@usage $mongodb->get('foo');
+	*	@param	string	$collection		the collection name
+	*	@usage	$mongodb->get('foo');
 	*/
 
-	public function count($collection = "") {
+	public function count($collection = '') {
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("In order to retreive a count of documents from MongoDB");
+			throw new \Mongo_DbException("In order to retrieve a count of documents from MongoDB");
 		}
 
 		$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count();
@@ -654,30 +606,32 @@ class Mongo_Db {
 	*
 	*	Insert a new document into the passed collection
 	*
-	*	@usage $mongodb->insert('foo', $data = array());
+	*	@param	string	$collection		the collection name
+	*	@param	array	$insert			an array of values to insert, array(field => value)
+	*	@usage	$mongodb->insert('foo', $data = array());
 	*/
-	public function insert($collection = "", $insert = array())
+	public function insert($collection = '', $insert = array())
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection selected to insert into");
 		}
 
-		if (count($insert) == 0 || !is_array($insert))
+		if (empty($insert) or ! is_array($insert))
 		{
 			throw new \Mongo_DbException("Nothing to insert into Mongo collection or insert is not an array");
 		}
 
 		try
 		{
-			$this->db->{$collection}->insert($insert, array('fsync' => TRUE));
+			$this->db->{$collection}->insert($insert, array('fsync' => true));
 			if (isset($insert['_id']))
 			{
-				return ($insert['_id']);
+				return $insert['_id'];
 			}
 			else
 			{
-				return (FALSE);
+				return false;
 			}
 		}
 		catch (\MongoCursorException $e)
@@ -687,29 +641,28 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	UPDATE
-	*	--------------------------------------------------------------------------------
-	*
 	*	Updates a single document
 	*
-	*	@usage $mongodb->update('foo', $data = array());
+	*	@param	string	$collection		the collection name
+	*	@param	array	$data			an associative array of values, array(field => value)
+	*	@param	array	$options		an associative array of options
+	*	@usage	$mongodb->update('foo', $data = array());
 	*/
-	public function update($collection = "", $data = array(), $options = array())
+	public function update($collection = '', $data = array(), $options = array())
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection selected to update");
 		}
 
-		if (count($data) == 0 || ! is_array($data))
+		if (empty($data) or ! is_array($data))
 		{
 			throw new \Mongo_DbException("Nothing to update in Mongo collection or update is not an array");
 		}
 
 		try
 		{
-			$options = array_merge($options, array('fsync' => TRUE, 'multiple' => FALSE));
+			$options = array_merge($options, array('fsync' => true, 'multiple' => false));
 			$this->db->{$collection}->update($this->wheres, array('$set' => $data), $options);
 			$this->_clear();
 			return true;
@@ -722,13 +675,11 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	UPDATE_ALL
-	*	--------------------------------------------------------------------------------
-	*
 	*	Updates a collection of documents
 	*
-	*	@usage $mongodb->update_all('foo', $data = array());
+	*	@param	string	$collection		the collection name
+	*	@param	array	$data			an associative array of values, array(field => value)
+	*	@usage	$mongodb->update_all('foo', $data = array());
 	*/
 	public function update_all($collection = "", $data = array())
 	{
@@ -737,14 +688,14 @@ class Mongo_Db {
 			throw new \Mongo_DbException("No Mongo collection selected to update");
 		}
 
-		if (count($data) == 0 || ! is_array($data))
+		if (empty($data) or ! is_array($data))
 		{
 			throw new \Mongo_DbException("Nothing to update in Mongo collection or update is not an array");
 		}
 
 		try
 		{
-			$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('fsync' => TRUE, 'multiple' => TRUE));
+			$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('fsync' => true, 'multiple' => true));
 			$this->_clear();
 			return true;
 		}
@@ -755,15 +706,12 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	DELETE
-	*	--------------------------------------------------------------------------------
+	*	Delete a document from the passed collection based upon certain criteria
 	*
-	*	delete document from the passed collection based upon certain criteria
-	*
-	*	@usage $mongodb->delete('foo', $data = array());
+	*	@param	string	$collection		the collection name
+	*	@usage	$mongodb->delete('foo');
 	*/
-	public function delete($collection = "")
+	public function delete($collection = '')
 	{
 		if (empty($collection))
 		{
@@ -772,7 +720,7 @@ class Mongo_Db {
 
 		try
 		{
-			$this->db->{$collection}->remove($this->wheres, array('fsync' => TRUE, 'justOne' => TRUE));
+			$this->db->{$collection}->remove($this->wheres, array('fsync' => true, 'justOne' => true));
 			$this->_clear();
 			return true;
 		}
@@ -784,15 +732,12 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	DELETE_ALL
-	*	--------------------------------------------------------------------------------
+	*	Delete all documents from the passed collection based upon certain criteria.
 	*
-	*	Delete all documents from the passed collection based upon certain criteria
-	*
-	*	@usage $mongodb->delete_all('foo', $data = array());
+	*	@param	string	$collection		the collection name
+	*	@usage	$mongodb->delete_all('foo');
 	*/
-	 public function delete_all($collection = "")
+	 public function delete_all($collection = '')
 	 {
 		if (empty($collection))
 		{
@@ -801,7 +746,7 @@ class Mongo_Db {
 
 		try
 		{
-			$this->db->{$collection}->remove($this->wheres, array('fsync' => TRUE, 'justOne' => FALSE));
+			$this->db->{$collection}->remove($this->wheres, array('fsync' => true, 'justOne' => false));
 			$this->_clear();
 			return true;
 		}
@@ -813,14 +758,11 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	COMMAND
-	*	--------------------------------------------------------------------------------
-	*
 	*	Runs a MongoDB command (such as GeoNear). See the MongoDB documentation for more usage scenarios:
 	*	http://dochub.mongodb.org/core/commands
 	*
-	*	@usage $mongodb->command(array('geoNear'=>'buildings', 'near'=>array(53.228482, -0.547847), 'num' => 10, 'nearSphere'=>TRUE));
+	*	@param	array	$query	a query array
+	*	@usage	$mongodb->command(array('geoNear'=>'buildings', 'near'=>array(53.228482, -0.547847), 'num' => 10, 'nearSphere'=>TRUE));
 	*/
 	public function command($query = array())
 	{
@@ -837,31 +779,30 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	ADD_INDEX
-	*	--------------------------------------------------------------------------------
-	*
 	*	Ensure an index of the keys in a collection with optional parameters. To set values to descending order,
-	*	you must pass values of either -1, FALSE, 'desc', or 'DESC', else they will be
+	*	you must pass values of either -1, false, 'desc', or 'DESC', else they will be
 	*	set to 1 (ASC).
 	*
-	*	@usage $mongodb->add_index($collection, array('first_name' => 'ASC', 'last_name' => -1), array('unique' => TRUE));
+	*	@param	string	$collection		the collection name
+	*	@param	array	$keys			an associative array of keys, array(field => direction)
+	*	@param	array	$options		an associative array of options
+	*	@usage	$mongodb->add_index($collection, array('first_name' => 'ASC', 'last_name' => -1), array('unique' => TRUE));
 	*/
-	public function add_index($collection = "", $keys = array(), $options = array())
+	public function add_index($collection = '', $keys = array(), $options = array())
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection specified to add index to");
 		}
 
-		if (empty($keys) || ! is_array($keys))
+		if (empty($keys) or ! is_array($keys))
 		{
 			throw new \Mongo_DbException("Index could not be created to MongoDB Collection because no keys were specified");
 		}
 
 		foreach ($keys as $col => $val)
 		{
-			if($val == -1 || $val === FALSE || strtolower($val) == 'desc')
+			if($val == -1 or $val === false or strtolower($val) == 'desc')
 			{
 				$keys[$col] = -1;
 			}
@@ -871,7 +812,7 @@ class Mongo_Db {
 			}
 		}
 
-		if ($this->db->{$collection}->ensureIndex($keys, $options) == TRUE)
+		if ($this->db->{$collection}->ensureIndex($keys, $options) == true)
 		{
 			$this->_clear();
 			return $this;
@@ -883,29 +824,27 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	REMOVE_INDEX
-	*	--------------------------------------------------------------------------------
-	*
 	*	Remove an index of the keys in a collection. To set values to descending order,
-	*	you must pass values of either -1, FALSE, 'desc', or 'DESC', else they will be
+	*	you must pass values of either -1, false, 'desc', or 'DESC', else they will be
 	*	set to 1 (ASC).
 	*
-	*	@usage $mongodb->remove_index($collection, array('first_name' => 'ASC', 'last_name' => -1));
+	*	@param	string	$collection		the collection name
+	*	@param	array	$keys			an associative array of keys, array(field => direction)
+	*	@usage	$mongodb->remove_index($collection, array('first_name' => 'ASC', 'last_name' => -1));
 	*/
-	public function remove_index($collection = "", $keys = array())
+	public function remove_index($collection = '', $keys = array())
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection specified to remove index from");
 		}
 
-		if (empty($keys) || ! is_array($keys))
+		if (empty($keys) or ! is_array($keys))
 		{
 			throw new \Mongo_DbException("Index could not be removed from MongoDB Collection because no keys were specified");
 		}
 
-		if ($this->db->{$collection}->deleteIndex($keys) == TRUE)
+		if ($this->db->{$collection}->deleteIndex($keys) == true)
 		{
 			$this->_clear();
 			return $this;
@@ -917,15 +856,12 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	REMOVE_ALL_INDEXES
-	*	--------------------------------------------------------------------------------
-	*
 	*	Remove all indexes from a collection.
 	*
-	*	@usage $mongodb->remove_all_index($collection);
+	*	@param	string	$collection		the collection name
+	*	@usage	$mongodb->remove_all_index($collection);
 	*/
-	public function remove_all_indexes($collection = "")
+	public function remove_all_indexes($collection = '')
 	{
 		if (empty($collection))
 		{
@@ -937,15 +873,12 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	LIST_INDEXES
-	*	--------------------------------------------------------------------------------
-	*
 	*	Lists all indexes in a collection.
 	*
-	*	@usage $mongodb->list_indexes($collection);
+	*	@param	string	$collection		the collection name
+	*	@usage	$mongodb->list_indexes($collection);
 	*/
-	public function list_indexes($collection = "")
+	public function list_indexes($collection = '')
 	{
 		if (empty($collection))
 		{
@@ -957,10 +890,7 @@ class Mongo_Db {
 
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	_clear
-	*	--------------------------------------------------------------------------------
-	*
+
 	*	Resets the class variables to default settings
 	*/
 	protected function _clear()
@@ -973,11 +903,9 @@ class Mongo_Db {
 	}
 
 	/**
-	*	--------------------------------------------------------------------------------
-	*	WHERE INITIALIZER
-	*	--------------------------------------------------------------------------------
-	*
 	*	Prepares parameters for insertion in $wheres array().
+	*
+	*	@param	string	$param		the field name
 	*/
 	protected function _where_init($param)
 	{
