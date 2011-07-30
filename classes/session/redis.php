@@ -291,4 +291,4 @@ class Session_Redis extends \Session_Driver {
 
 }
 
-/* End of file redis.php */
+

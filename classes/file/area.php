@@ -269,4 +269,4 @@ class File_Area {
 	}
 }
 
-/* End of file area.php */
+

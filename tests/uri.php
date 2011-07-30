@@ -55,4 +55,4 @@ class Tests_Uri extends TestCase {
 
 }
 
-/* End of file uri.php */
+

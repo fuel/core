@@ -801,4 +801,3 @@ abstract class Image_Driver {
 	}
 }
 
-// End of file driver.php

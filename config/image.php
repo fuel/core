@@ -106,4 +106,4 @@ return array(
 	)
 );
 
-/* End of file image.php */
+

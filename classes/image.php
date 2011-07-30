@@ -269,4 +269,3 @@ class Image {
 
 }
 
-// End of file image.php

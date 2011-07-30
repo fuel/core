@@ -167,4 +167,4 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\ViewModel'  => COREPATH.'classes/viewmodel.php',
 ));
 
-/* End of file bootstrap.php */
+

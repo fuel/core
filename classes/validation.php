@@ -701,4 +701,4 @@ class Validation {
 	}
 }
 
-/* End of file validation.php */
+

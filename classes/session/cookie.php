@@ -169,4 +169,4 @@ class Session_Cookie extends \Session_Driver {
 	}
 }
 
-/* End of file cookie.php */
+

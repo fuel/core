@@ -292,4 +292,4 @@ class Uri {
 	}
 }
 
-/* End of file uri.php */
+

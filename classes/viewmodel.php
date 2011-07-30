@@ -232,4 +232,4 @@ abstract class ViewModel {
 	}
 }
 
-/* End of file viewmodel.php */
+

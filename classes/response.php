@@ -200,4 +200,3 @@ class Response {
 	}
 }
 
-/* End of file response.php */

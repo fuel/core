@@ -346,4 +346,3 @@ abstract class Controller_Rest extends \Controller {
 
 }
 
-/* End of file rest.php */

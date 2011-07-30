@@ -28,4 +28,4 @@ class Cache_Handler_Serialized implements \Cache_Handler_Driver {
 
 }
 
-/* End of file serialized.php */
+

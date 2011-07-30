@@ -310,4 +310,3 @@ class DBUtil {
 
 }
 
-/* End of file dbutil.php */

@@ -264,4 +264,4 @@ class Pagination {
 	}
 }
 
-/* End of file pagination.php */
+

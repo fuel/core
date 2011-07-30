@@ -65,4 +65,4 @@ return array(
 	'css_dir' => 'css/'
 );
 
-/* End of file config/asset.php */
+

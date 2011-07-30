@@ -112,4 +112,4 @@ class Cookie {
 	}
 }
 
-/* End of file cookie.php */
+

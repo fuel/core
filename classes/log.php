@@ -125,4 +125,4 @@ class Log {
 
 }
 
-/* End of file log.php */
+

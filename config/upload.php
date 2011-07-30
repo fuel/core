@@ -97,4 +97,4 @@ return array(
 	'max_length'		=> 0
 );
 
-/* End of file config/upload.php */
+

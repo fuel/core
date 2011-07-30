@@ -988,4 +988,3 @@ class Mongo_Db {
 	}
 }
 
-/* End of file classes/mongodb.php */

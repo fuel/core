@@ -303,4 +303,4 @@ class Date {
 	}
 }
 
-/* End of file date.php */
+

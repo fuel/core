@@ -40,4 +40,4 @@ class Cache_Handler_Json implements \Cache_Handler_Driver {
 	}
 }
 
-/* End of file json.php */
+

@@ -35,4 +35,4 @@ interface Cache_Handler_Driver {
 	public function writable($contents);
 }
 
-/* End of file driver.php */
+

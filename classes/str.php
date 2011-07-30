@@ -253,4 +253,4 @@ class Str {
 	}
 }
 
-/* End of file str.php */
+
