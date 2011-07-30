@@ -337,17 +337,10 @@ class Fieldset
 	/**
 	 * Set all fields to the input from get or post (depends on the form method attribute)
 	 *
-	 * @param   array|object  input for initial population of fields, this is deprecated - you should use populate() instea
 	 * @return  Fieldset  this, to allow chaining
 	 */
-	public function repopulate($deprecated = null)
+	public function repopulate()
 	{
-		// The following usage will be deprecated in Fuel 1.1
-		if ( ! is_null($deprecated))
-		{
-			return $this->populate($deprecated, true);
-		}
-
 		foreach ($this->fields as $f)
 		{
 			// Don't repopulate the CSRF field
