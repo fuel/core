@@ -20,7 +20,7 @@ namespace Fuel\Core;
  */
 class Test_Format extends TestCase {
 	
-	public static array_provider()
+	public static function array_provider()
 	{
 		return array(
 			array(
