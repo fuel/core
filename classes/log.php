@@ -22,26 +22,54 @@ namespace Fuel\Core;
  */
 class Log {
 
+	/**
+	 * Logs a message with the Info Log Level
+	 *
+	 * @param   string  $msg     The log message
+	 * @param   string  $method  The method that logged
+	 * @return  bool    If it was successfully logged
+	 */
 	public static function info($msg, $method = null)
 	{
 		return static::write(\Fuel::L_INFO, $msg, $method);
 	}
 
-	// --------------------------------------------------------------------
-
+	/**
+	 * Logs a message with the Debug Log Level
+	 *
+	 * @param   string  $msg     The log message
+	 * @param   string  $method  The method that logged
+	 * @return  bool    If it was successfully logged
+	 */
 	public static function debug($msg, $method = null)
 	{
 		return static::write(\Fuel::L_DEBUG, $msg, $method);
 	}
 
-	// --------------------------------------------------------------------
+	/**
+	 * Logs a message with the Warning Log Level
+	 *
+	 * @param   string  $msg     The log message
+	 * @param   string  $method  The method that logged
+	 * @return  bool    If it was successfully logged
+	 */
+	public static function warning($msg, $method = null)
+	{
+		return static::write(\Fuel::L_WARNING, $msg, $method);
+	}
 
+	/**
+	 * Logs a message with the Error Log Level
+	 *
+	 * @param   string  $msg     The log message
+	 * @param   string  $method  The method that logged
+	 * @return  bool    If it was successfully logged
+	 */
 	public static function error($msg, $method = null)
 	{
 		return static::write(\Fuel::L_ERROR, $msg, $method);
 	}
 
-	// --------------------------------------------------------------------
 
 	/**
 	 * Write Log File
@@ -59,19 +87,13 @@ class Log {
 		{
 			return false;
 		}
-
-		switch ($level)
-		{
-			case \Fuel::L_ERROR:
-				$level = 'Error';
-			break;
-			case \Fuel::L_DEBUG:
-				$level = 'Debug';
-			break;
-			case \Fuel::L_INFO:
-				$level = 'Info';
-			break;
-		}
+		$levels = array(
+			1  => 'Error',
+			2  => 'Warning',
+			3  => 'Debug',
+			4  => 'Info',
+		);
+		$level = isset($levels[$level]) ? $levels[$level] : $level;
 
 		if (Config::get('profiling'))
 		{
