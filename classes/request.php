@@ -120,12 +120,13 @@ class Request {
 	 *
 	 *     Request::show_404();
 	 *
-	 * @deprecated
+	 * @deprecated  Remove in v1.2
 	 * @param   bool         Whether to return the 404 output or just output and exit
 	 * @return  void|string  Void if $return is false, the output if $return is true
 	 */
 	public static function show_404($return = false)
 	{
+		\Log::warning('This method is deprecated.  Please use a Request404Exception instead.', __METHOD__);
 		throw new \Request404Exception();
 	}
 
