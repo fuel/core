@@ -283,7 +283,7 @@ class Uri {
 			return $this->segments[$segment - 1];
 		}
 
-		return $default;
+		return is_callable($default) ? call_user_func($default) : $default;
 	}
 
 	public function __toString()

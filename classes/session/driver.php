@@ -145,7 +145,7 @@ abstract class Session_Driver {
 		}
 		elseif (isset($this->data[$name]))
 		{
-			return $this->data[$name];
+			return is_callable($this->data[$name]) ? call_user_func($this->data[$name]) : $this->data[$name];
 		}
 
 		if (strpos($name, '.') !== false)
@@ -157,21 +157,21 @@ abstract class Session_Driver {
 				case 2:
 					if (isset($this->data[$parts[0]][$parts[1]]))
 					{
-						return $this->data[$parts[0]][$parts[1]];
+						$return = $this->data[$parts[0]][$parts[1]];
 					}
 				break;
 
 				case 3:
 					if (isset($this->data[$parts[0]][$parts[1]][$parts[2]]))
 					{
-						return $this->data[$parts[0]][$parts[1]][$parts[2]];
+						$return = $this->data[$parts[0]][$parts[1]][$parts[2]];
 					}
 				break;
 
 				case 4:
 					if (isset($this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]]))
 					{
-						return $this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
+						$return = $this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
 					}
 				break;
 
@@ -189,15 +189,17 @@ abstract class Session_Driver {
 						}
 						else
 						{
-							return $default;
+							return is_callable($default) ? call_user_func($default) : $default;
 						}
 					}
-					return $return;
 				break;
 			}
 		}
-
-		return $default;
+		if ( ! isset($return))
+		{
+			$return = $default;
+		}
+		return is_callable($return) ? call_user_func($return) : $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -344,7 +346,7 @@ abstract class Session_Driver {
 			$default = $this->flash[$this->config['flash_id'].'::'.$name]['value'];
 		}
 
-		return $default;
+		return is_callable($default) ? call_user_func($default) : $default;
 	}
 
 	// --------------------------------------------------------------------

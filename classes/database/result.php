@@ -190,7 +190,7 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 				return $row[$name];
 		}
 
-		return $default;
+		return is_callable($default) ? call_user_func($default) : $default;
 	}
 
 	/**

@@ -131,7 +131,7 @@ CONF;
 	{
 		if (isset(static::$items[$item]))
 		{
-			return static::$items[$item];
+			return is_callable(static::$items[$item]) ? call_user_func(static::$items[$item]) : static::$items[$item];
 		}
 
 		if (strpos($item, '.') !== false)
@@ -143,21 +143,21 @@ CONF;
 				case 2:
 					if (isset(static::$items[$parts[0]][$parts[1]]))
 					{
-						return static::$items[$parts[0]][$parts[1]];
+						$return = static::$items[$parts[0]][$parts[1]];
 					}
 				break;
 
 				case 3:
 					if (isset(static::$items[$parts[0]][$parts[1]][$parts[2]]))
 					{
-						return static::$items[$parts[0]][$parts[1]][$parts[2]];
+						$return = static::$items[$parts[0]][$parts[1]][$parts[2]];
 					}
 				break;
 
 				case 4:
 					if (isset(static::$items[$parts[0]][$parts[1]][$parts[2]][$parts[3]]))
 					{
-						return static::$items[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
+						$return = static::$items[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
 					}
 				break;
 
@@ -175,15 +175,17 @@ CONF;
 						}
 						else
 						{
-							return $default;
+							return is_callable($default) ? call_user_func($default) : $default;
 						}
 					}
-					return $return;
 				break;
 			}
 		}
-
-		return $default;
+		if ( ! isset($return))
+		{
+			$return = $default;
+		}
+		return is_callable($return) ? call_user_func($return) : $return;
 	}
 
 	public static function set($item, $value)

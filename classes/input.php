@@ -279,7 +279,7 @@ class Input {
 					}
 					else
 					{
-						return $default;
+						return is_callable($default) ? call_user_func($default) : $default;
 					}
 				}
 
@@ -288,7 +288,7 @@ class Input {
 			}
 			elseif ( ! isset($array[$index]))
 			{
-				return $default;
+				return is_callable($default) ? call_user_func($default) : $default;
 			}
 
 		}

@@ -191,7 +191,7 @@ class Arr {
 		{
 			if ( ! is_array($array) or ! array_key_exists($key[0], $array))
 			{
-				return $default;
+				return is_callable($default) ? call_user_func($default) : $default;
 			}
 			$array = $array[$key[0]];
 			unset($key[0]);
@@ -204,7 +204,7 @@ class Arr {
 			$key = $key[0];
 			if ( ! is_array($array) or ! array_key_exists($key, $array))
 			{
-				return $default;
+				return is_callable($default) ? call_user_func($default) : $default;
 			}
 			return $array[$key];
 		}
