@@ -279,7 +279,7 @@ class Input {
 					}
 					else
 					{
-						return is_callable($default) ? call_user_func($default) : $default;
+						return ($default instanceof \Closure) ? $default() : $default;
 					}
 				}
 
@@ -288,7 +288,7 @@ class Input {
 			}
 			elseif ( ! isset($array[$index]))
 			{
-				return is_callable($default) ? call_user_func($default) : $default;
+				return ($default instanceof \Closure) ? $default() : $default;
 			}
 
 		}

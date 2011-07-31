@@ -124,7 +124,7 @@ abstract class Session_Driver {
 	 */
 	public function set($name, $value)
 	{
-		$value = is_callable($value) ? call_user_func($value) : $value;
+		$value = ($value instanceof \Closure) ? $value() : $value;
 		
 		$this->data[$name] = $value;
 	}
@@ -147,10 +147,10 @@ abstract class Session_Driver {
 		}
 		elseif (isset($this->data[$name]))
 		{
-			return is_callable($this->data[$name]) ? call_user_func($this->data[$name]) : $this->data[$name];
+			$return = $this->data[$name];
 		}
 
-		if (strpos($name, '.') !== false)
+		if ( ! isset($return) and strpos($name, '.') !== false)
 		{
 			$parts = explode('.', $name);
 
@@ -191,7 +191,7 @@ abstract class Session_Driver {
 						}
 						else
 						{
-							return is_callable($default) ? call_user_func($default) : $default;
+							return ($default instanceof \Closure) ? $default() : $default;
 						}
 					}
 				break;
@@ -201,7 +201,7 @@ abstract class Session_Driver {
 		{
 			$return = $default;
 		}
-		return is_callable($return) ? call_user_func($return) : $return;
+		return ($return instanceof \Closure) ? $return() : $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -348,7 +348,7 @@ abstract class Session_Driver {
 			$default = $this->flash[$this->config['flash_id'].'::'.$name]['value'];
 		}
 
-		return is_callable($default) ? call_user_func($default) : $default;
+		return ($default instanceof \Closure) ? $default() : $default;
 	}
 
 	// --------------------------------------------------------------------

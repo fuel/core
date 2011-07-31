@@ -131,10 +131,10 @@ CONF;
 	{
 		if (isset(static::$items[$item]))
 		{
-			return is_callable(static::$items[$item]) ? call_user_func(static::$items[$item]) : static::$items[$item];
+			$return = static::$items[$item];
 		}
 
-		if (strpos($item, '.') !== false)
+		if ( ! isset($return) and strpos($item, '.') !== false)
 		{
 			$parts = explode('.', $item);
 
@@ -175,7 +175,7 @@ CONF;
 						}
 						else
 						{
-							return is_callable($default) ? call_user_func($default) : $default;
+							return ($default instanceof \Closure) ? $default() : $default;
 						}
 					}
 				break;
@@ -185,12 +185,12 @@ CONF;
 		{
 			$return = $default;
 		}
-		return is_callable($return) ? call_user_func($return) : $return;
+		return ($return instanceof \Closure) ? $return() : $return;
 	}
 
 	public static function set($item, $value)
 	{
-		$value = is_callable($value) ? call_user_func($value) : $value;
+		$value = ($value instanceof \Closure) ? $value() : $value;
 		$parts = explode('.', $item);
 
 		switch (count($parts))

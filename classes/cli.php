@@ -101,7 +101,7 @@ class Cli {
 	{
 		if ( ! isset(static::$args[$name]))
 		{
-			return is_callable($default) ? call_user_func($default) : $default;
+			return ($default instanceof \Closure) ? $default() : $default;
 		}
 		return static::$args[$name];
 	}
