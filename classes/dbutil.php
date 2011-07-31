@@ -72,19 +72,42 @@ class DBUtil {
 		return \DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
 	}
 
-	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null)
+	/**
+	 * Creates a table
+	 *
+	 * @param	string	$table			the table you wish to create
+	 * @param	array	$fields			array of fields to be created in table
+	 * @param	array	$primary_keys	primary keys for the table
+	 * @param	bool	$if_not_exists	create table if not exists?
+	 * @param	string	$engine			Db engine to use
+	 * @param	string	$charset		A character set for the table
+	 * @param	array	$indexes		Array of indexes
+	 * @param	array	$foreign_keys	Array of foreign keys
+	 * @return  int    Number of rows affected
+	 */	
+	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $indexes = array(), $foreign_keys = array())
 	{
 		$sql = 'CREATE TABLE';
 
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$sql .= \DB::quote_identifier(DB::table_prefix($table)).' (';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{
 			$key_name = \DB::quote_identifier(implode('_', $primary_keys));
 			$primary_keys = \DB::quote_identifier($primary_keys);
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
+		}
+		if( ! empty($indexes))
+		{
+			$sql .= ",";
+			$sql .= static::process_indexes($indexes);
+		}
+		if( ! empty($foreign_keys))
+		{
+			$sql .= ",";
+			$sql .= static::process_foreign_keys($foreign_keys);
 		}
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
@@ -132,6 +155,10 @@ class DBUtil {
 		return static::alter_fields('DROP', $table, $fields);
 	}
 
+	/**
+	 * Alters fields in a table
+	 *
+	 */	
 	protected static function alter_fields($type, $table, $fields)
 	{
 		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' ';
@@ -152,6 +179,12 @@ class DBUtil {
 		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
 
+	/**
+	 * Returns string of fields
+	 *
+	 * @param    array    $fields       Array of field rules
+	 * @return   string    the formated fields string
+	 */	
 	protected static function process_fields($fields)
 	{
 		$sql_fields = array();
@@ -184,6 +217,51 @@ class DBUtil {
 
 		return \implode(',', $sql_fields);
 	}
+
+	/**
+	 * Returns string of indexes
+	 *
+	 * @param    array    $indexes       Array of index rules
+	 * @return   string    the formated indexes string
+	 */	
+	public static function process_indexes($indexes)
+	{
+		$sql = "";
+		$index_list = array();
+		foreach($indexes as $index)
+		{
+			$index = array_change_key_case($index, CASE_UPPER);
+			($index['UNIQUE'] === true) ? $unique = 'UNIQUE ' : $unique = '';
+			$sql = "\n\t".$unique."INDEX ".\DB::quote_identifier($index['NAME'])." (" . \DB::quote_identifier($index['FIELD']) . " " . $index['ORDER']. ")";
+			$index_list[] .= $sql;
+		}		
+		return implode(',', $index_list);		
+	}
+
+	/**
+	 * Returns string of foreign keys
+	 *
+	 * @param    array    $foreign_keys       Array of foreign key rules
+	 * @return   string    the formated foreign key string
+	 */	
+	public static function process_foreign_keys($foreign_keys)
+	{	
+		$fk_list = array();
+		foreach($foreign_keys as $fk)
+		{
+			$fk['fk_reference'] = array_change_key_case($fk['fk_reference'], CASE_UPPER);		
+			$fk = array_change_key_case($fk, CASE_UPPER);
+						
+			$sql = 
+			"\n\t CONSTRAINT ".$fk['CONSTRAINT_NAME'].
+			"\n\t FOREIGN KEY (".$fk['FK_NAME'].")".
+			"\n\t REFERENCES ".$fk['FK_REFERENCE']['TABLE']." (".$fk['FK_REFERENCE']['FIELD'].")".
+			"\n\t ON UPDATE ".$fk['FK_ON_UPDATE'].	
+			"\n\t ON DELETE ".$fk['FK_ON_DELETE'];		
+			$fk_list[] .= $sql;			
+		}
+		return implode(',', $fk_list);
+ 	}
 
 	/**
 	 * Formats the default charset.
