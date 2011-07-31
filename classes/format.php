@@ -309,63 +309,13 @@ class Format {
 	 * @param   string  $string
 	 * @return  array
 	 */
-	protected function _from_csv($string)
+	protected function _from_csv($string, $delimiter = ',', $enclosure = '"', $escape = '\\', $eol = "\n")
 	{
-		$data = array();
+		$data = str_getcsv($string, $eol, $enclosure, $escape);
 
-		// Splits
-		$rows = explode("\n", trim($string));
-
-		// TODO: This means any headers with , will be split, but this is less likley thay a value containing it
-		$headings = array_map(function($value) {
-				return trim($value, '"');
-			}, explode(',', array_shift($rows)));
-
-		$join_row = null;
-
-		foreach ($rows as $row)
+		foreach($data as &$row)
 		{
-			// Check for odd numer of double quotes
-			while (substr_count($row, '"') % 2)
-			{
-				// They have a line start to join onto
-				if ($join_row !== null)
-				{
-					// Lets stick this row onto a new line after the existing row, and see what happens
-					$row = $join_row."\n".$row;
-
-					// Did that fix it?
-					if (substr_count($row, '"') % 2)
-					{
-						// Nope, lets try adding the next line
-						continue 2;
-					}
-
-					else
-					{
-						// Yep, lets kill the join row.
-						$join_row = null;
-					}
-				}
-
-				// Lets start a new "join line"
-				else
-				{
-					$join_row = $row;
-
-					// Lets bust outta this join, and go to the next row (foreach)
-					continue 2;
-				}
-			}
-
-			// The substr removes " from start and end
-			$data_fields = explode('","', trim($row, '"'));
-
-			if (count($data_fields) == count($headings))
-			{
-				$data[] = array_combine($headings, $data_fields);
-			}
-
+			$row = str_getcsv($row, $delimiter, $enclosure, $escape);
 		}
 
 		return $data;
