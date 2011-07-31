@@ -16,7 +16,20 @@ namespace Fuel\Core;
 /**
  * When this is thrown and not caught, the Errors class will call \Request::show_404()
  */
-class Request404Exception extends \Fuel_Exception {}
+class Request404Exception extends \Fuel_Exception {
+
+	/**
+	 * When this type of exception isn't caught this method is called by
+	 * Error::exception_handler() to deal with the problem.
+	 */
+	public function handle()
+	{
+		$response = new \Response(\View::factory('404'), 404);
+		\Event::shutdown();
+		$response->send(true);
+		return;
+	}
+}
 
 
 /**

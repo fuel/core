@@ -74,12 +74,9 @@ class Error {
 	 */
 	public static function exception_handler(\Exception $e)
 	{
-		if ($e instanceof Request404Exception)
+		if (method_exists($e, 'handle'))
 		{
-			$response = new \Response(\View::factory('404'), 404);
-			\Event::shutdown();
-			$response->send(true);
-			return;
+			return $e->handle();
 		}
 
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
