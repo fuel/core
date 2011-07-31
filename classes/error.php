@@ -76,7 +76,10 @@ class Error {
 	{
 		if ($e instanceof Request404Exception)
 		{
-			\Request::show_404();
+			$response = new \Response(\View::factory('404'), 404);
+			\Event::shutdown();
+			$response->send(true);
+			return;
 		}
 
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
