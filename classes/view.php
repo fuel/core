@@ -69,7 +69,7 @@ class View {
 	 * @param   array   array of values
 	 * @return  View
 	 */
-	public static function factory($file = null, array $data = null, $auto_encode = null)
+	public static function factory($file = null, $data = null, $auto_encode = null)
 	{
 		if (is_object($data) === true)
 		{
