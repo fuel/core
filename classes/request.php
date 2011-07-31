@@ -22,7 +22,7 @@ class Request404Exception extends \Fuel_Exception {
 	 * When this type of exception isn't caught this method is called by
 	 * Error::exception_handler() to deal with the problem.
 	 */
-	public function handle()
+	public function _handle_exception()
 	{
 		$response = new \Response(\View::factory('404'), 404);
 		\Event::shutdown();

@@ -74,9 +74,9 @@ class Error {
 	 */
 	public static function exception_handler(\Exception $e)
 	{
-		if (method_exists($e, 'handle'))
+		if (method_exists($e, '_handle_exception'))
 		{
-			return $e->handle();
+			return $e->_handle_exception();
 		}
 
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
