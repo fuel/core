@@ -120,63 +120,13 @@ class Request {
 	 *
 	 *     Request::show_404();
 	 *
+	 * @deprecated
 	 * @param   bool         Whether to return the 404 output or just output and exit
 	 * @return  void|string  Void if $return is false, the output if $return is true
 	 */
 	public static function show_404($return = false)
 	{
-		logger(Fuel::L_INFO, 'Called', __METHOD__);
-
-		// This ensures that show_404 doesn't recurse indefinately
-		static $call_count = 0;
-		$call_count++;
-
-		if ($call_count == 1)
-		{
-			// first call, route the 404 route
-			$route_request = true;
-		}
-		elseif ($call_count == 2)
-		{
-			// second call, try the 404 route without routing
-			$route_request = false;
-		}
-		else
-		{
-			// third call, there's something seriously wrong now
-			exit('It appears your _404_ route is incorrect.  Multiple Recursion has happened.');
-		}
-
-		if (\Config::get('routes._404_') === null)
-		{
-			$response = new \Response(\View::factory('404'), 404);
-
-			if ($return)
-			{
-				return $response;
-			}
-
-			\Event::shutdown();
-
-			$response->send(true);
-		}
-		else
-		{
-			$request = \Request::factory(\Config::get('routes._404_'), $route_request)->execute();
-
-			if ($return)
-			{
-				return $request->response;
-			}
-
-			\Event::shutdown();
-
-			$request->response->send(true);
-		}
-
-		\Fuel::finish();
-
-		exit;
+		throw new \Request404Exception();
 	}
 
 	/**
