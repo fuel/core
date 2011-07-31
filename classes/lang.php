@@ -95,6 +95,8 @@ class Lang {
 
 	public static function set($line, $value, $group = null)
 	{
+		$value = is_callable($value) ? call_user_func($value) : $value;
+		
 		if ($group === null)
 		{
 			static::$lines[$line] = $value;

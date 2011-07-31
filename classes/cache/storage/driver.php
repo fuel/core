@@ -245,6 +245,7 @@ abstract class Cache_Storage_Driver {
 	 */
 	final public function set($contents = null, $expiration = false, $dependencies = array())
 	{
+		$contents = is_callable($contents) ? call_user_func($contents) : $contents;
 		// save the current expiration
 		$current_expiration = $this->expiration;
 

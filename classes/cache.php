@@ -78,6 +78,8 @@ class Cache {
 	 */
 	public static function set($identifier, $contents = null, $expiration = false, $dependencies = array())
 	{
+		$contents = is_callable($contents) ? call_user_func($contents) : $contents;
+		
 		$cache = static::factory($identifier);
 		return $cache->set($contents, $expiration, $dependencies);
 	}

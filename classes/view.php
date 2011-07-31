@@ -260,6 +260,8 @@ class View {
 	 */
 	public static function set_global($key, $value = null, $encode = null)
 	{
+		$value = is_callable($value) ? call_user_func($value) : $value;
+		
 		$encode === null and $encode = static::$auto_encode;
 
 		if (is_array($key))
@@ -351,6 +353,8 @@ class View {
 	 */
 	public function set($key, $value = null, $encode = null)
 	{
+		$value = is_callable($value) ? call_user_func($value) : $value;
+		
 		$encode === null and $encode = static::$auto_encode;
 
 		if (is_array($key))

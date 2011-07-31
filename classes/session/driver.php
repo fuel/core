@@ -124,6 +124,8 @@ abstract class Session_Driver {
 	 */
 	public function set($name, $value)
 	{
+		$value = is_callable($value) ? call_user_func($value) : $value;
+		
 		$this->data[$name] = $value;
 	}
 

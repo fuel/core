@@ -190,6 +190,7 @@ CONF;
 
 	public static function set($item, $value)
 	{
+		$value = is_callable($value) ? call_user_func($value) : $value;
 		$parts = explode('.', $item);
 
 		switch (count($parts))

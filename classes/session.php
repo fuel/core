@@ -175,6 +175,8 @@ class Session {
 	 */
 	public static function set($name, $value = null)
 	{
+		$value = is_callable($value) ? call_user_func($value) : $value;
+		
 		return static::instance()->set($name, $value);
 	}
 
