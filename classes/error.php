@@ -74,11 +74,6 @@ class Error {
 	 */
 	public static function exception_handler(\Exception $e)
 	{
-		if ($e instanceof Request404Exception)
-		{
-			\Request::show_404();
-		}
-
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
 		logger(Fuel::L_ERROR, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
 

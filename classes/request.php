@@ -162,7 +162,14 @@ class Request {
 		}
 		else
 		{
-			$request = \Request::factory(\Config::get('routes._404_'), $route_request)->execute();
+			try
+			{
+				$request = \Request::factory(\Config::get('routes._404_'), $route_request)->execute();
+			}
+			catch (\Request404Exception $e)
+			{
+				\Request::show_404();
+			}
 
 			if ($return)
 			{
