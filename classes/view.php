@@ -71,6 +71,14 @@ class View {
 	 */
 	public static function factory($file = null, array $data = null, $auto_encode = null)
 	{
+		if (is_object($data) === true)
+		{
+			$data = get_object_vars($data);
+		}
+		elseif (is_array($data) === false)
+		{
+			$data = array($data);
+		}
 		return new static($file, $data, $auto_encode);
 	}
 
