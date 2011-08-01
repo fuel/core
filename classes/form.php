@@ -498,35 +498,34 @@ class Form {
 
 		unset($attributes['selected']);
 
-		$input = PHP_EOL;
-		foreach ($options as $key => $val)
-		{
-			if (is_array($val))
+		// closure to recusively process the options array
+		$listoptions = function (Array $options, $selected, $level = 1) use (&$listoptions) {
+
+			$input = PHP_EOL;
+			foreach ($options as $key => $val)
 			{
-				$optgroup = PHP_EOL;
-				foreach ($val as $opt_key => $opt_val)
+				if (is_array($val))
 				{
-					$opt_attr = array('value' => $opt_key);
-					(in_array((string)$opt_key, $selected, TRUE)) && $opt_attr[] = 'selected';
-					$optgroup .= str_repeat("\t", 2);
-					$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
-						static::prep_value($opt_attr['value']) : $opt_attr['value'];
-					$optgroup .= html_tag('option', $opt_attr, $opt_val).PHP_EOL;
+					$optgroup = $listoptions($val, $selected, $level + 1);
+					$optgroup .= str_repeat("\t", $level);
+					$input .= str_repeat("\t", $level).html_tag('optgroup', array('label' => $key , 'style' => 'padding-left: '.(10*($level-1)).'px;'), $optgroup).PHP_EOL;
 				}
-				$optgroup .= str_repeat("\t", 1);
-				$input .= str_repeat("\t", 1).html_tag('optgroup', array('label' => $key), $optgroup).PHP_EOL;
+				else
+				{
+					$opt_attr = array('value' => $key, 'style' => 'padding-left: '.(10*($level-1)).'px;');
+					(in_array((string)$key, $selected, TRUE)) && $opt_attr[] = 'selected';
+					$input .= str_repeat("\t", $level);
+					$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
+						\Form::prep_value($opt_attr['value']) : $opt_attr['value'];
+					$input .= html_tag('option', $opt_attr, $val).PHP_EOL;
+				}
 			}
-			else
-			{
-				$opt_attr = array('value' => $key);
-				(in_array((string)$key, $selected, TRUE)) && $opt_attr[] = 'selected';
-				$input .= str_repeat("\t", 1);
-				$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
-					static::prep_value($opt_attr['value']) : $opt_attr['value'];
-				$input .= html_tag('option', $opt_attr, $val).PHP_EOL;
-			}
-		}
-		$input .= str_repeat("\t", 0);
+
+			return $input;
+		};
+
+		// generate the select options list
+		$input = $listoptions($options, $selected).str_repeat("\t", 0);
 
 		if (empty($attributes['id']) && \Config::get('form.auto_id', false) == true)
 		{
