@@ -41,7 +41,7 @@ class File_Area {
 	 */
 	protected $file_handlers = array();
 
-	protected function __construct(Array $config = array())
+	protected function __construct(array $config = array())
 	{
 		foreach ($config as $key => $value)
 		{
@@ -63,7 +63,7 @@ class File_Area {
 	 * @param	array
 	 * @return	File_Area
 	 */
-	public static function factory(Array $config = array())
+	public static function factory(array $config = array())
 	{
 		return new static($config);
 	}
@@ -76,7 +76,7 @@ class File_Area {
 	 * @return	File_Handler_File
 	 * @throws	FileAccessException		when outside basedir restriction or disallowed file extension
 	 */
-	public function get_handler($path, Array $config = array(), $content = array())
+	public function get_handler($path, array $config = array(), $content = array())
 	{
 		$path = $this->get_path($path);
 
