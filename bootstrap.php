@@ -139,7 +139,7 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
 
 	'Fuel\\Core\\Redis'            => COREPATH.'classes/redis.php',
-	'Fuel\\Core\\Redis_Exception'  => COREPATH.'classes/redis/exception.php',
+	'Fuel\\Core\\RedisException'   => COREPATH.'classes/redis.php',
 
 	'Fuel\\Core\\Response'  => COREPATH.'classes/response.php',
 	'Fuel\\Core\\Route'     => COREPATH.'classes/route.php',
