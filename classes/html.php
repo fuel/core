@@ -75,7 +75,7 @@ class Html
 	{
 		if ( ! preg_match('#^(\w+://)# i', $src))
 		{
-			$src = \Uri::create($src);
+			$src = \Config::get('base_url').$src;
 		}
 		$attr['src'] = $src;
 		$attr['alt'] = (isset($attr['alt'])) ? $attr['alt'] : pathinfo($src, PATHINFO_FILENAME);
