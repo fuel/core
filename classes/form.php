@@ -499,7 +499,7 @@ class Form {
 		unset($attributes['selected']);
 
 		// closure to recusively process the options array
-		$listoptions = function (Array $options, $selected, $level = 1) use (&$listoptions) {
+		$listoptions = function (array $options, $selected, $level = 1) use (&$listoptions) {
 
 			$input = PHP_EOL;
 			foreach ($options as $key => $val)
@@ -508,11 +508,11 @@ class Form {
 				{
 					$optgroup = $listoptions($val, $selected, $level + 1);
 					$optgroup .= str_repeat("\t", $level);
-					$input .= str_repeat("\t", $level).html_tag('optgroup', array('label' => $key , 'style' => 'padding-left: '.(10*($level-1)).'px;'), $optgroup).PHP_EOL;
+					$input .= str_repeat("\t", $level).html_tag('optgroup', array('label' => $key , 'style' => 'text-indent: '.(10*($level-1)).'px;'), $optgroup).PHP_EOL;
 				}
 				else
 				{
-					$opt_attr = array('value' => $key, 'style' => 'padding-left: '.(10*($level-1)).'px;');
+					$opt_attr = array('value' => $key, 'style' => 'text-indent: '.(10*($level-1)).'px;');
 					(in_array((string)$key, $selected, TRUE)) && $opt_attr[] = 'selected';
 					$input .= str_repeat("\t", $level);
 					$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
