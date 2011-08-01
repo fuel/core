@@ -174,7 +174,7 @@ class Database_Query {
 			$sql = strtr($sql, $values);
 		}
 
-		return $sql;
+		return trim($sql);
 	}
 
 	/**
