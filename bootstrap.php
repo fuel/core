@@ -100,11 +100,11 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Fieldset'        => COREPATH.'classes/fieldset.php',
 	'Fuel\\Core\\Fieldset_Field'  => COREPATH.'classes/fieldset/field.php',
 
-	'Fuel\\Core\\File'                   => COREPATH.'classes/file.php',
-	'Fuel\\Core\\FileAccessException'    => COREPATH.'classes/file.php',
-	'Fuel\\Core\\OutsideAreaException'   => COREPATH.'classes/file.php',
-	'Fuel\\Core\\InvalidPathException'   => COREPATH.'classes/file.php',
-	'Fuel\\Core\\File_Area'              => COREPATH.'classes/file/area.php',
+	'Fuel\\Core\\File'                    => COREPATH.'classes/file.php',
+	'Fuel\\Core\\FileAccessException'     => COREPATH.'classes/file.php',
+	'Fuel\\Core\\OutsideAreaException'    => COREPATH.'classes/file.php',
+	'Fuel\\Core\\InvalidPathException'    => COREPATH.'classes/file.php',
+	'Fuel\\Core\\File_Area'               => COREPATH.'classes/file/area.php',
 	'Fuel\\Core\\File_Handler_File'       => COREPATH.'classes/file/handler/file.php',
 	'Fuel\\Core\\File_Handler_Directory'  => COREPATH.'classes/file/handler/directory.php',
 
@@ -154,17 +154,18 @@ Autoloader::add_classes(array(
 	'Fuel\\Core\\Session_Memcached'  => COREPATH.'classes/session/memcached.php',
 	'Fuel\\Core\\Session_Redis'      => COREPATH.'classes/session/redis.php',
 
-	'Fuel\\Core\\Str'  => COREPATH.'classes/str.php',
+	'Fuel\\Core\\Num'       => COREPATH.'classes/num.php',
+	'Fuel\\Core\\Str'       => COREPATH.'classes/str.php',
 	'Fuel\\Core\\TestCase'  => COREPATH.'classes/testcase.php',
-	'Fuel\\Core\\Uri'     => COREPATH.'classes/uri.php',
+	'Fuel\\Core\\Uri'       => COREPATH.'classes/uri.php',
 	'Fuel\\Core\\Unzip'     => COREPATH.'classes/unzip.php',
-	'Fuel\\Core\\Upload'  => COREPATH.'classes/upload.php',
+	'Fuel\\Core\\Upload'    => COREPATH.'classes/upload.php',
 
 	'Fuel\\Core\\Validation'        => COREPATH.'classes/validation.php',
 	'Fuel\\Core\\Validation_Error'  => COREPATH.'classes/validation/error.php',
 
-	'Fuel\\Core\\View'  => COREPATH.'classes/view.php',
+	'Fuel\\Core\\View'       => COREPATH.'classes/view.php',
 	'Fuel\\Core\\ViewModel'  => COREPATH.'classes/viewmodel.php',
 ));
 
-
+/* End of file bootstrap.php */
