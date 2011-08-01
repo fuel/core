@@ -166,7 +166,7 @@ abstract class Image_Driver {
 	 * @param   integer  $y1  Y-Coordinate for first set.
 	 * @param   integer  $x2  X-Coordinate for second set.
 	 * @param   integer  $y2  Y-Coordinate for second set.
-	 * @return  Array    An array of variables for the specific driver.
+	 * @return  array    An array of variables for the specific driver.
 	 */
 	protected function _crop($x1, $y1, $x2, $y2)
 	{
@@ -211,7 +211,7 @@ abstract class Image_Driver {
 	 * @param   integer  $height  The new height of the image.
 	 * @param   boolean  $keepar  If false, allows stretching of the image.
 	 * @param   boolean  $pad     Adds padding to the image when resizing.
-	 * @return  Array    An array of variables for the specific driver.
+	 * @return  array    An array of variables for the specific driver.
 	 */
 	protected function _resize($width, $height = null, $keepar = true, $pad = true)
 	{

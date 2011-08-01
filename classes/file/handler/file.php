@@ -36,13 +36,13 @@ class File_Handler_File {
 	 */
 	protected $readonly = false;
 
-	protected function __construct($path, Array $config, File_Area $area, $content = array())
+	protected function __construct($path, array $config, File_Area $area, $content = array())
 	{
 		$this->path = $path;
 		$this->area = $area;
 	}
 
-	public static function factory($path, Array $config = array(), File_Area $area = null, $content = array())
+	public static function factory($path, array $config = array(), File_Area $area = null, $content = array())
 	{
 		$obj = new static($path, $config, \File::instance($area), $content);
 

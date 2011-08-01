@@ -117,7 +117,7 @@ abstract class Cache_Storage_Driver {
 	 *
 	 * @return  bool either true or false on any failure
 	 */
-	abstract public function check_dependencies(Array $dependencies);
+	abstract public function check_dependencies(array $dependencies);
 
 	// ---------------------------------------------------------------------
 
@@ -240,7 +240,7 @@ abstract class Cache_Storage_Driver {
 	 *
 	 * @param   mixed                 The content to be cached
 	 * @param   int                   The time in seconds until the cache will expire, =< 0 or null means no expiration
-	 * @param   array                 Array of names on which this cache depends for
+	 * @param   array                 array of names on which this cache depends for
 	 * @return  Cache_Storage_Driver  The new request
 	 */
 	final public function set($contents = null, $expiration = false, $dependencies = array())

@@ -137,7 +137,7 @@ class Form {
 	 * @param	string|array	action string or array with more tag attribute settings
 	 * @return	string
 	 */
-	public static function open($attributes = array(), Array $hidden = array())
+	public static function open($attributes = array(), array $hidden = array())
 	{
 		$attributes = ! is_array($attributes) ? array('action' => $attributes) : $attributes;
 
@@ -196,7 +196,7 @@ class Form {
 	 * @param	array
 	 * @return	string
 	 */
-	public static function input($field, $value = null, Array $attributes = array())
+	public static function input($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -238,7 +238,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function hidden($field, $value = null, Array $attributes = array())
+	public static function hidden($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -262,7 +262,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function password($field, $value = null, Array $attributes = array())
+	public static function password($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -286,7 +286,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function radio($field, $value = null, Array $attributes = array())
+	public static function radio($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -310,7 +310,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function checkbox($field, $value = null, Array $attributes = array())
+	public static function checkbox($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -333,7 +333,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function file($field, Array $attributes = array())
+	public static function file($field, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -356,7 +356,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function button($field, $value = null, Array $attributes = array())
+	public static function button($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -380,7 +380,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function reset($field = 'reset', $value = 'Reset', Array $attributes = array())
+	public static function reset($field = 'reset', $value = 'Reset', array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -404,7 +404,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function submit($field = 'submit', $value = 'Submit', Array $attributes = array())
+	public static function submit($field = 'submit', $value = 'Submit', array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -428,7 +428,7 @@ class Form {
 	 * @param	array
 	 * @return	string
 	 */
-	public static function textarea($field, $value = null, Array $attributes = array())
+	public static function textarea($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -465,7 +465,7 @@ class Form {
 	 * @param	array
 	 * @return	string
 	 */
-	public static function select($field, $values = null, Array $options = array(), Array $attributes = array())
+	public static function select($field, $values = null, array $options = array(), array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -544,7 +544,7 @@ class Form {
 	 * @param	array
 	 * @return	string
 	 */
-	public static function label($label, $id = null, Array $attributes = array())
+	public static function label($label, $id = null, array $attributes = array())
 	{
 		if (is_array($label))
 		{

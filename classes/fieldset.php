@@ -37,7 +37,7 @@ class Fieldset
 	 */
 	protected static $_instances = array();
 
-	public static function factory($name = 'default', Array $config = array())
+	public static function factory($name = 'default', array $config = array())
 	{
 		if ($exists = static::instance($name))
 		{
@@ -112,7 +112,7 @@ class Fieldset
 	 * @param  string
 	 * @param  array
 	 */
-	protected function __construct($name, Array $config = array())
+	protected function __construct($name, array $config = array())
 	{
 		if (isset($config['validation_instance']))
 		{
@@ -420,7 +420,7 @@ class Fieldset
 	/**
 	 * Alias for $this->validation()->show_errors()
 	 */
-	public function show_errors(Array $config = array())
+	public function show_errors(array $config = array())
 	{
 		return $this->validation()->show_errors($config);
 	}

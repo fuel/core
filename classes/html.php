@@ -272,12 +272,13 @@ class Html
 	 * @param	array			tag attributes
 	 * @return	string
 	 */
-	public static function audio($src = array(), $attr = false)
+	public static function audio($src = '', $attr = false)
 	{
 		if(static::$html5)
 		{
 			if(is_array($src))
 			{
+				$source = '';
 				foreach($src as $item)
 				{
 					$source .= html_tag('source', array('src' => $item));
@@ -298,7 +299,7 @@ class Html
 	 * @param	array|string	outer list attributes
 	 * @return	string
 	 */
-	public static function ul(Array $list = array(), $attr = false)
+	public static function ul(array $list = array(), $attr = false)
 	{
 		return static::build_list('ul', $list, $attr);
 	}
@@ -310,7 +311,7 @@ class Html
 	 * @param	array|string	outer list attributes
 	 * @return	string
 	 */
-	public static function ol(Array $list = array(), $attr = false)
+	public static function ol(array $list = array(), $attr = false)
 	{
 		return static::build_list('ol', $list, $attr);
 	}
@@ -324,7 +325,7 @@ class Html
 	 * @param	string	indentation
 	 * @return	string
 	 */
-	protected static function build_list($type = 'ul', Array $list = array(), $attr = false, $indent = '')
+	protected static function build_list($type = 'ul', array $list = array(), $attr = false, $indent = '')
 	{
 		if ( ! is_array($list))
 		{

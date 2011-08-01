@@ -78,27 +78,27 @@ class Validation {
 	protected $fieldset;
 
 	/**
-	 * @var  Array  available after validation started running: contains given input values
+	 * @var  array  available after validation started running: contains given input values
 	 */
 	protected $input = array();
 
 	/**
-	 * @var  Array  contains values of fields that validated succesfully
+	 * @var  array  contains values of fields that validated succesfully
 	 */
 	protected $validated = array();
 
 	/**
-	 * @var  Array  contains Validation_Error instances of encountered errors
+	 * @var  array  contains Validation_Error instances of encountered errors
 	 */
 	protected $errors = array();
 
 	/**
-	 * @var  Array  contains a list of classnames and objects that may contain validation methods
+	 * @var  array  contains a list of classnames and objects that may contain validation methods
 	 */
 	protected $callables = array();
 
 	/**
-	 * @var  Array  contains validation error messages, will overwrite those from lang files
+	 * @var  array  contains validation error messages, will overwrite those from lang files
 	 */
 	protected $error_messages = array();
 
@@ -244,7 +244,7 @@ class Validation {
 	 * Performs validation with current fieldset and on given input, will try POST
 	 * when input wasn't given.
 	 *
-	 * @param   Array  input that overwrites POST values
+	 * @param   array  input that overwrites POST values
 	 * @param   bool   will skip validation of values it can't find or are null
 	 * @return  bool   whether validation succeeded
 	 */
@@ -296,8 +296,8 @@ class Validation {
 	 *
 	 * @param   callback
 	 * @param   mixed     Value by reference, will be edited
-	 * @param   Array     Extra parameters
-	 * @param   Array     Validation field description
+	 * @param   array     Extra parameters
+	 * @param   array     Validation field description
 	 * @throws  Validation_Error
 	 */
 	protected function _run_rule($rule, &$value, $params, $field)
@@ -379,7 +379,7 @@ class Validation {
 	 *
 	 * Returns all errors in a list or with set markup from $options param
 	 *
-	 * @param   Array  uses keys open_list, close_list, open_error, close_error & no_errors
+	 * @param   array  uses keys open_list, close_list, open_error, close_error & no_errors
 	 * @return  string
 	 */
 	public function show_errors($options = array())
@@ -619,7 +619,7 @@ class Validation {
 	 * Validate input string with many options
 	 *
 	 * @param   string
-	 * @param   string|Array  either a named filter or combination of flags
+	 * @param   string|array  either a named filter or combination of flags
 	 * @return  bool
 	 */
 	public function _validation_valid_string($val, $flags = array('alpha', 'utf8'))

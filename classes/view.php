@@ -33,7 +33,7 @@ namespace Fuel\Core;
  */
 class View {
 
-	// Array of global view data
+	// array of global view data
 	protected static $_global_data = array();
 
 	// Current active search paths
@@ -45,7 +45,7 @@ class View {
 	// View filename
 	protected $_file;
 
-	// Array of local variables
+	// array of local variables
 	protected $_data = array();
 
 	// File extension used for views

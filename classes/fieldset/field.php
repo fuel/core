@@ -81,7 +81,7 @@ class Fieldset_Field
 	 * @param	array
 	 * @param	Fieldset
 	 */
-	public function __construct($name, $label = '', Array $attributes = array(), Array $rules = array(), Fieldset $fieldset)
+	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), Fieldset $fieldset)
 	{
 		$this->name = (string) $name;
 		$this->fieldset = $fieldset;

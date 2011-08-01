@@ -45,7 +45,7 @@ class File {
 		}
 	}
 
-	public static function factory(Array $config = array())
+	public static function factory(array $config = array())
 	{
 		return \File_Area::factory($config);
 	}
@@ -70,11 +70,11 @@ class File {
 	 * File & directory objects factory
 	 *
 	 * @param   string  path to the file or directory
-	 * @param   Array   configuration items
+	 * @param   array   configuration items
 	 * @param   string|File_Area|null  file area name, object or null for base area
 	 * @return  File_Handler_File
 	 */
-	public static function get($path, Array $config = array(), $area = null)
+	public static function get($path, array $config = array(), $area = null)
 	{
 		return static::instance($area)->get_handler($path, $config);
 	}
@@ -84,7 +84,7 @@ class File {
 	 *
 	 * @return  bool
 	 */
-	public static function get_url($path, Array $config = array(), $area = null)
+	public static function get_url($path, array $config = array(), $area = null)
 	{
 		return static::get($path, $config, $area)->get_url();
 	}
@@ -177,7 +177,7 @@ class File {
 	 * @param   int         depth to recurse directory, 1 is only current and 0 or smaller is unlimited
 	 * @param   Array|null  array of partial regexes or non-array for default
 	 * @param   string|File_Area|null  file area name, object or null for base area
-	 * @return  Array  directory contents in an array
+	 * @return  array  directory contents in an array
 	 */
 	public static function read_dir($path, $depth = 0, $filter = null, $area = null)
 	{
