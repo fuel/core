@@ -2,22 +2,21 @@
 /**
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
- * @package		Fuel
- * @version		1.0
- * @author		Fuel Development Team
- * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com
+ * @package    Fuel
+ * @version    1.0
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
 
-
 class Response {
 
 	/**
-	 * @var	array	An array of status codes and messages
+	 * @var  array  An array of status codes and messages
 	 */
 	public static $statuses = array(
 		100 => 'Continue',
@@ -76,21 +75,20 @@ class Response {
 	 *
 	 * The refresh header works better on certain servers like IIS.
 	 *
-	 * @access	public
-	 * @param	string	The url
-	 * @param	string	The redirect method
-	 * @param	int		The redirect status code
-	 * @return	void
+	 * @param   string  $url     The url
+	 * @param   string  $method  The redirect method
+	 * @param   int     $code    The redirect status code
+	 * @return  void
 	 */
-	public static function redirect($url = '', $method = 'location', $redirect_code = 302)
+	public static function redirect($url = '', $method = 'location', $code = 302)
 	{
 		$response = new static;
 
-		$response->status = $redirect_code;
+		$response->set_status($code);
 
 		if (strpos($url, '://') === false)
 		{
-			$url = Uri::create($url);
+			$url = \Uri::create($url);
 		}
 
 		if ($method == 'location')
@@ -113,20 +111,26 @@ class Response {
 	}
 
 	/**
-	 * @var	int		The HTTP status code
+	 * @var  int  The HTTP status code
 	 */
 	public $status = 200;
 
 	/**
-	 * @var	array	An array of headers
+	 * @var  array  An array of headers
 	 */
 	public $headers = array();
 
 	/**
-	 * @var	string	the content of the response
+	 * @var  string  The content of the response
 	 */
 	public $body = null;
 
+	/**
+	 * Sets up the response with a body and a status code.
+	 *
+	 * @param  string  $body    The response body
+	 * @param  string  $status  The response status
+	 */
 	public function __construct($body = null, $status = 200)
 	{
 		$this->body = $body;
@@ -134,24 +138,35 @@ class Response {
 	}
 
 	/**
+	 * Sets the response status code
+	 *
+	 * @param   string  $status  The status code
+	 * @return  $this
+	 */
+	public function set_status($status = 200)
+	{
+		$this->status = $status;
+		return $this;
+	}
+
+	/**
 	 * Adds a header to the queue
 	 *
-	 * @access	public
-	 * @param	string	The header name
-	 * @param	string	The header value
-	 * @return	void
+	 * @param   string  The header name
+	 * @param   string  The header value
+	 * @return  $this
 	 */
 	public function set_header($name, $value)
 	{
 		$this->headers[$name] = $value;
+		return $this;
 	}
 
 	/**
-	 * Sets the body for the response
+	 * Sets (or returns) the body for the response
 	 *
-	 * @access	public
-	 * @param	string	The response content
-	 * @return	void
+	 * @param   string  The response content
+	 * @return  $this|string
 	 */
 	public function body($value = false)
 	{
@@ -160,13 +175,14 @@ class Response {
 			return $this->body;
 		}
 		$this->body = $value;
+		return $this;
 	}
 
 	/**
-	 * Sends the headers if they haven't already been sent.
+	 * Sends the headers if they haven't already been sent.  Returns whether
+	 * they were sent or not.
 	 *
-	 * @access	public
-	 * @return	void
+	 * @return  bool
 	 */
 	public function send_headers()
 	{
@@ -181,9 +197,18 @@ class Response {
 				is_string($name) and $value = "{$name}: {$value}";
 				header($value, true);
 			}
+			return true;
 		}
+		return false;
 	}
 
+	/**
+	 * Sends the response to the output buffer.  Optionally will send the
+	 * headers.
+	 *
+	 * @param   string  $send_headers  Whether to send the headers
+	 * @return  $this
+	 */
 	public function send($send_headers = false)
 	{
 		$send_headers and $this->send_headers();
@@ -193,10 +218,14 @@ class Response {
 			echo $this->body;
 		}
 	}
-	
+
+	/**
+	 * Returns the body as a string.
+	 *
+	 * @return  string
+	 */
 	public function __toString()
 	{
 		return (string) $this->body();
 	}
 }
-
