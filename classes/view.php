@@ -71,14 +71,6 @@ class View {
 	 */
 	public static function factory($file = null, $data = null, $auto_encode = null)
 	{
-		if (is_object($data) === true)
-		{
-			$data = get_object_vars($data);
-		}
-		elseif (is_array($data) === false)
-		{
-			$data = array($data);
-		}
 		return new static($file, $data, $auto_encode);
 	}
 
@@ -92,8 +84,17 @@ class View {
 	 * @return  void
 	 * @uses    View::set_filename
 	 */
-	public function __construct($file = null, array $data = null, $encode = null)
+	public function __construct($file = null, $data = null, $encode = null)
 	{
+		if (is_object($data) === true)
+		{
+			$data = get_object_vars($data);
+		}
+		elseif ($data and ! is_array($data))
+		{
+			throw new \InvalidArgumentException('The data parameter only accepts objects and arrays.');
+		}
+
 		$encode === null and $encode = static::$auto_encode;
 
 		if ($file !== null)
