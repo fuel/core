@@ -276,14 +276,15 @@ class Request {
 			{
 				// load and add the module routes
 				$mod_routes = \Config::load(\Fuel::load($mod_path), $this->uri->segments[0] . '_routes');
-				array_walk($mod_routes, function ($route, $name) {
+				$self = $this;
+				array_walk($mod_routes, function ($route, $name) use (&$self) {
 					if ($name === '_root_')
 					{
-						$name = $this->uri->segments[0];
+						$name = $self->uri->segments[0];
 					}
-					elseif (strpos($name, $this->uri->segments[0].'/') !== 0 and $name != $this->uri->segments[0])
+					elseif (strpos($name, $self->uri->segments[0].'/') !== 0 and $name != $self->uri->segments[0])
 					{
-						$name = $this->uri->segments[0].'/'.$name;
+						$name = $self->uri->segments[0].'/'.$name;
 					}
 					\Config::set('routes.'.$name, $route);
 				});
