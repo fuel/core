@@ -169,7 +169,7 @@ class Upload {
 	 */
 	public static function get_errors($index = null)
 	{
-		if (is_null($index) or ! isset(static::$files[$index]) or $files[$index]['error'] == 0)
+		if (is_null($index) or ! isset(static::$files[$index]) or static::$files[$index]['error'] == 0)
 		{
 			return array_filter(static::$files, function($file) { return $file['error'] != 0; } );
 		}
