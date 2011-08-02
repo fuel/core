@@ -53,34 +53,45 @@ class Database_MySQLi_Connection extends \Database_Connection {
 			'database'   => '',
 			'hostname'   => '',
 			'port'       => '',
+			'socket'     => '',
 			'username'   => '',
 			'password'   => '',
 			'persistent' => FALSE,
 		));
-
-		// If a port is set in config append it to hostname
-		! empty($port) and $hostname = "{$hostname}:{$port}";
 
 		// Prevent this information from showing up in traces
 		unset($this->_config['connection']['username'], $this->_config['connection']['password']);
 
 		try
 		{
+			if ($socket != '')
+			{
+				$port   = null;
+			}
+			elseif (is_int($port))
+			{
+				$socket = null;
+			}
+			else
+			{
+				$socket = null;
+				$port   = null;
+			}
 			if ($persistent)
 			{
 				// Create a persistent connection
-				$this->_connection =  new \mysqli('p:'.$hostname, $username, $password, $database);
+				$this->_connection =  new \mysqli('p:'.$hostname, $username, $password, $database, $port, $socket);
 			}
 			else
 			{
 				// Create a connection and force it to be a new link
-				$this->_connection = new \mysqli($hostname, $username, $password, $database);
+				$this->_connection = new \mysqli($hostname, $username, $password, $database, $port, $socket);
 			}
 			if ($this->_connection->error)
-      {
-        // Unable to connect, select database, etc
-        throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
-      }
+			{
+				// Unable to connect, select database, etc
+				throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+			}
 		}
 		catch (ErrorException $e)
 		{

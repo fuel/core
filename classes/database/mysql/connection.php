@@ -53,19 +53,26 @@ class Database_MySQL_Connection extends \Database_Connection {
 			'database'   => '',
 			'hostname'   => '',
 			'port'       => '',
+			'socket'     => '',
 			'username'   => '',
 			'password'   => '',
 			'persistent' => FALSE,
 		));
-
-		// If a port is set in config append it to hostname
-		! empty($port) and $hostname = "{$hostname}:{$port}";
 
 		// Prevent this information from showing up in traces
 		unset($this->_config['connection']['username'], $this->_config['connection']['password']);
 
 		try
 		{
+			// Build right first argument ro mysql_connect()
+			if ($socket != '')
+			{
+				$hostname = $hostname.':'.$socket;
+			}
+			elseif (is_int($port))
+			{
+				$hostname = $hostname.':'.$port;
+			}
 			if ($persistent)
 			{
 				// Create a persistent connection
