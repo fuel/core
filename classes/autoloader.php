@@ -251,7 +251,7 @@ class Autoloader {
 			{
 				$ns = ltrim($ns, '\\');
 
-				if (strncmp($ns, $namespace, strlen($ns)) === 0)
+				if (strncasecmp($ns, $namespace, strlen($ns)) === 0)
 				{
 					if (array_key_exists($ns, static::$psr_namespaces))
 					{
