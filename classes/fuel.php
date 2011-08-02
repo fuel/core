@@ -108,10 +108,6 @@ class Fuel {
 			throw new \Fuel_Exception("You can't initialize Fuel more than once.");
 		}
 
-		register_shutdown_function('fuel_shutdown_handler');
-		set_exception_handler('fuel_exception_handler');
-		set_error_handler('fuel_error_handler');
-
 		// Start up output buffering
 		ob_start();
 
@@ -148,8 +144,6 @@ class Fuel {
 			{
 				\Config::set('base_url', static::generate_base_url());
 			}
-
-			\Uri::detect();
 		}
 
 		// Run Input Filtering
@@ -468,7 +462,7 @@ class Fuel {
 						$path = $mod_check_path;
 						$ns = '\\'.ucfirst($name);
 						\Autoloader::add_namespaces(array(
-							$ns	=> $path.'classes'.DS,
+							$ns  => $path.'classes'.DS,
 						), true);
 						break;
 					}
@@ -484,7 +478,7 @@ class Fuel {
 		else
 		{
 			// strip the classes directory, we need the module root
-			$path = substr($path,0, -8);
+			$path = substr($path, 0, -8);
 		}
 		
 		return $path;
@@ -493,8 +487,8 @@ class Fuel {
 	/**
 	 * Checks to see if a module exists or not.
 	 *
-	 * @param	string	the module name
-	 * @return	bool	whether it exists or not
+	 * @param   string  the module name
+	 * @return  bool    whether it exists or not
 	 */
 	public static function module_exists($module)
 	{
@@ -564,7 +558,7 @@ class Fuel {
 		if ( ! is_dir($dir))
 		{
 			// Create the cache directory
-			mkdir($dir, 0777, TRUE);
+			mkdir($dir, 0777, true);
 
 			// Set permissions (must be manually set to fix umask issues)
 			chmod($dir, 0777);
@@ -661,5 +655,3 @@ class Fuel {
 		return str_ireplace($search, $replace, $path);
 	}
 }
-
-

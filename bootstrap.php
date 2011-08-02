@@ -37,6 +37,25 @@ MBSTRING and mb_internal_encoding(Fuel::$encoding);
 // Is Fuel running on the command line?
 Fuel::$is_cli = (bool) defined('STDIN');
 
+/**
+ * Register all the error/shutdown handlers
+ */
+register_shutdown_function(function () {
+	return \Error::shutdown_handler();
+});
+
+set_exception_handler(function (\Exception $e) {
+	return \Error::exception_handler($e);
+});
+
+set_error_handler(function ($severity, $message, $filepath, $line) {
+	! class_exists('Fuel\\Core\\Error') and import('error');
+	! class_exists('Error') and class_alias('Fuel\\Core\\Error', 'Error');
+
+	return \Error::error_handler($severity, $message, $filepath, $line);
+});
+
+
 // Load in the Autoloader
 require COREPATH.'classes'.DS.'autoloader.php';
 
