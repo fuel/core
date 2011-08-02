@@ -725,6 +725,8 @@ class Form {
 				}
 				else
 				{
+					$field->value and $field->set_attribute('checked', 'checked');
+
 					$build_field = $field->type == 'radio'
 						? static::radio($field->name, $field->value, $field->attributes)
 						: static::checkbox($field->name, $field->value, $field->attributes);
