@@ -613,9 +613,9 @@ class Fuel {
 		{
 			foreach ($array['classes'] as $class)
 			{
-				if ( ! class_exists(ucfirst($class)))
+				if ( ! class_exists($class = ucfirst($class)))
 				{
-					throw new \Fuel_Exception('Always load class does not exist.');
+					throw new \Fuel_Exception('Always load class does not exist. Unable to load: '.$class);
 				}
 			}
 		}
