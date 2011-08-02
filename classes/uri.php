@@ -15,15 +15,24 @@ namespace Fuel\Core;
 /**
  * Uri Class
  *
- * @package		Fuel
- * @category	Core
- * @author		Dan Horrigan
- * @link		http://fuelphp.com/docs/classes/uri.html
+ * @package   Fuel
+ * @category  Core
+ * @author    Dan Horrigan
+ * @link      http://fuelphp.com/docs/classes/uri.html
  */
 class Uri {
 
+	/**
+	 * @var  $detected_uri  The URI that was detected automatically
+	 */
 	protected static $detected_uri = null;
 
+	/**
+	 * Detects and returns the current URI based on a number of different server
+	 * variables.
+	 *
+	 * @return  string
+	 */
 	public static function detect()
 	{
 		if (static::$detected_uri !== null)
@@ -116,11 +125,11 @@ class Uri {
 	}
 
 	/**
-	 * Returns the desired segment, or false if it does not exist.
+	 * Returns the desired segment, or $default if it does not exist.
 	 *
-	 * @access	public
-	 * @param	int		The segment number
-	 * @return	string
+	 * @param   int     $segment  The segment number (1-based index)
+	 * @param   mixed   $default  Default value to return
+	 * @return  string
 	 */
 	public static function segment($segment, $default = null)
 	{
@@ -130,7 +139,7 @@ class Uri {
 	/**
 	 * Returns all segments in an array
 	 *
-	 * @return	array
+	 * @return  array
 	 */
 	public static function segments()
 	{
@@ -161,59 +170,57 @@ class Uri {
 	/**
 	 * Creates a url with the given uri, including the base url
 	 *
-	 * @param	string	the url
-	 * @param	array	some variables for the url
+	 * @param   string  $uri            The uri to create the URL for
+	 * @param   array   $variables      Some variables for the URL
+	 * @param   array   $get_variables  Any GET urls to append via a query string
+	 * @return  string
 	 */
 	public static function create($uri = null, $variables = array(), $get_variables = array())
 	{
 		$url = '';
+		$uri = $uri ?: static::string();
 
-		if(!preg_match("/^(http|https|ftp):\/\//i", $uri))
+		// If the given uri is not a full URL
+		if( ! preg_match("#^(http|https|ftp)://#i", $uri))
 		{
 			$url .= \Config::get('base_url');
 
-			if (\Config::get('index_file'))
+			if ($index_file = \Config::get('index_file'))
 			{
-				$url .= \Config::get('index_file').'/';
+				$url .= $index_file.'/';
 			}
 		}
-
-		$url = $url.ltrim(is_null($uri) ? static::string() : $uri, '/');
+		$url .= ltrim($uri, '/');
 
 		substr($url, -1) != '/' and $url .= \Config::get('url_suffix');
 
 		if ( ! empty($get_variables))
 		{
 			$char = strpos($url, '?') === false ? '?' : '&';
-			foreach ($get_variables as $key => $val)
-			{
-				$url .= $char.$key.'='.$val;
-				$char = '&';
-			}
+			$url .= $char.http_build_query($get_variables);
 		}
 
-		foreach($variables as $key => $val)
-		{
+		array_walk($variables, function ($val, $key) use (&$url) {
 			$url = str_replace(':'.$key, $val, $url);
-		}
+		});
 
 		return $url;
 	}
 
 	/**
-	 * Gets the current URL, including the BASE_URL
+	 * Gets the main request's URI
 	 *
-	 * @param	string	the url
+	 * @return  string
 	 */
 	public static function main()
 	{
-		return static::create(\Request::main()->uri->uri);
+		return static::create(\Request::main()->uri->get());
 	}
 
 	/**
 	 * Gets the current URL, including the BASE_URL
 	 *
-	 * @param	string	the url
+	 * @return  string
 	 */
 	public static function current()
 	{
@@ -221,9 +228,10 @@ class Uri {
 	}
 
 	/**
-	 * Gets the base URL, including the index_file
+	 * Gets the base URL, including the index_file if wanted.
 	 *
-	 * @return  the base uri
+	 * @param   bool    $include_index  Whether to include index.php in the URL
+	 * @return  string
 	 */
 	public static function base($include_index = true)
 	{
@@ -239,43 +247,60 @@ class Uri {
 
 
 	/**
-	 * @var	string	The URI string
+	 * @deprecated  Make protected in 1.2
+	 * @var  string  The URI string
 	 */
 	public $uri = '';
 
 	/**
-	 * @var	array	The URI segements
+	 * @deprecated  Make protected in 1.2
+	 * @var  array  The URI segments
 	 */
 	public $segments = '';
 
 	/**
-	 * Contruct takes a URI or detects it if none is given and generates
+	 * Construct takes a URI or detects it if none is given and generates
 	 * the segments.
 	 *
-	 * @access	public
-	 * @param	string	The URI
-	 * @return	void
+	 * @param   string  The URI
+	 * @return  void
 	 */
 	public function __construct($uri = NULL)
 	{
-		if ($uri === NULL)
-		{
-			$uri = static::detect();
-		}
+		$uri = $uri ?: $uri = static::detect();
 		$this->uri = \Security::clean_uri(trim($uri, '/'));
 		$this->segments = explode('/', $this->uri);
 	}
 
+	/**
+	 * Returns the full URI string
+	 *
+	 * @return  string  The URI string
+	 */
 	public function get()
 	{
 		return $this->uri;
 	}
 
+	/**
+	 * Returns all of the URI segments
+	 *
+	 * @return  array  The URI segments
+	 */
 	public function get_segments()
 	{
 		return $this->segments;
 	}
 
+	/**
+	 * Get the specified URI segment, return default if it doesn't exist.
+	 * 
+	 * Segment index is 1 based, not 0 based
+	 *
+	 * @param   string  $segment  The 1-based segment index
+	 * @param   mixed   $default  The default value
+	 * @return  mixed
+	 */
 	public function get_segment($segment, $default = null)
 	{
 		if (isset($this->segments[$segment - 1]))
@@ -286,10 +311,13 @@ class Uri {
 		return ($default instanceof \Closure) ? $default() : $default;
 	}
 
+	/**
+	 * Returns the URI string
+	 *
+	 * @return  string
+	 */
 	public function __toString()
 	{
 		return $this->get();
 	}
 }
-
-
