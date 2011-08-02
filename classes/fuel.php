@@ -32,12 +32,6 @@ class Fuel {
 	const DEVELOPMENT = 'development';
 
 	/**
-	 * @var         string  constant used for when testing the code in a staging env.
-	 * @deprecated  This will be removed no earlier than v1.1.  Use STAGE instead.
-	 */
-	const QA = 'qa';
-
-	/**
 	 * @var  string  constant used for when in production
 	 */
 	const PRODUCTION = 'production';
