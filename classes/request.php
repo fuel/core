@@ -79,9 +79,11 @@ class Request {
 		logger(Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
 		$request = new static($uri, $route);
-		$request->parent = static::$active;
-		static::$active->children[] = $request;
-
+		if (static::$active)
+		{
+			$request->parent = static::$active;
+			static::$active->children[] = $request;
+		}
 		static::$active = $request;
 
 		if ( ! static::$main)
@@ -104,8 +106,6 @@ class Request {
 	 */
 	public static function main()
 	{
-		logger(Fuel::L_INFO, 'Called', __METHOD__);
-
 		return static::$main;
 	}
 
@@ -120,8 +120,6 @@ class Request {
 	 */
 	public static function active()
 	{
-		class_exists('Log', false) and logger(Fuel::L_INFO, 'Called', __METHOD__);
-
 		return static::$active;
 	}
 
@@ -156,9 +154,9 @@ class Request {
 	public static function reset_request()
 	{
 		// Let's make the previous Request active since we are done executing this one.
-		if (static::$active->parent())
+		if ($parent = static::$active->parent())
 		{
-			static::$active = static::$active->parent();
+			static::$active = $parent;
 		}
 	}
 
@@ -271,37 +269,24 @@ class Request {
 		$this->uri = new \Uri($uri);
 
 		// check if a module was requested
-		if (count($this->uri->segments) and $modpath = \Fuel::module_exists($this->uri->segments[0]))
+		if (count($this->uri->segments) and $mod_path = \Fuel::module_exists($this->uri->segments[0]))
 		{
 			// check if the module has routes
-			if (file_exists($modpath .= 'config/routes.php'))
+			if (file_exists($mod_path .= 'config/routes.php'))
 			{
 				// load and add the module routes
-				$modroutes = \Config::load(\Fuel::load($modpath), $this->uri->segments[0] . '_routes');
-				foreach ($modroutes as $name => $modroute)
-				{
-					switch ($name)
+				$mod_routes = \Config::load(\Fuel::load($mod_path), $this->uri->segments[0] . '_routes');
+				array_walk($mod_routes, function ($route, $name) {
+					if ($name === '_root_')
 					{
-						case '_root_':
-							// map the root to the module default controller/method
-							$name = $this->uri->segments[0];
-						break;
-
-						case '_404_':
-							// do not touch the 404 route
-						break;
-
-						default:
-							// prefix the route with the module name if it isn't done yet
-							if (strpos($name, $this->uri->segments[0].'/') !== 0 and $name != $this->uri->segments[0])
-							{
-								$name = $this->uri->segments[0].'/'.$name;
-							}
-						break;
+						$name = $this->uri->segments[0];
 					}
-
-					\Config::set('routes.' . $name, $modroute);
-				}
+					elseif (strpos($name, $this->uri->segments[0].'/') !== 0 and $name != $this->uri->segments[0])
+					{
+						$name = $this->uri->segments[0].'/'.$name;
+					}
+					\Config::set('routes.'.$name, $route);
+				});
 
 				// update the loaded list of routes
 				\Router::add(\Config::get('routes'));
