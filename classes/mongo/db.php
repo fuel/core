@@ -650,7 +650,7 @@ class Mongo_Db {
 			throw new \Mongo_DbException("In order to retrieve a count of documents from MongoDB");
 		}
 
-		$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count();
+		$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count(true);
 		$this->_clear();
 		return ($count);
 	}
