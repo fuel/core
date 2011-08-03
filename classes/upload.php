@@ -231,6 +231,9 @@ class Upload {
 		// processed files array
 		static::$files = $files = array();
 
+		// assume the uploads are valid
+		static::$valid = true;
+
 		// normalize the $_FILES array
 		foreach($_FILES as $name => $value)
 		{
@@ -369,8 +372,8 @@ class Upload {
 				}
 			}
 
-			// update the valid flag
-			static::$valid = (!static::$valid and ($files[$key]['error'] === 0));
+			// set the valid flag to false when there was an error detected
+			static::$valid and static::$valid = ($files[$key]['error'] === 0);
 
 			// and add the message text
 			static::$files[$key]['message'] = \Lang::line('upload.'.static::$files[$key]['error']);
