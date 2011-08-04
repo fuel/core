@@ -259,8 +259,9 @@ class Autoloader {
 						return true;
 					}
 					$class_no_ns = substr($class, $pos + 1);
-
-					$file_path = $path.strtolower(substr($namespace, strlen($ns) + 1).DS.str_replace('_', DS, $class_no_ns).'.php');
+					
+					$sub_namespace = (strlen($namespace) == strlen($ns)) ? '' : substr($namespace, strlen($ns) + 1).DS;
+					$file_path = $path.strtolower($sub_namespace.str_replace('_', DS, $class_no_ns).'.php');
 					if (is_file($file_path))
 					{
 						require $file_path;
