@@ -159,6 +159,13 @@ Autoloader::add_classes(array(
 
 	'Fuel\\Core\\Redis'            => COREPATH.'classes/redis.php',
 
+	'Fuel\\Core\\Rest'            => COREPATH.'classes/rest.php',
+	'Fuel\\Core\\RestException'   => COREPATH.'classes/rest.php',
+	'Fuel\\Core\\Rest_Driver'     => COREPATH.'classes/rest/driver.php',
+	'Fuel\\Core\\Rest_Curl'       => COREPATH.'classes/rest/curl.php',
+	'Fuel\\Core\\Rest_Wrapper'    => COREPATH.'classes/rest/wrapper.php',
+	'Fuel\\Core\\Rest_Sockets'    => COREPATH.'classes/rest/sockets.php',
+
 	'Fuel\\Core\\Response'  => COREPATH.'classes/response.php',
 	'Fuel\\Core\\Route'     => COREPATH.'classes/route.php',
 	'Fuel\\Core\\Router'    => COREPATH.'classes/router.php',
