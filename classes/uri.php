@@ -133,7 +133,12 @@ class Uri {
 	 */
 	public static function segment($segment, $default = null)
 	{
-		return \Request::active()->uri->get_segment($segment, $default);
+		if ($request = \Request::active())
+		{
+			return $request->uri->get_segment($segment, $default);
+		}
+		
+		return false;
 	}
 
 	/**
@@ -143,7 +148,12 @@ class Uri {
 	 */
 	public static function segments()
 	{
-		return \Request::active()->uri->get_segments();
+		if ($request = \Request::active())
+		{
+			return $request->uri->get_segments();
+		}
+		
+		return false;
 	}
 
 	/**
@@ -164,7 +174,12 @@ class Uri {
 	 */
 	public static function string()
 	{
-		return \Request::active()->uri->get();
+		if ($request = \Request::active())
+		{
+			return $request->uri->get();
+		}
+		
+		return false;
 	}
 
 	/**
