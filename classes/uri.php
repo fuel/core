@@ -138,7 +138,7 @@ class Uri {
 			return $request->uri->get_segment($segment, $default);
 		}
 		
-		return false;
+		return null;
 	}
 
 	/**
@@ -153,7 +153,7 @@ class Uri {
 			return $request->uri->get_segments();
 		}
 		
-		return false;
+		return null;
 	}
 
 	/**
@@ -179,7 +179,7 @@ class Uri {
 			return $request->uri->get();
 		}
 		
-		return false;
+		return null;
 	}
 
 	/**
