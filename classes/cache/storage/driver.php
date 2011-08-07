@@ -325,7 +325,7 @@ abstract class Cache_Storage_Driver {
 	 *
 	 * @param   string|array  Valid PHP callback
 	 * @param   array         Arguements for the above function/method
-	 * @param   int|null      Cache expiration in minutes
+	 * @param   int|null      Cache expiration in seconds
 	 * @param   array         Contains the identifiers of caches this one will depend on
 	 * @return  mixed
 	 */
