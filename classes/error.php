@@ -158,14 +158,22 @@ class Error {
 		if ($fatal)
 		{
 			$data['non_fatal'] = static::$non_fatal_cache;
-			exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
+
+			try
+			{
+				exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
+			}
+			catch (\Fuel_Exception $e)
+			{
+				echo $e->getMessage();
+			}
+
 		}
 
 		try
 		{
 			echo \View::factory('errors'.DS.'php_error', $data, false);
 		}
-
 		catch (\Fuel_Exception $e)
 		{
 			echo $e->getMessage();
