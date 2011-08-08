@@ -732,7 +732,10 @@ class File {
 			throw new \FileAccessException('Filename given could not be opened for download.');
 		}
 
-		ob_end_clean();
+		while (ob_get_level() > 0)
+		{
+			ob_end_clean();
+		}
 
 		ini_get('zlib.output_compression') and ini_set('zlib.output_compression', 0);
 		! ini_get('safe_mode') and set_time_limit(0);
