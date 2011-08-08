@@ -166,7 +166,7 @@ class Error {
 			catch (\Fuel_Exception $e)
 			{
 				echo $e->getMessage();
-				Debug::dump($data['non_fatal']);
+				Debug::dump($data);
 				exit();
 			}
 		}
