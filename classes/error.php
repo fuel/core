@@ -166,7 +166,7 @@ class Error {
 			echo \View::factory('errors'.DS.'php_error', $data, false);
 		}
 
-		catch (Fuel_Exception $e)
+		catch (\Fuel_Exception $e)
 		{
 			echo $e->getMessage();
 		}
