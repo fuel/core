@@ -165,9 +165,8 @@ class Error {
 			}
 			catch (\Fuel_Exception $e)
 			{
-				echo $e->getMessage();
+				exit($e->getMessage().Html::br());
 			}
-
 		}
 
 		try
@@ -176,7 +175,7 @@ class Error {
 		}
 		catch (\Fuel_Exception $e)
 		{
-			echo $e->getMessage();
+			echo $e->getMessage().Html::br();
 		}
 	}
 
