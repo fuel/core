@@ -139,7 +139,10 @@ class Error {
 		if ($fatal)
 		{
 			$data['contents'] = ob_get_contents();
-			ob_end_clean();
+			while (ob_get_level() > 0)
+			{
+				ob_end_clean();
+			}
 		}
 		else
 		{
