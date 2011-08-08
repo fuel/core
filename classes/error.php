@@ -165,7 +165,9 @@ class Error {
 			}
 			catch (\Fuel_Exception $e)
 			{
-				exit($e->getMessage().Html::br());
+				echo $e->getMessage();
+				Debug::dump($data['non_fatal']);
+				exit();
 			}
 		}
 
