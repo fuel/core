@@ -161,7 +161,15 @@ class Error {
 			exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
 		}
 
-		echo \View::factory('errors'.DS.'php_error', $data, false);
+		try
+		{
+			echo \View::factory('errors'.DS.'php_error', $data, false);
+		}
+
+		catch (Fuel_Exception $e)
+		{
+			echo $e->getMessage();
+		}
 	}
 
 	/**
