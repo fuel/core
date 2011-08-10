@@ -77,9 +77,9 @@ class Security {
 	/**
 	 * Generic variable clean method
 	 */
-	public static function clean($var, $filters = null)
+	public static function clean($var, $filters = null, $type = 'security.input_filter')
 	{
-		is_null($filters) and $filters = \Config::get('security.input_filter', array());
+		is_null($filters) and $filters = \Config::get($type, array());
 		$filters = is_array($filters) ? $filters : array($filters);
 
 		foreach ($filters as $filter)

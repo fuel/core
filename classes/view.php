@@ -270,7 +270,7 @@ class View {
 	public static function set_global($key, $value = null, $encode = null)
 	{
 		$value = ($value instanceof \Closure) ? $value() : $value;
-		
+
 		$encode === null and $encode = static::$auto_encode;
 
 		if (is_array($key))
@@ -363,19 +363,19 @@ class View {
 	public function set($key, $value = null, $encode = null)
 	{
 		$value = ($value instanceof \Closure) ? $value() : $value;
-		
+
 		$encode === null and $encode = static::$auto_encode;
 
 		if (is_array($key))
 		{
 			foreach ($key as $name => $value)
 			{
-				$this->_data[$name] = $encode ? \Security::htmlentities($value) : $value;
+				$this->_data[$name] = $encode ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
 		}
 		else
 		{
-			$this->_data[$key] = $encode ? \Security::htmlentities($value) : $value;
+			$this->_data[$key] = $encode ? \Security::clean($value, null, 'security.output_filter') : $value;
 		}
 
 		return $this;
