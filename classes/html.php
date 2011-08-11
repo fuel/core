@@ -51,12 +51,16 @@ class Html
 	 * @param	array	the attributes array
 	 * @return	string	the html link
 	 */
-	public static function anchor($href, $text, $attr = array())
+	public static function anchor($href, $text = null, $attr = array())
 	{
 		if ( ! preg_match('#^(\w+://|javascript:)# i', $href))
 		{
 			$href = \Uri::create($href);
 		}
+		
+		// Create and display a URL hyperlink
+		is_null($text) and $text = $href;
+		
 		$attr['href'] = $href;
 
 		return html_tag('a', $attr, $text);
