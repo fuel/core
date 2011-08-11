@@ -393,9 +393,10 @@ class Database_MySQLi_Connection extends \Database_Connection {
 		return "'$value'";
 	}
 
-	public function transactional($use_trans = TRUE)
+	public function transactional($use_trans = true)
 	{
-		if (is_bool($use_trans)) {
+		if (is_bool($use_trans))
+		{
 			$this->_trans_enabled = $use_trans;
 		}
 	}
