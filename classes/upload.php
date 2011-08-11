@@ -169,7 +169,7 @@ class Upload {
 	 */
 	public static function get_errors($index = null)
 	{
-		if (is_null($index) or ! isset(static::$files[$index]) or $files[$index]['error'] == 0)
+		if (is_null($index) or ! isset(static::$files[$index]) or static::$files[$index]['error'] == 0)
 		{
 			return array_filter(static::$files, function($file) { return $file['error'] != 0; } );
 		}
@@ -230,6 +230,9 @@ class Upload {
 
 		// processed files array
 		static::$files = $files = array();
+
+		// assume the uploads are valid
+		static::$valid = true;
 
 		// normalize the $_FILES array
 		foreach($_FILES as $name => $value)
@@ -369,8 +372,8 @@ class Upload {
 				}
 			}
 
-			// update the valid flag
-			static::$valid = (static::$valid or ($files[$key]['error'] === 0));
+			// set the valid flag to false when there was an error detected
+			static::$valid and static::$valid = ($files[$key]['error'] === 0);
 
 			// and add the message text
 			static::$files[$key]['message'] = \Lang::line('upload.'.static::$files[$key]['error']);

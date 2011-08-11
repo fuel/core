@@ -77,9 +77,9 @@ class Security {
 	/**
 	 * Generic variable clean method
 	 */
-	public static function clean($var, $filters = null)
+	public static function clean($var, $filters = null, $type = 'security.input_filter')
 	{
-		is_null($filters) and $filters = \Config::get('security.input_filter', array());
+		is_null($filters) and $filters = \Config::get($type, array());
 		$filters = is_array($filters) ? $filters : array($filters);
 
 		foreach ($filters as $filter)
@@ -296,6 +296,51 @@ class Security {
 			}
 		}
 		return "";
+	}'.PHP_EOL;
+		$output .= '</script>'.PHP_EOL;
+
+		return $output;
+	}
+
+	/**
+	 * JS set token
+	 *
+	 * Produces JavaScript fuel_set_csrf_token() function that will update the current
+	 * CSRF token in the form when called, based on the value of the csrf cookie
+	 *
+	 * @return string
+	 */
+	public static function js_set_token()
+	{
+		$output  = '<script type="text/javascript">
+	function fuel_set_csrf_token(form)
+	{
+		if (document.cookie.length > 0 && typeof form != undefined)
+		{
+			var c_name = "'.static::$csrf_token_key.'";
+			c_start = document.cookie.indexOf(c_name + "=");
+			if (c_start != -1)
+			{
+				c_start = c_start + c_name.length + 1;
+				c_end = document.cookie.indexOf(";" , c_start);
+				if (c_end == -1)
+				{
+					c_end=document.cookie.length;
+				}
+				value=unescape(document.cookie.substring(c_start, c_end));
+				if (value != "")
+				{
+					for(i=0; i<form.elements.length; i++)
+					{
+						if (form.elements[i].name == c_name)
+						{
+							form.elements[i].value = value;
+							break;
+						}
+					}
+				}
+			}
+		}
 	}'.PHP_EOL;
 		$output .= '</script>'.PHP_EOL;
 

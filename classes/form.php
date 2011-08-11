@@ -137,7 +137,7 @@ class Form {
 	 * @param	string|array	action string or array with more tag attribute settings
 	 * @return	string
 	 */
-	public static function open($attributes = array(), Array $hidden = array())
+	public static function open($attributes = array(), array $hidden = array())
 	{
 		$attributes = ! is_array($attributes) ? array('action' => $attributes) : $attributes;
 
@@ -196,7 +196,7 @@ class Form {
 	 * @param	array
 	 * @return	string
 	 */
-	public static function input($field, $value = null, Array $attributes = array())
+	public static function input($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -238,7 +238,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function hidden($field, $value = null, Array $attributes = array())
+	public static function hidden($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -262,7 +262,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function password($field, $value = null, Array $attributes = array())
+	public static function password($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -286,7 +286,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function radio($field, $value = null, Array $attributes = array())
+	public static function radio($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -310,7 +310,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function checkbox($field, $value = null, Array $attributes = array())
+	public static function checkbox($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -333,7 +333,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function file($field, Array $attributes = array())
+	public static function file($field, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -356,7 +356,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function button($field, $value = null, Array $attributes = array())
+	public static function button($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -380,7 +380,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function reset($field = 'reset', $value = 'Reset', Array $attributes = array())
+	public static function reset($field = 'reset', $value = 'Reset', array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -404,7 +404,7 @@ class Form {
 	 * @param	array
 	 * @return
 	 */
-	public static function submit($field = 'submit', $value = 'Submit', Array $attributes = array())
+	public static function submit($field = 'submit', $value = 'Submit', array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -428,7 +428,7 @@ class Form {
 	 * @param	array
 	 * @return	string
 	 */
-	public static function textarea($field, $value = null, Array $attributes = array())
+	public static function textarea($field, $value = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -465,7 +465,7 @@ class Form {
 	 * @param	array
 	 * @return	string
 	 */
-	public static function select($field, $values = null, Array $options = array(), Array $attributes = array())
+	public static function select($field, $values = null, array $options = array(), array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -498,35 +498,34 @@ class Form {
 
 		unset($attributes['selected']);
 
-		$input = PHP_EOL;
-		foreach ($options as $key => $val)
-		{
-			if (is_array($val))
+		// closure to recusively process the options array
+		$listoptions = function (array $options, $selected, $level = 1) use (&$listoptions) {
+
+			$input = PHP_EOL;
+			foreach ($options as $key => $val)
 			{
-				$optgroup = PHP_EOL;
-				foreach ($val as $opt_key => $opt_val)
+				if (is_array($val))
 				{
-					$opt_attr = array('value' => $opt_key);
-					(in_array((string)$opt_key, $selected, TRUE)) && $opt_attr[] = 'selected';
-					$optgroup .= str_repeat("\t", 2);
-					$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
-						static::prep_value($opt_attr['value']) : $opt_attr['value'];
-					$optgroup .= html_tag('option', $opt_attr, $opt_val).PHP_EOL;
+					$optgroup = $listoptions($val, $selected, $level + 1);
+					$optgroup .= str_repeat("\t", $level);
+					$input .= str_repeat("\t", $level).html_tag('optgroup', array('label' => $key , 'style' => 'text-indent: '.(10*($level-1)).'px;'), $optgroup).PHP_EOL;
 				}
-				$optgroup .= str_repeat("\t", 1);
-				$input .= str_repeat("\t", 1).html_tag('optgroup', array('label' => $key), $optgroup).PHP_EOL;
+				else
+				{
+					$opt_attr = array('value' => $key, 'style' => 'text-indent: '.(10*($level-1)).'px;');
+					(in_array((string)$key, $selected, TRUE)) && $opt_attr[] = 'selected';
+					$input .= str_repeat("\t", $level);
+					$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
+						\Form::prep_value($opt_attr['value']) : $opt_attr['value'];
+					$input .= html_tag('option', $opt_attr, $val).PHP_EOL;
+				}
 			}
-			else
-			{
-				$opt_attr = array('value' => $key);
-				(in_array((string)$key, $selected, TRUE)) && $opt_attr[] = 'selected';
-				$input .= str_repeat("\t", 1);
-				$opt_attr['value'] = (\Config::get('form.prep_value', true) && empty($attributes['dont_prep'])) ?
-					static::prep_value($opt_attr['value']) : $opt_attr['value'];
-				$input .= html_tag('option', $opt_attr, $val).PHP_EOL;
-			}
-		}
-		$input .= str_repeat("\t", 0);
+
+			return $input;
+		};
+
+		// generate the select options list
+		$input = $listoptions($options, $selected).str_repeat("\t", 0);
 
 		if (empty($attributes['id']) && \Config::get('form.auto_id', false) == true)
 		{
@@ -544,7 +543,7 @@ class Form {
 	 * @param	array
 	 * @return	string
 	 */
-	public static function label($label, $id = null, Array $attributes = array())
+	public static function label($label, $id = null, array $attributes = array())
 	{
 		if (is_array($label))
 		{
@@ -726,6 +725,8 @@ class Form {
 				}
 				else
 				{
+					$field->value and $field->set_attribute('checked', 'checked');
+
 					$build_field = $field->type == 'radio'
 						? static::radio($field->name, $field->value, $field->attributes)
 						: static::checkbox($field->name, $field->value, $field->attributes);
