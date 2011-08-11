@@ -317,33 +317,24 @@ abstract class Image_Driver {
 		$x = $y = 0;
 		if (function_exists('bcdiv'))
 		{
-			$widthr  = bcdiv($sizes->width, $width, 10);
-			$heightr = bcdiv($sizes->height, $height, 10);
-			$compare = bccomp($widthr, $heightr, 10);
-			if ($compare < 1)
+			if (bccomp(bcdiv($sizes->width, $width, 10), bcdiv($sizes->height, $height, 10), 10) < 1)
 			{
-				$t_height = ceil((float) bcmul($height, $widthr, 10));
-				$this->_resize($width, $t_height, true, false);
+				$this->_resize($width, 0, true, false);
 			}
 			else
 			{
-				$t_width = ceil((float) bcmul($width, $heightr, 10));
-				$this->_resize($t_width, $height, true, false);
+				$this->_resize(0, $height, true, false);
 			}
 		}
 		else
 		{
-			$widthr  = $sizes->width / $width;
-			$heightr = $sizes->height / $height;
-			if ($widthr < $heightr)
+			if ($sizes->width / $width < $sizes->height / $height)
 			{
-				$t_height = ceil($height * $widthr);
-				$this->_resize($width, $t_height, true, false);
+				$this->_resize($width, 0, true, false);
 			}
 			else
 			{
-				$t_width = ceil($width * $heightr);
-				$this->_resize($t_width, $height, true, false);
+				$this->_resize(0, $height, true, false);
 			}
 		}
 		$sizes = $this->sizes();

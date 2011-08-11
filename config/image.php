@@ -22,7 +22,7 @@
 
 return array(
 	/**
-	 * The driver to be used. Currently gd or imagemagick
+	 * The driver to be used. Currently gd, imagemagick or imagick
 	 */
 	'driver' => 'gd',
 
@@ -68,10 +68,10 @@ return array(
 	/**
 	 * Sets if the queue should be cleared after a save(), save_pa(), or output().
 	 */
-	'clear_queue' => false,
+	'clear_queue' => true,
 
 	/**
-	 * Determines whether to automatically reload the image (true) or keep the changes (false) when saving or outputting.
+	 * Determines whether to automatically reload the image (false) or keep the changes (true) when saving or outputting.
 	 */
 	'persistence' => false,
 

@@ -21,7 +21,7 @@ class Image_Imagemagick extends \Image_Driver {
 	private $size_cache = null;
 	private $im_path = null;
 
-	public function load($filename)
+	public function load($filename, $return_data = false)
 	{
 		extract(parent::load($filename));
 
@@ -130,7 +130,7 @@ class Image_Imagemagick extends \Image_Driver {
 	 *
 	 * @link  http://www.imagemagick.org/Usage/thumbnails/#rounded
 	 */
-	protected function _rounded($radius, $sides)
+	protected function _rounded($radius, $sides, $antialias = 0)
 	{
 		extract(parent::_rounded($radius, $sides, null));
 
@@ -195,7 +195,7 @@ class Image_Imagemagick extends \Image_Driver {
 		$new = '"'.$filename.'"';
 		$this->exec('convert', $old.' '.$new);
 
-		if ($this->config['persistent'] === false)
+		if ($this->config['persistence'] === false)
 			$this->reload();
 
 		return $this;
@@ -262,6 +262,8 @@ class Image_Imagemagick extends \Image_Driver {
 	{
 		//  Determine the path
 		$this->im_path = realpath($this->config['imagemagick_dir'].$program);
+		if ( ! $this->im_path)
+			$this->im_path = realpath($this->config['imagemagick_dir'].$program);
 		if ( ! $this->im_path)
 			$this->im_path = realpath($this->config['imagemagick_dir'].$program.'.exe');
 		if ( ! $this->im_path)
