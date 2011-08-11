@@ -95,6 +95,8 @@ class Lang {
 
 	public static function set($line, $value, $group = null)
 	{
+		$value = ($value instanceof \Closure) ? $value() : $value;
+		
 		if ($group === null)
 		{
 			static::$lines[$line] = $value;
@@ -129,4 +131,4 @@ class Lang {
 	}
 }
 
-/* End of file lang.php */
+

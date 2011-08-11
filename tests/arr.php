@@ -20,7 +20,7 @@ namespace Fuel\Core;
  */
 class Tests_Arr extends TestCase {
 
-	public function person_provider()
+	public static function person_provider()
 	{
 		return array(
 			array(
@@ -37,7 +37,7 @@ class Tests_Arr extends TestCase {
 			),
 		);
 	}
-	
+
 	/**
 	 * Tests Arr::assoc_to_keyval()
 	 *
@@ -62,7 +62,7 @@ class Tests_Arr extends TestCase {
 				'name' => 'Grape',
 				),
 			);
-		
+
 		$expected = array(
 			'red' => 'Apple',
 			'yellow' => 'Banana',
@@ -180,6 +180,25 @@ class Tests_Arr extends TestCase {
 	public function test_elements_throws_exception_when_keys_is_not_an_array($person)
 	{
 		$output = Arr::elements($person, 'name', 'Unknown');
+	}
+
+	/**
+	 * Tests Arr::flatten()
+	 *
+	 * @test
+	 */
+	public function test_flatten()
+	{
+		$indexed = array ( array('a'), array('b'), array('c') );
+
+		$expected = array(
+			"0_0" => "a",
+			"1_0" => "b",
+			"2_0" => "c",
+		);
+
+		$output = Arr::flatten($indexed, '_');
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -435,7 +454,7 @@ class Tests_Arr extends TestCase {
 
 	/**
 	 * Tests Arr::filter_keys()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_filter_keys()
@@ -457,6 +476,29 @@ class Tests_Arr extends TestCase {
 		$this->assertEquals(Arr::filter_keys($data, $keys, true), $expected_remove);
 	}
 
+	/**
+	 * Tests Arr::to_assoc()
+	 *
+	 * @test
+	 */
+	public function test_to_assoc_with_even_number_of_elements()
+	{
+		$arr = array('foo', 'bar', 'baz', 'yay');
+		$expected = array('foo' => 'bar', 'baz' => 'yay');
+		$this->assertEquals($expected, Arr::to_assoc($arr));
+	}
+
+	/**
+	 * Tests Arr::to_assoc()
+	 *
+	 * @test
+	 */
+	public function test_to_assoc_with_odd_number_of_elements()
+	{
+		$arr = array('foo', 'bar', 'baz');
+		$expected = null;
+		$this->assertEquals($expected, Arr::to_assoc($arr));
+	}
 }
 
-/* End of file arr.php */
+

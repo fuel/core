@@ -78,6 +78,8 @@ class Cache {
 	 */
 	public static function set($identifier, $contents = null, $expiration = false, $dependencies = array())
 	{
+		$contents = ($contents instanceof \Closure) ? $contents() : $contents;
+		
 		$cache = static::factory($identifier);
 		return $cache->set($contents, $expiration, $dependencies);
 	}
@@ -88,7 +90,7 @@ class Cache {
 	 * @param   mixed         The identifier of the cache, can be anything but empty
 	 * @param   string|array  Valid PHP callback
 	 * @param   array         Arguements for the above function/method
-	 * @param   int           Cache expiration in minutes
+	 * @param   int           Cache expiration in seconds
 	 * @param   array         Contains the identifiers of caches this one will depend on (not supported by all drivers!)
 	 * @return  mixed
 	 */
@@ -139,4 +141,3 @@ class Cache {
 	}
 }
 
-/* End of file cache.php */

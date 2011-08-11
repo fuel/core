@@ -653,4 +653,3 @@ class Ftp
 
 }
 
-/* End of file ftp.php */

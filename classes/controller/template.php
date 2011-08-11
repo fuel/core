@@ -60,4 +60,3 @@ abstract class Controller_Template extends \Controller {
 	}
 
 }
-/* End of file template.php */

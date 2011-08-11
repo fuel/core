@@ -23,7 +23,7 @@
 namespace Fuel\Core;
 
 
-class RedisException extends Fuel_Exception {}
+class RedisException extends \Fuel_Exception {}
 
 
 /**
@@ -168,5 +168,3 @@ class Redis {
 	}
 
 }
-
-// End of file redis.php

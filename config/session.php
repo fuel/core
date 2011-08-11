@@ -101,4 +101,4 @@ return array(
 						)
 );
 
-/* End of file config/session.php */
+

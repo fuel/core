@@ -335,11 +335,12 @@ class Inflector {
 	 * Takes a table name and creates the class name.
 	 *
 	 * @param	string	$table_name	the table name
+	 * @param	bool	$force_singular	whether to singularize the table name or not
 	 * @return	string	the class name
 	 */
-	public static function classify($table_name)
+	public static function classify($table_name, $force_singular = true)
 	{
-		return preg_replace('/(^|_)(.)/e', "strtoupper('\\1\\2')", static::singularize($table_name));
+		return preg_replace('/(^|_)(.)/e', "strtoupper('\\1\\2')", ($force_singular) ? static::singularize($table_name) : $table_name);
 	}
 
 	/**
@@ -371,4 +372,3 @@ class Inflector {
 	}
 }
 
-/* End of file inflector.php */

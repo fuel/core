@@ -32,12 +32,6 @@ class Fuel {
 	const DEVELOPMENT = 'development';
 
 	/**
-	 * @var         string  constant used for when testing the code in a staging env.
-	 * @deprecated  This will be removed no earlier than v1.1.  Use STAGE instead.
-	 */
-	const QA = 'qa';
-
-	/**
 	 * @var  string  constant used for when in production
 	 */
 	const PRODUCTION = 'production';
@@ -49,11 +43,12 @@ class Fuel {
 
 	const L_NONE = 0;
 	const L_ERROR = 1;
-	const L_DEBUG = 2;
-	const L_INFO = 3;
-	const L_ALL = 4;
+	const L_WARNING = 2;
+	const L_DEBUG = 3;
+	const L_INFO = 4;
+	const L_ALL = 5;
 
-	const VERSION = '1.0-rc3';
+	const VERSION = '1.0';
 
 	public static $initialized = false;
 
@@ -107,10 +102,6 @@ class Fuel {
 			throw new \Fuel_Exception("You can't initialize Fuel more than once.");
 		}
 
-		register_shutdown_function('fuel_shutdown_handler');
-		set_exception_handler('fuel_exception_handler');
-		set_error_handler('fuel_error_handler');
-
 		// Start up output buffering
 		ob_start();
 
@@ -147,8 +138,6 @@ class Fuel {
 			{
 				\Config::set('base_url', static::generate_base_url());
 			}
-
-			\Uri::detect();
 		}
 
 		// Run Input Filtering
@@ -159,17 +148,18 @@ class Fuel {
 		\Event::register('shutdown', 'Fuel::finish');
 
 		//Load in the packages
-		foreach (\Config::get('always_load.packages', array()) as $package)
+		foreach (\Config::get('always_load.packages', array()) as $package => $path)
 		{
-			static::add_package($package);
+			is_string($package) and $path = array($package => $path);
+			static::add_package($path);
 		}
 
 		// Load in the routes
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
-		// Set some server options
-		setlocale(LC_ALL, static::$locale);
+		// Set  locale
+		static::$locale and setlocale(LC_ALL, static::$locale);
 
 		// Always load classes, config & language set in always_load.php config
 		static::always_load();
@@ -466,7 +456,7 @@ class Fuel {
 						$path = $mod_check_path;
 						$ns = '\\'.ucfirst($name);
 						\Autoloader::add_namespaces(array(
-							$ns	=> $path.'classes'.DS,
+							$ns  => $path.'classes'.DS,
 						), true);
 						break;
 					}
@@ -482,17 +472,17 @@ class Fuel {
 		else
 		{
 			// strip the classes directory, we need the module root
-			$path = substr($path,0, -8);
+			$path = substr($path, 0, -8);
 		}
-
+		
 		return $path;
 	}
 
 	/**
 	 * Checks to see if a module exists or not.
 	 *
-	 * @param	string	the module name
-	 * @return	bool	whether it exists or not
+	 * @param   string  the module name
+	 * @return  bool    whether it exists or not
 	 */
 	public static function module_exists($module)
 	{
@@ -562,7 +552,7 @@ class Fuel {
 		if ( ! is_dir($dir))
 		{
 			// Create the cache directory
-			mkdir($dir, 0777, TRUE);
+			mkdir($dir, 0777, true);
 
 			// Set permissions (must be manually set to fix umask issues)
 			chmod($dir, 0777);
@@ -617,9 +607,9 @@ class Fuel {
 		{
 			foreach ($array['classes'] as $class)
 			{
-				if ( ! class_exists(ucfirst($class)))
+				if ( ! class_exists($class = ucfirst($class)))
 				{
-					throw new \Fuel_Exception('Always load class does not exist.');
+					throw new \Fuel_Exception('Always load class does not exist. Unable to load: '.$class);
 				}
 			}
 		}
@@ -659,5 +649,3 @@ class Fuel {
 		return str_ireplace($search, $replace, $path);
 	}
 }
-
-/* End of file fuel.php */

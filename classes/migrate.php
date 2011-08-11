@@ -264,4 +264,3 @@ class Migrate
 	}
 }
 
-/* End of file migrate.php */

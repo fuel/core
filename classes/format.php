@@ -395,4 +395,3 @@ class Format {
 
 }
 
-/* End of file view.php */

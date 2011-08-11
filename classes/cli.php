@@ -101,7 +101,7 @@ class Cli {
 	{
 		if ( ! isset(static::$args[$name]))
 		{
-			return $default;
+			return ($default instanceof \Closure) ? $default() : $default;
 		}
 		return static::$args[$name];
 	}
@@ -435,4 +435,3 @@ class Cli {
 
 }
 
-/* End of file cli.php */

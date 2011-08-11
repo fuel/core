@@ -31,7 +31,7 @@ return array(
 		'basedir'  => null,
 
 		/**
-		 * Array of allowed extensions, null for all
+		 * array of allowed extensions, null for all
 		 */
 		'extensions'  => null,
 
@@ -67,4 +67,4 @@ return array(
 
 );
 
-/* End of file file.php */
+

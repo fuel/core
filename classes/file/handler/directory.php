@@ -31,7 +31,7 @@ class File_Handler_Directory {
 	 */
 	protected $content = array();
 
-	protected function __construct($path, Array &$config, File_Area $area, $content = array())
+	protected function __construct($path, array &$config, File_Area $area, $content = array())
 	{
 		$this->path	= rtrim($path, '\\/').DS;
 		$this->area	= $area;
@@ -49,7 +49,7 @@ class File_Handler_Directory {
 		}
 	}
 
-	public static function factory($path, Array $config = array(), File_Area $area = null, $content = array())
+	public static function factory($path, array $config = array(), File_Area $area = null, $content = array())
 	{
 		return new static($path, $config, $area, $content);
 	}
@@ -185,4 +185,4 @@ class File_Handler_Directory {
 	}
 }
 
-/* End of file directory.php */
+

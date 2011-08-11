@@ -25,7 +25,7 @@
 	<div id="wrapper">
 		<h1>Crypto key error</h1>
 
-		<p class="intro">No write access to APPPATH/config/crypto.php.</p>
+		<p class="intro">No write access to APPPATH/config/crypt.php.</p>
 
 		<p>
 			The Fuel crypto functions require a set of unique and truely random crypto keys.
@@ -33,7 +33,7 @@
 			file the first time the application accesses a crypto function.
 		</p>
 
-		<p>Please copy the following code into APPPATH/config/crypto.php manually:</p>
+		<p>Please copy the following code into APPPATH/config/crypt.php manually:</p>
 		<pre><code>&lt;?php
 /**
  * Fuel
@@ -54,7 +54,7 @@ return array (
 	'crypto_hmac' => '<?php echo $keys['crypto_hmac']; ?>',
 );
 
-/* End of file crypt.php */</code></pre>
+
 
 		<p class="footer">
 			<a href="http://fuelphp.com">Fuel PHP</a> is released under the MIT license.

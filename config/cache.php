@@ -67,4 +67,4 @@ return array(
 	),
 );
 
-/* End of file cache.php */
+

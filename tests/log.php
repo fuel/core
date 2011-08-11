@@ -14,28 +14,34 @@ namespace Fuel\Core;
 
 /**
  * Log class tests
- * 
+ *
  * @group Core
  * @group Log
  */
 class Test_Log extends TestCase {
- 	
+
+	public function __construct()
+	{
+		// set the log threshold to a known value
+		\Config::set('log_threshold', Fuel::L_DEBUG);
+	}
+
 	/**
 	 * Test for Log::info()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_info()
 	{
 		$output = Log::info('testing log info');
-		$this->assertTrue($output);
+		$this->assertFalse($output);	// log level is set to DEBUG
 	}
-	
+
 	/**
 	 * Test for Log::debug()
-	 * 
+	 *
 	 * @test
-	 */	
+	 */
 	public function test_debug()
 	{
 		$output = Log::debug('testing log debug');
@@ -44,7 +50,7 @@ class Test_Log extends TestCase {
 
 	/**
 	 * Test for Log::error()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_error()
@@ -52,21 +58,21 @@ class Test_Log extends TestCase {
 		$output = Log::error('testing log error');
 		$this->assertTrue($output);
 	}
-	
+
 	/**
 	 * Test for Log::info()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_info_method()
 	{
 		$output = Log::info('testing log info', 'Log::info');
-		$this->assertTrue($output);
+		$this->assertFalse($output);	// default log level is DEBUG
 	}
-	
+
 	/**
 	 * Test for Log::debug()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_debug_method()
@@ -74,10 +80,10 @@ class Test_Log extends TestCase {
 		$output = Log::debug('testing log debug', 'Log::debug');
 		$this->assertTrue($output);
 	}
-	
+
 	/**
 	 * Test for Log::error()
-	 * 
+	 *
 	 * @test
 	 */
 	public function test_error_method()

@@ -47,6 +47,7 @@ class Upload {
 	const UPLOAD_ERR_MAX_FILENAME_LENGTH	= 108;
 	const UPLOAD_ERR_MOVE_FAILED			= 109;
 	const UPLOAD_ERR_DUPLICATE_FILE 		= 110;
+	const UPLOAD_ERR_MKDIR_FAILED			= 111;
 
 	/* ---------------------------------------------------------------------------
 	 * STATIC PROPERTIES
@@ -125,7 +126,7 @@ class Upload {
 		// make sure we have defaults for those not defined
 		static::$config = array_merge(static::$_defaults, \Config::get('upload', array()));
 
-		static::$config['auto_process'] and self::process();
+		static::$config['auto_process'] and static::process();
 	}
 
 	// ---------------------------------------------------------------------------
@@ -168,7 +169,7 @@ class Upload {
 	 */
 	public static function get_errors($index = null)
 	{
-		if (is_null($index) or ! isset(static::$files[$index]) or $files[$index]['error'] == 0)
+		if (is_null($index) or ! isset(static::$files[$index]) or static::$files[$index]['error'] == 0)
 		{
 			return array_filter(static::$files, function($file) { return $file['error'] != 0; } );
 		}
@@ -229,6 +230,9 @@ class Upload {
 
 		// processed files array
 		static::$files = $files = array();
+
+		// assume the uploads are valid
+		static::$valid = true;
 
 		// normalize the $_FILES array
 		foreach($_FILES as $name => $value)
@@ -368,8 +372,8 @@ class Upload {
 				}
 			}
 
-			// update the valid flag
-			static::$valid = (static::$valid or ($files[$key]['error'] === 0));
+			// set the valid flag to false when there was an error detected
+			static::$valid and static::$valid = ($files[$key]['error'] === 0);
 
 			// and add the message text
 			static::$files[$key]['message'] = \Lang::line('upload.'.static::$files[$key]['error']);
@@ -559,6 +563,19 @@ class Upload {
 							static::$files[$key]['error'] = $result;
 						}
 					}
+
+					// recheck the saved_to path, it might have been altered
+					if ( ! is_dir(static::$files[$key]['saved_to']) and (bool) static::$config['create_path'])
+					{
+						$oldumask = umask(0);
+						@mkdir(static::$files[$key]['saved_to'], static::$config['path_chmod'], true);
+						umask($oldumask);
+					}
+					if ( ! is_dir(static::$files[$key]['saved_to']))
+					{
+						static::$files[$key]['error'] = static::UPLOAD_ERR_MKDIR_FAILED;
+						continue;
+					}
 				}
 
 				// move the uploaded file
@@ -597,4 +614,4 @@ class Upload {
 
 }
 
-/* End of file upload.php */
+

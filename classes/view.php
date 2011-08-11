@@ -33,11 +33,11 @@ namespace Fuel\Core;
  */
 class View {
 
-	// Array of global view data
+	// array of global view data
 	protected static $_global_data = array();
 
 	// Current active search paths
-	protected static $request_paths = array();
+	protected $request_paths = array();
 
 	// Output encoding setting
 	public static $auto_encode = true;
@@ -45,7 +45,7 @@ class View {
 	// View filename
 	protected $_file;
 
-	// Array of local variables
+	// array of local variables
 	protected $_data = array();
 
 	// File extension used for views
@@ -69,7 +69,7 @@ class View {
 	 * @param   array   array of values
 	 * @return  View
 	 */
-	public static function factory($file = null, array $data = null, $auto_encode = null)
+	public static function factory($file = null, $data = null, $auto_encode = null)
 	{
 		return new static($file, $data, $auto_encode);
 	}
@@ -84,8 +84,17 @@ class View {
 	 * @return  void
 	 * @uses    View::set_filename
 	 */
-	public function __construct($file = null, array $data = null, $encode = null)
+	public function __construct($file = null, $data = null, $encode = null)
 	{
+		if (is_object($data) === true)
+		{
+			$data = get_object_vars($data);
+		}
+		elseif ($data and ! is_array($data))
+		{
+			throw new \InvalidArgumentException('The data parameter only accepts objects and arrays.');
+		}
+
 		$encode === null and $encode = static::$auto_encode;
 
 		if ($file !== null)
@@ -110,7 +119,7 @@ class View {
 		// store the current request search paths to deal with out-of-context rendering
 		if (class_exists('Request', false) and $active = \Request::active() and \Request::main() != $active)
 		{
-			static::$request_paths = $active->get_paths();
+			$this->request_paths = $active->get_paths();
 		}
 	}
 
@@ -260,6 +269,8 @@ class View {
 	 */
 	public static function set_global($key, $value = null, $encode = null)
 	{
+		$value = ($value instanceof \Closure) ? $value() : $value;
+
 		$encode === null and $encode = static::$auto_encode;
 
 		if (is_array($key))
@@ -318,7 +329,7 @@ class View {
 	public function set_filename($file)
 	{
 		// set find_file's one-time-only search paths
-		\Fuel::$volatile_paths = static::$request_paths;
+		\Fuel::$volatile_paths = $this->request_paths;
 
 		// locate the view file
 		if (($path = \Fuel::find_file('views', $file, '.'.$this->extension, false, false)) === false)
@@ -351,18 +362,20 @@ class View {
 	 */
 	public function set($key, $value = null, $encode = null)
 	{
+		$value = ($value instanceof \Closure) ? $value() : $value;
+
 		$encode === null and $encode = static::$auto_encode;
 
 		if (is_array($key))
 		{
 			foreach ($key as $name => $value)
 			{
-				$this->_data[$name] = $encode ? \Security::htmlentities($value) : $value;
+				$this->_data[$name] = $encode ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
 		}
 		else
 		{
-			$this->_data[$key] = $encode ? \Security::htmlentities($value) : $value;
+			$this->_data[$key] = $encode ? \Security::clean($value, null, 'security.output_filter') : $value;
 		}
 
 		return $this;
@@ -420,4 +433,4 @@ class View {
 
 }
 
-/* End of file view.php */
+

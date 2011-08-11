@@ -327,4 +327,3 @@ class Image_Imagemagick extends \Image_Driver {
 	}
 }
 
-// End of file imagemagick.php

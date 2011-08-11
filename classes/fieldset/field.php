@@ -81,7 +81,7 @@ class Fieldset_Field
 	 * @param	array
 	 * @param	Fieldset
 	 */
-	public function __construct($name, $label = '', Array $attributes = array(), Array $rules = array(), Fieldset $fieldset)
+	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), Fieldset $fieldset)
 	{
 		$this->name = (string) $name;
 		$this->fieldset = $fieldset;
@@ -260,7 +260,7 @@ class Fieldset_Field
 	 * @param	mixed			new value or null to unset
 	 * @return	Fieldset_Field	this, to allow chaining
 	 */
-	public function set_attribute($config, $value)
+	public function set_attribute($config, $value = null)
 	{
 		$config = is_array($config) ? $config : array($config => $value);
 		foreach ($config as $key => $value)
@@ -364,7 +364,7 @@ class Fieldset_Field
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
-		return $this->fieldset->add($name, $label, $attributes, $rules);
+		return $this->fieldset()->add($name, $label, $attributes, $rules);
 	}
 
 	/**
@@ -372,7 +372,7 @@ class Fieldset_Field
 	 */
 	public function build()
 	{
-		return $this->fieldset->form()->build_field($this);
+		return $this->fieldset()->form()->build_field($this);
 	}
 
 	/**
@@ -380,7 +380,7 @@ class Fieldset_Field
 	 */
 	public function input()
 	{
-		return $this->fieldset->validation()->input($this->name);
+		return $this->fieldset()->validation()->input($this->name);
 	}
 
 	/**
@@ -388,7 +388,7 @@ class Fieldset_Field
 	 */
 	public function validated()
 	{
-		return $this->fieldset->validation->validated($this->name);
+		return $this->fieldset()->validation()->validated($this->name);
 	}
 
 	/**
@@ -396,8 +396,8 @@ class Fieldset_Field
 	 */
 	public function error()
 	{
-		return $this->fieldset->validation()->error($this->name);
+		return $this->fieldset()->validation()->errors($this->name);
 	}
 }
 
-/* End of file field.php */
+

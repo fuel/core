@@ -62,4 +62,4 @@ abstract class Singleton
 	}
 }
 
-/* End of file singleton.php */
+

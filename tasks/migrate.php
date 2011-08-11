@@ -41,7 +41,7 @@ class Migrate {
 		}
 
 		// Not a lot of point in this
-		else if ($version == $current_version)
+		else if ( ! is_null($version) and $version == $current_version)
 		{
 			throw new \Oil\Exception('Migration: ' . $version .' already in use.');
 			return;
@@ -167,4 +167,3 @@ HELP;
 	}
 }
 
-/* End of file tasks/migrate.php */

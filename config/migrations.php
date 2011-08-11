@@ -47,4 +47,4 @@ return array(
 
 );
 
-/* End of file config/migrations.php */
+

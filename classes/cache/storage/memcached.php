@@ -128,7 +128,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver {
 	 * @param	array
 	 * @return	bool
 	 */
-	public function check_dependencies(Array $dependencies)
+	public function check_dependencies(array $dependencies)
 	{
 		foreach($dependencies as $dep)
 		{
@@ -433,4 +433,4 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver {
 
 }
 
-/* End of file file.php */
+

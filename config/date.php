@@ -44,4 +44,4 @@ return array(
 	)
 );
 
-/* End of file config/date.php */
+

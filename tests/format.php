@@ -20,24 +20,31 @@ namespace Fuel\Core;
  */
 class Test_Format extends TestCase {
 	
-	protected static $data = array(
-		array('field1' => 'Value 1', 'field2' => 35, 'field3' => 123123),
-		array('field1' => 'Value 1', 'field2' => "Value\nline 2", 'field3' => 'Value 3'),
-	);
-	
+	public static function array_provider()
+	{
+		return array(
+			array(
+				array(
+					array('field1' => 'Value 1', 'field2' => 35, 'field3' => 123123),
+					array('field1' => 'Value 1', 'field2' => "Value\nline 2", 'field3' => 'Value 3'),
+				),
+				'field1,field2,field3
+"Value 1","35","123123"
+"Value 1","Value
+line 2","Value 3"',
+			),
+		);
+	}
+
 	/**
 	 * Test for Format::factory($foo, 'csv')->to_array()
 	 *
 	 * @test
+	 * @dataProvider array_provider
 	 */
-	public function test_from_csv()
+	public function test_from_csv($array, $csv)
 	{
-		$csv = 'field1,field2,field3
-"Value 1","35","123123"
-"Value 1","Value
-line 2","Value 3"';
-
-		$this->assertEquals(static::$data, Format::factory($csv, 'csv')->to_array());
+		$this->assertEquals($array, Format::factory($csv, 'csv')->to_array());
 	 
 	}
 	
@@ -45,14 +52,10 @@ line 2","Value 3"';
 	 * Test for Format::factory($foo)->to_csv()
 	 *
 	 * @test
+	 * @dataProvider array_provider
 	 */
-	public function test_to_csv()
+	public function test_to_csv($array, $csv)
 	{
-		$csv = 'field1,field2,field3
-"Value 1","35","123123"
-"Value 1","Value
-line 2","Value 3"';
-		
-		$this->assertEquals($csv, Format::factory(static::$data)->to_csv());
+		$this->assertEquals($csv, Format::factory($array)->to_csv());
 	}
 }

@@ -47,7 +47,7 @@ return array(
 	'auth' => '',
 
 	/*
-	| Array of usernames and passwords for login
+	| array of usernames and passwords for login
 	|
 	|	array('admin' => '1234')
 	|
@@ -56,4 +56,4 @@ return array(
 
 );
 
-/* End of file config/asset.php */
+
