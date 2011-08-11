@@ -33,9 +33,15 @@ class Image_Imagick extends \Image_Driver {
 
 	protected function _crop($x1, $y1, $x2, $y2)
 	{
-		extract(parent::_crop($x1, $y1, $x2, $y2));
-		
-		$this->imagick->cropImage(($x2 - $x1), ($y2 - $y1), $x1, $y1);
+        extract(parent::_crop($x1, $y1, $x2, $y2));
+
+        $width = $x2 - $x1;
+        $height = $y2 - $y1;
+
+        $this->debug("Cropping image ".$width."x".$height."+$x1+$y1 based on coords ($x1, $y1), ($x2, $y2)");
+
+        $this->imagick->cropImage($width, $height, $x1, $y1);
+        $this->imagick->setImagePage(0, 0, 0, 0);
 	}
 
 	protected function _resize($width, $height = null, $keepar = true, $pad = true)
