@@ -56,7 +56,7 @@ class Fuel {
 
 	public static $profiling = false;
 
-	public static $locale = 'en_US';
+	public static $locale = false;
 
 	public static $timezone = 'UTC';
 
