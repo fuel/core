@@ -175,7 +175,7 @@ class Router {
 		$match->directory = array_shift($segments);
 		$match->controller = count($segments) ? array_shift($segments) : $match->directory;
 
-		if (class_exists('Controller_'.ucfirst($match->directory).'_'.Inflector::classify($match->controller)))
+		if (class_exists('Controller_'.ucfirst($match->directory).'_'.str_replace(' ', '_', ucwords(str_replace('_', ' ', $match->controller)))))
 		{
 			$match->action = count($segments) ? array_shift($segments) : null;
 			$match->method_params = $segments;
@@ -189,7 +189,7 @@ class Router {
 		$match->controller = count($segments) ? array_shift($segments) : $match->directory;
 
 		// We first want to check if the controller is in a directory.
-		if (class_exists('Controller_'.Inflector::classify('_', ' ', $match->controller)))
+		if (class_exists('Controller_'.str_replace(' ', '_', ucwords(str_replace('_', ' ', $match->controller)))))
 		{
 			$match->action = count($segments) ? array_shift($segments) : null;
 			$match->method_params = $segments;
