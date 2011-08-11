@@ -18,10 +18,10 @@ class Database_PDO_Connection extends \Database_Connection {
 	protected $_identifier = '';
 
 	// Allows transactions
-	protected $_trans_enabled = FALSE;
+	protected $_trans_enabled = false;
 
 	// transaction errors
-	public $trans_errors = FALSE;
+	public $trans_errors = false;
 
 	// Know which kind of DB is used
 	public $_db_type = '';
@@ -40,14 +40,16 @@ class Database_PDO_Connection extends \Database_Connection {
 	public function connect()
 	{
 		if ($this->_connection)
+		{
 			return;
+		}
 
 		// Extract the connection parameters, adding required variabels
 		extract($this->_config['connection'] + array(
 			'dsn'        => '',
-			'username'   => NULL,
-			'password'   => NULL,
-			'persistent' => FALSE,
+			'username'   => null,
+			'password'   => null,
+			'persistent' => false,
 		));
 
 		// Clear the connection parameters for security
@@ -86,7 +88,7 @@ class Database_PDO_Connection extends \Database_Connection {
 	public function disconnect()
 	{
 		// Destroy the PDO object
-		$this->_connection = NULL;
+		$this->_connection = null;
 
 		return TRUE;
 	}
@@ -186,12 +188,12 @@ class Database_PDO_Connection extends \Database_Connection {
 		}
 	}
 
-	public function list_tables($like = NULL)
+	public function list_tables($like = null)
 	{
 		throw new \Fuel_Exception('Database method '.__METHOD__.' is not supported by '.__CLASS__);
 	}
 
-	public function list_columns($table, $like = NULL)
+	public function list_columns($table, $like = null)
 	{
 		throw new \Fuel_Exception('Database method '.__METHOD__.' is not supported by '.__CLASS__);
 	}
@@ -204,9 +206,10 @@ class Database_PDO_Connection extends \Database_Connection {
 		return $this->_connection->quote($value);
 	}
 
-	public function transactional($use_trans = TRUE)
+	public function transactional($use_trans = true)
 	{
-		if (is_bool($use_trans)) {
+		if (is_bool($use_trans))
+		{
 			$this->_trans_enabled = $use_trans;
 		}
 	}
@@ -214,6 +217,7 @@ class Database_PDO_Connection extends \Database_Connection {
 	public function start_transaction()
 	{
 		$this->transactional();
+		$this->_connection or $this->connect();
 		$this->_connection->beginTransaction();
 	}
 
