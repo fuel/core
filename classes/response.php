@@ -88,7 +88,7 @@ class Response {
 
 		if (strpos($url, '://') === false)
 		{
-			$url = \Uri::create($url);
+			$url = $url !== '' ? \Uri::create($url) : \Uri::base();
 		}
 
 		if ($method == 'location')
