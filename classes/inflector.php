@@ -110,6 +110,7 @@ class Inflector {
 					break;
 				case 3:
 					return $number . 'rd';
+                                        break;
 				default:
 					return $number . 'th';
 					break;
