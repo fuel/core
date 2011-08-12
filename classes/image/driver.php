@@ -254,8 +254,8 @@ abstract class Image_Driver {
 			// See which is the biggest ratio
 			if (function_exists('bcdiv'))
 			{
-				$width_ratio  = bcdiv($width, $sizes->width, 10);
-				$height_ratio = bcdiv($height, $sizes->height, 10);
+				$width_ratio  = bcdiv((real) $width, $sizes->width, 10);
+				$height_ratio = bcdiv((real) $height, $sizes->height, 10);
 				$compare = bccomp($width_ratio, $height_ratio, 10);
 				if ($compare > -1)
 				{
