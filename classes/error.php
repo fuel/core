@@ -163,11 +163,9 @@ class Error {
 			{
 				exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
 			}
-			catch (\Fuel_Exception $e)
+			catch (\Fuel_Exception $view_exception)
 			{
-				echo $e->getMessage();
-				Debug::dump($data);
-				exit();
+				exit($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line']);
 			}
 		}
 
