@@ -136,7 +136,7 @@ class Input {
 	 * @param	mixed	The default value
 	 * @return	string
 	 */
-	public static function get($index, $default = null)
+	public static function get($index = null, $default = null)
 	{
 		return static::_fetch_from_array($_GET, $index, $default);
 	}
@@ -149,7 +149,7 @@ class Input {
 	 * @param	mixed	The default value
 	 * @return	string
 	 */
-	public static function post($index, $default = null)
+	public static function post($index = null, $default = null)
 	{
 		return static::_fetch_from_array($_POST, $index, $default);
 	}
@@ -212,7 +212,7 @@ class Input {
 	 * @param	mixed	The default value
 	 * @return	string
 	 */
-	public static function get_post($index, $default = null)
+	public static function get_post($index = null, $default = null)
 	{
 		return static::post($index, 's)meR4nD0ms+rIng') === 's)meR4nD0ms+rIng'
 				? static::get($index, $default)
