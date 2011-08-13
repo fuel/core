@@ -209,7 +209,7 @@ abstract class Controller_Rest extends \Controller {
 			$langs = explode(',', $lang);
 
 			$return_langs = array();
-			$i = 1;
+			
 			foreach ($langs as $lang)
 			{
 				// Remove weight and strip space
