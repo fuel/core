@@ -69,9 +69,6 @@ class Date {
 	 */
 	public static function factory($timestamp = null, $timezone = null)
 	{
-		$timestamp	= is_null($timestamp) ? time() + static::$server_gmt_offset : $timestamp;
-		$timezone	= is_null($timezone) ? \Fuel::$timezone : $timezone;
-
 		return new static($timestamp, $timezone);
 	}
 
@@ -223,8 +220,11 @@ class Date {
 	 */
 	protected $timezone;
 
-	protected function __construct($timestamp, $timezone)
+	public function __construct($timestamp = null, $timezone = null)
 	{
+		$timestamp  = is_null($timestamp) ? time() + static::$server_gmt_offset : $timestamp;
+		$timezone   = is_null($timezone) ? \Fuel::$timezone : $timezone;
+
 		$this->timestamp = $timestamp;
 		$this->set_timezone($timezone);
 	}
