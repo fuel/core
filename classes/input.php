@@ -215,7 +215,7 @@ class Input {
 		// only return full array when called without args
 		is_null($index) and func_num_args() > 0 and $index = '';
 
-		return static::post($index, 's)meR4nD0ms+rIng') === 's)meR4nD0ms+rIng'
+		return static::post($index, null) === null
 			? static::get($index, $default)
 			: static::post($index, $default);
 	}
