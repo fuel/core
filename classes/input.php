@@ -28,9 +28,7 @@ class Input {
 	/**
 	 * Get the public ip address of the user.
 	 *
-	 * @static
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function ip()
 	{
@@ -48,9 +46,7 @@ class Input {
 	/**
 	 * Get the real ip address of the user.  Even if they are using a proxy.
 	 *
-	 * @static
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function real_ip()
 	{
@@ -76,8 +72,7 @@ class Input {
 	/**
 	 * Return's the protocol that the request was made with
 	 *
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function protocol()
 	{
@@ -87,8 +82,7 @@ class Input {
 	/**
 	 * Return's whether this is an AJAX request or not
 	 *
-	 * @access	public
-	 * @return	bool
+	 * @return  bool
 	 */
 	public static function is_ajax()
 	{
@@ -98,8 +92,7 @@ class Input {
 	/**
 	 * Return's the referrer
 	 *
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function referrer()
 	{
@@ -109,8 +102,7 @@ class Input {
 	/**
 	 * Return's the input method used (GET, POST, DELETE, etc.)
 	 *
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function method()
 	{
@@ -120,8 +112,7 @@ class Input {
 	/**
 	 * Return's the user agent
 	 *
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function user_agent()
 	{
@@ -131,38 +122,41 @@ class Input {
 	/**
 	 * Fetch an item from the GET array
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
 	public static function get($index = null, $default = null)
 	{
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_GET, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from the POST array
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
 	public static function post($index = null, $default = null)
 	{
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_POST, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from the php://input for put arguments
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function put($index, $default = null)
+	public static function put($index = null, $default = null)
 	{
 		static $_PUT;
 
@@ -177,18 +171,20 @@ class Input {
 			! is_array($_PUT) and $_PUT = array();
 		}
 
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_PUT, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from the php://input for delete arguments
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function delete($index, $default = null)
+	public static function delete($index = null, $default = null)
 	{
 		if (static::method() !== 'DELETE')
 		{
@@ -201,58 +197,66 @@ class Input {
 			parse_str(file_get_contents('php://input'), $_DELETE);
 		}
 
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_DELETE, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from either the GET array or the POST
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
 	public static function get_post($index = null, $default = null)
 	{
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::post($index, 's)meR4nD0ms+rIng') === 's)meR4nD0ms+rIng'
-				? static::get($index, $default)
-				: static::post($index, $default);
+			? static::get($index, $default)
+			: static::post($index, $default);
 	}
 
 	/**
 	 * Fetch an item from the COOKIE array
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return   string|array
 	 */
-	public static function cookie($index, $default = null)
+	public static function cookie($index = null, $default = null)
 	{
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_COOKIE, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from the SERVER array
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function server($index, $default = null)
+	public static function server($index = null, $default = null)
 	{
-		return static::_fetch_from_array($_SERVER, strtoupper($index), $default);
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
+		return static::_fetch_from_array($_SERVER, ! is_null($index) ? strtoupper($index) : null, $default);
 	}
 
 	/**
 	 * Retrieve values from global arrays
 	 *
-	 * @access	private
-	 * @param	array	The array
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   array   The array
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
 	private static function _fetch_from_array(&$array, $index, $default = null)
 	{
