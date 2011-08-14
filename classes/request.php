@@ -13,9 +13,6 @@
 namespace Fuel\Core;
 
 
-/**
- * When this is thrown and not caught, the Errors class will call \Request::show_404()
- */
 class Request404Exception extends \Fuel_Exception {
 
 	/**
