@@ -103,7 +103,7 @@ class Fuel {
 		}
 
 		// Start up output buffering
-		ob_start();
+		ob_start(\Config::get('ob_callback', null));
 
 		static::$profiling = \Config::get('profiling', false);
 
