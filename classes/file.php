@@ -475,8 +475,8 @@ class File {
 		{
 			if (is_array($file))
 			{
-				$check = static::create_dir($new_path.DS, $dir, fileperms($path.$dir.DS) ?: 0777, $area);
-				$check and static::copy_dir($path.$dir.DS, $new_path.$dir.DS, $area);
+				$check = static::create_dir($new_path.DS, substr($dir, 0, -1), fileperms($path.$dir) ?: 0777, $area);
+				$check and static::copy_dir($path.$dir.DS, $new_path.$dir, $area);
 			}
 			else
 			{
