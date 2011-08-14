@@ -79,59 +79,6 @@ class Form {
 	}
 
 	/**
-	 * Sets a form class config value
-	 *
-	 * @param	string
-	 * @param	mixed	new value or null to unset
-	 * @depricated
-	 */
-	public static function set_class_config($config, $value = null)
-	{
-		$config = is_array($config) ? $config : array($config => $value);
-		foreach ($config as $key => $value)
-		{
-			if ($value === null)
-			{
-				$class_config = \Config::get('form');
-				unset($class_config[$key]);
-				\Config::set('form', $class_config);
-			}
-			else
-			{
-				\Config::set('form.'.$key, $value);
-			}
-		}
-	}
-
-	/**
-	 * Get a single or multiple config values by key
-	 *
-	 * @param	string|array	a single key or multiple in an array, empty to fetch all
-	 * @param	mixed			default output when config wasn't set
-	 * @return	mixed|array		a single config value or multiple in an array when $key input was an array
-	 * @depricated
-	 */
-	public static function get_class_config($key = null, $default = null)
-	{
-		if ($key === null)
-		{
-			return \Config::get('form');
-		}
-
-		if (is_array($key))
-		{
-			$output = array();
-			foreach ($key as $k)
-			{
-				$output[$k] = \Config::get('form.'.$k, $default);
-			}
-			return $output;
-		}
-
-		return \Config::get('form.'.$key, $default);
-	}
-
-	/**
 	 * Create a form open tag
 	 *
 	 * @param	string|array	action string or array with more tag attribute settings
