@@ -112,7 +112,7 @@ class Fuel {
 		set_error_handler('fuel_error_handler');
 
 		// Start up output buffering
-		ob_start();
+		ob_start(\Config::get('ob_callback', null));
 
 		static::$profiling = \Config::get('profiling', false);
 
