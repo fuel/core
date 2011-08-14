@@ -17,15 +17,33 @@ namespace Fuel\Core;
  *
  * Helper for creating forms with support for creating dynamic form objects.
  *
- * @package		Fuel
- * @category	Core
- * @author		Dan Horrigan & Jelmer Schreuder
+ * @package   Fuel
+ * @category  Core
  */
 class Form {
 
-	/* ----------------------------------------------------------------------------
-	 * Factory & instance methods
-	 * ---------------------------------------------------------------------------- */
+	/**
+	 * Valid types for input tags (including HTML5)
+	 */
+	protected static $_valid_inputs = array(
+		'button','checkbox','color','date','datetime',
+		'datetime-local','email','file','hidden','image',
+		'month','number','password','radio','range',
+		'reset','search','submit','tel','text','time',
+		'url','week'
+	);
+
+	/**
+	 * When autoloaded this will method will be fired, load once and once only
+	 *
+	 * @param   string  Ftp filename
+	 * @param   array   array of values
+	 * @return  void
+	 */
+	public static function _init()
+	{
+		\Config::load('form', true);
+	}
 
 	public static function factory($fieldset = 'default', array $config = array())
 	{
@@ -51,38 +69,11 @@ class Form {
 		return $fieldset === false ? false : $fieldset->form();
 	}
 
-	/* ----------------------------------------------------------------------------
-	 * Class static properties & methods
-	 * ---------------------------------------------------------------------------- */
-
-	/**
-	 * Valid types for input tags (including HTML5)
-	 */
-	protected static $_valid_inputs = array(
-		'button','checkbox','color','date','datetime',
-		'datetime-local','email','file','hidden','image',
-		'month','number','password','radio','range',
-		'reset','search','submit','tel','text','time',
-		'url','week'
-	);
-
-	/**
-	 * When autoloaded this will method will be fired, load once and once only
-	 *
-	 * @param   string  Ftp filename
-	 * @param   array   array of values
-	 * @return  void
-	 */
-	public static function _init()
-	{
-		\Config::load('form', true);
-	}
-
 	/**
 	 * Create a form open tag
 	 *
-	 * @param	string|array	action string or array with more tag attribute settings
-	 * @return	string
+	 * @param   string|array  action string or array with more tag attribute settings
+	 * @return  string
 	 */
 	public static function open($attributes = array(), array $hidden = array())
 	{
@@ -128,7 +119,7 @@ class Form {
 	/**
 	 * Create a form close tag
 	 *
-	 * @return string
+	 * @return  string
 	 */
 	public static function close()
 	{
@@ -138,10 +129,10 @@ class Form {
 	/**
 	 * Create a form input
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return	string
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function input($field, $value = null, array $attributes = array())
 	{
@@ -180,10 +171,10 @@ class Form {
 	/**
 	 * Create a hidden field
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function hidden($field, $value = null, array $attributes = array())
 	{
@@ -204,10 +195,10 @@ class Form {
 	/**
 	 * Create a password input field
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function password($field, $value = null, array $attributes = array())
 	{
@@ -228,10 +219,10 @@ class Form {
 	/**
 	 * Create a radio button
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function radio($field, $value = null, array $attributes = array())
 	{
@@ -252,10 +243,10 @@ class Form {
 	/**
 	 * Create a checkbox
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function checkbox($field, $value = null, array $attributes = array())
 	{
@@ -276,9 +267,9 @@ class Form {
 	/**
 	 * Create a file upload input field
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	array
-	 * @return
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   array
+	 * @return  string
 	 */
 	public static function file($field, array $attributes = array())
 	{
@@ -298,10 +289,10 @@ class Form {
 	/**
 	 * Create a button
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function button($field, $value = null, array $attributes = array())
 	{
@@ -322,10 +313,10 @@ class Form {
 	/**
 	 * Create a reset button
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function reset($field = 'reset', $value = 'Reset', array $attributes = array())
 	{
@@ -346,10 +337,10 @@ class Form {
 	/**
 	 * Create a submit button
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function submit($field = 'submit', $value = 'Submit', array $attributes = array())
 	{
@@ -370,10 +361,10 @@ class Form {
 	/**
 	 * Create a textarea field
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return	string
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function textarea($field, $value = null, array $attributes = array())
 	{
@@ -409,8 +400,11 @@ class Form {
 	 *
 	 * Generates a html select element based on the given parameters
 	 *
-	 * @param	array
-	 * @return	string
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string  selected value(s)
+	 * @param   array   array of options and option groups
+	 * @param   array
+	 * @return  string
 	 */
 	public static function select($field, $values = null, array $options = array(), array $attributes = array())
 	{
@@ -485,10 +479,10 @@ class Form {
 	/**
 	 * Create a label field
 	 *
-	 * @param	string|array	either fieldname or full attributes array (when array other params are ignored)
-	 * @param	string
-	 * @param	array
-	 * @return	string
+	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string
+	 * @param   array
+	 * @return  string
 	 */
 	public static function label($label, $id = null, array $attributes = array())
 	{
@@ -511,8 +505,8 @@ class Form {
 	 *
 	 * Prepares the value for display in the form
 	 *
-	 * @param	string
-	 * @return	string
+	 * @param   string
+	 * @return  string
 	 */
 	public static function prep_value($value)
 	{
@@ -527,9 +521,8 @@ class Form {
 	 *
 	 * Wraps the global attributes function and does some form specific work
 	 *
-	 * @access	private
-	 * @param	array	$attr
-	 * @return	string
+	 * @param   array  $attr
+	 * @return  string
 	 */
 	private static function attr_to_string($attr)
 	{
@@ -537,12 +530,10 @@ class Form {
 		return array_to_attr($attr);
 	}
 
-	/* ----------------------------------------------------------------------------
-	 * Class dynamic properties & methods
-	 * ---------------------------------------------------------------------------- */
+	/* ---------------------------------------------------------------------------- */
 
 	/**
-	 * @var	Fieldset
+	 * @var  Fieldset
 	 */
 	protected $fieldset;
 
@@ -567,7 +558,7 @@ class Form {
 	/**
 	 * Returns the related fieldset
 	 *
-	 * @return	Fieldset
+	 * @return  Fieldset
 	 */
 	public function fieldset()
 	{
@@ -577,7 +568,8 @@ class Form {
 	/**
 	 * Build the form
 	 *
-	 * @return string
+	 * @param   string  overwrite for the default action
+	 * @return  string
 	 */
 	public function build($action = null)
 	{
@@ -603,8 +595,8 @@ class Form {
 	/**
 	 * Build & template individual field
 	 *
-	 * @param	string|Fieldset_Field	field instance or name of a field in this form's fieldset
-	 * @return	string
+	 * @param   string|Fieldset_Field  field instance or name of a field in this form's fieldset
+	 * @return  string
 	 */
 	public function build_field($field)
 	{
@@ -703,10 +695,10 @@ class Form {
 	/**
 	 * Allows for templating fields
 	 *
-	 * @param	string
-	 * @param	Fieldset_Field
-	 * @param	bool
-	 * @return	string
+	 * @param   string
+	 * @param   Fieldset_Field
+	 * @param   bool
+	 * @return  string
 	 */
 	protected function field_template($build_field, Fieldset_Field $field, $required)
 	{
@@ -761,9 +753,9 @@ class Form {
 	/**
 	 * Sets a config value on the fieldset
 	 *
-	 * @param	string
-	 * @param	mixed
-	 * @return	Fieldset	this, to allow chaining
+	 * @param   string
+	 * @param   mixed
+	 * @return  Fieldset  this, to allow chaining
 	 */
 	public function set_config($config, $value = null)
 	{
@@ -775,9 +767,9 @@ class Form {
 	/**
 	 * Get a single or multiple config values by key
 	 *
-	 * @param	string|array	a single key or multiple in an array, empty to fetch all
-	 * @param	mixed			default output when config wasn't set
-	 * @return	mixed|array		a single config value or multiple in an array when $key input was an array
+	 * @param   string|array  a single key or multiple in an array, empty to fetch all
+	 * @param   mixed         default output when config wasn't set
+	 * @return  mixed|array   a single config value or multiple in an array when $key input was an array
 	 */
 	public function get_config($key = null, $default = null)
 	{
@@ -834,7 +826,7 @@ class Form {
 	/**
 	 * Magic method toString that will build this as a form
 	 *
-	 * @return	string
+	 * @return  string
 	 */
 	public function __toString()
 	{
