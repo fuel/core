@@ -249,12 +249,12 @@ class File {
 				// Use recursion when depth not depleted or not limited...
 				if ($depth < 1 or $new_depth > 0)
 				{
-					$dirs[$file] = static::read_dir($path.$file.DS, $new_depth, $filter, $area);
+					$dirs[$file.DS] = static::read_dir($path.$file.DS, $new_depth, $filter, $area);
 				}
 				// ... or set dir to false when not read
 				else
 				{
-					$dirs[$file] = false;
+					$dirs[$file.DS] = false;
 				}
 			}
 			else
