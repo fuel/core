@@ -19,7 +19,7 @@ class Request404Exception extends \Fuel_Exception {
 	 * When this type of exception isn't caught this method is called by
 	 * Error::exception_handler() to deal with the problem.
 	 */
-	public function _handle_exception()
+	public function handle()
 	{
 		$response = new \Response(\View::factory('404'), 404);
 		\Event::shutdown();
@@ -124,15 +124,10 @@ class Request {
 	 * Shows a 404.  Checks to see if a 404_override route is set, if not show
 	 * a default 404.
 	 *
-	 * Usage:
-	 *
-	 *     Request::show_404();
-	 *
 	 * @deprecated  Remove in v1.2
-	 * @param   bool         Whether to return the 404 output or just output and exit
-	 * @return  void|string  Void if $return is false, the output if $return is true
+	 * @throws  Request404Exception
 	 */
-	public static function show_404($return = false)
+	public static function show_404()
 	{
 		\Log::warning('This method is deprecated.  Please use a Request404Exception instead.', __METHOD__);
 		throw new \Request404Exception();
