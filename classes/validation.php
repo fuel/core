@@ -356,7 +356,7 @@ class Validation {
 	}
 
 	/**
-	 * Errors
+	 * Error
 	 *
 	 * Return specific error or all errors thrown during validation
 	 *
@@ -364,7 +364,7 @@ class Validation {
 	 * @param   mixed   value to return when not validated
 	 * @return  Array|Validation_Error
 	 */
-	public function errors($field = null, $default = false)
+	public function error($field = null, $default = false)
 	{
 		if ($field === null)
 		{
@@ -372,6 +372,17 @@ class Validation {
 		}
 
 		return array_key_exists($field, $this->errors) ? $this->errors[$field] : $default;
+	}
+
+	/**
+	 * Alias of Validation::error() for backwards compatibility
+	 *
+	 * @depricated  Remove in v1.2
+	 */
+	public function errors($field = null, $default = false)
+	{
+		\Log::warning('This method is deprecated. Please use Validation::error() instead.', __METHOD__);
+		return static::error($field, $default);
 	}
 
 	/**
