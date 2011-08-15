@@ -43,7 +43,7 @@ class Config {
 
 		if ($group === null)
 		{
-			static::$items = $reload ? array_merge(static::$items, $config);
+			static::$items = $reload ? $config : array_merge(static::$items, $config);
 		}
 		else
 		{
