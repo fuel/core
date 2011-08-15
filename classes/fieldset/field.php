@@ -315,10 +315,7 @@ class Fieldset_Field
 	public function set_options($value, $label = null)
 	{
 		$value = is_array($value) ? $value : array($value => $label);
-		foreach ($value as $key => $label)
-		{
-			$this->options[(string) $key] = $label;
-		}
+		$this->options = \Arr::merge($this->options, $value);
 
 		return $this;
 	}
