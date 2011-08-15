@@ -317,7 +317,7 @@ class Fieldset_Field
 		$value = is_array($value) ? $value : array($value => $label);
 		foreach ($value as $key => $label)
 		{
-			$this->options[(string) $key] = (string) $label;
+			$this->options[(string) $key] = $label;
 		}
 
 		return $this;

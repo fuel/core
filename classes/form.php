@@ -435,7 +435,7 @@ class Form {
 
 		// Get the selected options then unset it from the array
 		// and make sure they're all strings to avoid type conversions
-		$selected = ! isset($attributes['selected']) ? array() : array_map( function($a) { return (string) $a; }, array_values((array) $attributes['selected']));
+		$selected = ! isset($attributes['selected']) ? array() : array_map(function($a) { return (string) $a; }, array_values((array) $attributes['selected']));
 
 		unset($attributes['selected']);
 
