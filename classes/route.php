@@ -101,7 +101,7 @@ class Route {
 
 		if ($uri != '')
 		{
-			$path = preg_replace('@^'.$this->search.'$@uD', $this->translation, $uri);
+			$path = preg_replace('#^'.$this->search.'$#uD', $this->translation, $uri);
 		}
 
 		// Clean out all the non-named stuff out of $named_params
@@ -153,7 +153,7 @@ class Route {
 			return false;
 		}
 
-		if (preg_match('@^'.$route->search.'$@uD', $uri, $params) != false)
+		if (preg_match('#^'.$route->search.'$#uD', $uri, $params) != false)
 		{
 			return $route->matched($uri, $params);
 		}
