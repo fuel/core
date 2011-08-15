@@ -36,17 +36,9 @@ class Route {
 
 	public function __construct($path, $translation = null)
 	{
-		if ($translation === null)
-		{
-			$this->path = $path;
-			$this->translation = $path;
-		}
-		else
-		{
-			$this->path = $path;
-			$this->translation = $translation;
-			$this->compile();
-		}
+		$this->path = $path;
+		$this->translation = ($translation === null) ? $path : $translation;
+		($translation !== null) and $this->compile();
 	}
 
 	protected function compile()
@@ -63,7 +55,7 @@ class Route {
 	}
 
 	/**
-	 * Attemptes to find the correct route for the given URI
+	 * Attempts to find the correct route for the given URI
 	 *
 	 * @access	public
 	 * @param	object	The URI object

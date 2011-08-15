@@ -100,18 +100,18 @@ class Router {
 		if ( ! $match)
 		{
 			// Since we didn't find a match, we will create a new route.
-			$match = new Route(preg_quote($request->uri->get()), $request->uri->get());
+			$match = new Route(preg_quote($request->uri->get(), '#'), $request->uri->get());
 			$match->parse($request);
 		}
 
-		return  static::find_controller($match);
+		return static::find_controller($match);
 	}
 
 	/**
 	 * Find the controller that matches the route requested
 	 *
-	 * @param	Route		the given Route object
-	 * @return	mixed		the match array or false
+	 * @param	Route  $match  the given Route object
+	 * @return	mixed  the match array or false
 	 */
 	protected static function find_controller($match)
 	{
@@ -175,7 +175,7 @@ class Router {
 		$match->directory = array_shift($segments);
 		$match->controller = count($segments) ? array_shift($segments) : $match->directory;
 
-		if (class_exists(Inflector::words_to_upper('Controller_'.$match->directory.'_'.$match->controller)))
+		if (class_exists(\Inflector::words_to_upper('Controller_'.$match->directory.'_'.$match->controller)))
 		{
 			$match->action = count($segments) ? array_shift($segments) : null;
 			$match->method_params = $segments;
@@ -189,7 +189,7 @@ class Router {
 		$match->controller = count($segments) ? array_shift($segments) : $match->directory;
 
 		// We first want to check if the controller is in a directory.
-		if (class_exists(Inflector::words_to_upper('Controller_'.$match->controller)))
+		if (class_exists(\Inflector::words_to_upper('Controller_'.$match->controller)))
 		{
 			$match->action = count($segments) ? array_shift($segments) : null;
 			$match->method_params = $segments;
