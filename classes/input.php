@@ -25,6 +25,109 @@ namespace Fuel\Core;
  */
 class Input {
 
+
+	/**
+	 * @var  $detected_uri  The URI that was detected automatically
+	 */
+	protected static $detected_uri = null;
+
+	/**
+	 * Detects and returns the current URI based on a number of different server
+	 * variables.
+	 *
+	 * @return  string
+	 */
+	public static function detect_uri()
+	{
+		if (static::$detected_uri !== null)
+		{
+			return static::$detected_uri;
+		}
+
+		if (\Fuel::$is_cli)
+		{
+			if ($uri = \Cli::option('uri') !== null)
+			{
+				static::$detected_uri = $uri;
+			}
+			else
+			{
+				static::$detected_uri = \Cli::option(1);
+			}
+
+			return static::$detected_uri;
+		}
+
+		// We want to use PATH_INFO if we can.
+		if ( ! empty($_SERVER['PATH_INFO']))
+		{
+			$uri = $_SERVER['PATH_INFO'];
+		}
+		// Only use ORIG_PATH_INFO if it contains the path
+		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
+		{
+			$uri = $path;
+		}
+		else
+		{
+			// Fall back to parsing the REQUEST URI
+			if (isset($_SERVER['REQUEST_URI']))
+			{
+				// Some servers require 'index.php?' as the index page
+				// if we are using mod_rewrite or the server does not require
+				// the question mark, then parse the url.
+				if (\Config::get('index_file') != 'index.php?')
+				{
+					$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+				}
+				else
+				{
+					$uri = $_SERVER['REQUEST_URI'];
+				}
+			}
+			else
+			{
+				throw new \Fuel_Exception('Unable to detect the URI.');
+			}
+
+			// Remove the base URL from the URI
+			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
+			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
+			{
+				$uri = substr($uri, strlen($base_url));
+			}
+
+			// If we are using an index file (not mod_rewrite) then remove it
+			$index_file = \Config::get('index_file');
+			if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
+			{
+				$uri = substr($uri, strlen($index_file));
+			}
+
+			// Lets split the URI up in case it containes a ?.  This would
+			// indecate the server requires 'index.php?' and that mod_rewrite
+			// is not being used.
+			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
+
+			// If there are matches then lets set set everything correctly
+			if ( ! empty($matches))
+			{
+				$uri = $matches[1];
+				$_SERVER['QUERY_STRING'] = $matches[2];
+				parse_str($matches[2], $_GET);
+			}
+		}
+
+		// Strip the defined url suffix from the uri if needed
+		$ext = \Config::get('url_suffix');
+		strrchr($uri, '.') === $ext and $uri = substr($uri,0,-strlen($ext));
+
+		// Do some final clean up of the uri
+		static::$detected_uri = \Security::clean_uri(str_replace(array('//', '../'), '/', $uri));
+
+		return static::$detected_uri;
+	}
+
 	/**
 	 * Get the public ip address of the user.
 	 *
