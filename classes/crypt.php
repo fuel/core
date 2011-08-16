@@ -138,6 +138,21 @@ class Crypt {
 
 	// --------------------------------------------------------------------
 
+	/*
+	 * generate the HMAC of a string
+	 *
+	 * @param	string	text to be hashed
+	 * @access	public
+	 * @return	string	message digest
+	 */
+	public static function hmac($value)
+	{
+		// calculate the hmac-sha256 hash of this value
+		return static::safe_b64encode(static::$hasher->hash($value));
+	}
+
+	// --------------------------------------------------------------------
+
 	private static function safe_b64encode($value)
 	{
 		$data = base64_encode($value);
