@@ -143,8 +143,6 @@ class Fuel {
 		// Run Input Filtering
 		\Security::clean_input();
 
-		static::$env = \Config::get('environment');
-
 		\Event::register('shutdown', 'Fuel::finish');
 
 		//Load in the packages
