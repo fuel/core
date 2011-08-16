@@ -36,34 +36,24 @@ class Route {
 
 	public function __construct($path, $translation = null)
 	{
-		if ($translation === null)
-		{
-			$this->path = $path;
-			$this->translation = $path;
-		}
-		else
-		{
-			$this->path = $path;
-			$this->translation = $translation;
-			$this->compile();
-		}
+		$this->path = $path;
+		$this->translation = ($translation === null) ? $path : $translation;
+		$this->search = ($translation === null) ? $path : $this->compile();
 	}
 
 	protected function compile()
 	{
 		if ($this->path === '_root_')
 		{
-			$this->search = '';
+			return '';
 		}
-		else
-		{
-			$this->search = str_replace(array(':any', ':segment'), array('.+', '[^/]*'), $this->path);
-			$this->search = preg_replace('|:([a-z\_]+)|uD', '(?P<$1>.+?)', $this->search);
-		}
+
+		$search = str_replace(array(':any', ':segment'), array('.+', '[^/]*'), $this->path);
+		return preg_replace('|:([a-z\_]+)|uD', '(?P<$1>.+?)', $this->search);
 	}
 
 	/**
-	 * Attemptes to find the correct route for the given URI
+	 * Attempts to find the correct route for the given URI
 	 *
 	 * @access	public
 	 * @param	object	The URI object
@@ -101,7 +91,7 @@ class Route {
 
 		if ($uri != '')
 		{
-			$path = preg_replace('@^'.$this->search.'$@uD', $this->translation, $uri);
+			$path = preg_replace('#^'.$this->search.'$#uD', $this->translation, $uri);
 		}
 
 		// Clean out all the non-named stuff out of $named_params
@@ -153,7 +143,7 @@ class Route {
 			return false;
 		}
 
-		if (preg_match('@^'.$route->search.'$@uD', $uri, $params) != false)
+		if (preg_match('#^'.$route->search.'$#uD', $uri, $params) != false)
 		{
 			return $route->matched($uri, $params);
 		}
