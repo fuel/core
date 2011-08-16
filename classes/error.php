@@ -157,6 +157,12 @@ class Error {
 
 		if ($fatal)
 		{
+			if ( ! headers_sent())
+			{
+				$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
+				header($protocol.' 500 Internal Server Error');
+			}
+
 			$data['non_fatal'] = static::$non_fatal_cache;
 
 			try
@@ -214,6 +220,11 @@ class Error {
 	 */
 	public static function show_production_error(\Exception $e)
 	{
+		if ( ! headers_sent())
+		{
+			$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
+			header($protocol.' 500 Internal Server Error');
+		}
 		exit(\View::factory('errors'.DS.'production'));
 	}
 
