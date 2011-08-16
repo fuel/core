@@ -101,12 +101,12 @@ abstract class Controller_Rest extends \Controller {
 	 *
 	 * Takes pure data and optionally a status code, then creates the response
 	 *
-	 * @param  array
+	 * @param  mixed
 	 * @param  int
 	 */
 	protected function response($data = array(), $http_code = 200)
 	{
-		if (empty($data))
+		if ((is_array($data) and empty($data)) or ($data == ''))
 		{
 			$this->response->status = 404;
 			return;
