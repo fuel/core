@@ -154,33 +154,25 @@ class Num {
 	 * @param   integer
 	 * @return  string
 	 */
-	public static function quantity($num = null, $decimals = 0)
+	public static function quantity($num, $decimals = 0)
 	{
-		if($num)
+		if ($num >= 1000 && $num < 1000000)
 		{
-			switch(true)
-			{
-				case ($num >= 1000 && $num < 1000000):
-				{
-					return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000)).'K';
-				}
-				break;
-				case ($num >= 1000000 && $num < 1000000000):
-				{
-					return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000)).'M';
-				}
-				break;
-				case ($num >= 1000000000):
-				{
-					return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000000)).'B';
-				}
-				break;
-				default:
-				{
-					return $num;
-				}
-			}
+			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000)).'K';
 		}
+		elseif ($num >= 1000000 && $num < 1000000000)
+		{
+			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000)).'M';
+		}
+		elseif ($num >= 1000000000)
+		{
+			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000000)).'B';
+		}
+		else
+		{
+			return $num;
+		}
+
 		return $num;
 	}
 
