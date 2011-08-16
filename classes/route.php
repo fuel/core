@@ -38,20 +38,18 @@ class Route {
 	{
 		$this->path = $path;
 		$this->translation = ($translation === null) ? $path : $translation;
-		($translation !== null) and $this->compile();
+		$this->search = ($translation === null) ? $path : $this->compile();
 	}
 
 	protected function compile()
 	{
 		if ($this->path === '_root_')
 		{
-			$this->search = '';
+			return '';
 		}
-		else
-		{
-			$this->search = str_replace(array(':any', ':segment'), array('.+', '[^/]*'), $this->path);
-			$this->search = preg_replace('|:([a-z\_]+)|uD', '(?P<$1>.+?)', $this->search);
-		}
+
+		$search = str_replace(array(':any', ':segment'), array('.+', '[^/]*'), $this->path);
+		return preg_replace('|:([a-z\_]+)|uD', '(?P<$1>.+?)', $this->search);
 	}
 
 	/**
