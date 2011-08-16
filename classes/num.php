@@ -168,10 +168,6 @@ class Num {
 		{
 			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000000)).'B';
 		}
-		else
-		{
-			return $num;
-		}
 
 		return $num;
 	}
