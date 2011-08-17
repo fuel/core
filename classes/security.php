@@ -23,19 +23,14 @@ namespace Fuel\Core;
 class Security {
 
 	/**
-	 * @var  string  the token as submitted in the cookie from the previous request
-	 */
-	protected static $csrf_old_token = false;
-
-	/**
 	 * @var  string  the array key for cookie & post vars to check for the token
 	 */
 	protected static $csrf_token_key = false;
 
 	/**
-	 * @var  string  the token for the next request
+	 * @var  string  the array key for the csrf keys in the session
 	 */
-	protected static $csrf_token = false;
+	protected static $csrf_tokens_session_key = false;
 
 	/**
 	 * Class init
@@ -45,12 +40,7 @@ class Security {
 	public static function _init()
 	{
 		static::$csrf_token_key = \Config::get('security.csrf_token_key', 'fuel_csrf_token');
-		static::$csrf_old_token = \Input::cookie(static::$csrf_token_key, false);
-
-		if (\Config::get('security.csrf_autoload', true))
-		{
-			static::check_token();
-		}
+		static::$csrf_tokens_session_key = \Config::get('security.csrf_tokens_session_key', 'fuel_csrf_tokens_session_key');
 	}
 
 	/**
@@ -224,127 +214,49 @@ class Security {
 	{
 		$value = $value ?: \Input::post(static::$csrf_token_key, 'fail');
 
-		// always reset token once it's been checked and still the same
-		if (static::fetch_token() == static::$csrf_old_token and ! empty($value))
+		$tokens = \Session::get(static::$csrf_tokens_session_key, array());
+
+		// Remove any expired tokens
+		$now = new \DateTime();
+		$now_timestamp = $now->format('U');
+		$tokens = array_filter($tokens, function($var) use ($now_timestamp)
 		{
-			static::set_token(true);
+			return ! ($var !== null and $var < $now_timestamp);
+		});
+
+		// Check token validity
+		$valid = false;
+		if (array_key_exists($value, $tokens))
+		{
+			unset($tokens[$value]);
+			$valid = true;
 		}
 
-		return $value === static::$csrf_old_token;
+		\Session::set(static::$csrf_tokens_session_key, $tokens);
+		return $valid;
 	}
 
 	/**
-	 * Fetch CSRF Token for the next request
+	 * Fetch CSRF Token
 	 *
 	 * @return  string
 	 */
 	public static function fetch_token()
 	{
-		if (static::$csrf_token !== false)
+		$tokens = \Session::get(static::$csrf_tokens_session_key, array());
+		$new_token = md5(uniqid().time());
+
+		$expire_seconds = \Config::get('security.csrf_expiration', 120);
+		$expire_time = null;
+		if ($expire_seconds !== 0)
 		{
-			return static::$csrf_token;
+			$expire_time = new \DateTime('now + '.$expire_seconds.' seconds');
+			$expire_time = $expire_time->format('U');
 		}
+		$tokens[$new_token] = $expire_time;
 
-		static::set_token();
-
-		return static::$csrf_token;
-	}
-
-	protected static function set_token($reset = false)
-	{
-		// re-use old token when found (= not expired) and expiration is used (otherwise always reset)
-		if ( ! $reset and static::$csrf_old_token and \Config::get('security.csrf_expiration', 0) > 0)
-		{
-			static::$csrf_token = static::$csrf_old_token;
-		}
-		// set new token for next session when necessary
-		else
-		{
-			static::$csrf_token = md5(uniqid().time());
-
-			$expiration = \Config::get('security.csrf_expiration', 0);
-			\Cookie::set(static::$csrf_token_key, static::$csrf_token, $expiration);
-		}
-	}
-
-	/**
-	 * JS fetch token
-	 *
-	 * Produces JavaScript fuel_csrf_token() function that will return the current
-	 * CSRF token when called. Use to fill right field on form submit for AJAX operations.
-	 *
-	 * @return string
-	 */
-	public static function js_fetch_token()
-	{
-		$output  = '<script type="text/javascript">
-	function fuel_csrf_token()
-	{
-		if (document.cookie.length > 0)
-		{
-			var c_name = "'.static::$csrf_token_key.'";
-			c_start = document.cookie.indexOf(c_name + "=");
-			if (c_start != -1)
-			{
-				c_start = c_start + c_name.length + 1;
-				c_end = document.cookie.indexOf(";" , c_start);
-				if (c_end == -1)
-				{
-					c_end=document.cookie.length;
-				}
-				return unescape(document.cookie.substring(c_start, c_end));
-			}
-		}
-		return "";
-	}'.PHP_EOL;
-		$output .= '</script>'.PHP_EOL;
-
-		return $output;
-	}
-
-	/**
-	 * JS set token
-	 *
-	 * Produces JavaScript fuel_set_csrf_token() function that will update the current
-	 * CSRF token in the form when called, based on the value of the csrf cookie
-	 *
-	 * @return string
-	 */
-	public static function js_set_token()
-	{
-		$output  = '<script type="text/javascript">
-	function fuel_set_csrf_token(form)
-	{
-		if (document.cookie.length > 0 && typeof form != undefined)
-		{
-			var c_name = "'.static::$csrf_token_key.'";
-			c_start = document.cookie.indexOf(c_name + "=");
-			if (c_start != -1)
-			{
-				c_start = c_start + c_name.length + 1;
-				c_end = document.cookie.indexOf(";" , c_start);
-				if (c_end == -1)
-				{
-					c_end=document.cookie.length;
-				}
-				value=unescape(document.cookie.substring(c_start, c_end));
-				if (value != "")
-				{
-					for(i=0; i<form.elements.length; i++)
-					{
-						if (form.elements[i].name == c_name)
-						{
-							form.elements[i].value = value;
-							break;
-						}
-					}
-				}
-			}
-		}
-	}'.PHP_EOL;
-		$output .= '</script>'.PHP_EOL;
-
-		return $output;
+		\Session::set(static::$csrf_tokens_session_key, $tokens);
+		return $new_token;
 	}
 }
 
