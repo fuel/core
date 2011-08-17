@@ -130,7 +130,24 @@ class Form {
 
 		return \Config::get('form.'.$key, $default);
 	}
-
+	
+	/**
+	 * Create a form open tag with multipart support
+	 * 
+	 * @param	string|array	action string or array with more tag attribute settings
+	 * @return	string
+	 * 
+	 * 15:17 <@dhorrigan> utahcon: Pull Request or STFU :P 
+	 */
+	public static function openmulti($attributes = array(), Array $hidden = array())
+	{
+		$attributes = ! is_array($attributes) ? array('action' => $attributes) : $attributes;
+		if(!array_key_exists('enctype', $attributes)){
+			$attributes['enctype'] = 'multipart/form-data';
+		}
+		return self::open($attributes);
+	}
+	
 	/**
 	 * Create a form open tag
 	 *
