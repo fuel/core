@@ -246,7 +246,7 @@ class Security {
 		$tokens = \Session::get(static::$csrf_tokens_session_key, array());
 		$new_token = md5(uniqid().time());
 
-		$expire_seconds = \Config::get('security.csrf_expiration', 120);
+		$expire_seconds = \Config::get('security.csrf_expiration', 0);
 		$expire_time = null;
 		if ($expire_seconds !== 0)
 		{
