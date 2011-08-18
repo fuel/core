@@ -143,6 +143,7 @@ class Error {
 			{
 				ob_end_clean();
 			}
+			ob_start(\Config::get('ob_callback', null));
 		}
 		else
 		{
