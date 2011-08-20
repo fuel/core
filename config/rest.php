@@ -47,7 +47,7 @@ return array(
 	'auth' => '',
 
 	/*
-	| Array of usernames and passwords for login
+	| array of usernames and passwords for login
 	|
 	|	array('admin' => '1234')
 	|

@@ -19,7 +19,7 @@ class Image_Imagick extends \Image_Driver {
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
 	private $imagick = null;
 
-	public function load($filename)
+	public function load($filename, $return_data = false)
 	{
 		extract(parent::load($filename));
 		
@@ -34,8 +34,14 @@ class Image_Imagick extends \Image_Driver {
 	protected function _crop($x1, $y1, $x2, $y2)
 	{
 		extract(parent::_crop($x1, $y1, $x2, $y2));
-		
-		$this->imagick->cropImage(($x2 - $x1), ($y2 - $y1), $y1, $x1);
+
+		$width = $x2 - $x1;
+		$height = $y2 - $y1;
+
+		$this->debug("Cropping image ".$width."x".$height."+$x1+$y1 based on coords ($x1, $y1), ($x2, $y2)");
+
+		$this->imagick->cropImage($width, $height, $x1, $y1);
+		$this->imagick->setImagePage(0, 0, 0, 0);
 	}
 
 	protected function _resize($width, $height = null, $keepar = true, $pad = true)
@@ -85,7 +91,7 @@ class Image_Imagick extends \Image_Driver {
 		$this->imagick->compositeImage($wmimage, \Imagick::COMPOSITE_COPYOPACITY, 0, 0);
 	}
 	
-	protected function _rounded($radius, $sides)
+	protected function _rounded($radius, $sides, $antialias = 0)
 	{
 		extract(parent::_rounded($radius, $sides, null));
 		
@@ -162,12 +168,14 @@ class Image_Imagick extends \Image_Driver {
 		$this->run_queue();
 		$this->add_background();
 		
+		$filetype = $this->image_extension;
+		
 		if ($this->imagick->getImageFormat() != $filetype)
 			$this->imagick->setImageFormat($filetype);
 		
 		file_put_contents($filename, $this->imagick->getImageBlob());
 
-		if ($this->config['persistent'] === false)
+		if ($this->config['persistence'] === false)
 			$this->reload();
 		
 		return $this;

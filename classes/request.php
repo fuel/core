@@ -13,10 +13,20 @@
 namespace Fuel\Core;
 
 
-/**
- * When this is thrown and not caught, the Errors class will call \Request::show_404()
- */
-class Request404Exception extends \Fuel_Exception {}
+class Request404Exception extends \Fuel_Exception {
+
+	/**
+	 * When this type of exception isn't caught this method is called by
+	 * Error::exception_handler() to deal with the problem.
+	 */
+	public function handle()
+	{
+		$response = new \Response(\View::factory('404'), 404);
+		\Event::shutdown();
+		$response->send(true);
+		return;
+	}
+}
 
 
 /**
@@ -66,9 +76,11 @@ class Request {
 		logger(Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
 		$request = new static($uri, $route);
-		$request->parent = static::$active;
-		static::$active->children[] = $request;
-
+		if (static::$active)
+		{
+			$request->parent = static::$active;
+			static::$active->children[] = $request;
+		}
 		static::$active = $request;
 
 		if ( ! static::$main)
@@ -91,8 +103,6 @@ class Request {
 	 */
 	public static function main()
 	{
-		logger(Fuel::L_INFO, 'Called', __METHOD__);
-
 		return static::$main;
 	}
 
@@ -107,8 +117,6 @@ class Request {
 	 */
 	public static function active()
 	{
-		class_exists('Log', false) and logger(Fuel::L_INFO, 'Called', __METHOD__);
-
 		return static::$active;
 	}
 
@@ -116,67 +124,13 @@ class Request {
 	 * Shows a 404.  Checks to see if a 404_override route is set, if not show
 	 * a default 404.
 	 *
-	 * Usage:
-	 *
-	 *     Request::show_404();
-	 *
-	 * @param   bool         Whether to return the 404 output or just output and exit
-	 * @return  void|string  Void if $return is false, the output if $return is true
+	 * @deprecated  Remove in v1.2
+	 * @throws  Request404Exception
 	 */
-	public static function show_404($return = false)
+	public static function show_404()
 	{
-		logger(Fuel::L_INFO, 'Called', __METHOD__);
-
-		// This ensures that show_404 doesn't recurse indefinately
-		static $call_count = 0;
-		$call_count++;
-
-		if ($call_count == 1)
-		{
-			// first call, route the 404 route
-			$route_request = true;
-		}
-		elseif ($call_count == 2)
-		{
-			// second call, try the 404 route without routing
-			$route_request = false;
-		}
-		else
-		{
-			// third call, there's something seriously wrong now
-			exit('It appears your _404_ route is incorrect.  Multiple Recursion has happened.');
-		}
-
-		if (\Config::get('routes._404_') === null)
-		{
-			$response = new \Response(\View::factory('404'), 404);
-
-			if ($return)
-			{
-				return $response;
-			}
-
-			\Event::shutdown();
-
-			$response->send(true);
-		}
-		else
-		{
-			$request = \Request::factory(\Config::get('routes._404_'), $route_request)->execute();
-
-			if ($return)
-			{
-				return $request->response;
-			}
-
-			\Event::shutdown();
-
-			$request->response->send(true);
-		}
-
-		\Fuel::finish();
-
-		exit;
+		\Log::warning('This method is deprecated.  Please use a Request404Exception instead.', __METHOD__);
+		throw new \Request404Exception();
 	}
 
 	/**
@@ -192,9 +146,9 @@ class Request {
 	public static function reset_request()
 	{
 		// Let's make the previous Request active since we are done executing this one.
-		if (static::$active->parent())
+		if ($parent = static::$active->parent())
 		{
-			static::$active = static::$active->parent();
+			static::$active = $parent;
 		}
 	}
 
@@ -307,37 +261,25 @@ class Request {
 		$this->uri = new \Uri($uri);
 
 		// check if a module was requested
-		if (count($this->uri->segments) and $modpath = \Fuel::module_exists($this->uri->segments[0]))
+		if (count($this->uri->segments) and $mod_path = \Fuel::module_exists($this->uri->segments[0]))
 		{
 			// check if the module has routes
-			if (file_exists($modpath .= 'config/routes.php'))
+			if (file_exists($mod_path .= 'config/routes.php'))
 			{
 				// load and add the module routes
-				$modroutes = \Config::load(\Fuel::load($modpath), $this->uri->segments[0] . '_routes');
-				foreach ($modroutes as $name => $modroute)
-				{
-					switch ($name)
+				$mod_routes = \Config::load(\Fuel::load($mod_path), $this->uri->segments[0] . '_routes');
+				$self = $this;
+				array_walk($mod_routes, function ($route, $name) use (&$self) {
+					if ($name === '_root_')
 					{
-						case '_root_':
-							// map the root to the module default controller/method
-							$name = $this->uri->segments[0];
-						break;
-
-						case '_404_':
-							// do not touch the 404 route
-						break;
-
-						default:
-							// prefix the route with the module name if it isn't done yet
-							if (strpos($name, $this->uri->segments[0].'/') !== 0 and $name != $this->uri->segments[0])
-							{
-								$name = $this->uri->segments[0].'/'.$name;
-							}
-						break;
+						$name = $self->uri->segments[0];
 					}
-
-					\Config::set('routes.' . $name, $modroute);
-				}
+					elseif (strpos($name, $self->uri->segments[0].'/') !== 0 and $name != $self->uri->segments[0])
+					{
+						$name = $self->uri->segments[0].'/'.$name;
+					}
+					\Config::set('routes.'.$name, $route);
+				});
 
 				// update the loaded list of routes
 				\Router::add(\Config::get('routes'));

@@ -124,6 +124,8 @@ abstract class Session_Driver {
 	 */
 	public function set($name, $value)
 	{
+		$value = ($value instanceof \Closure) ? $value() : $value;
+		
 		$this->data[$name] = $value;
 	}
 
@@ -145,10 +147,10 @@ abstract class Session_Driver {
 		}
 		elseif (isset($this->data[$name]))
 		{
-			return $this->data[$name];
+			$return = $this->data[$name];
 		}
 
-		if (strpos($name, '.') !== false)
+		if ( ! isset($return) and strpos($name, '.') !== false)
 		{
 			$parts = explode('.', $name);
 
@@ -157,21 +159,21 @@ abstract class Session_Driver {
 				case 2:
 					if (isset($this->data[$parts[0]][$parts[1]]))
 					{
-						return $this->data[$parts[0]][$parts[1]];
+						$return = $this->data[$parts[0]][$parts[1]];
 					}
 				break;
 
 				case 3:
 					if (isset($this->data[$parts[0]][$parts[1]][$parts[2]]))
 					{
-						return $this->data[$parts[0]][$parts[1]][$parts[2]];
+						$return = $this->data[$parts[0]][$parts[1]][$parts[2]];
 					}
 				break;
 
 				case 4:
 					if (isset($this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]]))
 					{
-						return $this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
+						$return = $this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
 					}
 				break;
 
@@ -189,15 +191,17 @@ abstract class Session_Driver {
 						}
 						else
 						{
-							return $default;
+							return ($default instanceof \Closure) ? $default() : $default;
 						}
 					}
-					return $return;
 				break;
 			}
 		}
-
-		return $default;
+		if ( ! isset($return))
+		{
+			$return = $default;
+		}
+		return ($return instanceof \Closure) ? $return() : $return;
 	}
 
 	// --------------------------------------------------------------------
@@ -344,7 +348,7 @@ abstract class Session_Driver {
 			$default = $this->flash[$this->config['flash_id'].'::'.$name]['value'];
 		}
 
-		return $default;
+		return ($default instanceof \Closure) ? $default() : $default;
 	}
 
 	// --------------------------------------------------------------------

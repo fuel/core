@@ -74,9 +74,9 @@ class Error {
 	 */
 	public static function exception_handler(\Exception $e)
 	{
-		if ($e instanceof Request404Exception)
+		if (method_exists($e, 'handle'))
 		{
-			\Request::show_404();
+			return $e->handle();
 		}
 
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
@@ -139,7 +139,11 @@ class Error {
 		if ($fatal)
 		{
 			$data['contents'] = ob_get_contents();
-			ob_end_clean();
+			while (ob_get_level() > 0)
+			{
+				ob_end_clean();
+			}
+			ob_start(\Config::get('ob_callback', null));
 		}
 		else
 		{
@@ -154,11 +158,32 @@ class Error {
 
 		if ($fatal)
 		{
+			if ( ! headers_sent())
+			{
+				$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
+				header($protocol.' 500 Internal Server Error');
+			}
+
 			$data['non_fatal'] = static::$non_fatal_cache;
-			exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
+
+			try
+			{
+				exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
+			}
+			catch (\Fuel_Exception $view_exception)
+			{
+				exit($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line']);
+			}
 		}
 
-		echo \View::factory('errors'.DS.'php_error', $data, false);
+		try
+		{
+			echo \View::factory('errors'.DS.'php_error', $data, false);
+		}
+		catch (\Fuel_Exception $e)
+		{
+			echo $e->getMessage().Html::br();
+		}
 	}
 
 	/**
@@ -196,6 +221,11 @@ class Error {
 	 */
 	public static function show_production_error(\Exception $e)
 	{
+		if ( ! headers_sent())
+		{
+			$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
+			header($protocol.' 500 Internal Server Error');
+		}
 		exit(\View::factory('errors'.DS.'production'));
 	}
 

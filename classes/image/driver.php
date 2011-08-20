@@ -166,7 +166,7 @@ abstract class Image_Driver {
 	 * @param   integer  $y1  Y-Coordinate for first set.
 	 * @param   integer  $x2  X-Coordinate for second set.
 	 * @param   integer  $y2  Y-Coordinate for second set.
-	 * @return  Array    An array of variables for the specific driver.
+	 * @return  array    An array of variables for the specific driver.
 	 */
 	protected function _crop($x1, $y1, $x2, $y2)
 	{
@@ -211,7 +211,7 @@ abstract class Image_Driver {
 	 * @param   integer  $height  The new height of the image.
 	 * @param   boolean  $keepar  If false, allows stretching of the image.
 	 * @param   boolean  $pad     Adds padding to the image when resizing.
-	 * @return  Array    An array of variables for the specific driver.
+	 * @return  array    An array of variables for the specific driver.
 	 */
 	protected function _resize($width, $height = null, $keepar = true, $pad = true)
 	{
@@ -254,18 +254,18 @@ abstract class Image_Driver {
 			// See which is the biggest ratio
 			if (function_exists('bcdiv'))
 			{
-				$width_ratio  = bcdiv($width, $sizes->width, 10);
-				$height_ratio = bcdiv($height, $sizes->height, 10);
+				$width_ratio  = bcdiv((float) $width, $sizes->width, 10);
+				$height_ratio = bcdiv((float) $height, $sizes->height, 10);
 				$compare = bccomp($width_ratio, $height_ratio, 10);
 				if ($compare > -1)
 				{
-					$height = ceil((real) bcmul($sizes->height, $height_ratio, 10));
-					$width = ceil((real) bcmul($sizes->width, $height_ratio, 10));
+					$height = ceil((float) bcmul($sizes->height, $height_ratio, 10));
+					$width = ceil((float) bcmul($sizes->width, $height_ratio, 10));
 				}
 				else
 				{
-					$height = ceil((real) bcmul($sizes->height, $width_ratio, 10));
-					$width = ceil((real) bcmul($sizes->width, $width_ratio, 10));
+					$height = ceil((float) bcmul($sizes->height, $width_ratio, 10));
+					$width = ceil((float) bcmul($sizes->width, $width_ratio, 10));
 				}
 			}
 			else
@@ -317,33 +317,24 @@ abstract class Image_Driver {
 		$x = $y = 0;
 		if (function_exists('bcdiv'))
 		{
-			$widthr  = bcdiv($sizes->width, $width, 10);
-			$heightr = bcdiv($sizes->height, $height, 10);
-			$compare = bccomp($widthr, $heightr, 10);
-			if ($compare < 1)
+			if (bccomp(bcdiv($sizes->width, $width, 10), bcdiv($sizes->height, $height, 10), 10) < 1)
 			{
-				$t_height = ceil((float) bcmul($height, $widthr, 10));
-				$this->_resize($width, $t_height, true, false);
+				$this->_resize($width, 0, true, false);
 			}
 			else
 			{
-				$t_width = ceil((float) bcmul($width, $heightr, 10));
-				$this->_resize($t_width, $height, true, false);
+				$this->_resize(0, $height, true, false);
 			}
 		}
 		else
 		{
-			$widthr  = $sizes->width / $width;
-			$heightr = $sizes->height / $height;
-			if ($widthr < $heightr)
+			if ($sizes->width / $width < $sizes->height / $height)
 			{
-				$t_height = ceil($height * $widthr);
-				$this->_resize($width, $t_height, true, false);
+				$this->_resize($width, 0, true, false);
 			}
 			else
 			{
-				$t_width = ceil($width * $heightr);
-				$this->_resize($t_width, $height, true, false);
+				$this->_resize(0, $height, true, false);
 			}
 		}
 		$sizes = $this->sizes();

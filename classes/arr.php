@@ -191,7 +191,7 @@ class Arr {
 		{
 			if ( ! is_array($array) or ! array_key_exists($key[0], $array))
 			{
-				return $default;
+				return ($default instanceof \Closure) ? $default() : $default;
 			}
 			$array = $array[$key[0]];
 			unset($key[0]);
@@ -204,7 +204,7 @@ class Arr {
 			$key = $key[0];
 			if ( ! is_array($array) or ! array_key_exists($key, $array))
 			{
-				return $default;
+				return ($default instanceof \Closure) ? $default() : $default;
 			}
 			return $array[$key];
 		}
@@ -251,7 +251,7 @@ class Arr {
 	 * @param   int          the numeric position at which to insert, negative to count from the end backwards
 	 * @return  bool         false when array shorter then $pos, otherwise true
 	 */
-	public static function insert(Array &$original, $value, $pos)
+	public static function insert(array &$original, $value, $pos)
 	{
 		if (count($original) < abs($pos))
 		{
@@ -272,7 +272,7 @@ class Arr {
 	 * @param   string|int   the key after which to insert
 	 * @return  bool         false when key isn't found in the array, otherwise true
 	 */
-	public static function insert_after_key(Array &$original, $value, $key)
+	public static function insert_after_key(array &$original, $value, $key)
 	{
 		$pos = array_search($key, array_keys($original));
 		if ($pos === false)
@@ -292,7 +292,7 @@ class Arr {
 	 * @param   string|int   the value after which to insert
 	 * @return  bool         false when value isn't found in the array, otherwise true
 	 */
-	public static function insert_after_value(Array &$original, $value, $search)
+	public static function insert_after_value(array &$original, $value, $search)
 	{
 		$key = array_search($search, $original);
 		if ($key === false)

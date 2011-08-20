@@ -43,7 +43,7 @@ class Config {
 
 		if ($group === null)
 		{
-			static::$items = $reload ? $config : static::$items + $config;
+			static::$items = $reload ? $config : array_merge(static::$items, $config);
 		}
 		else
 		{
@@ -131,10 +131,10 @@ CONF;
 	{
 		if (isset(static::$items[$item]))
 		{
-			return static::$items[$item];
+			$return = static::$items[$item];
 		}
 
-		if (strpos($item, '.') !== false)
+		if ( ! isset($return) and strpos($item, '.') !== false)
 		{
 			$parts = explode('.', $item);
 
@@ -143,21 +143,21 @@ CONF;
 				case 2:
 					if (isset(static::$items[$parts[0]][$parts[1]]))
 					{
-						return static::$items[$parts[0]][$parts[1]];
+						$return = static::$items[$parts[0]][$parts[1]];
 					}
 				break;
 
 				case 3:
 					if (isset(static::$items[$parts[0]][$parts[1]][$parts[2]]))
 					{
-						return static::$items[$parts[0]][$parts[1]][$parts[2]];
+						$return = static::$items[$parts[0]][$parts[1]][$parts[2]];
 					}
 				break;
 
 				case 4:
 					if (isset(static::$items[$parts[0]][$parts[1]][$parts[2]][$parts[3]]))
 					{
-						return static::$items[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
+						$return = static::$items[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
 					}
 				break;
 
@@ -175,19 +175,22 @@ CONF;
 						}
 						else
 						{
-							return $default;
+							return ($default instanceof \Closure) ? $default() : $default;
 						}
 					}
-					return $return;
 				break;
 			}
 		}
-
-		return $default;
+		if ( ! isset($return))
+		{
+			$return = $default;
+		}
+		return ($return instanceof \Closure) ? $return() : $return;
 	}
 
 	public static function set($item, $value)
 	{
+		$value = ($value instanceof \Closure) ? $value() : $value;
 		$parts = explode('.', $item);
 
 		switch (count($parts))

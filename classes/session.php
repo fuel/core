@@ -175,6 +175,8 @@ class Session {
 	 */
 	public static function set($name, $value = null)
 	{
+		$value = ($value instanceof \Closure) ? $value() : $value;
+		
 		return static::instance()->set($name, $value);
 	}
 

@@ -25,12 +25,113 @@ namespace Fuel\Core;
  */
 class Input {
 
+
+	/**
+	 * @var  $detected_uri  The URI that was detected automatically
+	 */
+	protected static $detected_uri = null;
+
+	/**
+	 * Detects and returns the current URI based on a number of different server
+	 * variables.
+	 *
+	 * @return  string
+	 */
+	public static function detect_uri()
+	{
+		if (static::$detected_uri !== null)
+		{
+			return static::$detected_uri;
+		}
+
+		if (\Fuel::$is_cli)
+		{
+			if ($uri = \Cli::option('uri') !== null)
+			{
+				static::$detected_uri = $uri;
+			}
+			else
+			{
+				static::$detected_uri = \Cli::option(1);
+			}
+
+			return static::$detected_uri;
+		}
+
+		// We want to use PATH_INFO if we can.
+		if ( ! empty($_SERVER['PATH_INFO']))
+		{
+			$uri = $_SERVER['PATH_INFO'];
+		}
+		// Only use ORIG_PATH_INFO if it contains the path
+		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
+		{
+			$uri = $path;
+		}
+		else
+		{
+			// Fall back to parsing the REQUEST URI
+			if (isset($_SERVER['REQUEST_URI']))
+			{
+				// Some servers require 'index.php?' as the index page
+				// if we are using mod_rewrite or the server does not require
+				// the question mark, then parse the url.
+				if (\Config::get('index_file') != 'index.php?')
+				{
+					$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+				}
+				else
+				{
+					$uri = $_SERVER['REQUEST_URI'];
+				}
+			}
+			else
+			{
+				throw new \Fuel_Exception('Unable to detect the URI.');
+			}
+
+			// Remove the base URL from the URI
+			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
+			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
+			{
+				$uri = substr($uri, strlen($base_url));
+			}
+
+			// If we are using an index file (not mod_rewrite) then remove it
+			$index_file = \Config::get('index_file');
+			if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
+			{
+				$uri = substr($uri, strlen($index_file));
+			}
+
+			// Lets split the URI up in case it containes a ?.  This would
+			// indecate the server requires 'index.php?' and that mod_rewrite
+			// is not being used.
+			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
+
+			// If there are matches then lets set set everything correctly
+			if ( ! empty($matches))
+			{
+				$uri = $matches[1];
+				$_SERVER['QUERY_STRING'] = $matches[2];
+				parse_str($matches[2], $_GET);
+			}
+		}
+
+		// Strip the defined url suffix from the uri if needed
+		$ext = \Config::get('url_suffix');
+		strrchr($uri, '.') === $ext and $uri = substr($uri,0,-strlen($ext));
+
+		// Do some final clean up of the uri
+		static::$detected_uri = \Security::clean_uri(str_replace(array('//', '../'), '/', $uri));
+
+		return static::$detected_uri;
+	}
+
 	/**
 	 * Get the public ip address of the user.
 	 *
-	 * @static
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function ip()
 	{
@@ -48,9 +149,7 @@ class Input {
 	/**
 	 * Get the real ip address of the user.  Even if they are using a proxy.
 	 *
-	 * @static
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function real_ip()
 	{
@@ -76,8 +175,7 @@ class Input {
 	/**
 	 * Return's the protocol that the request was made with
 	 *
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function protocol()
 	{
@@ -87,8 +185,7 @@ class Input {
 	/**
 	 * Return's whether this is an AJAX request or not
 	 *
-	 * @access	public
-	 * @return	bool
+	 * @return  bool
 	 */
 	public static function is_ajax()
 	{
@@ -98,8 +195,7 @@ class Input {
 	/**
 	 * Return's the referrer
 	 *
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function referrer()
 	{
@@ -109,8 +205,7 @@ class Input {
 	/**
 	 * Return's the input method used (GET, POST, DELETE, etc.)
 	 *
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function method()
 	{
@@ -120,8 +215,7 @@ class Input {
 	/**
 	 * Return's the user agent
 	 *
-	 * @access	public
-	 * @return	string
+	 * @return  string
 	 */
 	public static function user_agent()
 	{
@@ -131,38 +225,41 @@ class Input {
 	/**
 	 * Fetch an item from the GET array
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function get($index, $default = null)
+	public static function get($index = null, $default = null)
 	{
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_GET, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from the POST array
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function post($index, $default = null)
+	public static function post($index = null, $default = null)
 	{
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_POST, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from the php://input for put arguments
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function put($index, $default = null)
+	public static function put($index = null, $default = null)
 	{
 		static $_PUT;
 
@@ -177,18 +274,20 @@ class Input {
 			! is_array($_PUT) and $_PUT = array();
 		}
 
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_PUT, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from the php://input for delete arguments
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function delete($index, $default = null)
+	public static function delete($index = null, $default = null)
 	{
 		if (static::method() !== 'DELETE')
 		{
@@ -201,58 +300,66 @@ class Input {
 			parse_str(file_get_contents('php://input'), $_DELETE);
 		}
 
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_DELETE, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from either the GET array or the POST
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function get_post($index, $default = null)
+	public static function get_post($index = null, $default = null)
 	{
-		return static::post($index, 's)meR4nD0ms+rIng') === 's)meR4nD0ms+rIng'
-				? static::get($index, $default)
-				: static::post($index, $default);
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
+		return static::post($index, null) === null
+			? static::get($index, $default)
+			: static::post($index, $default);
 	}
 
 	/**
 	 * Fetch an item from the COOKIE array
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return   string|array
 	 */
-	public static function cookie($index, $default = null)
+	public static function cookie($index = null, $default = null)
 	{
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
 		return static::_fetch_from_array($_COOKIE, $index, $default);
 	}
 
 	/**
 	 * Fetch an item from the SERVER array
 	 *
-	 * @access	public
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
-	public static function server($index, $default = null)
+	public static function server($index = null, $default = null)
 	{
-		return static::_fetch_from_array($_SERVER, strtoupper($index), $default);
+		// only return full array when called without args
+		is_null($index) and func_num_args() > 0 and $index = '';
+
+		return static::_fetch_from_array($_SERVER, ! is_null($index) ? strtoupper($index) : null, $default);
 	}
 
 	/**
 	 * Retrieve values from global arrays
 	 *
-	 * @access	private
-	 * @param	array	The array
-	 * @param	string	The index key
-	 * @param	mixed	The default value
-	 * @return	string
+	 * @param   array   The array
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
 	 */
 	private static function _fetch_from_array(&$array, $index, $default = null)
 	{
@@ -279,7 +386,7 @@ class Input {
 					}
 					else
 					{
-						return $default;
+						return ($default instanceof \Closure) ? $default() : $default;
 					}
 				}
 
@@ -288,7 +395,7 @@ class Input {
 			}
 			elseif ( ! isset($array[$index]))
 			{
-				return $default;
+				return ($default instanceof \Closure) ? $default() : $default;
 			}
 
 		}

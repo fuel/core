@@ -81,11 +81,10 @@ class Fieldset_Field
 	 * @param	array
 	 * @param	Fieldset
 	 */
-	public function __construct($name, $label = '', Array $attributes = array(), Array $rules = array(), Fieldset $fieldset)
+	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), Fieldset $fieldset)
 	{
 		$this->name = (string) $name;
 		$this->fieldset = $fieldset;
-		isset($attributes['options']) and  $this->set_options($attributes['options']);
 
 		// Don't allow name in attributes
 		unset($attributes['name']);
@@ -315,10 +314,7 @@ class Fieldset_Field
 	public function set_options($value, $label = null)
 	{
 		$value = is_array($value) ? $value : array($value => $label);
-		foreach ($value as $key => $label)
-		{
-			$this->options[(string) $key] = (string) $label;
-		}
+		$this->options = \Arr::merge($this->options, $value);
 
 		return $this;
 	}
