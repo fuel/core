@@ -613,7 +613,7 @@ class Mongo_Db {
 	 *	@param	string	$collection		the collection name
 	 *	@usage	$mongodb->get('foo', array('bar' => 'something'));
 	 */
-	 public function get($collection = "")
+	 public function get($collection = '')
 	 {
 		if (empty($collection))
 		{
@@ -636,6 +636,21 @@ class Mongo_Db {
 
 		return (object) $returns;
 	}
+	
+	/*
+	 *	Get a document based upon the passed parameters
+	 *
+	 *	@param	string	$collection		the collection name
+	 *	@usage $mongodb->get_one('foo');
+	 */
+	public function get_one($collection = '')
+	{
+		if (empty($collection))
+		{
+			throw new \Mongo_DbException('No Mongo collection selected');
+		}
+		return $this->db->{$collection}->findOne($this->wheres, $this->selects);
+	}
 
 	/**
 	 *	Count the documents based upon the passed parameters
@@ -644,7 +659,8 @@ class Mongo_Db {
 	 *	@usage	$mongodb->get('foo');
 	 */
 
-	public function count($collection = '') {
+	public function count($collection = '')
+	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("In order to retrieve a count of documents from MongoDB");
