@@ -76,6 +76,7 @@ class Upload {
 		'path_chmod'		=> 0777,
 		'file_chmod'		=> 0666,
 		'auto_rename'		=> true,
+		'new_name'			=> false,
 		'overwrite'			=> false,
 		'randomize'			=> false,
 		'normalize'			=> false,
@@ -477,6 +478,8 @@ class Upload {
 					$filename = \Inflector::friendly_title($filename, '_');
 				}
 			}
+			
+			static::$config['new_name'] and $filename = static::$config['new_name'];
 
 			// array with the final filename
 			$save_as = array(
