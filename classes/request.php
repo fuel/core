@@ -143,13 +143,17 @@ class Request {
 	 *
 	 * @return  void
 	 */
-	public static function reset_request()
+	public static function reset_request($is_404 = true)
 	{
-		// Let's make the previous Request active since we are done executing this one.
-		if ($parent = static::$active->parent())
+		// When the main Request fails, reset that and the active request
+		if ($is_404 and static::$main === static::$active)
 		{
-			static::$active = $parent;
+			static::$main = static::$active = null;
+			return;
 		}
+
+		// Let's make the previous Request active since we are done executing this one.
+		static::$active = static::$active->parent();
 	}
 
 
@@ -368,7 +372,15 @@ class Request {
 			}
 
 			logger(Fuel::L_INFO, 'Calling '.$class.'::'.$method, __METHOD__);
-			call_user_func_array(array($controller, $method), $this->method_params);
+			try
+			{
+				call_user_func_array(array($controller, $method), $this->method_params);
+			}
+			catch (Request404Exception $e)
+			{
+				static::reset_request();
+				throw $e;
+			}
 
 			// Call the after method if it exists
 			if (method_exists($controller, 'after'))
@@ -382,10 +394,11 @@ class Request {
 		}
 		else
 		{
+			static::reset_request();
 			throw new \Request404Exception();
 		}
 
-		static::reset_request();
+		static::reset_request(false);
 		return $this;
 	}
 
