@@ -87,6 +87,7 @@ class Request {
 
 	/**
 	 * Returns the main request instance (the one from the browser or CLI).
+	 * This is the first executed Request, not necessarily the root parent of the current request.
 	 *
 	 * Usage:
 	 *
@@ -136,15 +137,8 @@ class Request {
 	 *
 	 * @return  void
 	 */
-	public static function reset_request($is_404 = true)
+	public static function reset_request()
 	{
-		// When the main Request fails, reset that and the active request
-		if ($is_404 and static::$main === static::$active)
-		{
-			static::$main = static::$active = null;
-			return;
-		}
-
 		// Let's make the previous Request active since we are done executing this one.
 		static::$active = static::$active->parent();
 	}
@@ -401,7 +395,7 @@ class Request {
 			throw new \Request404Exception();
 		}
 
-		static::reset_request(false);
+		static::reset_request();
 		return $this;
 	}
 
