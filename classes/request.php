@@ -81,13 +81,6 @@ class Request {
 			$request->parent = static::$active;
 			static::$active->children[] = $request;
 		}
-		static::$active = $request;
-
-		if ( ! static::$main)
-		{
-			logger(Fuel::L_INFO, 'Setting main Request', __METHOD__);
-			static::$main = $request;
-		}
 
 		return $request;
 	}
@@ -324,6 +317,16 @@ class Request {
 	public function execute($method_params = null)
 	{
 		logger(Fuel::L_INFO, 'Called', __METHOD__);
+
+		// Make the current request active
+		static::$active = $this;
+
+		// First request called is also the main request
+		if ( ! static::$main)
+		{
+			logger(Fuel::L_INFO, 'Setting main Request', __METHOD__);
+			static::$main = $this;
+		}
 
 		if ( ! $this->route)
 		{
