@@ -158,10 +158,25 @@ class Error {
 		if ($fatal)
 		{
 			$data['non_fatal'] = static::$non_fatal_cache;
-			exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
+
+			try
+			{
+				exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
+			}
+			catch (\Fuel_Exception $view_exception)
+			{
+				exit($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line']);
+			}
 		}
 
-		echo \View::factory('errors'.DS.'php_error', $data, false);
+		try
+		{
+			echo \View::factory('errors'.DS.'php_error', $data, false);
+		}
+		catch (\Fuel_Exception $e)
+		{
+			echo $e->getMessage().Html::br();
+		}
 	}
 
 	/**
