@@ -149,7 +149,7 @@ class Input {
 	/**
 	 * Get the real ip address of the user.  Even if they are using a proxy.
 	 *
-	 * @return  string
+	 * @return  string		the real ip address of the user
 	 */
 	public static function real_ip()
 	{
@@ -157,23 +157,24 @@ class Input {
 		{
 			return static::server('HTTP_X_CLUSTER_CLIENT_IP');
 		}
-		elseif (static::server('HTTP_X_FORWARDED_FOR') !== null)
+		
+		if (static::server('HTTP_X_FORWARDED_FOR') !== null)
 		{
 			return static::server('HTTP_X_FORWARDED_FOR');
 		}
-		elseif (static::server('HTTP_CLIENT_IP') !== null)
+		
+		if (static::server('HTTP_CLIENT_IP') !== null)
 		{
 			return static::server('HTTP_CLIENT_IP');
 		}
-		elseif (static::server('REMOTE_ADDR') !== null)
+		
+		if (static::server('REMOTE_ADDR') !== null)
 		{
 			return static::server('REMOTE_ADDR');
 		}
-		else
-		{
-			// detection failed, return a dummy IP
-			return '0.0.0.0';
-		}
+		
+		// detection failed, return a dummy IP
+		return '0.0.0.0';
 	}
 
 	/**
