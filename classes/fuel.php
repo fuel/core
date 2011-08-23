@@ -53,7 +53,7 @@ class Fuel {
 	const L_INFO = 3;
 	const L_ALL = 4;
 
-	const VERSION = '1.0';
+	const VERSION = '1.0.1';
 
 	public static $initialized = false;
 
