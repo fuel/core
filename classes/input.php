@@ -18,10 +18,9 @@ namespace Fuel\Core;
  * The input class allows you to access HTTP parameters, load server variables
  * and user agent details.
  *
- * @package		Fuel
- * @category	Core
- * @author		Phil Sturgeon
- * @link		http://fuelphp.com/docs/classes/input.html
+ * @package   Fuel
+ * @category  Core
+ * @link      http://fuelphp.com/docs/classes/input.html
  */
 class Input {
 
@@ -30,6 +29,16 @@ class Input {
 	 * @var  $detected_uri  The URI that was detected automatically
 	 */
 	protected static $detected_uri = null;
+
+	/**
+	 * @var  $input  All of the input (GET, POST, PUT, DELETE)
+	 */
+	protected static $input = null;
+
+	/**
+	 * @var  $put_delete  All of the put or delete vars
+	 */
+	protected static $put_delete = null;
 
 	/**
 	 * Detects and returns the current URI based on a number of different server
@@ -133,7 +142,7 @@ class Input {
 	 *
 	 * @return  string
 	 */
-	public static function ip()
+	public static function ip($default = '0.0.0.0')
 	{
 		if (static::server('REMOTE_ADDR') !== null)
 		{
@@ -141,17 +150,17 @@ class Input {
 		}
 		else
 		{
-			// detection failed, return a dummy IP
-			return '0.0.0.0';
+			// detection failed, return the default
+			return \Fuel::value($default);
 		}
 	}
 
 	/**
 	 * Get the real ip address of the user.  Even if they are using a proxy.
 	 *
-	 * @return  string		the real ip address of the user
+	 * @return  string  the real ip address of the user
 	 */
-	public static function real_ip()
+	public static function real_ip($default = '0.0.0.0')
 	{
 		if (static::server('HTTP_X_CLUSTER_CLIENT_IP') !== null)
 		{
@@ -173,8 +182,8 @@ class Input {
 			return static::server('REMOTE_ADDR');
 		}
 		
-		// detection failed, return a dummy IP
-		return '0.0.0.0';
+		// detection failed, return the default
+		return \Fuel::value($default);
 	}
 
 	/**
@@ -202,9 +211,9 @@ class Input {
 	 *
 	 * @return  string
 	 */
-	public static function referrer()
+	public static function referrer($default = '')
 	{
-		return static::server('HTTP_REFERER', '');
+		return static::server('HTTP_REFERER', $default);
 	}
 
 	/**
@@ -212,9 +221,9 @@ class Input {
 	 *
 	 * @return  string
 	 */
-	public static function method()
+	public static function method($default = 'GET')
 	{
-		return static::server('REQUEST_METHOD', 'GET');
+		return static::server('REQUEST_METHOD', $default);
 	}
 
 	/**
@@ -222,24 +231,41 @@ class Input {
 	 *
 	 * @return  string
 	 */
-	public static function user_agent()
+	public static function user_agent($default = '')
 	{
-		return static::server('HTTP_USER_AGENT', '');
+		return static::server('HTTP_USER_AGENT', $default);
 	}
 
 	/**
-	 * Fetch an item from the GET array
+	 * Returns all of the GET, POST, PUT and DELETE variables.
 	 *
-	 * @param   string  The index key
-	 * @param   mixed   The default value
-	 * @return  string|array
+	 * @return  array
+	 */
+	public static function all()
+	{
+		if (is_null(static::$input))
+		{
+			static::hydrate();
+		}
+
+		return static::$input;
+	}
+
+	/**
+	 * Gets the specified GET variable.
+	 *
+	 * @param   string  $index    The index to get
+	 * @param   string  $default  The default value
+	 * @return  void
 	 */
 	public static function get($index = null, $default = null)
 	{
-		// only return full array when called without args
-		is_null($index) and func_num_args() > 0 and $index = '';
+		if (is_null($index) and func_num_args() == 0)
+		{
+			return $_GET;
+		}
 
-		return static::_fetch_from_array($_GET, $index, $default);
+		return \Arr::get($_GET, $index, $default);
 	}
 
 	/**
@@ -251,10 +277,12 @@ class Input {
 	 */
 	public static function post($index = null, $default = null)
 	{
-		// only return full array when called without args
-		is_null($index) and func_num_args() > 0 and $index = '';
+		if (is_null($index) and func_num_args() == 0)
+		{
+			return $_POST;
+		}
 
-		return static::_fetch_from_array($_POST, $index, $default);
+		return \Arr::get($_POST, $index, $default);
 	}
 
 	/**
@@ -266,23 +294,17 @@ class Input {
 	 */
 	public static function put($index = null, $default = null)
 	{
-		static $_PUT;
-
-		if (static::method() !== 'PUT')
+		if (is_null(static::$put_delete))
 		{
-			return null;
+			static::hydrate();
 		}
 
-		if ( ! isset($_PUT))
+		if (is_null($index) and func_num_args() == 0)
 		{
-			parse_str(file_get_contents('php://input'), $_PUT);
-			! is_array($_PUT) and $_PUT = array();
+			return static::$put_delete;
 		}
 
-		// only return full array when called without args
-		is_null($index) and func_num_args() > 0 and $index = '';
-
-		return static::_fetch_from_array($_PUT, $index, $default);
+		return \Arr::get(static::$put_delete, $index, $default);
 	}
 
 	/**
@@ -294,21 +316,56 @@ class Input {
 	 */
 	public static function delete($index = null, $default = null)
 	{
-		if (static::method() !== 'DELETE')
+		if (is_null(static::$put_delete))
 		{
-			return null;
+			static::hydrate();
 		}
 
-		if ( ! isset($_DELETE))
+		if (is_null($index) and func_num_args() == 0)
 		{
-			static $_DELETE;
-			parse_str(file_get_contents('php://input'), $_DELETE);
+			return static::$put_delete;
 		}
 
-		// only return full array when called without args
-		is_null($index) and func_num_args() > 0 and $index = '';
+		return \Arr::get(static::$put_delete, $index, $default);
+	}
 
-		return static::_fetch_from_array($_DELETE, $index, $default);
+	/**
+	 * Fetch an item from the FILE array
+	 *
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
+	 */
+	public static function file($index = null, $default = null)
+	{
+		if (is_null($index) and func_num_args() == 0)
+		{
+			return $_FILE;
+		}
+
+		return \Arr::get($_FILE, $index, $default);
+	}
+
+	/**
+	 * Fetch an item from either the GET, POST, PUT or DELETE array
+	 *
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
+	 */
+	public static function param($index = null, $default = null)
+	{
+		if (is_null(static::$input))
+		{
+			static::hydrate();
+		}
+
+		if (is_null($index) and func_num_args() == 0)
+		{
+			return static::$input;
+		}
+
+		return \Arr::get(static::$input, $index, $default);
 	}
 
 	/**
@@ -317,30 +374,29 @@ class Input {
 	 * @param   string  The index key
 	 * @param   mixed   The default value
 	 * @return  string|array
+	 * @deprecated until 1.2
 	 */
 	public static function get_post($index = null, $default = null)
 	{
-		// only return full array when called without args
-		is_null($index) and func_num_args() > 0 and $index = '';
-
-		return static::post($index, null) === null
-			? static::get($index, $default)
-			: static::post($index, $default);
+		return static::param($index, $default);
 	}
 
 	/**
 	 * Fetch an item from the COOKIE array
 	 *
-	 * @param   string  The index key
-	 * @param   mixed   The default value
+	 * @param    string  The index key
+	 * @param    mixed   The default value
 	 * @return   string|array
 	 */
 	public static function cookie($index = null, $default = null)
 	{
 		// only return full array when called without args
-		is_null($index) and func_num_args() > 0 and $index = '';
+		if (is_null($index) and func_num_args() === 0)
+		{
+			return $_COOKIE;
+		}
 
-		return static::_fetch_from_array($_COOKIE, $index, $default);
+		return \Arr::get($_COOKIE, $index, $default);
 	}
 
 	/**
@@ -353,61 +409,27 @@ class Input {
 	public static function server($index = null, $default = null)
 	{
 		// only return full array when called without args
-		is_null($index) and func_num_args() > 0 and $index = '';
+		if (is_null($index) and func_num_args() === 0)
+		{
+			return $_SERVER;
+		}
 
-		return static::_fetch_from_array($_SERVER, ! is_null($index) ? strtoupper($index) : null, $default);
+		return \Arr::get($_SERVER, strtoupper($index), $default);
 	}
 
 	/**
-	 * Retrieve values from global arrays
+	 * Hydrates the input array
 	 *
-	 * @param   array   The array
-	 * @param   string  The index key
-	 * @param   mixed   The default value
-	 * @return  string|array
+	 * @return  void
 	 */
-	private static function _fetch_from_array(&$array, $index, $default = null)
+	protected static function hydrate()
 	{
-		if (is_null($index))
+		static::$input = array_merge($_GET, $_POST);
+		
+		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
 		{
-			return $array;
+			static::$put_delete = parse_str(file_get_contents('php://input'));
+			static::$input = array_merge(static::$input, static::$put_delete);
 		}
-		else
-		{
-			if (strpos($index, '.') !== false)
-			{
-				$parts = explode('.', $index);
-
-				$return = false;
-				foreach ($parts as $part)
-				{
-					if ($return === false and isset($array[$part]))
-					{
-						$return = $array[$part];
-					}
-					elseif (isset($return[$part]))
-					{
-						$return = $return[$part];
-					}
-					else
-					{
-						return ($default instanceof \Closure) ? $default() : $default;
-					}
-				}
-
-				return $return;
-
-			}
-			elseif ( ! isset($array[$index]))
-			{
-				return ($default instanceof \Closure) ? $default() : $default;
-			}
-
-		}
-
-		return $array[$index];
 	}
-
 }
-
-
