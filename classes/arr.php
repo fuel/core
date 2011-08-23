@@ -68,7 +68,7 @@ class Arr {
 	 * @param   mixed   $value  The value
 	 * @return  void
 	 */
-	public static function set(&$array, $key, $value)
+	public static function set(&$array, $key, $value = null)
 	{
 		if (is_null($key))
 		{
@@ -78,9 +78,9 @@ class Arr {
 
 		if (is_array($key))
 		{
-			foreach ($key as $k)
+			foreach ($key as $k => $v)
 			{
-				static::set($array, $k, $default);
+				static::set($array, $k, $value);
 			}
 		}
 
