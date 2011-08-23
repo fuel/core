@@ -37,17 +37,28 @@ class File {
 	{
 		\Config::load('file', true);
 
-		static::$areas[null] = \File_Area::factory(\Config::get('file.base_config', array()));
+		static::$areas[null] = \File_Area::forge(\Config::get('file.base_config', array()));
 
 		foreach (\Config::get('file.areas', array()) as $name => $config)
 		{
-			static::$areas[$name] = \File_Area::factory($config);
+			static::$areas[$name] = \File_Area::forge($config);
 		}
 	}
 
+	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
 	public static function factory(array $config = array())
 	{
-		return \File_Area::factory($config);
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($config);
+	}
+
+	public static function forge(array $config = array())
+	{
+		return \File_Area::forge($config);
 	}
 
 	/**

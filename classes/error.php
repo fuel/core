@@ -168,7 +168,7 @@ class Error {
 
 			try
 			{
-				exit(\View::factory('errors'.DS.'php_fatal_error', $data, false));
+				exit(\View::forge('errors'.DS.'php_fatal_error', $data, false));
 			}
 			catch (\Fuel_Exception $view_exception)
 			{
@@ -178,7 +178,7 @@ class Error {
 
 		try
 		{
-			echo \View::factory('errors'.DS.'php_error', $data, false);
+			echo \View::forge('errors'.DS.'php_error', $data, false);
 		}
 		catch (\Fuel_Exception $e)
 		{
@@ -210,7 +210,7 @@ class Error {
 		$data['line']		= $trace['line'];
 		$data['function']	= $trace['function'];
 
-		echo \View::factory('errors'.DS.'php_short', $data, false);
+		echo \View::forge('errors'.DS.'php_short', $data, false);
 	}
 
 	/**
@@ -226,7 +226,7 @@ class Error {
 			$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
 			header($protocol.' 500 Internal Server Error');
 		}
-		exit(\View::factory('errors'.DS.'production'));
+		exit(\View::forge('errors'.DS.'production'));
 	}
 
 	protected static function prepare_exception(\Exception $e, $fatal = true)

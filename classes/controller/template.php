@@ -39,7 +39,7 @@ abstract class Controller_Template extends \Controller {
 		if ($this->auto_render === true)
 		{
 			// Load the template
-			$this->template = \View::factory($this->template);
+			$this->template = \View::forge($this->template);
 		}
 
 		return parent::before();

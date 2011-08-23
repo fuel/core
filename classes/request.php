@@ -21,7 +21,7 @@ class Request404Exception extends \Fuel_Exception {
 	 */
 	public function handle()
 	{
-		$response = new \Response(\View::factory('404'), 404);
+		$response = new \Response(\View::forge('404'), 404);
 		\Event::shutdown();
 		$response->send(true);
 		return;
@@ -36,7 +36,7 @@ class Request404Exception extends \Fuel_Exception {
  *
  * Example Usage:
  *
- *     $request = Request::factory('foo/bar')->execute();
+ *     $request = Request::forge('foo/bar')->execute();
  *     echo $request->response();
  *
  * @package     Fuel
@@ -59,19 +59,30 @@ class Request {
 	protected static $active = false;
 
 	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
+	public static function factory($uri = null, $route = true)
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($uri, $route);
+	}
+
+	/**
 	 * Generates a new request.  The request is then set to be the active
 	 * request.  If this is the first request, then save that as the main
 	 * request for the app.
 	 *
 	 * Usage:
 	 *
-	 *     Request::factory('hello/world');
+	 *     Request::forge('hello/world');
 	 *
 	 * @param   string   The URI of the request
 	 * @param   bool     Whether to use the routes to determine the Controller and Action
 	 * @return  Request  The new request object
 	 */
-	public static function factory($uri = null, $route = true)
+	public static function forge($uri = null, $route = true)
 	{
 		logger(Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
@@ -303,7 +314,7 @@ class Request {
 	 *
 	 * Usage:
 	 *
-	 *     $request = Request::factory('hello/world')->execute();
+	 *     $request = Request::forge('hello/world')->execute();
 	 *
 	 * @param  array|null  $method_params  An array of parameters to pass to the method being executed
 	 * @return  Request  This request object
@@ -371,7 +382,7 @@ class Request {
 			logger(Fuel::L_INFO, 'Calling '.$class.'::'.$method, __METHOD__);
 			try
 			{
-				call_user_func_array(array($controller, $method), $this->method_params);
+				$response = call_user_func_array(array($controller, $method), $this->method_params);
 			}
 			catch (Request404Exception $e)
 			{
@@ -387,7 +398,19 @@ class Request {
 			}
 
 			// Get the controller's output
-			$this->response =& $controller->response;
+			if (is_null($response))
+			{
+				// @TODO remove this in a future version as we will get rid of it.
+				$this->response =& $controller->response;
+			}
+			elseif ($response instanceof \Response)
+			{
+				$this->response =& $response;
+			}
+			else
+			{
+				$this->response = \Response::forge($response, 200);
+			}
 		}
 		else
 		{
@@ -404,7 +427,7 @@ class Request {
 	 *
 	 * Usage:
 	 *
-	 *     $response = Request::factory('foo/bar')->execute()->response();
+	 *     $response = Request::forge('foo/bar')->execute()->response();
 	 *
 	 * @return  Response  This Request's Response object
 	 */
@@ -469,7 +492,7 @@ class Request {
 	 *
 	 * Usage:
 	 *
-	 *     $request = Request::factory('hello/world')->execute();
+	 *     $request = Request::forge('hello/world')->execute();
 	 *     echo $request;
 	 *
 	 * @return  string  the response

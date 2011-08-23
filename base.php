@@ -137,7 +137,7 @@ if ( ! function_exists('render'))
 {
 	function render($view, $data = array())
 	{
-		return \View::factory($view, $data)->render();
+		return \View::forge($view, $data)->render();
 	}
 }
 

@@ -27,13 +27,24 @@ namespace Fuel\Core;
 abstract class ViewModel {
 
 	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
+	public static function factory($viewmodel, $method = 'view')
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($viewmodel, $method);
+	}
+
+	/**
 	 * Factory for fetching the ViewModel
 	 *
 	 * @param   string  ViewModel classname without View_ prefix or full classname
 	 * @param   string  Method to execute
 	 * @return  ViewModel
 	 */
-	public static function factory($viewmodel, $method = 'view')
+	public static function forge($viewmodel, $method = 'view')
 	{
 		$class = ucfirst(\Request::active()->module).'\\View_'.ucfirst(str_replace(DS, '_', $viewmodel));
 
@@ -91,7 +102,7 @@ abstract class ViewModel {
 	 */
 	protected function set_template()
 	{
-		$this->_template = \View::factory($this->_template);
+		$this->_template = \View::forge($this->_template);
 	}
 
 	/**

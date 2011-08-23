@@ -60,16 +60,27 @@ class View {
 	}
 
 	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
+	public static function factory($file = null, $data = null, $auto_encode = null)
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($file, $data, $auto_encode);
+	}
+
+	/**
 	 * Returns a new View object. If you do not define the "file" parameter,
 	 * you must call [static::set_filename].
 	 *
-	 *     $view = View::factory($file);
+	 *     $view = View::forge($file);
 	 *
 	 * @param   string  view filename
 	 * @param   array   array of values
 	 * @return  View
 	 */
-	public static function factory($file = null, $data = null, $auto_encode = null)
+	public static function forge($file = null, $data = null, $auto_encode = null)
 	{
 		return new static($file, $data, $auto_encode);
 	}

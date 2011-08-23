@@ -78,7 +78,7 @@ class Crypt {
 			catch (\FileAccessException $e)
 			{
 				// failed to write the config file, inform the user
-				echo \View::factory('errors/crypt_keys', array(
+				echo \View::forge('errors/crypt_keys', array(
 					'keys' => static::$config
 				));
 				die();

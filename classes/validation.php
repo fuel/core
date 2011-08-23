@@ -32,7 +32,18 @@ class Validation {
 	 */
 	protected static $active;
 
+	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
 	public static function factory($fieldset = 'default')
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($fieldset);
+	}
+
+	public static function forge($fieldset = 'default')
 	{
 		if (is_string($fieldset))
 		{
@@ -111,7 +122,7 @@ class Validation {
 		}
 		else
 		{
-			$this->fieldset = \Fieldset::factory($fieldset, array('validation_instance' => $this));
+			$this->fieldset = \Fieldset::forge($fieldset, array('validation_instance' => $this));
 		}
 
 		$this->callables = array($this);

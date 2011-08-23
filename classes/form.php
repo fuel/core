@@ -45,7 +45,18 @@ class Form {
 		\Config::load('form', true);
 	}
 
+	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
 	public static function factory($fieldset = 'default', array $config = array())
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($fieldset, $config);
+	}
+
+	public static function forge($fieldset = 'default', array $config = array())
 	{
 		if (is_string($fieldset))
 		{
@@ -546,7 +557,7 @@ class Form {
 		}
 		else
 		{
-			$this->fieldset = \Fieldset::factory($fieldset, array('form_instance' => $this));
+			$this->fieldset = \Fieldset::forge($fieldset, array('form_instance' => $this));
 		}
 
 		foreach ($config as $key => $val)

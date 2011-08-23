@@ -65,9 +65,20 @@ class Rest {
 		'application/vnd.php.serialized' => 'serialize',
 	);
 
-	/*
+	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
 	 */
 	public static function factory($name = 'default', array $config = array())
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($name, $config);
+	}
+
+	/*
+	 */
+	public static function forge($name = 'default', array $config = array())
 	{
 		if ($exists = static::instance($name))
 		{
@@ -105,7 +116,7 @@ class Rest {
 
 		if (static::$_instance === null)
 		{
-			static::$_instance = static::factory();
+			static::$_instance = static::forge();
 		}
 
 		return static::$_instance;

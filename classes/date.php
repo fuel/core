@@ -61,13 +61,24 @@ class Date {
 	}
 
 	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
+	public static function factory($timestamp = null, $timezone = null)
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($timestamp, $timezone);
+	}
+
+	/**
 	 * Create Date object from timestamp, timezone is optional
 	 *
 	 * @param   int     UNIX timestamp from current server
 	 * @param   string  valid PHP timezone from www.php.net/timezones
 	 * @return  Date
 	 */
-	public static function factory($timestamp = null, $timezone = null)
+	public static function forge($timestamp = null, $timezone = null)
 	{
 		return new static($timestamp, $timezone);
 	}
@@ -79,7 +90,7 @@ class Date {
 	 */
 	public static function time($timezone = null)
 	{
-		return static::factory(null, $timezone);
+		return static::forge(null, $timezone);
 	}
 
 	/**
@@ -105,7 +116,7 @@ class Date {
 		$timestamp = mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],
 						$time['tm_mon'] + 1, $time['tm_mday'], $time['tm_year'] + 1900);
 
-		return static::factory($timestamp + static::$server_gmt_offset);
+		return static::forge($timestamp + static::$server_gmt_offset);
 	}
 
 	/**
@@ -118,8 +129,8 @@ class Date {
 	 */
 	public static function range_to_array($start, $end, $interval = '+1 Day')
 	{
-		$start     = ( ! $start instanceof Date) ? static::factory($start) : $start;
-		$end       = ( ! $end instanceof Date) ? static::factory($end) : $end;
+		$start     = ( ! $start instanceof Date) ? static::forge($start) : $start;
+		$end       = ( ! $end instanceof Date) ? static::forge($end) : $end;
 		$interval  = (is_int($interval)) ? $interval : strtotime($interval, $start->get_timestamp()) - $start->get_timestamp();
 
 		if ($interval <= 0)
@@ -133,7 +144,7 @@ class Date {
 		while ($current->get_timestamp() <= $end->get_timestamp())
 		{
 			$range[] = $current;
-			$current = static::factory($current->get_timestamp() + $interval);
+			$current = static::forge($current->get_timestamp() + $interval);
 		}
 
 		return $range;

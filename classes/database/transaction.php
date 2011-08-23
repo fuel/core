@@ -22,17 +22,28 @@ class Database_Transaction
 	{
 		if (static::$_instance == null)
 		{
-			static::$_instance = static::factory();
+			static::$_instance = static::forge();
 		}
 		return static::$_instance;
 	}
-	
+
+	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
+	public static function factory()
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge();
+	}
+
 	/**
 	 * Creates a new instance
 	 *
 	 * @param	array	$config
 	 */
-	public static function factory()
+	public static function forge()
 	{		
 		return new static();
 	}

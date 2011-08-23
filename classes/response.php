@@ -67,6 +67,10 @@ class Response {
 		509 => 'Bandwidth Limit Exceeded'
 	);
 
+	public static function forge($body = null, $status = 200)
+	{
+		return new static($body, $status);
+	}
 
 	/**
 	 * Redirects to another uri/url.  Sets the redirect header,

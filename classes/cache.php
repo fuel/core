@@ -37,8 +37,23 @@ class Cache {
 	 * @param   mixed                 The identifier of the cache, can be anything but empty
 	 * @param   array|string          Either an array of settings or the storage driver to be used
 	 * @return  Cache_Storage_Driver  The new cache object
+	 * @deprecated until 1.2
 	 */
 	public static function factory($identifier, $config = array())
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($identifier, $config);
+	}
+
+	/**
+	 * Creates a new cache instance.
+	 *
+	 * @access  public
+	 * @param   mixed                 The identifier of the cache, can be anything but empty
+	 * @param   array|string          Either an array of settings or the storage driver to be used
+	 * @return  Cache_Storage_Driver  The new cache object
+	 */
+	public static function forge($identifier, $config = array())
 	{
 		// load the default config
 		$defaults = \Config::get('cache', array());
@@ -80,7 +95,7 @@ class Cache {
 	{
 		$contents = ($contents instanceof \Closure) ? $contents() : $contents;
 		
-		$cache = static::factory($identifier);
+		$cache = static::forge($identifier);
 		return $cache->set($contents, $expiration, $dependencies);
 	}
 
@@ -96,7 +111,7 @@ class Cache {
 	 */
 	public static function call($identifier, $callback, $args = array(), $expiration = null, $dependencies = array())
 	{
-		$cache = static::factory($identifier);
+		$cache = static::forge($identifier);
 		return $cache->call($callback, $args, $expiration, $dependencies);
 	}
 
@@ -110,7 +125,7 @@ class Cache {
 	 */
 	public static function get($identifier, $use_expiration = true)
 	{
-		$cache = static::factory($identifier);
+		$cache = static::forge($identifier);
 		return $cache->get($use_expiration);
 	}
 
@@ -122,7 +137,7 @@ class Cache {
 	 */
 	public static function delete($identifier)
 	{
-		$cache = static::factory($identifier);
+		$cache = static::forge($identifier);
 		return $cache->delete();
 	}
 
@@ -136,7 +151,7 @@ class Cache {
 	 */
 	public static function delete_all($section = null, $driver = null)
 	{
-		$cache = static::factory('__NOT_USED__', $driver);
+		$cache = static::forge('__NOT_USED__', $driver);
 		return $cache->delete_all($section);
 	}
 }

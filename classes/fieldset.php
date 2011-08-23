@@ -37,7 +37,18 @@ class Fieldset
 	 */
 	protected static $_instances = array();
 
+	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
 	public static function factory($name = 'default', array $config = array())
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($name, $config);
+	}
+
+	public static function forge($name = 'default', array $config = array())
 	{
 		if ($exists = static::instance($name))
 		{
@@ -75,7 +86,7 @@ class Fieldset
 
 		if (static::$_instance === null)
 		{
-			static::$_instance = static::factory();
+			static::$_instance = static::forge();
 		}
 
 		return static::$_instance;
@@ -145,7 +156,7 @@ class Fieldset
 
 		if (empty($this->validation) and $instance === true)
 		{
-			$this->validation = \Validation::factory($this);
+			$this->validation = \Validation::forge($this);
 		}
 
 		return $this->validation;
@@ -167,7 +178,7 @@ class Fieldset
 
 		if (empty($this->form) and $instance === true)
 		{
-			$this->form = \Form::factory($this);
+			$this->form = \Form::forge($this);
 		}
 
 		return $this->form;

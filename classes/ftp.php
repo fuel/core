@@ -39,15 +39,26 @@ class Ftp
 	protected $_conn_id   = false;
 
 	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
+	public static function factory($config = 'default', $connect = true)
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($config, $connect);
+	}
+
+	/**
 	 * Returns a new Ftp object. If you do not define the "file" parameter,
 	 *
-	 *     $ftp = static::factory('group');
+	 *     $ftp = static::forge('group');
 	 *
 	 * @param   string  Ftp filename
 	 * @param   array   array of values
 	 * @return  Ftp
 	 */
-	public static function factory($config = 'default', $connect = true)
+	public static function forge($config = 'default', $connect = true)
 	{
 		$ftp = new static($config);
 

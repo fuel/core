@@ -34,9 +34,20 @@ class Image {
 	{
 		if (static::$_instance == null)
 		{
-			static::$_instance = static::factory(static::$_config);
+			static::$_instance = static::forge(static::$_config);
 		}
 		return static::$_instance;
+	}
+
+	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
+	public static function factory($config = array(), $filename = null)
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($config, $filename);
 	}
 
 	/**
@@ -45,7 +56,7 @@ class Image {
 	 * @param  array   $config
 	 * @return Image_Driver
 	 */
-	public static function factory($config = array(), $filename = null)
+	public static function forge($config = array(), $filename = null)
 	{
 		!is_array($config) and $config = array();
 

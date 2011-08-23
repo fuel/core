@@ -37,25 +37,25 @@ line 2","Value 3"',
 	}
 
 	/**
-	 * Test for Format::factory($foo, 'csv')->to_array()
+	 * Test for Format::forge($foo, 'csv')->to_array()
 	 *
 	 * @test
 	 * @dataProvider array_provider
 	 */
 	public function test_from_csv($array, $csv)
 	{
-		$this->assertEquals($array, Format::factory($csv, 'csv')->to_array());
+		$this->assertEquals($array, Format::forge($csv, 'csv')->to_array());
 	 
 	}
 	
 	/**
-	 * Test for Format::factory($foo)->to_csv()
+	 * Test for Format::forge($foo)->to_csv()
 	 *
 	 * @test
 	 * @dataProvider array_provider
 	 */
 	public function test_to_csv($array, $csv)
 	{
-		$this->assertEquals($csv, Format::factory($array)->to_csv());
+		$this->assertEquals($csv, Format::forge($array)->to_csv());
 	}
 }

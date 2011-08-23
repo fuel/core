@@ -42,7 +42,18 @@ class File_Handler_File {
 		$this->area = $area;
 	}
 
+	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
 	public static function factory($path, array $config = array(), File_Area $area = null, $content = array())
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($path, $config, $area, $content);
+	}
+
+	public static function forge($path, array $config = array(), File_Area $area = null, $content = array())
 	{
 		$obj = new static($path, $config, \File::instance($area), $content);
 

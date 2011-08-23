@@ -66,13 +66,24 @@ class Session {
 	// --------------------------------------------------------------------
 
 	/**
+	 * This method is deprecated...use forge() instead.
+	 * 
+	 * @deprecated until 1.2
+	 */
+	public static function factory($custom = array())
+	{
+		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		return static::forge($custom);
+	}
+
+	/**
 	 * Factory
 	 *
 	 * Produces fully configured session driver instances
 	 *
 	 * @param	array|string	full driver config or just driver type
 	 */
-	public static function factory($custom = array())
+	public static function forge($custom = array())
 	{
 		$config = \Config::get('session', array());
 
@@ -157,7 +168,7 @@ class Session {
 
 		if (static::$_instance === null)
 		{
-			static::$_instance = static::factory();
+			static::$_instance = static::forge();
 		}
 
 		return static::$_instance;
