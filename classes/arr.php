@@ -26,7 +26,7 @@ class Arr {
 	 * not exist.
 	 *
 	 * @param   array   $array    The search array
-	 * @param   string  $key      The dot-notated key
+	 * @param   mixed   $key      The dot-notated key or array of keys
 	 * @param   string  $default  The default value
 	 * @return  mixed
 	 */
@@ -35,6 +35,16 @@ class Arr {
 		if (is_null($key))
 		{
 			return $array;
+		}
+
+		if (is_array($key))
+		{
+			$return = array();
+			foreach ($key as $k)
+			{
+				$return[$k] = static::get($array, $k, $default);
+			}
+			return $return;
 		}
 
 		foreach (explode('.', $key) as $key_part)
@@ -54,7 +64,7 @@ class Arr {
 	 * Set an array item (dot-notated) to the value.
 	 *
 	 * @param   array   $array  The array to insert it into
-	 * @param   string  $key    The dot-notated key to set
+	 * @param   mixed   $key    The dot-notated key to set or array of keys
 	 * @param   mixed   $value  The value
 	 * @return  void
 	 */
@@ -64,6 +74,14 @@ class Arr {
 		{
 			$array = $value;
 			return;
+		}
+
+		if (is_array($key))
+		{
+			foreach ($key as $k)
+			{
+				static::set($array, $k, $default);
+			}
 		}
 
 		$keys = explode('.', $key);
@@ -245,31 +263,11 @@ class Arr {
 	 * @param   mixed  the key to fetch from the array
 	 * @param   mixed  the value returned when not an array or invalid key
 	 * @return  mixed
+	 * @deprecated until 1.2
 	 */
 	public static function element($array, $key, $default = false)
 	{
-		$key = explode('.', $key);
-		if(count($key) > 1)
-		{
-			if ( ! is_array($array) or ! array_key_exists($key[0], $array))
-			{
-				return ($default instanceof \Closure) ? $default() : $default;
-			}
-			$array = $array[$key[0]];
-			unset($key[0]);
-			$key = implode('.', $key);
-			$array = static::element($array, $key, $default);
-			return $array;
-		}
-		else
-		{
-			$key = $key[0];
-			if ( ! is_array($array) or ! array_key_exists($key, $array))
-			{
-				return ($default instanceof \Closure) ? $default() : $default;
-			}
-			return $array[$key];
-		}
+		return static::get($array, $key, $default);
 	}
 
 	/**
@@ -279,29 +277,11 @@ class Arr {
 	 * @param   array  the keys to fetch from the array
 	 * @param   mixed  the value returned when not an array or invalid key
 	 * @return  mixed
+	 * @deprecated until 1.2
 	 */
 	public static function elements($array, $keys, $default = false)
 	{
-		$return = array();
-
-		if ( ! is_array($array) or ! is_array($keys))
-		{
-			throw new \InvalidArgumentException('Arr::elements() - $keys and $array must be arrays.');
-		}
-
-		foreach ($keys as $key)
-		{
-			if ( ! array_key_exists($key, $array))
-			{
-				$return[$key] = $default;
-			}
-			else
-			{
-				$return[$key] = $array[$key];
-			}
-		}
-
-		return $return;
+		return static::get($array, $keys, $default);
 	}
 
 	/**
