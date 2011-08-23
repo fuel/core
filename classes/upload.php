@@ -369,11 +369,18 @@ class Upload {
 				}
 			}
 
-			// update the valid flag
-			static::$valid = (!static::$valid and ($files[$key]['error'] === 0));
-
 			// and add the message text
 			static::$files[$key]['message'] = \Lang::line('upload.'.static::$files[$key]['error']);
+		}
+
+		// determine the validate status
+		foreach(static::$files as $key => $value)
+		{
+			if ($value['error'] === 0)
+			{
+				static::$valid = true;
+				break;
+			}
 		}
 	}
 
