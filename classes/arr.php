@@ -22,6 +22,68 @@ namespace Fuel\Core;
 class Arr {
 
 	/**
+	 * Gets a dot-notated key from an array, with a default value if it does
+	 * not exist.
+	 *
+	 * @param   array   $array    The search array
+	 * @param   string  $key      The dot-notated key
+	 * @param   string  $default  The default value
+	 * @return  mixed
+	 */
+	public static function get($array, $key, $default = null)
+	{
+		if (is_null($key))
+		{
+			return $array;
+		}
+
+		foreach (explode('.', $key) as $key_part)
+		{
+			if ( ! is_array($array) or ! array_key_exists($key_part, $array))
+			{
+				return \Fuel::value($default);
+			}
+
+			$array = $array[$key_part];
+		}
+
+		return $array;
+	}
+
+	/**
+	 * Set an array item (dot-notated) to the value.
+	 *
+	 * @param   array   $array  The array to insert it into
+	 * @param   string  $key    The dot-notated key to set
+	 * @param   mixed   $value  The value
+	 * @return  void
+	 */
+	public static function set(&$array, $key, $value)
+	{
+		if (is_null($key))
+		{
+			$array = $value;
+			return;
+		}
+
+		$keys = explode('.', $key);
+
+		while (count($keys) > 1)
+		{
+			$key = array_shift($keys);
+
+			if ( ! isset($array[$key]) or ! is_array($array[$key]))
+			{
+				$array[$key] = array();
+			}
+
+			$array =& $array[$key];
+		}
+
+		$array[array_shift($keys)] = $value;
+	}
+
+	/**
 	 * Converts a multi-dimensional associative array into an array of key => values with the provided field names
 	 *
 	 * @param   array   the array to convert

@@ -635,6 +635,19 @@ class Fuel {
 	}
 
 	/**
+	 * Takes a value and checks if it is a Closure or not, if it is it
+	 * will return the result of the closure, if not, it will simply return the
+	 * value.
+	 *
+	 * @param   mixed  $var  The value to get
+	 * @return  mixed
+	 */
+	public static function value($var)
+	{
+		return ($var instanceof \Closure) ? $var() : $var;
+	}
+
+	/**
 	 * Cleans a file path so that it does not contain absolute file paths.
 	 *
 	 * @param   string  the filepath
