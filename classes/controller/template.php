@@ -46,14 +46,15 @@ abstract class Controller_Template extends \Controller {
 	}
 
 	// After contorller method has run output the template
-	public function after()
+	public function after($response)
 	{
-		if ($this->auto_render === true)
+		// If the response is a Response object, we don't want to create a new one
+		if ($this->auto_render === true and ! $response instanceof \Response)
 		{
-			$this->response->body($this->template);
+			$response = \Response::forge($this->template);
 		}
 
-		return parent::after();
+		return parent::after($response);
 	}
 
 }

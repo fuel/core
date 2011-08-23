@@ -52,6 +52,20 @@ abstract class Controller_Rest extends \Controller {
 
 		// Which format should the data be returned in?
 		$this->request->lang = $this->_detect_lang();
+		
+		$this->response = \Response::forge();
+	}
+
+	public function after($response)
+	{
+		// If the response is a Response object, we will use their instead of
+		// ours.
+		if ( ! $response instanceof \Response)
+		{
+			$response = $this->response;
+		}
+
+		return parent::after($response);
 	}
 
 	/**

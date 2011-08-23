@@ -44,7 +44,10 @@ abstract class Controller {
 	/**
 	 * This method gets called after the action is called
 	 */
-	public function after() {}
+	public function after($response)
+	{
+		return $response;
+	}
 
 	/**
 	 * This method returns the named parameter requested, or all of them

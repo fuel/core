@@ -394,7 +394,7 @@ class Request {
 			if (method_exists($controller, 'after'))
 			{
 				logger(Fuel::L_INFO, 'Calling '.$class.'::after', __METHOD__);
-				$controller->after();
+				$response = $controller->after($response);
 			}
 
 			// Get the controller's output
