@@ -260,12 +260,7 @@ class Input {
 	 */
 	public static function get($index = null, $default = null)
 	{
-		if (is_null($index) and func_num_args() == 0)
-		{
-			return $_GET;
-		}
-
-		return \Arr::get($_GET, $index, $default);
+		return (is_null($index) and func_num_args() === 0) ? $_GET : \Arr::get($_GET, $index, $default);
 	}
 
 	/**
@@ -277,12 +272,7 @@ class Input {
 	 */
 	public static function post($index = null, $default = null)
 	{
-		if (is_null($index) and func_num_args() == 0)
-		{
-			return $_POST;
-		}
-
-		return \Arr::get($_POST, $index, $default);
+		return (is_null($index) and func_num_args() === 0) ? $_POST : \Arr::get($_POST, $index, $default);
 	}
 
 	/**
@@ -299,12 +289,7 @@ class Input {
 			static::hydrate();
 		}
 
-		if (is_null($index) and func_num_args() == 0)
-		{
-			return static::$put_delete;
-		}
-
-		return \Arr::get(static::$put_delete, $index, $default);
+		return (is_null($index) and func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
 	}
 
 	/**
@@ -321,12 +306,7 @@ class Input {
 			static::hydrate();
 		}
 
-		if (is_null($index) and func_num_args() == 0)
-		{
-			return static::$put_delete;
-		}
-
-		return \Arr::get(static::$put_delete, $index, $default);
+		return (is_null($index) and func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
 	}
 
 	/**
@@ -338,12 +318,7 @@ class Input {
 	 */
 	public static function file($index = null, $default = null)
 	{
-		if (is_null($index) and func_num_args() == 0)
-		{
-			return $_FILE;
-		}
-
-		return \Arr::get($_FILE, $index, $default);
+		return (is_null($index) and func_num_args() === 0) ? $_FILE : \Arr::get($_FILE, $index, $default);
 	}
 
 	/**
@@ -358,11 +333,6 @@ class Input {
 		if (is_null(static::$input))
 		{
 			static::hydrate();
-		}
-
-		if (is_null($index) and func_num_args() == 0)
-		{
-			return static::$input;
 		}
 
 		return \Arr::get(static::$input, $index, $default);
@@ -390,13 +360,7 @@ class Input {
 	 */
 	public static function cookie($index = null, $default = null)
 	{
-		// only return full array when called without args
-		if (is_null($index) and func_num_args() === 0)
-		{
-			return $_COOKIE;
-		}
-
-		return \Arr::get($_COOKIE, $index, $default);
+		return (is_null($index) and func_num_args() === 0) ? $_COOKIE : \Arr::get($_COOKIE, $index, $default);
 	}
 
 	/**
@@ -408,13 +372,7 @@ class Input {
 	 */
 	public static function server($index = null, $default = null)
 	{
-		// only return full array when called without args
-		if (is_null($index) and func_num_args() === 0)
-		{
-			return $_SERVER;
-		}
-
-		return \Arr::get($_SERVER, strtoupper($index), $default);
+		return (is_null($index) and func_num_args() === 0) ? $_SERVER : \Arr::get($_SERVER, $index, $default);
 	}
 
 	/**
