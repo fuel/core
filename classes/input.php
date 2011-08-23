@@ -54,7 +54,11 @@ class Input {
 	 */
 	public static function real_ip()
 	{
-		if (static::server('HTTP_X_FORWARDED_FOR') !== null)
+		if (static::server('HTTP_X_CLUSTER_CLIENT_IP') !== null)
+		{
+			return static::server('HTTP_X_CLUSTER_CLIENT_IP');
+		}
+		elseif (static::server('HTTP_X_FORWARDED_FOR') !== null)
 		{
 			return static::server('HTTP_X_FORWARDED_FOR');
 		}
