@@ -37,7 +37,7 @@ class Input {
 	 *
 	 * @return  string
 	 */
-	public static function detect_uri()
+	public static function uri()
 	{
 		if (static::$detected_uri !== null)
 		{

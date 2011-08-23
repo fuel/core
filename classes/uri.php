@@ -180,7 +180,7 @@ class Uri {
 	 */
 	public function __construct($uri = null)
 	{
-		$this->uri = trim($uri ?: \Input::detect_uri(), '/');
+		$this->uri = trim($uri ?: \Input::uri(), '/');
 		$this->segments = explode('/', $this->uri);
 	}
 
