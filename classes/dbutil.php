@@ -135,6 +135,7 @@ class DBUtil {
 	protected static function alter_fields($type, $table, $fields)
 	{
 		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' ';
+		
 		if ($type === 'DROP')
 		{
 			if( ! is_array($fields))
@@ -145,10 +146,13 @@ class DBUtil {
 				return 'DROP '.\DB::quote_identifier($field);
 			}, $fields);
 			$sql .= implode(', ', $fields);
-		} else {
-		  $sql .= $type.' ';
+		}
+		else
+		{
+			$sql .= $type.' ';
 			$sql .= '('.static::process_fields($fields).')';
 		}
+		
 		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
 
@@ -194,7 +198,7 @@ class DBUtil {
 	 */
 	protected static function process_charset($charset = null, $is_default = false)
 	{
-		$charset or $charset = \Config::get('db.'.\Config::get('environment').'.charset', null);
+		$charset or $charset = \Config::get('db.'.\Fuel::$env.'.charset', null);
 		if(empty($charset))
 		{
 			return '';
