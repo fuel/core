@@ -146,9 +146,9 @@ class Event {
 	{
 		if (isset(static::$_events[$event]) AND count(static::$_events[$event]) > 0)
 		{
-			return TRUE;
+			return true;
 		}
-		return FALSE;
+		return false;
 	}
 
 	// --------------------------------------------------------------------
@@ -191,7 +191,7 @@ class Event {
 				break;
 		}
 
-		return FALSE;
+		return false;
 	}
 }
 
