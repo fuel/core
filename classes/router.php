@@ -104,6 +104,11 @@ class Router {
 			$match->parse($request);
 		}
 
+		if ($match->closure !== null)
+		{
+			return $match;
+		}
+
 		return static::find_controller($match);
 	}
 
