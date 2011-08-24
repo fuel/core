@@ -157,11 +157,17 @@ class Database_Query {
 	 * Compile the SQL query and return it. Replaces any parameters with their
 	 * given values.
 	 *
-	 * @param   object  Database instance
+	 * @param   mixed  Database instance or instance name
 	 * @return  string
 	 */
-	public function compile(\Database_Connection$db)
+	public function compile($db = null)
 	{
+		if ( ! $db instanceof \Database_Connection)
+		{
+			// Get the database instance
+			$db = \Database_Connection::instance($db);
+		}
+		
 		// Import the SQL locally
 		$sql = $this->_sql;
 
@@ -185,7 +191,7 @@ class Database_Query {
 	 * @return  mixed    the insert id for INSERT queries
 	 * @return  integer  number of affected rows for all other queries
 	 */
-	public function execute($db = NULL)
+	public function execute($db = null)
 	{
 		if ( ! is_object($db))
 		{
