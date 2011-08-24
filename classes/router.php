@@ -104,7 +104,7 @@ class Router {
 			$match->parse($request);
 		}
 
-		if ($match->closure !== null)
+		if ($match->callable !== null)
 		{
 			return $match;
 		}

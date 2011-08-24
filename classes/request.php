@@ -60,7 +60,7 @@ class Request {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($uri = null, $route = true)
@@ -339,12 +339,12 @@ class Request {
 			throw new \Request404Exception();
 		}
 
-		if ($this->route->closure !== null)
+		if ($this->route->callable !== null)
 		{
 			logger(Fuel::L_INFO, 'Calling closure', __METHOD__);
 			try
 			{
-				$response = call_user_func_array($this->route->closure, array($this));
+				$response = call_user_func_array($this->route->callable, array($this));
 			}
 			catch (Request404Exception $e)
 			{

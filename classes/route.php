@@ -32,7 +32,7 @@ class Route {
 
 	public $translation = null;
 
-	public $closure = null;
+	public $callable = null;
 
 	protected $search = null;
 
@@ -99,10 +99,10 @@ class Route {
 		}
 
 		$this->named_params = $named_params;
-		
+
 		if ($this->translation instanceof \Closure)
 		{
-			$this->closure = $this->translation;
+			$this->callable = $this->translation;
 		}
 		else
 		{
