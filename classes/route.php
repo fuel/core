@@ -32,6 +32,8 @@ class Route {
 
 	public $translation = null;
 
+	public $closure = null;
+
 	protected $search = null;
 
 	public function __construct($path, $translation = null)
@@ -87,13 +89,6 @@ class Route {
 	 */
 	public function matched($uri = '', $named_params = array())
 	{
-		$path = $this->translation;
-
-		if ($uri != '')
-		{
-			$path = preg_replace('#^'.$this->search.'$#uD', $this->translation, $uri);
-		}
-
 		// Clean out all the non-named stuff out of $named_params
 		foreach($named_params as $key => $val)
 		{
@@ -104,7 +99,22 @@ class Route {
 		}
 
 		$this->named_params = $named_params;
-		$this->segments = explode('/', trim($path, '/'));
+		
+		if ($this->translation instanceof \Closure)
+		{
+			$this->closure = $this->translation;
+		}
+		else
+		{
+			$path = $this->translation;
+
+			if ($uri != '')
+			{
+				$path = preg_replace('#^'.$this->search.'$#uD', $this->translation, $uri);
+			}
+
+			$this->segments = explode('/', trim($path, '/'));
+		}
 
 		return $this;
 	}
