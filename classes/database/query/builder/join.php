@@ -60,11 +60,17 @@ class Database_Query_Builder_Join extends \Database_Query_Builder {
 	/**
 	 * Compile the SQL partial for a JOIN statement and return it.
 	 *
-	 * @param   object  Database instance
+	 * @param   mixed  Database instance or instance name
 	 * @return  string
 	 */
-	public function compile(\Database_Connection$db)
+	public function compile($db = null)
 	{
+		if ( ! $db instanceof \Database_Connection)
+		{
+			// Get the database instance
+			$db = \Database_Connection::instance($db);
+		}
+		
 		if ($this->_type)
 		{
 			$sql = strtoupper($this->_type).' JOIN';

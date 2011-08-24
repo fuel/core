@@ -130,11 +130,17 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder {
 	/**
 	 * Compile the SQL query and return it.
 	 *
-	 * @param   object  Database instance
+	 * @param   mixed  Database instance or instance name
 	 * @return  string
 	 */
-	public function compile(\Database_Connection$db)
+	public function compile($db = null)
 	{
+		if ( ! $db instanceof \Database_Connection)
+		{
+			// Get the database instance
+			$db = \Database_Connection::instance($db);
+		}
+		
 		// Start an insertion query
 		$query = 'INSERT INTO '.$db->quote_table($this->_table);
 

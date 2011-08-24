@@ -86,11 +86,17 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where {
 	/**
 	 * Compile the SQL query and return it.
 	 *
-	 * @param   object  Database instance
+	 * @param   mixed  Database instance or instance name
 	 * @return  string
 	 */
-	public function compile(\Database_Connection$db)
+	public function compile($db = null)
 	{
+		if ( ! $db instanceof \Database_Connection)
+		{
+			// Get the database instance
+			$db = \Database_Connection::instance($db);
+		}
+		
 		// Start an update query
 		$query = 'UPDATE '.$db->quote_table($this->_table);
 
