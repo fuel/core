@@ -22,12 +22,22 @@ namespace Fuel\Core;
  */
 class Lang {
 
+	/**
+	 * @var  array  language lines
+	 */
 	public static $lines = array();
 
-	public static $flat_lines = array();
-
+	/**
+	 * @var  string  language to fall back on when loading a file from the current lang fails
+	 */
 	public static $fallback = 'en';
 
+	/**
+	 * Load a language file
+	 *
+	 * @param   string
+	 * @param   string|null  name of the group to load to, null for global
+	 */
 	public static function load($file, $group = null)
 	{
 		$lang = array();
@@ -63,7 +73,14 @@ class Lang {
 		}
 	}
 
-	public static function line($line, $params = array())
+	/**
+	 * Fetch a line from the language
+	 *
+	 * @param   string  key for the line
+	 * @param   array   array of params to str_replace
+	 * @return  bool|string  either the line or false when not found
+	 */
+	public static function line($line, array $params = array())
 	{
 		if (strpos($line, '.') !== false)
 		{
@@ -93,10 +110,18 @@ class Lang {
 		return static::_parse_params($line, $params);
 	}
 
+	/**
+	 * Set or replace a line in the language
+	 *
+	 * @param   string  key to the line
+	 * @param   string  value for the key
+	 * @param   string  group
+	 * @return  bool    success, fails on non-existing group
+	 */
 	public static function set($line, $value, $group = null)
 	{
 		$value = ($value instanceof \Closure) ? $value() : $value;
-		
+
 		if ($group === null)
 		{
 			static::$lines[$line] = $value;
@@ -110,6 +135,13 @@ class Lang {
 		return false;
 	}
 
+	/**
+	 * Parse the params in the language line
+	 *
+	 * @param   string  language line to parse
+	 * @param   array   params to str_replace
+	 * @return  string
+	 */
 	protected static function _parse_params($string, $array = array())
 	{
 		if (is_string($string))
