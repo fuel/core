@@ -28,9 +28,14 @@ class Lang {
 	public static $lines = array();
 
 	/**
-	 * @var  string  language to fall back on when loading a file from the current lang fails
+	 * @var  array  language(s) to fall back on when loading a file from the current lang fails
 	 */
-	public static $fallback = 'en';
+	public static $fallback;
+
+	public static function _init()
+	{
+		static::$fallback = (array) \Config::get('language_fallback', 'en');
+	}
 
 	/**
 	 * Load a language file
@@ -38,21 +43,19 @@ class Lang {
 	 * @param   string
 	 * @param   string|null  name of the group to load to, null for global
 	 */
-	public static function load($file, $group = null)
+	public static function load($file, $group = null, $language = null)
 	{
-		$lang = array();
+		$languages = static::$fallback;
+		array_push($languages, $language ?: \Config::get('language'));
 
-		// Use the current language, failing that use the fallback language
-		$langconf = (is_array(\Config::get('language'))) ? \Config::get('language') : array(\Config::get('language'));
-
-		foreach (array_merge($langconf, (array)static::$fallback) as $language)
+		$lines = array();
+		foreach ($languages as $lang)
 		{
-			if ($path = \Fuel::find_file('lang/'.$language, $file, '.php', true))
+			if ($path = \Fuel::find_file('lang/'.$lang, $file, '.php', true))
 			{
-				$lang = array();
 				foreach ($path as $p)
 				{
-					$lang = $lang + \Fuel::load($p);
+					$lines = $lines + \Fuel::load($p);
 				}
 				break;
 			}
@@ -60,7 +63,7 @@ class Lang {
 
 		if ($group === null)
 		{
-			static::$lines = static::$lines + $lang;
+			static::$lines = static::$lines + $lines;
 		}
 		else
 		{
@@ -69,7 +72,7 @@ class Lang {
 			{
 				static::$lines[$group] = array();
 			}
-			static::$lines[$group] = static::$lines[$group] + $lang;
+			static::$lines[$group] = static::$lines[$group] + $lines;
 		}
 	}
 
