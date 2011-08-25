@@ -85,32 +85,7 @@ class Lang {
 	 */
 	public static function line($line, array $params = array())
 	{
-		if (strpos($line, '.') !== false)
-		{
-			$parts = explode('.', $line);
-
-			$return = false;
-			foreach ($parts as $part)
-			{
-				if ($return === false and isset(static::$lines[$part]))
-				{
-					$return = static::$lines[$part];
-				}
-				elseif (isset($return[$part]))
-				{
-					$return = $return[$part];
-				}
-				else
-				{
-					return false;
-				}
-			}
-			return  static::_parse_params($return, $params);
-		}
-
-		isset(static::$lines[$line]) and $line = static::$lines[$line];
-
-		return static::_parse_params($line, $params);
+		return static::_parse_params(\Arr::get(static::$lines, $line, false), $params);
 	}
 
 	/**
@@ -119,23 +94,12 @@ class Lang {
 	 * @param   string  key to the line
 	 * @param   string  value for the key
 	 * @param   string  group
-	 * @return  bool    success, fails on non-existing group
+	 * @return  bool    success
 	 */
 	public static function set($line, $value, $group = null)
 	{
-		$value = ($value instanceof \Closure) ? $value() : $value;
-
-		if ($group === null)
-		{
-			static::$lines[$line] = $value;
-			return true;
-		}
-		elseif (isset(static::$lines[$group][$line]))
-		{
-			static::$lines[$group][$line] = $value;
-			return true;
-		}
-		return false;
+		$key = ($group ? $group.'.' : '').$line;
+		\Arr::set(static::$lines, $key, $value);
 	}
 
 	/**
