@@ -20,6 +20,7 @@ abstract class Image_Driver {
 	protected $image_directory = null;
 	protected $image_filename  = null;
 	protected $image_extension = null;
+	protected $new_fullpath		 = null;
 	protected $new_extension   = null;
 	protected $config          = array();
 	protected $queued_actions  = array();
@@ -607,7 +608,9 @@ abstract class Image_Driver {
 		{
 			throw new \Fuel_Exception("Could not set permissions on the file.");
 		}
-
+		
+		$this->new_fullpath = $filename;
+		
 		$this->debug("", "Saving image as <code>$filename</code>");
 		return array(
 			'filename' => $filename
@@ -627,6 +630,24 @@ abstract class Image_Driver {
 		$filename = substr($this->image_filename, 0, -(strlen($this->image_extension) + 1));
 		$fullpath = $this->image_directory.'/'.$append.$filename.$prepend.'.'.($extension !== null ? $extension : $this->image_extension);
 		$this->save($fullpath, $permissions);
+		return $this;
+	}
+	
+	/**
+	 * Reload with new image path, to return freshly saved file
+	 * 
+	 * @access public
+	 * @return void
+	 */
+	public function load_saved()
+	{
+		if (is_null($this->new_fullpath))
+		{
+			throw new \Fuel_Exception("You must save " . $this->image_filename . " before to call ".__FUNCTION__.'()');
+		}
+		$this->image_fullpath = $this->new_fullpath;
+		$this->reload();
+		$this->new_fullpath = null;
 		return $this;
 	}
 
