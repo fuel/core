@@ -150,9 +150,9 @@ if ( ! function_exists('render'))
  */
 if ( ! function_exists('__'))
 {
-	function __($string, $params = array())
+	function __($string, $params = array(), $default = null)
 	{
-		return \Lang::line($string, $params);
+		return \Lang::get($string, $params, $default);
 	}
 }
 

@@ -77,14 +77,29 @@ class Lang {
 	}
 
 	/**
+	 * Get a line from the language
+	 *
+	 * @param   string  key for the line
+	 * @param   array   array of params to str_replace
+	 * @param   mixed   default value to return
+	 * @return  bool|string  either the line or false when not found
+	 */
+	public static function get($line, array $params = array(), $default = null)
+	{
+		return static::_parse_params(\Arr::get(static::$lines, $line, $default), $params);
+	}
+
+	/**
 	 * Fetch a line from the language
 	 *
 	 * @param   string  key for the line
 	 * @param   array   array of params to str_replace
 	 * @return  bool|string  either the line or false when not found
+	 * @depricated  Remove in v1.2
 	 */
 	public static function line($line, array $params = array())
 	{
+		\Log::warning('This method is deprecated. Please use Lang::get() instead.', __METHOD__);
 		return static::_parse_params(\Arr::get(static::$lines, $line, false), $params);
 	}
 
