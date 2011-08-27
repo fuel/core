@@ -142,7 +142,7 @@ if ( ! function_exists('render'))
 }
 
 /**
- * A wrapper function for Lang::line()
+ * A wrapper function for Lang::get()
  *
  * @param	mixed	The string to translate
  * @param	array	The parameters

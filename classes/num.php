@@ -54,7 +54,7 @@ class Num {
 		\Lang::load('byte_units', true);
 
 		static::$config     = \Config::load('num', true);
-		static::$byte_units = \Lang::line('byte_units');
+		static::$byte_units = \Lang::get('byte_units');
 	}
 
 	/**
@@ -175,7 +175,7 @@ class Num {
 	/**
 	 * Formats a number by injecting non-numeric characters in a specified
 	 * format into the string in the positions they appear in the format.
-	 * 
+	 *
 	 * Usage:
 	 * <code>
 	 * echo Num::format('1234567890', '(000) 000-0000'); // (123) 456-7890
@@ -193,11 +193,11 @@ class Num {
 		{
 			return $string;
 		}
-		
+
 		$result = '';
 		$fpos = 0;
 		$spos = 0;
-		
+
 		while ((strlen($format) - 1) >= $fpos)
 		{
 			if (ctype_alnum(substr($format, $fpos, 1)))
@@ -227,7 +227,7 @@ class Num {
 	 * echo Num::mask_string('1234567812345678', '**** **** **** 0000'); // **** **** **** 5678
 	 * echo Num::mask_string('1234567812345678', '**** - **** - **** - 0000', ' -'); // **** - **** - **** - 5678
 	 * </code>
-	 * 
+	 *
 	 * @link    http://snippets.symfony-project.org/snippet/157
 	 * @param   string     the string to transform
 	 * @param   string     the mask format

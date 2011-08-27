@@ -370,7 +370,7 @@ class Upload {
 			}
 
 			// and add the message text
-			static::$files[$key]['message'] = \Lang::line('upload.'.static::$files[$key]['error']);
+			static::$files[$key]['message'] = \Lang::get('upload.'.static::$files[$key]['error']);
 		}
 
 		// determine the validate status
