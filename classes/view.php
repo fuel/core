@@ -482,6 +482,21 @@ class View {
 	}
 
 	/**
+	 * The same as set(), except this defaults to not-encoding the variable
+	 * on output.
+	 *
+	 *     $view->set_safe('foo', 'bar');
+	 *
+	 * @param   string   variable name or an array of variables
+	 * @param   mixed    value
+	 * @return  $this
+	 */
+	public function set_safe($key, $value = null)
+	{
+		return $this->set($key, $value, false);
+	}
+
+	/**
 	 * Assigns a value by reference. The benefit of binding is that values can
 	 * be altered without re-setting them. It is also possible to bind variables
 	 * before they have values. Assigned values will be available as a
