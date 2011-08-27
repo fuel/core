@@ -83,8 +83,8 @@ abstract class ViewModel {
 		}
 
 		$this->set_template();
-		$this->_method		= $method;
-		$this->auto_filter = $auto_filter;
+		$this->_method = $method;
+		$this->auto_filter = is_null($auto_filter) ? \Config::get('security.auto_filter_view_data', \Config::get('security.auto_encode_view_data', true)) : $auto_filter;
 
 		$this->before();
 
