@@ -104,8 +104,7 @@ class Uri {
 			}
 		}
 		$url .= ltrim($uri, '/');
-
-		$url and substr($url, -1) != '/' and $url .= \Config::get('url_suffix');
+		$url and substr($url, -1) != '/' and strrchr($url, '.') !== \Config::get('url_suffix') and $url .= \Config::get('url_suffix');
 
 		if ( ! empty($get_variables))
 		{
