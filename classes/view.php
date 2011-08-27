@@ -267,7 +267,6 @@ class View {
 				{
 					$filter = $rules[$key];
 				}
-				$value = \Fuel::value($value);
 				$filter = isset($filter) ? $filter : $auto_filter;
 
 				$data[$key] = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
@@ -424,7 +423,6 @@ class View {
 
 		if (isset($value))
 		{
-			$value = \Fuel::value($value);
 			$filter = isset($filter) ? $filter : $this->auto_filter;
 
 			return $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
