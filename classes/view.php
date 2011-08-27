@@ -32,9 +32,9 @@ class View {
 	protected static $global_data = array();
 
 	/**
-	 * @var  array  Holds a list of specific encode rules for global variables
+	 * @var  array  Holds a list of specific filter rules for global variables
 	 */
-	protected static $global_encode = array();
+	protected static $global_filter = array();
 
 	/**
 	 * @var  array  Current active search paths
@@ -42,14 +42,14 @@ class View {
 	protected $request_paths = array();
 
 	/**
-	 * @var  bool  Whether to auto-encode the view's data
+	 * @var  bool  Whether to auto-filter the view's data
 	 */
-	protected $auto_encode = true;
+	protected $auto_filter = true;
 
 	/**
-	 * @var  array  Holds a list of specific encode rules for local variables
+	 * @var  array  Holds a list of specific filter rules for local variables
 	 */
-	protected $local_encode = array();
+	protected $local_filter = array();
 
 	/**
 	 * @var  string  The view's filename
@@ -71,10 +71,10 @@ class View {
 	 * 
 	 * @deprecated until 1.2
 	 */
-	public static function factory($file = null, $data = null, $auto_encode = null)
+	public static function factory($file = null, $data = null, $auto_filter = null)
 	{
 		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($file, $data, $auto_encode);
+		return static::forge($file, $data, $auto_filter);
 	}
 
 	/**
@@ -87,9 +87,9 @@ class View {
 	 * @param   array   array of values
 	 * @return  View
 	 */
-	public static function forge($file = null, $data = null, $auto_encode = null)
+	public static function forge($file = null, $data = null, $auto_filter = null)
 	{
-		return new static($file, $data, $auto_encode);
+		return new static($file, $data, $auto_filter);
 	}
 
 	/**
@@ -102,7 +102,7 @@ class View {
 	 * @return  void
 	 * @uses    View::set_filename
 	 */
-	public function __construct($file = null, $data = null, $encode = null)
+	public function __construct($file = null, $data = null, $filter = null)
 	{
 		if (is_object($data) === true)
 		{
@@ -113,7 +113,8 @@ class View {
 			throw new \InvalidArgumentException('The data parameter only accepts objects and arrays.');
 		}
 
-		$this->auto_encode = is_null($encode) ? \Config::get('security.auto_encode_view_data', true) : $encode;
+		// @TODO in v1.2 remove the auto_encode_view_data reference.
+		$this->auto_filter = is_null($filter) ? \Config::get('security.auto_filter_view_data', \Config::get('security.auto_encode_view_data', true)) : $filter;
 
 		if ($file !== null)
 		{
@@ -250,7 +251,7 @@ class View {
 	}
 
 	/**
-	 * Retrieves all the data, both local and global.  It encodes the data if
+	 * Retrieves all the data, both local and global.  It filters the data if
 	 * necessary.
 	 *
 	 *     $data = $this->get_data();
@@ -259,17 +260,17 @@ class View {
 	 */
 	protected function get_data()
 	{
-		$clean_it = function ($data, $rules, $auto_encode) {
+		$clean_it = function ($data, $rules, $auto_filter) {
 			foreach ($data as $key => $value)
 			{
 				if (array_key_exists($key, $rules))
 				{
-					$encode = $rules[$key];
+					$filter = $rules[$key];
 				}
 				$value = \Fuel::value($value);
-				$encode = isset($encode) ? $encode : $auto_encode;
+				$filter = isset($filter) ? $filter : $auto_filter;
 
-				$data[$key] = $encode ? \Security::clean($value, null, 'security.output_filter') : $value;
+				$data[$key] = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
 
 			return $data;
@@ -279,12 +280,12 @@ class View {
 
 		if ( ! empty($this->data))
 		{
-			$data += $clean_it($this->data, $this->local_encode, $this->auto_encode);
+			$data += $clean_it($this->data, $this->local_filter, $this->auto_filter);
 		}
 
 		if ( ! empty(static::$global_data))
 		{
-			$data += $clean_it(static::$global_data, static::$global_encode, $this->auto_encode);
+			$data += $clean_it(static::$global_data, static::$global_filter, $this->auto_filter);
 		}
 
 		return $data;
@@ -298,27 +299,27 @@ class View {
 	 *
 	 * @param   string  variable name or an array of variables
 	 * @param   mixed   value
-	 * @param   bool    whether to encode the data or not
+	 * @param   bool    whether to filter the data or not
 	 * @return  void
 	 */
-	public static function set_global($key, $value = null, $encode = null)
+	public static function set_global($key, $value = null, $filter = null)
 	{
 		if (is_array($key))
 		{
 			foreach ($key as $name => $value)
 			{
-				if ($encode !== null)
+				if ($filter !== null)
 				{
-					static::$global_encode[$name] = $encode;
+					static::$global_filter[$name] = $filter;
 				}
 				static::$global_data[$name] = $value;
 			}
 		}
 		else
 		{
-			if ($encode !== null)
+			if ($filter !== null)
 			{
-				static::$global_encode[$key] = $encode;
+				static::$global_filter[$key] = $filter;
 			}
 			static::$global_data[$key] = $value;
 		}
@@ -332,29 +333,29 @@ class View {
 	 *
 	 * @param   string  variable name
 	 * @param   mixed   referenced variable
-	 * @param   bool    whether to encode the data or not
+	 * @param   bool    whether to filter the data or not
 	 * @return  void
 	 */
-	public static function bind_global($key, &$value, $encode = null)
+	public static function bind_global($key, &$value, $filter = null)
 	{
-		if ($encode !== null)
+		if ($filter !== null)
 		{
-			static::$global_encode[$key] = $encode;
+			static::$global_filter[$key] = $filter;
 		}
 		static::$global_data[$key] =& $value;
 	}
 
 	/**
-	 * Sets whether to encode the data or not.
+	 * Sets whether to filter the data or not.
 	 *
-	 *     $view->auto_encode(false);
+	 *     $view->auto_filter(false);
 	 *
-	 * @param   bool  whether to auto encode or not
+	 * @param   bool  whether to auto filter or not
 	 * @return  View
 	 */
-	public function auto_encode($encode = true)
+	public function auto_filter($filter = true)
 	{
-		$this->auto_encode = $encode;
+		$this->auto_filter = $filter;
 
 		return $this;
 	}
@@ -406,27 +407,27 @@ class View {
 		{
 			$value = $this->data[$key];
 
-			if (array_key_exists($key, $this->local_encode))
+			if (array_key_exists($key, $this->local_filter))
 			{
-				$encode = $this->local_encode[$key];
+				$filter = $this->local_filter[$key];
 			}
 		}
 		elseif (array_key_exists($key, static::$global_data))
 		{
 			$value = static::$global_data[$key];
 
-			if (array_key_exists($key, static::$global_encode))
+			if (array_key_exists($key, static::$global_filter))
 			{
-				$encode = static::$global_encode[$key];
+				$filter = static::$global_filter[$key];
 			}
 		}
 
 		if (isset($value))
 		{
 			$value = \Fuel::value($value);
-			$encode = isset($encode) ? $encode : $this->auto_encode;
+			$filter = isset($filter) ? $filter : $this->auto_filter;
 
-			return $encode ? \Security::clean($value, null, 'security.output_filter') : $value;
+			return $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
 		}
 
 		if (is_null($default) and func_num_args() === 0)
@@ -453,27 +454,27 @@ class View {
 	 *
 	 * @param   string   variable name or an array of variables
 	 * @param   mixed    value
-	 * @param   bool     whether to encode the data or not
+	 * @param   bool     whether to filter the data or not
 	 * @return  $this
 	 */
-	public function set($key, $value = null, $encode = null)
+	public function set($key, $value = null, $filter = null)
 	{
 		if (is_array($key))
 		{
 			foreach ($key as $name => $value)
 			{
-				if ($encode !== null)
+				if ($filter !== null)
 				{
-					$this->local_encode[$name] = $encode;
+					$this->local_filter[$name] = $filter;
 				}
 				$this->data[$name] = $value;
 			}
 		}
 		else
 		{
-			if ($encode !== null)
+			if ($filter !== null)
 			{
-				$this->local_encode[$key] = $encode;
+				$this->local_filter[$key] = $filter;
 			}
 			$this->data[$key] = $value;
 		}
@@ -507,14 +508,14 @@ class View {
 	 *
 	 * @param   string   variable name
 	 * @param   mixed    referenced variable
-	 * @param   bool     Whether to encode the var on output
+	 * @param   bool     Whether to filter the var on output
 	 * @return  $this
 	 */
-	public function bind($key, &$value, $encode = null)
+	public function bind($key, &$value, $filter = null)
 	{
-		if ($encode !== null)
+		if ($filter !== null)
 		{
-			$this->local_encode[$key] = $encode;
+			$this->local_filter[$key] = $filter;
 		}
 		$this->data[$key] =& $value;
 
