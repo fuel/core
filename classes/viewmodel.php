@@ -28,7 +28,7 @@ abstract class ViewModel {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($viewmodel, $method = 'view')
@@ -180,36 +180,6 @@ abstract class ViewModel {
 	public function set($name, $val, $encode = null)
 	{
 		$this->_template->set($name, $val, $encode);
-
-		return $this;
-	}
-
-	/**
-	 * Sets a variable on the template without sanitizing
-	 * Note: Objects are auto-converted to strings unless they're ViewModel, View or Closure instances, if you want
-	 * 		objects not to be converted add them through set_raw().
-	 *
-	 * @param	string
-	 * @param	mixed
-	 */
-	public function set_safe($name, $val)
-	{
-		\Error::notice('The ViewModel::set_safe() method is depricated and will be removed at 1.0. Use set(name, var, true) instead.');
-		$this->_template->set($name, $val, true);
-
-		return $this;
-	}
-
-	/**
-	 * Sets a variable on the template without sanitizing
-	 *
-	 * @param	string
-	 * @param	mixed
-	 */
-	public function set_raw($name, $val)
-	{
-		\Error::notice('The ViewModel::set_safe() method is depricated and will be removed at 1.0. Use set(name, var, false) instead.');
-		$this->_template->set($name, $val, false);
 
 		return $this;
 	}
