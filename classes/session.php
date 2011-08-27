@@ -179,15 +179,13 @@ class Session {
 	/**
 	 * set session variables
 	 *
-	 * @param	string	name of the variable to set
-	 * @param	mixed	value
+	 * @param	string|array	name of the variable to set or array of values, array(name => value)
+	 * @param	mixed			value
 	 * @access	public
 	 * @return	void
 	 */
 	public static function set($name, $value = null)
 	{
-		$value = ($value instanceof \Closure) ? $value() : $value;
-		
 		return static::instance()->set($name, $value);
 	}
 
