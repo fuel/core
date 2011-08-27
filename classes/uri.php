@@ -103,8 +103,11 @@ class Uri {
 				$url .= $index_file.'/';
 			}
 		}
-		$url .= ltrim($uri, '/');
-		$url and substr($url, -1) != '/' and strrchr($url, '.') !== \Config::get('url_suffix') and $url .= \Config::get('url_suffix');
+		$url .= $uri;
+
+		$url === '/' or $url = ltrim($url, '/');
+
+		substr($url, -1) != '/' and strrchr($url, '.') !== \Config::get('url_suffix') and $url .= \Config::get('url_suffix');
 
 		if ( ! empty($get_variables))
 		{
