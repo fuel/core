@@ -166,22 +166,22 @@ class Input {
 		{
 			return static::server('HTTP_X_CLUSTER_CLIENT_IP');
 		}
-		
+
 		if (static::server('HTTP_X_FORWARDED_FOR') !== null)
 		{
 			return static::server('HTTP_X_FORWARDED_FOR');
 		}
-		
+
 		if (static::server('HTTP_CLIENT_IP') !== null)
 		{
 			return static::server('HTTP_CLIENT_IP');
 		}
-		
+
 		if (static::server('REMOTE_ADDR') !== null)
 		{
 			return static::server('REMOTE_ADDR');
 		}
-		
+
 		// detection failed, return the default
 		return \Fuel::value($default);
 	}
@@ -372,7 +372,7 @@ class Input {
 	 */
 	public static function server($index = null, $default = null)
 	{
-		return (is_null($index) and func_num_args() === 0) ? $_SERVER : \Arr::get($_SERVER, $index, $default);
+		return (is_null($index) and func_num_args() === 0) ? $_SERVER : \Arr::get($_SERVER, strtoupper($index), $default);
 	}
 
 	/**
@@ -383,7 +383,7 @@ class Input {
 	protected static function hydrate()
 	{
 		static::$input = array_merge($_GET, $_POST);
-		
+
 		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
 		{
 			static::$put_delete = parse_str(file_get_contents('php://input'));
