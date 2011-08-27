@@ -44,7 +44,7 @@ abstract class ViewModel {
 	 * @param   string  Method to execute
 	 * @return  ViewModel
 	 */
-	public static function forge($viewmodel, $method = 'view')
+	public static function forge($viewmodel, $method = 'view', $auto_filter = null)
 	{
 		$class = ucfirst(\Request::active()->module).'\\View_'.ucfirst(str_replace(DS, '_', $viewmodel));
 
@@ -56,7 +56,7 @@ abstract class ViewModel {
 			}
 		}
 
-		return new $class($method);
+		return new $class($method, $auto_filter);
 	}
 
 	/**
@@ -70,11 +70,11 @@ abstract class ViewModel {
 	protected $_template;
 
 	/**
-	 * @var  bool  whether or not to use auto encoding
+	 * @var  bool  whether or not to use auto filtering
 	 */
-	protected $_auto_encode;
+	protected $auto_filter;
 
-	protected function __construct($method)
+	protected function __construct($method, $auto_filter = null)
 	{
 		if (empty($this->_template))
 		{
@@ -84,7 +84,7 @@ abstract class ViewModel {
 
 		$this->set_template();
 		$this->_method		= $method;
-		$this->_auto_encode = \View::$auto_encode;
+		$this->auto_filter = $auto_filter;
 
 		$this->before();
 
@@ -106,19 +106,19 @@ abstract class ViewModel {
 	}
 
 	/**
-	 * Change auto encoding setting
+	 * Change auto filter setting
 	 *
 	 * @param   null|bool  change setting (bool) or get the current setting (null)
 	 * @return  void|bool  returns current setting or nothing when it is changed
 	 */
-	public function auto_encoding($setting = null)
+	public function auto_filter($setting = null)
 	{
-		if (is_null($setting))
+		if (func_num_args() == 0)
 		{
-			return $this->_auto_encode;
+			return $this->auto_filter;
 		}
 
-		$this->_auto_encode = (bool) $setting;
+		$this->auto_filter = (bool) $setting;
 
 		return $this;
 	}
@@ -167,7 +167,7 @@ abstract class ViewModel {
 	 */
 	public function __set($name, $val)
 	{
-		return $this->set($name, $val, \View::$auto_encode);
+		return $this->set($name, $val);
 	}
 
 	/**
@@ -177,9 +177,9 @@ abstract class ViewModel {
 	 * @param	mixed
 	 * @param	bool|null
 	 */
-	public function set($name, $val, $encode = null)
+	public function set($name, $val, $filter = null)
 	{
-		$this->_template->set($name, $val, $encode);
+		$this->_template->set($name, $val, $filter);
 
 		return $this;
 	}
