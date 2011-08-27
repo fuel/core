@@ -404,28 +404,11 @@ class View {
 	{
 		if (array_key_exists($key, $this->data))
 		{
-			$value = $this->data[$key];
-
-			if (array_key_exists($key, $this->local_filter))
-			{
-				$filter = $this->local_filter[$key];
-			}
+			return $this->data[$key];
 		}
 		elseif (array_key_exists($key, static::$global_data))
 		{
-			$value = static::$global_data[$key];
-
-			if (array_key_exists($key, static::$global_filter))
-			{
-				$filter = static::$global_filter[$key];
-			}
-		}
-
-		if (isset($value))
-		{
-			$filter = isset($filter) ? $filter : $this->auto_filter;
-
-			return $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
+			return static::$global_data[$key];
 		}
 
 		if (is_null($default) and func_num_args() === 0)
