@@ -35,7 +35,7 @@ class Uri {
 		{
 			return $request->uri->get_segment($segment, $default);
 		}
-		
+
 		return null;
 	}
 
@@ -50,7 +50,7 @@ class Uri {
 		{
 			return $request->uri->get_segments();
 		}
-		
+
 		return null;
 	}
 
@@ -76,7 +76,7 @@ class Uri {
 		{
 			return $request->uri->get();
 		}
-		
+
 		return null;
 	}
 
@@ -105,7 +105,7 @@ class Uri {
 		}
 		$url .= ltrim($uri, '/');
 
-		substr($url, -1) != '/' and $url .= \Config::get('url_suffix');
+		$url and substr($url, -1) != '/' and $url .= \Config::get('url_suffix');
 
 		if ( ! empty($get_variables))
 		{
@@ -206,7 +206,7 @@ class Uri {
 
 	/**
 	 * Get the specified URI segment, return default if it doesn't exist.
-	 * 
+	 *
 	 * Segment index is 1 based, not 0 based
 	 *
 	 * @param   string  $segment  The 1-based segment index
