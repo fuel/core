@@ -117,16 +117,20 @@ abstract class Session_Driver {
 	/**
 	 * set session variables
 	 *
-	 * @param	string	name of the variable to set
-	 * @param	mixed	value
+	 * @param	string|array	name of the variable to set or array of values, array(name => value)
+	 * @param	mixed			value
 	 * @access	public
 	 * @return	void
 	 */
-	public function set($name, $value)
+	public function set($name, $value = null)
 	{
-		$value = ($value instanceof \Closure) ? $value() : $value;
+		is_array($name) or $name = array($name => $value);
 		
-		$this->data[$name] = $value;
+		foreach($name as $_name => $_value)
+		{
+			$_value = ($_value instanceof \Closure) ? $_value() : $_value;
+			$this->data[$_name] = $_value;
+		}
 	}
 
 	// --------------------------------------------------------------------
