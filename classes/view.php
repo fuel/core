@@ -114,7 +114,7 @@ class View {
 		}
 
 		// @TODO in v1.2 remove the auto_encode_view_data reference.
-		$this->auto_filter = is_null($filter) ? \Config::get('security.auto_filter_view_data', \Config::get('security.auto_encode_view_data', true)) : $filter;
+		$this->auto_filter = is_null($filter) ? \Config::get('security.auto_filter_output', \Config::get('security.auto_encode_view_data', true)) : $filter;
 
 		if ($file !== null)
 		{
