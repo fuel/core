@@ -318,8 +318,24 @@ class Request {
 	 *
 	 * @param  array|null  $method_params  An array of parameters to pass to the method being executed
 	 * @return  Request  This request object
+	 * @deprecated until 1.2
 	 */
-	public function execute($method_params = null)
+	 public function execute($method_params = null)
+	 {
+	 	return $this->go($method_params);
+	 }
+
+	/**
+	 * This executes the request and sets the output to be used later.
+	 *
+	 * Usage:
+	 *
+	 *     $request = Request::forge('hello/world')->go();
+	 *
+	 * @param  array|null  $method_params  An array of parameters to pass to the method being executed
+	 * @return  Request  This request object
+	 */
+	public function go($method_params = null)
 	{
 		logger(Fuel::L_INFO, 'Called', __METHOD__);
 
