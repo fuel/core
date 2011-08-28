@@ -124,13 +124,7 @@ abstract class Session_Driver {
 	 */
 	public function set($name, $value = null)
 	{
-		is_array($name) or $name = array($name => $value);
-		
-		foreach($name as $_name => $_value)
-		{
-			$_value = ($_value instanceof \Closure) ? $_value() : $_value;
-			$this->data[$_name] = $_value;
-		}
+		\Arr::set($this->data, $name, $value);
 	}
 
 	// --------------------------------------------------------------------
@@ -149,63 +143,7 @@ abstract class Session_Driver {
 		{
 			return $this->data;
 		}
-		elseif (isset($this->data[$name]))
-		{
-			$return = $this->data[$name];
-		}
-
-		if ( ! isset($return) and strpos($name, '.') !== false)
-		{
-			$parts = explode('.', $name);
-
-			switch (count($parts))
-			{
-				case 2:
-					if (isset($this->data[$parts[0]][$parts[1]]))
-					{
-						$return = $this->data[$parts[0]][$parts[1]];
-					}
-				break;
-
-				case 3:
-					if (isset($this->data[$parts[0]][$parts[1]][$parts[2]]))
-					{
-						$return = $this->data[$parts[0]][$parts[1]][$parts[2]];
-					}
-				break;
-
-				case 4:
-					if (isset($this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]]))
-					{
-						$return = $this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]];
-					}
-				break;
-
-				default:
-					$return = false;
-					foreach ($parts as $part)
-					{
-						if ($return === false and isset($this->data[$part]))
-						{
-							$return = $this->data[$part];
-						}
-						elseif (isset($return[$part]))
-						{
-							$return = $return[$part];
-						}
-						else
-						{
-							return ($default instanceof \Closure) ? $default() : $default;
-						}
-					}
-				break;
-			}
-		}
-		if ( ! isset($return))
-		{
-			$return = $default;
-		}
-		return ($return instanceof \Closure) ? $return() : $return;
+		return \Arr::get($this->data, $name, $default);
 	}
 
 	// --------------------------------------------------------------------

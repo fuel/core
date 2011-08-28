@@ -101,7 +101,7 @@ class Cli {
 	{
 		if ( ! isset(static::$args[$name]))
 		{
-			return ($default instanceof \Closure) ? $default() : $default;
+			return \Fuel::value($default);
 		}
 		return static::$args[$name];
 	}

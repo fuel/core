@@ -93,7 +93,7 @@ class Cache {
 	 */
 	public static function set($identifier, $contents = null, $expiration = false, $dependencies = array())
 	{
-		$contents = ($contents instanceof \Closure) ? $contents() : $contents;
+		$contents = \Fuel::value($contents);
 		
 		$cache = static::forge($identifier);
 		return $cache->set($contents, $expiration, $dependencies);

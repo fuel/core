@@ -190,7 +190,7 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 				return $row[$name];
 		}
 
-		return ($default instanceof \Closure) ? $default() : $default;
+		return \Fuel::value($default);
 	}
 
 	/**

@@ -220,7 +220,7 @@ class Uri {
 			return $this->segments[$segment - 1];
 		}
 
-		return ($default instanceof \Closure) ? $default() : $default;
+		return \Fuel::value($default);
 	}
 
 	/**

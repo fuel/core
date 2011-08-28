@@ -245,7 +245,7 @@ abstract class Cache_Storage_Driver {
 	 */
 	final public function set($contents = null, $expiration = false, $dependencies = array())
 	{
-		$contents = ($contents instanceof \Closure) ? $contents() : $contents;
+		$contents = \Fuel::value($contents);
 		// save the current expiration
 		$current_expiration = $this->expiration;
 
