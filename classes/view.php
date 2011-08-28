@@ -354,6 +354,11 @@ class View {
 	 */
 	public function auto_filter($filter = true)
 	{
+		if (func_num_args() == 0)
+		{
+			return $this->auto_filter;
+		}
+
 		$this->auto_filter = $filter;
 
 		return $this;
@@ -411,7 +416,7 @@ class View {
 			return static::$global_data[$key];
 		}
 
-		if (is_null($default) and func_num_args() === 0)
+		if (is_null($default) and func_num_args() === 1)
 		{
 			throw new \OutOfBoundsException('View variable is not set: '.$key);
 		}
