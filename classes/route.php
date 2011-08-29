@@ -38,7 +38,6 @@ class Route {
 
 	public function __construct($path, $translation = null)
 	{
-		Debug::dump($path, $translation);
 		$this->path = $path;
 		$this->translation = ($translation === null) ? $path : $translation;
 		$this->search = ($translation == stripslashes($path)) ? $translation : $this->compile();
