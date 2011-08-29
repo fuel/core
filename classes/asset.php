@@ -356,6 +356,31 @@ class Asset {
 
 		return false;
 	}
+	
+	// --------------------------------------------------------------------
+
+	/**
+	 * From
+	 *
+	 * Load a remote javascript or css file
+	 *
+	 * @access	public
+	 * @param	string	Complete URL, path, filename, and extension
+	 * @param	string	File extension (js or css), Javascript by default
+	 * @return	mixed	Return a script (or link) tag to load remote js or css
+	 */
+	public static function from($location, $extension = 'js')
+	{
+		switch ($extension) {
+			//because we often load remote javascript than a css file (eg, from Google CDN)
+			default:
+			case '':
+			case 'js':
+				return '<script type="text/javascript" src="'.$location.'"></script>';
+			case 'css':
+				return '<link rel="stylesheet" href="'.$location.'">';
+		}
+	}
 }
 
 
