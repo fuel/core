@@ -43,20 +43,20 @@ class Str {
 				{
 					break;
 				}
-				$tag = substr(strtok($match[0][0], " \t\n\r\0\x0B>"), 1);
+				$tag = static::sub(strtok($match[0][0], " \t\n\r\0\x0B>"), 1);
 				if($tag[0] != '/')
 				{
 					$tags[] = $tag;
 				}
-				elseif (end($tags) == substr($tag, 1))
+				elseif (end($tags) == static::sub($tag, 1))
 				{
 					array_pop($tags);
 				}
 				$offset += $match[1][1] - $match[0][1];
 			}
 		}
-		$new_string = substr($string, 0, $limit = min(strlen($string),  $limit + $offset));
-		$new_string .= (strlen($string) > $limit ? $continuation : '');
+		$new_string = static::sub($string, 0, $limit = min(static::length($string),  $limit + $offset));
+		$new_string .= (static::length($string) > $limit ? $continuation : '');
 		$new_string .= (count($tags = array_reverse($tags)) ? '</'.implode('></',$tags).'>' : '');
 		return $new_string;
 	}
@@ -72,6 +72,40 @@ class Str {
 		preg_match('/(.+)'.$separator.'([0-9]+)$/', $str, $match);
 
 		return isset($match[2]) ? $match[1].$separator.($match[2] + 1) : $str.$separator.$first;
+	}
+
+	/**
+	 * substr
+	 *
+	 * @param   string    $str       required
+	 * @param   int       $start     required
+	 * @param   int|null  $length
+	 * @param   string    $encoding  default UTF-8
+	 * @return  string
+	 */
+	public static function sub($str, $start, $length = null, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return function_exists('mb_substr')
+			? mb_substr($str, $start, $length, $encoding)
+			: (is_null($length) ? substr($str, $start) : substr($str, $start, $length));
+	}
+
+	/**
+	 * strlen
+	 *
+	 * @param   string  $str       required
+	 * @param   string  $encoding  default UTF-8
+	 * @return  int
+	 */
+	public static function length($str, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return function_exists('mb_strlen')
+			? mb_strlen($str, $encoding)
+			: strlen($str);
 	}
 
 	/**
