@@ -109,7 +109,7 @@ class Router {
 			return $match;
 		}
 
-		return static::find_controller($match);
+		return static::parse_match($match);
 	}
 
 	/**
@@ -118,94 +118,51 @@ class Router {
 	 * @param	Route  $match  the given Route object
 	 * @return	mixed  the match array or false
 	 */
-	protected static function find_controller($match)
+	protected static function parse_match($match)
 	{
+		$namespace = '\\';
+
 		// First port of call: request for a module?
 		if (\Fuel::module_exists($match->segments[0]))
 		{
 			// make the module known to the autoloader
 			\Fuel::add_module($match->segments[0]);
-
-			$segments = $match->segments;
-
-			// first check if the controller is in a directory.
-			$match->module = array_shift($segments);
-			$match->directory = count($segments) ? array_shift($segments) : null;
-			$match->controller = count($segments) ? array_shift($segments) : $match->module;
-
-			// does the module controller exist?
-			if (class_exists(Inflector::words_to_upper($match->module.'\\Controller_'.$match->directory.'_'.$match->controller)))
-			{
-				$match->action = count($segments) ? array_shift($segments) : null;
-				$match->method_params = $segments;
-				return $match;
-			}
-
-			$segments = $match->segments;
-
-			// then check if it's a module controller
-			$match->module = array_shift($segments);
-			$match->directory = null;
-			$match->controller = count($segments) ? array_shift($segments) : $match->module;
-
-			// does the module controller exist?
-			if (class_exists(Inflector::words_to_upper($match->module.'\\Controller_'.$match->controller)))
-			{
-				$match->action = count($segments) ? array_shift($segments) : null;
-				$match->method_params = $segments;
-				return $match;
-			}
-
-			$segments = $match->segments;
-
-			// do we have a module controller with the same name as the module?
-			if ($match->controller != $match->module)
-			{
-				array_shift($segments);
-				$match->controller = $match->module;
-
-				if (class_exists(Inflector::words_to_upper($match->module.'\\Controller_'.$match->controller)))
-				{
-					$match->action = count($segments) ? array_shift($segments) : null;
-					$match->method_params = $segments;
-					return $match;
-				}
-			}
-
+			$match->module = $match->segments[0];
+			$namespace .= ucfirst($match->module).'\\';
 		}
 
-		$segments = $match->segments;
-
-		// It's not a module, first check if the controller is in a directory.
-		$match->directory = array_shift($segments);
-		$match->controller = count($segments) ? array_shift($segments) : $match->directory;
-
-		if (class_exists(\Inflector::words_to_upper('Controller_'.$match->directory.'_'.$match->controller)))
+		if ($info = static::parse_segments($match->segments))
 		{
-			$match->action = count($segments) ? array_shift($segments) : null;
-			$match->method_params = $segments;
+			$match->controller = $info['controller'];
+			$match->action = $info['action'];
+			$match->method_params = $info['method_params'];
 			return $match;
 		}
-
-		$segments = $match->segments;
-
-		// It's not in a directory, so check for app controllers
-		$match->directory = null;
-		$match->controller = count($segments) ? array_shift($segments) : $match->directory;
-
-		// We first want to check if the controller is in a directory.
-		if (class_exists(\Inflector::words_to_upper('Controller_'.$match->controller)))
+		else
 		{
-			$match->action = count($segments) ? array_shift($segments) : null;
-			$match->method_params = $segments;
-			return $match;
+			return null;
 		}
+	}
 
-		// none of the above. I give up. We've found ziltch...
-		$match->action = null;
-		$match->controller = null;
+	protected static function parse_segments($segments, $namespace = '\\')
+	{
+		$class = $namespace.'Controller';
+		$offset = 0;
 
-		return $match;
+		foreach ($segments as $segment)
+		{
+			$offset++;
+			$class .= '_'.ucfirst($segment);
+			if (class_exists($class))
+			{
+				return array(
+					'controller'    => $class,
+					'action'        => isset($segments[$offset]) ? $segments[$offset] : null,
+					'method_params' => array_slice($segments, $offset + 1),
+				);
+			}
+		}
+		return false;
 	}
 }
 
