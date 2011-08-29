@@ -148,7 +148,7 @@ class Router {
 	{
 		$temp_segments = $segments;
 
-		for ($i = count($segments) - 1; $i >= 0; $i--)
+		foreach (array_reverse($segments, true) as $key => $segment)
 		{
 			$class = $namespace.'Controller_'.implode('_', $temp_segments);
 			array_pop($temp_segments);
@@ -156,8 +156,8 @@ class Router {
 			{
 				return array(
 					'controller'    => $class,
-					'action'        => isset($segments[$i + 1]) ? $segments[$i + 1] : null,
-					'method_params' => array_slice($segments, $i + 2),
+					'action'        => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
+					'method_params' => array_slice($segments, $key + 2),
 				);
 			}
 		}
