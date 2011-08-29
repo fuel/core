@@ -121,17 +121,18 @@ class Router {
 	protected static function parse_match($match)
 	{
 		$namespace = '\\';
+		$segments = $match->segments;
 
 		// First port of call: request for a module?
-		if (\Fuel::module_exists($match->segments[0]))
+		if (\Fuel::module_exists($segments[0]))
 		{
 			// make the module known to the autoloader
-			\Fuel::add_module($match->segments[0]);
-			$match->module = $match->segments[0];
+			\Fuel::add_module($segments[0]);
+			$match->module = array_shift($segments);
 			$namespace .= ucfirst($match->module).'\\';
 		}
 
-		if ($info = static::parse_segments($match->segments, $namespace))
+		if ($info = static::parse_segments($segments, $namespace))
 		{
 			$match->controller = $info['controller'];
 			$match->action = $info['action'];
