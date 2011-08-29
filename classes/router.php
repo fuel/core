@@ -131,7 +131,7 @@ class Router {
 			$namespace .= ucfirst($match->module).'\\';
 		}
 
-		if ($info = static::parse_segments($match->segments))
+		if ($info = static::parse_segments($match->segments, $namespace))
 		{
 			$match->controller = $info['controller'];
 			$match->action = $info['action'];
