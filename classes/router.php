@@ -146,19 +146,18 @@ class Router {
 
 	protected static function parse_segments($segments, $namespace = '\\')
 	{
-		$class = $namespace.'Controller';
-		$offset = 0;
+		$temp_segments = $segments;
 
-		foreach ($segments as $segment)
+		for ($i = count($segments) - 1; $i >= 0; $i--)
 		{
-			$offset++;
-			$class .= '_'.ucfirst($segment);
+			$class = $namespace.'Controller_'.implode('_', $temp_segments);
+			array_pop($temp_segments);
 			if (class_exists($class))
 			{
 				return array(
 					'controller'    => $class,
-					'action'        => isset($segments[$offset]) ? $segments[$offset] : null,
-					'method_params' => array_slice($segments, $offset + 1),
+					'action'        => isset($segments[$i + 1]) ? $segments[$i + 1] : null,
+					'method_params' => array_slice($segments, $i + 2),
 				);
 			}
 		}
