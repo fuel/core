@@ -45,7 +45,7 @@ class Ftp
 	 */
 	public static function factory($config = 'default', $connect = true)
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($config, $connect);
 	}
 

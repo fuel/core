@@ -124,11 +124,15 @@ CONF;
 
 		$path = pathinfo($path);
 
-		return File::update($path['dirname'], $path['basename'], $content);
+		return \File::update($path['dirname'], $path['basename'], $content);
 	}
 
 	public static function get($item, $default = null)
 	{
+		if (isset(static::$items[$item]))
+		{
+			return static::$items[$item];
+		}
 		return \Fuel::value(\Arr::get(static::$items, $item, $default));
 	}
 

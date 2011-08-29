@@ -56,7 +56,7 @@ class File_Handler_Directory {
 	 */
 	public static function factory($path, array $config = array(), File_Area $area = null, $content = array())
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($path, $config, $area, $content);
 	}
 

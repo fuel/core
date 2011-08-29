@@ -294,11 +294,11 @@ class DBUtil {
 
 		if($type === 'error')
 		{
-			\Log::error('Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
+			logger(\Fuel::L_ERROR, 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
 		}
 		else
 		{
-			\Log::write(ucfirst($type), 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
+			logger(ucfirst($type), 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
 		}
 		return false;
 	}

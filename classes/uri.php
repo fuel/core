@@ -180,8 +180,18 @@ class Uri {
 	 */
 	public function __construct($uri = null)
 	{
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' Start');
+		}
+
 		$this->uri = trim($uri ?: \Input::uri(), '/');
 		$this->segments = explode('/', $this->uri);
+
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' End');
+		}
 	}
 
 	/**

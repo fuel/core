@@ -65,7 +65,7 @@ class Request {
 	 */
 	public static function factory($uri = null, $route = true)
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($uri, $route);
 	}
 
@@ -134,7 +134,7 @@ class Request {
 	 */
 	public static function show_404()
 	{
-		\Log::warning('This method is deprecated.  Please use a Request404Exception instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Request404Exception instead.', __METHOD__);
 		throw new \Request404Exception();
 	}
 
@@ -260,6 +260,11 @@ class Request {
 	 */
 	public function __construct($uri, $route = true)
 	{
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' Start');
+		}
+
 		$this->uri = new \Uri($uri);
 
 		// check if a module was requested
@@ -302,11 +307,15 @@ class Request {
 			$this->add_path(\Fuel::module_exists($this->module));
 		}
 
-		$this->directory = $this->route->directory;
 		$this->controller = $this->route->controller;
 		$this->action = $this->route->action;
 		$this->method_params = $this->route->method_params;
 		$this->named_params = $this->route->named_params;
+
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' End');
+		}
 	}
 
 	/**
@@ -337,6 +346,11 @@ class Request {
 	 */
 	public function go($method_params = null)
 	{
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' Start');
+		}
+
 		logger(Fuel::L_INFO, 'Called', __METHOD__);
 
 		// Make the current request active
@@ -370,10 +384,8 @@ class Request {
 		}
 		else
 		{
-			$controller_prefix = '\\'.($this->module ? ucfirst($this->module).'\\' : '').'Controller_';
 			$method_prefix = 'action_';
-
-			$class = $controller_prefix.($this->directory ? ucfirst($this->directory).'_' : '').ucfirst($this->controller);
+			$class = $this->controller;
 
 			// If the class doesn't exist then 404
 			if ( ! class_exists($class))
@@ -451,6 +463,12 @@ class Request {
 		}
 
 		static::reset_request();
+
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' End');
+		}
+
 		return $this;
 	}
 

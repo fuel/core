@@ -33,7 +33,7 @@ abstract class ViewModel {
 	 */
 	public static function factory($viewmodel, $method = 'view')
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($viewmodel, $method);
 	}
 
@@ -97,7 +97,7 @@ abstract class ViewModel {
 		// @TODO Remove in 1.2.  This is for backwards compat only.
 		if ( ! empty($this->_template))
 		{
-			\Log::warning('$this->_template is deprecated.  Please use a $this->_view instead.', __METHOD__);
+			logger(\Fuel::L_WARNING, '$this->_template is deprecated.  Please use a $this->_view instead.', __METHOD__);
 			$this->_view = $this->_template;
 		}
 
@@ -114,7 +114,7 @@ abstract class ViewModel {
 	 */
 	protected function set_template()
 	{
-		\Log::warning('This method is deprecated.  Please use a $this->set_view() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a $this->set_view() instead.', __METHOD__);
 		return $this->set_view();
 	}
 

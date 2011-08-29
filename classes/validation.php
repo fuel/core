@@ -39,7 +39,7 @@ class Validation {
 	 */
 	public static function factory($fieldset = 'default')
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($fieldset);
 	}
 
@@ -392,7 +392,7 @@ class Validation {
 	 */
 	public function errors($field = null, $default = false)
 	{
-		\Log::warning('This method is deprecated. Please use Validation::error() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated. Please use Validation::error() instead.', __METHOD__);
 		return static::error($field, $default);
 	}
 

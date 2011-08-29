@@ -73,7 +73,7 @@ class View {
 	 */
 	public static function factory($file = null, $data = null, $auto_filter = null)
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($file, $data, $auto_filter);
 	}
 

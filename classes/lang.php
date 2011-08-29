@@ -99,7 +99,7 @@ class Lang {
 	 */
 	public static function line($line, array $params = array())
 	{
-		\Log::warning('This method is deprecated. Please use Lang::get() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated. Please use Lang::get() instead.', __METHOD__);
 		return static::_parse_params(\Arr::get(static::$lines, $line, false), $params);
 	}
 

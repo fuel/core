@@ -37,7 +37,7 @@ class Format {
 	 */
 	public static function factory($data = null, $from_type = null)
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($data, $from_type);
 	}
 

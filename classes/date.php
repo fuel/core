@@ -67,7 +67,7 @@ class Date {
 	 */
 	public static function factory($timestamp = null, $timezone = null)
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($timestamp, $timezone);
 	}
 

@@ -36,13 +36,13 @@ if ( ! function_exists('logger'))
 {
 	function logger($level, $msg, $method = null)
 	{
-		! class_exists('Fuel\\Core\\Log') and import('log');
-		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
-
 		if ($level > \Config::get('log_threshold'))
 		{
 			return false;
 		}
+
+		! class_exists('Fuel\\Core\\Log') and import('log');
+		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
 
 		return \Log::write($level, $msg, $method);
 	}
