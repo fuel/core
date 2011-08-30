@@ -122,6 +122,7 @@ class Router {
 	{
 		$namespace = '\\';
 		$segments = $match->segments;
+		$module = false;
 
 		// First port of call: request for a module?
 		if (\Fuel::module_exists($segments[0]))
@@ -130,9 +131,10 @@ class Router {
 			\Fuel::add_module($segments[0]);
 			$match->module = array_shift($segments);
 			$namespace .= ucfirst($match->module).'\\';
+			$module = $match->module;
 		}
 
-		if ($info = static::parse_segments($segments, $namespace))
+		if ($info = static::parse_segments($segments, $namespace, $module))
 		{
 			$match->controller = $info['controller'];
 			$match->action = $info['action'];
@@ -145,7 +147,7 @@ class Router {
 		}
 	}
 
-	protected static function parse_segments($segments, $namespace = '\\')
+	protected static function parse_segments($segments, $namespace = '\\', $module = false)
 	{
 		$temp_segments = $segments;
 
@@ -159,6 +161,20 @@ class Router {
 					'controller'    => $class,
 					'action'        => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
 					'method_params' => array_slice($segments, $key + 2),
+				);
+			}
+		}
+		
+		// Fall back for default module controllers
+		if ($module)
+		{
+			$class = $namespace.'Controller_'.$module;
+			if (class_exists($class))
+			{
+				return array(
+					'controller'    => $class,
+					'action'        => isset($segments[0]) ? $segments[0] : null,
+					'method_params' => array_slice($segments, 1),
 				);
 			}
 		}
