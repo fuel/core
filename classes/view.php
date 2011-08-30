@@ -68,7 +68,7 @@ class View {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($file = null, $data = null, $auto_filter = null)
@@ -263,11 +263,8 @@ class View {
 		$clean_it = function ($data, $rules, $auto_filter) {
 			foreach ($data as $key => $value)
 			{
-				if (array_key_exists($key, $rules))
-				{
-					$filter = $rules[$key];
-				}
-				$filter = isset($filter) ? $filter : $auto_filter;
+				$filter = array_key_exists($key, $rules) ? $rules[$key] : null;
+				$filter = is_null($filter) ? $auto_filter : $filter;
 
 				$data[$key] = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
