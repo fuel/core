@@ -409,17 +409,32 @@ class Arr {
 	}
 
 	/**
+	 * Alias for replace_key for backwards compatibility.
+	 */
+	public static function replace_keys($source, $replace, $new_key = null)
+	{
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a replace_key() instead.', __METHOD__);
+		return static::replace_key($source, $replace, $new_key);
+	}
+	
+	/**
 	 * Replaces key names in an array by names in $replace
 	 *
-	 * @param   array    the array containing the key/value combinations
-	 * @param   array    the array containing the replacement keys
-	 * @return  array    the array with the new keys
+	 * @param   array			the array containing the key/value combinations
+	 * @param   array|string	key to replace or array containing the replacement keys
+	 * @param   string			the replacement key
+	 * @return  array			the array with the new keys
 	 */
-	public static function replace_keys($source, $replace)
+	public static function replace_key($source, $replace, $new_key = null)
 	{
+		if(is_string($replace))
+		{
+			$replace = array($replace => $new_key);
+		}
+		
 		if ( ! is_array($source) or ! is_array($replace))
 		{
-			throw new \InvalidArgumentException('Arr::replace_keys() - $source and $replace must arrays.');
+			throw new \InvalidArgumentException('Arr::replace_keys() - $source must and array. $replace must be an array or string.');
 		}
 
 		$result = array();
