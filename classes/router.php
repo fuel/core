@@ -153,7 +153,7 @@ class Router {
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
-			$class = $namespace.'Controller_'.implode('_', $temp_segments);
+			$class = $namespace.'Controller_'.\Inflector::words_to_upper(implode('_', $temp_segments));
 			array_pop($temp_segments);
 			if (class_exists($class))
 			{
@@ -164,7 +164,7 @@ class Router {
 				);
 			}
 		}
-		
+
 		// Fall back for default module controllers
 		if ($module)
 		{
