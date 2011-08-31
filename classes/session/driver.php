@@ -383,6 +383,20 @@ abstract class Session_Driver {
 	// --------------------------------------------------------------------
 
 	/**
+	 * set a runtime config value
+	 *
+	 * @param	string	name of the config variable to set
+	 * @access	public
+	 * @return  mixed
+	 */
+	public function set_config($name, $value = null)
+	{
+		if (isset($this->config[$name])) $this->config[$name] = $value;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * removes flash variables marked as old
 	 *
 	 * @access	private
