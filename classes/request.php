@@ -118,10 +118,16 @@ class Request {
 	 *
 	 *     Request::active();
 	 *
+	 * @param   Request|null|false  overwrite current request before returning, false prevents overwrite
 	 * @return  Request
 	 */
-	public static function active()
+	public static function active($request = false)
 	{
+		if ($request !== false)
+		{
+			static::$active = $request;
+		}
+
 		return static::$active;
 	}
 
