@@ -190,7 +190,15 @@ class Input {
 	 */
 	public static function protocol()
 	{
-		return (static::server('HTTPS') !== null and static::server('HTTPS') != 'off') ? 'https' : 'http';
+		if (static::server('HTTPS') !== null and static::server('HTTPS') != 'off')
+		{
+			return 'https';
+		}
+		elseif (static::server('SERVER_PORT') == 443)
+		{
+			return 'https';
+		}
+		return 'http';
 	}
 
 	/**
