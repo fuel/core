@@ -47,7 +47,7 @@ class Form {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($fieldset = 'default', array $config = array())
@@ -93,7 +93,7 @@ class Form {
 		// If there is still no action set, Form-post
 		if( ! array_key_exists('action', $attributes) or $attributes['action'] === null)
 		{
-			$attributes['action'] = \Uri::current();
+			$attributes['action'] = \Uri::main();
 		}
 
 
