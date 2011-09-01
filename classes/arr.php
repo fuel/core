@@ -102,6 +102,53 @@ class Arr {
 	}
 
 	/**
+	 * Unsets dot-notated key from an array
+	 *
+	 * @param   array   $array    The search array
+	 * @param   mixed   $key      The dot-notated key or array of keys
+	 * @param   string  $default  The default value
+	 * @return  mixed
+	 */
+	public static function delete(&$array, $key)
+	{
+		if (is_null($key))
+		{
+			return false;
+		}
+
+		if (is_array($key))
+		{
+			$return = array();
+			foreach ($key as $k)
+			{
+				$return[$k] = static::delete($array, $k);
+			}
+			return $return;
+		}
+
+		$key_parts = explode('.', $key);
+
+		if ( ! is_array($array) or ! array_key_exists($key_parts[0], $array))
+		{
+			return false;
+		}
+
+		$this_key = array_shift($key_parts);
+
+		if (count($key_parts) > 0)
+		{
+			$key = implode('.', $key_parts);
+			return static::delete($array[$this_key], $key);
+		}
+		else
+		{
+			unset($array[$this_key]);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Converts a multi-dimensional associative array into an array of key => values with the provided field names
 	 *
 	 * @param   array   the array to convert
