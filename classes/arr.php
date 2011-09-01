@@ -434,7 +434,7 @@ class Arr {
 		
 		if ( ! is_array($source) or ! is_array($replace))
 		{
-			throw new \InvalidArgumentException('Arr::replace_keys() - $source must and array. $replace must be an array or string.');
+			throw new \InvalidArgumentException('Arr::replace_keys() - $source must an array. $replace must be an array or string.');
 		}
 
 		$result = array();
