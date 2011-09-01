@@ -374,7 +374,7 @@ JS;
 	 * @access public
 	 * @static
 	 */
-	public static function benchmark($callable, Array $params = array())
+	public static function benchmark($callable, array $params = array())
 	{
 		// get the before-benchmark time
 		if (function_exists('getrusage'))
