@@ -235,10 +235,8 @@ abstract class Session_Driver {
 	public function rotate($force = true)
 	{
 		// existing session. need to rotate the session id?
-		if ($this->config['rotation_time'] &&
-			($force or $this->keys['created'] + $this->config['rotation_time'] <= $this->time->get_timestamp()))
+		if ($force or ($this->config['rotation_time'] and $this->keys['created'] + $this->config['rotation_time'] <= $this->time->get_timestamp()))
 		{
-
 			// generate a new session id, and update the create timestamp
 			$this->keys['previous_id']	= $this->keys['session_id'];
 			$this->keys['session_id']	= $this->_new_session_id();
