@@ -172,55 +172,7 @@ abstract class Session_Driver {
 	 */
 	public function delete($name)
 	{
-		if (isset($this->data[$name]))
-		{
-			unset($this->data[$name]);
-		}
-
-		if (strpos($name, '.') !== false)
-		{
-			$parts = explode('.', $name);
-
-			switch (count($parts))
-			{
-				case 2:
-					if (isset($this->data[$parts[0]][$parts[1]]))
-					{
-						unset($this->data[$parts[0]][$parts[1]]);
-					}
-				break;
-
-				case 3:
-					if (isset($this->data[$parts[0]][$parts[1]][$parts[2]]))
-					{
-						unset($this->data[$parts[0]][$parts[1]][$parts[2]]);
-					}
-				break;
-
-				case 4:
-					if (isset($this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]]))
-					{
-						unset($this->data[$parts[0]][$parts[1]][$parts[2]][$parts[3]]);
-					}
-				break;
-
-				default:
-					$return = false;
-					foreach ($parts as $part)
-					{
-						if ($return === false and isset($this->data[$part]))
-						{
-							$return =& $this->data[$part];
-						}
-						elseif (isset($return[$part]))
-						{
-							$return =& $return[$part];
-						}
-					}
-					if ($return !== false) unset($return);
-				break;
-			}
-		}
+		\Arr::delete($this->data, $name);
 	}
 
 	// --------------------------------------------------------------------
