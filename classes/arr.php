@@ -135,7 +135,7 @@ class Arr {
 
 		$this_key = array_shift($key_parts);
 
-		if (count($key_parts) > 0)
+		if ( ! empty($key_parts))
 		{
 			$key = implode('.', $key_parts);
 			return static::delete($array[$this_key], $key);
