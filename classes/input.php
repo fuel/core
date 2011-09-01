@@ -383,7 +383,7 @@ class Input {
 
 		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
 		{
-			static::$put_delete = parse_str(file_get_contents('php://input'));
+			parse_str(file_get_contents('php://input'), static::$put_delete);
 			static::$input = array_merge(static::$input, static::$put_delete);
 		}
 	}
