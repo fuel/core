@@ -512,6 +512,19 @@ class Form {
 	}
 
 	/**
+	 * Create an error message field
+	 *
+	 * @param   string	error_msg	
+	 * @param   array	attributes
+	 *
+	 * @return  string
+	 */
+	public static function error_msg($error_msg, array $attributes = array())
+	{
+		return html_tag('span', $attributes, __($error_msg) ?: $error_msg);
+	}
+
+	/**
 	 * Prep Value
 	 *
 	 * Prepares the value for display in the form
@@ -538,6 +551,7 @@ class Form {
 	private static function attr_to_string($attr)
 	{
 		unset($attr['label']);
+		unset($attr['error_msg']);
 		return array_to_attr($attr);
 	}
 
@@ -590,8 +604,16 @@ class Form {
 		$open = static::open($attributes).PHP_EOL;
 		$fields = $this->field();
 		$fields_output = '';
+		
 		foreach ($fields as $f)
 		{
+			// Inline error reporting
+			if ($this->get_config('inline_errors') && $f->error())
+			{
+				$f->set_attribute('error_msg', $f->error()->get_message());
+				$f->set_attribute('class', $this->get_config('error_class'));
+			}
+
 			$fields_output .= $this->build_field($f).PHP_EOL;
 		}
 		$close = static::close();
@@ -606,7 +628,7 @@ class Form {
 	/**
 	 * Build & template individual field
 	 *
-	 * @param   string|Fieldset_Field  field instance or name of a field in this form's fieldset
+	 * @param   string|Fieldset_Field   field 		instance or name of a field in this form's fieldset
 	 * @return  string
 	 */
 	public function build_field($field)
@@ -715,6 +737,7 @@ class Form {
 	{
 		$required_mark = $required ? $this->get_config('required_mark', null) : null;
 		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
+		$error_msg = ($msg = $field->get_attribute('error_msg')) ? static::error_msg($msg) : '';
 
 		if (is_array($build_field))
 		{
@@ -741,9 +764,9 @@ class Form {
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $field->template ?: $this->get_config('field_template', '\t\t\t{label} {field}\n');
-		$template = str_replace(array('{label}', '{required}', '{field}'),
-			array($label, $required_mark, $build_field),
+		$template = $field->template ?: $this->get_config('field_template', '\t\t\t{label} {field} {error_msg}\n');
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}'),
+			array($label, $required_mark, $build_field, $error_msg),
 			$template);
 		return $template;
 	}
