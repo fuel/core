@@ -238,6 +238,24 @@ class Validation {
 		return $this;
 	}
 
+	/*
+	 * Remove Callable
+	 *
+	 * Removes an object from the callables array
+	 *
+	 * @param   string|Object  Classname or object
+	 * @return  Validation     this, to allow chaining
+	 */
+	public function remove_callable($class)
+	{
+		if (($key = array_search($class, $this->callables, true)))
+		{
+			unset($this->callables[$key]);
+		}
+
+		return $this;
+	}
+
 	/**
 	 * Fetch the objects for which you don't need to add a full callback but
 	 * just the method name
@@ -259,11 +277,28 @@ class Validation {
 	 * @param   bool   will skip validation of values it can't find or are null
 	 * @return  bool   whether validation succeeded
 	 */
-	public function run($input = null, $allow_partial = false)
+	public function run($input = null, $allow_partial = false, $temp_callables = array())
 	{
 		if (empty($input) && \Input::method() != 'POST')
 		{
 			return false;
+		}
+
+		// Backup current state of callables so they can be restored after adding temp callables
+		$callable_backup = $this->callables;
+
+		// Add temporary callables
+		foreach ($temp_callables as $temp_callable)
+		{
+			// Get class
+			$class = $temp_callable;
+			is_object($temp_callable) and $class = get_class($temp_callable);
+
+			// Remove class from callables list so it's not called statically
+			$this->remove_callable($class);
+
+			// Add this callable
+			$this->add_callable($temp_callable);
 		}
 
 		static::set_active($this);
@@ -296,6 +331,9 @@ class Validation {
 		}
 
 		static::set_active();
+
+		// Restore callables
+		$this->callables = $callable_backup;
 
 		return empty($this->errors);
 	}
