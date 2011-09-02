@@ -229,18 +229,24 @@ class Validation {
 			throw new \InvalidArgumentException('Input for add_callable is not a valid object or class.');
 		}
 
-		// Prevent having the same class twice in the array
+		// Prevent having the same class twice in the array, remove to re-add on top if...
 		foreach ($this->callables as $key => $c)
 		{
-			// remove to re-add on top if it already exists in callables
-			if ($c === $class)
+			// ...it already exists in callables, or is an instance of a callable
+			if ($c === $class or (is_string($c) and is_object($class) and is_a($class, $c)))
 			{
 				unset($this->callables[$key]);
 			}
-			// remove from current callables if new object/class extends it
+			// ...new object/class extends it
 			elseif (is_string($c) and is_subclass_of($class, $c))
 			{
 				unset($this->callables[$key]);
+			}
+			// but if there's a subclass in there to the new one, put the subclass on top and forget the new
+			elseif (is_string($class) and is_subclass_of($c, $class))
+			{
+				unset($this->callables[$key]);
+				$class = $c;
 			}
 		}
 
@@ -301,27 +307,6 @@ class Validation {
 		// Add temporary callables, reversed so first ends on top
 		foreach (array_reverse($temp_callables) as $temp_callable)
 		{
-			if ( ! is_object($temp_callable) and ! class_exists($temp_callable))
-			{
-				throw new \InvalidArgumentException('One of the temporary callables is not a class or object.');
-			}
-
-			// check existing callables to prevent doubles
-			foreach ($this->callables as $key => $c)
-			{
-				// remove to re-add on top if it already exists in callables
-				if ($c === $temp_callable)
-				{
-					unset($this->callables[$key]);
-				}
-				// remove from current callables if new object/class extends it
-				elseif (is_string($c) and is_subclass_of($temp_callable, $c))
-				{
-					unset($this->callables[$key]);
-				}
-			}
-
-			// Add this callable
 			$this->add_callable($temp_callable);
 		}
 
