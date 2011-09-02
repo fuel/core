@@ -229,11 +229,22 @@ class Validation {
 			throw new \InvalidArgumentException('Input for add_callable is not a valid object or class.');
 		}
 
-		// Prevent adding it twice
-		if ( ! in_array($class, $this->callables, true))
+		// Prevent having the same class twice in the array
+		foreach ($this->callables as $key => $c)
 		{
-			array_unshift($this->callables, $class);
+			// remove to re-add on top if it already exists in callables
+			if ($c === $class)
+			{
+				unset($this->callables[$key]);
+			}
+			// remove from current callables if new object/class extends it
+			elseif (is_string($c) and is_subclass_of($class, $c))
+			{
+				unset($this->callables[$key]);
+			}
 		}
+
+		array_unshift($this->callables, $class);
 
 		return $this;
 	}
