@@ -34,7 +34,7 @@ class Validation {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($fieldset = 'default')
@@ -287,15 +287,28 @@ class Validation {
 		// Backup current state of callables so they can be restored after adding temp callables
 		$callable_backup = $this->callables;
 
-		// Add temporary callables
-		foreach ($temp_callables as $temp_callable)
+		// Add temporary callables, reversed so first ends on top
+		foreach (array_reverse($temp_callables) as $temp_callable)
 		{
-			// Get class
-			$class = $temp_callable;
-			is_object($temp_callable) and $class = get_class($temp_callable);
+			if ( ! is_object($temp_callable) and ! class_exists($temp_callable))
+			{
+				throw new \InvalidArgumentException('One of the temporary callables is not a class or object.');
+			}
 
-			// Remove class from callables list so it's not called statically
-			$this->remove_callable($class);
+			// check existing callables to prevent doubles
+			foreach ($this->callables as $key => $c)
+			{
+				// remove to re-add on top if it already exists in callables
+				if ($c === $temp_callable)
+				{
+					unset($this->callables[$key]);
+				}
+				// remove from current callables if new object/class extends it
+				elseif (is_string($c) and is_subclass_of($temp_callable, $c))
+				{
+					unset($this->callables[$key]);
+				}
+			}
 
 			// Add this callable
 			$this->add_callable($temp_callable);
