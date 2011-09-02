@@ -178,13 +178,13 @@ class Security {
 		}
 		elseif (is_array($value) || $value instanceof \Iterator)
 		{
+			// Add to $already_cleaned variable when object
+			is_object($value) and $already_cleaned[] = $value;
+
 			foreach ($value as $k => $v)
 			{
 				$value[$k] = static::htmlentities($v);
 			}
-
-			// Add to $already_cleaned variable when object
-			is_object($value) and $already_cleaned[] = $value;
 		}
 		elseif (is_object($value))
 		{
