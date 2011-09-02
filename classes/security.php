@@ -189,7 +189,7 @@ class Security {
 		elseif (is_object($value))
 		{
 			// Check if the object is whitelisted and return when that's the case
-			foreach (\Config::get('security.whitelisted_classes') as $class)
+			foreach (\Config::get('security.whitelisted_classes', array()) as $class)
 			{
 				if (is_a($value, $class))
 				{
