@@ -232,18 +232,18 @@ class Validation {
 		// Prevent having the same class twice in the array, remove to re-add on top if...
 		foreach ($this->callables as $key => $c)
 		{
-			// ...it already exists in callables, or is an instance of a callable
-			if ($c === $class or (is_string($c) and is_object($class) and is_a($class, $c)))
+			// ...it already exists in callables
+			if ($c === $class)
 			{
 				unset($this->callables[$key]);
 			}
-			// ...new object/class extends it
-			elseif (is_string($c) and is_subclass_of($class, $c))
+			// ...new object/class extends it or an instance of it
+			elseif (is_string($c) and (is_subclass_of($class, $c) or (is_object($class) and is_a($class, $c))))
 			{
 				unset($this->callables[$key]);
 			}
 			// but if there's a subclass in there to the new one, put the subclass on top and forget the new
-			elseif (is_string($class) and is_subclass_of($c, $class))
+			elseif (is_string($class) and (is_subclass_of($c, $class) or (is_object($c) and is_a($c, $class))))
 			{
 				unset($this->callables[$key]);
 				$class = $c;
