@@ -44,6 +44,9 @@ return array(
 	// cookie path  (optional, default = '/')
 	'cookie_path'		=> '/',
 
+	// cookie http_only flag  (optional, default = use the cookie class default)
+	'cookie_http_only'	=> null,
+
 	// if true, the session expires when the browser is closed (optional, default = false)
 	'expire_on_close'	=> false,
 

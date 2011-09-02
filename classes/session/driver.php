@@ -410,11 +410,11 @@ abstract class Session_Driver {
 		// write the session cookie
 		if ($this->config['expire_on_close'])
 		{
-			return \Cookie::set($this->config['cookie_name'], $payload, 0, $this->config['cookie_path'], $this->config['cookie_domain']);
+			return \Cookie::set($this->config['cookie_name'], $payload, 0, $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
 		}
 		else
 		{
-			return \Cookie::set($this->config['cookie_name'], $payload, $this->config['expiration_time'], $this->config['cookie_path'], $this->config['cookie_domain']);
+			return \Cookie::set($this->config['cookie_name'], $payload, $this->config['expiration_time'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
 		}
 	}
 
@@ -586,6 +586,11 @@ abstract class Session_Driver {
 					{
 						$item = '/';
 					}
+				break;
+
+				case 'cookie_http_only':
+					// make sure it's a boolean
+					$item = (bool) $item;
 				break;
 
 				case 'expire_on_close':

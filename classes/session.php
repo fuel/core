@@ -40,6 +40,7 @@ class Session {
 		'match_ua'			=> true,
 		'cookie_domain' 	=> '',
 		'cookie_path'		=> '/',
+		'cookie_http_only'	=> null,
 		'expire_on_close'	=> false,
 		'expiration_time'	=> 7200,
 		'rotation_time'		=> 300,
@@ -67,7 +68,7 @@ class Session {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($custom = array())
