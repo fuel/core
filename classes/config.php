@@ -18,7 +18,7 @@ class Config {
 
 	public static $items = array();
 
-	public static function load($file, $group = null, $reload = false)
+	public static function load($file, $group = null, $reload = false, $overwrite = false)
 	{
 		if ( ! is_array($file) && array_key_exists($file, static::$loaded_files) and ! $reload)
 		{
@@ -37,13 +37,13 @@ class Config {
 			$paths = array_reverse($paths);
 			foreach ($paths as $path)
 			{
-				$config = \Arr::merge($config, \Fuel::load($path));
+				$config = $overwrite ? array_merge($config, \Fuel::load($path)) : \Arr::merge($config, \Fuel::load($path));
 			}
 		}
 
 		if ($group === null)
 		{
-			static::$items = $reload ? $config : \Arr::merge(static::$items, $config);
+			static::$items = $reload ? $config : ($overwrite ? array_merge(static::$items, $config) : \Arr::merge(static::$items, $config));
 		}
 		else
 		{
@@ -52,7 +52,7 @@ class Config {
 			{
 				static::$items[$group] = array();
 			}
-			static::$items[$group] = \Arr::merge(static::$items[$group],$config);
+			static::$items[$group] = $overwrite ? array_merge(static::$items[$group],$config) : \Arr::merge(static::$items[$group],$config);
 		}
 
 		if ( ! is_array($file))
@@ -139,5 +139,10 @@ CONF;
 	public static function set($item, $value)
 	{
 		return \Arr::set(static::$items, $item, \Fuel::value($value));
+	}
+
+	public static function delete($item)
+	{
+		return \Arr::delete(static::$items, $item);
 	}
 }
