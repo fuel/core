@@ -327,8 +327,8 @@ class Validation {
 			{
 				foreach ($field->rules as $rule)
 				{
-					$callback	= $rule[0];
-					$params		= $rule[1];
+					$callback  = $rule[0];
+					$params    = $rule[1];
 					$this->_run_rule($callback, $value, $params, $field);
 				}
 				$this->validated[$field->name] = $value;
@@ -347,6 +347,56 @@ class Validation {
 		return empty($this->errors);
 	}
 
+	protected function _find_rule($callback)
+	{
+		// Rules are validated and only accepted when given as an array consisting of
+		// array(callback, params) or just callbacks in an array.
+		if (is_string($callback))
+		{
+			$callback_method = '_validation_'.$callback;
+			foreach ($this->callables as $callback_class)
+			{
+				if (method_exists($callback_class, $callback_method))
+				{
+					return array($callback_method => array($callback_class, $callback_method));
+				}
+			}
+		}
+
+		// when no callable function was found, try regular callbacks
+		if (is_callable($callback))
+		{
+			if ($callback instanceof \Closure)
+			{
+				$callback_name = 'closure';
+			}
+			elseif (is_array($callback))
+			{
+				$callback_name = preg_replace('#^([a-z_]*\\\\)*#i', '',
+					is_object($callback[0]) ? get_class($callback[0]) : $callback[0]).':'.$callback[1];
+			}
+			else
+			{
+				$callback_name = preg_replace('#^([a-z_]*\\\\)*#i', '', str_replace('::', ':', $callback));
+			}
+			return array($callback_name => $callback);
+		}
+		elseif (is_array($callback) and is_callable(reset($callback)))
+		{
+			return $callback;
+		}
+		else
+		{
+			$string = ! is_array($callback)
+					? $callback
+					: (is_object(@$callback[0])
+						? get_class(@$callback[0]).'->'.@$callback[1]
+						: @$callback[0].'::'.@$callback[1]);
+			Error::notice('Invalid rule "'.$string.'" passed to Validation, not used.');
+			return false;
+		}
+	}
+
 	/**
 	 * Run rule
 	 *
@@ -360,6 +410,11 @@ class Validation {
 	 */
 	protected function _run_rule($rule, &$value, $params, $field)
 	{
+		if (($rule = $this->_find_rule($rule)) === false)
+		{
+			return;
+		}
+
 		$output = call_user_func_array(reset($rule), array_merge(array($value), $params));
 
 		if ($output === false && $value !== false)
@@ -769,5 +824,3 @@ class Validation {
 		return $this->_empty($val) || floatval($val) <= floatval($max_val);
 	}
 }
-
-
