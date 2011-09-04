@@ -607,13 +607,6 @@ class Form {
 		
 		foreach ($fields as $f)
 		{
-			// Inline error reporting
-			if ($this->get_config('inline_errors') && $f->error())
-			{
-				$f->set_attribute('error_msg', $f->error()->get_message());
-				$f->set_attribute('class', $this->get_config('error_class'));
-			}
-
 			$fields_output .= $this->build_field($f).PHP_EOL;
 		}
 		$close = static::close();
@@ -653,6 +646,13 @@ class Form {
 		if ($this->get_config('auto_id', false) === true and $field->get_attribute('id') == '')
 		{
 			$field->set_attribute('id', $this->get_config('auto_id_prefix', '').$field->name);
+		}
+
+		// Inline error reporting
+		if ($this->get_config('inline_errors') && $field->error())
+		{
+			$field->set_attribute('error_msg', $field->error()->get_message());
+			$field->set_attribute('class', $this->get_config('error_class'));
 		}
 
 		switch($field->type)
