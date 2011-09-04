@@ -458,8 +458,10 @@ class Upload {
 			throw new \Fuel_Exception('Can\'t move the uploaded file. Destination path specified does not exist.');
 		}
 
-		// now that we have a path, let's save the files
+		// save the old umask
 		$oldumask = umask(0);
+
+		// now that we have a path, let's save the files
 		foreach($files as $key => $file)
 		{
 			// skip all files in error
@@ -571,9 +573,7 @@ class Upload {
 					// recheck the saved_to path, it might have been altered
 					if ( ! is_dir(static::$files[$key]['saved_to']) and (bool) static::$config['create_path'])
 					{
-						$oldumask = umask(0);
 						@mkdir(static::$files[$key]['saved_to'], static::$config['path_chmod'], true);
-						umask($oldumask);
 					}
 					if ( ! is_dir(static::$files[$key]['saved_to']))
 					{
@@ -613,6 +613,14 @@ class Upload {
 				}
 			}
 		}
+
+		// update any error messages that occured while saving
+		foreach(static::$files as $key => $file)
+		{
+			static::$files[$key]['message'] = \Lang::get('upload.'.static::$files[$key]['error']);
+		}
+
+		// reset the umask
 		umask($oldumask);
 	}
 

@@ -82,17 +82,7 @@ class Input {
 			// Fall back to parsing the REQUEST URI
 			if (isset($_SERVER['REQUEST_URI']))
 			{
-				// Some servers require 'index.php?' as the index page
-				// if we are using mod_rewrite or the server does not require
-				// the question mark, then parse the url.
-				if (\Config::get('index_file') != 'index.php?')
-				{
-					$uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-				}
-				else
-				{
-					$uri = $_SERVER['REQUEST_URI'];
-				}
+				$uri = $_SERVER['REQUEST_URI'];
 			}
 			else
 			{
@@ -111,6 +101,13 @@ class Input {
 			if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
 			{
 				$uri = substr($uri, strlen($index_file));
+			}
+
+			// When index.php? is used and the config is set wrong, lets just
+			// be nice and help them out.
+			if ($index_file and strncmp($uri, '?/', 2) === 0)
+			{
+				$uri = substr($uri, 1);
 			}
 
 			// Lets split the URI up in case it containes a ?.  This would
@@ -386,7 +383,7 @@ class Input {
 
 		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
 		{
-			static::$put_delete = parse_str(file_get_contents('php://input'));
+			parse_str(file_get_contents('php://input'), static::$put_delete);
 			static::$input = array_merge(static::$input, static::$put_delete);
 		}
 	}

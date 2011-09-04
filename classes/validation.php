@@ -34,7 +34,7 @@ class Validation {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($fieldset = 'default')
@@ -229,10 +229,45 @@ class Validation {
 			throw new \InvalidArgumentException('Input for add_callable is not a valid object or class.');
 		}
 
-		// Prevent adding it twice
-		if ( ! in_array($class, $this->callables, true))
+		// Prevent having the same class twice in the array, remove to re-add on top if...
+		foreach ($this->callables as $key => $c)
 		{
-			array_unshift($this->callables, $class);
+			// ...it already exists in callables
+			if ($c === $class)
+			{
+				unset($this->callables[$key]);
+			}
+			// ...new object/class extends it or an instance of it
+			elseif (is_string($c) and (is_subclass_of($class, $c) or (is_object($class) and is_a($class, $c))))
+			{
+				unset($this->callables[$key]);
+			}
+			// but if there's a subclass in there to the new one, put the subclass on top and forget the new
+			elseif (is_string($class) and (is_subclass_of($c, $class) or (is_object($c) and is_a($c, $class))))
+			{
+				unset($this->callables[$key]);
+				$class = $c;
+			}
+		}
+
+		array_unshift($this->callables, $class);
+
+		return $this;
+	}
+
+	/*
+	 * Remove Callable
+	 *
+	 * Removes an object from the callables array
+	 *
+	 * @param   string|Object  Classname or object
+	 * @return  Validation     this, to allow chaining
+	 */
+	public function remove_callable($class)
+	{
+		if (($key = array_search($class, $this->callables, true)))
+		{
+			unset($this->callables[$key]);
 		}
 
 		return $this;
@@ -259,11 +294,20 @@ class Validation {
 	 * @param   bool   will skip validation of values it can't find or are null
 	 * @return  bool   whether validation succeeded
 	 */
-	public function run($input = null, $allow_partial = false)
+	public function run($input = null, $allow_partial = false, $temp_callables = array())
 	{
 		if (empty($input) && \Input::method() != 'POST')
 		{
 			return false;
+		}
+
+		// Backup current state of callables so they can be restored after adding temp callables
+		$callable_backup = $this->callables;
+
+		// Add temporary callables, reversed so first ends on top
+		foreach (array_reverse($temp_callables) as $temp_callable)
+		{
+			$this->add_callable($temp_callable);
 		}
 
 		static::set_active($this);
@@ -283,8 +327,8 @@ class Validation {
 			{
 				foreach ($field->rules as $rule)
 				{
-					$callback	= $rule[0];
-					$params		= $rule[1];
+					$callback  = $rule[0];
+					$params    = $rule[1];
 					$this->_run_rule($callback, $value, $params, $field);
 				}
 				$this->validated[$field->name] = $value;
@@ -297,7 +341,60 @@ class Validation {
 
 		static::set_active();
 
+		// Restore callables
+		$this->callables = $callable_backup;
+
 		return empty($this->errors);
+	}
+
+	protected function _find_rule($callback)
+	{
+		// Rules are validated and only accepted when given as an array consisting of
+		// array(callback, params) or just callbacks in an array.
+		if (is_string($callback))
+		{
+			$callback_method = '_validation_'.$callback;
+			foreach ($this->callables as $callback_class)
+			{
+				if (method_exists($callback_class, $callback_method))
+				{
+					return array($callback_method => array($callback_class, $callback_method));
+				}
+			}
+		}
+
+		// when no callable function was found, try regular callbacks
+		if (is_callable($callback))
+		{
+			if ($callback instanceof \Closure)
+			{
+				$callback_name = 'closure';
+			}
+			elseif (is_array($callback))
+			{
+				$callback_name = preg_replace('#^([a-z_]*\\\\)*#i', '',
+					is_object($callback[0]) ? get_class($callback[0]) : $callback[0]).':'.$callback[1];
+			}
+			else
+			{
+				$callback_name = preg_replace('#^([a-z_]*\\\\)*#i', '', str_replace('::', ':', $callback));
+			}
+			return array($callback_name => $callback);
+		}
+		elseif (is_array($callback) and is_callable(reset($callback)))
+		{
+			return $callback;
+		}
+		else
+		{
+			$string = ! is_array($callback)
+					? $callback
+					: (is_object(@$callback[0])
+						? get_class(@$callback[0]).'->'.@$callback[1]
+						: @$callback[0].'::'.@$callback[1]);
+			Error::notice('Invalid rule "'.$string.'" passed to Validation, not used.');
+			return false;
+		}
 	}
 
 	/**
@@ -313,6 +410,11 @@ class Validation {
 	 */
 	protected function _run_rule($rule, &$value, $params, $field)
 	{
+		if (($rule = $this->_find_rule($rule)) === false)
+		{
+			return;
+		}
+
 		$output = call_user_func_array(reset($rule), array_merge(array($value), $params));
 
 		if ($output === false && $value !== false)
@@ -722,5 +824,3 @@ class Validation {
 		return $this->_empty($val) || floatval($val) <= floatval($max_val);
 	}
 }
-
-

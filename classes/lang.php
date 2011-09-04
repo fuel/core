@@ -55,7 +55,7 @@ class Lang {
 			{
 				foreach ($path as $p)
 				{
-					$lines = $lines + \Fuel::load($p);
+					$lines = \Arr::merge(\Fuel::load($p), $lines);
 				}
 				break;
 			}

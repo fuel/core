@@ -368,5 +368,51 @@ JS;
 		return static::dump(parse_ini_file(get_cfg_var('cfg_file_path'), true));
 	}
 
+	/**
+	 * Benchmark anything that is callable
+	 *
+	 * @access public
+	 * @static
+	 */
+	public static function benchmark($callable, array $params = array())
+	{
+		// get the before-benchmark time
+		if (function_exists('getrusage'))
+		{
+			$dat = getrusage();
+			$utime_before = $dat['ru_utime.tv_sec'] + round($dat['ru_utime.tv_usec']/1000000, 4);
+			$stime_before = $dat['ru_stime.tv_sec'] + round($dat['ru_stime.tv_usec']/1000000, 4);
+		}
+		else
+		{
+			list($usec, $sec) = explode(" ", microtime());
+			$utime_before = ((float)$usec + (float)$sec);
+			$stime_before = 0;
+		}
+
+		// call the function to be benchmarked
+		$result = is_callable($callable) ? call_user_func_array($callable, $params) : null;
+
+		// get the after-benchmark time
+		if (function_exists('getrusage'))
+		{
+			$dat = getrusage();
+			$utime_after = $dat['ru_utime.tv_sec'] + round($dat['ru_utime.tv_usec']/1000000, 4);
+			$stime_after = $dat['ru_stime.tv_sec'] + round($dat['ru_stime.tv_usec']/1000000, 4);
+		}
+		else
+		{
+			list($usec, $sec) = explode(" ", microtime());
+			$utime_after = ((float)$usec + (float)$sec);
+			$stime_after = 0;
+		}
+
+		return array(
+			'user' => sprintf('%1.6f', $utime_after - $utime_before),
+			'system' => sprintf('%1.6f', $stime_after - $stime_before),
+			'result' => $result
+		);
+	}
+
 }
 

@@ -186,7 +186,7 @@ class Uri {
 		}
 
 		$this->uri = trim($uri ?: \Input::uri(), '/');
-		$this->segments = explode('/', $this->uri);
+		$this->segments = $this->uri === '' ? array() : explode('/', $this->uri);
 
 		if (\Fuel::$profiling)
 		{

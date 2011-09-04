@@ -78,10 +78,18 @@ abstract class ViewModel {
 	/**
 	 * @var  bool  whether or not to use auto filtering
 	 */
-	protected $auto_filter;
+	protected $_auto_filter;
+
+	/**
+	 * @var  Request  active request during ViewModel creation for proper context
+	 */
+	protected $_active_request;
 
 	protected function __construct($method, $auto_filter = null)
 	{
+		$this->_auto_filter = $auto_filter;
+		class_exists('Request', false) and $this->_active_request = \Request::active();
+
 		// @TODO Remove in 1.2.  This is for backwards compat only.
 		empty($this->_view) and $this->_view = $this->_template;
 
@@ -109,7 +117,7 @@ abstract class ViewModel {
 	/**
 	 * Must return a View object or something compatible
 	 *
-	 * @return	Object	any object on which the template vars can be set and which has a toString method
+	 * @return     Object  any object on which the template vars can be set and which has a toString method
 	 * @deprecated until 1.2
 	 */
 	protected function set_template()
@@ -121,7 +129,7 @@ abstract class ViewModel {
 	/**
 	 * Must return a View object or something compatible
 	 *
-	 * @return	Object	any object on which the template vars can be set and which has a toString method
+	 * @return  Object  any object on which the template vars can be set and which has a toString method
 	 */
 	protected function set_view()
 	{
@@ -171,8 +179,8 @@ abstract class ViewModel {
 	/**
 	 * Sets and sanitizes a variable on the template
 	 *
-	 * @param	string
-	 * @param	mixed
+	 * @param  string
+	 * @param  mixed
 	 */
 	public function __set($key, $value)
 	{
@@ -182,15 +190,29 @@ abstract class ViewModel {
 	/**
 	 * Sets a variable on the template
 	 *
-	 * @param	string
-	 * @param	mixed
-	 * @param	bool|null
+	 * @param  string
+	 * @param  mixed
+	 * @param  bool|null
 	 */
 	public function set($key, $value, $filter = null)
 	{
+		is_null($filter) and $filter = $this->_auto_filter;
 		$this->_view->set($key, $value, $filter);
 
 		return $this;
+	}
+
+	/**
+	 * Magic method, determines if a variable is set.
+	 *
+	 *     isset($view->foo);
+	 *
+	 * @param   string  variable name
+	 * @return  boolean
+	 */
+	public function __isset($key)
+	{
+		return isset($this->_view->$key);
 	}
 
 	/**
@@ -235,10 +257,23 @@ abstract class ViewModel {
 	 */
 	public function render()
 	{
+		if (class_exists('Request', false))
+		{
+			$current_request = Request::active();
+			Request::active($this->_active_request);
+		}
+
 		$this->{$this->_method}();
 		$this->after();
 
-		return (string) $this->_view;
+		$return = $this->_view->render();
+
+		if (class_exists('Request', false))
+		{
+			Request::active($current_request);
+		}
+
+		return $return;
 	}
 
 	/**

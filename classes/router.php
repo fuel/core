@@ -121,17 +121,20 @@ class Router {
 	protected static function parse_match($match)
 	{
 		$namespace = '\\';
+		$segments = $match->segments;
+		$module = false;
 
 		// First port of call: request for a module?
-		if (\Fuel::module_exists($match->segments[0]))
+		if (\Fuel::module_exists($segments[0]))
 		{
 			// make the module known to the autoloader
-			\Fuel::add_module($match->segments[0]);
-			$match->module = $match->segments[0];
+			\Fuel::add_module($segments[0]);
+			$match->module = array_shift($segments);
 			$namespace .= ucfirst($match->module).'\\';
+			$module = $match->module;
 		}
 
-		if ($info = static::parse_segments($match->segments, $namespace))
+		if ($info = static::parse_segments($segments, $namespace, $module))
 		{
 			$match->controller = $info['controller'];
 			$match->action = $info['action'];
@@ -144,13 +147,13 @@ class Router {
 		}
 	}
 
-	protected static function parse_segments($segments, $namespace = '\\')
+	protected static function parse_segments($segments, $namespace = '\\', $module = false)
 	{
 		$temp_segments = $segments;
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
-			$class = $namespace.'Controller_'.implode('_', $temp_segments);
+			$class = $namespace.'Controller_'.\Inflector::words_to_upper(implode('_', $temp_segments));
 			array_pop($temp_segments);
 			if (class_exists($class))
 			{
@@ -158,6 +161,20 @@ class Router {
 					'controller'    => $class,
 					'action'        => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
 					'method_params' => array_slice($segments, $key + 2),
+				);
+			}
+		}
+
+		// Fall back for default module controllers
+		if ($module)
+		{
+			$class = $namespace.'Controller_'.$module;
+			if (class_exists($class))
+			{
+				return array(
+					'controller'    => $class,
+					'action'        => isset($segments[0]) ? $segments[0] : null,
+					'method_params' => array_slice($segments, 1),
 				);
 			}
 		}
