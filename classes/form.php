@@ -652,7 +652,7 @@ class Form {
 		if ($this->get_config('inline_errors') && $field->error())
 		{
 			$field->set_attribute('error_msg', $field->error()->get_message());
-			$field->set_attribute('class', $this->get_config('error_class'));
+			$field->set_attribute('class', $field->get_attribute('class').' '.$this->get_config('error_class'));
 		}
 
 		switch($field->type)
