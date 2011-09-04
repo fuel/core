@@ -22,6 +22,11 @@ namespace Fuel\Core;
  */
 class Log {
 
+	public static function _init()
+	{
+		\Config::load('file', true);
+	}
+
 	/**
 	 * Logs a message with the Info Log Level
 	 *
@@ -105,8 +110,8 @@ class Log {
 		if ( ! is_dir($filepath))
 		{
 			$old = umask(0);
-			mkdir($filepath, 0777, true);
-			chmod($filepath, 0777);
+			mkdir($filepath, octdec(\Config::get('file.chmod.folders', 0777)), true);
+			chmod($filepath, octdec(\Config::get('file.chmod.folders', 0777)));
 			umask($old);
 		}
 
@@ -114,7 +119,7 @@ class Log {
 
 		$message  = '';
 
-		if ( ! file_exists($filename))
+		if ( ! $exists = file_exists($filename))
 		{
 			$message .= "<"."?php defined('COREPATH') or exit('No direct script access allowed'); ?".">".PHP_EOL.PHP_EOL;
 		}
@@ -139,12 +144,14 @@ class Log {
 		flock($fp, LOCK_UN);
 		fclose($fp);
 
-		$old = umask(0);
-		@chmod($filename, 0666);
-		umask($old);
+		if ( ! $exists)
+		{
+			$old = umask(0);
+			@chmod($filename, octdec(\Config::get('file.chmod.files', 0666)));
+			umask($old);
+		}
+
 		return true;
 	}
 
 }
-
-

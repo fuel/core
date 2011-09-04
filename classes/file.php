@@ -47,7 +47,7 @@ class File {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory(array $config = array())
@@ -138,10 +138,11 @@ class File {
 	 * @param   string|File_Area|null  file area name, object or null for non-specific
 	 * @return  bool
 	 */
-	public static function create_dir($basepath, $name, $chmod = 0777, $area = null)
+	public static function create_dir($basepath, $name, $chmod = null, $area = null)
 	{
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_dir	= static::instance($area)->get_path($basepath.$name);
+		is_null($chmod) and $chmod = octdec(\Config::get('file.chmod.folders', 0777));
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{

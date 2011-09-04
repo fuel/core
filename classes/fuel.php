@@ -509,7 +509,7 @@ class Fuel {
 			// strip the classes directory, we need the module root
 			$path = substr($path, 0, -8);
 		}
-		
+
 		return $path;
 	}
 
@@ -587,10 +587,10 @@ class Fuel {
 		if ( ! is_dir($dir))
 		{
 			// Create the cache directory
-			mkdir($dir, 0777, true);
+			mkdir($dir, octdec(\Config::get('file.chmod.folders', 0777)), true);
 
 			// Set permissions (must be manually set to fix umask issues)
-			chmod($dir, 0777);
+			chmod($dir, octdec(\Config::get('file.chmod.folders', 0777)));
 		}
 
 		// Force the data to be a string
