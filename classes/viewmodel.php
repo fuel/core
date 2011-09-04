@@ -203,6 +203,19 @@ abstract class ViewModel {
 	}
 
 	/**
+	 * Magic method, determines if a variable is set.
+	 *
+	 *     isset($view->foo);
+	 *
+	 * @param   string  variable name
+	 * @return  boolean
+	 */
+	public function __isset($key)
+	{
+		return isset($this->_view->$key);
+	}
+
+	/**
 	 * Assigns a value by reference. The benefit of binding is that values can
 	 * be altered without re-setting them. It is also possible to bind variables
 	 * before they have values. Assigned values will be available as a
