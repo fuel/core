@@ -423,7 +423,7 @@ abstract class Cache_Storage_Driver {
 			}
 		}
 
-		$class = 'Cache_Handler_'.ucfirst($this->content_handler);
+		$class = '\\Cache_Handler_'.ucfirst($this->content_handler);
 		$this->handler_object = new $class();
 
 		return $this->handler_object;

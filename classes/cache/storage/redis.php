@@ -97,7 +97,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver {
 			'dependencies'		=> $this->dependencies,
 			'content_handler'	=> $this->content_handler
 		);
-		$properties = '{{'.self::PROPS_TAG.'}}'.json_encode($properties).'{{/'.self::PROPS_TAG.'}}';
+		$properties = '{{'.static::PROPS_TAG.'}}'.json_encode($properties).'{{/'.static::PROPS_TAG.'}}';
 
 		return $properties . $this->contents;
 	}
@@ -112,14 +112,14 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver {
 	 */
 	protected function unprep_contents($payload)
 	{
-		$properties_end = strpos($payload, '{{/'.self::PROPS_TAG.'}}');
+		$properties_end = strpos($payload, '{{/'.static::PROPS_TAG.'}}');
 		if ($properties_end === FALSE)
 		{
 			throw new \UnexpectedValueException('Cache has bad formatting');
 		}
 
-		$this->contents = substr($payload, $properties_end + strlen('{{/'.self::PROPS_TAG.'}}'));
-		$props = substr(substr($payload, 0, $properties_end), strlen('{{'.self::PROPS_TAG.'}}'));
+		$this->contents = substr($payload, $properties_end + strlen('{{/'.static::PROPS_TAG.'}}'));
+		$props = substr(substr($payload, 0, $properties_end), strlen('{{'.static::PROPS_TAG.'}}'));
 		$props = json_decode($props, true);
 		if ($props === NULL)
 		{
