@@ -358,7 +358,7 @@ class Validation {
 			{
 				if (method_exists($callback_class, $callback_method))
 				{
-					return array($callback_method => array($callback_class, $callback_method));
+					return array($callback => array($callback_class, $callback_method));
 				}
 			}
 		}
