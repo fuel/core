@@ -40,7 +40,7 @@ abstract class Database_Connection {
 	 *
 	 * @param   string   instance name
 	 * @param   array    configuration parameters
-	 * @return  Database
+	 * @return  Database_Connection
 	 */
 	public static function instance($name = NULL, array $config = NULL)
 	{
