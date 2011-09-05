@@ -65,6 +65,20 @@ return array(
 	// fileinfo() magic filename
 	'magic_file' => null,
 
+	// default file and directory permissions
+	'chmod' => array(
+
+		/**
+		 * Permissions for newly created files
+		 */
+		'files'  => '0666',
+
+		/**
+		 * Permissions for newly created directories
+		 */
+		'folders'  => '0777',
+	),
+
 );
 
 

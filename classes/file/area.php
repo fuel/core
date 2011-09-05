@@ -59,7 +59,7 @@ class File_Area {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory(array $config = array())
@@ -213,7 +213,7 @@ class File_Area {
 		return \File::create($basepath, $name, $contents, $this);
 	}
 
-	public function create_dir($basepath, $name, $chmod = 0777)
+	public function create_dir($basepath, $name, $chmod = null)
 	{
 		return \File::create_dir($basepath, $name, $chmod, $this);
 	}
