@@ -444,6 +444,12 @@ class Upload {
 		{
 			throw new \Fuel_Exception('No uploaded files are selected.');
 		}
+		
+		// supplied new name and not auto renaming?
+		if (array_key_exists('new_name', static::$config) and ! static::$config['auto_rename'] and count($files) > 1)
+		{
+			throw new \Fuel_Exception('Can\'t rename multiple files without auto renaming.');
+		}
 
 		// make sure we have a valid path
 		$path = rtrim($path, DS).DS;
@@ -453,6 +459,7 @@ class Upload {
 			@mkdir($path, static::$config['path_chmod'], true);
 			umask($oldumask);
 		}
+		
 		if ( ! is_dir($path))
 		{
 			throw new \Fuel_Exception('Can\'t move the uploaded file. Destination path specified does not exist.');
@@ -481,6 +488,8 @@ class Upload {
 					$filename = \Inflector::friendly_title($filename, '_');
 				}
 			}
+			
+			array_key_exists('new_name', static::$config) and $filename = (string) static::$config['new_name'];
 
 			// array with the final filename
 			$save_as = array(
