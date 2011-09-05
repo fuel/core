@@ -63,7 +63,7 @@ class Lang {
 
 		if ($group === null)
 		{
-			static::$lines = static::$lines + $lines;
+			static::$lines = \Arr::merge($lines, static::$lines);
 		}
 		else
 		{
@@ -72,7 +72,7 @@ class Lang {
 			{
 				static::$lines[$group] = array();
 			}
-			static::$lines[$group] = static::$lines[$group] + $lines;
+			static::$lines[$group] = \Arr::merge($lines, static::$lines[$group]);
 		}
 	}
 
