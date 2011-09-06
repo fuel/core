@@ -374,14 +374,16 @@ class Upload {
 		}
 
 		// determine the validate status
+		$valid = true;
 		foreach(static::$files as $key => $value)
 		{
-			if ($value['error'] === 0)
+			if ($value['error'] !== 0)
 			{
-				static::$valid = true;
+				$valid = false;
 				break;
 			}
 		}
+		static::$valid = $valid;
 	}
 
 	// ---------------------------------------------------------------------------
