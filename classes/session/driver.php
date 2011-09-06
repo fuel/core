@@ -83,6 +83,7 @@ abstract class Session_Driver {
 				$this->flash[$key]['state'] = 'old';
 			}
 		}
+
 		return $this;
 	}
 
@@ -97,6 +98,7 @@ abstract class Session_Driver {
 	public function write()
 	{
 		$this->_cleanup_flash();
+
 		return $this;
 	}
 
@@ -127,6 +129,7 @@ abstract class Session_Driver {
 	public function set($name, $value = null)
 	{
 		\Arr::set($this->data, $name, $value);
+
 		return $this;
 	}
 
@@ -176,6 +179,7 @@ abstract class Session_Driver {
 	public function delete($name)
 	{
 		\Arr::delete($this->data, $name);
+
 		return $this;
 	}
 
@@ -199,6 +203,7 @@ abstract class Session_Driver {
 			$this->keys['created'] 		= $this->time->get_timestamp();
 			$this->keys['updated']		= $this->keys['created'];
 		}
+
 		return $this;
 	}
 
@@ -215,6 +220,7 @@ abstract class Session_Driver {
 	public function set_flash($name, $value)
 	{
 		$this->flash[$this->config['flash_id'].'::'.$name] = array('state' => 'new', 'value' => $value);
+
 		return $this;
 	}
 
@@ -270,6 +276,7 @@ abstract class Session_Driver {
 		{
 			$this->flash[$this->config['flash_id'].'::'.$name]['state'] = 'new';
 		}
+
 		return $this;
 	}
 
@@ -293,6 +300,7 @@ abstract class Session_Driver {
 		{
 			unset($this->flash[$this->config['flash_id'].'::'.$name]);
 		}
+
 		return $this;
 	}
 
@@ -308,6 +316,7 @@ abstract class Session_Driver {
 	public function set_flash_id($name)
 	{
 		$this->config['flash_id'] = (string) $name;
+
 		return $this;
 	}
 
@@ -350,6 +359,7 @@ abstract class Session_Driver {
 	public function set_config($name, $value = null)
 	{
 		if (isset($this->config[$name])) $this->config[$name] = $value;
+		
 		return $this;
 	}
 
@@ -460,11 +470,11 @@ abstract class Session_Driver {
 			{
 				// session has expired
 			}
-			elseif ($this->config['match_ip'] && $cookie[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
+			elseif ($this->config['match_ip'] and $cookie[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
 			{
 				// IP address doesn't match
 			}
-			elseif ($this->config['match_ua'] && $cookie[0]['user_agent'] !== \Input::user_agent())
+			elseif ($this->config['match_ua'] and $cookie[0]['user_agent'] !== \Input::user_agent())
 			{
 				// user agent doesn't match
 			}
