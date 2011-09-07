@@ -590,14 +590,14 @@ class Form {
 		$open = static::open($attributes).PHP_EOL;
 		$fields = $this->field();
 		$fields_output = '';
-		
+
 		foreach ($fields as $f)
 		{
 			$fields_output .= $this->build_field($f).PHP_EOL;
 		}
 		$close = static::close();
 
-		$template =  $this->get_config('form_template', "\t\t{form_open}\n{fields}\n\t\t{form_close}\n");
+		$template =  $this->get_config('form_template', "\n\t\t{form_open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{form_close}\n");
 		$template = str_replace(array('{form_open}', '{fields}', '{form_close}'),
 			array($open, $fields_output, $close),
 			$template);
@@ -633,7 +633,7 @@ class Form {
 		{
 			$field->set_attribute('id', $this->get_config('auto_id_prefix', '').$field->name);
 		}
-		
+
 		if ($this->get_config('inline_errors') && $field->error())
 		{
 			$field->set_attribute('class', $field->get_attribute('class').' '.$this->get_config('error_class'));
@@ -721,12 +721,13 @@ class Form {
 	{
 		$required_mark = $required ? $this->get_config('required_mark', null) : null;
 		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
-		$error_msg = ($this->get_config('inline_errors') && $field->error()) ? html_tag('span', '', $field->error()) : '';
+		$error_template = $this->get_config('error_template', "");
+		$error_msg = ($this->get_config('inline_errors') && $field->error()) ? str_replace('{error_msg}', $field->error(), $error_template) : '';
 
 		if (is_array($build_field))
 		{
 			$label = $field->label ? static::label($field->label) : '';
-			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t\t{group_label}\n {fields}\t\t\t{label} {field}{fields}');
+			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t<tr>\n\t\t\t<td>{group_label}{required}</td>\n\t\t\t<td>{fields}\n\t\t\t\t{label} {field}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n');
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
@@ -739,7 +740,7 @@ class Form {
 				}
 
 				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}'), array($label, $required_mark, $build_fields), $template);
+				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}'), array($label, $required_mark, $build_fields, $error_msg), $template);
 
 				return $template;
 			}
@@ -748,7 +749,7 @@ class Form {
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $field->template ?: $this->get_config('field_template', '\t\t\t{label} {field} {error_msg}\n');
+		$template = $field->template ?: $this->get_config('field_template', '\t\t<tr>\n\t\t\t<td>{label}{required}</td>\n\t\t\t<td>{field} {error_msg}</td>\n\t\t</tr>\n');
 		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}'),
 			array($label, $required_mark, $build_field, $error_msg),
 			$template);
