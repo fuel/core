@@ -22,7 +22,7 @@ class Session_Cookie extends \Session_Driver {
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
-		'cookie_name'		=> 'fuelcid',
+		'cookie_name'  => 'fuelcid',
 	);
 
 	// --------------------------------------------------------------------
@@ -30,7 +30,7 @@ class Session_Cookie extends \Session_Driver {
 	public function __construct($config = array())
 	{
 		// merge the driver config with the global config
-		$this->config = array_merge($config, isset($config['cookie']) and is_array($config['cookie']) ? $config['cookie'] : static::$_defaults);
+		$this->config = array_merge($config, (isset($config['cookie']) and is_array($config['cookie'])) ? $config['cookie'] : static::$_defaults);
 
 		$this->config = $this->_validate_config($this->config);
 	}
@@ -129,7 +129,7 @@ class Session_Cookie extends \Session_Driver {
 
 		// reset the stored session data
 		$this->keys = $this->flash = $this->data = array();
-		
+
 		return $this;
 	}
 
