@@ -240,11 +240,6 @@ class Upload {
 				$keys = array_keys($value['name']);
 				foreach ($keys as $key)
 				{
-					// skip this entry if no file was uploaded
-					if ($value['error'][$key] == static::UPLOAD_ERR_NO_FILE)
-					{
-						continue;
-					}
 					// store the file data
 					$file = array('field' => $name, 'key' => $key);
 					$file['name'] = $value['name'][$key];
@@ -257,11 +252,6 @@ class Upload {
 			}
 			else
 			{
-				// skip this entry if no file was uploaded
-				if ($value['error'] == static::UPLOAD_ERR_NO_FILE)
-				{
-					continue;
-				}
 				// store the file data
 				$file = array('field' => $name, 'key' => false, 'file' => $value['tmp_name']);
 				unset($value['tmp_name']);
