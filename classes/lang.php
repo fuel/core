@@ -109,7 +109,7 @@ class Lang {
 	 * @param   string  key to the line
 	 * @param   string  value for the key
 	 * @param   string  group
-	 * @return  bool    success
+	 * @return  void
 	 */
 	public static function set($line, $value, $group = null)
 	{
