@@ -29,7 +29,7 @@ return array(
 	'field_template'		=> "\t\t\t{label} {field} {error_msg}\n",
 	'multi_field_template'	=> "\t\t\t{group_label}{required}\n {fields}\t\t\t{label} {field}{fields}",
 	'required_mark'			=> '*',
-	'inline_errors'			=> true,
+	'inline_errors'			=> false,
 	'error_class'			=> 'invalid'
 );
 

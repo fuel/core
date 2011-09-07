@@ -538,7 +538,6 @@ class Form {
 	private static function attr_to_string($attr)
 	{
 		unset($attr['label']);
-		unset($attr['error_msg']);
 		return array_to_attr($attr);
 	}
 
@@ -635,14 +634,12 @@ class Form {
 			$field->set_attribute('id', $this->get_config('auto_id_prefix', '').$field->name);
 		}
 
-		// Inline error reporting
-		if ($this->get_config('inline_errors') && $field->error())
+        if ($this->get_config('inline_errors') && $field->error())
 		{
-			$field->set_attribute('error_msg', $field->error()->get_message());
 			$field->set_attribute('class', $field->get_attribute('class').' '.$this->get_config('error_class'));
-		}
+        }
 
-		switch($field->type)
+        switch($field->type)
 		{
 			case 'hidden':
 				$build_field = static::hidden($field->name, $field->value, $field->attributes);
@@ -724,7 +721,7 @@ class Form {
 	{
 		$required_mark = $required ? $this->get_config('required_mark', null) : null;
 		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
-		$error_msg = ($msg = $field->get_attribute('error_msg')) ? html_tag('span', $msg) : '';
+        $error_msg = ($this->get_config('inline_errors') && $field->error()) ? html_tag('span', '', $field->error()) : '';
 
 		if (is_array($build_field))
 		{
