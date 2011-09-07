@@ -634,11 +634,6 @@ class Form {
 			$field->set_attribute('id', $this->get_config('auto_id_prefix', '').$field->name);
 		}
 
-		if ($this->get_config('inline_errors') && $field->error())
-		{
-			$field->set_attribute('class', $field->get_attribute('class').' '.$this->get_config('error_class'));
-		}
-
 		switch($field->type)
 		{
 			case 'hidden':
@@ -723,11 +718,12 @@ class Form {
 		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
 		$error_template = $this->get_config('error_template', "");
 		$error_msg = ($this->get_config('inline_errors') && $field->error()) ? str_replace('{error_msg}', $field->error(), $error_template) : '';
+		$error_class = $field->error() ? $this->get_config('error_class') : '';
 
 		if (is_array($build_field))
 		{
 			$label = $field->label ? static::label($field->label) : '';
-			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t<tr>\n\t\t\t<td>{group_label}{required}</td>\n\t\t\t<td>{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n');
+			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n');
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
@@ -740,7 +736,7 @@ class Form {
 				}
 
 				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}'), array($label, $required_mark, $build_fields, $error_msg), $template);
+				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}'), array($label, $required_mark, $build_fields, $error_msg, $error_class), $template);
 
 				return $template;
 			}
@@ -749,9 +745,9 @@ class Form {
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $field->template ?: $this->get_config('field_template', '\t\t<tr>\n\t\t\t<td>{label}{required}</td>\n\t\t\t<td>{field} {error_msg}</td>\n\t\t</tr>\n');
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}'),
-			array($label, $required_mark, $build_field, $error_msg),
+		$template = $field->template ?: $this->get_config('field_template', '\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {error_msg}</td>\n\t\t</tr>\n');
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}'),
+			array($label, $required_mark, $build_field, $error_msg, $error_class),
 			$template);
 		return $template;
 	}
