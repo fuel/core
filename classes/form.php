@@ -590,6 +590,7 @@ class Form {
 		$open = static::open($attributes).PHP_EOL;
 		$fields = $this->field();
 		$fields_output = '';
+		
 		foreach ($fields as $f)
 		{
 			$fields_output .= $this->build_field($f).PHP_EOL;
@@ -606,7 +607,7 @@ class Form {
 	/**
 	 * Build & template individual field
 	 *
-	 * @param   string|Fieldset_Field  field instance or name of a field in this form's fieldset
+	 * @param   string|Fieldset_Field   field 		instance or name of a field in this form's fieldset
 	 * @return  string
 	 */
 	public function build_field($field)
@@ -631,6 +632,11 @@ class Form {
 		if ($this->get_config('auto_id', false) === true and $field->get_attribute('id') == '')
 		{
 			$field->set_attribute('id', $this->get_config('auto_id_prefix', '').$field->name);
+		}
+		
+		if ($this->get_config('inline_errors') && $field->error())
+		{
+			$field->set_attribute('class', $field->get_attribute('class').' '.$this->get_config('error_class'));
 		}
 
 		switch($field->type)
@@ -715,6 +721,7 @@ class Form {
 	{
 		$required_mark = $required ? $this->get_config('required_mark', null) : null;
 		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
+		$error_msg = ($this->get_config('inline_errors') && $field->error()) ? html_tag('span', '', $field->error()) : '';
 
 		if (is_array($build_field))
 		{
@@ -741,9 +748,9 @@ class Form {
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $field->template ?: $this->get_config('field_template', '\t\t\t{label} {field}\n');
-		$template = str_replace(array('{label}', '{required}', '{field}'),
-			array($label, $required_mark, $build_field),
+		$template = $field->template ?: $this->get_config('field_template', '\t\t\t{label} {field} {error_msg}\n');
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}'),
+			array($label, $required_mark, $build_field, $error_msg),
 			$template);
 		return $template;
 	}

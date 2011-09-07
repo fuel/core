@@ -26,9 +26,11 @@ return array(
 	'auto_id_prefix'		=> 'form_',
 	'form_method'			=> 'post',
 	'form_template'			=> "\t\t{form_open}\n{fields}\n\t\t{form_close}\n",
-	'field_template'		=> "\t\t\t{label} {field}\n",
+	'field_template'		=> "\t\t\t{label} {field} {error_msg}\n",
 	'multi_field_template'	=> "\t\t\t{group_label}{required}\n {fields}\t\t\t{label} {field}{fields}",
 	'required_mark'			=> '*',
+	'inline_errors'			=> false,
+	'error_class'			=> 'invalid'
 );
 
 
