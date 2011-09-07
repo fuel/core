@@ -114,7 +114,7 @@ class Uri {
 		if ( ! empty($get_variables))
 		{
 			$char = strpos($url, '?') === false ? '?' : '&';
-			$url .= $char.http_build_query($get_variables);
+			$url .= $char.str_replace('%3A', ':', http_build_query($get_variables));
 		}
 
 		array_walk($variables, function ($val, $key) use (&$url) {
