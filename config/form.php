@@ -27,7 +27,7 @@ return array(
 	'form_method'           => 'post',
 	'form_template'         => "\n\t\t{form_open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{form_close}\n",
 	'field_template'        => "\t\t<tr>\n\t\t\t<td>{label}{required}</td>\n\t\t\t<td>{field} {error_msg}</td>\n\t\t</tr>\n",
-	'multi_field_template'  => "\t\t<tr>\n\t\t\t<td>{group_label}{required}</td>\n\t\t\t<td>{fields}\n\t\t\t\t{label} {field}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n",
+	'multi_field_template'  => "\t\t<tr>\n\t\t\t<td>{group_label}{required}</td>\n\t\t\t<td>{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n",
 	'error_template'        => '<span>{error_msg}</span>',
 	'required_mark'         => '*',
 	'inline_errors'         => false,

@@ -727,7 +727,7 @@ class Form {
 		if (is_array($build_field))
 		{
 			$label = $field->label ? static::label($field->label) : '';
-			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t<tr>\n\t\t\t<td>{group_label}{required}</td>\n\t\t\t<td>{fields}\n\t\t\t\t{label} {field}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n');
+			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t<tr>\n\t\t\t<td>{group_label}{required}</td>\n\t\t\t<td>{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n');
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
