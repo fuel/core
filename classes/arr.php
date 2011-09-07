@@ -228,7 +228,7 @@ class Arr {
 			$curr_key[] = $key;
 			if (is_array($val) and ($indexed or array_values($val) !== $val))
 			{
-				static::flatten_assoc($val, $glue, false);
+				static::flatten($val, $glue, false. false);
 			}
 			else
 			{
