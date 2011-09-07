@@ -310,11 +310,11 @@ class Upload {
 			// check the file extension black- and whitelists
 			if ($files[$key]['error'] == UPLOAD_ERR_OK)
 			{
-				if (in_array($files[$key]['extension'], (array) static::$config['ext_blacklist']))
+				if (in_array(strtolower($files[$key]['extension']), (array) static::$config['ext_blacklist']))
 				{
 					$files[$key]['error'] = static::UPLOAD_ERR_EXT_BLACKLISTED;
 				}
-				elseif ( ! empty(static::$config['ext_whitelist']) and ! in_array($files[$key]['extension'], (array) static::$config['ext_whitelist']))
+				elseif ( ! empty(static::$config['ext_whitelist']) and ! in_array(strtolower($files[$key]['extension']), (array) static::$config['ext_whitelist']))
 				{
 					$files[$key]['error'] = static::UPLOAD_ERR_EXT_NOT_WHITELISTED;
 				}
@@ -446,7 +446,7 @@ class Upload {
 		{
 			throw new \Fuel_Exception('No uploaded files are selected.');
 		}
-		
+
 		// supplied new name and not auto renaming?
 		if (array_key_exists('new_name', static::$config) and ! static::$config['auto_rename'] and count($files) > 1)
 		{
@@ -461,7 +461,7 @@ class Upload {
 			@mkdir($path, static::$config['path_chmod'], true);
 			umask($oldumask);
 		}
-		
+
 		if ( ! is_dir($path))
 		{
 			throw new \Fuel_Exception('Can\'t move the uploaded file. Destination path specified does not exist.');
@@ -492,7 +492,7 @@ class Upload {
 					$filename = \Inflector::friendly_title($filename, '_');
 				}
 			}
-			
+
 			array_key_exists('new_name', static::$config) and $filename = (string) static::$config['new_name'];
 
 			// array with the final filename
