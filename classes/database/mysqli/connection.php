@@ -209,6 +209,15 @@ class Database_MySQLi_Connection extends \Database_Connection {
 			}
 		}
 
+		// check for multiresults, we don't support those at the moment
+		while($this->_connection->more_results() and $this->_connection->next_result())
+		{
+			if ($more_result = $this->_connection->use_result())
+			{
+				throw new \Database_Exception('The MySQLi driver does not support multiple resultsets', 0);
+			}
+		}
+
 		if (isset($benchmark))
 		{
 			Profiler::stop($benchmark);
