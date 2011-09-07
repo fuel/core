@@ -123,7 +123,7 @@ class Event {
 		if ( static::has_events('shutdown'))
 		{
 			// trigger the shutdown events
-			static::trigger('shutdown');
+			static::trigger('shutdown', '', 'none');
 		}
 	}
 
