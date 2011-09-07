@@ -633,13 +633,13 @@ class Form {
 		{
 			$field->set_attribute('id', $this->get_config('auto_id_prefix', '').$field->name);
 		}
-
-        if ($this->get_config('inline_errors') && $field->error())
+		
+		if ($this->get_config('inline_errors') && $field->error())
 		{
 			$field->set_attribute('class', $field->get_attribute('class').' '.$this->get_config('error_class'));
-        }
+		}
 
-        switch($field->type)
+		switch($field->type)
 		{
 			case 'hidden':
 				$build_field = static::hidden($field->name, $field->value, $field->attributes);
@@ -721,7 +721,7 @@ class Form {
 	{
 		$required_mark = $required ? $this->get_config('required_mark', null) : null;
 		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
-        $error_msg = ($this->get_config('inline_errors') && $field->error()) ? html_tag('span', '', $field->error()) : '';
+		$error_msg = ($this->get_config('inline_errors') && $field->error()) ? html_tag('span', '', $field->error()) : '';
 
 		if (is_array($build_field))
 		{
