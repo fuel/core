@@ -65,7 +65,7 @@ class Request {
 	 */
 	public static function factory($uri = null, $route = true)
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($uri, $route);
 	}
 
@@ -118,10 +118,16 @@ class Request {
 	 *
 	 *     Request::active();
 	 *
+	 * @param   Request|null|false  overwrite current request before returning, false prevents overwrite
 	 * @return  Request
 	 */
-	public static function active()
+	public static function active($request = false)
 	{
+		if ($request !== false)
+		{
+			static::$active = $request;
+		}
+
 		return static::$active;
 	}
 
@@ -134,7 +140,7 @@ class Request {
 	 */
 	public static function show_404()
 	{
-		\Log::warning('This method is deprecated.  Please use a Request404Exception instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Request404Exception instead.', __METHOD__);
 		throw new \Request404Exception();
 	}
 
@@ -263,22 +269,23 @@ class Request {
 		$this->uri = new \Uri($uri);
 
 		// check if a module was requested
-		if (count($this->uri->segments) and $mod_path = \Fuel::module_exists($this->uri->segments[0]))
+		if (count($this->uri->segments) and $module_path = \Fuel::module_exists($this->uri->segments[0]))
 		{
 			// check if the module has routes
-			if (file_exists($mod_path .= 'config/routes.php'))
+			if (is_file($module_path .= 'config/routes.php'))
 			{
+				$module = $this->uri->segments[0];
+
 				// load and add the module routes
-				$mod_routes = \Config::load(\Fuel::load($mod_path), $this->uri->segments[0] . '_routes');
-				$self = $this;
-				array_walk($mod_routes, function ($route, $name) use (&$self) {
+				$module_routes = \Config::load(\Fuel::load($module_path), $module . '_routes');
+				array_walk($module_routes, function ($route, $name) use ($module) {
 					if ($name === '_root_')
 					{
-						$name = $self->uri->segments[0];
+						$name = $module;
 					}
-					elseif (strpos($name, $self->uri->segments[0].'/') !== 0 and $name != $self->uri->segments[0])
+					elseif (strpos($name, $module.'/') !== 0 and $name != $module)
 					{
-						$name = $self->uri->segments[0].'/'.$name;
+						$name = $module.'/'.$name;
 					}
 					\Config::set('routes.'.$name, $route);
 				});
@@ -295,18 +302,16 @@ class Request {
 			return;
 		}
 
-		if ($this->route->module !== null)
-		{
-			$this->module = $this->route->module;
-			\Fuel::add_module($this->module);
-			$this->add_path(\Fuel::module_exists($this->module));
-		}
-
-		$this->directory = $this->route->directory;
+		$this->module = $this->route->module;
 		$this->controller = $this->route->controller;
 		$this->action = $this->route->action;
 		$this->method_params = $this->route->method_params;
 		$this->named_params = $this->route->named_params;
+
+		if ($this->route->module !== null)
+		{
+			$this->add_path(\Fuel::module_exists($this->module));
+		}
 	}
 
 	/**
@@ -337,6 +342,11 @@ class Request {
 	 */
 	public function go($method_params = null)
 	{
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' Start');
+		}
+
 		logger(Fuel::L_INFO, 'Called', __METHOD__);
 
 		// Make the current request active
@@ -370,10 +380,8 @@ class Request {
 		}
 		else
 		{
-			$controller_prefix = '\\'.($this->module ? ucfirst($this->module).'\\' : '').'Controller_';
 			$method_prefix = 'action_';
-
-			$class = $controller_prefix.($this->directory ? ucfirst($this->directory).'_' : '').ucfirst($this->controller);
+			$class = $this->controller;
 
 			// If the class doesn't exist then 404
 			if ( ! class_exists($class))
@@ -425,7 +433,17 @@ class Request {
 				if (method_exists($controller, 'after'))
 				{
 					logger(Fuel::L_INFO, 'Calling '.$class.'::after', __METHOD__);
-					$response = $controller->after($response);
+					$response_after = $controller->after($response);
+
+					// @TODO let the after method set the response directly
+					if (is_null($response_after))
+					{
+						logger(\Fuel::L_WARNING, 'The Controller::after() method should accept and return the Controller\'s response, empty return for the after() method is deprecated.', __METHOD__);
+					}
+					else
+					{
+						$response = $response_after;
+					}
 				}
 			}
 			else
@@ -439,11 +457,12 @@ class Request {
 		if (is_null($response))
 		{
 			// @TODO remove this in a future version as we will get rid of it.
-			$this->response =& $controller->response;
+			logger(\Fuel::L_WARNING, 'The Controller should return a string or a Response object, support for the $controller->response object is deprecated.', __METHOD__);
+			$this->response = $controller->response;
 		}
 		elseif ($response instanceof \Response)
 		{
-			$this->response =& $response;
+			$this->response = $response;
 		}
 		else
 		{
@@ -451,6 +470,12 @@ class Request {
 		}
 
 		static::reset_request();
+
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' End');
+		}
+
 		return $this;
 	}
 

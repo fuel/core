@@ -36,13 +36,13 @@ if ( ! function_exists('logger'))
 {
 	function logger($level, $msg, $method = null)
 	{
-		! class_exists('Fuel\\Core\\Log') and import('log');
-		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
-
 		if ($level > \Config::get('log_threshold'))
 		{
 			return false;
 		}
+
+		! class_exists('Fuel\\Core\\Log') and import('log');
+		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
 
 		return \Log::write($level, $msg, $method);
 	}
@@ -167,5 +167,28 @@ if ( ! function_exists('e'))
 	function e($string)
 	{
 		return Security::htmlentities($string);
+	}
+}
+
+/**
+ * Takes a classname and returns the actual classname for an alias or just the classname
+ * if it's a normal class.
+ *
+ * @param   string  classname to check
+ * @return  string  real classname
+ */
+if ( ! function_exists('get_real_class'))
+{
+	function get_real_class($class)
+	{
+		static $classes = array();
+
+		if ( ! array_key_exists($class, $classes))
+		{
+			$reflect = new ReflectionClass($class);
+			$classes[$class] = $reflect->getName();
+		}
+
+		return $classes[$class];
 	}
 }

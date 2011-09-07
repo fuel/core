@@ -12,6 +12,8 @@
 
 namespace Fuel\Core;
 
+class Fuel_Exception extends \Exception {}
+
 /**
  * The core of the framework.
  *
@@ -20,6 +22,11 @@ namespace Fuel\Core;
  * @category	Core
  */
 class Fuel {
+
+	/**
+	 * @var  string  The version of Fuel
+	 */
+	const VERSION = '1.1-dev';
 
 	/**
 	 * @var  string  constant used for when in testing mode
@@ -41,19 +48,49 @@ class Fuel {
 	 */
 	const STAGE = 'stage';
 
+	/**
+	 * @var  int  No logging
+	 */
 	const L_NONE = 0;
+
+	/**
+	 * @var  int  Log errors only
+	 */
 	const L_ERROR = 1;
+
+	/**
+	 * @var  int  Log warning massages and below
+	 */
 	const L_WARNING = 2;
+
+	/**
+	 * @var  int  Log debug massages and below
+	 */
 	const L_DEBUG = 3;
+
+	/**
+	 * @var  int  Log info massages and below
+	 */
 	const L_INFO = 4;
+
+	/**
+	 * @var  int  Log everything
+	 */
 	const L_ALL = 5;
 
-	const VERSION = '1.1-dev';
-
+	/**
+	 * @var  bool  Whether Fuel has been initialized
+	 */
 	public static $initialized = false;
 
+	/**
+	 * @var  string  The Fuel environment
+	 */
 	public static $env = \Fuel::DEVELOPMENT;
 
+	/**
+	 * @var  bool  Whether to display the profiling information
+	 */
 	public static $profiling = false;
 
 	public static $locale = 'en_US';

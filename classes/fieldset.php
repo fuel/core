@@ -44,7 +44,7 @@ class Fieldset
 	 */
 	public static function factory($name = 'default', array $config = array())
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($name, $config);
 	}
 

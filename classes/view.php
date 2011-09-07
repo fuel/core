@@ -67,13 +67,18 @@ class View {
 	protected $extension = 'php';
 
 	/**
+	 * @var  Request  active request when the View was created
+	 */
+	protected $active_request;
+
+	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($file = null, $data = null, $auto_filter = null)
 	{
-		\Log::warning('This method is deprecated.  Please use a forge() instead.', __METHOD__);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($file, $data, $auto_filter);
 	}
 
@@ -132,6 +137,7 @@ class View {
 		{
 			$this->request_paths = $active->get_paths();
 		}
+		isset($active) and $this->active_request = $active;
 	}
 
 	/**
@@ -263,11 +269,8 @@ class View {
 		$clean_it = function ($data, $rules, $auto_filter) {
 			foreach ($data as $key => $value)
 			{
-				if (array_key_exists($key, $rules))
-				{
-					$filter = $rules[$key];
-				}
-				$filter = isset($filter) ? $filter : $auto_filter;
+				$filter = array_key_exists($key, $rules) ? $rules[$key] : null;
+				$filter = is_null($filter) ? $auto_filter : $filter;
 
 				$data[$key] = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
@@ -524,6 +527,12 @@ class View {
 	 */
 	public function render($file = null)
 	{
+		if (class_exists('Request', false))
+		{
+			$current_request = Request::active();
+			Request::active($this->active_request);
+		}
+
 		if ($file !== null)
 		{
 			$this->set_filename($file);
@@ -535,7 +544,14 @@ class View {
 		}
 
 		// Combine local and global data and capture the output
-		return $this->process_file();
+		$return = $this->process_file();
+
+		if (class_exists('Request', false))
+		{
+			Request::active($current_request);
+		}
+
+		return $return;
 	}
 
 }
