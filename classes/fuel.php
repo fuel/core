@@ -440,20 +440,8 @@ class Fuel {
 	 */
 	public static function add_package($package)
 	{
-		if ( ! is_array($package))
-		{
-			$package = array($package => PKGPATH.$package.DS);
-		}
-		foreach ($package as $name => $path)
-		{
-			if (array_key_exists($name, static::$packages))
-			{
-				continue;
-			}
-			static::add_path($path);
-			static::load($path.'bootstrap.php');
-			static::$packages[$name] = true;
-		}
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Package::load() instead.', __METHOD__);
+		\Package::load($package);
 	}
 
 	/**
@@ -464,7 +452,8 @@ class Fuel {
 	 */
 	public static function remove_package($name)
 	{
-		unset(static::$packages[$name]);
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Package::unload() instead.', __METHOD__);
+		\Package::unload($name);
 	}
 
 	/**

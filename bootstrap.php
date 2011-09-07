@@ -154,6 +154,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
 
 		'Fuel\\Core\\Output'               => COREPATH.'classes/output.php',
+		'Fuel\\Core\\Package'              => COREPATH.'classes/package.php',
+		'Fuel\\Core\\PackageNotFoundException'  => COREPATH.'classes/package.php',
 		'Fuel\\Core\\Pagination'           => COREPATH.'classes/pagination.php',
 		'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
 		'Fuel\\Core\\Request'              => COREPATH.'classes/request.php',
