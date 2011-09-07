@@ -67,7 +67,7 @@ class Session_Redis extends \Session_Driver {
 	 * create a new session
 	 *
 	 * @access	public
-	 * @return	void
+	 * @return	Fuel\Core\Session_Redis
 	 */
 	public function create()
 	{
@@ -84,6 +84,8 @@ class Session_Redis extends \Session_Driver {
 
 		// and set the session cookie
 		$this->_set_cookie();
+
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -93,7 +95,7 @@ class Session_Redis extends \Session_Driver {
 	 *
 	 * @access	public
 	 * @param	boolean, set to true if we want to force a new session to be created
-	 * @return	void
+	 * @return	Fuel\Core\Session_Driver
 	 */
 	public function read($force = false)
 	{
@@ -139,7 +141,7 @@ class Session_Redis extends \Session_Driver {
 			{
 				// update the session
 				$this->keys['previous_id'] = $this->keys['session_id'];
-				$this->keys['session_id'] = $payload['rotated_session_id'];
+				$this->keys['session_id']  = $payload['rotated_session_id'];
 
 				// unpack the payload
 				$payload = $this->_unserialize($payload);
@@ -149,7 +151,7 @@ class Session_Redis extends \Session_Driver {
 		if (isset($payload[0])) $this->data = $payload[0];
 		if (isset($payload[1])) $this->flash = $payload[1];
 
-		parent::read();
+		retunrn parent::read();
 	}
 
 	// --------------------------------------------------------------------
@@ -158,7 +160,7 @@ class Session_Redis extends \Session_Driver {
 	 * write the session
 	 *
 	 * @access	public
-	 * @return	void
+	 * @return	Fuel\Core\Session_Redis
 	 */
 	public function write()
 	{
@@ -177,7 +179,7 @@ class Session_Redis extends \Session_Driver {
 			$this->_write_redis($this->keys['session_id'], $payload);
 
 			// was the session id rotated?
-			if ( isset($this->keys['previous_id']) && $this->keys['previous_id'] != $this->keys['session_id'])
+			if ( isset($this->keys['previous_id']) and $this->keys['previous_id'] != $this->keys['session_id'])
 			{
 				// point the old session file to the new one, we don't want to lose the session
 				$payload = $this->_serialize(array('rotated_session_id' => $this->keys['session_id']));
@@ -186,6 +188,8 @@ class Session_Redis extends \Session_Driver {
 
 			$this->_set_cookie();
 		}
+
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -194,7 +198,7 @@ class Session_Redis extends \Session_Driver {
 	 * destroy the current session
 	 *
 	 * @access	public
-	 * @return	void
+	 * @return	Fuel\Core\Session_Redis
 	 */
 	public function destroy()
 	{
@@ -207,6 +211,8 @@ class Session_Redis extends \Session_Driver {
 
 		// reset the stored session data
 		$this->keys = $this->flash = $this->data = array();
+
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -262,7 +268,7 @@ class Session_Redis extends \Session_Driver {
 				switch ($item)
 				{
 					case 'cookie_name':
-						if ( empty($item) OR ! is_string($item))
+						if ( empty($item) or ! is_string($item))
 						{
 							$item = 'fuelrid';
 						}
@@ -270,7 +276,7 @@ class Session_Redis extends \Session_Driver {
 
 					case 'database':
 						// do we have a servers config
-						if ( empty($item) OR ! is_array($item))
+						if ( empty($item) or ! is_array($item))
 						{
 							$item = 'default';
 						}

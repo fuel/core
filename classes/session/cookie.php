@@ -30,7 +30,7 @@ class Session_Cookie extends \Session_Driver {
 	public function __construct($config = array())
 	{
 		// merge the driver config with the global config
-		$this->config = array_merge($config, isset($config['cookie']) && is_array($config['cookie']) ? $config['cookie'] : static::$_defaults);
+		$this->config = array_merge($config, isset($config['cookie']) and is_array($config['cookie']) ? $config['cookie'] : static::$_defaults);
 
 		$this->config = $this->_validate_config($this->config);
 	}
@@ -41,7 +41,7 @@ class Session_Cookie extends \Session_Driver {
 	 * create a new session
 	 *
 	 * @access	public
-	 * @return	void
+	 * @return	Fuel\Core\Session_Cookie
 	 */
 	public function create()
 	{
@@ -55,6 +55,8 @@ class Session_Cookie extends \Session_Driver {
 
 		// and set the session cookie
 		$this->_set_cookie();
+
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -64,7 +66,7 @@ class Session_Cookie extends \Session_Driver {
 	 *
 	 * @access	public
 	 * @param	boolean, set to true if we want to force a new session to be created
-	 * @return	void
+	 * @return	Fuel\Core\Session_Driver
 	 */
 	public function read($force = false)
 	{
@@ -77,10 +79,10 @@ class Session_Cookie extends \Session_Driver {
 			$this->create();
 		}
 
-		if (isset($payload[0])) $this->data = $payload[0];
+		if (isset($payload[0])) $this->data  = $payload[0];
 		if (isset($payload[1])) $this->flash = $payload[1];
 
-		parent::read();
+		return parent::read();
 	}
 
 	// --------------------------------------------------------------------
@@ -89,7 +91,7 @@ class Session_Cookie extends \Session_Driver {
 	 * write the current session
 	 *
 	 * @access	public
-	 * @return	void
+	 * @return	Fuel\Core\Session_Cookie
 	 */
 	public function write()
 	{
@@ -104,6 +106,8 @@ class Session_Cookie extends \Session_Driver {
 			// then update the cookie
 			$this->_set_cookie(array($this->data, $this->flash));
 		}
+
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -112,7 +116,7 @@ class Session_Cookie extends \Session_Driver {
 	 * destroy the current session
 	 *
 	 * @access	public
-	 * @return	void
+	 * @return	Fuel\Core\Session_Cookie
 	 */
 	public function destroy()
 	{
@@ -125,6 +129,8 @@ class Session_Cookie extends \Session_Driver {
 
 		// reset the stored session data
 		$this->keys = $this->flash = $this->data = array();
+		
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -148,7 +154,7 @@ class Session_Cookie extends \Session_Driver {
 				switch ($name)
 				{
 					case 'cookie_name':
-						if ( empty($item) OR ! is_string($item))
+						if ( empty($item) or ! is_string($item))
 						{
 							$item = 'fuelcid';
 						}
