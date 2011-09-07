@@ -512,19 +512,6 @@ class Form {
 	}
 
 	/**
-	 * Create an error message field
-	 *
-	 * @param   string	error_msg	
-	 * @param   array	attributes
-	 *
-	 * @return  string
-	 */
-	public static function error_msg($error_msg, array $attributes = array())
-	{
-		return html_tag('span', $attributes, __($error_msg) ?: $error_msg);
-	}
-
-	/**
 	 * Prep Value
 	 *
 	 * Prepares the value for display in the form
@@ -737,7 +724,7 @@ class Form {
 	{
 		$required_mark = $required ? $this->get_config('required_mark', null) : null;
 		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
-		$error_msg = ($msg = $field->get_attribute('error_msg')) ? static::error_msg($msg) : '';
+		$error_msg = ($msg = $field->get_attribute('error_msg')) ? html_tag('span', $msg) : '';
 
 		if (is_array($build_field))
 		{
