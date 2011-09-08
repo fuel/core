@@ -105,12 +105,16 @@ class Uri {
 		}
 		$url .= ltrim($uri, '/');
 
-		substr($url, -1) != '/' and strrchr($url, '.') !== \Config::get('url_suffix') and $url .= \Config::get('url_suffix');
+		// Add a url_suffix if defined and the url doesn't already have one
+		if (substr($url, -1) != '/' and (($suffix = strrchr($url, '.')) === false or strlen($suffix) > 5))
+		{
+			\Config::get('url_suffix') and $url .= \Config::get('url_suffix');
+		}
 
 		if ( ! empty($get_variables))
 		{
 			$char = strpos($url, '?') === false ? '?' : '&';
-			$url .= $char.http_build_query($get_variables);
+			$url .= $char.str_replace('%3A', ':', http_build_query($get_variables));
 		}
 
 		array_walk($variables, function ($val, $key) use (&$url) {

@@ -54,6 +54,11 @@ class Tests_Num extends TestCase {
 		$expected = '8K';
 
 		$this->assertEquals($expected, $output);
+
+		$output = Num::quantity('7500', 1);
+		$expected = '7.5K';
+
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -110,7 +115,7 @@ class Tests_Num extends TestCase {
 
 		$this->assertEquals($expected, $output);
 	}
-	
+
 	/**
 	 * @see     Num::mask_credit_card
 	 */

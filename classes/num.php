@@ -158,15 +158,15 @@ class Num {
 	{
 		if ($num >= 1000 && $num < 1000000)
 		{
-			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000)).'K';
+			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0f', $num) / 1000)).'K';
 		}
 		elseif ($num >= 1000000 && $num < 1000000000)
 		{
-			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000)).'M';
+			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0f', $num) / 1000000)).'M';
 		}
 		elseif ($num >= 1000000000)
 		{
-			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0.f', $num) / 1000000000)).'B';
+			return sprintf('%01.'.$decimals.'f', (sprintf('%01.0f', $num) / 1000000000)).'B';
 		}
 
 		return $num;
