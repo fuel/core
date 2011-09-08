@@ -319,7 +319,8 @@ class Validation {
 		foreach($fields as $field)
 		{
 			$value = $this->input($field->name);
-			if ($allow_partial && $value === null)
+			if (($allow_partial === true and $value === null)
+				or (is_array($allow_partial) or ! isset($allow_partial[$field->name])))
 			{
 				continue;
 			}
