@@ -320,7 +320,7 @@ class Validation {
 		{
 			$value = $this->input($field->name);
 			if (($allow_partial === true and $value === null)
-				or (is_array($allow_partial) or ! isset($allow_partial[$field->name])))
+				or (is_array($allow_partial) and ! in_array($field->name, $allow_partial)))
 			{
 				continue;
 			}
