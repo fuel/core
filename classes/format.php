@@ -32,7 +32,7 @@ class Format {
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($data = null, $from_type = null)
@@ -96,7 +96,7 @@ class Format {
 
 		$array = array();
 
-		if (is_object ( $data))
+		if (is_object($data) and ! $data instanceof \Iterator)
 		{
 			$data = get_object_vars($data);
 		}
