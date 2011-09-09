@@ -34,7 +34,7 @@ class Image_Imagemagick extends \Image_Driver {
 			}
 			while (file_exists($this->image_temp));
 		}
-		else if (file_exists($this->image_temp))
+		elseif (file_exists($this->image_temp))
 		{
 			$this->debug('Removing previous temporary image.');
 			unlink($this->image_temp);
@@ -42,11 +42,11 @@ class Image_Imagemagick extends \Image_Driver {
 		$this->debug('Temp file: '.$this->image_temp);
 		if (!file_exists($this->config['temp_dir']) || !is_dir($this->config['temp_dir']))
 		{
-			throw new \Fuel_Exception("The temp directory that was given does not exist.");
+			throw new \RuntimeException("The temp directory that was given does not exist.");
 		}
-		else if (!touch($this->config['temp_dir'] . $this->config['temp_append'] . '_touch'))
+		elseif (!touch($this->config['temp_dir'] . $this->config['temp_append'] . '_touch'))
 		{
-			throw new \Fuel_Exception("Could not write in the temp directory.");
+			throw new \RuntimeException("Could not write in the temp directory.");
 		}
 		$this->exec('convert', '"'.$image_fullpath.'"[0] "'.$this->image_temp.'"');
 
@@ -67,10 +67,10 @@ class Image_Imagemagick extends \Image_Driver {
 
 		$image = '"'.$this->image_temp.'"';
 		$this->exec('convert', "-define png:size=".$cwidth."x".$cheight." ".$image." ".
-				"-background none ".
-				"-resize \"".($pad ? $width : $cwidth)."x".($pad ? $height : $cheight)."!\" ".
-				"-gravity center ".
-				"-extent ".$cwidth."x".$cheight." ".$image);
+			"-background none ".
+			"-resize \"".($pad ? $width : $cwidth)."x".($pad ? $height : $cheight)."!\" ".
+			"-gravity center ".
+			"-extent ".$cwidth."x".$cheight." ".$image);
 		$this->clear_sizes();
 	}
 
@@ -144,7 +144,7 @@ class Image_Imagemagick extends \Image_Driver {
 			') -alpha off -compose CopyOpacity -composite '.$image;
 		$this->exec('convert', $command);
 	}
-	
+
 	protected function _grayscale()
 	{
 		$image = '"'.$this->image_temp.'"';
@@ -181,6 +181,7 @@ class Image_Imagemagick extends \Image_Driver {
 		{
 			$return = $this->sizes_cache;
 		}
+
 		return $return;
 	}
 
@@ -190,13 +191,15 @@ class Image_Imagemagick extends \Image_Driver {
 
 		$this->run_queue();
 		$this->add_background();
-		
+
 		$old = '"'.$this->image_temp.'"';
 		$new = '"'.$filename.'"';
 		$this->exec('convert', $old.' '.$new);
 
 		if ($this->config['persistence'] === false)
+		{
 			$this->reload();
+		}
 
 		return $this;
 	}
@@ -223,8 +226,12 @@ class Image_Imagemagick extends \Image_Driver {
 				echo file_get_contents($this->image_temp);
 			}
 		}
+
 		if ($this->config['persistence'] === false)
+		{
 			$this->reload();
+		}
+
 		return $this;
 	}
 
@@ -253,21 +260,28 @@ class Image_Imagemagick extends \Image_Driver {
 	/**
 	 * Executes the specified imagemagick executable and returns the output.
 	 *
-	 * @param  string   $program   The name of the executable.
-	 * @param  string   $params    The parameters of the executable.
-	 * @param  boolean  $passthru  Returns the output if false or pass it to browser.
-	 * @return mixed    Either returns the output or returns nothing.
+	 * @param   string   $program   The name of the executable.
+	 * @param   string   $params    The parameters of the executable.
+	 * @param   boolean  $passthru  Returns the output if false or pass it to browser.
+	 * @return  mixed    Either returns the output or returns nothing.
 	 */
 	private function exec($program, $params, $passthru = false)
 	{
 		//  Determine the path
 		$this->im_path = realpath($this->config['imagemagick_dir'].$program);
 		if ( ! $this->im_path)
+		{
 			$this->im_path = realpath($this->config['imagemagick_dir'].$program);
+		}
 		if ( ! $this->im_path)
+		{
 			$this->im_path = realpath($this->config['imagemagick_dir'].$program.'.exe');
+		}
 		if ( ! $this->im_path)
-			throw new \Fuel_Exception("imagemagick executables not found in ".$this->config['imagemagick_dir']);
+		{
+			throw new \RuntimeException("imagemagick executables not found in ".$this->config['imagemagick_dir']);
+		}
+
 		$command = $this->im_path." ".$params;
 		$this->debug("Running command: <code>$command</code>");
 		$code = 0;
@@ -280,15 +294,16 @@ class Image_Imagemagick extends \Image_Driver {
 			$message = implode('\n', $output);
 			throw new \Fuel_Exception("imagemagick failed to edit the image. Returned with $code.<br /><br />Command:\n <code>$command</code>");
 		}
+
 		return $output;
 	}
 
 	/**
 	 * Creates a new color usable by ImageMagick.
 	 *
-	 * @param  string   $hex    The hex code of the color
-	 * @param  integer  $alpha  The alpha of the color, 0 (trans) to 100 (opaque)
-	 * @return string   rgba representation of the hex and alpha values.
+	 * @param   string   $hex    The hex code of the color
+	 * @param   integer  $alpha  The alpha of the color, 0 (trans) to 100 (opaque)
+	 * @return  string   rgba representation of the hex and alpha values.
 	 */
 	protected function create_color($hex, $alpha)
 	{
