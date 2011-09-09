@@ -19,18 +19,16 @@ interface Cache_Handler_Driver {
 	/**
 	 * Should make the contents readable
 	 *
-	 * @access	public
-	 * @param	mixed
-	 * @return	mixed
+	 * @param   mixed
+	 * @return  mixed
 	 */
 	public function readable($contents);
 
 	/**
 	 * Should make the contents writable
 	 *
-	 * @access	public
-	 * @param	mixed
-	 * @return	mixed
+	 * @param   mixed
+	 * @return  mixed
 	 */
 	public function writable($contents);
 }

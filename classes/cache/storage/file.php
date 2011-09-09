@@ -17,21 +17,19 @@ namespace Fuel\Core;
 class Cache_Storage_File extends \Cache_Storage_Driver {
 
 	/**
-	 * @const	string	Tag used for opening & closing cache properties
+	 * @const  string  Tag used for opening & closing cache properties
 	 */
 	const PROPS_TAG = 'Fuel_Cache_Properties';
 
 	/**
-	 * @var	string	File caching basepath
+	 * @var  string  File caching basepath
 	 */
 	protected static $path = '';
 
 	/**
-	 * @var driver specific configuration
+	 * @var  array  driver specific configuration
 	 */
 	protected $config = array();
-
-	// ---------------------------------------------------------------------
 
 	public function __construct($identifier, $config)
 	{
@@ -40,25 +38,26 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		$this->config = isset($config['file']) ? $config['file'] : array();
 
 		// check for an expiration override
-		$this->expiration = $this->_validate_config('expiration', isset($this->config['expiration']) ? $this->config['expiration'] : $this->expiration);
+		$this->expiration = $this->_validate_config('expiration', isset($this->config['expiration'])
+			? $this->config['expiration'] : $this->expiration);
 
 		// determine the file cache path
-		static::$path = !empty($this->config['path']) ? $this->config['path'] : \Config::get('cache_dir', APPPATH.'cache'.DS);
+		static::$path = !empty($this->config['path'])
+			? $this->config['path'] : \Config::get('cache_dir', APPPATH.'cache'.DS);
+
 		if ( ! is_dir(static::$path) || ! is_writable(static::$path))
 		{
 			throw new \Fuel_Exception('Cache directory does not exist or is not writable.');
 		}
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Translates a given identifier to a valid path
 	 *
-	 * @param	string
-	 * @return	string
+	 * @param   string
+	 * @return  string
 	 */
-	protected function identifier_to_path( $identifier )
+	protected function identifier_to_path($identifier)
 	{
 		// replace dots with dashes
 		$identifier = str_replace('.', DS, $identifier);
@@ -66,27 +65,23 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		return $identifier;
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Prepend the cache properties
 	 *
-	 * @return string
+	 * @return  string
 	 */
 	protected function prep_contents()
 	{
 		$properties = array(
-			'created'			=> $this->created,
-			'expiration'		=> $this->expiration,
-			'dependencies'		=> $this->dependencies,
-			'content_handler'	=> $this->content_handler
+			'created'          => $this->created,
+			'expiration'       => $this->expiration,
+			'dependencies'     => $this->dependencies,
+			'content_handler'  => $this->content_handler
 		);
 		$properties = '{{'.self::PROPS_TAG.'}}'.json_encode($properties).'{{/'.self::PROPS_TAG.'}}';
 
-		return $properties . $this->contents;
+		return $properties.$this->contents;
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Remove the prepended cache properties and save them in class properties
@@ -110,19 +105,17 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 			throw new \UnexpectedValueException('Cache properties retrieval failed');
 		}
 
-		$this->created			= $props['created'];
-		$this->expiration		= is_null($props['expiration']) ? null : (int) ($props['expiration'] - time());
-		$this->dependencies		= $props['dependencies'];
-		$this->content_handler	= $props['content_handler'];
+		$this->created          = $props['created'];
+		$this->expiration       = is_null($props['expiration']) ? null : (int) ($props['expiration'] - time());
+		$this->dependencies     = $props['dependencies'];
+		$this->content_handler  = $props['content_handler'];
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Check if other caches or files have been changed since cache creation
 	 *
-	 * @param	array
-	 * @return	bool
+	 * @param   array
+	 * @return  bool
 	 */
 	public function check_dependencies(array $dependencies)
 	{
@@ -132,13 +125,17 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 			{
 				$filemtime = filemtime($file);
 				if ($filemtime === false || $filemtime > $this->created)
+				{
 					return false;
+				}
 			}
 			elseif (file_exists($dep))
 			{
 				$filemtime = filemtime($file);
 				if ($filemtime === false || $filemtime > $this->created)
+				{
 					return false;
+				}
 			}
 			else
 			{
@@ -147,8 +144,6 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		}
 		return true;
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Delete Cache
@@ -165,8 +160,8 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 	/**
 	 * Purge all caches
 	 *
-	 * @param	limit purge to subsection
-	 * @return	bool
+	 * @param   limit purge to subsection
+	 * @return  bool
 	 */
 	public function delete_all($section)
 	{
@@ -176,12 +171,10 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		return \File::delete_dir($path.$section, true, false);
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Save a cache, this does the generic pre-processing
 	 *
-	 * @return	bool
+	 * @return  bool  success
 	 */
 	protected function _set()
 	{
@@ -199,7 +192,10 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 			if ( ! @is_dir($test_path))
 			{
 				// create non existing dir
-				if ( ! @mkdir($test_path, 0755, true)) return false;
+				if ( ! @mkdir($test_path, 0755, true))
+				{
+					return false;
+				}
 			}
 		}
 
@@ -207,39 +203,45 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		$file = static::$path.$id_path.'.cache';
 		$handle = fopen($file, 'c');
 
-		if ($handle)
+		if ( ! $handle)
 		{
-			// wait for a lock
-			while ( ! flock($handle, LOCK_EX));
-
-			// write the session data
-			fwrite($handle, $payload);
-
-			//release the lock
-			flock($handle, LOCK_UN);
-
-			// close the file
-			fclose($handle);
+			return false;
 		}
-	}
 
-	// ---------------------------------------------------------------------
+		// wait for a lock
+		while ( ! flock($handle, LOCK_EX));
+
+		// write the session data
+		fwrite($handle, $payload);
+
+		//release the lock
+		flock($handle, LOCK_UN);
+
+		// close the file
+		fclose($handle);
+
+		return true;
+	}
 
 	/**
 	 * Load a cache, this does the generic post-processing
 	 *
-	 * @return bool
+	 * @return  bool  success
 	 */
 	protected function _get()
 	{
 		$id_path = $this->identifier_to_path( $this->identifier );
 		$file = static::$path.$id_path.'.cache';
 		if ( ! file_exists($file))
+		{
 			return false;
+		}
 
 		$handle = fopen($file, 'r');
 		if ( ! $handle)
+		{
 			return false;
+		}
 
 		// wait for a lock
 		while( ! flock($handle, LOCK_EX));
@@ -265,14 +267,11 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 		return true;
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * validate a driver config value
 	 *
-	 * @param	string	name of the config variable to validate
-	 * @param	mixed	value
-	 * @access	private
+	 * @param   string  name of the config variable to validate
+	 * @param   mixed   value
 	 * @return  mixed
 	 */
 	private function _validate_config($name, $value)
@@ -296,7 +295,4 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 
 		return $value;
 	}
-
 }
-
-

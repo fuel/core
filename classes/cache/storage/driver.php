@@ -65,8 +65,6 @@ abstract class Cache_Storage_Driver {
 	 */
 	protected $driver = null;
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Abstract method that should take care of the storage engine specific reading. Needs to set the object properties:
 	 * - created
@@ -79,8 +77,6 @@ abstract class Cache_Storage_Driver {
 	 */
 	abstract protected function _get();
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Abstract method that should take care of the storage engine specific writing. Needs to write the object properties:
 	 * - created
@@ -91,14 +87,10 @@ abstract class Cache_Storage_Driver {
 	 */
 	abstract protected function _set();
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Should delete this cache instance, should also run reset() afterwards
 	 */
 	abstract public function delete();
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Flushes the whole cache for a specific storage type or just a part of it when $section is set
@@ -108,8 +100,6 @@ abstract class Cache_Storage_Driver {
 	 */
 	abstract public function delete_all($section);
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Should check all dependencies against the creation timestamp.
 	 * This is static to make it possible in the future to check dependencies from other storages then the current one,
@@ -118,8 +108,6 @@ abstract class Cache_Storage_Driver {
 	 * @return  bool either true or false on any failure
 	 */
 	abstract public function check_dependencies(array $dependencies);
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Default constructor, any extension should either load this first or act similar
@@ -132,13 +120,11 @@ abstract class Cache_Storage_Driver {
 		$this->identifier = $identifier;
 
 		// fetch options from config and set them
-		$this->expiration		= array_key_exists('expiration', $config) ? $config['expiration'] : \Config::get('cache.expiration', null);
-		$this->dependencies		= array_key_exists('dependencies', $config) ? $config['dependencies'] : array();
-		$this->content_handler	= array_key_exists('content_handler', $config) ? new $config['content_handler']() : null;
-		$this->driver			= array_key_exists('driver', $config) ? $config['driver'] : 'file';
+		$this->expiration       = array_key_exists('expiration', $config) ? $config['expiration'] : \Config::get('cache.expiration', null);
+		$this->dependencies     = array_key_exists('dependencies', $config) ? $config['dependencies'] : array();
+		$this->content_handler  = array_key_exists('content_handler', $config) ? new $config['content_handler']() : null;
+		$this->driver           = array_key_exists('driver', $config) ? $config['driver'] : 'file';
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Allows for default getting and setting
@@ -182,8 +168,6 @@ abstract class Cache_Storage_Driver {
 		}
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Converts the identifier to a string when necessary:
 	 * A int is just converted to a string, all others are serialized and then md5'd
@@ -217,8 +201,6 @@ abstract class Cache_Storage_Driver {
 		}
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Resets all properties except for the identifier, should be run by default when a delete() is triggered
 	 */
@@ -231,8 +213,6 @@ abstract class Cache_Storage_Driver {
 		$this->content_handler	= null;
 		$this->handler_object	= null;
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Front for writing the cache, ensures interchangebility of storage engines. Actual writing
@@ -283,8 +263,6 @@ abstract class Cache_Storage_Driver {
 		$this->expiration = $current_expiration;
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Front for reading the cache, ensures interchangebility of storage engines. Actual reading
 	 * is being done by the _get() method which needs to be extended.
@@ -318,8 +296,6 @@ abstract class Cache_Storage_Driver {
 		return $this->get_contents();
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Does get() & set() in one call that takes a callback and it's arguements to generate the contents
 	 *
@@ -346,8 +322,6 @@ abstract class Cache_Storage_Driver {
 		return $this->get_contents();
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Set the contents with optional handler instead of the default
 	 *
@@ -363,8 +337,6 @@ abstract class Cache_Storage_Driver {
 		return $this;
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Fetches contents
 	 *
@@ -374,8 +346,6 @@ abstract class Cache_Storage_Driver {
 	{
 		return $this->handle_reading($this->contents);
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Decides a content handler that makes it possible to write non-strings to a file
@@ -389,8 +359,6 @@ abstract class Cache_Storage_Driver {
 		$this->content_handler = (string) $handler;
 		return $this;
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Gets a specific content handler
@@ -429,8 +397,6 @@ abstract class Cache_Storage_Driver {
 		return $this->handler_object;
 	}
 
-	// ---------------------------------------------------------------------
-
 	/**
 	 * Converts the contents the cachable format
 	 *
@@ -440,8 +406,6 @@ abstract class Cache_Storage_Driver {
 	{
 		return $this->get_content_handler()->writable($contents);
 	}
-
-	// ---------------------------------------------------------------------
 
 	/**
 	 * Converts the cachable format to the original value
@@ -453,4 +417,3 @@ abstract class Cache_Storage_Driver {
 		return $this->get_content_handler()->readable($contents);
 	}
 }
-

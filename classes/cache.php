@@ -33,7 +33,6 @@ class Cache {
 	/**
 	 * Creates a new cache instance.
 	 *
-	 * @access  public
 	 * @param   mixed                 The identifier of the cache, can be anything but empty
 	 * @param   array|string          Either an array of settings or the storage driver to be used
 	 * @return  Cache_Storage_Driver  The new cache object
@@ -48,7 +47,6 @@ class Cache {
 	/**
 	 * Creates a new cache instance.
 	 *
-	 * @access  public
 	 * @param   mixed                 The identifier of the cache, can be anything but empty
 	 * @param   array|string          Either an array of settings or the storage driver to be used
 	 * @return  Cache_Storage_Driver  The new cache object
@@ -94,7 +92,7 @@ class Cache {
 	public static function set($identifier, $contents = null, $expiration = false, $dependencies = array())
 	{
 		$contents = \Fuel::value($contents);
-		
+
 		$cache = static::forge($identifier);
 		return $cache->set($contents, $expiration, $dependencies);
 	}
