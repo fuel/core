@@ -80,12 +80,12 @@ class Database_MySQLi_Connection extends \Database_Connection {
 			if ($persistent)
 			{
 				// Create a persistent connection
-				$this->_connection =  new \mysqli('p:'.$hostname, $username, $password, $database, $port, $socket);
+				$this->_connection =  new \MySQLi('p:'.$hostname, $username, $password, $database, $port, $socket);
 			}
 			else
 			{
 				// Create a connection and force it to be a new link
-				$this->_connection = new \mysqli($hostname, $username, $password, $database, $port, $socket);
+				$this->_connection = new \MySQLi($hostname, $username, $password, $database, $port, $socket);
 			}
 			if ($this->_connection->error)
       {
