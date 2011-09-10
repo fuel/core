@@ -215,7 +215,7 @@ abstract class Cache_Storage_Driver {
 	}
 
 	/**
-	 * Front for writing the cache, ensures interchangebility of storage engines. Actual writing
+	 * Front for writing the cache, ensures interchangeability of storage engines. Actual writing
 	 * is being done by the _set() method which needs to be extended.
 	 *
 	 * @param   mixed                 The content to be cached
@@ -264,7 +264,7 @@ abstract class Cache_Storage_Driver {
 	}
 
 	/**
-	 * Front for reading the cache, ensures interchangebility of storage engines. Actual reading
+	 * Front for reading the cache, ensures interchangeability of storage engines. Actual reading
 	 * is being done by the _get() method which needs to be extended.
 	 *
 	 * @param   bool
@@ -297,10 +297,10 @@ abstract class Cache_Storage_Driver {
 	}
 
 	/**
-	 * Does get() & set() in one call that takes a callback and it's arguements to generate the contents
+	 * Does get() & set() in one call that takes a callback and it's arguments to generate the contents
 	 *
 	 * @param   string|array  Valid PHP callback
-	 * @param   array         Arguements for the above function/method
+	 * @param   array         Arguments for the above function/method
 	 * @param   int|null      Cache expiration in seconds
 	 * @param   array         Contains the identifiers of caches this one will depend on
 	 * @return  mixed
@@ -373,7 +373,7 @@ abstract class Cache_Storage_Driver {
 			return $this->handler_object;
 		}
 
-		// When not yet set, use $handler or detect the prefered handler (string = string, otherwise serialize)
+		// When not yet set, use $handler or detect the preferred handler (string = string, otherwise serialize)
 		if (empty($this->content_handler) && empty($handler))
 		{
 			if ( ! empty($handler))
