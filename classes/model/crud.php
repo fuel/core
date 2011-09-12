@@ -356,11 +356,11 @@ class Model_Crud extends Model {
 	 */
 	public static function _init()
 	{
-		if( ! static::$table)
+		if( ! static::$_table)
 		{
 			$class = get_called_class();
 			$table = \Inflector::tableize($class);
-			static::$table = &$table;
+			static::$_table = &$table;
 		}
 	}
 
