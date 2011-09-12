@@ -100,6 +100,28 @@ class Arr {
 
 		$array[array_shift($keys)] = $value;
 	}
+	
+	/**
+	 * Array_key_exists with a dot-notated key from an array.
+	 *
+	 * @param   array   $array    The search array
+	 * @param   mixed   $key      The dot-notated key or array of keys
+	 * @return  mixed
+	 */
+	public static function key_exists($array, $key)
+	{
+		foreach (explode('.', $key) as $key_part)
+		{
+			if ( ! is_array($array) or ! array_key_exists($key_part, $array))
+			{
+				return false;
+			}
+
+			$array = $array[$key_part];
+		}
+
+		return true;
+	}
 
 	/**
 	 * Converts a multi-dimensional associative array into an array of key => values with the provided field names
