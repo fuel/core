@@ -71,6 +71,45 @@ class Tests_Arr extends TestCase {
 		$output = Arr::assoc_to_keyval($assoc, 'color', 'name');
 		$this->assertEquals($expected, $output);
 	}
+	
+	/**
+	 * Tests Arr::key_exists()
+	 *
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_key_exists_with_key_found($person)
+	{
+		$expected = true;
+		$output = Arr::key_exists($person, "name");
+		$this->assertEquals($expected, $output);
+	}
+	
+	/**
+	 * Tests Arr::key_exists()
+	 *
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_key_exists_with_key_not_found($person)
+	{
+		$expected = false;
+		$output = Arr::key_exists($person, "unknown");
+		$this->assertEquals($expected, $output);
+	}
+	
+	/**
+	 * Tests Arr::key_exists()
+	 *
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_key_exists_with_dot_separated_key($person)
+	{
+		$expected = true;
+		$output = Arr::key_exists($person, "location.city");
+		$this->assertEquals($expected, $output);
+	}
 
 	/**
 	 * Tests Arr::element()
