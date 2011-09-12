@@ -17,7 +17,7 @@ class Model_Crud extends Model {
 	/**
 	 * @var  string  $_table  The table name
 	 */
-	protected static $_table = '';
+	protected static $_table = false;
 
 	/**
 	 * @var  string  $_pk  The primary key for the table
@@ -286,6 +286,21 @@ class Model_Crud extends Model {
 		$this->_is_frozen = (bool) $frozen;
 
 		return $this;
+	}
+	
+	/**
+	 * Class init.
+	 *
+	 * Sets the table name if not set, based on the model name.
+	 */
+	public static function _init()
+	{
+		if( ! static::$table)
+		{
+			$class = get_called_class();
+			$table = \Inflector::tableize($class);
+			static::$table = &$table;
+		}
 	}
 
 }
