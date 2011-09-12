@@ -81,7 +81,7 @@ class Model_Crud extends Model {
 	 */
 	public static function find_by($column = null, $value = null, $operator = '=', $limit = null, $offset = 0)
 	{
-		$query = DB::select('*')
+		$query = \DB::select('*')
 		           ->from(static::$_table);
 		
 		if ($column !== null)
@@ -215,7 +215,7 @@ class Model_Crud extends Model {
 	{
 		if ($this->frozen())
 		{
-			throw new Exception('Cannot modify a frozen row.');
+			throw new \Exception('Cannot modify a frozen row.');
 		}
 		// This crazy bit of code gets all of this object's public properties
 		$vars = (array) $this;
@@ -229,11 +229,11 @@ class Model_Crud extends Model {
 
 		if ($this->is_new())
 		{
-			return DB::insert(static::$_table)
+			return \DB::insert(static::$_table)
 			         ->set($vars)
 			         ->execute();
 		}
-		return DB::update(static::$_table)
+		return \DB::update(static::$_table)
 		         ->set($vars)
 		         ->where(static::$_pk, '=', $this->{static::$_pk})
 		         ->execute();
@@ -247,7 +247,7 @@ class Model_Crud extends Model {
 	public function delete()
 	{
 		$this->frozen(true);
-		return DB::delete(static::$_table)
+		return \DB::delete(static::$_table)
 		         ->where(static::$_pk, '=', $this->{static::$_pk})
 		         ->execute();
 	}
