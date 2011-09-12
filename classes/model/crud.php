@@ -169,7 +169,7 @@ class Model_Crud extends Model {
 	/**
 	 * @var  object  $_validation  The validation instance
 	 */
-	protected $_validation = array();
+	protected $_validation = null;
 
 	/**
 	 * Sets up the object.
