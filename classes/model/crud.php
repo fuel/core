@@ -137,11 +137,11 @@ class Model_Crud extends Model {
 	{
 		if (strncmp($name, 'find_by_', 8) === 0)
 		{
-			return static::find(substr($name, 8), reset($args));
+			return static::find_by(substr($name, 8), reset($args));
 		}
 		elseif (strncmp($name, 'find_one_by_', 12) === 0)
 		{
-			return static::find_one(substr($name, 12), reset($args));
+			return static::find_one_by(substr($name, 12), reset($args));
 		}
 		throw new \BadMethodCallException('Method "'.$name.'" does not exist.');
 	}
