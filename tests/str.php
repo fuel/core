@@ -212,4 +212,17 @@ class Tests_Str extends TestCase {
 		$output = Str::random('nozero', 22);
 		$this->assertFalse(strpos($output, '0'));	
 	}
+	
+	/**
+	 * Test for Str::to_url()
+	 *
+	 * @test
+	 */
+	public function test_to_url()
+	{
+		$output = Str::to_url('Oh, hello! You’re a nice chap .');
+		$expected = "oh-hello-youre-a-nice-chap";
+
+		$this->assertEquals($expected, $output);
+	}
 }

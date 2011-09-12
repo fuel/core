@@ -285,6 +285,30 @@ class Str {
 			return $args[($next ? $i++ : $i) % count($args)];
 		};
 	}
+	
+	/**
+	 * Returns a string suitable for use in a URL. Spaces are converted to hyphens,
+	 * everything is lowercase and non-standard characters are removed.
+	 *
+	 * @param	string	$url			required	URL to be returned
+	 * @param 	string	$space_replace				Character to use instead of a space
+	 * @return	string
+	 */
+	public static function to_url($url, $space_replace = '-')
+	{
+		// Lower case, no funny business
+		$url = strtolower($url);
+		$url = strip_tags($url);
+		$url = stripslashes($url);
+		$url = trim($url);
+
+		// Replace spaces
+		$url = preg_replace("/\s+/", $space_replace, $url);
+
+		// Remove anything that isn’t a number, letter, hyphen or underscore
+		$url = preg_replace("/[^a-z0-9\-\_]/", '', $url);
+
+		// Return without bits hanging off the end
+		return trim($url, $space_replace);
+	}
 }
-
-
