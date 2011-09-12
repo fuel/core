@@ -112,6 +112,11 @@ class Validation {
 	 * @var  array  contains validation error messages, will overwrite those from lang files
 	 */
 	protected $error_messages = array();
+	
+	/**
+	 * @var  mixed  contains the field currently being validated
+	 */
+	protected $_current_validation_field = null;
 
 	protected function __construct($fieldset)
 	{
@@ -416,7 +421,12 @@ class Validation {
 			return;
 		}
 
-		$output = call_user_func_array(reset($rule), array_merge(array($value), $params));
+		$rule_callback = reset($rule);
+		$rule_callback[0]->_current_validation_field = $field;
+
+		$output = call_user_func_array($rule_callback, array_merge(array($value), $params));
+
+		$rule_callback[0]->_current_validation_field = null;
 
 		if ($output === false && $value !== false)
 		{
