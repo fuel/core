@@ -17,7 +17,7 @@ class Model_Crud extends Model {
 	/**
 	 * @var  string  $_table_name  The table name (must set this in your Model)
 	 */
-	//protected static $_table_name = '';
+	// protected static $_table_name = '';
 
 	/**
 	 * @var  string  $_primary_key  The primary key for the table
@@ -25,14 +25,14 @@ class Model_Crud extends Model {
 	protected static $_primary_key = 'id';
 	
 	/**
-	 * @var  array  $_rules  The validation rules
+	 * @var  array  $_rules  The validation rules (must set this in your Model to use)
 	 */
-	protected static $_rules = array();
+	// protected static $_rules = array();
 	
 	/**
-	 * @var array  $_labels  Field labels
+	 * @var array  $_labels  Field labels (must set this in your Model to use)
 	 */
-	protected static $_labels = array();
+	// protected static $_labels = array();
 
 	/**
 	 * Finds a row with the given primary key value.
@@ -242,11 +242,11 @@ class Model_Crud extends Model {
 			}
 		});
 		
-		if(count(static::$_rules) > 0)
+		if (isset(static::$_rules) and count(static::$_rules) > 0)
 		{
 			$validated = $this->run_validation($vars);
 			
-			if($validated)
+			if ($validated)
 			{
 				$vars = $this->validation()->validated();
 			}
@@ -266,38 +266,6 @@ class Model_Crud extends Model {
 		         ->set($vars)
 		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key})
 		         ->execute();
-	}
-	
-	/**
-	 * Run validation
-	 *
-	 * @param   array  $vars  array to validate
-	 * @return  bool   validation result
-	 */
-	protected function run_validation($vars)
-	{
-		$this->_validation = null;
-		$this->_validation = $this->validation();
-		
-		if(static::$_rules as $field => $rules)
-		{
-			$label = array_key_exists($field, static::$_labels) ? static::$_labels[$field] : $field;
-			$this->_validation->add_field($field, $label, $rules);
-		}
-		
-		return $this->_validation->run($vars);
-	}
-	
-	/**
-	 * Returns the a validation object for the model.
-	 *
-	 * @return  object  Validation object
-	 */
-	public function validation()
-	{
-		$this->_validation or $this->_validation = \Validation::forge(md5(microtime(true)));
-		
-		return $this->_validation;
 	}
 
 	/**
@@ -349,4 +317,35 @@ class Model_Crud extends Model {
 		return $this;
 	}
 
+	/**
+	 * Returns the a validation object for the model.
+	 *
+	 * @return  object  Validation object
+	 */
+	public function validation()
+	{
+		$this->_validation or $this->_validation = \Validation::forge(md5(microtime(true)));
+		
+		return $this->_validation;
+	}
+
+	/**
+	 * Run validation
+	 *
+	 * @param   array  $vars  array to validate
+	 * @return  bool   validation result
+	 */
+	protected function run_validation($vars)
+	{
+		$this->_validation = null;
+		$this->_validation = $this->validation();
+		
+		if(static::$_rules as $field => $rules)
+		{
+			$label = (isset(static::$_labels) and array_key_exists($field, static::$_labels)) ? static::$_labels[$field] : $field;
+			$this->_validation->add_field($field, $label, $rules);
+		}
+		
+		return $this->_validation->run($vars);
+	}
 }
