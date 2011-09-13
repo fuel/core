@@ -129,7 +129,7 @@ class Input {
 		strrchr($uri, '.') === $ext and $uri = substr($uri,0,-strlen($ext));
 
 		// Do some final clean up of the uri
-		static::$detected_uri = \Security::clean_uri(str_replace(array('//', '../'), '/', $uri));
+		static::$detected_uri = \Security::clean_uri(preg_replace(array("/\.+\//", '/\/+/'), '/', $uri));
 
 		return static::$detected_uri;
 	}
