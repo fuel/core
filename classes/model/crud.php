@@ -17,12 +17,22 @@ class Model_Crud extends Model {
 	/**
 	 * @var  string  $_table  The table name
 	 */
-	protected static $_table = '';
+	protected static $_table = false;
 
 	/**
 	 * @var  string  $_pk  The primary key for the table
 	 */
 	protected static $_pk = 'id';
+	
+	/**
+	 * @var  array  $_rules  The validation rules
+	 */
+	protected static $_rules = array();
+	
+	/**
+	 * @var array  $_labels  Field labels
+	 */
+	protected static $_labels = array();
 
 	/**
 	 * Finds a row with the given primary key value.
@@ -155,6 +165,11 @@ class Model_Crud extends Model {
 	 * @var  bool  $_is_frozen  If this is a record is frozen
 	 */
 	protected $_is_frozen = false;
+	
+	/**
+	 * @var  object  $_validation  The validation instance
+	 */
+	protected $_validation = null;
 
 	/**
 	 * Sets up the object.
@@ -226,6 +241,20 @@ class Model_Crud extends Model {
 				unset($vars[$key]);
 			}
 		});
+		
+		if(count(static::$_rules) > 0)
+		{
+			$validated = $this->run_validation($vars);
+			
+			if($validated)
+			{
+				$vars = $this->validation()->validated();
+			}
+			else
+			{
+				return false;
+			}
+		}
 
 		if ($this->is_new())
 		{
@@ -237,6 +266,38 @@ class Model_Crud extends Model {
 		         ->set($vars)
 		         ->where(static::$_pk, '=', $this->{static::$_pk})
 		         ->execute();
+	}
+	
+	/**
+	 * Run validation
+	 *
+	 * @param   array  $vars  array to validate
+	 * @return  bool   validation result
+	 */
+	protected function run_validation($vars)
+	{
+		$this->_validation = null;
+		$this->_validation = $this->validation();
+		
+		if(static::$_rules as $field => $rules)
+		{
+			$label = array_key_exists($field, static::$_labels) ? static::$_labels[$field] : $field;
+			$this->_validation->add_field($field, $label, $rules);
+		}
+		
+		return $this->_validation->run($vars);
+	}
+	
+	/**
+	 * Returns the a validation object for the model.
+	 *
+	 * @return  object  Validation object
+	 */
+	public function validation()
+	{
+		$this->_validation or $this->_validation = \Validation::forge(md5(microtime(true)));
+		
+		return $this->_validation;
 	}
 
 	/**
@@ -286,6 +347,21 @@ class Model_Crud extends Model {
 		$this->_is_frozen = (bool) $frozen;
 
 		return $this;
+	}
+	
+	/**
+	 * Class init.
+	 *
+	 * Sets the table name if not set, based on the model name.
+	 */
+	public static function _init()
+	{
+		if( ! static::$_table)
+		{
+			$class = get_called_class();
+			$table = \Inflector::tableize($class);
+			static::$_table = &$table;
+		}
 	}
 
 }
