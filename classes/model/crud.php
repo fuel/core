@@ -49,11 +49,11 @@ class Model_Crud extends Model {
 		
 		if (is_array($column))
 		{
-			$query->where($column);
+			$query = $query->where($column);
 		}
 		else
 		{
-			$query->where($column, $operator, $value);
+			$query = $query->where($column, $operator, $value);
 		}
 
 		$query = $query->limit(1)
@@ -88,17 +88,17 @@ class Model_Crud extends Model {
 		{
 			if (is_array($column))
 			{
-				$query->where($column);
+				$query = $query->where($column);
 			}
 			else
 			{
-				$query->where($column, $operator, $value);
+				$query = $query->where($column, $operator, $value);
 			}
 		}
 		
 		if ($limit !== null)
 		{
-			$query->limit($limit)->offset($offset);
+			$query = $query->limit($limit)->offset($offset);
 		}
 
 		$query = $query->as_object(get_called_class())
