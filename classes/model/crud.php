@@ -15,14 +15,14 @@ namespace Fuel\Core;
 class Model_Crud extends Model {
 	
 	/**
-	 * @var  string  $_table  The table name
+	 * @var  string  $_table_name  The table name (must set this in your Model)
 	 */
-	protected static $_table = false;
+	//protected static $_table_name = '';
 
 	/**
-	 * @var  string  $_pk  The primary key for the table
+	 * @var  string  $_primary_key  The primary key for the table
 	 */
-	protected static $_pk = 'id';
+	protected static $_primary_key = 'id';
 	
 	/**
 	 * @var  array  $_rules  The validation rules
@@ -42,7 +42,7 @@ class Model_Crud extends Model {
 	 */
 	public static function find_by_pk($value)
 	{
-		return static::find_one_by(static::$_pk, $value);
+		return static::find_one_by(static::$_primary_key, $value);
 	}
 
 	/**
@@ -55,7 +55,7 @@ class Model_Crud extends Model {
 	public static function find_one_by($column, $value = null, $operator = '=')
 	{
 		$query = \DB::select('*')
-		           ->from(static::$_table);
+		           ->from(static::$_table_name);
 		
 		if (is_array($column))
 		{
@@ -92,7 +92,7 @@ class Model_Crud extends Model {
 	public static function find_by($column = null, $value = null, $operator = '=', $limit = null, $offset = 0)
 	{
 		$query = \DB::select('*')
-		           ->from(static::$_table);
+		           ->from(static::$_table_name);
 		
 		if ($column !== null)
 		{
@@ -179,7 +179,7 @@ class Model_Crud extends Model {
 	 */
 	public function __construct(array $data = array())
 	{
-		if (isset($this->{static::$_pk}))
+		if (isset($this->{static::$_primary_key}))
 		{
 			$this->is_new(false);
 		}
@@ -258,13 +258,13 @@ class Model_Crud extends Model {
 
 		if ($this->is_new())
 		{
-			return \DB::insert(static::$_table)
+			return \DB::insert(static::$_table_name)
 			         ->set($vars)
 			         ->execute();
 		}
-		return \DB::update(static::$_table)
+		return \DB::update(static::$_table_name)
 		         ->set($vars)
-		         ->where(static::$_pk, '=', $this->{static::$_pk})
+		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key})
 		         ->execute();
 	}
 	
@@ -308,8 +308,8 @@ class Model_Crud extends Model {
 	public function delete()
 	{
 		$this->frozen(true);
-		return \DB::delete(static::$_table)
-		         ->where(static::$_pk, '=', $this->{static::$_pk})
+		return \DB::delete(static::$_table_name)
+		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key})
 		         ->execute();
 	}
 
@@ -347,21 +347,6 @@ class Model_Crud extends Model {
 		$this->_is_frozen = (bool) $frozen;
 
 		return $this;
-	}
-	
-	/**
-	 * Class init.
-	 *
-	 * Sets the table name if not set, based on the model name.
-	 */
-	public static function _init()
-	{
-		if( ! static::$_table)
-		{
-			$class = get_called_class();
-			$table = \Inflector::tableize($class);
-			static::$_table = &$table;
-		}
 	}
 
 }
