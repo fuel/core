@@ -55,11 +55,16 @@ class Security {
 
 	/**
 	 * Cleans the request URI
+	 *
+	 * @param  string  $uri     uri to clean
+	 * @param  bool    $strict  whether to remove relative directories
 	 */
-	public static function clean_uri($uri)
+	public static function clean_uri($uri, $strict = false)
 	{
 		$filters = \Config::get('security.uri_filter', array());
 		$filters = is_array($filters) ? $filters : array($filters);
+
+		$strict and $uri = preg_replace(array("/\.+\//", '/\/+/'), '/', $uri);
 
 		return static::clean($uri, $filters);
 	}
