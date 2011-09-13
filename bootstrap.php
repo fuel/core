@@ -149,6 +149,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Log'        => COREPATH.'classes/log.php',
 		'Fuel\\Core\\Migrate'    => COREPATH.'classes/migrate.php',
 		'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
+		'Fuel\\Core\\Model_Crud' => COREPATH.'classes/model/crud.php',
 
 		'Fuel\\Core\\Mongo_Db'           => COREPATH.'classes/mongo/db.php',
 		'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
