@@ -33,6 +33,11 @@ class Validation {
 	protected static $active;
 
 	/**
+	 * @var  Fieldset_Field  keeps a reference to an instance of the Fieldset_Field validation is being run on
+	 */
+	protected static $active_field;
+
+	/**
 	 * This method is deprecated...use forge() instead.
 	 *
 	 * @deprecated until 1.2
@@ -84,6 +89,22 @@ class Validation {
 	}
 
 	/**
+	 * Fetch the field currently being validated
+	 */
+	public static function active_field()
+	{
+		return static::$active_field;
+	}
+
+	/**
+	 * Set or unset the current field being validated
+	 */
+	protected static function set_active_field($instance = null)
+	{
+		static::$active_field = $instance;
+	}
+
+	/**
 	 * @var  Fieldset
 	 */
 	protected $fieldset;
@@ -112,11 +133,6 @@ class Validation {
 	 * @var  array  contains validation error messages, will overwrite those from lang files
 	 */
 	protected $error_messages = array();
-	
-	/**
-	 * @var  mixed  contains the field currently being validated
-	 */
-	protected $_current_validation_field = null;
 
 	protected function __construct($fieldset)
 	{
@@ -323,6 +339,8 @@ class Validation {
 		$fields = $this->field();
 		foreach($fields as $field)
 		{
+			static::set_active_field($field);
+
 			$value = $this->input($field->name);
 			if (($allow_partial === true and $value === null)
 				or (is_array($allow_partial) and ! in_array($field->name, $allow_partial)))
@@ -346,6 +364,7 @@ class Validation {
 		}
 
 		static::set_active();
+		static::set_active_field();
 
 		// Restore callables
 		$this->callables = $callable_backup;
@@ -421,12 +440,7 @@ class Validation {
 			return;
 		}
 
-		$rule_callback = reset($rule);
-		$rule_callback[0]->_current_validation_field = $field;
-
-		$output = call_user_func_array($rule_callback, array_merge(array($value), $params));
-
-		$rule_callback[0]->_current_validation_field = null;
+		$output = call_user_func_array(reset($rule), array_merge(array($value), $params));
 
 		if ($output === false && $value !== false)
 		{
