@@ -32,6 +32,11 @@ class Arr {
 	 */
 	public static function get($array, $key, $default = null)
 	{
+		if ( ! is_array($array) or $array instanceof \ArrayAccess)
+		{
+			throw new \InvalidArgumentException('First parameter must be an array or ArrayAccess object.');
+		}
+
 		if (is_null($key))
 		{
 			return $array;
@@ -463,7 +468,7 @@ class Arr {
 		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a replace_key() instead.', __METHOD__);
 		return static::replace_key($source, $replace, $new_key);
 	}
-	
+
 	/**
 	 * Replaces key names in an array by names in $replace
 	 *
@@ -478,7 +483,7 @@ class Arr {
 		{
 			$replace = array($replace => $new_key);
 		}
-		
+
 		if ( ! is_array($source) or ! is_array($replace))
 		{
 			throw new \InvalidArgumentException('Arr::replace_keys() - $source must an array. $replace must be an array or string.');
