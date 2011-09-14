@@ -192,3 +192,22 @@ if ( ! function_exists('get_real_class'))
 		return $classes[$class];
 	}
 }
+
+/**
+ * Loads in the classes used for the error handlers.  The class_exists() calls
+ * will trigger the autoloader if it is loaded, if not, then it will import
+ * the classes and do the work itself.
+ *
+ * @return  void
+ */
+if ( ! function_exists('load_error_classes'))
+{
+	function load_error_classes()
+	{
+		! class_exists('Fuel\\Core\\Error') and import('error');
+		! class_exists('Error') and class_alias('Fuel\\Core\\Error', 'Error');
+
+		! class_exists('Fuel\\Core\\Debug') and import('debug');
+		! class_exists('Debug') and class_alias('Fuel\\Core\\Debug', 'Debug');
+	}
+}

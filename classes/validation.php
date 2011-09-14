@@ -69,6 +69,8 @@ class Validation {
 
 	/**
 	 * Fetch the currently active validation instance
+	 *
+	 * @return  Validation
 	 */
 	public static function active()
 	{
@@ -84,7 +86,7 @@ class Validation {
 	}
 
 	/**
-	 * @var  Fieldset
+	 * @var  Fieldset  the fieldset this instance validates
 	 */
 	protected $fieldset;
 
@@ -94,7 +96,7 @@ class Validation {
 	protected $input = array();
 
 	/**
-	 * @var  array  contains values of fields that validated succesfully
+	 * @var  array  contains values of fields that validated successfully
 	 */
 	protected $validated = array();
 
@@ -181,8 +183,9 @@ class Validation {
 	/**
 	 * This will overwrite lang file messages for this validation instance
 	 *
-	 * @param  string
-	 * @param  string
+	 * @param   string
+	 * @param   string
+	 * @return  Validation  this, to allow chaining
 	 */
 	public function set_message($rule, $message)
 	{
@@ -194,6 +197,8 @@ class Validation {
 		{
 			unset($this->error_messages[$rule]);
 		}
+
+		return $this;
 	}
 
 	/**
@@ -348,6 +353,12 @@ class Validation {
 		return empty($this->errors);
 	}
 
+	/**
+	 * Takes the rule input and formats it into a name & callback
+	 *
+	 * @param   string|array  short rule to be called on Validation callables array or full callback
+	 * @return  array|bool    rule array or false when it fails to find something callable
+	 */
 	protected function _find_rule($callback)
 	{
 		// Rules are validated and only accepted when given as an array consisting of
@@ -433,7 +444,7 @@ class Validation {
 	 *
 	 * @param   string
 	 * @param   mixed
-	 * @return  mixed
+	 * @return  mixed|array  the input value or full input values array
 	 */
 	public function input($key = null, $default = null)
 	{
@@ -457,7 +468,7 @@ class Validation {
 	 *
 	 * @param   string  fieldname
 	 * @param   mixed   value to return when not validated
-	 * @return  Array|mixed
+	 * @return  mixed|array  the validated value or full validated values array
 	 */
 	public function validated($field = null, $default = false)
 	{
@@ -476,7 +487,7 @@ class Validation {
 	 *
 	 * @param   string  fieldname
 	 * @param   mixed   value to return when not validated
-	 * @return  Array|Validation_Error
+	 * @return  Validation_Error|array  the validation error object or full array of error objects
 	 */
 	public function error($field = null, $default = false)
 	{
@@ -535,6 +546,8 @@ class Validation {
 
 	/**
 	 * Alias for $this->fieldset->add()
+	 *
+	 * @return  Fieldset_Field
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
@@ -555,15 +568,17 @@ class Validation {
 
 	/**
 	 * Alias for $this->fieldset->field()
+	 *
+	 * @return  Fieldset_Field
 	 */
 	public function field($name = null)
 	{
 		return $this->fieldset->field($name);
 	}
 
-	/**
-	 * Some validation methods
-	 */
+	/* -------------------------------------------------------------------------------
+	 * The validation methods
+	 * ------------------------------------------------------------------------------- */
 
 	/**
 	 * Required
