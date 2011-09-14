@@ -450,7 +450,7 @@ class Agent {
 				}
 
 				// normalize keys
-				$properties = \Arr::replace_keys($properties, array_flip(static::$keys));
+				$properties = \Arr::replace_key($properties, array_flip(static::$keys));
 
 				// merge it with the defaults to add missing values
 				$result = array_merge(static::$properties, $properties);

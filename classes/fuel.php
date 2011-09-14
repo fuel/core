@@ -186,7 +186,7 @@ class Fuel {
 		foreach (\Config::get('always_load.packages', array()) as $package => $path)
 		{
 			is_string($package) and $path = array($package => $path);
-			static::add_package($path);
+			\Package::load($path);
 		}
 
 		// Load in the routes
