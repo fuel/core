@@ -150,7 +150,9 @@ class DBUtil {
 		else
 		{
 			$sql .= $type.' ';
-			$sql .= '('.static::process_fields($fields).')';
+			$type !== 'CHANGE' and $sql .= '(';
+			$sql .= static::process_fields($fields);
+			$type !== 'CHANGE' and $sql .= ')';
 		}
 		
 		return \DB::query($sql, \DB::UPDATE)->execute();
