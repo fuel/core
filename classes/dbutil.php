@@ -149,10 +149,11 @@ class DBUtil {
 		}
 		else
 		{
+			$use_brackets = in_array($type, array('ADD', 'CHANGE', 'MODIFY'));
 			$sql .= $type.' ';
-			$type !== 'CHANGE' and $sql .= '(';
+			$use_brackets and $sql .= '(';
 			$sql .= static::process_fields($fields);
-			$type !== 'CHANGE' and $sql .= ')';
+			$use_brackets and $sql .= ')';
 		}
 		
 		return \DB::query($sql, \DB::UPDATE)->execute();
