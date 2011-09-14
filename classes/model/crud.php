@@ -12,7 +12,7 @@
 
 namespace Fuel\Core;
 
-class Model_Crud extends Model {
+class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	
 	/**
 	 * @var  string  $_table_name  The table name (must set this in your Model)
@@ -232,16 +232,8 @@ class Model_Crud extends Model {
 		{
 			throw new \Exception('Cannot modify a frozen row.');
 		}
-		// This crazy bit of code gets all of this object's public properties
-		$vars = (array) $this;
-		array_walk($vars, function ($value, $key) use (&$vars)
-		{
-			if ($key[0] === "\0")
-			{
-				unset($vars[$key]);
-			}
-		});
 		
+		$vars = $this->as_array();
 		if (isset(static::$_rules) and count(static::$_rules) > 0)
 		{
 			$validated = $this->run_validation($vars);
@@ -327,6 +319,103 @@ class Model_Crud extends Model {
 		$this->_validation or $this->_validation = \Validation::forge(md5(microtime(true)));
 		
 		return $this->_validation;
+	}
+
+	public function as_array()
+	{
+		// This crazy bit of code gets all of this object's public properties
+		$vars = (array) $this;
+		array_walk($vars, function ($value, $key) use (&$vars)
+		{
+			if ($key[0] === "\0")
+			{
+				unset($vars[$key]);
+			}
+		});
+
+		return $vars;
+	}
+
+	/**
+	 * Implementation of the Iterator interface
+	 */
+
+	protected $_iterable = array();
+
+	public function rewind()
+	{
+		$this->_iterable = $this->as_array();
+		reset($this->_iterable);
+	}
+
+	public function current()
+	{
+		return current($this->_iterable);
+	}
+
+	public function key()
+	{
+		return key($this->_iterable);
+	}
+
+	public function next()
+	{
+		return next($this->_iterable);
+	}
+
+	public function valid()
+	{
+		return key($this->_iterable) !== null;
+	}
+
+	/**
+	 * Sets the value of the given offset (class property).
+	 * 
+	 * @param   string  $offset  class property
+	 * @param   string  $value   value
+	 * @return  void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		$this->{$offset} = $value;
+	}
+
+	/**
+	 * Checks if the given offset (class property) exists.
+	 * 
+	 * @param   string  $offset  class property
+	 * @return  bool
+	 */
+	public function offsetExists($offset)
+	{
+		return isset($this->{$offset});
+	}
+
+	/**
+	 * Unsets the given offset (class property).
+	 * 
+	 * @param   string  $offset  class property
+	 * @return  void
+	 */
+	public function offsetUnset($offset)
+	{
+		unset($this->{$offset});
+	}
+
+	/**
+	 * Gets the value of the given offset (class property).
+	 * 
+	 * @param   string  $offset  class property
+	 * @return  mixed
+	 */
+	public function offsetGet($offset)
+	{
+		if (isset($this->{$offset}))
+		{
+			return $this->{$offset};
+		}
+
+		throw new \OutOfBoundsException('Property "'.$offset.'" not found for '.get_called_class().'.');
 	}
 
 	/**
