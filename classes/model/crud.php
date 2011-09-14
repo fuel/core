@@ -233,7 +233,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			throw new \Exception('Cannot modify a frozen row.');
 		}
 		
-		$vars = $this->as_array();
+		$vars = $this->to_array();
 		if (isset(static::$_rules) and count(static::$_rules) > 0)
 		{
 			$validated = $this->run_validation($vars);
@@ -321,19 +321,14 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		return $this->_validation;
 	}
 
-	public function as_array()
+	/**
+	 * Returns all of $this object's public properties as an associative array.
+	 *
+	 * @return  array
+	 */
+	public function to_array()
 	{
-		// This crazy bit of code gets all of this object's public properties
-		$vars = (array) $this;
-		array_walk($vars, function ($value, $key) use (&$vars)
-		{
-			if ($key[0] === "\0")
-			{
-				unset($vars[$key]);
-			}
-		});
-
-		return $vars;
+		return get_object_public_vars($this);
 	}
 
 	/**
@@ -344,7 +339,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 	public function rewind()
 	{
-		$this->_iterable = $this->as_array();
+		$this->_iterable = $this->to_array();
 		reset($this->_iterable);
 	}
 
