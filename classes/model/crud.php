@@ -337,10 +337,15 @@ class Model_Crud extends Model {
 	 */
 	protected function run_validation($vars)
 	{
+		if ( ! isset(static::$_rules))
+		{
+			return true;
+		}
+
 		$this->_validation = null;
 		$this->_validation = $this->validation();
 		
-		if(static::$_rules as $field => $rules)
+		foreach (static::$_rules as $field => $rules)
 		{
 			$label = (isset(static::$_labels) and array_key_exists($field, static::$_labels)) ? static::$_labels[$field] : $field;
 			$this->_validation->add_field($field, $label, $rules);
