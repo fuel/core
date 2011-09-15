@@ -549,7 +549,7 @@ class Agent {
 				}
 			}
 
-			$result[$browser] = \Arr::replace_keys($properties, static::$keys);
+			$result[$browser] = \Arr::replace_key($properties, static::$keys);
 
 		}
 
