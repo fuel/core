@@ -110,7 +110,7 @@ class Input {
 				$uri = substr($uri, 1);
 			}
 
-			// Lets split the URI up in case it containes a ?.  This would
+			// Lets split the URI up in case it contains a ?.  This would
 			// indecate the server requires 'index.php?' and that mod_rewrite
 			// is not being used.
 			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
