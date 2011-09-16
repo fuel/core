@@ -285,6 +285,33 @@ class Str {
 			return $args[($next ? $i++ : $i) % count($args)];
 		};
 	}
+
+	/**
+	 * Parse the params from a string using strtr()
+	 *
+	 * @param   string  string to parse
+	 * @param   array   params to str_replace
+	 * @return  string
+	 */
+	public static function tr($string, $array = array())
+	{
+		if (is_string($string))
+		{
+			$tr_arr = array();
+
+			foreach ($array as $from => $to)
+			{
+				$tr_arr[':'.$from] = $to;
+			}
+			unset($array);
+
+			return strtr($string, $tr_arr);
+		}
+		else
+		{
+			return $string;
+		}
+	}
 }
 
 
