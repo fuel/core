@@ -27,7 +27,11 @@ class Tests_Date extends TestCase {
 	 */
 	public function test_days_in_month()
 	{
-		$output = Date::days_in_month(2);
+		$output = Date::days_in_month(8);
+		$expected = 31;
+		$this->assertEquals($expected, $output);
+
+		$output = Date::days_in_month(2,2001);
 		$expected = 28;
 		$this->assertEquals($expected, $output);
 
