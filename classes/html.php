@@ -40,7 +40,7 @@ class Html
 	 */
 	public static function anchor($href, $text = null, $attr = array())
 	{
-		if ( ! preg_match('#^(\w+://|javascript:)# i', $href))
+		if ( ! preg_match('#^(\w+://|javascript:|\#)# i', $href))
 		{
 			$href = \Uri::create($href);
 		}
