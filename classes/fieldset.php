@@ -194,6 +194,17 @@ class Fieldset
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
+		if (is_a($name, 'Fieldset_Field'))
+		{
+			// Make sure it doesn't conflict with existing fields
+			if ($existing_field = static::field($name->name))
+			{
+				\Error::notice('Field with this name exists already, cannot be overwritten through add().');
+				return $existing_field;
+			}
+			$this->fields[$name->name] = $name;
+			return $name;
+		}
 		if (empty($name) || (is_array($name) and empty($name['name'])))
 		{
 			throw new \InvalidArgumentException('Cannot create field without name.');
