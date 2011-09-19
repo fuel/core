@@ -301,7 +301,7 @@ class Request {
 					{
 						$name = $module;
 					}
-					elseif (strpos($name, $module.'/') !== 0 and $name != $module)
+					elseif (strpos($name, $module.'/') !== 0 and $name != $module and $name !== '_404_')
 					{
 						$name = $module.'/'.$name;
 					}
