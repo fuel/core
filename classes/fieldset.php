@@ -366,19 +366,9 @@ class Fieldset
 				continue;
 			}
 
-			if (strtolower($this->form()->get_attribute('method', 'post')) == 'get')
+			if (($value = $f->input()) !== null)
 			{
-				if (($value = \Input::get($f->name, null)) !== null)
-				{
-					$f->set_value($value, true);
-				}
-			}
-			else
-			{
-				if (($value = \Input::post($f->name, null)) !== null)
-				{
-					$f->set_value($value, true);
-				}
+				$f->set_value($value, true);
 			}
 		}
 

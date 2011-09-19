@@ -455,7 +455,7 @@ class Validation {
 
 		if ( ! array_key_exists($key, $this->input))
 		{
-			$this->input[$key] = \Input::post($key, $default);
+			$this->input[$key] = \Input::param($key, $default);
 		}
 
 		return $this->input[$key];
