@@ -73,6 +73,19 @@ class Tests_Html extends TestCase {
 		$output = Html::anchor('controller/method', 'Method');
 		$expected = '<a href="' . Uri::create('controller/method') . '">Method</a>';
 		$this->assertEquals($expected, $output);
+
+		// Query string tests
+		Config::set('url_suffix', '');
+
+		$output = Html::anchor('search?q=query', 'Search');
+		$expected = '<a href="search?q=query">Search</a>';
+		$this->assertEquals($expected, $output);
+
+		Config::set('url_suffix', '.html');
+
+		$output = Html::anchor('search?q=query', 'Search');
+		$expected = '<a href="search.html?q=query">Search</a>';
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
