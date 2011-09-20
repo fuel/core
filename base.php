@@ -223,5 +223,8 @@ if ( ! function_exists('load_error_classes'))
 
 		! class_exists('Fuel\\Core\\Debug') and import('debug');
 		! class_exists('Debug') and class_alias('Fuel\\Core\\Debug', 'Debug');
+
+		! class_exists('Fuel\\Core\\View') and import('view');
+		! class_exists('View') and class_alias('Fuel\\Core\\View', 'View');
 	}
 }
