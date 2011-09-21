@@ -643,6 +643,59 @@ class Arr {
 
 		return $array;
 	}
+	
+	/**
+	 * Merge 2 arrays recursively, differs from \Arr::merge() in:
+	 * - The values are only merged if they exist in the left-most array
+	 * 
+	 * The value of the right-most array has precedence.
+	 * Note that if a branch-end-item (a.k.a. an item that is not an array) is to be
+	 * replaced, it will only be replaced by a non-array value.
+	 *
+	 * @param   array  multiple variables all of which must be arrays
+	 * @return  array
+	 * @throws  \InvalidArgumentException
+	 */
+	public static function merge_replace()
+	{
+		$array  = func_get_arg(0);
+		$arrays = array_slice(func_get_args(), 1);
+		
+		if ( ! is_array($array))
+		{
+			throw new \InvalidArgumentException('Arr::merge_replace() - all arguments must be arrays.');
+		}
+		
+		foreach ($arrays as $arr)
+		{
+			if ( ! is_array($arr))
+			{
+				throw new \InvalidArgumentException('Arr::merge_replace() - all arguments must be arrays.');
+			}
+			
+			foreach ($arr as $key => $value)
+			{
+				if(isset($array[$key]))
+				{
+					if(is_array($array[$key]))
+					{
+						if(is_array($value))
+						{
+							$array[$key] = static::merge_replace($array[$key], $value);
+						}
+					}
+					else
+					{
+						if(!is_array($value)){
+							$array[$key] = $value;
+						}
+					}
+				}
+			}
+		}
+		
+		return $array;
+	}
 
 }
 
