@@ -184,6 +184,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Session_Cookie'     => COREPATH.'classes/session/cookie.php',
 		'Fuel\\Core\\Session_File'       => COREPATH.'classes/session/file.php',
 		'Fuel\\Core\\Session_Memcached'  => COREPATH.'classes/session/memcached.php',
+		'Fuel\\Core\\Session_Native'  => COREPATH.'classes/session/native.php',
 		'Fuel\\Core\\Session_Redis'      => COREPATH.'classes/session/redis.php',
 
 		'Fuel\\Core\\Num'       => COREPATH.'classes/num.php',
