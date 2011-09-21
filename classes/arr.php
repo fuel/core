@@ -654,6 +654,8 @@ class Arr {
 	 * Note that if a branch-end-item (a.k.a. an item that is not an array) is to be
 	 * replaced, it will only be replaced by a non-array value. This means that only
 	 * full branches are replaced.
+	 * Numeric keys are not checked as they are considered as item multiple values and
+	 * are thus inserted as-is.
 	 *
 	 * @param   array  multiple variables all of which must be arrays
 	 * @return  array
@@ -679,19 +681,27 @@ class Arr {
 			$keys = array_keys($array);
 			foreach ($arr as $key => $value)
 			{
-				if(in_array($key, $keys))
+				if(is_numeric($key))
 				{
-					if(is_array($array[$key]))
+					$array[$key] = $value;
+				}
+				else
+				{
+					if(in_array($key, $keys))
 					{
-						if(is_array($value))
+						if(is_array($array[$key]))
 						{
-							$array[$key] = static::merge_replace($array[$key], $value);
+							if(is_array($value))
+							{
+								$array[$key] = static::merge_replace($array[$key], $value);
+							}
 						}
-					}
-					else
-					{
-						if(!is_array($value)){
-							$array[$key] = $value;
+						else
+						{
+							if(!is_array($value))
+							{
+								$array[$key] = $value;
+							}
 						}
 					}
 				}
