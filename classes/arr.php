@@ -650,7 +650,8 @@ class Arr {
 	 * 
 	 * The value of the right-most array has precedence.
 	 * Note that if a branch-end-item (a.k.a. an item that is not an array) is to be
-	 * replaced, it will only be replaced by a non-array value.
+	 * replaced, it will only be replaced by a non-array value. This means that only
+	 * full branches are replaced.
 	 *
 	 * @param   array  multiple variables all of which must be arrays
 	 * @return  array
@@ -673,9 +674,10 @@ class Arr {
 				throw new \InvalidArgumentException('Arr::merge_replace() - all arguments must be arrays.');
 			}
 			
+			$keys = array_keys($array);
 			foreach ($arr as $key => $value)
 			{
-				if(isset($array[$key]))
+				if(in_array($key, $keys))
 				{
 					if(is_array($array[$key]))
 					{
