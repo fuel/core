@@ -114,7 +114,14 @@ class Uri {
 		if ( ! empty($get_variables))
 		{
 			$char = strpos($url, '?') === false ? '?' : '&';
-			$url .= $char.str_replace('%3A', ':', http_build_query($get_variables));
+			if (is_string($get_variables))
+			{
+				$url .= $char.str_replace('%3A', ':', $get_variables);
+			}
+			else
+			{
+				$url .= $char.str_replace('%3A', ':', http_build_query($get_variables));
+			}
 		}
 
 		array_walk($variables, function ($val, $key) use (&$url) {
