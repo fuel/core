@@ -45,7 +45,7 @@ abstract class Controller_Template extends \Controller {
 		return parent::before();
 	}
 
-	// After contorller method has run output the template
+	// After controller method has run output the template
 	public function after($response)
 	{
 		// If the response is a Response object, we don't want to create a new one

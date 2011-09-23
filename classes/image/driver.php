@@ -36,7 +36,7 @@ abstract class Image_Driver {
 		{
 			$this->config = Config::get('image');
 		}
-		$this->debug("Image Class was initalized using the " . $this->config['driver'] . " driver.");
+		$this->debug("Image Class was initialized using the " . $this->config['driver'] . " driver.");
 	}
 	/**
 	 * Accepts configuration in either an array (as $index) or a pairing using $index and $value
@@ -51,7 +51,7 @@ abstract class Image_Driver {
 		{
 			if (isset($index['driver']))
 			{
-				throw new \RuntimeException("The driver cannot be changed after initalization!");
+				throw new \RuntimeException("The driver cannot be changed after initialization!");
 			}
 			$this->config = array_merge($this->config, $index);
 		}
@@ -59,7 +59,7 @@ abstract class Image_Driver {
 		{
 			if ($index == 'driver')
 			{
-				throw new \RuntimeException("The driver cannot be changed after initalization!");
+				throw new \RuntimeException("The driver cannot be changed after initialization!");
 			}
 			$this->config[$index] = $value;
 		}
@@ -103,7 +103,7 @@ abstract class Image_Driver {
 	}
 
 	/**
-	 * Loads the image and checks if its compatable.
+	 * Loads the image and checks if its compatible.
 	 *
 	 * @param   string  $filename     The file to load
 	 * @param   string  $return_data  Decides if it should return the images data, or just "$this".
@@ -470,7 +470,7 @@ abstract class Image_Driver {
 	 * Adds a border to the image.
 	 *
 	 * @param   integer  $size   The side of the border, in pixels.
-	 * @param   string   $color  A hexidecimal color.
+	 * @param   string   $color  A hexadecimal color.
 	 * @return  Image_Driver
 	 */
 	public function border($size, $color = null)
@@ -485,7 +485,7 @@ abstract class Image_Driver {
 	 * Formats the border method input for use with driver specific methods
 	 *
 	 * @param   integer  $size   The side of the border, in pixels.
-	 * @param   string   $color  A hexidecimal color.
+	 * @param   string   $color  A hexadecimal color.
 	 * @return  array    An array of variables for the specific driver.
 	 */
 	protected function _border($size, $color = null)
@@ -529,7 +529,7 @@ abstract class Image_Driver {
 	 * Adds rounded corners to the image.
 	 *
 	 * @param   integer  $radius
-	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" seperated by spaces, or null for all sides
+	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" separated by spaces, or null for all sides
 	 * @param   integer  $antialias  Sets the antialias range.
 	 * @return  Image_Driver
 	 */
@@ -545,7 +545,7 @@ abstract class Image_Driver {
 	 * Formats the rounded method input for use with driver specific methods
 	 *
 	 * @param   integer  $radius
-	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" seperated by spaces, or null for all sides
+	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" separated by spaces, or null for all sides
 	 * @param   integer  $antialias  Sets the antialias range.
 	 * @return  array    An array of variables for the specific driver.
 	 */
@@ -719,11 +719,11 @@ abstract class Image_Driver {
 	 *
 	 * @param   string   $input
 	 * @param   boolean  $x  Determines if the number relates to the x-axis or y-axis.
-	 * @return  integer  The converted number, useable with the image being edited.
+	 * @return  integer  The converted number, usable with the image being edited.
 	 */
 	protected function convert_number($input, $x = null)
 	{
-		// Sanatize double negatives
+		// Sanitize double negatives
 		$input = str_replace('--', '', $input);
 
 		$orig = $input;

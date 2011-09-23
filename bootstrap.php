@@ -38,19 +38,21 @@ Fuel::$is_cli = (bool) defined('STDIN');
  */
 register_shutdown_function(function ()
 {
+	load_error_classes();
 	return \Error::shutdown_handler();
 });
 
 set_exception_handler(function (\Exception $e)
 {
+	load_error_classes();
 	return \Error::exception_handler($e);
 });
 
 set_error_handler(function ($severity, $message, $filepath, $line)
 {
+	load_error_classes();
 	return \Error::error_handler($severity, $message, $filepath, $line);
 });
-
 
 function setup_autoloader()
 {
@@ -149,6 +151,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Log'        => COREPATH.'classes/log.php',
 		'Fuel\\Core\\Migrate'    => COREPATH.'classes/migrate.php',
 		'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
+		'Fuel\\Core\\Model_Crud' => COREPATH.'classes/model/crud.php',
 
 		'Fuel\\Core\\Mongo_Db'           => COREPATH.'classes/mongo/db.php',
 		'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',

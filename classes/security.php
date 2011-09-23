@@ -55,11 +55,16 @@ class Security {
 
 	/**
 	 * Cleans the request URI
+	 *
+	 * @param  string  $uri     uri to clean
+	 * @param  bool    $strict  whether to remove relative directories
 	 */
-	public static function clean_uri($uri)
+	public static function clean_uri($uri, $strict = false)
 	{
 		$filters = \Config::get('security.uri_filter', array());
 		$filters = is_array($filters) ? $filters : array($filters);
+
+		$strict and $uri = preg_replace(array("/\.+\//", '/\/+/'), '/', $uri);
 
 		return static::clean($uri, $filters);
 	}
@@ -176,7 +181,7 @@ class Security {
 		{
 			$value = htmlentities($value, ENT_COMPAT, \Fuel::$encoding, false);
 		}
-		elseif (is_array($value) || $value instanceof \Iterator || get_class($value) == 'stdClass')
+		elseif (is_array($value) or ($value instanceof \Iterator and $value instanceof \ArrayAccess))
 		{
 			// Add to $already_cleaned variable when object
 			is_object($value) and $already_cleaned[] = $value;
@@ -184,6 +189,16 @@ class Security {
 			foreach ($value as $k => $v)
 			{
 				$value[$k] = static::htmlentities($v);
+			}
+		}
+		elseif ($value instanceof \Iterator or get_class($value) == 'stdClass')
+		{
+			// Add to $already_cleaned variable
+			$already_cleaned[] = $value;
+
+			foreach ($value as $k => $v)
+			{
+				$value->{$k} = static::htmlentities($v);
 			}
 		}
 		elseif (is_object($value))

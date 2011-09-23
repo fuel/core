@@ -156,7 +156,7 @@ class Str {
 		return function_exists('mb_strtolower')
 			? mb_strtolower(mb_substr($str, 0, 1, $encoding), $encoding).
 				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
-			: ucfirst($str);
+			: lcfirst($str);
 	}
 
 	/**

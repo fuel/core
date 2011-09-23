@@ -21,25 +21,24 @@ namespace Fuel\Core;
  *
  * Define a set of fields that can be used to generate a form or to validate input.
  *
- * @package		Fuel
- * @category	Core
- * @author		Jelmer Schreuder
+ * @package   Fuel
+ * @category  Core
  */
 class Fieldset
 {
 	/**
-	 * @var	Fieldset
+	 * @var  Fieldset
 	 */
 	protected static $_instance;
 
 	/**
-	 * @var	array	contains references to all instantiations of Fieldset
+	 * @var  array  contains references to all instantiations of Fieldset
 	 */
 	protected static $_instances = array();
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($name = 'default', array $config = array())
@@ -69,8 +68,8 @@ class Fieldset
 	/**
 	 * Return a specific instance, or the default instance (is created if necessary)
 	 *
-	 * @param	string	driver id
-	 * @return	Auth_Login_Driver
+	 * @param   string  driver id
+	 * @return  Fieldset
 	 */
 	public static function instance($instance = null)
 	{
@@ -93,32 +92,32 @@ class Fieldset
 	}
 
 	/**
-	 * @var	string	instance id
+	 * @var  string  instance id
 	 */
 	protected $name;
 
 	/**
-	 * @var	array	array of Fieldset_Field objects
+	 * @var  array  array of Fieldset_Field objects
 	 */
 	protected $fields = array();
 
 	/**
-	 * @var	Validation	instance of validation
+	 * @var  Validation  instance of validation
 	 */
 	protected $validation;
 
 	/**
-	 * @var	Form	instance of form
+	 * @var  Form  instance of form
 	 */
 	protected $form;
 
 	/**
-	 * @var	array	configuration array
+	 * @var  array  configuration array
 	 */
 	protected $config = array();
 
 	/**
-	 * Class constructor
+	 * Object constructor
 	 *
 	 * @param  string
 	 * @param  array
@@ -187,11 +186,11 @@ class Fieldset
 	/**
 	 * Factory for Fieldset_Field objects
 	 *
-	 * @param	string
-	 * @param	string
-	 * @param	array
-	 * @param	array
-	 * @return	Fieldset_Field
+	 * @param   string
+	 * @param   string
+	 * @param   array
+	 * @param   array
+	 * @return  Fieldset_Field
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
@@ -225,8 +224,8 @@ class Fieldset
 	/**
 	 * Get Field instance
 	 *
-	 * @param	string					null to fetch an array of all
-	 * @return	Fieldset_Field|false	returns false when field wasn't found
+	 * @param   string|null           field name or null to fetch an array of all
+	 * @return  Fieldset_Field|false  returns false when field wasn't found
 	 */
 	public function field($name = null)
 	{
@@ -248,10 +247,10 @@ class Fieldset
 	 * The model must have a method "set_form_fields" that takes this Fieldset instance
 	 * and adds fields to it.
 	 *
-	 * @param	string|Object	either a full classname (including full namespace) or object instance
-	 * @param	array|Object	array or object that has the exactly same named properties to populate the fields
-	 * @param	string			method name to call on model for field fetching
-	 * @return	Fieldset		this, to allow chaining
+	 * @param   string|Object  either a full classname (including full namespace) or object instance
+	 * @param   array|Object   array or object that has the exactly same named properties to populate the fields
+	 * @param   string         method name to call on model for field fetching
+	 * @return  Fieldset       this, to allow chaining
 	 */
 	public function add_model($class, $instance = null, $method = 'set_form_fields')
 	{
@@ -270,9 +269,9 @@ class Fieldset
 	/**
 	 * Sets a config value on the fieldset
 	 *
-	 * @param	string
-	 * @param	mixed
-	 * @return	Fieldset	this, to allow chaining
+	 * @param   string
+	 * @param   mixed
+	 * @return  Fieldset  this, to allow chaining
 	 */
 	public function set_config($config, $value = null)
 	{
@@ -288,9 +287,9 @@ class Fieldset
 	/**
 	 * Get a single or multiple config values by key
 	 *
-	 * @param	string|array	a single key or multiple in an array, empty to fetch all
-	 * @param	mixed			default output when config wasn't set
-	 * @return	mixed|array		a single config value or multiple in an array when $key input was an array
+	 * @param   string|array  a single key or multiple in an array, empty to fetch all
+	 * @param   mixed         default output when config wasn't set
+	 * @return  mixed|array   a single config value or multiple in an array when $key input was an array
 	 */
 	public function get_config($key = null, $default = null)
 	{
@@ -349,7 +348,7 @@ class Fieldset
 	 * Set all fields to the input from get or post (depends on the form method attribute)
 	 *
 	 * @param   array|object  input for initial population of fields, this is deprecated - you should use populate() instea
-	 * @return  Fieldset  this, to allow chaining
+	 * @return  Fieldset      this, to allow chaining
 	 */
 	public function repopulate($deprecated = null)
 	{
@@ -367,19 +366,9 @@ class Fieldset
 				continue;
 			}
 
-			if (strtolower($this->form()->get_attribute('method', 'post')) == 'get')
+			if (($value = $f->input()) !== null)
 			{
-				if (($value = \Input::get($f->name, null)) !== null)
-				{
-					$f->set_value($value, true);
-				}
-			}
-			else
-			{
-				if (($value = \Input::post($f->name, null)) !== null)
-				{
-					$f->set_value($value, true);
-				}
+				$f->set_value($value, true);
 			}
 		}
 
@@ -398,6 +387,8 @@ class Fieldset
 
 	/**
 	 * Alias for $this->form()->build() for this fieldset
+	 *
+	 * @return  string
 	 */
 	public function build($action = null)
 	{
@@ -406,6 +397,8 @@ class Fieldset
 
 	/**
 	 * Alias for $this->validation()->input()
+	 *
+	 * @return  mixed
 	 */
 	public function input($field = null)
 	{
@@ -414,6 +407,8 @@ class Fieldset
 
 	/**
 	 * Alias for $this->validation()->validated()
+	 *
+	 * @return  mixed
 	 */
 	public function validated($field = null)
 	{
@@ -421,15 +416,30 @@ class Fieldset
 	}
 
 	/**
-	 * Alias for $this->validation()->errors()
+	 * Alias of $this->error() for backwards compatibility
+	 *
+	 * @depricated  Remove in v1.2
 	 */
 	public function errors($field = null)
 	{
-		return $this->validation()->errors($field);
+		logger(\Fuel::L_WARNING, 'This method is deprecated. Please use Fieldset::error() instead.', __METHOD__);
+		return $this->error($field);
+	}
+
+	/**
+	 * Alias for $this->validation()->error()
+	 *
+	 * @return  Validation_Error|array
+	 */
+	public function error($field = null)
+	{
+		return $this->validation()->error($field);
 	}
 
 	/**
 	 * Alias for $this->validation()->show_errors()
+	 *
+	 * @return  string
 	 */
 	public function show_errors(array $config = array())
 	{

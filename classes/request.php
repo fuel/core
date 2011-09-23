@@ -132,6 +132,24 @@ class Request {
 	}
 
 	/**
+	 * Returns the current request is an HMVC request
+	 *
+	 * Usage:
+	 *
+	 *     if (Request::is_hmvc())
+	 *     {
+	 *         // Do something special...
+	 *         return;
+	 *     }
+	 *
+	 * @return  bool
+	 */
+	public static function is_hmvc()
+	{
+		return static::active() !== static::main();
+	}
+
+	/**
 	 * Shows a 404.  Checks to see if a 404_override route is set, if not show
 	 * a default 404.
 	 *
@@ -283,7 +301,7 @@ class Request {
 					{
 						$name = $module;
 					}
-					elseif (strpos($name, $module.'/') !== 0 and $name != $module)
+					elseif (strpos($name, $module.'/') !== 0 and $name != $module and $name !== '_404_')
 					{
 						$name = $module.'/'.$name;
 					}

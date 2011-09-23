@@ -127,6 +127,20 @@ if ( ! function_exists('in_arrayi'))
 }
 
 /**
+ * Gets all the public vars for an object.  Use this if you need to get all the
+ * public vars of $this inside an object.
+ *
+ * @return	array
+ */
+if ( ! function_exists('get_object_public_vars'))
+{
+	function get_object_public_vars($obj)
+	{
+		return get_object_vars($obj);
+	}
+}
+
+/**
  * Renders a view and returns the output.
  *
  * @param	string	The view name/path
@@ -190,5 +204,27 @@ if ( ! function_exists('get_real_class'))
 		}
 
 		return $classes[$class];
+	}
+}
+
+/**
+ * Loads in the classes used for the error handlers.  The class_exists() calls
+ * will trigger the autoloader if it is loaded, if not, then it will import
+ * the classes and do the work itself.
+ *
+ * @return  void
+ */
+if ( ! function_exists('load_error_classes'))
+{
+	function load_error_classes()
+	{
+		! class_exists('Fuel\\Core\\Error') and import('error');
+		! class_exists('Error') and class_alias('Fuel\\Core\\Error', 'Error');
+
+		! class_exists('Fuel\\Core\\Debug') and import('debug');
+		! class_exists('Debug') and class_alias('Fuel\\Core\\Debug', 'Debug');
+
+		! class_exists('Fuel\\Core\\View') and import('view');
+		! class_exists('View') and class_alias('Fuel\\Core\\View', 'View');
 	}
 }

@@ -40,19 +40,20 @@ class Html
 	 */
 	public static function anchor($href, $text = null, $attr = array())
 	{
-		if ( ! preg_match('#^(\w+://|javascript:)# i', $href))
+		if ( ! preg_match('#^(\w+://|javascript:|\#)# i', $href))
 		{
-			$href = \Uri::create($href);
+			$urlparts = explode('?', $href, 2);
+			$href = \Uri::create($urlparts[0], array(), isset($urlparts[1])?$urlparts[1]:array());
 		}
-		
+
 		// Create and display a URL hyperlink
 		is_null($text) and $text = $href;
-		
+
 		$attr['href'] = $href;
 
 		return html_tag('a', $attr, $text);
 	}
-	
+
 	/**
 	 * Creates an html image tag
 	 *
