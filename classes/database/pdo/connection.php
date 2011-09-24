@@ -71,7 +71,7 @@ class Database_PDO_Connection extends \Database_Connection {
 		try
 		{
 			// Create a new PDO connection
-			$this->_connection = new \PDO($dsn, $username, $password, $attrs);
+			$this->_connection = @new \PDO($dsn, $username, $password, $attrs);
 		}
 		catch (\PDOException $e)
 		{
