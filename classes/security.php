@@ -176,7 +176,7 @@ class Security {
 		{
 			$value = htmlentities($value, ENT_COMPAT, \Fuel::$encoding, false);
 		}
-		elseif (is_array($value) || $value instanceof \Iterator || get_class($value) == 'stdClass')
+		elseif (is_array($value) || $value instanceof \Iterator)
 		{
 			// Add to $already_cleaned variable when object
 			is_object($value) and $already_cleaned[] = $value;
@@ -184,6 +184,16 @@ class Security {
 			foreach ($value as $k => $v)
 			{
 				$value[$k] = static::htmlentities($v);
+			}
+		}
+		elseif (get_class($value) == 'stdClass')
+		{
+			// Add to $already_cleaned variable
+			$already_cleaned[] = $value;
+
+			foreach ($value as $k => $v)
+			{
+				$value->$k = static::htmlentities($v);
 			}
 		}
 		elseif (is_object($value))
