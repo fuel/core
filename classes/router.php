@@ -56,23 +56,36 @@ class Router {
 	 * Does reverse routing for a named route.  This will return the FULL url
 	 * (including the base url and index.php).
 	 *
-	 * WARNING: This is VERY limited at this point.  Does not work if there is
-	 * any regex in the route.
+	 * First attempts to find the route by name. If that fails, it tries to
+	 * match up route destinations to the given destination, dealing with route
+	 * regex as it goes. If that fails, gracefully passes the given destination
+	 * to Uri::create.
 	 *
 	 * Usage:
 	 *
 	 * <a href="<?php echo Router::get('foo'); ?>">Foo</a>
 	 *
-	 * @param   string  $name  the name of the route
+	 * @param   string  $destination the name of the route / route destination
 	 * @param   array   $named_params  the array of named parameters
 	 * @return  string  the full url for the named route
 	 */
-	public static function get($name, $named_params = array())
+	public static function get($destination, $named_params = array())
 	{
-		if (array_key_exists($name, static::$routes))
+		// First see if we can find a named route with the given name
+		if (array_key_exists($destination, static::$routes))
 		{
-			return \Uri::create(static::$routes[$name]->path, $named_params);
+			return \Uri::create(static::$routes[$destination]->path, $named_params);
 		}
+		// If that fails, try and find a reverse route
+		foreach (static::$routes as $route)
+		{
+			if ($match = $route->match_reverse($destination))
+			{
+				return \Uri::create($match, $named_params);
+			}
+		}
+		// If that fails, assume it's a forward route
+		return \Uri::create($destination, $named_params);
 	}
 
 	/**

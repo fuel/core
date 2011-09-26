@@ -36,22 +36,81 @@ class Route {
 
 	protected $search = null;
 
+	protected $reverse_search = null;
+
+	protected $reverse_translation = null;
+
 	public function __construct($path, $translation = null)
 	{
 		$this->path = $path;
 		$this->translation = ($translation === null) ? $path : $translation;
-		$this->search = ($translation == stripslashes($path)) ? $path : $this->compile();
+		$this->search = ($translation == stripslashes($path)) ? $path : $this->compile($this->path);
+		list ($this->reverse_search, $this->reverse_translation) = $this->compile_reverse($this->path);
 	}
 
-	protected function compile()
+	protected function compile($path)
 	{
-		if ($this->path === '_root_')
+		if ($path === '_root_')
 		{
 			return '';
 		}
 
-		$search = str_replace(array(':any', ':segment'), array('.+', '[^/]*'), $this->path);
+		$search = str_replace(array(':any', ':segment'), array('.+', '[^/]*'), $path);
 		return preg_replace('|:([a-z\_]+)|uD', '(?P<$1>.+?)', $search);
+	}
+
+	protected function compile_reverse($path)
+	{
+		if ($path === '_root_')
+		{
+			return array('', '');
+		}
+
+		// Go through path, and every time we find :any or :secment, $<num> in $translation
+		// Construct $translation, which is later compiled down to reverse_search.
+		// Go through $path, and every time we find :and or :segment, replace
+		// $<num> with this in $translation (taking num in incrementing order).
+
+		// Also construct $reverse_translation.
+		// Every time we find :any or :segment in $path, replace it with the
+		// corresponding $<num> from $this->translation.
+
+		// The net result is $this->reverse_search, which is used to match against
+		// a requested reverse route, and $this->reverse_translation, which is the
+		// path this is translated into.
+
+		preg_match_all('/\(:any\)|\(:segment\)/', $path, $matches);
+		preg_match_all('/\$\d+/', $this->translation, $translation_matches);
+
+		$translation = $this->translation;
+		$reverse_translation = $this->path;
+		foreach ($matches[0] as $i => $match)
+		{
+			$translation_search = '$'.($i+1);
+			$translation = str_replace($translation_search, $match, $translation);
+			$reverse_translation = substr_replace($reverse_translation, $translation_matches[0][$i],
+					strpos($reverse_translation, $match), strlen($match));
+		}
+
+		return array($this->compile($translation), $reverse_translation);
+	}
+
+	/**
+	 * Given a path, sees whether this route could point towards that path.
+	 * If true, construct the url which would point towards the given path.
+	 * If false, return false
+	 *
+	 * @access public
+	 * @param string $path	The path to check
+	 * @return string|false	The uri which point to the path if we do match, false if not
+	 */
+	public function match_reverse($path)
+	{
+		if ($this->reverse_search == '')
+			return false;
+
+		$uri = preg_replace('#^'.$this->reverse_search.'$#uD', $this->reverse_translation, $path, -1, $count);
+		return $count ? $uri : false;
 	}
 
 	/**
