@@ -576,6 +576,30 @@ class Arr {
 
 		return $array;
 	}
+	
+	/**
+	 * Prepends a value with an asociative key to an array.
+	 * Will overwrite if the value exists.
+	 *
+	 * @param   array           $arr     the array to prepend to
+	 * @param   string|array    $key     the key or array of keys and values
+	 * @param   mixed           $valye   the value to prepend
+	 */
+	public static function prepend(&$arr, $key, $value = null)
+	{
+		if(is_array($key))
+		{
+			$key = array_reverse($key, true);
+			foreach($key as $k => $v)
+			{
+				static::prepend($arr, $k, $v);
+			}
+			return;
+		}
+		
+		$return = array($key => $value);
+		$arr = $return + $arr;
+	}
 
 }
 
