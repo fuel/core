@@ -587,18 +587,7 @@ class Arr {
 	 */
 	public static function prepend(&$arr, $key, $value = null)
 	{
-		if(is_array($key))
-		{
-			$key = array_reverse($key, true);
-			foreach($key as $k => $v)
-			{
-				static::prepend($arr, $k, $v);
-			}
-			return;
-		}
-		
-		$return = array($key => $value);
-		$arr = $return + $arr;
+		$arr = (is_array($key) ? $key : array($key => $value)) + $arr;
 	}
 
 }
