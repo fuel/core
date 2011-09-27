@@ -538,6 +538,44 @@ class Tests_Arr extends TestCase {
 		$expected = null;
 		$this->assertEquals($expected, Arr::to_assoc($arr));
 	}
+	
+	/**
+	 * Tests Arr::prepend()
+	 *
+	 * @test
+	 */
+	public function test_prepend()
+	{
+		$arr = array(
+			'two' => 2,
+			'three' => 3,
+		);
+		$expected = array(
+			'one' => 2
+			'two' => 2,
+			'three' => 3,
+		);
+		$this->assertEquals($expected, Arr::prepend($arr, 'one', 1));
+	}
+	
+	/**
+	 * Tests Arr::prepend()
+	 *
+	 * @test
+	 */
+	public function test_prepend_array()
+	{
+		$arr = array(
+			'two' => 2,
+			'three' => 3,
+		);
+		$expected = array(
+			'one' => 2
+			'two' => 2,
+			'three' => 3,
+		);
+		$this->assertEquals($expected, Arr::prepend($arr, array('one' => 1)));
+	}
 }
 
 
