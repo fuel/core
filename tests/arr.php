@@ -551,7 +551,7 @@ class Tests_Arr extends TestCase {
 			'three' => 3,
 		);
 		$expected = array(
-			'one' => 2
+			'one' => 1,
 			'two' => 2,
 			'three' => 3,
 		);
@@ -570,7 +570,7 @@ class Tests_Arr extends TestCase {
 			'three' => 3,
 		);
 		$expected = array(
-			'one' => 2
+			'one' => 1,
 			'two' => 2,
 			'three' => 3,
 		);
