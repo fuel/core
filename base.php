@@ -143,14 +143,14 @@ if ( ! function_exists('get_object_public_vars'))
 /**
  * Renders a view and returns the output.
  *
- * @param	string	The view name/path
- * @param	array	The data for the view
- * @param       bool    Auto sanitize data
- * @return	string
+ * @param   string	The view name/path
+ * @param   array	The data for the view
+ * @param   bool    Auto filter override
+ * @return  string
  */
 if ( ! function_exists('render'))
 {
-	function render($view, $data = array(), $auto_filter = null)
+	function render($view, $data = null, $auto_filter = null)
 	{
 		return \View::forge($view, $data, $auto_filter)->render();
 	}
