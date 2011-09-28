@@ -547,6 +547,33 @@ class Request {
 	}
 
 	/**
+	 * Gets a specific named parameter
+	 *
+	 * @param   string  $param    Name of the parameter
+	 * @param   mixed   $default  Default value
+	 * @return  mixed
+	 */
+	public function param($param, $default = null)
+	{
+		if ( ! isset($this->named_params[$param]))
+		{
+			return \Fuel::value($default);
+		}
+
+		return $this->named_params[$param];
+	}
+
+	/**
+	 * Gets all of the named parameters
+	 *
+	 * @return  array
+	 */
+	public function params()
+	{
+		return $this->named_params;
+	}
+
+	/**
 	 * PHP magic function returns the Output of the request.
 	 *
 	 * Usage:

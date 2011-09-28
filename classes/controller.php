@@ -53,17 +53,13 @@ abstract class Controller {
 	 * This method returns the named parameter requested, or all of them
 	 * if no parameter is given.
 	 *
-	 * @param   string  The name of the parameter
-	 * @return  string
+	 * @param   string  $param    The name of the parameter
+	 * @param   mixed   $default  Default value
+	 * @return  mixed
 	 */
-	public function param($param)
+	public function param($param, $default = null)
 	{
-		if ( ! isset($this->request->named_params[$param]))
-		{
-			return FALSE;
-		}
-
-		return $this->request->named_params[$param];
+		return $this->request->param($param, $default);
 	}
 
 	/**
@@ -73,7 +69,7 @@ abstract class Controller {
 	 */
 	public function params()
 	{
-		return $this->request->named_params;
+		return $this->request->params();
 	}
 
 	/**

@@ -13,9 +13,6 @@
 namespace Fuel\Core;
 
 
-
-// ------------------------------------------------------------------------
-
 /**
  * ViewModel
  *
@@ -136,6 +133,16 @@ abstract class ViewModel {
 		$this->_view = \View::forge($this->_view);
 	}
 
+	/**
+	 * Returns the active request object.
+	 * 
+	 * @return  Request
+	 */
+	protected function request()
+	{
+		return $this->_active_request;
+	}
+	
 	/**
 	 * Executed before the view method
 	 */
