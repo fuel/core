@@ -145,13 +145,14 @@ if ( ! function_exists('get_object_public_vars'))
  *
  * @param	string	The view name/path
  * @param	array	The data for the view
+ * @param       bool    Auto sanitize data
  * @return	string
  */
 if ( ! function_exists('render'))
 {
-	function render($view, $data = array())
+	function render($view, $data = array(), $auto_sanitize = true)
 	{
-		return \View::forge($view, $data)->render();
+		return \View::forge($view, $data, $auto_sanitize)->render();
 	}
 }
 
