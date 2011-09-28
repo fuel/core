@@ -150,9 +150,9 @@ if ( ! function_exists('get_object_public_vars'))
  */
 if ( ! function_exists('render'))
 {
-	function render($view, $data = array(), $auto_sanitize = true)
+	function render($view, $data = array(), $auto_filter = null)
 	{
-		return \View::forge($view, $data, $auto_sanitize)->render();
+		return \View::forge($view, $data, $auto_filter)->render();
 	}
 }
 
