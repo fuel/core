@@ -647,6 +647,19 @@ class Arr {
 	}
 	
 	/**
+	 * Prepends a value with an asociative key to an array.
+	 * Will overwrite if the value exists.
+	 *
+	 * @param   array           $arr     the array to prepend to
+	 * @param   string|array    $key     the key or array of keys and values
+	 * @param   mixed           $valye   the value to prepend
+	 */
+	public static function prepend(&$arr, $key, $value = null)
+	{
+		$arr = (is_array($key) ? $key : array($key => $value)) + $arr;
+	}
+	
+	/**
 	 * Merge 2 arrays recursively, differs from \Arr::merge() in:
 	 * - The values are only merged if they exist in the left-most array
 	 * 

@@ -149,7 +149,7 @@ class DBUtil {
 		}
 		else
 		{
-			$use_brackets = in_array($type, array('ADD', 'CHANGE', 'MODIFY'));
+			$use_brackets = ! in_array($type, array('ADD', 'CHANGE', 'MODIFY'));
 			$sql .= $type.' ';
 			$use_brackets and $sql .= '(';
 			$sql .= static::process_fields($fields);

@@ -48,6 +48,10 @@ class Database_Result_Cached extends \Database_Result {
 	public function current()
 	{
 		// Return an array of the row
+		if( ! array_key_exists($this->_current_row, $this->_result))
+		{
+			return null;
+		}
 		return $this->_result[$this->_current_row];
 	}
 

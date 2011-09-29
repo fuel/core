@@ -13,7 +13,7 @@
 namespace Fuel\Core;
 
 class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
-	
+
 	/**
 	 * @var  string  $_table_name  The table name (must set this in your Model)
 	 */
@@ -23,12 +23,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var  string  $_primary_key  The primary key for the table
 	 */
 	protected static $_primary_key = 'id';
-	
+
 	/**
 	 * @var  array  $_rules  The validation rules (must set this in your Model to use)
 	 */
 	// protected static $_rules = array();
-	
+
 	/**
 	 * @var array  $_labels  Field labels (must set this in your Model to use)
 	 */
@@ -56,7 +56,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	{
 		$query = \DB::select('*')
 		           ->from(static::$_table_name);
-		
+
 		if (is_array($column))
 		{
 			$query = $query->where($column);
@@ -67,15 +67,15 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		}
 
 		$query = $query->limit(1)
-		               ->as_object(get_called_class())
-		               ->execute();
+		               ->as_object(get_called_class());
 
-		if ($query->count() === 0)
-		{
-			return null;
-		}
+		$query = static::pre_find($query);
 
-		return $query->current();
+		$result = $query->execute();
+		$result = ($result->count() === 0) ? null : $result->current();
+
+		return static::post_find($result);
+
 	}
 
 	/**
@@ -93,7 +93,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	{
 		$query = \DB::select('*')
 		           ->from(static::$_table_name);
-		
+
 		if ($column !== null)
 		{
 			if (is_array($column))
@@ -105,21 +105,20 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				$query = $query->where($column, $operator, $value);
 			}
 		}
-		
+
 		if ($limit !== null)
 		{
 			$query = $query->limit($limit)->offset($offset);
 		}
 
-		$query = $query->as_object(get_called_class())
-		               ->execute();
+		$query = $query->as_object(get_called_class());
 
-		if ($query->count() === 0)
-		{
-			return null;
-		}
+		$query = static::pre_find($query);
 
-		return $query->as_array();
+		$result = $query->execute();
+		$result = ($result->count() === 0) ? null : $result->as_array();
+
+		return static::post_find($result);
 	}
 
 	/**
@@ -157,6 +156,29 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	}
 
 	/**
+	 * Gets called before the query is executed.  Must return the query object.
+	 *
+	 * @param   Database_Query  $query  The query object
+	 * @return  Database_Query
+	 */
+	protected static function pre_find($query)
+	{
+		return $query;
+	}
+
+	/**
+	 * Gets called after the query is executed and right before it is returned.
+	 * $result will be null if 0 rows are returned.
+	 *
+	 * @param   Database_Result  $result  The result object
+	 * @return  Database_Result|null
+	 */
+	protected static function post_find($result)
+	{
+		return $result;
+	}
+
+	/**
 	 * @var  bool  $_is_new  If this is a new record
 	 */
 	protected $_is_new = true;
@@ -165,7 +187,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var  bool  $_is_frozen  If this is a record is frozen
 	 */
 	protected $_is_frozen = false;
-	
+
 	/**
 	 * @var  object  $_validation  The validation instance
 	 */
@@ -232,12 +254,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		{
 			throw new \Exception('Cannot modify a frozen row.');
 		}
-		
+
 		$vars = $this->to_array();
 		if (isset(static::$_rules) and count(static::$_rules) > 0)
 		{
 			$validated = $this->run_validation($vars);
-			
+
 			if ($validated)
 			{
 				$vars = $this->validation()->validated();
@@ -250,14 +272,23 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ($this->is_new())
 		{
-			return \DB::insert(static::$_table_name)
-			         ->set($vars)
-			         ->execute();
+			$query = \DB::insert(static::$_table_name)
+			            ->set($vars);
+
+			$query = $this->pre_save($query);
+			$result = $query->execute();
+
+			return $this->post_save($result);
 		}
-		return \DB::update(static::$_table_name)
+
+		$query = \DB::update(static::$_table_name)
 		         ->set($vars)
-		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key})
-		         ->execute();
+		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key});
+
+		$query = $this->pre_update($query);
+		$result = $query->execute();
+
+		return $this->post_update($result);
 	}
 
 	/**
@@ -268,9 +299,13 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	public function delete()
 	{
 		$this->frozen(true);
-		return \DB::delete(static::$_table_name)
-		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key})
-		         ->execute();
+		$query = \DB::delete(static::$_table_name)
+		            ->where(static::$_primary_key, '=', $this->{static::$_primary_key});
+
+		$query = $this->pre_delete($query);
+		$result = $query->execute();
+
+		return $this->post_delete($result);
 	}
 
 	/**
@@ -317,7 +352,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	public function validation()
 	{
 		$this->_validation or $this->_validation = \Validation::forge(md5(microtime(true)));
-		
+
 		return $this->_validation;
 	}
 
@@ -365,7 +400,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 	/**
 	 * Sets the value of the given offset (class property).
-	 * 
+	 *
 	 * @param   string  $offset  class property
 	 * @param   string  $value   value
 	 * @return  void
@@ -377,7 +412,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 	/**
 	 * Checks if the given offset (class property) exists.
-	 * 
+	 *
 	 * @param   string  $offset  class property
 	 * @return  bool
 	 */
@@ -388,7 +423,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 	/**
 	 * Unsets the given offset (class property).
-	 * 
+	 *
 	 * @param   string  $offset  class property
 	 * @return  void
 	 */
@@ -399,7 +434,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 	/**
 	 * Gets the value of the given offset (class property).
-	 * 
+	 *
 	 * @param   string  $offset  class property
 	 * @return  mixed
 	 */
@@ -428,13 +463,110 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		$this->_validation = null;
 		$this->_validation = $this->validation();
-		
+
 		foreach (static::$_rules as $field => $rules)
 		{
 			$label = (isset(static::$_labels) and array_key_exists($field, static::$_labels)) ? static::$_labels[$field] : $field;
 			$this->_validation->add_field($field, $label, $rules);
 		}
-		
-		return $this->_validation->run($vars);
+
+		$vars = $this->pre_validate($data);
+
+		$result = $this->_validation->run($vars);
+
+		return $this->post_validate($result);
 	}
+
+	/**
+	 * Gets called before the insert query is executed.  Must return
+	 * the query object.
+	 *
+	 * @param   Database_Query  $query  The query object
+	 * @return  Database_Query
+	 */
+	protected function pre_save($query)
+	{
+		return $query;
+	}
+
+	/**
+	 * Gets called after the insert query is executed and right before
+	 * it is returned.
+	 *
+	 * @param   array  $result  insert id and number of affected rows
+	 * @return  array
+	 */
+	protected function post_save($result)
+	{
+		return $result;
+	}
+
+	/**
+	 * Gets called before the update query is executed.  Must return the query object.
+	 *
+	 * @param   Database_Query  $query  The query object
+	 * @return  Database_Query
+	 */
+	protected function pre_update($query)
+	{
+		return $query;
+	}
+
+	/**
+	 * Gets called after the update query is executed and right before
+	 * it is returned.
+	 *
+	 * @param   int  $result  Number of affected rows
+	 * @return  int
+	 */
+	protected function post_update($result)
+	{
+		return $result;
+	}
+
+	/**
+	 * Gets called before the delete query is executed.  Must return the query object.
+	 *
+	 * @param   Database_Query  $query  The query object
+	 * @return  Database_Query
+	 */
+	protected function pre_delete($query)
+	{
+		return $query;
+	}
+
+	/**
+	 * Gets called after the delete query is executed and right before
+	 * it is returned.
+	 *
+	 * @param   int  $result  Number of affected rows
+	 * @return  int
+	 */
+	protected function post_delete($result)
+	{
+		return $result;
+	}
+
+	/**
+	 * Gets called before the validation is ran.
+	 *
+	 * @param   array  $data  The validation data
+	 * @return  array
+	 */
+	protected function pre_validate($data)
+	{
+		return $data;
+	}
+
+	/**
+	 * Called right after the validation is ran.
+	 *
+	 * @param   bool  $result  Validation result
+	 * @return  bool
+	 */
+	protected function post_validate($result)
+	{
+		return $result;
+	}
+
 }
