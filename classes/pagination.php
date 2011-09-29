@@ -51,6 +51,12 @@ class Pagination {
 		'next_mark'      => ' &raquo;',
 		'active_start'   => '<span class="active"> ',
 		'active_end'     => ' </span>',
+		'disabled'       => array(
+            'previous_start' => '<li class="prev disabled"><a href="#">',
+            'previous_end'   => '</a></li>',
+            'next_start'     => '<li class="next disabled"><a href="#">',
+            'next_end'       => '</a></li>',
+        ),
 	);
 
 	/**
@@ -201,11 +207,11 @@ class Pagination {
 			else
 			{
 				$url = ($i == 1) ? '' : '/'.$i;
-				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/').$url, $i);
+				$pagination .= static::$template['page_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$url, $i).static::$template['page_end'];
 			}
 		}
 
-		return static::$template['page_start'].$pagination.static::$template['page_end'];
+		return $pagination;
 	}
 
 	// --------------------------------------------------------------------
@@ -226,12 +232,12 @@ class Pagination {
 
 		if (static::$current_page == static::$total_pages)
 		{
-			return $value.static::$template['next_mark'];
+			return static::$template['disabled']['next_start'].$value.static::$template['next_mark'].static::$template['disabled']['next_end'];
 		}
 		else
 		{
 			$next_page = static::$current_page + 1;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']);
+			return static::$template['next_start'].\Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']).static::$template['next_end'];
 		}
 	}
 
@@ -253,13 +259,13 @@ class Pagination {
 
 		if (static::$current_page == 1)
 		{
-			return static::$template['previous_mark'].$value;
+			return static::$template['disabled']['previous_start'].static::$template['previous_mark'].$value.static::$template['disabled']['previous_end'];
 		}
 		else
 		{
 			$previous_page = static::$current_page - 1;
 			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value);
+			return static::$template['previous_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value).static::$template['previous_end'];
 		}
 	}
 }
