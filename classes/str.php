@@ -88,7 +88,7 @@ class Str {
 		$encoding or $encoding = \Fuel::$encoding;
 
 		return function_exists('mb_substr')
-			? mb_substr($str, $start, $length, $encoding)
+			? mb_substr($str, $start, (is_null($length) ? strlen($str) : $length), $encoding)
 			: (is_null($length) ? substr($str, $start) : substr($str, $start, $length));
 	}
 
