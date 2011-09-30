@@ -136,23 +136,20 @@ class Form {
 	{
 		return '</form>';
 	}
-	
+
 	/**
 	 * Create a fieldset open tag
 	 *
-	 * @param	string|array	action string or array with more tag attribute settings
-	 * @param	string	string for the fieldset legend
-	 * @return	string
+	 * @param   array   array with tag attribute settings
+	 * @param   string  string for the fieldset legend
+	 * @return  string
 	 */
 	public static function fieldset_open($attributes = array(), $legend = null)
 	{
 		$fieldset_open = '<fieldset ' . array_to_attr($attributes) . ' >';
 
-		if ( ! is_null($legend))
-		{
-			$fieldset_open.= "\n<legend>".$legend."</legend>";
-		} 
-		else if ( ! empty($attributes['legend']))
+		! is_null($legend) and $attributes['legend'] = $legend;
+		if ( ! empty($attributes['legend']))
 		{
 			$fieldset_open.= "\n<legend>".$attributes['legend']."</legend>";
 		}
