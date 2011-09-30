@@ -192,9 +192,16 @@ class Response {
 	{
 		if ( ! headers_sent())
 		{
-			// Send the protocol line first
-			$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
-			header($protocol.' '.$this->status.' '.static::$statuses[$this->status]);
+			// Send the protocol/status line first, FCGI servers need different status header
+			if (empty($_SERVER['FCGI_SERVER_VERSION']))
+			{
+				header('Status: '.$this->status.' '.static::$statuses[$this->status]);
+			}
+			else
+			{
+				$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
+				header($protocol.' '.$this->status.' '.static::$statuses[$this->status]);
+			}
 
 			foreach ($this->headers as $name => $value)
 			{
@@ -216,7 +223,7 @@ class Response {
 	public function send($send_headers = false)
 	{
 		$send_headers and $this->send_headers();
-		
+
 		if ($this->body != null)
 		{
 			echo $this->body;
