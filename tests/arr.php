@@ -155,12 +155,20 @@ class Tests_Arr extends TestCase {
 	 * Tests Arr::element()
 	 *
 	 * @test
+	 * @expectedException InvalidArgumentException
 	 */
-	public function test_element_when_array_is_not_an_array()
+	public function test_element_throws_exception_when_array_is_not_an_array()
 	{
-		$expected = "Unknown Name";
-		$output = Arr::element('Jack', 'name', 'Unknown Name');
-		$this->assertEquals($expected, $output);
+		try 
+		{
+			$output = Arr::element('Jack', 'name', 'Unknown Name');
+		}
+		catch (\InvalidArgumentException $e) 
+		{
+			return ;
+		}
+
+		$this->fail("Expected Exception \InvalidArgumentException not thrown");
 	}
 
 	/**
@@ -214,11 +222,12 @@ class Tests_Arr extends TestCase {
 	 *
 	 * @test
 	 * @dataProvider person_provider
-	 * @expectedException InvalidArgumentException
 	 */
-	public function test_elements_throws_exception_when_keys_is_not_an_array($person)
+	public function test_elements_when_keys_is_not_an_array($person)
 	{
+		$expected = 'Jack';
 		$output = Arr::elements($person, 'name', 'Unknown');
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
