@@ -136,6 +136,34 @@ class Form {
 	{
 		return '</form>';
 	}
+	
+	/**
+	 * Create a fieldset open tag
+	 *
+	 * @param	string|array	action string or array with more tag attribute settings
+	 * @return	string
+	 */
+	public static function fieldset_open($legend = null, $attributes = array())
+	{
+		$fieldset_open = '<fieldset ' . array_to_attr($attributes) . ' >';
+
+		if (! empty($legend))
+		{
+			$fieldset_open.= "\n<legend>{$legend}</legend>";
+		}
+
+		return $fieldset_open;
+	}
+
+	/**
+	 * Create a fieldset close tag
+	 *
+	 * @return string
+	 */
+	public static function fieldset_close()
+	{
+		return '</fieldset>';
+	}
 
 	/**
 	 * Create a form input
@@ -693,6 +721,12 @@ class Form {
 				break;
 			case 'button':
 				$build_field = static::button($field->name, $field->value, $field->attributes);
+				break;
+			case 'fieldset_open':
+				return static::fieldset_open($field->label, $field->attributes);
+				break;
+			case 'fieldset_close':
+				return static::fieldset_close();
 				break;
 			default:
 				$build_field = static::input($field->name, $field->value, $field->attributes);
