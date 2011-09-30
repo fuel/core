@@ -159,16 +159,7 @@ class Tests_Arr extends TestCase {
 	 */
 	public function test_element_throws_exception_when_array_is_not_an_array()
 	{
-		try 
-		{
-			$output = Arr::element('Jack', 'name', 'Unknown Name');
-		}
-		catch (\InvalidArgumentException $e) 
-		{
-			return ;
-		}
-
-		$this->fail("Expected Exception \InvalidArgumentException not thrown");
+		$output = Arr::element('Jack', 'name', 'Unknown Name');
 	}
 
 	/**
