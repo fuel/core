@@ -158,11 +158,20 @@ class Response {
 	 *
 	 * @param   string  The header name
 	 * @param   string  The header value
+	 * @param   string  Whether to replace existing value for the header, will never overwrite/be overwritten when false
 	 * @return  $this
 	 */
-	public function set_header($name, $value)
+	public function set_header($name, $value, $replace = true)
 	{
-		$this->headers[$name] = $value;
+		if ($replace)
+		{
+			$this->headers[$name] = $value;
+		}
+		else
+		{
+			$this->headers[] = array($name, $value);
+		}
+
 		return $this;
 	}
 
@@ -205,7 +214,13 @@ class Response {
 
 			foreach ($this->headers as $name => $value)
 			{
+				// Parse non-replace headers
+				is_int($name) and is_array($value) and list($name, $value) = $value;
+
+				// Create the header
 				is_string($name) and $value = "{$name}: {$value}";
+
+				// Send it
 				header($value, true);
 			}
 			return true;
