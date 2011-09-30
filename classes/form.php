@@ -140,6 +140,7 @@ class Form {
 	/**
 	 * Create a fieldset open tag
 	 *
+	 * @param	string	string for the fieldset legend
 	 * @param	string|array	action string or array with more tag attribute settings
 	 * @return	string
 	 */
@@ -721,12 +722,6 @@ class Form {
 				break;
 			case 'button':
 				$build_field = static::button($field->name, $field->value, $field->attributes);
-				break;
-			case 'fieldset_open':
-				return static::fieldset_open($field->label, $field->attributes);
-				break;
-			case 'fieldset_close':
-				return static::fieldset_close();
 				break;
 			default:
 				$build_field = static::input($field->name, $field->value, $field->attributes);
