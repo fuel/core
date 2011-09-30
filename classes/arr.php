@@ -587,7 +587,7 @@ class Arr {
 	 */
 	public static function prepend(&$arr, $key, $value = null)
 	{
-		return $arr = (is_array($key) ? $key : array($key => $value)) + $arr;
+		$arr = (is_array($key) ? $key : array($key => $value)) + $arr;
 	}
 
 }

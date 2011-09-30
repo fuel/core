@@ -555,7 +555,8 @@ class Tests_Arr extends TestCase {
 			'two' => 2,
 			'three' => 3,
 		);
-		$this->assertEquals($expected, Arr::prepend($arr, 'one', 1));
+		$output = Arr::prepend($arr, 'one', 1);
+		$this->assertEquals($expected, $output);
 	}
 	
 	/**
@@ -574,7 +575,8 @@ class Tests_Arr extends TestCase {
 			'two' => 2,
 			'three' => 3,
 		);
-		$this->assertEquals($expected, Arr::prepend($arr, array('one' => 1)));
+		$output = Arr::prepend($arr, array('one' => 1));
+		$this->assertEquals($expected, $output);
 	}
 }
 
