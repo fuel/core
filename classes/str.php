@@ -86,9 +86,12 @@ class Str {
 	public static function sub($str, $start, $length = null, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
-
-		return function_exists('mb_substr')
-			? mb_substr($str, $start, $length, $encoding)
+		
+		// if you try to perform a mp_substr() with encoding set to UTF-8 on
+		// a ASCII encoded string, you'll get an empty string, which leads
+		// to errors
+		return function_exists('mb_substr') && mb_detect_encoding($str) == $encoding
+			? mb_substr($str, $start, $length)
 			: (is_null($length) ? substr($str, $start) : substr($str, $start, $length));
 	}
 
