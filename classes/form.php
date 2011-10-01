@@ -645,18 +645,6 @@ class Form {
 		! $field instanceof Fieldset_Field && $field = $this->field($field);
 
 		$required = $field->get_attribute('required', null);
-		$field->set_attribute('required', null);
-		if ($required === null)
-		{
-			$required = false;
-			foreach ($field->rules as $rule)
-			{
-				if (reset($rule) === 'required')
-				{
-					$required = true;
-				}
-			}
-		}
 
 		// Add IDs when auto-id is on
 		if ($this->get_config('auto_id', false) === true and $field->get_attribute('id') == '')

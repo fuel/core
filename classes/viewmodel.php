@@ -43,13 +43,13 @@ abstract class ViewModel {
 	 */
 	public static function forge($viewmodel, $method = 'view', $auto_filter = null)
 	{
-		$class = ucfirst(\Request::active()->module).'\\View_'.ucfirst(str_replace(DS, '_', $viewmodel));
+		$class = ucfirst(\Request::active()->module).'\\View_'.ucfirst(str_replace(array('/', DS), '_', $viewmodel));
 
 		if ( ! class_exists($class))
 		{
 			if ( ! class_exists($class = $viewmodel))
 			{
-				throw new \OutOfBoundsException('ViewModel "View_'.ucfirst(str_replace(DS, '_', $viewmodel)).'" could not be found.');
+				throw new \OutOfBoundsException('ViewModel "View_'.ucfirst(str_replace(array('/', DS), '_', $viewmodel)).'" could not be found.');
 			}
 		}
 
@@ -135,14 +135,14 @@ abstract class ViewModel {
 
 	/**
 	 * Returns the active request object.
-	 * 
+	 *
 	 * @return  Request
 	 */
 	protected function request()
 	{
 		return $this->_active_request;
 	}
-	
+
 	/**
 	 * Executed before the view method
 	 */
