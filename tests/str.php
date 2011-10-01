@@ -66,10 +66,6 @@ class Tests_Str extends TestCase {
 		$output = Str::truncate($string, $limit, '...', false);
 		$expected = '<h1>Lorem ipsum...';
 		$this->assertEquals($expected, $output);
-		
-		$output = Str::truncate($string, $limit, '...', true);
-		$expected = '<h1>Lorem ipsum dol...</h1>';
-		$this->assertEquals($expected, $output);
 	}
 
 	/**
