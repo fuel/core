@@ -155,12 +155,11 @@ class Tests_Arr extends TestCase {
 	 * Tests Arr::element()
 	 *
 	 * @test
+	 * @expectedException InvalidArgumentException
 	 */
 	public function test_element_when_array_is_not_an_array()
 	{
-		$expected = "Unknown Name";
 		$output = Arr::element('Jack', 'name', 'Unknown Name');
-		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -207,18 +206,6 @@ class Tests_Arr extends TestCase {
 		);
 		$output = Arr::elements($person, array('name', 'height'), 'Unknown');
 		$this->assertEquals($expected, $output);
-	}
-
-	/**
-	 * Tests Arr::elements()
-	 *
-	 * @test
-	 * @dataProvider person_provider
-	 * @expectedException InvalidArgumentException
-	 */
-	public function test_elements_throws_exception_when_keys_is_not_an_array($person)
-	{
-		$output = Arr::elements($person, 'name', 'Unknown');
 	}
 
 	/**
@@ -555,7 +542,9 @@ class Tests_Arr extends TestCase {
 			'two' => 2,
 			'three' => 3,
 		);
-		$this->assertEquals($expected, Arr::prepend($arr, 'one', 1));
+		
+		Arr::prepend($arr, 'one', 1);
+		$this->assertEquals($expected, $arr);
 	}
 	
 	/**
@@ -574,7 +563,9 @@ class Tests_Arr extends TestCase {
 			'two' => 2,
 			'three' => 3,
 		);
-		$this->assertEquals($expected, Arr::prepend($arr, array('one' => 1)));
+		
+		Arr::prepend($arr, array('one' => 1));
+		$this->assertEquals($expected, $arr);
 	}
 }
 
