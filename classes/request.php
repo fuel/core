@@ -374,7 +374,7 @@ class Request {
 			{
 				$response = call_user_func_array($this->route->callable, array($this));
 			}
-			catch (\Request404Exception $e)
+			catch (Request404Exception $e)
 			{
 				static::reset_request();
 				throw $e;
@@ -425,7 +425,7 @@ class Request {
 				{
 					$response = call_user_func_array(array($controller, $method), $this->method_params);
 				}
-				catch (\Request404Exception $e)
+				catch (Request404Exception $e)
 				{
 					static::reset_request();
 					throw $e;
