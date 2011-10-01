@@ -295,8 +295,11 @@ class Request {
 				$module = $this->uri->segments[0];
 
 				// load and add the module routes
-				$module_routes = \Config::load(\Fuel::load($module_path), $module . '_routes');
-				array_walk($module_routes, function ($route, $name) use ($module) {
+				$module_routes = \Fuel::load($module_path);
+				
+				$prepped_routes = array();
+				foreach($module_routes as $name => $route)
+				{
 					if ($name === '_root_')
 					{
 						$name = $module;
@@ -305,11 +308,12 @@ class Request {
 					{
 						$name = $module.'/'.$name;
 					}
-					\Config::set('routes.'.$name, $route);
-				});
+					
+					$prepped_routes[$name] = $route;
+				};
 
 				// update the loaded list of routes
-				\Router::add(\Config::get('routes'));
+				\Router::add($prepped_routes, null, true);
 			}
 		}
 
