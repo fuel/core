@@ -87,9 +87,12 @@ class Str {
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
+		// substr functions don't parse null correctly
+		$length = is_null($length) ? (function_exists('mb_substr') ? mb_strlen($str, $encoding) : strlen($str)) - $start : $length;
+
 		return function_exists('mb_substr')
-			? mb_substr($str, $start, (is_null($length) ? mb_strlen($str, $encoding) : $length), $encoding)
-			: (is_null($length) ? substr($str, $start) : substr($str, $start, $length));
+			? mb_substr($str, $start, $length, $encoding)
+			: substr($str, $start, $length);
 	}
 
 	/**
