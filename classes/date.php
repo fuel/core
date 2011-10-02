@@ -30,8 +30,9 @@ namespace Fuel\Core;
  */
 class Date {
 
-	const YEAR = 31556926;
-	const MONTH = 2629744;
+	/**
+	 * Time constants (and only those that are constant, thus not MONTH/YEAR)
+	 */
 	const WEEK = 604800;
 	const DAY = 86400;
 	const HOUR = 3600;
