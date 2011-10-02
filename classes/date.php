@@ -31,6 +31,14 @@ namespace Fuel\Core;
 class Date {
 
 	/**
+	 * Time constants (and only those that are constant, thus not MONTH/YEAR)
+	 */
+	const WEEK = 604800;
+	const DAY = 86400;
+	const HOUR = 3600;
+	const MINUTE = 60;
+
+	/**
 	 * @var int server's time() offset from gmt in seconds
 	 */
 	protected static $server_gmt_offset = 0;
