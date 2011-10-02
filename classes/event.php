@@ -120,7 +120,7 @@ class Event {
 	 */
 	public static function shutdown()
 	{
-		if ( static::has_events('shutdown'))
+		if (static::has_events('shutdown'))
 		{
 			// trigger the shutdown events
 			static::trigger('shutdown', '', 'none');
@@ -140,7 +140,7 @@ class Event {
 	 */
 	public static function has_events($event)
 	{
-		if (isset(static::$_events[$event]) AND count(static::$_events[$event]) > 0)
+		if (isset(static::$_events[$event]) and count(static::$_events[$event]) > 0)
 		{
 			return true;
 		}

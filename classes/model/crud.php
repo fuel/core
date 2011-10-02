@@ -312,7 +312,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Either checks if the record is new or sets whether it is new or not.
 	 *
 	 * @param   bool|null  $new  Whether this is a new record
-	 * @return  void|$this
+	 * @return  bool|$this
 	 */
 	public function is_new($new = null)
 	{
@@ -330,7 +330,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Either checks if the record is frozen or sets whether it is frozen or not.
 	 *
 	 * @param   bool|null  $new  Whether this is a frozen record
-	 * @return  void|$this
+	 * @return  bool|$this
 	 */
 	public function frozen($frozen = null)
 	{
