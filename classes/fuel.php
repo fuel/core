@@ -662,15 +662,60 @@ class Fuel {
 
 	/**
 	 * Takes a value and checks if it is a Closure or not, if it is it
-	 * will return the result of the closure, if not, it will simply return the
-	 * value.
+	 * will return the result of the closure with any function arguments
+	 * preserved. If not, it will simply return the value.
 	 *
 	 * @param   mixed  $var  The value to get
 	 * @return  mixed
 	 */
 	public static function value($var)
 	{
-		return ($var instanceof \Closure) ? $var() : $var;
+		if ($var instanceof \Closure)
+		{
+			return static::new_closure_with_args($var);
+		}
+
+		return $var;
+	}
+
+	/**
+	 * Will take a closure and create a new function with all
+	 * parameters intact.
+	 *
+	 * @param function $closure
+	 * @return function $closure with arguments preserved.
+	 * @author Lee Overy
+	 */
+	public static function new_closure_with_args($closure)
+	{
+	    $reflection = new \ReflectionFunction($closure);
+
+		// grab all the parameters for the existing closure.
+	    $tmp = $reflection->getParameters();
+
+		// loop through and put into args array
+		$args = array();
+	    foreach ($tmp as $a)
+		{
+			array_push($args, '$'.$a->getName() . ($a->isDefaultValueAvailable() ? '=\''.$a->getDefaultValue().'\'' : ''));
+		}
+
+		// now get the code from the function/closure to create a new function.
+	    $file = new \SplFileObject($reflection->getFileName());
+	    $file->seek($reflection->getStartLine()-1);
+
+	    $code = '';
+	    while ($file->key() < $reflection->getEndLine())
+	    {
+	        $code .= $file->current();
+	        $file->next();
+	    }
+
+	    $start = strpos($code, '{')+1;
+	    $end = strrpos($code, '}');
+
+		// awesome. now create and return the new function with args intact! :-)
+	    return create_function(implode(', ', $args), substr($code, $start, $end - $start));
 	}
 
 	/**
