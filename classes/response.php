@@ -202,7 +202,7 @@ class Response {
 		if ( ! headers_sent())
 		{
 			// Send the protocol/status line first, FCGI servers need different status header
-			if (!empty($_SERVER['FCGI_SERVER_VERSION']))
+			if ( ! empty($_SERVER['FCGI_SERVER_VERSION']))
 			{
 				header('Status: '.$this->status.' '.static::$statuses[$this->status]);
 			}
