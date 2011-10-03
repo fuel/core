@@ -51,7 +51,14 @@ abstract class Controller_Template extends \Controller {
 		// If the response is a Response object, we don't want to create a new one
 		if ($this->auto_render === true and ! $response instanceof \Response)
 		{
-			$response = \Response::forge($this->template);
+			$status = null; // it should set to 200 when given null
+
+			if ($this->response instanceof \Response)
+			{
+				$status = $this->response->status;
+			}
+
+			$response = \Response::forge($this->template, $status);
 		}
 
 		return parent::after($response);
