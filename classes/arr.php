@@ -481,6 +481,75 @@ class Arr {
 
 		return (array_sum($array) / $count);
 	}
+	
+	/**
+	 * Sets the value of the given item only if the item exists in the given array.
+	 * The key must be dot-notated. 
+	 *
+	 * @param   array  the array to fetch from
+	 * @param   mixed  the key for the item to be replaced in the array
+	 * @param   mixed  the value to be set if the key exists
+	 * @return  bool   true: element replaced | false: element not in array
+	 */
+	public static function replace_item(array &$array, $key, $value)
+	{
+		if(empty($array))
+		{
+			return false;
+		}
+		
+		if (!is_string($key) && !is_numeric($key))
+		{
+			throw new \InvalidArgumentException('Second parameter must be a string or numeric.');
+		}
+		
+		$keys = explode('.', $key);
+
+		while (count($keys) > 1)
+		{
+			$key = array_shift($keys);
+			
+			if(!isset($array[$key]))
+			{
+				return false;
+			}
+			
+			$array =& $array[$key];
+		}
+		
+		$key = array_shift($keys);
+		if(!isset($array[$key]))
+		{
+			return false;
+		}
+		
+		$array[$key] = $value;
+		return true;
+	}
+	
+	/**
+	 * Sets the values of the given items only if the items exists in the given array.
+	 * The keys must be dot-notated. 
+	 *
+	 * @param   array  the array to fetch from
+	 * @param   array  associative array with the dot-notated keys as indexes and the values to be replaced for
+	 * @return  int    the count of the replaced elements
+	 */
+	public static function replace_items(array &$array, array $keys_values)
+	{
+		if(empty($array))
+		{
+			return 0;
+		}
+		
+		$return = 0;
+		foreach($keys_values as $key=>$value)
+		{
+			$return += (int)(static::replace_item($array, $key, $value));
+		}
+		
+		return $return;
+	}
 
 	/**
 	 * Alias for replace_key for backwards compatibility.
@@ -588,6 +657,71 @@ class Arr {
 	public static function prepend(&$arr, $key, $value = null)
 	{
 		$arr = (is_array($key) ? $key : array($key => $value)) + $arr;
+	}
+	
+	/**
+	 * Merge 2 arrays recursively, differs from \Arr::merge() in:
+	 * - The values are only merged if they exist in the left-most array
+	 * 
+	 * The value of the right-most array has precedence.
+	 * Note that if a branch-end-item (a.k.a. an item that is not an array) is to be
+	 * replaced, it will only be replaced by a non-array value. This means that only
+	 * full branches are replaced.
+	 * Numeric keys are not checked as they are considered as item multiple values and
+	 * are thus inserted as-is.
+	 *
+	 * @param   array  multiple variables all of which must be arrays
+	 * @return  array
+	 * @throws  \InvalidArgumentException
+	 */
+	public static function merge_replace()
+	{
+		$array  = func_get_arg(0);
+		$arrays = array_slice(func_get_args(), 1);
+		
+		if ( ! is_array($array))
+		{
+			throw new \InvalidArgumentException('Arr::merge_replace() - all arguments must be arrays.');
+		}
+		
+		foreach ($arrays as $arr)
+		{
+			if ( ! is_array($arr))
+			{
+				throw new \InvalidArgumentException('Arr::merge_replace() - all arguments must be arrays.');
+			}
+			
+			$keys = array_keys($array);
+			foreach ($arr as $key => $value)
+			{
+				if(is_numeric($key))
+				{
+					$array[$key] = $value;
+				}
+				else
+				{
+					if(in_array($key, $keys))
+					{
+						if(is_array($array[$key]))
+						{
+							if(is_array($value))
+							{
+								$array[$key] = static::merge_replace($array[$key], $value);
+							}
+						}
+						else
+						{
+							if(!is_array($value))
+							{
+								$array[$key] = $value;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		return $array;
 	}
 
 }
