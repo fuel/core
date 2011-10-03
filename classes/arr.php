@@ -484,68 +484,50 @@ class Arr {
 	
 	/**
 	 * Sets the value of the given item only if the item exists in the given array.
-	 * The key must be dot-notated. 
+	 * The key(s) must be dot-notated. The second argumetn must be a non-empty string or a numeric index or an array.
+	 * The third parameter is the value that will be set when key is a string or int, or an array of values to be set if key is array. 
 	 *
 	 * @param   array  the array to fetch from
-	 * @param   mixed  the key for the item to be replaced in the array
-	 * @param   mixed  the value to be set if the key exists
-	 * @return  bool   true: element replaced | false: element not in array
+	 * @param   mixed  the key (or array of keys) for the item(s) to be replaced in the array
+	 * @param   mixed  the value (or array of values) to be set if the key(s) exists
+	 * @return  bool|numeric	true: single element replaced | false: single element not in array | int count of multiple replaced item
 	 */
 	public static function replace_item(array &$array, $key, $value)
 	{
-		if(empty($array))
+		$return = false;
+		if(!empty($array))
 		{
-			return false;
-		}
-		
-		if (!is_string($key) && !is_numeric($key))
-		{
-			throw new \InvalidArgumentException('Second parameter must be a string or numeric.');
-		}
-		
-		$keys = explode('.', $key);
-
-		while (count($keys) > 1)
-		{
-			$key = array_shift($keys);
-			
-			if(!isset($array[$key]))
+			if(is_array($key) && is_array($value))
 			{
-				return false;
+				if(($length = count($key)) === count($value))
+				{
+					$return = 0;
+					for($i = 0; $i<$length; $i++)
+					{
+						if(static::key_exists($array, $key[$i]))
+						{
+							static::set($array, $key[$i], $value[$i]);
+							$return++;
+						}
+					}
+				}
+				else
+				{
+					throw new \InvalidArgumentException('The second and third parameter must be arrays of the same length.');
+				}
 			}
-			
-			$array =& $array[$key];
-		}
-		
-		$key = array_shift($keys);
-		if(!isset($array[$key]))
-		{
-			return false;
-		}
-		
-		$array[$key] = $value;
-		return true;
-	}
-	
-	/**
-	 * Sets the values of the given items only if the items exists in the given array.
-	 * The keys must be dot-notated. 
-	 *
-	 * @param   array  the array to fetch from
-	 * @param   array  associative array with the dot-notated keys as indexes and the values to be replaced for
-	 * @return  int    the count of the replaced elements
-	 */
-	public static function replace_items(array &$array, array $keys_values)
-	{
-		if(empty($array))
-		{
-			return 0;
-		}
-		
-		$return = 0;
-		foreach($keys_values as $key=>$value)
-		{
-			$return += (int)(static::replace_item($array, $key, $value));
+			elseif (is_string($key) || is_numeric($key))
+			{
+				if(static::key_exists($array, $key))
+				{
+					static::set($array, $key, $value);
+					$return = true;
+				}
+			}
+			else
+			{
+				throw new \InvalidArgumentException('The second and third parameter must either be:\r\n1. a non-empty string or numeric index and a mixed value\r\nOR\r\n2. two arrays of the same length\r\nrespectively.');
+			}
 		}
 		
 		return $return;
