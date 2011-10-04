@@ -84,7 +84,7 @@ class Request {
 	 */
 	public static function forge($uri = null, $route = true)
 	{
-		logger(Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
+		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
 		$request = new static($uri, $route);
 		if (static::$active)
@@ -295,8 +295,11 @@ class Request {
 				$module = $this->uri->segments[0];
 
 				// load and add the module routes
-				$module_routes = \Config::load(\Fuel::load($module_path), $module . '_routes');
-				array_walk($module_routes, function ($route, $name) use ($module) {
+				$module_routes = \Fuel::load($module_path);
+				
+				$prepped_routes = array();
+				foreach($module_routes as $name => $route)
+				{
 					if ($name === '_root_')
 					{
 						$name = $module;
@@ -305,11 +308,12 @@ class Request {
 					{
 						$name = $module.'/'.$name;
 					}
-					\Config::set('routes.'.$name, $route);
-				});
+					
+					$prepped_routes[$name] = $route;
+				};
 
 				// update the loaded list of routes
-				\Router::add(\Config::get('routes'));
+				\Router::add($prepped_routes, null, true);
 			}
 		}
 
@@ -349,7 +353,7 @@ class Request {
 			\Profiler::mark(__METHOD__.' Start');
 		}
 
-		logger(Fuel::L_INFO, 'Called', __METHOD__);
+		logger(\Fuel::L_INFO, 'Called', __METHOD__);
 
 		// Make the current request active
 		static::$active = $this;
@@ -357,7 +361,7 @@ class Request {
 		// First request called is also the main request
 		if ( ! static::$main)
 		{
-			logger(Fuel::L_INFO, 'Setting main Request', __METHOD__);
+			logger(\Fuel::L_INFO, 'Setting main Request', __METHOD__);
 			static::$main = $this;
 		}
 
@@ -369,7 +373,7 @@ class Request {
 
 		if ($this->route->callable !== null)
 		{
-			logger(Fuel::L_INFO, 'Calling closure', __METHOD__);
+			logger(\Fuel::L_INFO, 'Calling closure', __METHOD__);
 			try
 			{
 				$response = call_user_func_array($this->route->callable, array($this));
@@ -392,7 +396,7 @@ class Request {
 				throw new \Request404Exception();
 			}
 
-			logger(Fuel::L_INFO, 'Loading controller '.$class, __METHOD__);
+			logger(\Fuel::L_INFO, 'Loading controller '.$class, __METHOD__);
 			$this->controller_instance = $controller = new $class($this, new \Response);
 
 			$this->action = $this->action ?: (property_exists($controller, 'default_action') ? $controller->default_action : 'index');
@@ -416,11 +420,11 @@ class Request {
 				// Call the before method if it exists
 				if (method_exists($controller, 'before'))
 				{
-					logger(Fuel::L_INFO, 'Calling '.$class.'::before', __METHOD__);
+					logger(\Fuel::L_INFO, 'Calling '.$class.'::before', __METHOD__);
 					$controller->before();
 				}
 
-				logger(Fuel::L_INFO, 'Calling '.$class.'::'.$method, __METHOD__);
+				logger(\Fuel::L_INFO, 'Calling '.$class.'::'.$method, __METHOD__);
 				try
 				{
 					$response = call_user_func_array(array($controller, $method), $this->method_params);
@@ -434,7 +438,7 @@ class Request {
 				// Call the after method if it exists
 				if (method_exists($controller, 'after'))
 				{
-					logger(Fuel::L_INFO, 'Calling '.$class.'::after', __METHOD__);
+					logger(\Fuel::L_INFO, 'Calling '.$class.'::after', __METHOD__);
 					$response_after = $controller->after($response);
 
 					// @TODO let the after method set the response directly

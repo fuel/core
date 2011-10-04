@@ -56,7 +56,7 @@ class Format {
 	}
 
 	/**
-	 * Do not use this directly, call factory()
+	 * Do not use this directly, call forge()
 	 */
 	public function __construct($data = null, $from_type = null)
 	{
@@ -268,7 +268,7 @@ class Format {
 			$data = $this->_data;
 		}
 
-		return var_export($data, TRUE);
+		return var_export($data, true);
 	}
 
 	/**

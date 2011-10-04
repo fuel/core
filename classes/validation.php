@@ -33,6 +33,11 @@ class Validation {
 	protected static $active;
 
 	/**
+	 * @var  Fieldset_Field  keeps a reference to an instance of the Fieldset_Field validation is being run on
+	 */
+	protected static $active_field;
+
+	/**
 	 * This method is deprecated...use forge() instead.
 	 *
 	 * @deprecated until 1.2
@@ -83,6 +88,22 @@ class Validation {
 	protected static function set_active($instance = null)
 	{
 		static::$active = $instance;
+	}
+
+	/**
+	 * Fetch the field currently being validated
+	 */
+	public static function active_field()
+	{
+		return static::$active_field;
+	}
+
+	/**
+	 * Set or unset the current field being validated
+	 */
+	protected static function set_active_field($instance = null)
+	{
+		static::$active_field = $instance;
 	}
 
 	/**
@@ -323,6 +344,8 @@ class Validation {
 		$fields = $this->field();
 		foreach($fields as $field)
 		{
+			static::set_active_field($field);
+
 			$value = $this->input($field->name);
 			if (($allow_partial === true and $value === null)
 				or (is_array($allow_partial) and ! in_array($field->name, $allow_partial)))
@@ -346,6 +369,7 @@ class Validation {
 		}
 
 		static::set_active();
+		static::set_active_field();
 
 		// Restore callables
 		$this->callables = $callable_backup;

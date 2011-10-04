@@ -86,7 +86,7 @@ class Lang {
 	 */
 	public static function get($line, array $params = array(), $default = null)
 	{
-		return static::_parse_params(\Arr::get(static::$lines, $line, $default), $params);
+		return \Str::tr(\Arr::get(static::$lines, $line, $default), $params);
 	}
 
 	/**
@@ -100,7 +100,7 @@ class Lang {
 	public static function line($line, array $params = array())
 	{
 		logger(\Fuel::L_WARNING, 'This method is deprecated. Please use Lang::get() instead.', __METHOD__);
-		return static::_parse_params(\Arr::get(static::$lines, $line, false), $params);
+		return \Str::tr(\Arr::get(static::$lines, $line, false), $params);
 	}
 
 	/**
@@ -117,32 +117,6 @@ class Lang {
 		\Arr::set(static::$lines, $key, $value);
 	}
 
-	/**
-	 * Parse the params in the language line
-	 *
-	 * @param   string  language line to parse
-	 * @param   array   params to str_replace
-	 * @return  string
-	 */
-	protected static function _parse_params($string, $array = array())
-	{
-		if (is_string($string))
-		{
-			$tr_arr = array();
-
-			foreach ($array as $from => $to)
-			{
-				$tr_arr[':'.$from] = $to;
-			}
-			unset($array);
-
-			return strtr($string, $tr_arr);
-		}
-		else
-		{
-			return $string;
-		}
-	}
 }
 
 

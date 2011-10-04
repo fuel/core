@@ -138,7 +138,7 @@ class DBUtil {
 		
 		if ($type === 'DROP')
 		{
-			if( ! is_array($fields))
+			if ( ! is_array($fields))
 			{
 				$fields = array($fields);
 			}
@@ -202,12 +202,12 @@ class DBUtil {
 	protected static function process_charset($charset = null, $is_default = false)
 	{
 		$charset or $charset = \Config::get('db.'.\Fuel::$env.'.charset', null);
-		if(empty($charset))
+		if (empty($charset))
 		{
 			return '';
 		}
 
-		if(($pos = stripos($charset, '_')) !== false)
+		if (($pos = stripos($charset, '_')) !== false)
 		{
 			$charset = ' CHARACTER SET '.substr($charset, 0, $pos).' COLLATE '.$charset;
 		}
@@ -290,12 +290,12 @@ class DBUtil {
 		$type = $result->get('Msg_type');
 		$message = $result->get('Msg_text');
 		$table = $result->get('Table');
-		if($type === 'status' and in_array(strtolower($message), array('ok','table is already up to date')))
+		if ($type === 'status' and in_array(strtolower($message), array('ok','table is already up to date')))
 		{
 			return true;
 		}
 
-		if($type === 'error')
+		if ($type === 'error')
 		{
 			logger(\Fuel::L_ERROR, 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
 		}

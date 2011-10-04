@@ -158,11 +158,20 @@ class Response {
 	 *
 	 * @param   string  The header name
 	 * @param   string  The header value
+	 * @param   string  Whether to replace existing value for the header, will never overwrite/be overwritten when false
 	 * @return  $this
 	 */
-	public function set_header($name, $value)
+	public function set_header($name, $value, $replace = true)
 	{
-		$this->headers[$name] = $value;
+		if ($replace)
+		{
+			$this->headers[$name] = $value;
+		}
+		else
+		{
+			$this->headers[] = array($name, $value);
+		}
+
 		return $this;
 	}
 
@@ -192,13 +201,26 @@ class Response {
 	{
 		if ( ! headers_sent())
 		{
-			// Send the protocol line first
-			$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
-			header($protocol.' '.$this->status.' '.static::$statuses[$this->status]);
+			// Send the protocol/status line first, FCGI servers need different status header
+			if ( ! empty($_SERVER['FCGI_SERVER_VERSION']))
+			{
+				header('Status: '.$this->status.' '.static::$statuses[$this->status]);
+			}
+			else
+			{
+				$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
+				header($protocol.' '.$this->status.' '.static::$statuses[$this->status]);
+			}
 
 			foreach ($this->headers as $name => $value)
 			{
+				// Parse non-replace headers
+				is_int($name) and is_array($value) and list($name, $value) = $value;
+
+				// Create the header
 				is_string($name) and $value = "{$name}: {$value}";
+
+				// Send it
 				header($value, true);
 			}
 			return true;
@@ -216,7 +238,7 @@ class Response {
 	public function send($send_headers = false)
 	{
 		$send_headers and $this->send_headers();
-		
+
 		if ($this->body != null)
 		{
 			echo $this->body;

@@ -138,6 +138,36 @@ class Form {
 	}
 
 	/**
+	 * Create a fieldset open tag
+	 *
+	 * @param   array   array with tag attribute settings
+	 * @param   string  string for the fieldset legend
+	 * @return  string
+	 */
+	public static function fieldset_open($attributes = array(), $legend = null)
+	{
+		$fieldset_open = '<fieldset ' . array_to_attr($attributes) . ' >';
+
+		! is_null($legend) and $attributes['legend'] = $legend;
+		if ( ! empty($attributes['legend']))
+		{
+			$fieldset_open.= "\n<legend>".$attributes['legend']."</legend>";
+		}
+
+		return $fieldset_open;
+	}
+
+	/**
+	 * Create a fieldset close tag
+	 *
+	 * @return string
+	 */
+	public static function fieldset_close()
+	{
+		return '</fieldset>';
+	}
+
+	/**
 	 * Create a form input
 	 *
 	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
@@ -615,18 +645,6 @@ class Form {
 		! $field instanceof Fieldset_Field && $field = $this->field($field);
 
 		$required = $field->get_attribute('required', null);
-		$field->set_attribute('required', null);
-		if ($required === null)
-		{
-			$required = false;
-			foreach ($field->rules as $rule)
-			{
-				if (reset($rule) === 'required')
-				{
-					$required = true;
-				}
-			}
-		}
 
 		// Add IDs when auto-id is on
 		if ($this->get_config('auto_id', false) === true and $field->get_attribute('id') == '')
