@@ -89,11 +89,11 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 * @param   string  column for values
 	 * @return  array
 	 */
-	public function as_array($key = NULL, $value = NULL)
+	public function as_array($key = null, $value = null)
 	{
 		$results = array();
 
-		if ($key === NULL AND $value === NULL)
+		if ($key === null and $value === null)
 		{
 			// Indexed rows
 
@@ -102,7 +102,7 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 				$results[] = $row;
 			}
 		}
-		elseif ($key === NULL)
+		elseif ($key === null)
 		{
 			// Indexed columns
 
@@ -121,7 +121,7 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 				}
 			}
 		}
-		elseif ($value === NULL)
+		elseif ($value === null)
 		{
 			// Associative rows
 
@@ -175,19 +175,23 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 * @param   mixed   default value if the column does not exist
 	 * @return  mixed
 	 */
-	public function get($name, $default = NULL)
+	public function get($name, $default = null)
 	{
 		$row = $this->current();
 
 		if ($this->_as_object)
 		{
 			if (isset($row->$name))
+			{
 				return $row->$name;
+			}
 		}
 		else
 		{
 			if (isset($row[$name]))
+			{
 				return $row[$name];
+			}
 		}
 
 		return \Fuel::value($default);
@@ -217,7 +221,7 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 */
 	public function offsetExists($offset)
 	{
-		return ($offset >= 0 AND $offset < $this->_total_rows);
+		return ($offset >= 0 and $offset < $this->_total_rows);
 	}
 
 	/**
@@ -230,7 +234,9 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	public function offsetGet($offset)
 	{
 		if ( ! $this->seek($offset))
-			return NULL;
+		{
+			return null;
+		}
 
 		return $this->current();
 	}
