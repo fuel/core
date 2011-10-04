@@ -31,7 +31,7 @@ class Router {
 			$prepend and $path = array_reverse($path, true);
 			foreach ($path as $p => $t)
 			{
-				static::add($p, $t, true);
+				static::add($p, $t, $prepend);
 			}
 			return;
 		}
@@ -51,7 +51,7 @@ class Router {
 				$options = $options[0];
 			}
 		}
-		
+
 		if ($prepend)
 		{
 			\Arr::prepend(static::$routes, $name, new \Route($path, $options));
