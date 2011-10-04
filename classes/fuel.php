@@ -132,6 +132,9 @@ class Fuel {
 	 */
 	public static function init($config)
 	{
+		// Is Fuel running on the command line?
+		static::$is_cli = (bool) defined('STDIN');
+
 		\Config::load($config);
 
 		if (static::$initialized)
@@ -163,8 +166,9 @@ class Fuel {
 		static::$timezone = \Config::get('default_timezone') ?: date_default_timezone_get();
 		date_default_timezone_set(static::$timezone);
 
-		// set the encoding and locale to use
 		static::$encoding = \Config::get('encoding', static::$encoding);
+		MBSTRING and mb_internal_encoding(static::$encoding);
+
 		static::$locale = \Config::get('locale', static::$locale);
 
 		static::$_paths = array(APPPATH, COREPATH);
