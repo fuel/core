@@ -10,6 +10,8 @@
  * @link       http://fuelphp.com
  */
 
+namespace Fuel\Core;
+
 class ThemeException extends Fuel_Exception { }
 
 /**
@@ -17,7 +19,7 @@ class ThemeException extends Fuel_Exception { }
  *
  * @author  Dan Horrigan
  */
-class Theme implements ArrayAccess, Iterator
+class Theme implements \ArrayAccess, \Iterator
 {
 
 	/**
@@ -100,7 +102,7 @@ class Theme implements ArrayAccess, Iterator
 	{
 		if (empty($config))
 		{
-			$config = Config::load('theme', true);
+			$config = \Config::load('theme', true);
 		}
 		// Order of this addition is important, do not change this.
 		$this->config = $config + $this->config;
@@ -123,7 +125,7 @@ class Theme implements ArrayAccess, Iterator
 	{
 		if ($this->active['path'] === null)
 		{
-			throw new ThemeException('You must set an active theme.');
+			throw new \ThemeException('You must set an active theme.');
 		}
 
 		$file = $view;
@@ -142,10 +144,10 @@ class Theme implements ArrayAccess, Iterator
 		}
 		else
 		{
-			throw new ThemeException(sprintf('Could not locate view "%s" in the theme.', $view));
+			throw new \ThemeException(sprintf('Could not locate view "%s" in the theme.', $view));
 		}
 
-		return View::factory($file, $data, $auto_filter);
+		return \View::forge($file, $data, $auto_filter);
 	}
 
 	/**
@@ -158,7 +160,7 @@ class Theme implements ArrayAccess, Iterator
 	{
 		if ($this->active['path'] === null)
 		{
-			throw new ThemeException('You must set an active theme.');
+			throw new \ThemeException('You must set an active theme.');
 		}
 
 		if ($this->active['asset_base'])
@@ -226,11 +228,11 @@ class Theme implements ArrayAccess, Iterator
 
 	/**
 	 * Sets the currently active theme.  Will return the currently active
-	 * theme.  It will throw a ThemeException if it cannot locate the theme.
+	 * theme.  It will throw a \ThemeException if it cannot locate the theme.
 	 *
 	 * @param   string  $theme  Theme name to set active
 	 * @return  array   The theme array
-	 * @throws  ThemeException
+	 * @throws  \ThemeException
 	 */
 	public function active($theme = null)
 	{
@@ -245,11 +247,11 @@ class Theme implements ArrayAccess, Iterator
 	/**
 	 * Sets the fallback theme.  This theme will be used if a view or asset
 	 * cannot be found in the active theme.  Will return the fallback
-	 * theme.  It will throw a ThemeException if it cannot locate the theme.
+	 * theme.  It will throw a \ThemeException if it cannot locate the theme.
 	 *
 	 * @param   string  $theme  Theme name to set active
 	 * @return  array   The theme array
-	 * @throws  ThemeException
+	 * @throws  \ThemeException
 	 */
 	public function fallback($theme = null)
 	{
@@ -321,7 +323,7 @@ class Theme implements ArrayAccess, Iterator
 			$theme = $this->active['name'];
 		}
 
-		throw new ThemeException(sprintf('Variable "%s" does not exist in "%s".', $var, $theme));
+		throw new \ThemeException(sprintf('Variable "%s" does not exist in "%s".', $var, $theme));
 	}
 
 	/**
@@ -345,14 +347,14 @@ class Theme implements ArrayAccess, Iterator
 
 		if ( ! $path)
 		{
-			throw new ThemeException(sprintf('Could not find theme "%s".', $theme));
+			throw new \ThemeException(sprintf('Could not find theme "%s".', $theme));
 		}
 
 		$file = $this->config['info_file_name'];
 		$file_exists = is_file($path.$file);
 		if ( ! $file_exists and $this->config['require_info_file'])
 		{
-			throw new ThemeException(sprintf('Theme "%s" is missing "%s".', $theme, $file));
+			throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme, $file));
 		}
 		elseif ( ! $file_exists)
 		{
@@ -371,7 +373,7 @@ class Theme implements ArrayAccess, Iterator
 			break;
 
 			default:
-				throw new ThemeException(sprintf('Invalid info file type "%s".', $type));
+				throw new \ThemeException(sprintf('Invalid info file type "%s".', $type));
 		}
 
 		return $info;
@@ -479,17 +481,17 @@ class Theme implements ArrayAccess, Iterator
 
 	/**
 	 * Creates a theme array by locating the given theme and setting all of the
-	 * option.  It will throw a ThemeException if it cannot locate the theme.
+	 * option.  It will throw a \ThemeException if it cannot locate the theme.
 	 *
 	 * @param   string  $theme  Theme name to set active
 	 * @return  array   The theme array
-	 * @throws  ThemeException
+	 * @throws  \ThemeException
 	 */
 	protected function create_theme_array($theme)
 	{
 		if ( ! $path = $this->find($theme))
 		{
-			throw new ThemeException(sprintf('Theme "%s" could not be found.', $theme));
+			throw new \ThemeException(sprintf('Theme "%s" could not be found.', $theme));
 		}
 
 		$return = array(
