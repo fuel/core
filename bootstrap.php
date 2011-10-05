@@ -177,6 +177,10 @@ function setup_autoloader()
 		'Fuel\\Core\\Num'       => COREPATH.'classes/num.php',
 		'Fuel\\Core\\Str'       => COREPATH.'classes/str.php',
 		'Fuel\\Core\\TestCase'  => COREPATH.'classes/testcase.php',
+
+		'Fuel\\Core\\Theme'          => COREPATH.'classes/theme.php',
+		'Fuel\\Core\\ThemeException' => COREPATH.'classes/theme.php',
+
 		'Fuel\\Core\\Uri'       => COREPATH.'classes/uri.php',
 		'Fuel\\Core\\Unzip'     => COREPATH.'classes/unzip.php',
 		'Fuel\\Core\\Upload'    => COREPATH.'classes/upload.php',
