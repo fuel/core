@@ -25,15 +25,6 @@ require COREPATH.'base.php';
 define('MBSTRING', function_exists('mb_get_info'));
 
 /**
- * Is mbstring enabled?
- * Set the encoding to use whatever Fuel is set to use.
- */
-MBSTRING and mb_internal_encoding(Fuel::$encoding);
-
-// Is Fuel running on the command line?
-Fuel::$is_cli = (bool) defined('STDIN');
-
-/**
  * Register all the error/shutdown handlers
  */
 register_shutdown_function(function ()
@@ -58,9 +49,6 @@ function setup_autoloader()
 {
 	// Load in the Autoloader
 	require COREPATH.'classes'.DS.'autoloader.php';
-
-	// Register the autoloader
-	Autoloader::register();
 
 	Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 

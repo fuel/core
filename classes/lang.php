@@ -46,7 +46,7 @@ class Lang {
 	public static function load($file, $group = null, $language = null)
 	{
 		$languages = static::$fallback;
-		array_push($languages, $language ?: \Config::get('language'));
+		array_unshift($languages, $language ?: \Config::get('language'));
 
 		$lines = array();
 		foreach ($languages as $lang)
