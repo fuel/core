@@ -382,7 +382,7 @@ class View {
 		// If it is an absolute path, then just use it.
 		if ($file == realpath($file))
 		{
-			$this->_file = $file;
+			$this->file_name = $file;
 
 			return $this;
 		}
