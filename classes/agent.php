@@ -396,7 +396,7 @@ class Agent {
 			return false;
 		}
 
-		return array_key_exists(static::$user_agent, $cache) ? $content[static::$user_agent] : false;
+		return array_key_exists(static::$user_agent, $content) ? $content[static::$user_agent] : false;
 	}
 
 	// --------------------------------------------------------------------
