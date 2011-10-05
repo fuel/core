@@ -379,14 +379,6 @@ class View {
 	 */
 	public function set_filename($file)
 	{
-		// If it is an absolute path, then just use it.
-		if ($file == realpath($file))
-		{
-			$this->file_name = $file;
-
-			return $this;
-		}
-
 		// set find_file's one-time-only search paths
 		\Fuel::$volatile_paths = $this->request_paths;
 

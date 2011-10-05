@@ -260,9 +260,9 @@ class Fuel {
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
 		// absolute path requested?
-		if (strpos($file, '/') === 0 or strpos($file, ':') === 1)
+		if ($file == realpath($file))
 		{
-			return is_file($file) ? $file : false;
+			return $file;
 		}
 
 		$cache_id = '';
