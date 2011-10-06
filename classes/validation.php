@@ -623,7 +623,7 @@ class Validation {
 	 * @param   mixed
 	 * @return  bool
 	 */
-	public function _empty($val)
+	public static function _empty($val)
 	{
 		return ($val === false or $val === null or $val === '' or $val === array());
 	}

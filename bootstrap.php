@@ -65,6 +65,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Cache_Handler_Serialized'  => COREPATH.'classes/cache/handler/serialized.php',
 		'Fuel\\Core\\Cache_Handler_String'      => COREPATH.'classes/cache/handler/string.php',
 		'Fuel\\Core\\Cache_Storage_Driver'      => COREPATH.'classes/cache/storage/driver.php',
+		'Fuel\\Core\\Cache_Storage_Apc'         => COREPATH.'classes/cache/storage/apc.php',
 		'Fuel\\Core\\Cache_Storage_File'        => COREPATH.'classes/cache/storage/file.php',
 		'Fuel\\Core\\Cache_Storage_Memcached'   => COREPATH.'classes/cache/storage/memcached.php',
 		'Fuel\\Core\\Cache_Storage_Redis'       => COREPATH.'classes/cache/storage/redis.php',
