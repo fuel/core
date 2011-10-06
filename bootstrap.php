@@ -25,15 +25,6 @@ require COREPATH.'base.php';
 define('MBSTRING', function_exists('mb_get_info'));
 
 /**
- * Is mbstring enabled?
- * Set the encoding to use whatever Fuel is set to use.
- */
-MBSTRING and mb_internal_encoding(Fuel::$encoding);
-
-// Is Fuel running on the command line?
-Fuel::$is_cli = (bool) defined('STDIN');
-
-/**
  * Register all the error/shutdown handlers
  */
 register_shutdown_function(function ()
@@ -59,9 +50,6 @@ function setup_autoloader()
 	// Load in the Autoloader
 	require COREPATH.'classes'.DS.'autoloader.php';
 
-	// Register the autoloader
-	Autoloader::register();
-
 	Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
 	Autoloader::add_classes(array(
@@ -77,6 +65,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Cache_Handler_Serialized'  => COREPATH.'classes/cache/handler/serialized.php',
 		'Fuel\\Core\\Cache_Handler_String'      => COREPATH.'classes/cache/handler/string.php',
 		'Fuel\\Core\\Cache_Storage_Driver'      => COREPATH.'classes/cache/storage/driver.php',
+		'Fuel\\Core\\Cache_Storage_Apc'         => COREPATH.'classes/cache/storage/apc.php',
 		'Fuel\\Core\\Cache_Storage_File'        => COREPATH.'classes/cache/storage/file.php',
 		'Fuel\\Core\\Cache_Storage_Memcached'   => COREPATH.'classes/cache/storage/memcached.php',
 		'Fuel\\Core\\Cache_Storage_Redis'       => COREPATH.'classes/cache/storage/redis.php',
@@ -189,6 +178,10 @@ function setup_autoloader()
 		'Fuel\\Core\\Num'       => COREPATH.'classes/num.php',
 		'Fuel\\Core\\Str'       => COREPATH.'classes/str.php',
 		'Fuel\\Core\\TestCase'  => COREPATH.'classes/testcase.php',
+
+		'Fuel\\Core\\Theme'          => COREPATH.'classes/theme.php',
+		'Fuel\\Core\\ThemeException' => COREPATH.'classes/theme.php',
+
 		'Fuel\\Core\\Uri'       => COREPATH.'classes/uri.php',
 		'Fuel\\Core\\Unzip'     => COREPATH.'classes/unzip.php',
 		'Fuel\\Core\\Upload'    => COREPATH.'classes/upload.php',
