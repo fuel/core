@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @package     Core
  * @subpackage  Packages
  */
-class PackageNotFoundException extends \Fuel_Exception { }
+class PackageNotFoundException extends \FuelException { }
 
 /**
  * Handles all the loading, unloading and management of packages.

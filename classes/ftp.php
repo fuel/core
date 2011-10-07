@@ -13,9 +13,9 @@
 namespace Fuel\Core;
 
 
-class FtpConnectionException extends \Fuel_Exception {}
+class FtpConnectionException extends \FuelException {}
 
-class FtpFileAccessException extends \Fuel_Exception {}
+class FtpFileAccessException extends \FuelException {}
 
 
 /**

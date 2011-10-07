@@ -98,8 +98,9 @@ function setup_autoloader()
 		'Fuel\\Core\\Database_Mysqli_Connection'     => COREPATH.'classes/database/mysqli/connection.php',
 		'Fuel\\Core\\Database_MySQLi_Result'         => COREPATH.'classes/database/mysqli/result.php',
 
-		'Fuel\\Core\\Fuel'            => COREPATH.'classes/fuel.php',
-		'Fuel\\Core\\Fuel_Exception'  => COREPATH.'classes/fuel.php',
+		'Fuel\\Core\\Fuel'           => COREPATH.'classes/fuel.php',
+		'Fuel\\Core\\FuelException'  => COREPATH.'classes/fuel.php',
+		'Fuel\\Core\\Fuel_Exception' => COREPATH.'classes/fuel.php',
 
 		'Fuel\\Core\\Date'    => COREPATH.'classes/date.php',
 		'Fuel\\Core\\Debug'   => COREPATH.'classes/debug.php',

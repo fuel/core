@@ -190,12 +190,12 @@ class Database_PDO_Connection extends \Database_Connection {
 
 	public function list_tables($like = null)
 	{
-		throw new \Fuel_Exception('Database method '.__METHOD__.' is not supported by '.__CLASS__);
+		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
 	}
 
 	public function list_columns($table, $like = null)
 	{
-		throw new \Fuel_Exception('Database method '.__METHOD__.' is not supported by '.__CLASS__);
+		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
 	}
 
 	public function escape($value)

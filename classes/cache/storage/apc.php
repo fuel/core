@@ -43,7 +43,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver {
 		// do we have the PHP APC extension available
 		if ( ! function_exists('apc_add') )
 		{
-			throw new \Fuel_Exception('Your PHP installation doesn\'t have APC loaded.');
+			throw new \FuelException('Your PHP installation doesn\'t have APC loaded.');
 		}
 	}
 
