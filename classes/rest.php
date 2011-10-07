@@ -15,7 +15,7 @@
 namespace Fuel\Core;
 
 
-class RestException extends \Fuel_Exception {}
+class RestException extends \FuelException {}
 
 // ------------------------------------------------------------------------
 

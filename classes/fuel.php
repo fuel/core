@@ -12,7 +12,15 @@
 
 namespace Fuel\Core;
 
-class Fuel_Exception extends \Exception {}
+/**
+ * General Fuel Exception class
+ */
+class FuelException extends \Exception {}
+
+/**
+ * @deprecated  Keep until v1.2
+ */
+class Fuel_Exception extends \FuelException {}
 
 /**
  * The core of the framework.
@@ -139,7 +147,7 @@ class Fuel {
 
 		if (static::$initialized)
 		{
-			throw new \Fuel_Exception("You can't initialize Fuel more than once.");
+			throw new \FuelException("You can't initialize Fuel more than once.");
 		}
 
 		// Start up output buffering
@@ -494,7 +502,7 @@ class Fuel {
 			// throw an exception if a non-existent module has been added
 			if ( ! isset($ns))
 			{
-				throw new \Fuel_Exception('Trying to add a non-existent module "'.$name.'"');
+				throw new \FuelException('Trying to add a non-existent module "'.$name.'"');
 			}
 		}
 		else
@@ -637,7 +645,7 @@ class Fuel {
 			{
 				if ( ! class_exists($class = ucfirst($class)))
 				{
-					throw new \Fuel_Exception('Always load class does not exist. Unable to load: '.$class);
+					throw new \FuelException('Always load class does not exist. Unable to load: '.$class);
 				}
 			}
 		}

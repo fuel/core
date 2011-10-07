@@ -13,7 +13,7 @@
 namespace Fuel\Core;
 
 
-class Request404Exception extends \Fuel_Exception {
+class Request404Exception extends \FuelException {
 
 	/**
 	 * When this type of exception isn't caught this method is called by

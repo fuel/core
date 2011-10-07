@@ -86,7 +86,7 @@ class Input {
 			}
 			else
 			{
-				throw new \Fuel_Exception('Unable to detect the URI.');
+				throw new \FuelException('Unable to detect the URI.');
 			}
 
 			// Remove the base URL from the URI

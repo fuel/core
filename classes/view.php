@@ -375,7 +375,7 @@ class View {
 	 *
 	 * @param   string  view filename
 	 * @return  View
-	 * @throws  Fuel_Exception
+	 * @throws  FuelException
 	 */
 	public function set_filename($file)
 	{
@@ -385,7 +385,7 @@ class View {
 		// locate the view file
 		if (($path = \Fuel::find_file('views', $file, '.'.$this->extension, false, false)) === false)
 		{
-			throw new \Fuel_Exception('The requested view could not be found: '.\Fuel::clean_path($file));
+			throw new \FuelException('The requested view could not be found: '.\Fuel::clean_path($file));
 		}
 
 		// Store the file path locally
@@ -522,7 +522,7 @@ class View {
 	 *
 	 * @param    string  view filename
 	 * @return   string
-	 * @throws   Fuel_Exception
+	 * @throws   FuelException
 	 * @uses     static::capture
 	 */
 	public function render($file = null)
@@ -540,7 +540,7 @@ class View {
 
 		if (empty($this->file_name))
 		{
-			throw new \Fuel_Exception('You must set the file to use within your view before rendering');
+			throw new \FuelException('You must set the file to use within your view before rendering');
 		}
 
 		// Combine local and global data and capture the output

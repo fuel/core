@@ -434,13 +434,13 @@ class Upload {
 		// anything to save?
 		if (empty($files))
 		{
-			throw new \Fuel_Exception('No uploaded files are selected.');
+			throw new \FuelException('No uploaded files are selected.');
 		}
 
 		// supplied new name and not auto renaming?
 		if (array_key_exists('new_name', static::$config) and ! static::$config['auto_rename'] and count($files) > 1)
 		{
-			throw new \Fuel_Exception('Can\'t rename multiple files without auto renaming.');
+			throw new \FuelException('Can\'t rename multiple files without auto renaming.');
 		}
 
 		// make sure we have a valid path
@@ -454,7 +454,7 @@ class Upload {
 
 		if ( ! is_dir($path))
 		{
-			throw new \Fuel_Exception('Can\'t move the uploaded file. Destination path specified does not exist.');
+			throw new \FuelException('Can\'t move the uploaded file. Destination path specified does not exist.');
 		}
 
 		// save the old umask

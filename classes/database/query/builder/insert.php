@@ -84,7 +84,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder {
 	{
 		if ( ! is_array($this->_values))
 		{
-			throw new \Fuel_Exception('INSERT INTO ... SELECT statements cannot be combined with INSERT INTO ... VALUES');
+			throw new \FuelException('INSERT INTO ... SELECT statements cannot be combined with INSERT INTO ... VALUES');
 		}
 
 		// Get all of the passed values
@@ -119,7 +119,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder {
 	{
 		if ($query->type() !== \DB::SELECT)
 		{
-			throw new \Fuel_Exception('Only SELECT queries can be combined with INSERT queries');
+			throw new \FuelException('Only SELECT queries can be combined with INSERT queries');
 		}
 
 		$this->_values = $query;

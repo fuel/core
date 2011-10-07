@@ -12,7 +12,7 @@
 
 namespace Fuel\Core;
 
-class ThemeException extends Fuel_Exception { }
+class ThemeException extends FuelException { }
 
 /**
  * Handles loading theme views and assets.

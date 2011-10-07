@@ -58,14 +58,14 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver {
 			}
 			catch (\Exception $e)
 			{
-				throw new \Fuel_Exception('Can not connect to the Redis engine. The error message says "'.$e->getMessage().'".');
+				throw new \FuelException('Can not connect to the Redis engine. The error message says "'.$e->getMessage().'".');
 			}
 
 			// get the redis version
 			preg_match('/redis_version:(.*?)\n/', $this->redis->info(), $info);
 			if (version_compare(trim($info[1]), '1.2') < 0)
 			{
-				throw new \Fuel_Exception('Version 1.2 or higher of the Redis NoSQL engine is required to use the redis cache driver.');
+				throw new \FuelException('Version 1.2 or higher of the Redis NoSQL engine is required to use the redis cache driver.');
 			}
 		}
 	}
