@@ -102,7 +102,8 @@ class Theme implements \ArrayAccess, \Iterator
 	{
 		if (empty($config))
 		{
-			$config = \Config::load('theme', true);
+			\Config::load('theme', true);
+			$config = \Config::get('theme', false);
 		}
 		// Order of this addition is important, do not change this.
 		$this->config = $config + $this->config;
