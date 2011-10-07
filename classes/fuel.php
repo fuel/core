@@ -260,7 +260,7 @@ class Fuel {
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
 		// absolute path requested?
-		if ($file == realpath($file))
+		if ($file[0] === '/' or $file[1] === ':')
 		{
 			return $file;
 		}
@@ -271,7 +271,7 @@ class Fuel {
 		$found = $multiple ? array() : false;
 
 		// the file requested namespaced?
-		if($pos = strripos($file, '::'))
+		if ($pos = strripos($file, '::'))
 		{
 			// get the namespace path
 			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
@@ -279,10 +279,10 @@ class Fuel {
 				$cache_id .= substr($file, 0, $pos);
 
 				// and strip the classes directory as we need the module root
-				$paths = array(substr($path,0, -8));
+				$paths = array(substr($path, 0, -8));
 
 				// strip the namespace from the filename
-				$file = substr($file, $pos+2);
+				$file = substr($file, $pos + 2);
 			}
 		}
 
