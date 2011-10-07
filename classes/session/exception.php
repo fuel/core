@@ -12,4 +12,4 @@
 
 namespace Fuel\Core;
 
-class Session_Exception extends Fuel_Exception {}
+class Session_Exception extends FuelException {}

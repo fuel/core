@@ -180,7 +180,7 @@ abstract class Cache_Storage_Driver {
 		// Identifier may not be empty, but can be false or 0
 		if ($identifier === '' || $identifier === null)
 		{
-			throw new \Fuel_Exception('The identifier cannot be empty, must contain a value of any kind other than null or an empty string.');
+			throw new \FuelException('The identifier cannot be empty, must contain a value of any kind other than null or an empty string.');
 		}
 
 		// In case of string or int just return it as a string
@@ -189,7 +189,7 @@ abstract class Cache_Storage_Driver {
 			// cleanup to only allow alphanum chars, dashes, dots & underscores
 			if (preg_match('/^([a-z0-9_\.\-]*)$/iuD', $identifier) === 0)
 			{
-				throw new \Fuel_Exception('Cache identifier can only contain alphanumeric characters, underscores, dashes & dots.');
+				throw new \FuelException('Cache identifier can only contain alphanumeric characters, underscores, dashes & dots.');
 			}
 
 			return (string) $identifier;

@@ -65,6 +65,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Cache_Handler_Serialized'  => COREPATH.'classes/cache/handler/serialized.php',
 		'Fuel\\Core\\Cache_Handler_String'      => COREPATH.'classes/cache/handler/string.php',
 		'Fuel\\Core\\Cache_Storage_Driver'      => COREPATH.'classes/cache/storage/driver.php',
+		'Fuel\\Core\\Cache_Storage_Apc'         => COREPATH.'classes/cache/storage/apc.php',
 		'Fuel\\Core\\Cache_Storage_File'        => COREPATH.'classes/cache/storage/file.php',
 		'Fuel\\Core\\Cache_Storage_Memcached'   => COREPATH.'classes/cache/storage/memcached.php',
 		'Fuel\\Core\\Cache_Storage_Redis'       => COREPATH.'classes/cache/storage/redis.php',
@@ -97,8 +98,9 @@ function setup_autoloader()
 		'Fuel\\Core\\Database_Mysqli_Connection'     => COREPATH.'classes/database/mysqli/connection.php',
 		'Fuel\\Core\\Database_MySQLi_Result'         => COREPATH.'classes/database/mysqli/result.php',
 
-		'Fuel\\Core\\Fuel'            => COREPATH.'classes/fuel.php',
-		'Fuel\\Core\\Fuel_Exception'  => COREPATH.'classes/fuel.php',
+		'Fuel\\Core\\Fuel'           => COREPATH.'classes/fuel.php',
+		'Fuel\\Core\\FuelException'  => COREPATH.'classes/fuel.php',
+		'Fuel\\Core\\Fuel_Exception' => COREPATH.'classes/fuel.php',
 
 		'Fuel\\Core\\Date'    => COREPATH.'classes/date.php',
 		'Fuel\\Core\\Debug'   => COREPATH.'classes/debug.php',
@@ -177,6 +179,10 @@ function setup_autoloader()
 		'Fuel\\Core\\Num'       => COREPATH.'classes/num.php',
 		'Fuel\\Core\\Str'       => COREPATH.'classes/str.php',
 		'Fuel\\Core\\TestCase'  => COREPATH.'classes/testcase.php',
+
+		'Fuel\\Core\\Theme'          => COREPATH.'classes/theme.php',
+		'Fuel\\Core\\ThemeException' => COREPATH.'classes/theme.php',
+
 		'Fuel\\Core\\Uri'       => COREPATH.'classes/uri.php',
 		'Fuel\\Core\\Unzip'     => COREPATH.'classes/unzip.php',
 		'Fuel\\Core\\Upload'    => COREPATH.'classes/upload.php',

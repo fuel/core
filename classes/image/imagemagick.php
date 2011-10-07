@@ -292,7 +292,7 @@ class Image_Imagemagick extends \Image_Driver {
 		if ($code != 0)
 		{
 			$message = implode('\n', $output);
-			throw new \Fuel_Exception("imagemagick failed to edit the image. Returned with $code.<br /><br />Command:\n <code>$command</code>");
+			throw new \FuelException("imagemagick failed to edit the image. Returned with $code.<br /><br />Command:\n <code>$command</code>");
 		}
 
 		return $output;

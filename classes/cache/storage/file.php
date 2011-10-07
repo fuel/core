@@ -47,7 +47,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver {
 
 		if ( ! is_dir(static::$path) || ! is_writable(static::$path))
 		{
-			throw new \Fuel_Exception('Cache directory does not exist or is not writable.');
+			throw new \FuelException('Cache directory does not exist or is not writable.');
 		}
 	}
 

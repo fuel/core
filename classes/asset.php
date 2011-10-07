@@ -150,7 +150,7 @@ class Asset {
 			{
 				if ( ! ($file = static::find_file($filename, static::$_folders[$type])))
 				{
-					throw new \Fuel_Exception('Could not find asset: '.$filename);
+					throw new \FuelException('Could not find asset: '.$filename);
 				}
 
 				$raw or $file = static::$_asset_url.$file.(static::$_add_mtime ? '?'.filemtime($file) : '');

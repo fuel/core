@@ -229,7 +229,7 @@ class Session_Db extends \Session_Driver {
 						}
 						if ($item === false)
 						{
-							throw new \Fuel_Exception('You have specify a database to use database backed sessions.');
+							throw new \FuelException('You have specify a database to use database backed sessions.');
 						}
 					break;
 
@@ -237,7 +237,7 @@ class Session_Db extends \Session_Driver {
 						// and a table name?
 						if ( empty($item) or ! is_string($item))
 						{
-							throw new \Fuel_Exception('You have specify a database table name to use database backed sessions.');
+							throw new \FuelException('You have specify a database table name to use database backed sessions.');
 						}
 					break;
 
