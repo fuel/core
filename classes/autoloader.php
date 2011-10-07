@@ -41,7 +41,7 @@ class Autoloader {
 	/**
 	 * @var  array  list off namespaces of which classes will be aliased to global namespace
 	 */
-	protected static $core_namespaces = array('Fuel\\Core');
+	protected static $core_namespaces = array();
 
 	/**
 	 * @var  array  the default path to look in if the class is not in a package
@@ -146,7 +146,7 @@ class Autoloader {
 	 */
 	public static function alias_to_namespace($class, $namespace = '')
 	{
-		! empty($namespace) and $namespace = rtrim($namespace, '\\').'\\';
+		empty($namespace) or $namespace = rtrim($namespace, '\\').'\\';
 		$parts = explode('\\', $class);
 		$root_class = $namespace.array_pop($parts);
 		class_alias($class, $root_class);
@@ -168,7 +168,7 @@ class Autoloader {
 	 * @param	string
 	 * @return	bool|string
 	 */
-	protected static function is_core_class($class)
+	protected static function find_core_class($class)
 	{
 		foreach (static::$core_namespaces as $ns)
 		{
@@ -202,6 +202,12 @@ class Autoloader {
 		}
 	}
 
+	/**
+	 * Loads a class.
+	 *
+	 * @param   string  $class  Class to load
+	 * @return  bool    If it loaded the class
+	 */
 	public static function load($class)
 	{
 		$loaded = false;
@@ -212,60 +218,65 @@ class Autoloader {
 		{
 			static::$auto_initialize = $class;
 		}
+
 		if (array_key_exists($class, static::$classes))
 		{
 			include str_replace('/', DS, static::$classes[$class]);
-			static::_init_class($class);
-			$loaded = true;
-		}
-		elseif ( ! $namespaced and $class_name = static::is_core_class($class))
-		{
-			! class_exists($class_name, false) and include str_replace('/', DS, static::$classes[$class_name]);
-			static::alias_to_namespace($class_name);
-			static::_init_class($class);
+			static::init_class($class);
 			$loaded = true;
 		}
 		elseif ( ! $namespaced)
 		{
-			$file_path = str_replace('_', DS, $class);
-			$file_path = APPPATH.'classes/'.strtolower($file_path).'.php';
-
-			if (file_exists($file_path))
+			if ($full_class = static::find_core_class($class))
 			{
-				require $file_path;
-				if ( ! class_exists($class, false) and class_exists($class_name = 'Fuel\\Core\\'.$class, false))
-				{
-					static::alias_to_namespace($class_name);
-				}
-				static::_init_class($class);
+				class_exists($full_class, false) or include static::prep_path(static::$classes[$full_class]);
+				static::alias_to_namespace($full_class);
+				static::init_class($class);
 				$loaded = true;
+			}
+			else
+			{
+				$path = APPPATH.'classes/'.static::class_to_path($class);
+
+				if (file_exists($path))
+				{
+					include $path;
+					static::init_class($class);
+					$loaded = true;
+				}
+				else
+				{
+					// Takes care of any Fuel Core classes that may not be defined in the bootstrap
+					if (class_exists('Fuel\\Core\\'.$class))
+					{
+						static::alias_to_namespace('Fuel\\Core\\'.$class);
+					}
+				}
 			}
 		}
 
 		// This handles a namespaces class that a path does not exist for
 		else
 		{
-			$namespace = substr($class, 0, $pos);
+			$full_ns = substr($class, 0, $pos);
 
 			foreach (static::$namespaces as $ns => $path)
 			{
 				$ns = ltrim($ns, '\\');
 
-				if (strncasecmp($ns, $namespace, strlen($ns)) === 0)
+				if (strpos($full_ns, $ns) === 0)
 				{
 					if (array_key_exists($ns, static::$psr_namespaces))
 					{
 						static::psr_loader($path, $class);
 						return true;
 					}
-					$class_no_ns = substr($class, $pos + 1);
-					
-					$sub_namespace = (strlen($namespace) == strlen($ns)) ? '' : substr($namespace, strlen($ns) + 1).DS;
-					$file_path = $path.strtolower($sub_namespace.str_replace('_', DS, $class_no_ns).'.php');
-					if (is_file($file_path))
+
+					$path .= static::class_to_path(substr($class, strlen($ns) + 1));
+					if (is_file($path))
 					{
-						require $file_path;
-						static::_init_class($class);
+						require $path;
+						static::init_class($class);
 						$loaded = true;
 						break;
 					}
@@ -291,6 +302,24 @@ class Autoloader {
 	protected static function psr_loader($path, $class)
 	{
 		$class = ltrim($class, '\\');
+		$file  = static::class_to_path($class, true);
+
+		require $path.$file;
+	}
+
+	/**
+	 * Takes a class name and turns it into a path.  It follows the PSR-0
+	 * standard, except for makes the entire path lower case, unless you
+	 * tell it otherwise.
+	 *
+	 * Note: This does not check if the file exists...just gets the path
+	 *
+	 * @param   string  $class  Class name
+	 * @param   bool    $psr    Whether this is a PSR-0 compliant class
+	 * @return  string  Path for the class
+	 */
+	protected static function class_to_path($class, $psr = false)
+	{
 		$file  = '';
 		if ($last_ns_pos = strripos($class, '\\'))
 		{
@@ -300,7 +329,23 @@ class Autoloader {
 		}
 		$file .= str_replace('_', DS, $class).'.php';
 
-		require $path.$file;
+		if ( ! $psr)
+		{
+			$file = strtolower($file);
+		}
+
+		return $file;
+	}
+
+	/**
+	 * Prepares a given path by making sure the directory separators are correct.
+	 *
+	 * @param   string  $path  Path to prepare
+	 * @return  string  Prepped path
+	 */
+	protected static function prep_path($path)
+	{
+		return str_replace(array('/', '\\'), DS, $path);
 	}
 
 	/**
@@ -309,7 +354,7 @@ class Autoloader {
 	 *
 	 * @param	string	the class name
 	 */
-	private static function _init_class($class)
+	private static function init_class($class)
 	{
 		if (static::$auto_initialize === $class)
 		{
@@ -321,5 +366,3 @@ class Autoloader {
 		}
 	}
 }
-
-
