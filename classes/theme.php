@@ -368,6 +368,10 @@ class Theme implements \ArrayAccess, \Iterator
 				$info = parse_ini_file($path.$this->config['info_file_name'], true);
 			break;
 
+			case 'json':
+				$info = json_decode(file_get_contents($path.$this->config['info_file_name']), true);
+			break;
+
 			case 'php':
 				$info = include($path.$this->config['info_file_name']);
 			break;
