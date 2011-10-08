@@ -13,7 +13,7 @@
 namespace Fuel\Core;
 
 
-class FileAccessException extends \Fuel_Exception {}
+class FileAccessException extends \FuelException {}
 class OutsideAreaException extends \OutOfBoundsException {}
 class InvalidPathException extends \FileAccessException {}
 

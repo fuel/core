@@ -278,9 +278,9 @@ class DBUtil {
 	}
 
 	/*
-	 * Executes table maintenance. Will throw Fuel_Exception when the operation is not supported.
+	 * Executes table maintenance. Will throw FuelException when the operation is not supported.
 	 *
-	 * @throws	Fuel_Exception
+	 * @throws	FuelException
 	 * @param     string    $table    the table name
 	 * @return    bool      whether the operation has succeeded
 	 */

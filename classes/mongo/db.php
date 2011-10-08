@@ -27,7 +27,7 @@ namespace Fuel\Core;
  */
 
 
-class Mongo_DbException extends Fuel_Exception {}
+class Mongo_DbException extends FuelException {}
 
 
 class Mongo_Db {
@@ -480,7 +480,7 @@ class Mongo_Db {
 	 */
 	public function where_near($field = '', $co = array())
 	{
-		$this->__where_init($field);
+		$this->_where_init($field);
 		$this->where[$field]['$near'] = $co;
 		return $this;
 	}
@@ -517,7 +517,7 @@ class Mongo_Db {
 	public function like($field = '', $value = '', $flags = 'i', $enable_start_wildcard = TRUE, $enable_end_wildcard = TRUE)
 	 {
 	 	$field = (string) trim($field);
-	 	$this->where_init($field);
+	 	$this->_where_init($field);
 	 	$value = (string) trim($value);
 	 	$value = quotemeta($value);
 
@@ -532,7 +532,8 @@ class Mongo_Db {
 	 	}
 
 	 	$regex = "/$value/$flags";
-	 	$this->wheres[$field] = new MongoRegex($regex);
+	 	$this->wheres[$field] = new \MongoRegex($regex);
+	 	
 	 	return $this;
 	 }
 
@@ -634,7 +635,7 @@ class Mongo_Db {
 			}
 		}
 
-		return (object) $returns;
+		return $returns;
 	}
 
 	/**

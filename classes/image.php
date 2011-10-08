@@ -67,7 +67,7 @@ class Image {
 		$class = 'Image_'.$protocol;
 		if ($protocol == 'Driver' || ! class_exists($class))
 		{
-			throw new \Fuel_Exception('Driver '.$protocol.' is not a valid driver for image manipulation.');
+			throw new \FuelException('Driver '.$protocol.' is not a valid driver for image manipulation.');
 		}
 		$return = new $class($config);
 		if ($filename !== null)

@@ -67,7 +67,7 @@ class Cache {
 
 		if (empty($config['driver']))
 		{
-			throw new \Fuel_Exception('No cache driver given or no default cache driver set.');
+			throw new \FuelException('No cache driver given or no default cache driver set.');
 		}
 
 		$class = '\\Cache_Storage_'.ucfirst($config['driver']);

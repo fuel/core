@@ -12,7 +12,7 @@
 
 namespace Fuel\Core;
 
-class ThemeException extends Fuel_Exception { }
+class ThemeException extends FuelException { }
 
 /**
  * Handles loading theme views and assets.
@@ -102,7 +102,8 @@ class Theme implements \ArrayAccess, \Iterator
 	{
 		if (empty($config))
 		{
-			$config = \Config::load('theme', true);
+			\Config::load('theme', true);
+			$config = \Config::get('theme', false);
 		}
 		// Order of this addition is important, do not change this.
 		$this->config = $config + $this->config;
@@ -366,6 +367,10 @@ class Theme implements \ArrayAccess, \Iterator
 		{
 			case 'ini':
 				$info = parse_ini_file($path.$this->config['info_file_name'], true);
+			break;
+
+			case 'json':
+				$info = json_decode(file_get_contents($path.$this->config['info_file_name']), true);
 			break;
 
 			case 'php':

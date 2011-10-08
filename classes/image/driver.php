@@ -671,7 +671,7 @@ abstract class Image_Driver {
 		}
 		else
 		{
-			throw new \Fuel_Exception("Image extension $filetype is unsupported.");
+			throw new \FuelException("Image extension $filetype is unsupported.");
 		}
 
 		$this->debug('', "Outputting image as $filetype");

@@ -423,7 +423,7 @@ abstract class Session_Driver {
 		// make sure it doesn't exceed the cookie size specification
 		if (strlen($payload) > 4000)
 		{
-			throw new \Fuel_Exception('The session data stored by the application in the cookie exceeds 4Kb. Select a different session storage driver.');
+			throw new \FuelException('The session data stored by the application in the cookie exceeds 4Kb. Select a different session storage driver.');
 		}
 
 		// write the session cookie

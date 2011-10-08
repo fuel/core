@@ -65,7 +65,7 @@ class Migrate
 	{
 		if ( ! $migrations = static::find_migrations())
 		{
-			throw new Fuel_Exception('no_migrations_found');
+			throw new FuelException('no_migrations_found');
 			return false;
 		}
 
@@ -138,7 +138,7 @@ class Migrate
 			// Only one migration per step is permitted
 			if (count($f) > 1)
 			{
-				throw new Fuel_Exception('multiple_migrations_version');
+				throw new FuelException('multiple_migrations_version');
 				return false;
 			}
 
@@ -151,7 +151,7 @@ class Migrate
 
 				// If trying to migrate down but we're missing a step,
 				// something must definitely be wrong.
-				throw new Fuel_Exception('migration_not_found');
+				throw new FuelException('migration_not_found');
 				return false;
 			}
 
@@ -166,7 +166,7 @@ class Migrate
 				// Cannot repeat a migration at different steps
 				if (in_array($match[1], $migrations))
 				{
-					throw new Fuel_Exception('multiple_migrations_name');
+					throw new FuelException('multiple_migrations_name');
 					return false;
 				}
 
@@ -175,13 +175,13 @@ class Migrate
 
 				if ( ! class_exists($class))
 				{
-					throw new Fuel_Exception('migration_class_doesnt_exist');
+					throw new FuelException('migration_class_doesnt_exist');
 					return false;
 				}
 
 				if ( ! is_callable(array($class, 'up')) || !is_callable(array($class, 'down')))
 				{
-					throw new Fuel_Exception('wrong_migration_interface');
+					throw new FuelException('wrong_migration_interface');
 					return false;
 				}
 
@@ -189,7 +189,7 @@ class Migrate
 			}
 			else
 			{
-				throw new Fuel_Exception('invalid_migration_filename');
+				throw new FuelException('invalid_migration_filename');
 				return false;
 			}
 		}
