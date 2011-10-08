@@ -27,27 +27,27 @@ class Upload {
 	 * --------------------------------------------------------------------------- */
 
 	// duplicate the PHP standard error codes for consistency
-	const UPLOAD_ERR_OK						= UPLOAD_ERR_OK;
-	const UPLOAD_ERR_INI_SIZE				= UPLOAD_ERR_INI_SIZE;
-	const UPLOAD_ERR_FORM_SIZE				= UPLOAD_ERR_FORM_SIZE;
-	const UPLOAD_ERR_PARTIAL				= UPLOAD_ERR_PARTIAL;
-	const UPLOAD_ERR_NO_FILE				= UPLOAD_ERR_NO_FILE;
-	const UPLOAD_ERR_NO_TMP_DIR				= UPLOAD_ERR_NO_TMP_DIR;
-	const UPLOAD_ERR_CANT_WRITE				= UPLOAD_ERR_CANT_WRITE;
-	const UPLOAD_ERR_EXTENSION				= UPLOAD_ERR_EXTENSION;
+	const UPLOAD_ERR_OK         = UPLOAD_ERR_OK;
+	const UPLOAD_ERR_INI_SIZE   = UPLOAD_ERR_INI_SIZE;
+	const UPLOAD_ERR_FORM_SIZE  = UPLOAD_ERR_FORM_SIZE;
+	const UPLOAD_ERR_PARTIAL    = UPLOAD_ERR_PARTIAL;
+	const UPLOAD_ERR_NO_FILE    = UPLOAD_ERR_NO_FILE;
+	const UPLOAD_ERR_NO_TMP_DIR = UPLOAD_ERR_NO_TMP_DIR;
+	const UPLOAD_ERR_CANT_WRITE = UPLOAD_ERR_CANT_WRITE;
+	const UPLOAD_ERR_EXTENSION  = UPLOAD_ERR_EXTENSION;
 
 	// and add our own error codes
-	const UPLOAD_ERR_MAX_SIZE				= 101;
-	const UPLOAD_ERR_EXT_BLACKLISTED		= 102;
-	const UPLOAD_ERR_EXT_NOT_WHITELISTED	= 103;
-	const UPLOAD_ERR_TYPE_BLACKLISTED		= 104;
-	const UPLOAD_ERR_TYPE_NOT_WHITELISTED	= 105;
-	const UPLOAD_ERR_MIME_BLACKLISTED		= 106;
-	const UPLOAD_ERR_MIME_NOT_WHITELISTED	= 107;
-	const UPLOAD_ERR_MAX_FILENAME_LENGTH	= 108;
-	const UPLOAD_ERR_MOVE_FAILED			= 109;
-	const UPLOAD_ERR_DUPLICATE_FILE 		= 110;
-	const UPLOAD_ERR_MKDIR_FAILED			= 111;
+	const UPLOAD_ERR_MAX_SIZE             = 101;
+	const UPLOAD_ERR_EXT_BLACKLISTED      = 102;
+	const UPLOAD_ERR_EXT_NOT_WHITELISTED  = 103;
+	const UPLOAD_ERR_TYPE_BLACKLISTED     = 104;
+	const UPLOAD_ERR_TYPE_NOT_WHITELISTED = 105;
+	const UPLOAD_ERR_MIME_BLACKLISTED     = 106;
+	const UPLOAD_ERR_MIME_NOT_WHITELISTED = 107;
+	const UPLOAD_ERR_MAX_FILENAME_LENGTH  = 108;
+	const UPLOAD_ERR_MOVE_FAILED          = 109;
+	const UPLOAD_ERR_DUPLICATE_FILE       = 110;
+	const UPLOAD_ERR_MKDIR_FAILED         = 111;
 
 	/* ---------------------------------------------------------------------------
 	 * STATIC PROPERTIES
@@ -59,36 +59,36 @@ class Upload {
 	protected static $_defaults = array(
 		'auto_process'		=> false,
 		// validation settings
-		'max_size'			=> 0,
-		'max_length'		=> 0,
-		'ext_whitelist'		=> array(),
-		'ext_blacklist'		=> array(),
-		'type_whitelist'	=> array(),
-		'type_blacklist'	=> array(),
-		'mime_whitelist'	=> array(),
-		'mime_blacklist'	=> array(),
+		'max_size'       => 0,
+		'max_length'     => 0,
+		'ext_whitelist'  => array(),
+		'ext_blacklist'  => array(),
+		'type_whitelist' => array(),
+		'type_blacklist' => array(),
+		'mime_whitelist' => array(),
+		'mime_blacklist' => array(),
 		// save settings
-		'path'				=> '',
-		'prefix'			=> '',
-		'suffix'			=> '',
-		'extension'			=> '',
-		'create_path'		=> true,
-		'path_chmod'		=> 0777,
-		'file_chmod'		=> 0666,
-		'auto_rename'		=> true,
-		'overwrite'			=> false,
-		'randomize'			=> false,
-		'normalize'			=> false,
-		'change_case'		=> false
+		'path'           => '',
+		'prefix'         => '',
+		'suffix'         => '',
+		'extension'      => '',
+		'create_path'    => true,
+		'path_chmod'     => 0777,
+		'file_chmod'     => 0666,
+		'auto_rename'    => true,
+		'overwrite'      => false,
+		'randomize'      => false,
+		'normalize'      => false,
+		'change_case'    => false
 	);
 
 	/**
 	 * @var array defined callbacks
 	 */
 	protected static $callbacks = array(
-		'validate'	=> null,
-		'before'	=> null,
-		'after'		=> null
+		'validate' => null,
+		'before'   => null,
+		'after'    => null
 	);
 
 	/**
