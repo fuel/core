@@ -12,6 +12,8 @@
 
 namespace Fuel\Core;
 
+class ConfigException extends \FuelException { }
+
 class Config {
 
 	public static $loaded_files = array();
@@ -53,7 +55,14 @@ class Config {
 
 		if ($file instanceof Config_Interface)
 		{
-			$config = $file->load($overwrite);
+			try
+			{
+				$config = $file->load($overwrite);
+			}
+			catch (\ConfigException $e)
+			{
+				$config = array();
+			}
 			$group = $group === true ? $file->group() : $group;
 		}
 
