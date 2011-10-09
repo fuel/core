@@ -303,7 +303,7 @@ class Ftp
 		{
 			if ($this->_debug == true)
 			{
-				throw new \FtpFileAccessException('Unable to upload ' . $local_path);
+				throw new \FtpFileAccessException('Unable to upload');
 			}
 			return false;
 		}
