@@ -41,7 +41,9 @@ class Autoloader {
 	/**
 	 * @var  array  list off namespaces of which classes will be aliased to global namespace
 	 */
-	protected static $core_namespaces = array();
+	protected static $core_namespaces = array(
+		'Fuel\\Core'
+	);
 
 	/**
 	 * @var  array  the default path to look in if the class is not in a package
@@ -141,8 +143,8 @@ class Autoloader {
 	 * Autoloader::alias_to_namespace('Foo\\Bar', '\\Baz');
 	 * </code>
 	 *
-	 * @param	string	$class		the class name
-	 * @param	string	$namespace	the namespace to alias to
+	 * @param  string  $class      the class name
+	 * @param  string  $namespace  the namespace to alias to
 	 */
 	public static function alias_to_namespace($class, $namespace = '')
 	{
@@ -225,16 +227,40 @@ class Autoloader {
 			static::init_class($class);
 			$loaded = true;
 		}
-		elseif ( ! $namespaced)
+		elseif ($full_class = static::find_core_class($class))
 		{
-			if ($full_class = static::find_core_class($class))
+			class_exists($full_class, false) or include static::prep_path(static::$classes[$full_class]);
+			class_alias($full_class, $class);
+			static::init_class($class);
+			$loaded = true;
+		}
+		else
+		{
+			$full_ns = substr($class, 0, $pos);
+
+			if ($full_ns)
 			{
-				class_exists($full_class, false) or include static::prep_path(static::$classes[$full_class]);
-				static::alias_to_namespace($full_class);
-				static::init_class($class);
-				$loaded = true;
+				foreach (static::$namespaces as $ns => $path)
+				{
+					$ns = ltrim($ns, '\\');
+					if (strpos($full_ns, $ns) === 0)
+					{
+						$path .= static::class_to_path(
+							substr($class, strlen($ns) + 1),
+							array_key_exists($ns, static::$psr_namespaces)
+						);
+						if (is_file($path))
+						{
+							require $path;
+							static::init_class($class);
+							$loaded = true;
+							break;
+						}
+					}
+				}
 			}
-			else
+
+			if ( ! $loaded)
 			{
 				$path = APPPATH.'classes/'.static::class_to_path($class);
 
@@ -243,43 +269,6 @@ class Autoloader {
 					include $path;
 					static::init_class($class);
 					$loaded = true;
-				}
-				else
-				{
-					// Takes care of any Fuel Core classes that may not be defined in the bootstrap
-					if (class_exists('Fuel\\Core\\'.$class))
-					{
-						static::alias_to_namespace('Fuel\\Core\\'.$class);
-					}
-				}
-			}
-		}
-
-		// This handles a namespaces class that a path does not exist for
-		else
-		{
-			$full_ns = substr($class, 0, $pos);
-
-			foreach (static::$namespaces as $ns => $path)
-			{
-				$ns = ltrim($ns, '\\');
-
-				if (strpos($full_ns, $ns) === 0)
-				{
-					if (array_key_exists($ns, static::$psr_namespaces))
-					{
-						static::psr_loader($path, $class);
-						return true;
-					}
-
-					$path .= static::class_to_path(substr($class, strlen($ns) + 1));
-					if (is_file($path))
-					{
-						require $path;
-						static::init_class($class);
-						$loaded = true;
-						break;
-					}
 				}
 			}
 		}
@@ -291,20 +280,6 @@ class Autoloader {
 		}
 
 		return $loaded;
-	}
-
-	/**
-	 * A PSR-0 compatible class loader
-	 *
-	 * @param  string  path to the class
-	 * @param  string  classname
-	 */
-	protected static function psr_loader($path, $class)
-	{
-		$class = ltrim($class, '\\');
-		$file  = static::class_to_path($class, true);
-
-		require $path.$file;
 	}
 
 	/**
