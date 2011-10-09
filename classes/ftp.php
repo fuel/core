@@ -303,7 +303,7 @@ class Ftp
 		{
 			if ($this->_debug == true)
 			{
-				throw new \FtpFileAccessException('Unable to upload');
+				throw new \FtpFileAccessException('Unable to upload ' . $local_path);
 			}
 			return false;
 		}
@@ -590,7 +590,7 @@ class Ftp
 				elseif (substr($file, 0, 1) != ".")
 				{
 					// Get the file extension so we can se the upload type
-					$ext = $this->_getext($file);
+					$ext = pathinfo($remote_path, PATHINFO_BASENAME);
 					$mode = $this->_settype($ext);
 
 					$this->upload($local_path.$file, $remote_path.$file, $mode);
