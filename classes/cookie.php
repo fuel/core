@@ -41,7 +41,6 @@ class Cookie {
 	 */
 	public static function _init()
 	{
-		\Config::load('cookie', true);
 		static::$config = array_merge(static::$config, \Config::get('cookie', array()));
 	}
 
@@ -81,7 +80,7 @@ class Cookie {
 	public static function set($name, $value, $expiration = null, $path = null, $domain = null, $secure = null, $http_only = null)
 	{
 		$value = \Fuel::value($value);
-		
+
 		// use the class defaults for the other parameters if not provided
 		is_null($expiration) and $expiration = static::$config['expiration'];
 		is_null($path) and $path = static::$config['path'];
