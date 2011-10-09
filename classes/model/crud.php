@@ -35,6 +35,17 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	// protected static $_labels = array();
 
 	/**
+	 * Forges new Model_Crud objects.
+	 *
+	 * @param   array  $data  Model data
+	 * @return  Model_Crud
+	 */
+	public static function forge(array $data = array())
+	{
+		return new static($data);
+	}
+
+	/**
 	 * Finds a row with the given primary key value.
 	 *
 	 * @param   mixed  $value  The primary key value to find
@@ -277,6 +288,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			$query = $this->pre_save($query);
 			$result = $query->execute();
+
+			$this->{static::$_primary_key} = $result[0];
 
 			return $this->post_save($result);
 		}
