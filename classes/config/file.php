@@ -86,7 +86,10 @@ abstract class Config_File implements Config_Interface
 	 */
 	protected function find_file($multiple = true)
 	{
-		if ($paths = \Fuel::find_file('config', $this->file, $this->ext, $multiple))
+		$paths = \Fuel::find_file('config', $this->file, $this->ext, $multiple);
+		$paths = array_merge(\Fuel::find_file('config/' . \Fuel::$env, $this->file, $this->ext, $multiple), $paths);
+
+		if (count($paths) > 0)
 		{
 			return array_reverse($paths);
 		}
