@@ -86,7 +86,25 @@ abstract class Config_File implements Config_Interface
 	 */
 	protected function find_file($multiple = true)
 	{
-		if ($paths = \Fuel::find_file('config', $this->file, $this->ext, $multiple))
+		/**
+		 * Let fuel do its thing to find standard config files in the normal place
+		 */
+		$paths = \Fuel::find_file('config', $this->file, $this->ext, $multiple);
+
+		/**
+		 * Now lets let fuel find any production specific config files
+		 */
+		$paths = array_merge(\Fuel::find_file('config/production', $this->file, $this->ext, $multiple), $paths);
+
+		/**
+		 * If we aren't in production let fuel find some config files for the current environment
+		 */
+		if (\Fuel::$env != \Fuel::PRODUCTION)
+		{
+			$paths = array_merge(\Fuel::find_file('config/' . \Fuel::$env, $this->file, $this->ext, $multiple), $paths);
+		}
+
+		if ($paths)
 		{
 			return array_reverse($paths);
 		}
