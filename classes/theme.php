@@ -129,26 +129,42 @@ class Theme implements \ArrayAccess, \Iterator
 			throw new \ThemeException('You must set an active theme.');
 		}
 
-		$file = $view;
-		if (pathinfo($file, PATHINFO_EXTENSION) === '')
+		return \View::forge($this->find_file($view), $data, $auto_filter);
+	}
+
+	/**
+	 * Find the absolute path to the requested View
+	 *
+	 * @param   string  $view  name of the view to find
+	 * @return  string  absolute path to the view
+	 * @throws  \ThemeException  when not found
+	 */
+	protected function find_file($view)
+	{
+		foreach (array($this->active, $this->fallback) as $theme)
 		{
-			$file .= $this->config['view_ext'];
+			$ext   = pathinfo($view, PATHINFO_EXTENSION) ?
+				'.'.pathinfo($view, PATHINFO_EXTENSION) : $this->config['view_ext'];
+			$file  = (pathinfo($view, PATHINFO_DIRNAME) ?
+					str_replace(array('/', DS), DS, pathinfo($view, PATHINFO_DIRNAME)).DS : '').
+				pathinfo($view, PATHINFO_FILENAME);
+			if (empty($theme['find_file']))
+			{
+				if (is_file($path = $theme['path'].$file.$ext))
+				{
+					return $path;
+				}
+			}
+			else
+			{
+				if ($path = \Fuel::find_file($theme['path'], $file, $ext))
+				{
+					return $path;
+				}
+			}
 		}
 
-		if (is_file($this->active['path'].$file))
-		{
-			$file = $this->active['path'].$file;
-		}
-		elseif ($this->fallback['path'] and is_file($this->fallback['path'].$file))
-		{
-			$file = $this->fallback['path'].$file;
-		}
-		else
-		{
-			throw new \ThemeException(sprintf('Could not locate view "%s" in the theme.', $view));
-		}
-
-		return \View::forge($file, $data, $auto_filter);
+		throw new \ThemeException(sprintf('Could not locate view "%s" in the theme.', $view));
 	}
 
 	/**
@@ -304,11 +320,18 @@ class Theme implements \ArrayAccess, \Iterator
 		return $themes;
 	}
 
-	public function info($var, $theme = null)
+	public function info($var, $default = null, $theme = null)
 	{
-		if ($theme === null and isset($this->active['info'][$var]))
+		if ($theme === null)
 		{
-			return $this->active['info'][$var];
+			if (isset($this->active['info'][$var]))
+			{
+				return $this->active['info'][$var];
+			}
+			elseif (isset($this->fallback['info'][$var]))
+			{
+				return $this->fallback['info'][$var];
+			}
 		}
 
 		if ($theme !== null)
@@ -319,12 +342,8 @@ class Theme implements \ArrayAccess, \Iterator
 				return $info[$var];
 			}
 		}
-		else
-		{
-			$theme = $this->active['name'];
-		}
 
-		throw new \ThemeException(sprintf('Variable "%s" does not exist in "%s".', $var, $theme));
+		return $default;
 	}
 
 	/**
@@ -335,11 +354,15 @@ class Theme implements \ArrayAccess, \Iterator
 	 */
 	public function all_info($theme = null)
 	{
-		$path = null;
 		if ($theme === null)
 		{
-			$theme = $this->active['name'];
-			$path = $this->active['path'];
+			$theme = $this->active;
+		}
+
+		if (is_array($theme))
+		{
+			$path = $theme['path'];
+			$theme = $theme['name'];
 		}
 		else
 		{
@@ -351,30 +374,39 @@ class Theme implements \ArrayAccess, \Iterator
 			throw new \ThemeException(sprintf('Could not find theme "%s".', $theme));
 		}
 
-		$file = $this->config['info_file_name'];
-		$file_exists = is_file($path.$file);
-		if ( ! $file_exists and $this->config['require_info_file'])
+		try
 		{
-			throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme, $file));
+			$file = $this->find_file($this->config['info_file_name']);
 		}
-		elseif ( ! $file_exists)
+		catch (\ThemeException $e)
 		{
-			return array();
+			if ($this->config['require_info_file'])
+			{
+				throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme, $this->config['info_file_name']));
+			}
+			else
+			{
+				return array();
+			}
 		}
 
 		$type = strtolower($this->config['info_file_type']);
 		switch ($type)
 		{
 			case 'ini':
-				$info = parse_ini_file($path.$this->config['info_file_name'], true);
+				$info = parse_ini_file($file, true);
 			break;
 
 			case 'json':
-				$info = json_decode(file_get_contents($path.$this->config['info_file_name']), true);
+				$info = json_decode(file_get_contents($file), true);
+			break;
+
+			case 'yaml':
+				$info = \Format::forge(file_get_contents($file), 'yaml')->to_array();
 			break;
 
 			case 'php':
-				$info = include($path.$this->config['info_file_name']);
+				$info = include($file);
 			break;
 
 			default:
@@ -494,25 +526,42 @@ class Theme implements \ArrayAccess, \Iterator
 	 */
 	protected function create_theme_array($theme)
 	{
-		if ( ! $path = $this->find($theme))
+		if ( ! is_array($theme))
 		{
-			throw new \ThemeException(sprintf('Theme "%s" could not be found.', $theme));
+			if ( ! $path = $this->find($theme))
+			{
+				throw new \ThemeException(sprintf('Theme "%s" could not be found.', $theme));
+			}
+
+			$theme = array(
+				'name' => $theme,
+				'path' => $path,
+				'asset_base' => null,
+			);
+		}
+		else
+		{
+			if ( ! isset($theme['name']) or ! isset($theme['path']))
+			{
+				throw new \ThemeException('Theme name and path must be given in array config.');
+			}
 		}
 
-		$return = array(
-			'name' => $theme,
-			'path' => $path,
-			'asset_base' => false,
-			'info' => $this->all_info($theme),
-		);
-
-		$assets_folder = rtrim($this->config['assets_folder'], DS).DS;
-		if (strpos($path, DOCROOT) === 0 and is_dir($path.$assets_folder))
+		if ( ! isset($theme['info']))
 		{
-			$path = str_replace(DOCROOT, '', $path).$assets_folder;
-			$return['asset_base'] = Config::get('base_url').$path;
+			$theme['info'] = $this->all_info($theme);
 		}
 
-		return $return;
+		if ( ! isset($theme['asset_base']))
+		{
+			$assets_folder = rtrim($this->config['assets_folder'], DS).DS;
+			if (strpos($path, DOCROOT) === 0 and is_dir($path.$assets_folder))
+			{
+				$path = str_replace(DOCROOT, '', $path).$assets_folder;
+				$theme['asset_base'] = Config::get('base_url').$path;
+			}
+		}
+
+		return $theme;
 	}
 }
