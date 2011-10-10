@@ -42,7 +42,7 @@ return array(
 	'info_file_name' => 'theme.info',
 
 	/**
-	 * File type of the theme info file.  Possible values: ini, php
+	 * File type of the theme info file.  Possible values: php, ini, json and yaml
 	 */
-	'info_file_type' => 'ini',
+	'info_file_type' => 'php',
 );

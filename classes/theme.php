@@ -373,6 +373,10 @@ class Theme implements \ArrayAccess, \Iterator
 				$info = json_decode(file_get_contents($path.$this->config['info_file_name']), true);
 			break;
 
+			case 'yaml':
+				$info = \Format::forge(file_get_contents($path.$this->config['info_file_name']), 'yaml')->to_array();
+			break;
+
 			case 'php':
 				$info = include($path.$this->config['info_file_name']);
 			break;
