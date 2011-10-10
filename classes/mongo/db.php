@@ -262,12 +262,12 @@ class Mongo_Db {
 	{
 	 	if ( ! is_array($includes))
 	 	{
-	 		$includes = array();
+	 		$includes = array($includes);
 	 	}
 
 	 	if ( ! is_array($excludes))
 	 	{
-	 		$excludes = array();
+	 		$excludes = array($excludes);
 	 	}
 
 	 	if ( ! empty($includes))
