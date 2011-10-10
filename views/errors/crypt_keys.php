@@ -36,9 +36,7 @@
 		<p>Please copy the following code into APPPATH/config/crypt.php manually:</p>
 		<pre><code>&lt;?php
 /**
- * Fuel
- *
- * Fuel is a fast, lightweight, community driven PHP5 framework.
+ * Part of the Fuel framework.
  *
  * @package     Fuel
  * @version     1.0
