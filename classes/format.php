@@ -247,7 +247,7 @@ class Format {
 	 */ 
 	public function to_jsonp($data = null)
 	{
-		 $callback = \Input::get_post('callback', null)); 
+		 $callback = \Input::get_post('callback', null); 
 		 is_null($callback) and $callback = 'response'; 
 
 		 return $callback.'('.$this->to_json($data).')';
