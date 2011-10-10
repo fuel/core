@@ -394,7 +394,7 @@ class Theme implements \ArrayAccess, \Iterator
 		{
 			if ($this->config['require_info_file'])
 			{
-				throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme, $this->config['info_file_name']));
+				throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $name, $this->config['info_file_name']));
 			}
 			else
 			{
