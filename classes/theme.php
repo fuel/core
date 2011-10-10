@@ -102,7 +102,8 @@ class Theme implements \ArrayAccess, \Iterator
 	{
 		if (empty($config))
 		{
-			$config = \Config::load('theme', true);
+			\Config::load('theme', true);
+			$config = \Config::get('theme', false);
 		}
 		// Order of this addition is important, do not change this.
 		$this->config = $config + $this->config;
@@ -370,6 +371,10 @@ class Theme implements \ArrayAccess, \Iterator
 
 			case 'json':
 				$info = json_decode(file_get_contents($path.$this->config['info_file_name']), true);
+			break;
+
+			case 'yaml':
+				$info = \Format::forge(file_get_contents($path.$this->config['info_file_name']), 'yaml')->to_array();
 			break;
 
 			case 'php':

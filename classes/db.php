@@ -303,7 +303,7 @@ class DB {
 	 * @param   string  db connection
 	 * @return  integer
 	 */
-	public function count_last_query($db = null)
+	public static function count_last_query($db = null)
 	{
 		return \Database_Connection::instance($db)->count_last_query();
 	}
