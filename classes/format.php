@@ -240,6 +240,20 @@ class Format {
 	}
 
 	/**
+	 * To JSONP conversion
+	 *
+	 * @param mixed $data
+	 * @return string
+	 */ 
+	public function to_jsonp($data = null)
+	{
+		 $callback = \Input::get_post('callback', null)); 
+		 is_null($callback) and $callback = 'response'; 
+
+		 return $callback.'('.$this->to_json($data).')';
+	}
+
+	/**
 	 * Serialize
 	 *
 	 * @param   mixed  $data

@@ -26,6 +26,7 @@ abstract class Controller_Rest extends \Controller {
 		'xml' => 'application/xml',
 		'rawxml' => 'application/xml',
 		'json' => 'application/json',
+		'jsonp'=> 'text/javascript',
 		'serialized' => 'application/vnd.php.serialized',
 		'php' => 'text/plain',
 		'html' => 'text/html',
