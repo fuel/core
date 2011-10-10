@@ -300,7 +300,16 @@ class Format {
 	 */
 	protected function _from_xml($string)
 	{
-		return $string ? (array) simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : array();
+		$_arr = is_string($string) ? simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : $string;
+		$arr = array();
+		
+		foreach (get_object_vars($_arr) as $key => $val)
+		{
+			$val = (is_array($val) or is_object($val)) ? call_user_func(array(__CLASS__, __FUNCTION__), $val) : $val;
+			$arr[$key] = $val;
+		}
+		
+		return $arr;
 	}
 
 	/**
