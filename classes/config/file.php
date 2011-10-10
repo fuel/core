@@ -94,7 +94,7 @@ abstract class Config_File implements Config_Interface
 			return array_reverse($paths);
 		}
 
-		return array();
+		throw new \ConfigException(sprintf('File "%s" does not exist.', $this->file));
 	}
 
 	/**
