@@ -374,20 +374,15 @@ class Theme implements \ArrayAccess, \Iterator
 			throw new \ThemeException(sprintf('Could not find theme "%s".', $theme));
 		}
 
-		try
+		$file = $path.$this->config['info_file_name'];
+		$info_file_exists = is_file($file);
+		if ( ! $info_file_exists and $this->config['require_info_file'])
 		{
-			$file = $this->find_file($this->config['info_file_name']);
+			throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme, $this->config['info_file_name']));
 		}
-		catch (\ThemeException $e)
+		elseif ( ! $info_file_exists)
 		{
-			if ($this->config['require_info_file'])
-			{
-				throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme, $this->config['info_file_name']));
-			}
-			else
-			{
-				return array();
-			}
+			return array();
 		}
 
 		$type = strtolower($this->config['info_file_type']);
@@ -553,7 +548,7 @@ class Theme implements \ArrayAccess, \Iterator
 
 		if ( ! isset($theme['info']))
 		{
-			$theme['info'] = $this->all_info($theme);
+			$theme['info'] = $this->all_info($theme['name']);
 		}
 
 		if ( ! isset($theme['asset_base']))
