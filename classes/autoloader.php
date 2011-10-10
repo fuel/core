@@ -243,7 +243,7 @@ class Autoloader {
 				foreach (static::$namespaces as $ns => $path)
 				{
 					$ns = ltrim($ns, '\\');
-					if (strpos($full_ns, $ns) === 0)
+					if (stripos($full_ns, $ns) === 0)
 					{
 						$path .= static::class_to_path(
 							substr($class, strlen($ns) + 1),

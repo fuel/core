@@ -140,6 +140,8 @@ class Fuel {
 	 */
 	public static function init($config)
 	{
+		static::$_paths = array(APPPATH, COREPATH);
+
 		// Is Fuel running on the command line?
 		static::$is_cli = (bool) defined('STDIN');
 
@@ -178,8 +180,6 @@ class Fuel {
 		MBSTRING and mb_internal_encoding(static::$encoding);
 
 		static::$locale = \Config::get('locale', static::$locale);
-
-		static::$_paths = array(APPPATH, COREPATH);
 
 		if ( ! static::$is_cli)
 		{

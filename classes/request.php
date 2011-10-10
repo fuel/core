@@ -298,7 +298,7 @@ class Request {
 				$module_routes = \Fuel::load($module_path);
 				
 				$prepped_routes = array();
-				foreach($module_routes as $name => $route)
+				foreach($module_routes as $name => $_route)
 				{
 					if ($name === '_root_')
 					{
@@ -309,7 +309,7 @@ class Request {
 						$name = $module.'/'.$name;
 					}
 					
-					$prepped_routes[$name] = $route;
+					$prepped_routes[$name] = $_route;
 				};
 
 				// update the loaded list of routes

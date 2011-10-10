@@ -12,6 +12,8 @@
 
 namespace Fuel\Core;
 
+class ConfigException extends \FuelException { }
+
 class Config {
 
 	public static $loaded_files = array();
@@ -20,7 +22,10 @@ class Config {
 
 	public static function load($file, $group = null, $reload = false, $overwrite = false)
 	{
-		if ( ! is_array($file) && array_key_exists($file, static::$loaded_files) and ! $reload)
+		if ( ! $reload and
+		     ! is_array($file) and
+		     ! is_object($file) and
+		    array_key_exists($file, static::$loaded_files))
 		{
 			return false;
 		}
@@ -30,15 +35,35 @@ class Config {
 		{
 			$config = $file;
 		}
-		elseif ($paths = \Fuel::find_file('config', $file, '.php', true))
+		elseif (is_string($file))
 		{
-			// Reverse the file list so that we load the core configs first and
-			// the app can override anything.
-			$paths = array_reverse($paths);
-			foreach ($paths as $path)
+			$info = pathinfo($file);
+			$type = isset($info['extension']) ? $info['extension'] : 'php';
+			$file = $info['filename'];
+			$class = '\\Config_'.ucfirst($type);
+
+			if (class_exists($class))
 			{
-				$config = $overwrite ? array_merge($config, \Fuel::load($path)) : \Arr::merge($config, \Fuel::load($path));
+				static::$loaded_files[$file] = true;
+				$file = new $class($file);
 			}
+			else
+			{
+				throw new \FuelException(sprintf('Invalid config type "%s".', $type));
+			}
+		}
+
+		if ($file instanceof Config_Interface)
+		{
+			try
+			{
+				$config = $file->load($overwrite);
+			}
+			catch (\ConfigException $e)
+			{
+				$config = array();
+			}
+			$group = $group === true ? $file->group() : $group;
 		}
 
 		if ($group === null)
@@ -55,10 +80,6 @@ class Config {
 			static::$items[$group] = $overwrite ? array_merge(static::$items[$group],$config) : \Arr::merge(static::$items[$group],$config);
 		}
 
-		if ( ! is_array($file))
-		{
-			static::$loaded_files[$file] = true;
-		}
 		return $config;
 	}
 

@@ -405,6 +405,10 @@ class Theme implements \ArrayAccess, \Iterator
 				$info = \Format::forge(file_get_contents($file), 'yaml')->to_array();
 			break;
 
+			case 'yaml':
+				$info = \Format::forge(file_get_contents($path.$this->config['info_file_name']), 'yaml')->to_array();
+			break;
+
 			case 'php':
 				$info = include($file);
 			break;
