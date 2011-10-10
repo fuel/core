@@ -111,7 +111,6 @@ class Theme implements \ArrayAccess, \Iterator
 		$this->add_paths($this->config['paths']);
 		$this->active($this->config['active']);
 		$this->fallback($this->config['fallback']);
-
 	}
 
 	/**
@@ -133,15 +132,23 @@ class Theme implements \ArrayAccess, \Iterator
 	}
 
 	/**
-	 * Find the absolute path to the requested View
+	 * Find the absolute path to a file in a set of Themes.  You can optionally
+	 * send an array of themes to search.  If you do not, it will search active
+	 * then fallback (in that order).
 	 *
-	 * @param   string  $view  name of the view to find
+	 * @param   string  $view    name of the view to find
+	 * @param   array   $themes  optional array of themes to search
 	 * @return  string  absolute path to the view
 	 * @throws  \ThemeException  when not found
 	 */
-	protected function find_file($view)
+	protected function find_file($view, $themes = null)
 	{
-		foreach (array($this->active, $this->fallback) as $theme)
+		if ($themes === null)
+		{
+			$themes = array($this->active, $this->fallback);
+		}
+
+		foreach ($themes as $theme)
 		{
 			$ext   = pathinfo($view, PATHINFO_EXTENSION) ?
 				'.'.pathinfo($view, PATHINFO_EXTENSION) : $this->config['view_ext'];
@@ -362,11 +369,16 @@ class Theme implements \ArrayAccess, \Iterator
 		if (is_array($theme))
 		{
 			$path = $theme['path'];
-			$theme = $theme['name'];
+			$name = $theme['name'];
 		}
 		else
 		{
 			$path = $this->find($theme);
+			$name = $theme;
+			$theme = array(
+				'name' => $name,
+				'path' => $path
+			);
 		}
 
 		if ( ! $path)
@@ -376,7 +388,7 @@ class Theme implements \ArrayAccess, \Iterator
 
 		try
 		{
-			$file = $this->find_file($this->config['info_file_name']);
+			$file = $this->find_file($this->config['info_file_name'], array($theme));
 		}
 		catch (\ThemeException $e)
 		{
