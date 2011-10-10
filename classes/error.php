@@ -53,7 +53,7 @@ class Error {
 			logger(Fuel::L_ERROR, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line']);
 
 			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
-			if (\Fuel::$env == \Fuel::PRODUCTION AND !\Fuel::$is_cli)
+			if (\Fuel::$env == \Fuel::PRODUCTION AND ! \Fuel::$is_cli)
 			{	
 				static::show_production_error($error);
 			}
@@ -82,7 +82,7 @@ class Error {
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
 		logger(Fuel::L_ERROR, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
 
-		if (\Fuel::$env == \Fuel::PRODUCTION AND !\Fuel::$is_cli)
+		if (\Fuel::$env == \Fuel::PRODUCTION AND ! \Fuel::$is_cli)
 		{
 			static::show_production_error($e);
 		}
