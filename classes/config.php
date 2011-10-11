@@ -95,20 +95,9 @@ class Config {
 		}
 		$content = <<<CONF
 <?php
-/**
- * Part of the Fuel framework.
- *
- * @package		Fuel
- * @version		1.0
- * @author		Fuel Development Team
- * @license		MIT License
- * @copyright	2011 Fuel Development Team
- * @link		http://fuelphp.com
- */
-
 
 CONF;
-		$content .= 'return '.str_replace('  ', "\t", var_export($config, true)).';';
+		$content .= 'return '.str_replace(array('  ', 'array ('), array("\t", 'array('), var_export($config, true)).";\n";
 
 		if ( ! $path = \Finder::search('config', $file, '.php'))
 		{
@@ -133,12 +122,6 @@ CONF;
 			}
 
 		}
-
-		$content .= <<<CONF
-
-
-
-CONF;
 
 		// make sure we have a fallback
 		$path or $path = APPPATH.'config'.DS.$file.'.php';
