@@ -25,7 +25,8 @@ namespace Fuel\Core;
  * @subpackage  Core
  * @category    Core
  */
-class Validation {
+class Validation
+{
 
 	/**
 	 * @var  Validation  keeps a reference to an instance of Validation while it is being run

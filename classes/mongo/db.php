@@ -27,7 +27,8 @@ namespace Fuel\Core;
 class Mongo_DbException extends FuelException {}
 
 
-class Mongo_Db {
+class Mongo_Db
+{
 
 	/**
 	 * Holds the current Mongo connection object

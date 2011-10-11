@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * PHP needs to be compiled with --enable-mbstring
  * or a fallback without encoding support is used
  */
-class Str {
+class Str
+{
 
 	/**
 	 * Truncates a string to the given length.  It will optionally preserve

@@ -14,7 +14,8 @@
 
 namespace Fuel\Core;
 
-abstract class Image_Driver {
+abstract class Image_Driver
+{
 
 	protected $image_fullpath  = null;
 	protected $image_directory = null;

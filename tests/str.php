@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Str
  */
-class Tests_Str extends TestCase {
+class Tests_Str extends TestCase
+{
 
 	public function truncate_provider()
 	{

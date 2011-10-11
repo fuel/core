@@ -13,7 +13,8 @@ namespace Fuel\Core;
 
 
 
-class DB {
+class DB
+{
 
 	// Query types
 	const SELECT =  1;

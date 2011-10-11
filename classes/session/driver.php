@@ -14,7 +14,8 @@ namespace Fuel\Core;
 
 
 
-abstract class Session_Driver {
+abstract class Session_Driver
+{
 
 	/*
 	 * @var	session class configuration

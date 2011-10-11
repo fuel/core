@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @author		Harro "WanWizard" Verton
  * @link		http://fuelphp.com/docs/classes/session.html
  */
-class Session {
+class Session
+{
 	/**
 	 * loaded session driver instance
 	 */

@@ -33,7 +33,8 @@ namespace Fuel\Core;
  * @license
  * @version     1.0.0
  */
-class Unzip {
+class Unzip
+{
 
 	private $compressed_list = array();
 

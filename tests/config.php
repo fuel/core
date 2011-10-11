@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Config
  */
-class Test_Config extends TestCase {
+class Test_Config extends TestCase
+{
  	public function test_foo() {}
 }

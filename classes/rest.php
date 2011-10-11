@@ -27,7 +27,8 @@ class RestException extends \FuelException {}
  * @author		Harro Verton
  * @based-on	Phil Sturgeon's CodeIgniter REST client
  */
-class Rest {
+class Rest
+{
 
 	/**
 	 * @var     object    Rest

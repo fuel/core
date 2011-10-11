@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Router
  */
-class Test_Router extends TestCase {
+class Test_Router extends TestCase
+{
  	public function test_foo() {}
 }

@@ -25,7 +25,8 @@ namespace Fuel\Core;
  * @author		Harro Verton
  * @based-on	Phil Sturgeon's CodeIgniter cURL library
  */
-class Rest_Curl extends \Rest_Driver {
+class Rest_Curl extends \Rest_Driver
+{
 
 	/**
 	 * Class constructor

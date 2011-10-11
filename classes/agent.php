@@ -25,7 +25,8 @@ namespace Fuel\Core;
  * @author      Harro Verton
  */
 
-class Agent {
+class Agent
+{
 
 	/**
 	 * @var  array  information about the current browser

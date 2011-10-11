@@ -23,7 +23,8 @@ namespace Fuel\Tasks;
  * @link		http://fuelphp.com/docs/general/migrations.html
  */
 
-class Migrate {
+class Migrate
+{
 
 	public static function run()
 	{

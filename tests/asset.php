@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Asset
  */
-class Test_Asset extends TestCase {
+class Test_Asset extends TestCase
+{
  	public function test_foo() {}
 }

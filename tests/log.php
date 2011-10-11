@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Log
  */
-class Test_Log extends TestCase {
+class Test_Log extends TestCase
+{
 
 	public function __construct()
 	{

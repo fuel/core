@@ -22,7 +22,8 @@ namespace Fuel\Core;
  * @package   Fuel
  * @category  Core
  */
-class Validation_Error extends \Exception {
+class Validation_Error extends \Exception
+{
 
 	/**
 	 * Load validation Language file when errors are thrown

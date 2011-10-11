@@ -26,7 +26,8 @@ namespace Fuel\Core;
  * @category	Core
  * @author      Chase "Syntaqx" Hutchins
  */
-class Num {
+class Num
+{
 
 	/**
 	 * Cached byte units

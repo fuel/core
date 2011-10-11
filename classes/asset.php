@@ -23,7 +23,8 @@ namespace Fuel\Core;
  * @package     Fuel
  * @subpackage  Core
  */
-class Asset {
+class Asset
+{
 
 	/**
 	 * @var  array  the asset paths to be searched

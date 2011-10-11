@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Error
  */
-class Test_Error extends TestCase {
+class Test_Error extends TestCase
+{
  	public function test_foo() {}
 }
 // TestCase {

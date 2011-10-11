@@ -14,7 +14,8 @@
 
 namespace Fuel\Core;
 
-class Image_Gd extends \Image_Driver {
+class Image_Gd extends \Image_Driver
+{
 
 	private $image_data = null;
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');

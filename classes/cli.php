@@ -22,7 +22,8 @@ namespace Fuel\Core;
  * @author		Phil Sturgeon
  * @link		http://fuelphp.com/docs/classes/cli.html
  */
-class Cli {
+class Cli
+{
 
 	public static $readline_support = false;
 

@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Crypt
  */
-class Test_Crypt extends TestCase {
+class Test_Crypt extends TestCase
+{
  	public function test_foo() {}
 }

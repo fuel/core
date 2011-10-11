@@ -20,7 +20,8 @@ class CacheNotFoundException extends \OutOfBoundsException {}
 class CacheExpiredException extends \CacheNotFoundException {}
 
 
-class Cache {
+class Cache
+{
 
 	/**
 	 * Loads any default caching settings when available

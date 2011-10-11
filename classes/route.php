@@ -12,7 +12,8 @@
 
 namespace Fuel\Core;
 
-class Route {
+class Route
+{
 
 	public $segments = array();
 

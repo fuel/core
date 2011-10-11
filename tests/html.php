@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Html
  */
-class Tests_Html extends TestCase {
+class Tests_Html extends TestCase
+{
 
 	/**
 	 * Tests Html::meta()

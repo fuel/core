@@ -14,7 +14,8 @@ namespace Fuel\Core;
 
 
 
-class File_Area {
+class File_Area
+{
 
 	/**
 	 * @var	string	path to basedir restriction, null for no restriction

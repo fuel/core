@@ -23,7 +23,8 @@ namespace Fuel\Core;
  * @license    http://kohanaframework.org/license
  * @link       http://fuelphp.com/docs/classes/cookie.html
  */
-class Cookie {
+class Cookie
+{
 
 	/**
 	 * @var  array  Cookie class configuration defaults

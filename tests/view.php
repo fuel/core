@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group View
  */
-class Test_View extends TestCase {
+class Test_View extends TestCase
+{
  	public function test_foo() {}
 }

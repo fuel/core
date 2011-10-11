@@ -19,7 +19,8 @@ namespace Fuel\Core;
  * @category	Core
  * @author		Dan Horrigan
  */
-class DBUtil {
+class DBUtil
+{
 
 	/**
 	 * Creates a database.  Will throw a Database_Exception if it cannot.

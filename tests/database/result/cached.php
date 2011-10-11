@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Database
  */
-class Test_Database_Result_Cached extends TestCase {
+class Test_Database_Result_Cached extends TestCase
+{
  	public function test_foo() {}
 }

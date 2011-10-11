@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Fieldset
  */
-class Test_Fieldset extends TestCase {
+class Test_Fieldset extends TestCase
+{
  	public function test_foo() {}
 }

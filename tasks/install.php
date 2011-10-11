@@ -23,7 +23,8 @@ namespace Fuel\Tasks;
  * @author		Phil Sturgeon
  */
 
-class Install {
+class Install
+{
 
 	public static function run()
 	{

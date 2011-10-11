@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Database
  */
-class Test_Database_Mysqli_Connection extends TestCase {
+class Test_Database_Mysqli_Connection extends TestCase
+{
  	public function test_foo() {}
 }

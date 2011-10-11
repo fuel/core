@@ -13,7 +13,8 @@ namespace Fuel\Core;
 
 
 
-class Database_Query {
+class Database_Query
+{
 
 	// Query type
 	protected $_type;

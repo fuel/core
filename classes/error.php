@@ -13,7 +13,8 @@
 namespace Fuel\Core;
 
 
-class Error {
+class Error
+{
 
 	public static $levels = array(
 		0                  => 'Error',

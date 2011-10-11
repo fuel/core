@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Db
  */
-class Test_Db extends TestCase {
+class Test_Db extends TestCase
+{
  	public function test_foo() {}
 }

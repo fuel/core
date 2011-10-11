@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Email
  */
-class Test_Email_Smtp extends TestCase {
+class Test_Email_Smtp extends TestCase
+{
  	public function test_foo() {}
 }

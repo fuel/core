@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @category	Core
  * @author      Chase "Syntaqx" Hutchins
  */
-class Tests_Num extends TestCase {
+class Tests_Num extends TestCase
+{
 
 	/**
 	 * @see     Num::bytes

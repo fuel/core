@@ -22,7 +22,8 @@ namespace Fuel\Core;
  * @author		Phil Sturgeon
  * @link		http://fuelphp.com/docs/classes/debug.html
  */
-class Debug {
+class Debug
+{
 
 	protected static $js_displayed = false;
 

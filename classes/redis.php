@@ -29,7 +29,8 @@ class RedisException extends \FuelException {}
 /**
  * Redisent, a Redis interface for the modest among us
  */
-class Redis {
+class Redis
+{
 
 	protected static $instances = array();
 

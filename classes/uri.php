@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @author    Dan Horrigan
  * @link      http://fuelphp.com/docs/classes/uri.html
  */
-class Uri {
+class Uri
+{
 
 	/**
 	 * Returns the desired segment, or $default if it does not exist.

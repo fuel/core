@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Cli
  */
-class Test_Cli extends TestCase {
+class Test_Cli extends TestCase
+{
  	
 	public function test_exec_speed()
 	{

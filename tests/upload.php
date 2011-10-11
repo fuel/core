@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Upload
  */
-class Test_Upload extends TestCase {
+class Test_Upload extends TestCase
+{
  	public function test_foo() {}
 }

@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @author		Harro "WanWizard" Verton
  * @link		http://fuelphp.com/docs/classes/upload.html
  */
-class Upload {
+class Upload
+{
 
 	/* ---------------------------------------------------------------------------
 	 * ERROR CODE CONSTANTS

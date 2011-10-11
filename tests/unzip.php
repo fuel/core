@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Unzip
  */
-class Test_Unzip extends TestCase {
+class Test_Unzip extends TestCase
+{
  	public function test_foo() {}
 }

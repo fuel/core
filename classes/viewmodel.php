@@ -21,7 +21,8 @@ namespace Fuel\Core;
  * @category    Core
  * @author      Jelmer Schreuder
  */
-abstract class ViewModel {
+abstract class ViewModel
+{
 
 	/**
 	 * This method is deprecated...use forge() instead.

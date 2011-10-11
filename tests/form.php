@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Form
  */
-class Test_Form extends TestCase {
+class Test_Form extends TestCase
+{
  	public function test_foo() {}
 }

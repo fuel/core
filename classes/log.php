@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @author		Phil Sturgeon
  * @link		http://fuelphp.com/docs/classes/log.html
  */
-class Log {
+class Log
+{
 
 	public static function _init()
 	{

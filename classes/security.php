@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @author		Dan Horrigan
  * @link		http://fuelphp.com/docs/classes/security.html
  */
-class Security {
+class Security
+{
 
 	/**
 	 * @var  string  the token as submitted in the cookie from the previous request

@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Security
  */
-class Test_Security extends TestCase {
+class Test_Security extends TestCase
+{
  	public function test_foo() {}
 }

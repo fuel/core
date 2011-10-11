@@ -13,7 +13,8 @@ namespace Fuel\Core;
 
 
 
-class Database_MySQLi_Connection extends \Database_Connection {
+class Database_MySQLi_Connection extends \Database_Connection
+{
 
 	// Database in use by each connection
 	protected static $_current_databases = array();

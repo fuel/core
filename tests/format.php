@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Format
  */
-class Test_Format extends TestCase {
+class Test_Format extends TestCase
+{
 	
 	public static function array_provider()
 	{

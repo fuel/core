@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Viewmodel
  */
-class Test_Viewmodel extends TestCase {
+class Test_Viewmodel extends TestCase
+{
  	public function test_foo() {}
 }

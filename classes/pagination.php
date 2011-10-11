@@ -13,7 +13,8 @@ namespace Fuel\Core;
 
 
 
-class Pagination {
+class Pagination
+{
 
 	/**
 	 * @var	integer	The current page

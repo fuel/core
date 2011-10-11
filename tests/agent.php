@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Agent
  */
-class Test_Agent extends TestCase {
+class Test_Agent extends TestCase
+{
 
 	/**
 	 * need to setup a fake browser environment

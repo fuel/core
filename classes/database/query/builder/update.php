@@ -11,7 +11,8 @@
 
 namespace Fuel\Core;
 
-class Database_Query_Builder_Update extends \Database_Query_Builder_Where {
+class Database_Query_Builder_Update extends \Database_Query_Builder_Where
+{
 
 	// UPDATE ...
 	protected $_table;

@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Request
  */
-class Test_Request extends TestCase {
+class Test_Request extends TestCase
+{
  	public function test_foo() {}
 }

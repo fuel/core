@@ -18,7 +18,8 @@
  * @package     Fuel
  * @subpackage  Core
  */
-class Autoloader {
+class Autoloader
+{
 
 	/**
 	 * @var  array  $classes  holds all the classes and paths

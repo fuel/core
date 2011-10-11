@@ -14,7 +14,8 @@ namespace Fuel\Core;
 
 
 
-class File_Handler_File {
+class File_Handler_File
+{
 
 	/**
 	 * @var	string	path to the file

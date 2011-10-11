@@ -14,7 +14,8 @@ namespace Fuel\Core;
 
 
 
-class Rest_Wrapper extends \Rest_Driver {
+class Rest_Wrapper extends \Rest_Driver
+{
 
 	/**
 	 * Class constructor

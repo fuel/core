@@ -24,7 +24,8 @@ namespace Fuel\Core;
  * @category  Core
  * @link      http://fuelphp.com/docs/classes/view.html
  */
-class View {
+class View
+{
 
 	/**
 	 * @var  array  Global view data

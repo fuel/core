@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Database
  */
-class Test_Database_Query_Builder extends TestCase {
+class Test_Database_Query_Builder extends TestCase
+{
  	public function test_foo() {}
 }

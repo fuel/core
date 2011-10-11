@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @copyright	Flinn Mueller
  * @link		http://fuelphp.com/docs/classes/inlector.html
  */
-class Inflector {
+class Inflector
+{
 
 	protected static $uncountable_words = array(
 		'equipment', 'information', 'rice', 'money',

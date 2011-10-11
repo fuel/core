@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Dbutil
  */
-class Test_Dbutil extends TestCase {
+class Test_Dbutil extends TestCase
+{
  	public function test_foo() {}
 }

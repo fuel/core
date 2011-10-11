@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Arr
  */
-class Tests_Arr extends TestCase {
+class Tests_Arr extends TestCase
+{
 
 	public static function person_provider()
 	{

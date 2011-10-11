@@ -29,7 +29,8 @@ class Fuel_Exception extends \FuelException {}
  * @subpackage	Core
  * @category	Core
  */
-class Fuel {
+class Fuel
+{
 
 	/**
 	 * @var  string  The version of Fuel

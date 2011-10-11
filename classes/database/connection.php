@@ -15,7 +15,8 @@ namespace Fuel\Core;
 
 
 
-abstract class Database_Connection {
+abstract class Database_Connection
+{
 
 	/**
 	 * @var  string  default instance name

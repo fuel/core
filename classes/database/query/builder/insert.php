@@ -11,7 +11,8 @@
 
 namespace Fuel\Core;
 
-class Database_Query_Builder_Insert extends \Database_Query_Builder {
+class Database_Query_Builder_Insert extends \Database_Query_Builder
+{
 
 	// INSERT INTO ...
 	protected $_table;

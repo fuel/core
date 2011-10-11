@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @author		Eric Barnes
  * @author		Harro "WanWizard" Verton
  */
-class Event {
+class Event
+{
 
 	/**
 	 * @var	array	An array of listeners

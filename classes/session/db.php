@@ -16,7 +16,8 @@ namespace Fuel\Core;
 
 // --------------------------------------------------------------------
 
-class Session_Db extends \Session_Driver {
+class Session_Db extends \Session_Driver
+{
 
 	/*
 	 * @var	session database result object

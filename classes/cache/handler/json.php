@@ -14,7 +14,8 @@ namespace Fuel\Core;
 
 
 
-class Cache_Handler_Json implements \Cache_Handler_Driver {
+class Cache_Handler_Json implements \Cache_Handler_Driver
+{
 
 	public function readable($contents)
 	{

@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Date
  */
-class Tests_Date extends TestCase {
+class Tests_Date extends TestCase
+{
 
 	/**
 	 * Test for Date::days_in_month()

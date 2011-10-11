@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Image
  */
-class Test_Image_Imagemagick extends TestCase {
+class Test_Image_Imagemagick extends TestCase
+{
  	public function test_foo() {}
 }

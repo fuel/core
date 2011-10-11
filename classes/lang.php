@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @author		Phil Sturgeon
  * @link		http://fuelphp.com/docs/classes/lang.html
  */
-class Lang {
+class Lang
+{
 
 	/**
 	 * @var  array  language lines

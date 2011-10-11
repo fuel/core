@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Redis
  */
-class Test_Redis_Exception extends TestCase {
+class Test_Redis_Exception extends TestCase
+{
  	public function test_foo() {}
 }

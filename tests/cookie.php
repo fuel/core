@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Cookie
  */
-class Test_Cookie extends TestCase {
+class Test_Cookie extends TestCase
+{
  	public function test_foo() {}
 }

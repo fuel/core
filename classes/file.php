@@ -26,7 +26,8 @@ class InvalidPathException extends \FileAccessException {}
  * @subpackage  Core
  * @category    Core
  */
-class File {
+class File
+{
 
 	/**
 	 * @var  array  loaded area's

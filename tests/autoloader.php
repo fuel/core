@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Autoloader
  */
-class Test_Autoloader extends TestCase {
+class Test_Autoloader extends TestCase
+{
  	public function test_foo() {}
 }

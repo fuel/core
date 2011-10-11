@@ -7,7 +7,8 @@ import('phpquickprofiler/phpquickprofiler', 'vendor');
 use \Console;
 use \PhpQuickProfiler;
 
-class Profiler {
+class Profiler
+{
 
 	protected static $profiler = null;
 

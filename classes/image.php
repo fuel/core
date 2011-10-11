@@ -14,7 +14,8 @@
 
 namespace Fuel\Core;
 
-class Image {
+class Image
+{
 
 	protected static $_instance = null;
 

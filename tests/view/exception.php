@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group View
  */
-class Test_View_Exception extends TestCase {
+class Test_View_Exception extends TestCase
+{
  	public function test_foo() {}
 }

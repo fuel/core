@@ -14,7 +14,8 @@ namespace Fuel\Core;
 
 class ConfigException extends \FuelException { }
 
-class Config {
+class Config
+{
 
 	public static $loaded_files = array();
 

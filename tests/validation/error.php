@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Validation
  */
-class Test_Validation_Error extends TestCase {
+class Test_Validation_Error extends TestCase
+{
  	public function test_foo() {}
 }

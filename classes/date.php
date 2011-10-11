@@ -28,7 +28,8 @@ namespace Fuel\Core;
  * - create_time() uses strptime and has currently a very bad hack to use strtotime for windows servers
  * - Uses strftime formatting for dates www.php.net/manual/en/function.strftime.php
  */
-class Date {
+class Date
+{
 
 	/**
 	 * Time constants (and only those that are constant, thus not MONTH/YEAR)

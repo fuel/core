@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Pagination
  */
-class Test_Pagination extends TestCase {
+class Test_Pagination extends TestCase
+{
  	public function test_foo() {}
 }

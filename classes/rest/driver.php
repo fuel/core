@@ -14,7 +14,8 @@ namespace Fuel\Core;
 
 
 
-abstract class Rest_Driver {
+abstract class Rest_Driver
+{
 
 	/**
 	 * @var	array	http headers set for the request

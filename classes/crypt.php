@@ -18,7 +18,8 @@ import('phpseclib/Crypt/Hash', 'vendor');
 use \PHPSecLib\Crypt_AES;
 use \PHPSecLib\Crypt_Hash;
 
-class Crypt {
+class Crypt
+{
 
 	/*
 	 * Crypto object used to encrypt/decrypt

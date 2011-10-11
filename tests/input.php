@@ -18,6 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Input
  */
-class Test_Input extends TestCase {
+class Test_Input extends TestCase
+{
  	public function test_foo() {}
 }

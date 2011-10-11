@@ -11,7 +11,8 @@
 
 namespace Fuel\Core;
 
-class Database_Query_Builder_Select extends \Database_Query_Builder_Where {
+class Database_Query_Builder_Select extends \Database_Query_Builder_Where
+{
 
 	// SELECT ...
 	protected $_select = array();

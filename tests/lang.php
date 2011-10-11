@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Lang
  */
-class Test_Lang extends TestCase {
+class Test_Lang extends TestCase
+{
 
 	/**
 	 * Test for Lang::line()

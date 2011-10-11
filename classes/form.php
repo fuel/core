@@ -20,7 +20,8 @@ namespace Fuel\Core;
  * @package   Fuel
  * @category  Core
  */
-class Form {
+class Form
+{
 
 	/**
 	 * Valid types for input tags (including HTML5)

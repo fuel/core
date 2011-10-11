@@ -13,7 +13,8 @@
 namespace Fuel\Core;
 
 
-class Request404Exception extends \FuelException {
+class Request404Exception extends \FuelException
+{
 
 	/**
 	 * When this type of exception isn't caught this method is called by
@@ -42,7 +43,8 @@ class Request404Exception extends \FuelException {
  * @package     Fuel
  * @subpackage  Core
  */
-class Request {
+class Request
+{
 
 	/**
 	 * Holds the main request instance

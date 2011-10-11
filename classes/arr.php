@@ -19,7 +19,8 @@ namespace Fuel\Core;
  * @package     Fuel
  * @subpackage  Core
  */
-class Arr {
+class Arr
+{
 
 	/**
 	 * Gets a dot-notated key from an array, with a default value if it does

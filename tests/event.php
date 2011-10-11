@@ -18,7 +18,8 @@ namespace Fuel\Core;
  * @group Core
  * @group Event
  */
-class Test_Event extends TestCase {
+class Test_Event extends TestCase
+{
 	
 	/**
 	 * Test for Event::register()

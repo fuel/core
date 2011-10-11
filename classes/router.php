@@ -12,7 +12,8 @@
 
 namespace Fuel\Core;
 
-class Router {
+class Router
+{
 
 	public static $routes = array();
 

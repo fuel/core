@@ -13,7 +13,8 @@
 namespace Fuel\Core;
 
 
-abstract class Cache_Storage_Driver {
+abstract class Cache_Storage_Driver
+{
 
 	/**
 	 * @var  array  defines which class properties are gettable with get_... in the __call() method

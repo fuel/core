@@ -12,7 +12,8 @@
 
 namespace Fuel\Core;
 
-abstract class Controller {
+abstract class Controller
+{
 
 	/**
 	 * @var  Request  The current Request object

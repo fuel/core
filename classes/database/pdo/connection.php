@@ -12,7 +12,8 @@
 namespace Fuel\Core;
 
 
-class Database_PDO_Connection extends \Database_Connection {
+class Database_PDO_Connection extends \Database_Connection
+{
 
 	// PDO uses no quoting for identifiers
 	protected $_identifier = '';

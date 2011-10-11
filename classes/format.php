@@ -23,7 +23,8 @@ namespace Fuel\Core;
  * @copyright  2010 - 2011 Fuel Development Team
  * @link       http://fuelphp.com/docs/classes/format.html
  */
-class Format {
+class Format
+{
 
 	/**
 	 * @var  array|mixed  input to convert
