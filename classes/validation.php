@@ -347,25 +347,53 @@ class Validation
 		{
 			static::set_active_field($field);
 
-			$value = $this->input($field->name);
-			if (($allow_partial === true and $value === null)
-				or (is_array($allow_partial) and ! in_array($field->name, $allow_partial)))
+			$field_name = str_replace('[]', '', $field->name);
+			$is_array = is_array($this->input($field_name));
+			$values = array();
+			$validated_array = array();
+
+			if($is_array)
 			{
-				continue;
-			}
-			try
-			{
-				foreach ($field->rules as $rule)
+				foreach($this->input($field_name) as $input_field)
 				{
-					$callback  = $rule[0];
-					$params    = $rule[1];
-					$this->_run_rule($callback, $value, $params, $field);
+					$values[] = $input_field;
 				}
-				$this->validated[$field->name] = $value;
 			}
-			catch (Validation_Error $v)
+			else
 			{
-				$this->errors[$field->name] = $v;
+				$values[] = $this->input($field_name);
+			}
+
+			foreach($values as $value)
+			{
+				if (($allow_partial === true and $value === null)
+					or (is_array($allow_partial) and ! in_array($field->name, $allow_partial)))
+				{
+					continue;
+				}
+				try
+				{
+					foreach ($field->rules as $rule)
+					{
+						$callback	= $rule[0];
+						$params		= $rule[1];
+						$this->_run_rule($callback, $value, $params, $field);
+					}
+					
+					if($is_array)
+					{
+						$validated_array[] = $value;
+						$this->validated[$field_name] = $validated_array;
+					}
+					else
+					{
+						$this->validated[$field->name] = $value;
+					}
+				}
+				catch (Validation_Error $v)
+				{
+					$this->errors[$field->name] = $v;
+				}
 			}
 		}
 
