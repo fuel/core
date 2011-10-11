@@ -3,7 +3,7 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.0
+ * @version    1.1
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2011 Fuel Development Team
@@ -26,7 +26,8 @@ class PackageNotFoundException extends \FuelException { }
  * @package     Core
  * @subpackage  Packages
  */
-class Package {
+class Package
+{
 
 	/**
 	 * @var  array  $packages  Holds all the loaded package information.
@@ -55,7 +56,7 @@ class Package {
 				}
 				static::load($pkg, $path);
 			}
-			return;
+			return false;
 		}
 
 
@@ -75,9 +76,11 @@ class Package {
 			throw new \PackageNotFoundException("Package '$package' could not be found at '".\Fuel::clean_path($path)."'");
 		}
 
-		\Fuel::add_path($path);
+		\Finder::instance()->add_path($path);
 		\Fuel::load($path.'bootstrap.php');
 		static::$packages[$package] = $path;
+
+		return true;
 	}
 
 	/**
@@ -88,6 +91,7 @@ class Package {
 	 */
 	public static function unload($package)
 	{
+		\Finder::instance()->remove_path(static::$packages[$package]);
 		unset(static::$packages[$package]);
 	}
 
@@ -95,7 +99,7 @@ class Package {
 	 * Checks if the given package is loaded, if no package is given then
 	 * all loaded packages are returned.
 	 *
-	 * @param   strin|null  $package  The package name or null
+	 * @param   string|null  $package  The package name or null
 	 * @return  bool|array  Whether the package is loaded, or all packages
 	 */
 	public static function loaded($package = null)
@@ -107,5 +111,5 @@ class Package {
 
 		return array_key_exists($package, static::$packages);
 	}
-	
+
 }

@@ -380,10 +380,10 @@ class View {
 	public function set_filename($file)
 	{
 		// set find_file's one-time-only search paths
-		\Fuel::$volatile_paths = $this->request_paths;
+		\Finder::instance()->flash($this->request_paths);
 
 		// locate the view file
-		if (($path = \Fuel::find_file('views', $file, '.'.$this->extension, false, false)) === false)
+		if (($path = \Finder::search('views', $file, '.'.$this->extension, false, false)) === false)
 		{
 			throw new \FuelException('The requested view could not be found: '.\Fuel::clean_path($file));
 		}

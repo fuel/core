@@ -51,7 +51,7 @@ class Lang {
 		$lines = array();
 		foreach ($languages as $lang)
 		{
-			if ($path = \Fuel::find_file('lang/'.$lang, $file, '.php', true))
+			if ($path = \Finder::search('lang/'.$lang, $file, '.php', true))
 			{
 				foreach ($path as $p)
 				{

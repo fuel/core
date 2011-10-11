@@ -110,7 +110,7 @@ class Config {
 CONF;
 		$content .= 'return '.str_replace('  ', "\t", var_export($config, true)).';';
 
-		if ( ! $path = \Fuel::find_file('config', $file, '.php'))
+		if ( ! $path = \Finder::search('config', $file, '.php'))
 		{
 			if ($pos = strripos($file, '::'))
 			{

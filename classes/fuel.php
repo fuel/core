@@ -122,6 +122,7 @@ class Fuel {
 	public static $paths_changed = false;
 
 	public static $is_cli = false;
+
 	public static $is_test = false;
 
 	public static $volatile_paths = array();
@@ -140,17 +141,17 @@ class Fuel {
 	 */
 	public static function init($config)
 	{
+		if (static::$initialized)
+		{
+			throw new \FuelException("You can't initialize Fuel more than once.");
+		}
+
 		static::$_paths = array(APPPATH, COREPATH);
 
 		// Is Fuel running on the command line?
 		static::$is_cli = (bool) defined('STDIN');
 
 		\Config::load($config);
-
-		if (static::$initialized)
-		{
-			throw new \FuelException("You can't initialize Fuel more than once.");
-		}
 
 		// Start up output buffering
 		ob_start(\Config::get('ob_callback', null));
@@ -169,7 +170,7 @@ class Fuel {
 
 		if (static::$caching)
 		{
-			static::$path_cache = static::cache('Fuel::path_cache');
+			\Finder::instance()->read_cache('Fuel::paths');
 		}
 
 		// set a default timezone if one is defined
@@ -201,15 +202,15 @@ class Fuel {
 			\Package::load($path);
 		}
 
+		// Always load classes, config & language set in always_load.php config
+		static::always_load();
+
 		// Load in the routes
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
 		// Set  locale
 		static::$locale and setlocale(LC_ALL, static::$locale);
-
-		// Always load classes, config & language set in always_load.php config
-		static::always_load();
 
 		static::$initialized = true;
 
@@ -228,9 +229,9 @@ class Fuel {
 	 */
 	public static function finish()
 	{
-		if (static::$caching and static::$paths_changed === true)
+		if (static::$caching)
 		{
-			static::cache('Fuel::path_cache', static::$path_cache);
+			\Finder::instance()->write_cache('Fuel::paths');
 		}
 
 		if (static::$profiling)
@@ -267,84 +268,9 @@ class Fuel {
 	 */
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
-		// absolute path requested?
-		if ($file[0] === '/' or $file[1] === ':')
-		{
-			return $file;
-		}
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::search() instead.', __METHOD__);
 
-		$cache_id = '';
-		$paths = array();
-
-		$found = $multiple ? array() : false;
-
-		// the file requested namespaced?
-		if ($pos = strripos($file, '::'))
-		{
-			// get the namespace path
-			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
-			{
-				$cache_id .= substr($file, 0, $pos);
-
-				// and strip the classes directory as we need the module root
-				$paths = array(substr($path, 0, -8));
-
-				// strip the namespace from the filename
-				$file = substr($file, $pos + 2);
-			}
-		}
-
-		// if not found, use the cascading filesystem to find the file
-		if (empty($cache_id))
-		{
-			$paths = static::$_paths;
-
-			// get extra information of the active request
-			if (class_exists('Request', false) and $active = \Request::active())
-			{
-				$cache_id = $active->uri->uri;
-				$paths = array_merge($active->paths, $paths);
-			}
-		}
-
-		$paths = array_merge(static::$volatile_paths, $paths);
-
-		$path = $directory.DS.strtolower($file).$ext;
-
-		$cache_id = md5(($multiple ? 'M.' : 'S.').$cache_id);
-
-		if (static::$path_cache !== null and array_key_exists($cache_id.$path, static::$path_cache))
-		{
-			static::$volatile_paths = array();
-
-			return static::$path_cache[$cache_id.$path];
-		}
-
-		foreach ($paths as $dir)
-		{
-			$file_path = $dir.$path;
-
-			if (is_file($file_path))
-			{
-				if ( ! $multiple)
-				{
-					$found = $file_path;
-					break;
-				}
-
-				$found[] = $file_path;
-			}
-		}
-
-		if ( ! empty($found))
-		{
-			$cache and static::$path_cache[$cache_id.$path] = $found;
-			static::$paths_changed = true;
-		}
-
-		static::$volatile_paths = array();
-
-		return $found;
+		return \Finder::search($directory, $file, $ext, $multiple, $cache);
 	}
 
 	/**
@@ -404,18 +330,9 @@ class Fuel {
 	 */
 	public static function add_path($path, $prefix = false)
 	{
-		if ($prefix)
-		{
-			// prefix the path to the paths array
-			array_unshift(static::$_paths, $path);
-		}
-		else
-		{
-			// find APPPATH index
-			$insert_at = array_search(APPPATH, static::$_paths) + 1;
-			// insert new path just behind the APPPATH
-			array_splice(static::$_paths, $insert_at, 0, $path);
-		}
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::instance()->add_path() instead.', __METHOD__);
+
+		return \Finder::instance()->add_path($path, ($prefix ? 1 : null));
 	}
 
 	/**
@@ -425,7 +342,9 @@ class Fuel {
 	 */
 	public static function get_paths()
 	{
-		return static::$_paths;
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::instance()->paths() instead.', __METHOD__);
+
+		return \Finder::instance()->paths();
 	}
 
 	/**
@@ -549,7 +468,7 @@ class Fuel {
 		$file = sha1($name).'.txt';
 
 		// Cache directories are split by keys to prevent filesystem overload
-		$dir = static::$cache_dir.DS.$file[0].$file[1].DS;
+		$dir = rtrim(static::$cache_dir, DS).DS.$file[0].$file[1].DS;
 
 		if ($lifetime === NULL)
 		{

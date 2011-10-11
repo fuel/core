@@ -164,7 +164,7 @@ class Theme implements \ArrayAccess, \Iterator
 			}
 			else
 			{
-				if ($path = \Fuel::find_file($theme['path'], $file, $ext))
+				if ($path = \Finder::search($theme['path'], $file, $ext))
 				{
 					return $path;
 				}

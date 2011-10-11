@@ -108,6 +108,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Fuel'           => COREPATH.'classes/fuel.php',
 		'Fuel\\Core\\FuelException'  => COREPATH.'classes/fuel.php',
 		'Fuel\\Core\\Fuel_Exception' => COREPATH.'classes/fuel.php',
+		'Fuel\\Core\\Finder'         => COREPATH.'classes/finder.php',
 
 		'Fuel\\Core\\Date'    => COREPATH.'classes/date.php',
 		'Fuel\\Core\\Debug'   => COREPATH.'classes/debug.php',
