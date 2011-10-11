@@ -98,6 +98,10 @@ class Fieldset_Field
 				unset($attributes[$prop]);
 			}
 		}
+
+		// Add default "type" attribute if not specified
+		if (empty($attributes['type'])) $this->set_type($this->type);
+
 		$this->attributes = array_merge($this->attributes, $attributes);
 
 		// only when non-empty, will overwrite what was given in $name
