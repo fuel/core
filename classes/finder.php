@@ -275,7 +275,7 @@ class Finder
 			$paths = $this->paths;
 
 			// get extra information of the active request
-			if (class_exists('Request', false) and $uri = \Uri::string())
+			if (class_exists('Request', false) and ($uri = \Uri::string()) !== null)
 			{
 				$cache_id .= $uri;
 				$paths = array_merge(\Request::active()->get_paths(), $paths);
