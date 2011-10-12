@@ -51,8 +51,21 @@ class Route
 			return '';
 		}
 
-		$search = str_replace(array(':any', ':segment'), array('.+', '[^/]*'), $this->path);
-		return preg_replace('|:([a-z\_]+)|uD', '(?P<$1>.+?)', $search);
+		$search = str_replace(array(
+			':any',
+			':alnum',
+			':num',
+			':alpha',
+			':segment',
+		), array(
+			'.+',
+			'[[:alnum:]]+',
+			'[[:digit:]]+',
+			'[[:alpha:]]+',
+			'[^/]*',
+		), $this->path);
+					
+		return preg_replace('#(?<!\[\[):([a-z\_]+)(?!:\]\])#uD', '(?P<$1>.+?)', $search);
 	}
 
 	/**
