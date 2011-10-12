@@ -111,9 +111,9 @@ class Migrate
 	 * @access	public
 	 * @return	mixed	true if already current, false if failed, int if upgraded
 	 */
-	public static function current()
+	public static function current($name, $type)
 	{
-		return static::version(\Config::get('migrations.version'));
+		return static::version(\Config::get('migrations.version.'.$type.'.'.$name), $name, $type);
 	}
 
 	// --------------------------------------------------------------------

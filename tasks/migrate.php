@@ -26,17 +26,22 @@ namespace Fuel\Tasks;
 class Migrate
 {
 
+	/* set vars*/
 	protected static $default = true;
 	protected static $modules = array();
 	protected static $packages = array();
 	protected static $module_count = 0;
 	protected static $package_count = 0;
 
+	/**
+	 * Sets vars by grabbing Cli options
+	 */
 	public function __construct()
 	{
 		//load config
 		\Config::load('migrations', true);
 
+		// get Cli options
 		$modules = \Cli::option('modules');
 		$packages = \Cli::option('packages');
 		$default = \Cli::option('default');
@@ -99,44 +104,42 @@ class Migrate
 		static::$package_count = count(static::$packages);
 	}
 
-	public static function run()
+	/**
+	 * Catches requested method call and runs as needed
+	 */
+	public function __call($name, $args)
 	{
-		// run default migrations if default is true
+		// set method name
+		$name = '_'.$name;
+
+		// run app (default) migrations if default is true
 		if (static::$default)
 		{
-			static::_run('default', 'app');
+			static::$name('default', 'app');
 		}
 
 		// run modules if passed
-		if (count(static::$modules))
+		foreach (static::$modules as $module)
 		{
-			foreach (static::$modules as $module)
-			{
-				static::_run($module, 'module');
-			}
+			static::$name($module, 'module');
 		}
 
 		//run packages if passed
-		if (count(static::$packages))
+		foreach (static::$packages as $package)
 		{
-			foreach (static::$packages as $package)
-			{
-				static::_run($package, 'package');
-			}
+			static::$name($package, 'package');
 		}
-
 	}
 
+	/**
+	 * Migrates to the latest version unless -version is specified
+	 *
+	 * @param string
+	 * @param string
+	 */
 	private static function _run($name, $type)
 	{
-		if ($type)
-		{
-			$current_version = \Config::get('migrations.version.'.$type.'.'.$name);
-		}
-		else
-		{
-			$current_version = \Config::get('migrations.version.'.$name);
-		}
+		$current_version = \Config::get('migrations.version.'.$type.'.'.$name);
 
 		if ( ! $current_version)
 		{
@@ -156,14 +159,14 @@ class Migrate
 		// If version has a value, make sure only 1 item was passed
 		else if ( ! is_null($version) and static::$default + static::$module_count + static::$package_count > 1)
 		{
-			throw new \Oil\Exception('Migration: version only excepts 1 item.');
+			\Cli::write('Migration: version only excepts 1 item.');
 			return;
 		}
 
 		// Not a lot of point in this
 		else if ( ! is_null($version) and $version == $current_version)
 		{
-			throw new \Oil\Exception('Migration: ' . $version .' already in use for '.$type.':'.$name.'.');
+			\Cli::write('Migration: ' . $version .' already in use for '.$type.':'.$name.'.');
 			return;
 		}
 
@@ -174,7 +177,7 @@ class Migrate
 		{
 			if (\Migrate::version($version, $name, $type) === false)
 			{
-				throw new \Oil\Exception('Migration ' . $version .' could not be found.');
+				\Cli::write('Migration ' . $version .' could not be found for '.$type.':'.$name.'.');
 			}
 
 			else
@@ -201,39 +204,90 @@ class Migrate
 
 	}
 
-	public static function up()
+	/**
+	 * Migrates item up 1 version
+	 *
+	 * @param string
+	 * @param string
+	 */
+	private static function _up($name, $type)
 	{
-		$version = \Config::get('migrations.version.app.default') + 1;
+		// add 1 to the version #
+		$version = \Config::get('migrations.version.'.$type.'.'.$name) + 1;
 
-		if ($foo = \Migrate::version($version, 'default', 'app'))
+		// if migration successful
+		if ($foo = \Migrate::version($version, $name, $type))
 		{
-			static::_update_version($version, 'default', 'app');
-			\Cli::write('Migrated to version: ' . $version .'.', 'green');
+			// update config and output a notice
+			static::_update_version($version, $name, $type);
+			\Cli::write('Migrated to version: ' . $version .' for '.$type.':'.$name.'.', 'green');
 		}
 		else
 		{
-			\Cli::write('Already on latest migration.');
+			// already on last/highest migration
+			\Cli::write('Already on latest migration for '.$type.':'.$name.'.');
 		}
 	}
 
-	public static function down()
+	/**
+	 * Migrates item down 1 version
+	 *
+	 * @param string
+	 * @param string
+	 */
+	private static function _down($name, $type)
 	{
-		if (($version = \Config::get('migrations.version.default') - 1) < 0)
+		// if version - 1 is less than 0
+		if (($version = \Config::get('migrations.version.'.$type.'.'.$name) - 1) < 0)
 		{
-			throw new \Oil\Exception('You are already on the first migration.');
+			// already on first/lowest migration
+			\Cli::write('You are already on the first migration for '.$type.':'.$name.'.');
+			return;
 		}
 
-		if (\Migrate::version($version) !== false)
+		if (\Migrate::version($version, $name, $type) !== false)
 		{
-			static::_update_version($version, 'default');
-			\Cli::write("Migrated to version: {$version}.", 'green');
+			// update config and output a notice to console
+			static::_update_version($version, $name, $type);
+			\Cli::write('Migrated to version: ' . $version .' for '.$type.':'.$name.'.', 'green');
 		}
 		else
 		{
-			throw new \Oil\Exception("Migration {$version} does not exist. How did you get here?");
+			// migration doesn't exist
+			\Cli::write('Migration '.$version.' does not exist for '.$type.':'.$name.'. How did you get here?');
 		}
 	}
 
+	/**
+	 * Migrates item to current config verision
+	 *
+	 * @param string
+	 * @param string
+	 */
+	private static function _current($name, $type)
+	{
+		$version = \Migrate::current($name, $type);
+
+		// if version is a number
+		if(is_numeric($version))
+		{
+			// show what version the item migrated to
+			\Cli::write('Migrated to version: '.$version.' for '.$type.':'.$name.'.');
+		}
+		else
+		{
+			// migration is already on current version
+			\Cli::write('Already on current migration version for '.$type.':'.$name.'.');
+		}
+	}
+
+	/**
+	 * Updates version in migrations config
+	 *
+	 * @param int
+	 * @param string
+	 * @param string
+	 */
 	private static function _update_version($version, $name, $type)
 	{
 		// if migrations config doesn't exist in app/config
@@ -246,47 +300,24 @@ class Migrate
 			}
 			else
 			{
-				throw new Exception('Config file core/config/migrations.php is missing.');
+				\Cli::write('Config file core/config/migrations.php is missing.');
 				exit;
 			}
 
+			// create the file in app/config folder
 			file_put_contents($path, $contents);
 		}
 
 		// set config version
 		\Config::set('migrations.version.'.$type.'.'.$name, (int) $version);
 
+		// save the config;
 		\Config::save('migrations', 'migrations');
-
 	}
 
-/*
-	private static function _update_version($version)
-	{
-		if (file_exists($path = APPPATH.'config'.DS.'migrations.php'))
-		{
-			$contents = file_get_contents($path);
-		}
-		elseif (file_exists($core_path = COREPATH.'config'.DS.'migrations.php'))
-		{
-			$contents = file_get_contents($core_path);
-		}
-		else
-		{
-			throw new Exception('Config file core/config/migrations.php is missing.');
-			exit;
-		}
-
-		$contents = preg_replace("#('default'[ \t]+=>)[ \t]+([0-9]+),#i", "$1 $version,", $contents);
-
-		file_put_contents($path, $contents);
-	}
-*/
-	public static function current()
-	{
-		\Migrate::current();
-	}
-
+	/**
+	 * Shows basic help instructions for using migrate in oil
+	 */
 	public static function help()
 	{
 		echo <<<HELP
@@ -294,7 +325,7 @@ Usage:
     php oil refine migrate [--version=X]
 
 Fuel options:
-    -v, [--version]  # Migrate to a specific version
+    -v, [--version]  # Migrate to a specific version ( only 1 item at a time)
 
     # The following disable default migrations unless you add --default to the command
     --default # re-enables default migration
@@ -312,6 +343,9 @@ Examples:
     php oil r migrate:up
     php oil r migrate:down
     php oil r migrate --version=10
+    php oil r migrate --modules --packages --default
+    php oil r migrate:up --modules=module1,module2 --packages=package1
+    php oil r migrate --module=module1 -v=3
 
 HELP;
 
