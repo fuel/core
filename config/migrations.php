@@ -27,15 +27,19 @@ return array(
 	|	Default: 0
 	|
 	*/
-	'version' => 0,
+	'version' => array(
+		'default' => 0,
+		'module' => array(),
+		'packages' => array()
+	),
 
 	/*
-	| Where are these migrations stored?
+	| Folder name where migrations are stored relative to App, Module and Package Paths?
 	|
 	|	Default: APPPATH.'migrations/'
 	|
 	*/
-	'path' => APPPATH.'migrations/',
+	'folder' => 'migrations/',
 
 	/*
 	| Table name
@@ -46,5 +50,4 @@ return array(
 	'table' => 'migration',
 
 );
-
 
