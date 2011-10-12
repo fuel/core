@@ -162,9 +162,13 @@ class Pagination
 		\Lang::load('pagination', true);
 
 		$pagination  = static::$template['wrapper_start'];
+		$pagination .= static::$template['previous_start'];
 		$pagination .= static::prev_link(\Lang::get('pagination.previous'));
+		$pagination .= static::$template['previous_end'];
 		$pagination .= static::page_links();
+		$pagination .= static::$template['next_start'];
 		$pagination .= static::next_link(\Lang::get('pagination.next'));
+		$pagination .= static::$template['next_end'];
 		$pagination .= static::$template['wrapper_end'];
 
 		return $pagination;
