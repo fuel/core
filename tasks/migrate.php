@@ -104,7 +104,7 @@ class Migrate
 		// run default migrations if default is true
 		if (static::$default)
 		{
-			static::_run('default');
+			static::_run('default', 'app');
 		}
 
 		// run modules if passed
@@ -127,7 +127,7 @@ class Migrate
 
 	}
 
-	private static function _run($name, $type = null)
+	private static function _run($name, $type)
 	{
 		if ($type)
 		{
@@ -149,7 +149,7 @@ class Migrate
 		// version is used as a flag, so show it
 		if ($version === true)
 		{
-			\Cli::write('Currently on migration: ' . $current_version .'.', 'green');
+			\Cli::write('Currently on migration: ' . $current_version .' for '.$type.':'.$name.'.', 'green');
 			return;
 		}
 
@@ -163,7 +163,7 @@ class Migrate
 		// Not a lot of point in this
 		else if ( ! is_null($version) and $version == $current_version)
 		{
-			throw new \Oil\Exception('Migration: ' . $version .' already in use.');
+			throw new \Oil\Exception('Migration: ' . $version .' already in use for '.$type.':'.$name.'.');
 			return;
 		}
 
@@ -179,8 +179,8 @@ class Migrate
 
 			else
 			{
-				static::_update_version($version, 'default');
-				\Cli::write('Migrated to version: ' . $version .'.', 'green');
+				static::_update_version($version, $name, $type);
+				\Cli::write('Migrated '.$type.':'.$name.' version: ' . $version .'.', 'green');
 			}
 		}
 
@@ -189,13 +189,13 @@ class Migrate
 		{
 			if (($result = \Migrate::latest($name, $type)) === false)
 			{
-				throw new \Oil\Exception("Could not migrate to latest version, still using {$current_version}.");
+				\Cli::write('Already on latest migration for '.$type.':'.$name.'.');
 			}
 
 			else
 			{
-				static::_update_version($result, 'default');
-				\Cli::write('Migrated to latest version: ' . $result .'.', 'green');
+				static::_update_version($result, $name, $type);
+				\Cli::write('Migrated '.$type.':'.$name.' to latest version: ' . $result .'.', 'green');
 			}
 		}
 
@@ -203,16 +203,16 @@ class Migrate
 
 	public static function up()
 	{
-		$version = \Config::get('migrations.version.default') + 1;
+		$version = \Config::get('migrations.version.app.default') + 1;
 
-		if ($foo = \Migrate::version($version))
+		if ($foo = \Migrate::version($version, 'default', 'app'))
 		{
-			static::_update_version($version, 'default');
+			static::_update_version($version, 'default', 'app');
 			\Cli::write('Migrated to version: ' . $version .'.', 'green');
 		}
 		else
 		{
-			throw new \Oil\Exception('Already on latest migration.');
+			\Cli::write('Already on latest migration.');
 		}
 	}
 
@@ -234,7 +234,7 @@ class Migrate
 		}
 	}
 
-	private static function _update_version($version, $name, $type = null)
+	private static function _update_version($version, $name, $type)
 	{
 		// if migrations config doesn't exist in app/config
 		if ( ! file_exists($path = APPPATH.'config'.DS.'migrations.php'))
@@ -254,14 +254,7 @@ class Migrate
 		}
 
 		// set config version
-		if ($type)
-		{
-			\Config::set('migrations.version.'.$type.'.'.$name, $version);
-		}
-		else
-		{
-			\Config::set('migrations.version.'.$name, $version);
-		}
+		\Config::set('migrations.version.'.$type.'.'.$name, (int) $version);
 
 		\Config::save('migrations', 'migrations');
 
