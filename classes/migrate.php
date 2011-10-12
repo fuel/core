@@ -52,32 +52,8 @@ class Migrate
 
 		foreach($migrations as $migration)
 		{
-			if($migration['type'])
-			{
-				static::$version[$migration['type']][$migration['name']] = (int) $migration['version'];
-			}
-			else
-			{
-				static::$version['app'][$migration['name']] = (int) $migration['version'];
-			}
+			static::$version[$migration['type']][$migration['name']] = (int) $migration['version'];
 		}
-/*
-		// Not set, so we are on 0
-		if ($current === null)
-		{
-			\DB::insert(static::$table)
-				->set(array(
-					'name' => 'default',
-					'version' => '0'
-				))
-				->execute();
-		}
-
-		else
-		{
-			static::$version = (int) $current;
-		}
-*/
 	}
 
 	/**
@@ -86,7 +62,7 @@ class Migrate
 	 * @access	public
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
-	public static function latest($name = null, $type = 'a[[')
+	public static function latest($name, $type)
 	{
 		if ( ! $migrations = static::find_migrations($name, $type))
 		{
@@ -128,28 +104,35 @@ class Migrate
 	 * @param $version integer	Target schema version
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
-	public static function version($version, $name, $type = 'app')
+	public static function version($version, $name, $type)
 	{
+		// if version isn't set
 		if ( ! isset(static::$version[$type][$name]))
 		{
+			// insert into db
 			\DB::insert(static::$table)
 			->set(array(
 				'name' => $name,
 				'type' => $type,
-				'version' => '0'
+				'version' => 0,
 			))
 			->execute();
+
+			// set verstion to 0
 			static::$version[$type][$name] = 0;
 		}
 
+		// return false if current version equals requested version
 		if (static::$version[$type][$name] === $version)
 		{
 			return false;
 		}
 
+		// set vars for loop
 		$start = static::$version[$type][$name];
 		$stop = $version;
 
+		// modify loop vars and add step
 		if ($version > static::$version[$type][$name])
 		{
 			// Moving Up
