@@ -24,7 +24,7 @@ class Migrate
 {
 	public static $version = array();
 
-	protected static $prefix = '\\Fuel\Migrations\\';
+	protected static $prefix = '\\Fuel\\Migrations\\';
 
 	protected static $table = 'migration';
 
@@ -58,7 +58,7 @@ class Migrate
 			}
 			else
 			{
-				static::$version[$migration['name']] = (int) $migration['version'];
+				static::$version['app'][$migration['name']] = (int) $migration['version'];
 			}
 		}
 /*
@@ -86,7 +86,7 @@ class Migrate
 	 * @access	public
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
-	public static function latest($name = null, $type = null)
+	public static function latest($name = null, $type = 'a[[')
 	{
 		if ( ! $migrations = static::find_migrations($name, $type))
 		{
@@ -128,43 +128,29 @@ class Migrate
 	 * @param $version integer	Target schema version
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
-	public static function version($version, $name, $type = null)
+	public static function version($version, $name, $type = 'app')
 	{
-		if ($type)
+		if ( ! isset(static::$version[$type][$name]))
 		{
-			if ( ! isset(static::$version[$type][$name]))
-			{
-				\DB::insert(static::$table)
-				->set(array(
-					'name' => $name,
-					'type' => $type,
-					'version' => '0'
-				))
-				->execute();
-				static::$version[$type][$name] = 0;
-			}
-
-			if (static::$version[$type][$name] === $version)
-			{
-				return false;
-			}
-
-			$current_version = static::$version[$type][$name];
-		}
-		else
-		{
-			if (static::$version[$name] === $version)
-			{
-				return false;
-			}
-
-			$current_version = static::$version[$name];
+			\DB::insert(static::$table)
+			->set(array(
+				'name' => $name,
+				'type' => $type,
+				'version' => '0'
+			))
+			->execute();
+			static::$version[$type][$name] = 0;
 		}
 
-		$start = $current_version;
+		if (static::$version[$type][$name] === $version)
+		{
+			return false;
+		}
+
+		$start = static::$version[$type][$name];
 		$stop = $version;
 
-		if ($version > $current_version)
+		if ($version > static::$version[$type][$name])
 		{
 			// Moving Up
 			++$start;
@@ -234,7 +220,7 @@ class Migrate
 				include $f[0];
 				$class = static::$prefix . ucfirst($match[1]);
 
-				if ( ! class_exists($class))
+				if ( ! class_exists($class, false))
 				{
 					throw new FuelException('migration_class_doesnt_exist');
 					return false;
@@ -271,23 +257,14 @@ class Migrate
 			$class = static::$prefix . ucfirst($migration);
 			call_user_func(array(new $class, $method));
 
-			$current_version += $step;
+			static::$version[$type][$name] += $step;
 
-			static::_update_schema_version($current_version - $step, $current_version, $name, $type);
+			static::_update_schema_version(static::$version[$type][$name] - $step, static::$version[$type][$name], $name, $type);
 		}
 
 		logger(Fuel::L_INFO, 'Migrated to ' . static::$version.' successfully.');
 
-		if ($type)
-		{
-			static::$version[$type][$name] = $current_version;
-		}
-		else
-		{
-			static::$version[$name] = $current_version;
-		}
-
-		return $current_version;
+		return static::$version[$type][$name];
 	}
 
 	// --------------------------------------------------------------------
@@ -299,18 +276,12 @@ class Migrate
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
 
-	protected static function find_migrations($name = '', $type = '')
+	protected static function find_migrations($name, $type = 'app')
 	{
 		// Load all *_*.php files in the migrations path
-		if ($type)
-		{
-			$method = '_find_'.$type;
-			$files = static::$method($name);
-		}
-		else
-		{
-			$files = static::_find_default();
-		}
+		$method = '_find_'.$type;
+		$files = static::$method($name);
+
 		$file_count = count($files);
 
 		for ($i = 0; $i < $file_count; $i++)
@@ -347,7 +318,7 @@ class Migrate
 			->execute();
 	}
 
-	private static function _find_default($file = null)
+	private static function _find_app($name = null, $file = null)
 	{
 		if ($file)
 		{

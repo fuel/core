@@ -28,9 +28,11 @@ return array(
 	|
 	*/
 	'version' => array(
-		'default' => 0,
+		'app' => array(
+			'default' => 0,
+		),
 		'module' => array(),
-		'packages' => array()
+		'package' => array()
 	),
 
 	/*
