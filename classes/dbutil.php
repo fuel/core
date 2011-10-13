@@ -313,7 +313,7 @@ class DBUtil
 
 		try
 		{
-			\DB::select()->select_array($columns)->from($table)->limit(1)->execute();
+			\DB::select_array($columns)->from($table)->limit(1)->execute();
 			return true;
 		}
 		catch (\Database_Exception $e)
