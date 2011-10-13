@@ -22,11 +22,17 @@ namespace Fuel\Core;
  */
 class Migrate
 {
-	public static $version = 0;
+	public static $version = array();
 
-	protected static $prefix = '\\Fuel\Migrations\\';
+	protected static $prefix = '\\Fuel\\Migrations\\';
 
 	protected static $table = 'migration';
+
+	protected static $table_definition = array(
+		'name' => array('type' => 'varchar', 'constraint' => 50),
+		'type' => array('type' => 'varchar', 'constraint' => 25),
+		'version' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0),
+	);
 
 	public static function _init()
 	{
@@ -36,22 +42,18 @@ class Migrate
 
 		static::$table = \Config::get('migrations.table', static::$table);
 
-		\DBUtil::create_table(static::$table, array(
-			'current' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0)
-		));
+		// installs or upgrades table
+		static::table_check();
 
-		// Check if there is a version
-		$current = \DB::select('current')->from(static::$table)->execute()->get('current');
+		//get all versions from db
+		$migrations = \DB::select()
+			->from(static::$table)
+			->execute()
+			->as_array();
 
-		// Not set, so we are on 0
-		if ($current === null)
+		foreach ($migrations as $migration)
 		{
-			\DB::insert(static::$table)->set(array('current' => '0'))->execute();
-		}
-
-		else
-		{
-			static::$version = (int) $current;
+			static::$version[$migration['type']][$migration['name']] = (int) $migration['version'];
 		}
 	}
 
@@ -61,9 +63,9 @@ class Migrate
 	 * @access	public
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
-	public static function latest()
+	public static function latest($name = 'default', $type = 'app')
 	{
-		if ( ! $migrations = static::find_migrations())
+		if ( ! $migrations = static::find_migrations($name, $type))
 		{
 			throw new FuelException('no_migrations_found');
 			return false;
@@ -74,7 +76,8 @@ class Migrate
 		// Calculate the last migration step from existing migration
 		// filenames and procceed to the standard version migration
 		$last_version = intval(substr($last_migration, 0, 3));
-		return static::version($last_version);
+
+		return static::version($last_version, $name, $type);
 	}
 
 	// --------------------------------------------------------------------
@@ -85,9 +88,9 @@ class Migrate
 	 * @access	public
 	 * @return	mixed	true if already current, false if failed, int if upgraded
 	 */
-	public static function current()
+	public static function current($name = 'default', $type = 'app')
 	{
-		return static::version(\Config::get('migrations.version'));
+		return static::version(\Config::get('migrations.version.'.$type.'.'.$name), $name, $type);
 	}
 
 	// --------------------------------------------------------------------
@@ -102,17 +105,36 @@ class Migrate
 	 * @param $version integer	Target schema version
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
-	public static function version($version)
+	public static function version($version, $name = 'default', $type = 'app')
 	{
-		if (static::$version === $version)
+		// if version isn't set
+		if ( ! isset(static::$version[$type][$name]))
+		{
+			// insert into db
+			\DB::insert(static::$table)
+			->set(array(
+				'name' => $name,
+				'type' => $type,
+				'version' => 0,
+			))
+			->execute();
+
+			// set verstion to 0
+			static::$version[$type][$name] = 0;
+		}
+
+		// return false if current version equals requested version
+		if (static::$version[$type][$name] === $version)
 		{
 			return false;
 		}
 
-		$start = static::$version;
+		// set vars for loop
+		$start = static::$version[$type][$name];
 		$stop = $version;
 
-		if ($version > static::$version)
+		// modify loop vars and add step
+		if ($version > static::$version[$type][$name])
 		{
 			// Moving Up
 			++$start;
@@ -133,7 +155,15 @@ class Migrate
 		// But first let's make sure that everything is the way it should be
 		for ($i = $start; $i != $stop; $i += $step)
 		{
-			$f = glob(\Config::get('migrations.path') . str_pad($i, 3, '0', STR_PAD_LEFT) . "_*.php");
+			if ($type)
+			{
+				$get_method = '_find_'.$type;
+				$f = static::$get_method($name, $i);
+			}
+			else
+			{
+				$f = static::_get_default($i);
+			}
 
 			// Only one migration per step is permitted
 			if (count($f) > 1)
@@ -156,10 +186,10 @@ class Migrate
 			}
 
 			$file = basename($f[0]);
-			$name = basename($f[0], '.php');
+			$file_name = basename($f[0], '.php');
 
 			// Filename validations
-			if (preg_match('/^\d{3}_(\w+)$/', $name, $match))
+			if (preg_match('/^\d{3}_(\w+)$/', $file_name, $match))
 			{
 				$match[1] = strtolower($match[1]);
 
@@ -173,7 +203,7 @@ class Migrate
 				include $f[0];
 				$class = static::$prefix . ucfirst($match[1]);
 
-				if ( ! class_exists($class))
+				if ( ! class_exists($class, false))
 				{
 					throw new FuelException('migration_class_doesnt_exist');
 					return false;
@@ -210,13 +240,14 @@ class Migrate
 			$class = static::$prefix . ucfirst($migration);
 			call_user_func(array(new $class, $method));
 
-			static::$version += $step;
-			static::_update_schema_version(static::$version - $step, static::$version);
+			static::$version[$type][$name] += $step;
+
+			static::_update_schema_version(static::$version[$type][$name] - $step, static::$version[$type][$name], $name, $type);
 		}
 
 		logger(Fuel::L_INFO, 'Migrated to ' . static::$version.' successfully.');
 
-		return static::$version;
+		return static::$version[$type][$name];
 	}
 
 	// --------------------------------------------------------------------
@@ -228,10 +259,12 @@ class Migrate
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
 
-	protected static function find_migrations()
+	protected static function find_migrations($name, $type)
 	{
 		// Load all *_*.php files in the migrations path
-		$files = glob(\Config::get('migrations.path') . '*_*.php');
+		$method = '_find_'.$type;
+		$files = static::$method($name);
+
 		$file_count = count($files);
 
 		for ($i = 0; $i < $file_count; $i++)
@@ -243,8 +276,6 @@ class Migrate
 				$files[$i] = false;
 			}
 		}
-
-		sort($files);
 
 		return $files;
 	}
@@ -258,9 +289,141 @@ class Migrate
 	 * @param $schema_version integer	Schema version reached
 	 * @return	void					Outputs a report of the migration
 	 */
-	private static function _update_schema_version($old_version, $version)
+	private static function _update_schema_version($old_version, $version, $name, $type = '')
 	{
-		\DB::update(static::$table)->set(array('current' => (int) $version))->where('current', '=', (int) $old_version)->execute();
+		\DB::update(static::$table)
+			->set(array(
+				'version' => (int) $version
+			))
+			->where('version', (int) $old_version)
+			->where('name', $name)
+			->where('type', $type)
+			->execute();
+	}
+
+	/**
+	 * Finds migrations for the fuel/app
+	 *
+	 * @param string
+	 * @param string
+	 */
+	private static function _find_app($name = null, $file = null)
+	{
+		if ($file)
+		{
+			if ( ! isset($name))
+			{
+				throw new FuelException('Name must be set to find a specific file');
+				return false;
+			}
+
+			return glob(APPPATH . \Config::get('migrations.folder') . str_pad($file, 3, '0', STR_PAD_LEFT) . "_*.php");;
+		}
+
+		return glob(APPPATH . \Config::get('migrations.folder') . '*_*.php');
+	}
+
+	/**
+	 * Finds migrations for modules
+	 *
+	 * @param string
+	 * @param string
+	 */
+	private static function _find_module($name = null, $file = null)
+	{
+		if ($file)
+		{
+			if ( ! isset($name))
+			{
+				throw new FuelException('Name must be set to find a specific file');
+				return false;
+			}
+
+			foreach (\Config::get('module_paths') as $m)
+			{
+				return glob($m .$name.'/'. \Config::get('migrations.folder') . str_pad($file, 3, '0', STR_PAD_LEFT) . "_*.php");
+			}
+		}
+
+		if ($name)
+		{
+			// find a module
+			foreach (\Config::get('module_paths') as $m)
+			{
+				$files = glob($m .$name.'/'. \Config::get('migrations.folder') . '*_*.php');
+			}
+		}
+		else
+		{
+			// find all modules
+			foreach (\Config::get('module_paths') as $m)
+			{
+				$files = glob($m .'*/'. \Config::get('migrations.folder') . '*_*.php');
+			}
+		}
+
+		return $files;
+	}
+
+	/**
+	 * Finds migrations for packages
+	 *
+	 * @param string
+	 * @param string
+	 */
+	private static function _find_package($name = null, $file = null)
+	{
+		if ($file)
+		{
+			if ( ! isset($name))
+			{
+				throw new FuelException('Name must be set to find a specific file');
+				return false;
+			}
+
+			return glob(PKGPATH .$name.'/'. \Config::get('migrations.folder') . str_pad($file, 3, '0', STR_PAD_LEFT) . "_*.php");;
+		}
+
+		if ($name)
+		{
+			// find a package
+			$files = glob(PKGPATH .$name.'/'. \Config::get('migrations.folder') . '*_*.php');
+		}
+		else
+		{
+			// find all modules
+			$files = glob(PKGPATH .'*/'. \Config::get('migrations.folder') . '*_*.php');
+		}
+
+		return $files;
+	}
+
+	/**
+	 * Installs or upgrades migration table
+	 *
+	 * @deprecated	Remove upgrade check in 1.2
+	 */
+	private static function table_check()
+	{
+		// if table does not exist
+		if ( ! \DBUtil::table_exists(static::$table))
+		{
+			// create table
+			\DBUtil::create_table(static::$table, static::$table_definition);
+		}
+		elseif ( ! \DBUtil::field_exists(static::$table, array('name', 'type')))
+		{
+			$current = \DB::select('current')->from(static::$table)->limit(1)->execute()->get('current');
+
+			\DBUtil::drop_table(static::$table);
+			\DBUtil::create_table(static::$table, static::$table_definition);
+
+			\DB::insert(static::$table)->set(array(
+				'name' => 'default',
+				'type' => 'app',
+				'version' => (int) $current
+			))->execute();
+		}
 	}
 }
 
