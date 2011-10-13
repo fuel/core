@@ -28,6 +28,12 @@ class Migrate
 
 	protected static $table = 'migration';
 
+	protected static $table_definition = array(
+		'name' => array('type' => 'varchar', 'constraint' => 50),
+		'type' => array('type' => 'varchar', 'constraint' => 25),
+		'version' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0),
+	);
+
 	public static function _init()
 	{
 		logger(Fuel::L_DEBUG, 'Migrate class initialized');
@@ -403,19 +409,20 @@ class Migrate
 		if ( ! \DBUtil::table_exists(static::$table))
 		{
 			// create table
-			\DBUtil::create_table(static::$table, array(
-				'name' => array('type' => 'varchar', 'constraint' => 50),
-				'type' => array('type' => 'varchar', 'constraint' => 25),
-				'version' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0),
-			));
+			\DBUtil::create_table(static::$table, static::$table_definition);
 		}
 		elseif ( ! \DBUtil::field_exists(static::$table, array('name', 'type')))
 		{
-			// modify table with new fields
-			\DBUtil::add_fields(static::$table, array(
-				'name' => array('type' => 'varchar', 'constraint' => 50),
-				'type' => array('type' => 'varchar', 'constraint' => 25),
-			));
+			$current = \DB::select('current')->from(static::$table)->limit(1)->execute()->get('current');
+
+			\DBUtil::drop_table(static::$table);
+			\DBUtil::create_table(static::$table, static::$table_definition);
+
+			\DB::insert(static::$table)->set(array(
+				'name' => 'default',
+				'type' => 'app',
+				'version' => (int) $current
+			))->execute();
 		}
 	}
 }
