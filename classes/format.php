@@ -308,6 +308,80 @@ class Format
 	}
 
 	/**
+	 * Convert to HTML (table or unordered list)
+	 *
+	 * @param   mixed   $data
+	 * @param   bool    $humanize_headings
+	 * @return  string
+	 */
+	public function to_html($data = null, $humanize_headings = true)
+	{
+		if ($data === null)
+		{
+			$data = $this->_data;
+		}
+
+		// Force it to be something useful
+		if ( ! is_array($data) AND ! is_object($data))
+		{
+			$data = (array) $data;
+		}
+		
+		// Try to figure out how the data is laid out
+		if (is_array($keys = Arr::get($data, 0)) and is_int(reset($keys)))
+		{
+			// The headings are in the first array, treat the rest as data
+			$headings = array_shift($data);
+		}
+		elseif (is_array(Arr::get($data, 0)))
+		{
+			// Assoc arrays; grab headings from the keys
+			$headings = array_keys($data[0]);
+		}
+		elseif ($keys = array_keys($data) and is_int(reset($keys)))
+		{
+			// We only have values; can't make much of a table out of that...
+			$html = "<ul>\n";
+			foreach ($data as $value)
+			{
+				$html .= "\t<li>$value</li>\n";
+			}
+			$html .= "</ul>";
+			return $html;
+		}
+		else
+		{
+			// Only 1 row of data, with keys being the headings
+			$headings = array_keys($data);
+			$data = array($data);
+		}
+
+		// Start compiling our table
+		$html = "<table>\n<thead>\n<tr>\n";
+
+		foreach ($headings as $heading)
+		{
+			$humanize_headings and $heading = Inflector::humanize($heading);
+			$html .= "\t<th>$heading</th>\n";
+		}
+
+		// Close the head and move on to the body
+		$html .= "</thead>\n<tbody>\n";
+		foreach ($data as $row)
+		{
+			$html .= "<tr>\n";
+			foreach ($row as $value)
+			{
+				$html .= "\t<td>$value</td>\n";
+			}
+			$html .= "</tr>\n";
+		}
+		$html .= "</tbody>\n</table>";
+
+		return $html;
+	}
+
+	/**
 	 * Import XML data
 	 *
 	 * @param   string  $string
