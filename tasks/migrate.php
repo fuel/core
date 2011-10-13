@@ -45,6 +45,14 @@ class Migrate
 		$modules = \Cli::option('modules');
 		$packages = \Cli::option('packages');
 		$default = \Cli::option('default');
+		$all = \Cli::option('all');
+
+		if ($all)
+		{
+			$modules = true;
+			$packages = true;
+			$default = true;
+		}
 
 		// if modules option set
 		if ( ! empty($modules))
@@ -333,6 +341,7 @@ Fuel options:
     --modules=item1,item2 # Migrates specific modules
     --packages # Migrates all packages
     --packages=item1,item2 # Migrates specific modules
+    --all # shortcut for --modules --packages --default
 
 Description:
     The migrate task can run migrations. You can go up, down or by default go to the current migration marked in the config file.
@@ -346,6 +355,7 @@ Examples:
     php oil r migrate --modules --packages --default
     php oil r migrate:up --modules=module1,module2 --packages=package1
     php oil r migrate --module=module1 -v=3
+    php oil r migrate --all
 
 HELP;
 
