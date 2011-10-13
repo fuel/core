@@ -36,11 +36,8 @@ class Migrate
 
 		static::$table = \Config::get('migrations.table', static::$table);
 
-		\DBUtil::create_table(static::$table, array(
-			'name' => array('type' => 'varchar', 'constraint' => 50),
-			'type' => array('type' => 'varchar', 'constraint' => 25),
-			'version' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0),
-		));
+		// installs or upgrades table
+		static::table_check();
 
 		//get all versions from db
 		$migrations = \DB::select()
@@ -60,7 +57,7 @@ class Migrate
 	 * @access	public
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
-	public static function latest($name, $type)
+	public static function latest($name = 'default', $type = 'app')
 	{
 		if ( ! $migrations = static::find_migrations($name, $type))
 		{
@@ -85,7 +82,7 @@ class Migrate
 	 * @access	public
 	 * @return	mixed	true if already current, false if failed, int if upgraded
 	 */
-	public static function current($name, $type)
+	public static function current($name = 'default', $type = 'app')
 	{
 		return static::version(\Config::get('migrations.version.'.$type.'.'.$name), $name, $type);
 	}
@@ -102,7 +99,7 @@ class Migrate
 	 * @param $version integer	Target schema version
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
-	public static function version($version, $name, $type)
+	public static function version($version, $name = 'default', $type = 'app')
 	{
 		// if version isn't set
 		if ( ! isset(static::$version[$type][$name]))
@@ -256,7 +253,7 @@ class Migrate
 	 * @return	mixed	true if already latest, false if failed, int if upgraded
 	 */
 
-	protected static function find_migrations($name, $type = 'app')
+	protected static function find_migrations($name, $type)
 	{
 		// Load all *_*.php files in the migrations path
 		$method = '_find_'.$type;
@@ -298,6 +295,12 @@ class Migrate
 			->execute();
 	}
 
+	/**
+	 * Finds migrations for the fuel/app
+	 *
+	 * @param string
+	 * @param string
+	 */
 	private static function _find_app($name = null, $file = null)
 	{
 		if ($file)
@@ -314,6 +317,12 @@ class Migrate
 		return glob(APPPATH . \Config::get('migrations.folder') . '*_*.php');
 	}
 
+	/**
+	 * Finds migrations for modules
+	 *
+	 * @param string
+	 * @param string
+	 */
 	private static function _find_module($name = null, $file = null)
 	{
 		if ($file)
@@ -350,6 +359,12 @@ class Migrate
 		return $files;
 	}
 
+	/**
+	 * Finds migrations for packages
+	 *
+	 * @param string
+	 * @param string
+	 */
 	private static function _find_package($name = null, $file = null)
 	{
 		if ($file)
@@ -375,6 +390,33 @@ class Migrate
 		}
 
 		return $files;
+	}
+
+	/**
+	 * Installs or upgrades migration table
+	 *
+	 * @deprecated	Remove upgrade check in 1.2
+	 */
+	private static function table_check()
+	{
+		// if table does not exist
+		if ( ! \DBUtil::table_exists(static::$table))
+		{
+			// create table
+			\DBUtil::create_table(static::$table, array(
+				'name' => array('type' => 'varchar', 'constraint' => 50),
+				'type' => array('type' => 'varchar', 'constraint' => 25),
+				'version' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0),
+			));
+		}
+		elseif ( ! \DBUtil::field_exists(static::$table, array('name', 'type')))
+		{
+			// modify table with new fields
+			\DBUtil::add_fields(static::$table, array(
+				'name' => array('type' => 'varchar', 'constraint' => 50),
+				'type' => array('type' => 'varchar', 'constraint' => 25),
+			));
+		}
 	}
 }
 
