@@ -42,15 +42,13 @@ class Migrate
 			'version' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0),
 		));
 
-		//get all versions
-
-		// Check if there is a version
+		//get all versions from db
 		$migrations = \DB::select()
 			->from(static::$table)
 			->execute()
 			->as_array();
 
-		foreach($migrations as $migration)
+		foreach ($migrations as $migration)
 		{
 			static::$version[$migration['type']][$migration['name']] = (int) $migration['version'];
 		}
@@ -163,7 +161,6 @@ class Migrate
 			{
 				$f = static::_get_default($i);
 			}
-			//$f = glob(APPPATH . \Config::get('migrations.folder') . str_pad($i, 3, '0', STR_PAD_LEFT) . "_*.php");
 
 			// Only one migration per step is permitted
 			if (count($f) > 1)

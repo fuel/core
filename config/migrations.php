@@ -38,7 +38,7 @@ return array(
 	/*
 	| Folder name where migrations are stored relative to App, Module and Package Paths?
 	|
-	|	Default: APPPATH.'migrations/'
+	|	Default: 'migrations/'
 	|
 	*/
 	'folder' => 'migrations/',
