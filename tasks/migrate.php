@@ -37,7 +37,7 @@ class Migrate {
 	 */
 	public function __construct()
 	{
-		//load config
+		// load config
 		\Config::load('migrations', true);
 
 		// get Cli options
@@ -46,7 +46,7 @@ class Migrate {
 		$default = \Cli::option('default');
 
 		// if modules option set
-		if (!empty($modules))
+		if ( ! empty($modules))
 		{
 			// if true - get all modules
 			if ($modules === true)
@@ -72,7 +72,7 @@ class Migrate {
 		}
 
 		// if packages option set
-		if (!empty($packages))
+		if ( ! empty($packages))
 		{
 			// if true - get all packages
 			if ($packages === true)
@@ -93,7 +93,7 @@ class Migrate {
 			}
 		}
 
-		if ( (!empty($packages) or !empty($modules)) and empty($default))
+		if ( ( ! empty($packages) or !empty($modules)) and empty($default))
 		{
 			static::$default = false;
 		}
@@ -151,21 +151,21 @@ class Migrate {
 		// version is used as a flag, so show it
 		if ($version === true)
 		{
-			\Cli::write('Currently on migration: ' . $current_version .' for '.$type.':'.$name.'.', 'green');
+			\Cli::write('Currently on migration: '.$current_version.' for '.$type.':'.$name.'.', 'green');
 			return;
 		}
 
 		// If version has a value, make sure only 1 item was passed
-		else if ( ! is_null($version) and static::$default + static::$module_count + static::$package_count > 1)
+		elseif ( ! is_null($version) and static::$default + static::$module_count + static::$package_count > 1)
 		{
 			\Cli::write('Migration: version only excepts 1 item.');
 			return;
 		}
 
 		// Not a lot of point in this
-		else if ( ! is_null($version) and $version == $current_version)
+		elseif ( ! is_null($version) and $version == $current_version)
 		{
-			\Cli::write('Migration: ' . $version .' already in use for '.$type.':'.$name.'.');
+			\Cli::write('Migration: '.$version.' already in use for '.$type.':'.$name.'.');
 			return;
 		}
 
@@ -268,7 +268,7 @@ class Migrate {
 		$version = \Migrate::current($name, $type);
 
 		// if version is a number
-		if(is_numeric($version))
+		if (is_numeric($version))
 		{
 			// show what version the item migrated to
 			\Cli::write('Migrated to version: '.$version.' for '.$type.':'.$name.'.');
