@@ -23,6 +23,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var  string  $_primary_key  The primary key for the table
 	 */
 	protected static $_primary_key = 'id';
+	
+	/**
+	 * @var string   $_connection   The database connection to use
+	 */
+	protected static $_connection = null;
 
 	/**
 	 * @var  array  $_rules  The validation rules (must set this in your Model to use)
@@ -82,7 +87,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		$query = static::pre_find($query);
 
-		$result = $query->execute();
+		$result = $query->execute(static::$_connection);
 		$result = ($result->count() === 0) ? null : $result->current();
 
 		return static::post_find($result);
@@ -126,7 +131,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		$query = static::pre_find($query);
 
-		$result = $query->execute();
+		$result = $query->execute(static::$_connection);
 		$result = ($result->count() === 0) ? null : $result->as_array();
 
 		return static::post_find($result);
@@ -287,7 +292,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			            ->set($vars);
 
 			$query = $this->pre_save($query);
-			$result = $query->execute();
+			$result = $query->execute(static::$_connection);
 
 			$this->{static::$_primary_key} = $result[0];
 
@@ -299,7 +304,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key});
 
 		$query = $this->pre_update($query);
-		$result = $query->execute();
+		$result = $query->execute(static::$_connection);
 
 		return $this->post_update($result);
 	}
@@ -316,7 +321,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		            ->where(static::$_primary_key, '=', $this->{static::$_primary_key});
 
 		$query = $this->pre_delete($query);
-		$result = $query->execute();
+		$result = $query->execute(static::$_connection);
 
 		return $this->post_delete($result);
 	}
