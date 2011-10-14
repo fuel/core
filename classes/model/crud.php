@@ -23,7 +23,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var  string  $_primary_key  The primary key for the table
 	 */
 	protected static $_primary_key = 'id';
-	
+
 	/**
 	 * @var string   $_connection   The database connection to use
 	 */
@@ -278,7 +278,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			if ($validated)
 			{
-				$vars = $this->validation()->validated();
+				$vars = $this->validation()->validated() + $vars;
 			}
 			else
 			{
@@ -488,7 +488,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			$this->_validation->add_field($field, $label, $rules);
 		}
 
-		$vars = $this->pre_validate($data);
+		$vars = $this->pre_validate($vars);
 
 		$result = $this->_validation->run($vars);
 
