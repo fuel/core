@@ -52,10 +52,10 @@ class Pagination {
 		'active_start'   => '<span class="active"> ',
 		'active_end'     => ' </span>',
 		'disabled'       => array(
-            'previous_start' => '<li class="prev disabled"><a href="#">',
-            'previous_end'   => '</a></li>',
-            'next_start'     => '<li class="next disabled"><a href="#">',
-            'next_end'       => '</a></li>',
+            'previous_start' => '<span class="previous disabled">',
+            'previous_end'   => '</span>',
+            'next_start'     => '<span class="next disabled">',
+            'next_end'       => '</span>',
         ),
 	);
 
