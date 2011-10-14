@@ -23,7 +23,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var  string  $_primary_key  The primary key for the table
 	 */
 	protected static $_primary_key = 'id';
-
+	
 	/**
 	 * @var string   $_connection   The database connection to use
 	 */
@@ -70,27 +70,20 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public static function find_one_by($column, $value = null, $operator = '=')
 	{
-		$query = \DB::select('*')
-		           ->from(static::$_table_name);
+		$config = array(
+			'limit' => 1,
+		);
 
 		if (is_array($column))
 		{
-			$query = $query->where($column);
+			$config['where'] = $column;
 		}
 		else
 		{
-			$query = $query->where($column, $operator, $value);
+			$config['where'] = array($column => array($operator, $value));
 		}
 
-		$query = $query->limit(1)
-		               ->as_object(get_called_class());
-
-		$query = static::pre_find($query);
-
-		$result = $query->execute(static::$_connection);
-		$result = ($result->count() === 0) ? null : $result->current();
-
-		return static::post_find($result);
+		return static::find($config);
 
 	}
 
@@ -107,34 +100,24 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public static function find_by($column = null, $value = null, $operator = '=', $limit = null, $offset = 0)
 	{
-		$query = \DB::select('*')
-		           ->from(static::$_table_name);
+		$config = array(
+			'limit' => $limit,
+			'offset' => $offset,
+		);
 
 		if ($column !== null)
 		{
 			if (is_array($column))
 			{
-				$query = $query->where($column);
+				$config['where'] = $column;
 			}
 			else
 			{
-				$query = $query->where($column, $operator, $value);
+				$config['where'] = array($column => array($operator, $value));
 			}
 		}
 
-		if ($limit !== null)
-		{
-			$query = $query->limit($limit)->offset($offset);
-		}
-
-		$query = $query->as_object(get_called_class());
-
-		$query = static::pre_find($query);
-
-		$result = $query->execute(static::$_connection);
-		$result = ($result->count() === 0) ? null : $result->as_array();
-
-		return static::post_find($result);
+		return static::find($config);
 	}
 
 	/**
@@ -146,7 +129,65 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public static function find_all($limit = null, $offset = 0)
 	{
-		return static::find_by(null, null, '=', $limit, $offset);
+		return static::find(array(
+			'limit' => $limit,
+			'offset' => $offset,
+		));
+	}
+	
+	/**
+	 * Finds all records.
+	 *
+	 * @param    array     $config     array containing query settings
+	 * @param    string    $key        optional array index key
+	 * @return   array|null            an array containing models or null if none are found
+	 */
+	public static function find($config = array(), $key = null)
+	{
+		$query = \DB::select()
+			->from(static::$_table_name)
+			->as_object(get_called_class());
+		
+		$config = $config + array(
+			'select' => array('*'),
+			'where' => array(),
+			'order_by' => array(),
+			'limit' => null,
+			'offset' => 0,
+		);
+		
+		extract($config);
+		
+		is_string($select) and $select = array($select);
+		
+		$query->select_array($select);
+		
+		foreach ($where as $_field => $_value)
+		{
+			$operator = '=';
+			if (is_array($_value))
+			{
+				$operator = reset($_value);
+				$_value = end($_value);
+			}
+			
+			$query->where($_field, $operator, $_value);
+		}
+		
+		foreach ($order_by as $_field => $_direction)
+		{
+			$query->order_by($_field, $_direction);
+		}
+		
+		$limit and $query->limit($limit);
+		$offset and $query->offset($offset);
+		
+		$query = static::pre_find($query);
+		
+		$result =  $query->execute(static::$_connection);
+		$result = ($result->count() === 0) ? null : $result->as_array($key);
+
+		return static::post_find($result);
 	}
 
 	/**
