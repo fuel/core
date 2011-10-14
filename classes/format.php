@@ -315,7 +315,16 @@ class Format
 	 */
 	protected function _from_xml($string)
 	{
-		return $string ? (array) simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : array();
+		$_arr = is_string($string) ? simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : $string;
+		$arr = array();
+		
+		// Convert all objects SimpleXMLElement to array recursively
+		foreach ((array)$_arr as $key => $val)
+		{
+			$arr[$key] = (is_array($val) or is_object($val)) ? $this->_from_xml($val) : $val;
+		}
+		
+		return $arr;
 	}
 
 	/**
