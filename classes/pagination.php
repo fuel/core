@@ -52,6 +52,8 @@ class Pagination
 		'next_mark'      => ' &raquo;',
 		'active_start'   => '<span class="active"> ',
 		'active_end'     => ' </span>',
+		'inactive_start'   => '<span class="inactive"> ',
+		'inactive_end'     => ' </span>',
 	);
 
 	/**
@@ -227,7 +229,7 @@ class Pagination
 
 		if (static::$current_page == static::$total_pages)
 		{
-			return $value.static::$template['next_mark'];
+			return static::$template['inactive_start'].$value.static::$template['next_mark'].static::$template['inactive_end'];
 		}
 		else
 		{
@@ -254,7 +256,7 @@ class Pagination
 
 		if (static::$current_page == 1)
 		{
-			return static::$template['previous_mark'].$value;
+			return static::$template['inactive_start'].static::$template['previous_mark'].$value.static::$template['inactive_end'];
 		}
 		else
 		{
