@@ -179,8 +179,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			$query->order_by($_field, $_direction);
 		}
 		
-		$limit and $query->limit($limit);
-		$offset and $query->offset($offset);
+		if ($limit !== null)
+		{
+			$query = $query->limit($limit)->offset($offset);
+		}
 		
 		$query = static::pre_find($query);
 		
