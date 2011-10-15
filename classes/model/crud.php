@@ -85,7 +85,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		$result = static::find($config);
 
-		if ( ! is_null($result))
+		if ($result !== null)
 		{
 			return current($result);
 		}
@@ -131,7 +131,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 *
 	 * @param   int     $limit     Number of records to return
 	 * @param   int     $offset    What record to start at
-	 * @return  null|object  Null if not found or an array of Model object
+	 * @return  null|object        Null if not found or an array of Model object
 	 */
 	public static function find_all($limit = null, $offset = 0)
 	{
@@ -165,7 +165,6 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		extract($config);
 		
 		is_string($select) and $select = array($select);
-		
 		$query->select_array($select);
 		
 		foreach ($where as $_field => $_value)
@@ -235,8 +234,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Gets called after the query is executed and right before it is returned.
 	 * $result will be null if 0 rows are returned.
 	 *
-	 * @param   Database_Result  $result  The result object
-	 * @return  Database_Result|null
+	 * @param   array|null    $result    the result array or null when there was no result
+	 * @return  array|null
 	 */
 	protected static function post_find($result)
 	{
