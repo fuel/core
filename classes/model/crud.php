@@ -83,8 +83,14 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			$config['where'] = array($column => array($operator, $value));
 		}
 
-		return static::find($config);
+		$result = static::find($config);
 
+		if ( ! is_null($result))
+		{
+			return current($result);
+		}
+
+		return null;
 	}
 
 	/**
