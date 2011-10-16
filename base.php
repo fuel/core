@@ -159,14 +159,17 @@ if ( ! function_exists('render'))
 /**
  * A wrapper function for Lang::get()
  *
- * @param	mixed	The string to translate
- * @param	array	The parameters
- * @return	string
+ * @param   mixed   The string to translate
+ * @param   array   The parameters
+ * @param   mixed   The default value. If false, it will be set to first param
+ * @return  string
  */
 if ( ! function_exists('__'))
 {
-	function __($string, $params = array())
+	function __($string, $params = array(), $default = null)
 	{
+		$default === false and $default = $string;
+		
 		return \Lang::get($string, $params, $string);
 	}
 }
