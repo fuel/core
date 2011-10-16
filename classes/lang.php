@@ -82,12 +82,11 @@ class Lang
 	 *
 	 * @param   string  key for the line
 	 * @param   array   array of params to str_replace
-	 * @param   mixed   default value to return
-	 * @return  bool|string  either the line or false when not found
+	 * @return  string  The line
 	 */
-	public static function get($line, array $params = array(), $default = null)
+	public static function get($line, array $params = array())
 	{
-		return \Str::tr(\Arr::get(static::$lines, $line, $default), $params);
+		return \Str::tr(\Arr::get(static::$lines, $line, $line), $params);
 	}
 
 	/**
