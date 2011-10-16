@@ -334,7 +334,7 @@ class Cli
 
 
 	/**
-	 * if oprerating system === windows
+	 * if operating system === windows
 	 */
  	public static function is_windows()
  	{ 
@@ -377,7 +377,7 @@ class Cli
 	 * optionally a background color.
 	 *
 	 * @param	string	$text		the text to color
-	 * @param	atring	$foreground the foreground color
+	 * @param	string	$foreground the foreground color
 	 * @param	string	$background the background color
 	 * @return	string	the color coded string
 	 */
