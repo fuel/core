@@ -170,7 +170,7 @@ if ( ! function_exists('__'))
 	{
 		$default === false and $default = $string;
 		
-		return \Lang::get($string, $params, $string);
+		return \Lang::get($string, $params, $default);
 	}
 }
 
