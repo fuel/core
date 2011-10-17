@@ -253,16 +253,15 @@ else {
 		foreach($output['queries'] as $query) {
 			$return_output .='<tr>
 				<td class="'.$class.'">'.$query['sql'];
+			$return_output .='<em>';
 			if(isset($query['explain'])) {
-					$return_output .='<em>
-						Possible keys: <b>'.$query['explain']['possible_keys'].'</b> &middot;
+					$return_output .='Possible keys: <b>'.$query['explain']['possible_keys'].'</b> &middot;
 						Key Used: <b>'.$query['explain']['key'].'</b> &middot;
 						Type: <b>'.$query['explain']['type'].'</b> &middot;
-						Rows: <b>'.$query['explain']['rows'].'</b> &middot;
-						Speed: <b>'.$query['time'].'</b>
-					</em>';
+						Rows: <b>'.$query['explain']['rows'].'</b> &middot;';
 			}
-			$return_output .='</td></tr>';
+			$return_output .='Speed: <b>'.$query['time'].'</b>
+					</em></td></tr>';
 			if($class == '') $class = 'alt';
 			else $class = '';
 		}

@@ -23,6 +23,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var  string  $_primary_key  The primary key for the table
 	 */
 	protected static $_primary_key = 'id';
+	
+	/**
+	 * @var string   $_connection   The database connection to use
+	 */
+	protected static $_connection = null;
 
 	/**
 	 * @var  array  $_rules  The validation rules (must set this in your Model to use)
@@ -65,28 +70,27 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public static function find_one_by($column, $value = null, $operator = '=')
 	{
-		$query = \DB::select('*')
-		           ->from(static::$_table_name);
+		$config = array(
+			'limit' => 1,
+		);
 
 		if (is_array($column))
 		{
-			$query = $query->where($column);
+			$config['where'] = $column;
 		}
 		else
 		{
-			$query = $query->where($column, $operator, $value);
+			$config['where'] = array($column => array($operator, $value));
 		}
 
-		$query = $query->limit(1)
-		               ->as_object(get_called_class());
+		$result = static::find($config);
 
-		$query = static::pre_find($query);
+		if ($result !== null)
+		{
+			return current($result);
+		}
 
-		$result = $query->execute();
-		$result = ($result->count() === 0) ? null : $result->current();
-
-		return static::post_find($result);
-
+		return null;
 	}
 
 	/**
@@ -102,34 +106,24 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public static function find_by($column = null, $value = null, $operator = '=', $limit = null, $offset = 0)
 	{
-		$query = \DB::select('*')
-		           ->from(static::$_table_name);
+		$config = array(
+			'limit' => $limit,
+			'offset' => $offset,
+		);
 
 		if ($column !== null)
 		{
 			if (is_array($column))
 			{
-				$query = $query->where($column);
+				$config['where'] = $column;
 			}
 			else
 			{
-				$query = $query->where($column, $operator, $value);
+				$config['where'] = array($column => array($operator, $value));
 			}
 		}
 
-		if ($limit !== null)
-		{
-			$query = $query->limit($limit)->offset($offset);
-		}
-
-		$query = $query->as_object(get_called_class());
-
-		$query = static::pre_find($query);
-
-		$result = $query->execute();
-		$result = ($result->count() === 0) ? null : $result->as_array();
-
-		return static::post_find($result);
+		return static::find($config);
 	}
 
 	/**
@@ -137,11 +131,70 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 *
 	 * @param   int     $limit     Number of records to return
 	 * @param   int     $offset    What record to start at
-	 * @return  null|object  Null if not found or an array of Model object
+	 * @return  null|object        Null if not found or an array of Model object
 	 */
 	public static function find_all($limit = null, $offset = 0)
 	{
-		return static::find_by(null, null, '=', $limit, $offset);
+		return static::find(array(
+			'limit' => $limit,
+			'offset' => $offset,
+		));
+	}
+	
+	/**
+	 * Finds all records.
+	 *
+	 * @param    array     $config     array containing query settings
+	 * @param    string    $key        optional array index key
+	 * @return   array|null            an array containing models or null if none are found
+	 */
+	public static function find($config = array(), $key = null)
+	{
+		$query = \DB::select()
+			->from(static::$_table_name)
+			->as_object(get_called_class());
+		
+		$config = $config + array(
+			'select' => array('*'),
+			'where' => array(),
+			'order_by' => array(),
+			'limit' => null,
+			'offset' => 0,
+		);
+		
+		extract($config);
+		
+		is_string($select) and $select = array($select);
+		$query->select_array($select);
+		
+		foreach ($where as $_field => $_value)
+		{
+			$operator = '=';
+			if (is_array($_value))
+			{
+				$operator = reset($_value);
+				$_value = end($_value);
+			}
+			
+			$query->where($_field, $operator, $_value);
+		}
+		
+		foreach ($order_by as $_field => $_direction)
+		{
+			$query->order_by($_field, $_direction);
+		}
+		
+		if ($limit !== null)
+		{
+			$query = $query->limit($limit)->offset($offset);
+		}
+		
+		$query = static::pre_find($query);
+		
+		$result =  $query->execute(static::$_connection);
+		$result = ($result->count() === 0) ? null : $result->as_array($key);
+
+		return static::post_find($result);
 	}
 
 	/**
@@ -181,8 +234,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Gets called after the query is executed and right before it is returned.
 	 * $result will be null if 0 rows are returned.
 	 *
-	 * @param   Database_Result  $result  The result object
-	 * @return  Database_Result|null
+	 * @param   array|null    $result    the result array or null when there was no result
+	 * @return  array|null
 	 */
 	protected static function post_find($result)
 	{
@@ -273,7 +326,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			if ($validated)
 			{
-				$vars = $this->validation()->validated();
+				$vars = $this->validation()->validated() + $vars;
 			}
 			else
 			{
@@ -287,7 +340,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			            ->set($vars);
 
 			$query = $this->pre_save($query);
-			$result = $query->execute();
+			$result = $query->execute(static::$_connection);
 
 			$this->{static::$_primary_key} = $result[0];
 
@@ -299,7 +352,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key});
 
 		$query = $this->pre_update($query);
-		$result = $query->execute();
+		$result = $query->execute(static::$_connection);
 
 		return $this->post_update($result);
 	}
@@ -316,7 +369,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		            ->where(static::$_primary_key, '=', $this->{static::$_primary_key});
 
 		$query = $this->pre_delete($query);
-		$result = $query->execute();
+		$result = $query->execute(static::$_connection);
 
 		return $this->post_delete($result);
 	}
@@ -483,7 +536,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			$this->_validation->add_field($field, $label, $rules);
 		}
 
-		$vars = $this->pre_validate($data);
+		$vars = $this->pre_validate($vars);
 
 		$result = $this->_validation->run($vars);
 

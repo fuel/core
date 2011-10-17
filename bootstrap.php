@@ -135,6 +135,10 @@ function setup_autoloader()
 		'Fuel\\Core\\FtpConnectionException'  => COREPATH.'classes/ftp.php',
 		'Fuel\\Core\\FtpFileAccessException'  => COREPATH.'classes/ftp.php',
 
+		'Fuel\\Core\\HttpException'             => COREPATH.'classes/httpexception.php',
+		'Fuel\\Core\\HttpNotFoundException'     => COREPATH.'classes/httpexception.php',
+		'Fuel\\Core\\HttpServerErrorException'  => COREPATH.'classes/httpexception.php',
+
 		'Fuel\\Core\\Html'  => COREPATH.'classes/html.php',
 
 		'Fuel\\Core\\Image'              => COREPATH.'classes/image.php',

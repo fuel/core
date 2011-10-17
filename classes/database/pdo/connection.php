@@ -54,7 +54,7 @@ class Database_PDO_Connection extends \Database_Connection
 		));
 
 		// Clear the connection parameters for security
-		unset($this->_config['connection']);
+		$this->_config['connection'] = array();
 
 		// determine db type
 		$_dsn_find_collon = strpos($dsn, ':');

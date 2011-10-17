@@ -38,7 +38,7 @@ class Test_Agent extends TestCase
 	 */
 	public function test_browser()
  	{
-		$expected = "Firefox 3.6";
+		$expected = "Firefox";
 		$output = Agent::browser();
 		$this->assertEquals($expected, $output);
 	}
@@ -72,7 +72,7 @@ class Test_Agent extends TestCase
  	{
 		return array(
 			array(
-				'Browser','Firefox 3.6',
+				'Browser','Firefox',
 			),
 			array(
 				'Version',3.6,

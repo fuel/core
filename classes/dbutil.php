@@ -136,7 +136,7 @@ class DBUtil
 	protected static function alter_fields($type, $table, $fields)
 	{
 		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' ';
-		
+
 		if ($type === 'DROP')
 		{
 			if ( ! is_array($fields))
@@ -150,13 +150,13 @@ class DBUtil
 		}
 		else
 		{
-			$use_brackets = ! in_array($type, array('ADD', 'CHANGE', 'MODIFY'));
+			$use_brackets = ! in_array($type, array('CHANGE', 'MODIFY'));
 			$sql .= $type.' ';
 			$use_brackets and $sql .= '(';
 			$sql .= static::process_fields($fields);
 			$use_brackets and $sql .= ')';
 		}
-		
+
 		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
 
@@ -276,6 +276,50 @@ class DBUtil
 	public static function repair_table($table)
 	{
 		return static::table_maintenance('REPAIR TABLE', $table);
+	}
+
+	/**
+	 * Checks if a given table exists.
+	 *
+	 * @param   string  $table  Table name
+	 * @return  bool
+	 */
+	public static function table_exists($table)
+	{
+		try
+		{
+			\DB::select()->from($table)->limit(1)->execute();
+			return true;
+		}
+		catch (\Database_Exception $e)
+		{
+			return false;
+		}
+	}
+
+	/**
+	 * Checks if given field(s) in a given table exists.
+	 *
+	 * @param   string         $table    Table name
+	 * @param   string|array   $columns  columns to check
+	 * @return  bool
+	 */
+	public static function field_exists($table, $columns)
+	{
+		if ( ! is_array($columns))
+		{
+			$columns = array($columns);
+		}
+
+		try
+		{
+			\DB::select_array($columns)->from($table)->limit(1)->execute();
+			return true;
+		}
+		catch (\Database_Exception $e)
+		{
+			return false;
+		}
 	}
 
 	/*
