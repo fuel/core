@@ -56,8 +56,8 @@ class Date
 			{
 				$ts = strtotime($input);
 				return array(
-					'tm_year'	=> date('Y', $ts),
-					'tm_mon'	=> date('n', $ts),
+					'tm_year'	=> date('y', $ts),
+					'tm_mon'	=> date('n', $ts) - 1,
 					'tm_mday'	=> date('j', $ts),
 					'tm_hour'	=> date('H', $ts),
 					'tm_min'	=> date('i', $ts),
