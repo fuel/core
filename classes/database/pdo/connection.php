@@ -53,9 +53,6 @@ class Database_PDO_Connection extends \Database_Connection
 			'persistent' => false,
 		));
 
-		// Clear the connection parameters for security
-		unset($this->_config['connection']);
-
 		// determine db type
 		$_dsn_find_collon = strpos($dsn, ':');
 		$this->_db_type = $_dsn_find_collon ? substr($dsn, 0, $_dsn_find_collon) : null;
@@ -73,6 +70,9 @@ class Database_PDO_Connection extends \Database_Connection
 		{
 			// Create a new PDO connection
 			$this->_connection = new \PDO($dsn, $username, $password, $attrs);
+
+			// Clear the connection parameters for security
+			unset($this->_config['connection']);
 		}
 		catch (\PDOException $e)
 		{
