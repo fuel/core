@@ -12,24 +12,6 @@
 
 namespace Fuel\Core;
 
-
-class Request404Exception extends \FuelException
-{
-
-	/**
-	 * When this type of exception isn't caught this method is called by
-	 * Error::exception_handler() to deal with the problem.
-	 */
-	public function handle()
-	{
-		$response = new \Response(\View::forge('404'), 404);
-		\Event::shutdown();
-		$response->send(true);
-		return;
-	}
-}
-
-
 /**
  * The Request class is used to create and manage new and existing requests.  There
  * is a main request which comes in from the browser or command line, then new
@@ -156,12 +138,12 @@ class Request
 	 * a default 404.
 	 *
 	 * @deprecated  Remove in v1.2
-	 * @throws  Request404Exception
+	 * @throws  HttpNotFoundException
 	 */
 	public static function show_404()
 	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Request404Exception instead.', __METHOD__);
-		throw new \Request404Exception();
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a HttpNotFoundException instead.', __METHOD__);
+		throw new \HttpNotFoundException();
 	}
 
 	/**
@@ -298,7 +280,7 @@ class Request
 
 				// load and add the module routes
 				$module_routes = \Fuel::load($module_path);
-				
+
 				$prepped_routes = array();
 				foreach($module_routes as $name => $_route)
 				{
@@ -310,7 +292,7 @@ class Request
 					{
 						$name = $module.'/'.$name;
 					}
-					
+
 					$prepped_routes[$name] = $_route;
 				};
 
@@ -370,7 +352,7 @@ class Request
 		if ( ! $this->route)
 		{
 			static::reset_request();
-			throw new \Request404Exception();
+			throw new \HttpNotFoundException();
 		}
 
 		if ($this->route->callable !== null)
@@ -380,7 +362,7 @@ class Request
 			{
 				$response = call_user_func_array($this->route->callable, array($this));
 			}
-			catch (Request404Exception $e)
+			catch (HttpNotFoundException $e)
 			{
 				static::reset_request();
 				throw $e;
@@ -395,7 +377,7 @@ class Request
 			if ( ! class_exists($class))
 			{
 				static::reset_request();
-				throw new \Request404Exception();
+				throw new \HttpNotFoundException();
 			}
 
 			logger(\Fuel::L_INFO, 'Loading controller '.$class, __METHOD__);
@@ -431,7 +413,7 @@ class Request
 				{
 					$response = call_user_func_array(array($controller, $method), $this->method_params);
 				}
-				catch (Request404Exception $e)
+				catch (HttpNotFoundException $e)
 				{
 					static::reset_request();
 					throw $e;
@@ -457,7 +439,7 @@ class Request
 			else
 			{
 				static::reset_request();
-				throw new \Request404Exception();
+				throw new \HttpNotFoundException();
 			}
 		}
 

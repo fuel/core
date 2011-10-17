@@ -39,10 +39,10 @@
 <body>
 	<div id="container">
 		<div id="header">
-			<h1>404 - Page not found!</h1>
+			<h1>500 - Internal Server Error!</h1>
 		</div>
 		<div id="body">
-			<p>You can see this page because the URL you are accessing cannot be found.</p>
+			<p>Something has gone horribly wrong.</p>
 		</div>
 	</div>
 </body>
