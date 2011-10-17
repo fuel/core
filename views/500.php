@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>404 - Page Not Found</title>
+	<title>500 - Internal Server Error</title>
 	<style type="text/css">
 
 	body { background-color: #fff; margin: 40px; font-family: Arial, Sans-serif; font-size: 12px; color: #000; }

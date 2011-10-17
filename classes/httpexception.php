@@ -19,7 +19,10 @@ abstract class HttpException extends FuelException
 }
 
 
-class HttpNotFoundException extends \HttpException
+/**
+ * @deprecated  This should extend HttpException, but kept as Request404Exception for backwards compat.
+ */
+class HttpNotFoundException extends \Request404Exception
 {
 	/**
 	 * When this type of exception isn't caught this method is called by

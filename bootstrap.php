@@ -164,6 +164,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Pagination'           => COREPATH.'classes/pagination.php',
 		'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
 		'Fuel\\Core\\Request'              => COREPATH.'classes/request.php',
+		'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
 
 		'Fuel\\Core\\Redis'            => COREPATH.'classes/redis.php',
 
