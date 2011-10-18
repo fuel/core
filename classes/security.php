@@ -53,7 +53,7 @@ class Security
 			static::check_token();
 		}
 
-		// set a default output filter if non is defined in the config
+		// set a default output filter if none is defined in the config
 		// this code is deprecated and will be removed in v1.2
 		if (\Config::get('security.output_filter', null) === null)
 		{
