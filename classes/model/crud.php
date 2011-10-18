@@ -38,6 +38,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var array  $_labels  Field labels (must set this in your Model to use)
 	 */
 	// protected static $_labels = array();
+	
+	/**
+	 * @var array  $_defaults  Field defaults (must set this in your Model to use)
+	 */
+	// protected static $_defaults = array();
 
 	/**
 	 * Forges new Model_Crud objects.
@@ -320,6 +325,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		}
 
 		$vars = $this->to_array();
+		
+		// Set default if there are any
+		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
+		
 		if (isset(static::$_rules) and count(static::$_rules) > 0)
 		{
 			$validated = $this->run_validation($vars);
@@ -341,7 +350,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			$query = $this->pre_save($query);
 			$result = $query->execute(static::$_connection);
-
+			$result[1] > 0 and $this->set($vars);
 			$this->{static::$_primary_key} = $result[0];
 
 			return $this->post_save($result);
@@ -353,6 +362,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		$query = $this->pre_update($query);
 		$result = $query->execute(static::$_connection);
+		$result[1] > 0 and $this->set($vars);
 
 		return $this->post_update($result);
 	}
