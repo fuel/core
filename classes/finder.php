@@ -233,6 +233,38 @@ class Finder
 	}
 
 	/**
+	 * Gets a list of all the files in a given directory inside all of the
+	 * loaded search paths (e.g. the cascading file system).  This is useful
+	 * for things like finding all the config files in all the search paths.
+	 *
+	 * @param   string  The directory to look in
+	 * @param   string  The file filter
+	 * @return  array   the array of files
+	 */
+	public function list_files($directory = null, $filter = '*.php')
+	{
+		$paths = $this->paths;
+
+		// get extra information of the active request
+		if (class_exists('Request', false) and ($uri = \Uri::string()) !== null)
+		{
+			$paths = array_merge(\Request::active()->get_paths(), $paths);
+		}
+
+		// Merge in the flash paths then reset the flash paths
+		$paths = array_merge($this->flash_paths, $paths);
+		$this->clear_flash();
+
+		$found = array();
+		foreach ($paths as $path)
+		{
+			$found = array_merge(glob($path.$directory.'/'.$filter), $found);
+		}
+
+		return $found;
+	}
+
+	/**
 	 * Locates a given file in the search paths.
 	 *
 	 * @param   string  $dir       Directory to look in
