@@ -52,6 +52,15 @@ class Security
 		{
 			static::check_token();
 		}
+
+		// set a default output filter if non is defined in the config
+		// this code is deprecated and will be removed in v1.2
+		if (\Config::get('security.output_filter', null) === null)
+		{
+			\Config::set('security.output_filter', '\\Security::htmlentities');
+			logger(\Fuel::L_WARNING, 'There is no security.output_filter defined in your application config file.', __METHOD__);
+		}
+
 	}
 
 	/**
