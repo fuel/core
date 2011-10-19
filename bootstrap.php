@@ -47,9 +47,6 @@ set_error_handler(function ($severity, $message, $filepath, $line)
 
 function setup_autoloader()
 {
-	// Load in the Autoloader
-	require COREPATH.'classes'.DS.'autoloader.php';
-
 	Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
 	Autoloader::add_classes(array(

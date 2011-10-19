@@ -10,6 +10,8 @@
  * @link       http://fuelphp.com
  */
 
+namespace Fuel\Core;
+
 /**
  * The Autloader is responsible for all class loading.  It allows you to define
  * different load paths based on namespaces.  It also lets you set explicit paths
