@@ -166,7 +166,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Request'              => COREPATH.'classes/request.php',
 		'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
 
-		'Fuel\\Core\\Redis'            => COREPATH.'classes/redis.php',
+		'Fuel\\Core\\Redis'                => COREPATH.'classes/redis.php',
+		'Fuel\\Core\\RedisException'       => COREPATH.'classes/redis.php',
 
 		'Fuel\\Core\\Rest'            => COREPATH.'classes/rest.php',
 		'Fuel\\Core\\RestException'   => COREPATH.'classes/rest.php',

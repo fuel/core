@@ -27,7 +27,6 @@ class Fuel_Exception extends \FuelException {}
  *
  * @package		Fuel
  * @subpackage	Core
- * @category	Core
  */
 class Fuel
 {
@@ -266,6 +265,7 @@ class Fuel
 	 * @param   boolean  if true return an array of all files found
 	 * @param   boolean  if false do not cache the result
 	 * @return  string   the path to the file
+	 * @deprecated  Replaced by Finder::search()
 	 */
 	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
@@ -282,23 +282,13 @@ class Fuel
 	 * @param   string  The directory to look in
 	 * @param   string  The file filter
 	 * @return  array   the array of files
+	 * @deprecated  Replaced by Finder::instance()->list_files()
 	 */
 	public static function list_files($directory = null, $filter = '*.php')
 	{
-		$paths = static::$_paths;
-		// get the paths of the active request, and search them first
-		if (class_exists('Request', false) and $active = \Request::active())
-		{
-			$paths = array_merge($active->paths, $paths);
-		}
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::instance()->list_files() instead.', __METHOD__);
 
-		$found = array();
-		foreach ($paths as $path)
-		{
-			$found = array_merge(glob($path.$directory.'/'.$filter), $found);
-		}
-
-		return $found;
+		return Finder::instance()->list_files($directory, $filter);
 	}
 
 	/**

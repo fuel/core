@@ -101,16 +101,20 @@ class Cookie
 	 *     Cookie::delete('theme');
 	 *
 	 * @param   string   cookie name
+ 	 * @param   string    path of the cookie
+	 * @param   string    domain of the cookie
+	 * @param   boolean   if true, the cookie should only be transmitted over a secure HTTPS connection
+	 * @param   boolean   if true, the cookie will be made accessible only through the HTTP protocol
 	 * @return  boolean
 	 * @uses    static::set
 	 */
-	public static function delete($name)
+	public static function delete($name, $path = null, $domain = null, $secure = null, $http_only = null)
 	{
 		// Remove the cookie
 		unset($_COOKIE[$name]);
 
 		// Nullify the cookie and make it expire
-		return static::set($name, null, -86400);
+		return static::set($name, null, -86400, $path, $domain, $secure, $http_only);
 	}
 }
 
