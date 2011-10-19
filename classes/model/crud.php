@@ -324,8 +324,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			throw new \Exception('Cannot modify a frozen row.');
 		}
 
-		$vars = $this->to_array();
-		
+		$vars = $this->prep_values($this->to_array());
+
 		// Set default if there are any
 		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
 
@@ -643,6 +643,18 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	protected function post_validate($result)
 	{
 		return $result;
+	}
+
+	/**
+	 * Called right after values retrieval, before save,
+	 * update, setting defaults and validation.
+	 *
+	 * @param   array  $values  input array
+	 * @return  array
+	 */
+	protected function prep_values($values)
+	{
+		return $values;
 	}
 
 }
