@@ -632,7 +632,9 @@ class Mongo_Db
 				$returns[] = $doc;
 			}
 		}
-
+		
+		$this->_clear();
+		
 		return $returns;
 	}
 
