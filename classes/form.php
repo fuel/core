@@ -566,7 +566,7 @@ class Form
 	 * @param   array  $attr
 	 * @return  string
 	 */
-	private static function attr_to_string($attr)
+	protected static function attr_to_string($attr)
 	{
 		unset($attr['label']);
 		return array_to_attr($attr);
