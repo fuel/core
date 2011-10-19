@@ -332,7 +332,7 @@ class Autoloader
 	 *
 	 * @param	string	the class name
 	 */
-	private static function init_class($class)
+	protected static function init_class($class)
 	{
 		if (static::$auto_initialize === $class)
 		{
