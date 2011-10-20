@@ -448,7 +448,7 @@ class Request
 					// @TODO let the after method set the response directly
 					if (is_null($response_after))
 					{
-						logger(\Fuel::L_WARNING, 'The Controller::after() method should accept and return the Controller\'s response, empty return for the after() method is deprecated.', __METHOD__);
+						logger(\Fuel::L_WARNING, 'The '.get_class($controller).'::after() method should accept and return the Controller\'s response, empty return for the after() method is deprecated.', __METHOD__);
 					}
 					else
 					{
@@ -467,7 +467,7 @@ class Request
 		if (is_null($response))
 		{
 			// @TODO remove this in a future version as we will get rid of it.
-			logger(\Fuel::L_WARNING, 'The Controller should return a string or a Response object, support for the $controller->response object is deprecated.', __METHOD__);
+			logger(\Fuel::L_WARNING, 'The '.get_class($controller).' controller should return a string or a Response object, support for the $controller->response object is deprecated.', __METHOD__);
 			$this->response = $controller->response;
 		}
 		elseif ($response instanceof \Response)
