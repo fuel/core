@@ -194,6 +194,18 @@ class Fieldset
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
+		if ($name instanceof Fieldset_Field)
+		{
+			if (isset($this->fields[$name->name]))
+			{
+				throw new \RuntimeException('Field with the name "'.$name->name.'" already exists in this Fieldset.');
+			}
+
+			$name->set_fieldset($this);
+			$this->fields[$name->name] = $name;
+			return $name;
+		}
+
 		if (empty($name) || (is_array($name) and empty($name['name'])))
 		{
 			throw new \InvalidArgumentException('Cannot create field without name.');
