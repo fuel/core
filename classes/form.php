@@ -702,8 +702,13 @@ class Form
 				break;
 			case 'select':
 				$attributes = $field->attributes;
+				$name = $field->name;
+				if (in_array('multiple', $attributes))
+				{
+					$name .= '[]';
+				}
 				unset($attributes['type']);
-				$build_field = static::select($field->name, $field->value, $field->options, $attributes);
+				$build_field = static::select($name, $field->value, $field->options, $attributes);
 				break;
 			case 'textarea':
 				$attributes = $field->attributes;
