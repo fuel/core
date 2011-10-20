@@ -35,7 +35,7 @@ class Fieldset_Field
 	protected $name = '';
 
 	/**
-	 * @var  string  Field type for form generation
+	 * @var  string  Field type for form generation, false to prevent it showing
 	 */
 	protected $type = 'text';
 
@@ -131,7 +131,7 @@ class Fieldset_Field
 	 */
 	public function set_type($type)
 	{
-		$this->type = (string) $type;
+		$this->type = $type;
 		$this->set_attribute('type', $type);
 
 		return $this;

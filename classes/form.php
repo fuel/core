@@ -713,6 +713,9 @@ class Form
 			case 'button':
 				$build_field = static::button($field->name, $field->value, $field->attributes);
 				break;
+			case false:
+				$build_field = '';
+				break;
 			default:
 				$build_field = static::input($field->name, $field->value, $field->attributes);
 				break;
