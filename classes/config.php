@@ -16,11 +16,24 @@ class ConfigException extends \FuelException { }
 
 class Config
 {
-
+	/**
+	 * @var    array    $loaded_files    array of loaded files
+	 */
 	public static $loaded_files = array();
 
+	/**
+	 * @var    array    $items           the master config array
+	 */
 	public static $items = array();
 
+	/**
+	 * Loads a config file.
+	 *
+	 * @param    mixed    $file         string file | config array | Config_Interface instance
+	 * @param    mixed    $group        null for no group, true for group is filename, false for not storing in the master config
+	 * @param    bool     $overwrite    true for array_merge, false for \Arr::merge
+	 * @return   array                  the (loaded) config array
+	 */
 	public static function load($file, $group = null, $reload = false, $overwrite = false)
 	{
 		if ( ! $reload and
@@ -84,6 +97,13 @@ class Config
 		return $config;
 	}
 
+	/**
+	 * Save a config array to disc.
+	 *
+	 * @param   string          $file      desired file name
+	 * @param   string|array    $config    master config array key or config array
+	 * @return  bool                       false when config is empty or invalid else \File::update result
+	 */
 	public static function save($file, $config)
 	{
 		if ( ! is_array($config))
@@ -132,6 +152,13 @@ CONF;
 		return \File::update($path['dirname'], $path['basename'], $content);
 	}
 
+	/**
+	 * Returns a (dot notated) config setting
+	 *
+	 * @param   string   $item      name of the config item, can be dot notated
+	 * @param   mixed    $default   the return value if the item isn't found
+	 * @return  mixed               the config setting or default if not found
+	 */
 	public static function get($item, $default = null)
 	{
 		if (isset(static::$items[$item]))
@@ -141,11 +168,24 @@ CONF;
 		return \Fuel::value(\Arr::get(static::$items, $item, $default));
 	}
 
+	/**
+	 * Sets a (dot notated) config item
+	 *
+	 * @param    string    a (dot notated) config key
+	 * @param    mixed     the config value
+	 * @return   void      the \Arr::set result
+	 */
 	public static function set($item, $value)
 	{
 		return \Arr::set(static::$items, $item, \Fuel::value($value));
 	}
 
+	/**
+	 * Deletes a (dot notated) config item
+	 *
+	 * @param    string       a (dot notated) config key
+	 * @return   array|bool   the \Arr::delete result, success boolean or array of success booleans
+	 */
 	public static function delete($item)
 	{
 		return \Arr::delete(static::$items, $item);
