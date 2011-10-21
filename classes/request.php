@@ -458,8 +458,15 @@ class Request
 			}
 			else
 			{
-				static::reset_request();
-				throw new \HttpNotFoundException();
+                                if (method_exists($controller, 'action_404'))
+                                {
+                                        $controller->action_404();
+                                }
+                                else
+                                {
+				        static::reset_request();
+				        throw new \Request404Exception();
+                                }
 			}
 		}
 
