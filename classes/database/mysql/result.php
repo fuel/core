@@ -34,28 +34,28 @@ class Database_MySQL_Result extends \Database_Result
 
 	public function seek($offset)
 	{
-		if ($this->offsetExists($offset) AND mysql_data_seek($this->_result, $offset))
+		if ($this->offsetExists($offset) and mysql_data_seek($this->_result, $offset))
 		{
 			// Set the current row to the offset
 			$this->_current_row = $this->_internal_row = $offset;
 
-			return TRUE;
+			return true;
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
 
 	public function current()
 	{
-		if ($this->_current_row !== $this->_internal_row AND ! $this->seek($this->_current_row))
-			return FALSE;
+		if ($this->_current_row !== $this->_internal_row and ! $this->seek($this->_current_row))
+			return false;
 
 		// Increment internal row for optimization assuming rows are fetched in order
 		$this->_internal_row++;
 
-		if ($this->_as_object === TRUE)
+		if ($this->_as_object === true)
 		{
 			// Return an stdClass
 			return mysql_fetch_object($this->_result);
@@ -71,5 +71,4 @@ class Database_MySQL_Result extends \Database_Result
 			return mysql_fetch_assoc($this->_result);
 		}
 	}
-
-} // End Database_MySQL_Result_Select
+}

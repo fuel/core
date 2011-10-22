@@ -48,4 +48,4 @@ class Database_Result_Cached extends \Database_Result
 		return $this->valid() ? $this->_result[$this->_current_row] : null;
 	}
 
-} // End Database_Result_Cached
+}

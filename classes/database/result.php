@@ -15,17 +15,29 @@ namespace Fuel\Core;
 
 abstract class Database_Result implements \Countable, \Iterator, \SeekableIterator, \ArrayAccess {
 
-	// Executed SQL for this result
+	/**
+	 * @var  Executed SQL for this result
+	 */
 	protected $_query;
 
-	// Raw result resource
+	/**
+	 * @var  resource  Raw result resource
+	 */
 	protected $_result;
 
-	// Total number of rows and current row
+	/**
+	 * @var  int  Total number of rows
+	 */
 	protected $_total_rows  = 0;
+
+	/**
+	 * @var  int  Current row number
+	 */
 	protected $_current_row = 0;
 
-	// Return rows as an object or associative array
+	/**
+	 * @var  bool  Return rows as an object or associative array
+	 */
 	protected $_as_object;
 
 	/**
@@ -330,4 +342,4 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 		return $this->offsetExists($this->_current_row);
 	}
 
-} // End Database_Result
+}
