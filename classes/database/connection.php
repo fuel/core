@@ -80,16 +80,24 @@ abstract class Database_Connection
 	 */
 	public $last_query;
 
-	// Character that is used to quote identifiers
+	/**
+	 * @var  string  Character that is used to quote identifiers
+	 */
 	protected $_identifier = '"';
 
-	// Instance name
+	/**
+	 * @var  string  Instance name
+	 */
 	protected $_instance;
 
-	// Raw server connection
+	/**
+	 * @var  resource  Raw server connection
+	 */
 	protected $_connection;
 
-	// Configuration array
+	/**
+	 * @var  array  Configuration array
+	 */
 	protected $_config;
 
 	/**
@@ -637,24 +645,18 @@ abstract class Database_Connection
 	abstract public function escape($value);
 
 	/**
-	 * Sets the Database instance to use transactions
-	 * Transactions are OFF by default
+	 * Whether or not the connection is in transaction mode
 	 *
-	 *     $db->transactional();
-	 *     $db->transactional(TRUE);
-	 *     $db->transactional(FALSE);
-	 *
-	 * @param   bool   use tranactions TRUE/FALSE
-	 * @return  void
+	 * @return  bool
 	 */
-	abstract public function transactional($use_trans = TRUE);
+	abstract public function in_transaction();
 
 	/**
 	 * Begins a transaction on instance
 	 *
 	 *     $db->start_transaction();
 	 *
-	 * @return  void
+	 * @return  bool
 	 */
 	abstract public function start_transaction();
 
@@ -663,7 +665,7 @@ abstract class Database_Connection
 	 *
 	 *     $db->commit_transaction();
 	 *
-	 * @return  void
+	 * @return  bool
 	 */
 	abstract public function commit_transaction();
 
@@ -672,8 +674,8 @@ abstract class Database_Connection
 	 *
 	 *     $db->rollback_transaction();
 	 *
-	 * @return  void
+	 * @return  bool
 	 */
 	abstract public function rollback_transaction();
 
-} // End Database_Connection
+}

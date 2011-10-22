@@ -15,34 +15,49 @@ namespace Fuel\Core;
 
 class Database_MySQLi_Connection extends \Database_Connection
 {
+	/**
+	 * @var  \MySQLi  Raw server connection
+	 */
+	protected $_connection;
 
-	// Database in use by each connection
+	/**
+	 * @var  array  Database in use by each connection
+	 */
 	protected static $_current_databases = array();
 
-	// Use SET NAMES to set the character set
+	/**
+	 * @var  bool  Use SET NAMES to set the character set
+	 */
 	protected static $_set_names;
 
-	// Identifier for this connection within the PHP driver
+	/**
+	 * @var  string  Identifier for this connection within the PHP driver
+	 */
 	protected $_connection_id;
 
-	// MySQL uses a backtick for identifiers
+	/**
+	 * @var  string  MySQL uses a backtick for identifiers
+	 */
 	protected $_identifier = '`';
 
-	// Allows transactions
-	protected $_trans_enabled = FALSE;
+	/**
+	 * @var  bool  Allows transactions
+	 */
+	protected $_in_transaction = false;
 
-	// transaction errors
-	public $trans_errors = FALSE;
-
-	// Know which kind of DB is used
+	/**
+	 * @var  string  Which kind of DB is used
+	 */
 	public $_db_type = 'mysql';
 
 	public function connect()
 	{
 		if ($this->_connection)
+		{
 			return;
+		}
 
-		if (static::$_set_names === NULL)
+		if (static::$_set_names === null)
 		{
 			// Determine if we can use mysqli_set_charset(), which is only
 			// available on PHP 5.2.3+ when compiled against MySQL 5.0+
@@ -57,7 +72,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			'socket'     => '',
 			'username'   => '',
 			'password'   => '',
-			'persistent' => FALSE,
+			'persistent' => false,
 		));
 
 		// Prevent this information from showing up in traces
@@ -81,7 +96,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			if ($persistent)
 			{
 				// Create a persistent connection
-				$this->_connection =  new \MySQLi('p:'.$hostname, $username, $password, $database, $port, $socket);
+				$this->_connection = new \MySQLi('p:'.$hostname, $username, $password, $database, $port, $socket);
 			}
 			else
 			{
@@ -89,15 +104,15 @@ class Database_MySQLi_Connection extends \Database_Connection
 				$this->_connection = new \MySQLi($hostname, $username, $password, $database, $port, $socket);
 			}
 			if ($this->_connection->error)
-      {
-        // Unable to connect, select database, etc
-        throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
-      }
+			{
+				// Unable to connect, select database, etc
+				throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+			}
 		}
-		catch (ErrorException $e)
+		catch (\ErrorException $e)
 		{
 			// No connection exists
-			$this->_connection = NULL;
+			$this->_connection = null;
 
 			throw new \Database_Exception('No MySQLi Connection', 0);
 		}
@@ -139,17 +154,17 @@ class Database_MySQLi_Connection extends \Database_Connection
 		try
 		{
 			// Database is assumed disconnected
-			$status = TRUE;
+			$status = true;
 
-			if ($this->_connection instanceof MySQLi)
+			if ($this->_connection instanceof \MySQLi)
 			{
 				$status = $this->_connection->close();
 			}
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			// Database is probably not disconnected
-			$status = !($this->_connection instanceof MySQLi);
+			$status = ! ($this->_connection instanceof \MySQLi);
 		}
 
 		return $status;
@@ -161,7 +176,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		$this->_connection or $this->connect();
 		$status = $this->_connection->set_charset($charset);
 
-		if ($status === FALSE)
+		if ($status === false)
 		{
 			throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
 		}
@@ -178,14 +193,14 @@ class Database_MySQLi_Connection extends \Database_Connection
 			$benchmark = Profiler::start("Database ({$this->_instance})", $sql);
 		}
 
-		if ( ! empty($this->_config['connection']['persistent']) AND $this->_config['connection']['database'] !== static::$_current_databases[$this->_connection_id])
+		if ( ! empty($this->_config['connection']['persistent']) and $this->_config['connection']['database'] !== static::$_current_databases[$this->_connection_id])
 		{
 			// Select database on persistent connections
 			$this->_select_db($this->_config['connection']['database']);
 		}
 
 		// Execute the query
-		if (($result = $this->_connection->query($sql)) === FALSE)
+		if (($result = $this->_connection->query($sql)) === false)
 		{
 			if (isset($benchmark))
 			{
@@ -193,21 +208,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 				Profiler::delete($benchmark);
 			}
 
-			if ($type !== \DB::SELECT && $this->_trans_enabled)
-			{
-				// If we are using transactions, throwing an exception would defeat the purpose
-				// We need to log the failures for transaction status
-				if ( ! is_array($this->trans_errors))
-				{
-					$this->trans_errors = array();
-				}
-
-				$this->trans_errors[] = $this->_connection->errno.': '.$this->_connection->error.' [ '.$sql.' ]';
-			}
-			else
-			{
-				throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno);
-			}
+			throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno);
 		}
 
 		// check for multiresults, we don't support those at the moment
@@ -251,35 +252,35 @@ class Database_MySQLi_Connection extends \Database_Connection
 	{
 		static $types = array
 		(
-			'blob'                      => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '65535'),
+			'blob'                      => array('type' => 'string', 'binary' => true, 'character_maximum_length' => '65535'),
 			'bool'                      => array('type' => 'bool'),
 			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
 			'datetime'                  => array('type' => 'string'),
-			'decimal unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'decimal unsigned'          => array('type' => 'float', 'exact' => true, 'min' => '0'),
 			'double'                    => array('type' => 'float'),
 			'double precision unsigned' => array('type' => 'float', 'min' => '0'),
 			'double unsigned'           => array('type' => 'float', 'min' => '0'),
 			'enum'                      => array('type' => 'string'),
-			'fixed'                     => array('type' => 'float', 'exact' => TRUE),
-			'fixed unsigned'            => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'fixed'                     => array('type' => 'float', 'exact' => true),
+			'fixed unsigned'            => array('type' => 'float', 'exact' => true, 'min' => '0'),
 			'float unsigned'            => array('type' => 'float', 'min' => '0'),
 			'int unsigned'              => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
 			'integer unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '4294967295'),
-			'longblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '4294967295'),
+			'longblob'                  => array('type' => 'string', 'binary' => true, 'character_maximum_length' => '4294967295'),
 			'longtext'                  => array('type' => 'string', 'character_maximum_length' => '4294967295'),
-			'mediumblob'                => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '16777215'),
+			'mediumblob'                => array('type' => 'string', 'binary' => true, 'character_maximum_length' => '16777215'),
 			'mediumint'                 => array('type' => 'int', 'min' => '-8388608', 'max' => '8388607'),
 			'mediumint unsigned'        => array('type' => 'int', 'min' => '0', 'max' => '16777215'),
 			'mediumtext'                => array('type' => 'string', 'character_maximum_length' => '16777215'),
 			'national varchar'          => array('type' => 'string'),
-			'numeric unsigned'          => array('type' => 'float', 'exact' => TRUE, 'min' => '0'),
+			'numeric unsigned'          => array('type' => 'float', 'exact' => true, 'min' => '0'),
 			'nvarchar'                  => array('type' => 'string'),
-			'point'                     => array('type' => 'string', 'binary' => TRUE),
+			'point'                     => array('type' => 'string', 'binary' => true),
 			'real unsigned'             => array('type' => 'float', 'min' => '0'),
 			'set'                       => array('type' => 'string'),
 			'smallint unsigned'         => array('type' => 'int', 'min' => '0', 'max' => '65535'),
 			'text'                      => array('type' => 'string', 'character_maximum_length' => '65535'),
-			'tinyblob'                  => array('type' => 'string', 'binary' => TRUE, 'character_maximum_length' => '255'),
+			'tinyblob'                  => array('type' => 'string', 'binary' => true, 'character_maximum_length' => '255'),
 			'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
 			'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
 			'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
@@ -294,17 +295,17 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return parent::datatype($type);
 	}
 
-	public function list_tables($like = NULL)
+	public function list_tables($like = null)
 	{
 		if (is_string($like))
 		{
 			// Search for table names
-			$result = $this->query(\DB::SELECT, 'SHOW TABLES LIKE '.$this->quote($like), FALSE);
+			$result = $this->query(\DB::SELECT, 'SHOW TABLES LIKE '.$this->quote($like), false);
 		}
 		else
 		{
 			// Find all table names
-			$result = $this->query(\DB::SELECT, 'SHOW TABLES', FALSE);
+			$result = $this->query(\DB::SELECT, 'SHOW TABLES', false);
 		}
 
 		$tables = array();
@@ -316,7 +317,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return $tables;
 	}
 
-	public function list_columns($table, $like = NULL)
+	public function list_columns($table, $like = null)
 	{
 		// Quote the table name
 		$table = $this->quote_table($table);
@@ -324,12 +325,12 @@ class Database_MySQLi_Connection extends \Database_Connection
 		if (is_string($like))
 		{
 			// Search for column names
-			$result = $this->query(\DB::SELECT, 'SHOW FULL COLUMNS FROM '.$table.' LIKE '.$this->quote($like), FALSE);
+			$result = $this->query(\DB::SELECT, 'SHOW FULL COLUMNS FROM '.$table.' LIKE '.$this->quote($like), false);
 		}
 		else
 		{
 			// Find all column names
-			$result = $this->query(\DB::SELECT, 'SHOW FULL COLUMNS FROM '.$table, FALSE);
+			$result = $this->query(\DB::SELECT, 'SHOW FULL COLUMNS FROM '.$table, false);
 		}
 
 		$count = 0;
@@ -405,7 +406,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		// Make sure the database is connected
 		$this->_connection or $this->connect();
 
-		if (($value = $this->_connection->real_escape_string((string) $value)) === FALSE)
+		if (($value = $this->_connection->real_escape_string((string) $value)) === false)
 		{
 			throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
 		}
@@ -414,31 +415,33 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return "'$value'";
 	}
 
-	public function transactional($use_trans = true)
+	public function in_transaction()
 	{
-		if (is_bool($use_trans))
-		{
-			$this->_trans_enabled = $use_trans;
-		}
+		return $this->_in_transaction;
 	}
 
 	public function start_transaction()
 	{
-		$this->transactional();
 		$this->query(0, 'SET AUTOCOMMIT=0', false);
 		$this->query(0, 'START TRANSACTION', false);
+		$this->_in_transaction = true;
+		return true;
 	}
 
 	public function commit_transaction()
 	{
 		$this->query(0, 'COMMIT', false);
 		$this->query(0, 'SET AUTOCOMMIT=1', false);
+		$this->_in_transaction = false;
+		return true;
 	}
 
 	public function rollback_transaction()
 	{
 		$this->query(0, 'ROLLBACK', false);
 		$this->query(0, 'SET AUTOCOMMIT=1', false);
+		$this->_in_transaction = false;
+		return true;
 	}
 
-} // End Database_MySQLi
+}
