@@ -96,7 +96,7 @@ class Agent
 	protected static $defaults = array(
 		'browscap' => array(
 			'enabled' => true,
-			'url' => 'http://browsers.garykeith.com/stream.asp?BrowsCapINI',
+			'url' => 'http://browsers.garykeith.com/stream.asp?Lite_PHP_BrowsCapINI',
 			'method' => 'wrapper',
 			'file' => '',
 		),
@@ -189,24 +189,17 @@ class Agent
 			}
 		}
 
-		// check if we have the browser info in cache
-		if (false === $browser = static::get_from_cache())
+		// try the build in get_browser() method
+		if (ini_get('browscap') == '' or false === $browser = get_browser(null, true))
 		{
-			// if not, try the build in get_browser() method
-			if (ini_get('browscap') == '' or false === $browser = get_browser(null, true))
-			{
-				// if all else fails, emulate get_browser()
-				$browser = static::get_from_browscap();
-			}
+			// if it fails, emulate get_browser()
+			$browser = static::get_from_browscap();
 		}
 
 		if ($browser)
 		{
 			// save it for future reference
 			static::$properties = array_change_key_case($browser);
-
-			// store the result in local cache
-			static::add_to_cache();
 		}
 	}
 
@@ -264,7 +257,7 @@ class Agent
 	/**
 	 * Get all browser properties
 	 *
-	 * @return	string
+	 * @return	array
 	 */
 	public static function properties()
 	{
@@ -347,58 +340,6 @@ class Agent
 
 	// --------------------------------------------------------------------
 	// internal static methods
-	// --------------------------------------------------------------------
-
-	/**
-	 * add the detected browser info to the cache for this user agent string
-	 *
-	 * @param	bool	indicates if we were able to get the browser information
-	 * @return	void
-	 */
-	protected static function add_to_cache()
-	{
-		$cache = \Cache::forge(static::$config['cache']['identifier'].'.cache');
-
-		// save the cached user agent strings
-		try
-		{
-			$content = $cache->get();
-		}
-		catch (\Exception $e)
-		{
-			$content = array();
-		}
-
-		$content[static::$user_agent] = static::$properties;
-
-		// save the updated cache file
-		$cache->set($content, static::$config['cache']['expiry']);
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * load the cached user agent strings, and look for a match
-	 *
-	 * @return	mixed	array if a match is found, of false if not cached yet
-	 */
-	protected static function get_from_cache()
-	{
-		$cache = \Cache::forge(static::$config['cache']['identifier'].'.cache');
-
-		// save the cached user agent strings
-		try
-		{
-			$content = $cache->get();
-		}
-		catch (\Exception $e)
-		{
-			return false;
-		}
-
-		return array_key_exists(static::$user_agent, $content) ? $content[static::$user_agent] : false;
-	}
-
 	// --------------------------------------------------------------------
 
 	/**
@@ -586,5 +527,3 @@ class Agent
 		return $result;
 	}
 }
-
-

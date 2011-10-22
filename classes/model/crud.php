@@ -22,12 +22,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	/**
 	 * @var  string  $_primary_key  The primary key for the table
 	 */
-	protected static $_primary_key = 'id';
-	
+	// protected static $_primary_key = 'id';
+
 	/**
 	 * @var string   $_connection   The database connection to use
 	 */
-	protected static $_connection = null;
+	// protected static $_connection = null;
 
 	/**
 	 * @var  array  $_rules  The validation rules (must set this in your Model to use)
@@ -38,7 +38,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var array  $_labels  Field labels (must set this in your Model to use)
 	 */
 	// protected static $_labels = array();
-	
+
 	/**
 	 * @var array  $_defaults  Field defaults (must set this in your Model to use)
 	 */
@@ -63,7 +63,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public static function find_by_pk($value)
 	{
-		return static::find_one_by(static::$_primary_key, $value);
+		return static::find_one_by(static::primary_key(), $value);
 	}
 
 	/**
@@ -145,7 +145,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			'offset' => $offset,
 		));
 	}
-	
+
 	/**
 	 * Finds all records.
 	 *
@@ -158,7 +158,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		$query = \DB::select()
 			->from(static::$_table_name)
 			->as_object(get_called_class());
-		
+
 		$config = $config + array(
 			'select' => array('*'),
 			'where' => array(),
@@ -166,12 +166,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			'limit' => null,
 			'offset' => 0,
 		);
-		
+
 		extract($config);
-		
+
 		is_string($select) and $select = array($select);
 		$query->select_array($select);
-		
+
 		foreach ($where as $_field => $_value)
 		{
 			$operator = '=';
@@ -180,23 +180,23 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				$operator = reset($_value);
 				$_value = end($_value);
 			}
-			
+
 			$query->where($_field, $operator, $_value);
 		}
-		
+
 		foreach ($order_by as $_field => $_direction)
 		{
 			$query->order_by($_field, $_direction);
 		}
-		
+
 		if ($limit !== null)
 		{
 			$query = $query->limit($limit)->offset($offset);
 		}
-		
+
 		$query = static::pre_find($query);
-		
-		$result =  $query->execute(static::$_connection);
+
+		$result =  $query->execute(isset(static::$_connection) ? static::$_connection : null);
 		$result = ($result->count() === 0) ? null : $result->as_array($key);
 
 		return static::post_find($result);
@@ -222,6 +222,16 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			return static::find_one_by(substr($name, 12), reset($args));
 		}
 		throw new \BadMethodCallException('Method "'.$name.'" does not exist.');
+	}
+
+	/**
+	 * Get the primary key for the current Model
+	 *
+	 * @return  string
+	 */
+	protected static function primary_key()
+	{
+		return isset(static::$_primary_key) ? static::$_primary_key : 'id';
 	}
 
 	/**
@@ -270,7 +280,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function __construct(array $data = array())
 	{
-		if (isset($this->{static::$_primary_key}))
+		if (isset($this->{static::primary_key()}))
 		{
 			$this->is_new(false);
 		}
@@ -349,19 +359,19 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			            ->set($vars);
 
 			$query = $this->pre_save($query);
-			$result = $query->execute(static::$_connection);
+			$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
 			$result[1] > 0 and $this->set($vars);
-			$this->{static::$_primary_key} = $result[0];
+			$this->{static::primary_key()} = $result[0];
 
 			return $this->post_save($result);
 		}
 
 		$query = \DB::update(static::$_table_name)
 		         ->set($vars)
-		         ->where(static::$_primary_key, '=', $this->{static::$_primary_key});
+		         ->where(static::primary_key(), '=', $this->{static::primary_key()});
 
 		$query = $this->pre_update($query);
-		$result = $query->execute(static::$_connection);
+		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
 		$result[1] > 0 and $this->set($vars);
 
 		return $this->post_update($result);
@@ -376,10 +386,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	{
 		$this->frozen(true);
 		$query = \DB::delete(static::$_table_name)
-		            ->where(static::$_primary_key, '=', $this->{static::$_primary_key});
+		            ->where(static::primary_key(), '=', $this->{static::primary_key()});
 
 		$query = $this->pre_delete($query);
-		$result = $query->execute(static::$_connection);
+		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
 
 		return $this->post_delete($result);
 	}

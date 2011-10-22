@@ -678,4 +678,16 @@ abstract class Database_Connection
 	 */
 	abstract public function rollback_transaction();
 
+	/**
+	 * Returns the raw connection object for custom method access
+	 *
+	 *     $db->connection()->lastInsertId('id');
+	 *
+	 * @return  void
+	 */
+	public function connection()
+	{
+		return $this->_connection;
+	}
+
 }
