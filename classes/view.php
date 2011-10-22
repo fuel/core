@@ -231,7 +231,7 @@ class View
 	 */
 	protected function process_file($file_override = false)
 	{
-		$clean_room = function ($__file_name, array $__data) {
+		$clean_room = function($__file_name, array $__data) {
 			extract($__data, EXTR_REFS);
 
 			// Capture the view output
