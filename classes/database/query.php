@@ -213,17 +213,6 @@ class Database_Query
 		// Compile the SQL query
 		$sql = $this->compile($db);
 
-		if ( ! empty($this->_lifetime) and $this->_type === DB::SELECT)
-		{
-			$cache = \Cache::forge(md5('Database_Connection::query("'.$db.'", "'.$sql.'")'));
-			try
-			{
-				$result = $cache->get();
-				return new Database_Result_Cached($result, $sql, $this->_as_object);
-			}
-			catch (CacheNotFoundException $e) {}
-		}
-
 		switch(strtoupper(substr($sql, 0, 6)))
 		{
 			case 'SELECT':
@@ -233,6 +222,17 @@ class Database_Query
 			case 'CREATE':
 				$this->_type = \DB::INSERT;
 				break;
+		}
+		
+		if ( ! empty($this->_lifetime) and $this->_type === DB::SELECT)
+		{
+			$cache = \Cache::forge(md5('Database_Connection::query("'.$db.'", "'.$sql.'")'));
+			try
+			{
+				$result = $cache->get();
+				return new Database_Result_Cached($result, $sql, $this->_as_object);
+			}
+			catch (CacheNotFoundException $e) {}
 		}
 
 		\DB::$query_count++;
