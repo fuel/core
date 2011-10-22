@@ -13,7 +13,7 @@ namespace Fuel\Core;
 
 
 /**
- * @deprecated  as of v1.2
+ * @deprecated  remove in v1.2
  */
 class Database_Transaction
 {
@@ -54,6 +54,7 @@ class Database_Transaction
 	 */
 	public static function forge($instance = null)
 	{
+		logger(\Fuel::L_WARNING, 'The Database_Transaction class is deprecated, use the connection driver methods instead.', __METHOD__);
 		return new static($instance);
 	}
 

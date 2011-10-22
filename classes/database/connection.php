@@ -652,6 +652,17 @@ abstract class Database_Connection
 	abstract public function in_transaction();
 
 	/**
+	 * Deprecated, does nothing now.
+	 *
+	 * @return void
+	 * @deprecated  remove in v1.2
+	 */
+	public function transactional()
+	{
+		logger(\Fuel::L_WARNING, 'This method is deprecated, it does nothing anymore.', __METHOD__);
+	}
+
+	/**
 	 * Begins a transaction on instance
 	 *
 	 *     $db->start_transaction();
