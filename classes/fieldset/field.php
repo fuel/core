@@ -288,7 +288,7 @@ class Fieldset_Field
 			return $this;
 		}
 
-		$merge = function($array, $new, $merge) {
+		$merge = function(&$array, $new, $merge) {
 			foreach ($new as $k => $v)
 			{
 				if (is_array($array[$k]) and is_array($v))
@@ -302,7 +302,7 @@ class Fieldset_Field
 			}
 		};
 
-		empty($this->options) ? $this->options = $value : $merge(&$this->options, $value, $merge);
+		empty($this->options) ? $this->options = $value : $merge($this->options, $value, $merge);
 
 		return $this;
 	}
