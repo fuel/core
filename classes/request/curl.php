@@ -2,7 +2,7 @@
 
 namespace Fuel\Core;
 
-class Request_Curl extends Request_Driver
+class Request_Curl extends \Request_Driver
 {
 	/**
 	 * @var  string  to preserve the original resource url when using get
@@ -25,9 +25,9 @@ class Request_Curl extends Request_Driver
 		}
 
 		// If authentication is enabled use it
-		if ( ! empty($options['http_auth']) and ! empty($options['http_user']))
+		if ( ! empty($options['auth']) and ! empty($options['user']) and ! empty($options['pass']))
 		{
-			$this->http_login($options['http_user'], $options['http_pass'], $options['http_auth']);
+			$this->http_login($options['user'], $options['pass'], $options['auth']);
 		}
 
 		// we want to handle failure ourselves

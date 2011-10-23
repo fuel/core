@@ -99,7 +99,7 @@ class Request
 			return $class::forge($uri, $options);
 		}
 
-		$request = new static($uri, $options['route']);
+		$request = new static($uri, isset($options['route']) ? $options['route'] : true);
 		if (static::$active)
 		{
 			$request->parent = static::$active;
