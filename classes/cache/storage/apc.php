@@ -42,7 +42,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 			? $this->config['expiration'] : $this->expiration);
 
 		// do we have the PHP APC extension available
-		if ( ! function_exists('apc_add') )
+		if ( ! function_exists('apc_store') )
 		{
 			throw new \FuelException('Your PHP installation doesn\'t have APC loaded.');
 		}
@@ -186,7 +186,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 
 			// update the directory index
 			$index = array_diff($index, $dirs);
-			apc_add($this->config['cache_id'].'__DIR__', $index);
+			apc_store($this->config['cache_id'].'__DIR__', $index);
 		}
 	}
 
@@ -203,7 +203,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 		$payload = $this->prep_contents();
 
 		// write it to the apc store
-		if (apc_add($key, $payload, ! is_null($this->expiration) ? (int) $this->expiration : 0) === false)
+		if (apc_store($key, $payload, ! is_null($this->expiration) ? (int) $this->expiration : 0) === false)
 		{
 			throw new \RuntimeException('APC returned failed to write. Check your configuration.');
 		}
@@ -301,7 +301,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 			if ( $key !== false )
 			{
 				unset($index[$identifier]);
-				apc_add($this->config['cache_id'].$sections, $index);
+				apc_store($this->config['cache_id'].$sections, $index);
 			}
 		}
 		else
@@ -313,7 +313,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 
 				// create a new index and store the key
 				is_array($index) || $index = array();
-				apc_add($this->config['cache_id'].$sections, array_merge($index, array($identifier => array($key,$this->created))), 0);
+				apc_store($this->config['cache_id'].$sections, array_merge($index, array($identifier => array($key,$this->created))), 0);
 
 				// get the directory index
 				$index = apc_fetch($this->config['cache_id'].'__DIR__');
@@ -331,7 +331,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 				}
 
 				// update the directory index
-				apc_add($this->config['cache_id'].'__DIR__', $index, 0);
+				apc_store($this->config['cache_id'].'__DIR__', $index, 0);
 			}
 		}
 		return $key;
