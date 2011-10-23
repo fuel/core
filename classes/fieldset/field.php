@@ -420,8 +420,10 @@ class Fieldset_Field
 				break;
 			case 'select':
 				$attributes = $this->attributes;
+				$name = $this->name;
 				unset($attributes['type']);
-				$build_field = $form->select($this->name, $this->value, $this->options, $attributes);
+				array_key_exists('multiple', $attributes) and $name .= '[]';
+				$build_field = $form->select($name, $this->value, $this->options, $attributes);
 				break;
 			case 'textarea':
 				$attributes = $this->attributes;
