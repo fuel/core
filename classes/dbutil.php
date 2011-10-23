@@ -167,27 +167,52 @@ class DBUtil
 	 * @static
 	 * @param	string	$table
 	 * @param	string	$index_name
+	 * @param	string	$index_columns
 	 * @param	string	$index (should be 'unique' or 'fulltext')
 	 * @return	bool
 	 * @author	Thomas Edwards
 	 */
-	public static function create_index($table, $index_name, $index = '')
+	public static function create_index($table, $index_columns, $index_name = '', $index = '')
 	{
 		static $accepted_index = array('UNIQUE', 'FULLTEXT', 'SPATIAL', 'NONCLUSTERED');
 
+		// make sure the index type is uppercase
+		$index !== '' and $index = strtoupper($index);
+
+		if (empty($index_name))
+		{
+			if (is_array($index_columns))
+			{
+				foreach ($index_columns as $key => $value)
+				{
+					if (is_numeric($key))
+					{
+						$index_name .= ($columns=='' ? '' : '_').$value;
+					}
+					else
+					{
+						$index_name .= ($columns=='' ? '' : '_').str_replace(array('(', ')', ' '), '', $key);
+					}
+				}
+			}
+			else
+			{
+				$index_name = $index_columns;
+			}
+		}
+
 		$sql = 'CREATE ';
 
-		$index !== '' and $index = strtoupper($index);
 		$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
 
 		$sql .= 'INDEX ';
 		$sql .= \DB::quote_identifier($index_name);
 		$sql .= ' ON ';
 		$sql .= \DB::quote_identifier(\DB::table_prefix($table));
-		if (is_array($index_name))
+		if (is_array($index_columns))
 		{
 			$columns = '';
-			foreach ($index_name as $key => $value)
+			foreach ($index_columns as $key => $value)
 			{
 				if (is_numeric($key))
 				{
@@ -202,9 +227,9 @@ class DBUtil
 		}
 		else
 		{
-			$sql .= ' ('.\DB::quote_identifier($index_name).')';
+			$sql .= ' ('.\DB::quote_identifier($index_columns).')';
 		}
-
+\Debug::dump($sql);die();
 		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
 
