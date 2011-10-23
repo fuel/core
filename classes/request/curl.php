@@ -25,7 +25,7 @@ class Request_Curl extends Request_Driver
 		}
 
 		// If authentication is enabled use it
-		if ($options['http_auth'] != '' && $options['http_user'] != '')
+		if ( ! empty($options['http_auth']) and ! empty($options['http_user']))
 		{
 			$this->http_login($options['http_user'], $options['http_pass'], $options['http_auth']);
 		}
@@ -99,7 +99,7 @@ class Request_Curl extends Request_Driver
 		return $this;
 	}
 
-	public function execute(array $additional_params)
+	public function execute(array $additional_params = array())
 	{
 		// Reset response
 		$this->response = null;
@@ -133,6 +133,8 @@ class Request_Curl extends Request_Driver
 			$this->set_option(CURLOPT_HTTPHEADER, $this->get_headers());
 		}
 
+		$additional_params and $this->params = \Arr::merge($this->params, $additional_params);
+
 		if ( ! empty($this->options[CURLOPT_CUSTOMREQUEST]))
 		{
 			$this->{'method_'.strtolower($this->options[CURLOPT_CUSTOMREQUEST])}();
@@ -164,7 +166,7 @@ class Request_Curl extends Request_Driver
 			curl_close($connection);
 			$this->set_defaults();
 
-			return $this->response()->body;
+			return $this;
 		}
 	}
 

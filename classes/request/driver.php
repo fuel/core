@@ -215,7 +215,7 @@ abstract class Request_Driver
 	 * @param   array  $query_string
 	 * @return  Response
 	 */
-	abstract public function execute(array $additional_params);
+	abstract public function execute(array $additional_params = array());
 
 	/**
 	 * Reset before doing another request
