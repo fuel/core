@@ -506,7 +506,7 @@ class Fieldset
 			? $this->form()->close($attributes).PHP_EOL
 			: $this->form()->{$this->fieldset_tag.'_close'}($attributes);
 
-		$template = $this->get_config((empty($this->fieldset_tag) ? 'form' : $this->fieldset_tag).'_template',
+		$template = $this->form()->get_config((empty($this->fieldset_tag) ? 'form' : $this->fieldset_tag).'_template',
 			"\n\t\t{open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{close}\n");
 		$template = str_replace(array('{form_open}', '{open}', '{fields}', '{form_close}', '{close}'),
 			array($open, $open, $fields_output, $close, $close),
