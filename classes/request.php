@@ -83,7 +83,7 @@ class Request
 	 *     Request::forge('hello/world');
 	 *
 	 * @param   string   The URI of the request
-	 * @param   bool     Whether to use the routes to determine the Controller and Action
+	 * @param   mixed    Internal: whether to use the routes; external: driver type or array with settings (driver key must be set)
 	 * @return  Request  The new request object
 	 */
 	public static function forge($uri = null, $options = true)

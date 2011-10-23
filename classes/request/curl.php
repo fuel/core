@@ -84,7 +84,7 @@ class Request_Curl extends Request_Driver
 	 * @param   mixed       $value
 	 * @return  Request_Curl
 	 */
-	public function set_options($options)
+	public function set_options(array $options)
 	{
 		foreach ($options as $key => $val)
 		{

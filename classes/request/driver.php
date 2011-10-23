@@ -7,6 +7,18 @@ class RequestException extends HttpNotFoundException {}
 abstract class Request_Driver
 {
 	/**
+	 * Forge
+	 *
+	 * @param   string  $resource
+	 * @param   array   $options
+	 * @return  Request_Driver
+	 */
+	public static function forge($resource, array $options = array())
+	{
+		return new static($resource, $options);
+	}
+
+	/**
 	 * @var  string  URL resource to perform requests upon
 	 */
 	protected $resource = '';
