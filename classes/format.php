@@ -49,7 +49,7 @@ class Format
 	 *
 	 * @param   mixed  general date to be converted
 	 * @param   string  data format the file was provided in
-	 * @return  Factory
+	 * @return  Format
 	 */
 	public static function forge($data = null, $from_type = null)
 	{
@@ -245,11 +245,11 @@ class Format
 	 *
 	 * @param mixed $data
 	 * @return string
-	 */ 
+	 */
 	public function to_jsonp($data = null)
 	{
-		 $callback = \Input::get_post('callback', null); 
-		 is_null($callback) and $callback = 'response'; 
+		 $callback = \Input::get_post('callback', null);
+		 is_null($callback) and $callback = 'response';
 
 		 return $callback.'('.$this->to_json($data).')';
 	}
@@ -317,13 +317,13 @@ class Format
 	{
 		$_arr = is_string($string) ? simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : $string;
 		$arr = array();
-		
+
 		// Convert all objects SimpleXMLElement to array recursively
 		foreach ((array)$_arr as $key => $val)
 		{
 			$arr[$key] = (is_array($val) or is_object($val)) ? $this->_from_xml($val) : $val;
 		}
-		
+
 		return $arr;
 	}
 

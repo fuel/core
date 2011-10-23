@@ -26,6 +26,35 @@ abstract class Request_Driver
 	 */
 	protected $response;
 
+	/**
+	 * @var  bool  whether to attempt auto-formatting the response
+	 */
+	protected $auto_format = true;
+
+	/**
+	 * @var  array  supported response formats
+	 */
+	protected static $supported_formats = array(
+		'xml' => 'application/xml',
+		'json' => 'application/json',
+		'serialize' => 'application/vnd.php.serialized',
+		'php' => 'text/plain',
+		'csv' => 'text/csv',
+	);
+
+	/**
+	 * @var  array  mimetype format autodetection
+	 */
+	protected static $auto_detect_formats = array(
+		'application/xml' => 'xml',
+		'text/xml' => 'xml',
+		'application/json' => 'json',
+		'text/json' => 'json',
+		'text/csv' => 'csv',
+		'application/csv' => 'csv',
+		'application/vnd.php.serialized' => 'serialize',
+	);
+
 	public function __construct($resource, array $options)
 	{
 		$this->resource  = $resource;
@@ -97,6 +126,18 @@ abstract class Request_Driver
 	}
 
 	/**
+	 * Switch auto formatting on or off
+	 *
+	 * @param   bool  $auto_format
+	 * @return  Request_Driver
+	 */
+	public function set_auto_format($auto_format)
+	{
+		$this->auto_format = (bool) $auto_format;
+		return $this;
+	}
+
+	/**
 	 * Executes the request upon the URL
 	 *
 	 * @param   array  $additional_params
@@ -115,6 +156,25 @@ abstract class Request_Driver
 		$this->options   = array();
 		$this->params    = array();
 		return $this;
+	}
+
+	/**
+	 * Creates the Response and optionally attempts to auto-format the output
+	 *
+	 * @param   string  $body
+	 * @param   int     $status
+	 * @param   string  $mime
+	 * @return  Response
+	 */
+	public function set_response($body, $status, $mime = null)
+	{
+		if ($this->auto_format and array_key_exists($mime, static::$auto_detect_formats))
+		{
+			$body = Format::forge($body, static::$auto_detect_formats[$mime])->to_array();
+		}
+
+		$this->response = \Response::forge($body, $status);
+		return $this->response;
 	}
 
 	/**

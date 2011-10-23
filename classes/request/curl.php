@@ -29,6 +29,15 @@ class Request_Curl extends Request_Driver
 			throw new \RuntimeException('Your PHP installation doesn\'t have cURL enabled. Rebuild PHP with --with-curl');
 		}
 
+		// If authentication is enabled use it
+		if ($options['http_auth'] != '' && $options['http_user'] != '')
+		{
+			$this->http_login($options['http_user'], $options['http_pass'], $options['http_auth']);
+		}
+
+		// we want to handle failure ourselves
+		$this->set_option('failonerror', false);
+
 		parent::__construct($resource, $options);
 	}
 
@@ -79,6 +88,17 @@ class Request_Curl extends Request_Driver
 		}
 
 		return $headers;
+	}
+
+	public function set_mime_type($mime)
+	{
+		if (array_key_exists($mime, static::$supported_formats))
+		{
+			$mime = static::$supported_formats[$mime];
+		}
+
+		$this->set_header('Accept', $mime);
+		return $this;
 	}
 
 	/**
@@ -134,6 +154,9 @@ class Request_Curl extends Request_Driver
 
 	public function execute(array $additional_params)
 	{
+		// Reset response
+		$this->response = null;
+
 		// Set two default options, and merge any extra ones in
 		if ( ! isset($this->options[CURLOPT_TIMEOUT]))
 		{
@@ -160,7 +183,7 @@ class Request_Curl extends Request_Driver
 
 		if ( ! empty($this->headers))
 		{
-			$this->set_option(CURLOPT_HTTPHEADER, $this->headers);
+			$this->set_option(CURLOPT_HTTPHEADER, $this->get_headers());
 		}
 
 		if ( ! empty($this->options[CURLOPT_CUSTOMREQUEST]))
@@ -177,12 +200,13 @@ class Request_Curl extends Request_Driver
 		curl_setopt_array($connection, $this->options);
 
 		// Execute the request & and hide all output
-		$this->response = \Response::forge(curl_exec($connection));
-		$this->response->headers = curl_getinfo($connection);
-		$this->response->status  = $this->response->headers['http_code'];
+		$body = curl_exec($connection);
+		$headers = curl_getinfo($connection);
+		$mime = isset($this->headers['Accept']) ? $this->headers['Accept'] : $headers['content_type'];
+		$this->set_response($body, $headers['http_code'], $mime);
 
 		// Request failed
-		if ($this->response === false)
+		if ($body === false or $this->response->status >= 400)
 		{
 			$this->set_defaults();
 			throw new \RequestException(curl_error($connection), curl_errno($connection));
