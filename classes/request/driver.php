@@ -22,6 +22,11 @@ abstract class Request_Driver
 	protected $options = array();
 
 	/**
+	 * @var  array  http headers set for the request
+	 */
+	protected $headers = array();
+
+	/**
 	 * @var  Response  the response object after execute
 	 */
 	protected $response;
@@ -122,6 +127,60 @@ abstract class Request_Driver
 		{
 			\Arr::set($this->params, $key, $val);
 		}
+		return $this;
+	}
+
+	/**
+	 * set a request http header
+	 *
+	 * @param   string  $header
+	 * @param   string  $header
+	 * @return  Request_Driver
+	 */
+	public function set_header($header, $content = null)
+	{
+		if (is_null($content))
+		{
+			$this->headers[] = $header;
+		}
+		else
+		{
+			$this->headers[$header] = $content;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Collect all headers and parse into consistent string
+	 *
+	 * @return  array
+	 */
+	public function get_headers()
+	{
+		$headers = array();
+		foreach ($this->headers as $key => $value)
+		{
+			$headers = is_int($key) ? $value : $key.': '.$value;
+		}
+
+		return $headers;
+	}
+
+	/**
+	 * Set mime-type accept header
+	 *
+	 * @param   string  $mime
+	 * @return  string  Request_Driver
+	 */
+	public function set_mime_type($mime)
+	{
+		if (array_key_exists($mime, static::$supported_formats))
+		{
+			$mime = static::$supported_formats[$mime];
+		}
+
+		$this->set_header('Accept', $mime);
 		return $this;
 	}
 

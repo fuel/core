@@ -5,11 +5,6 @@ namespace Fuel\Core;
 class Request_Curl extends Request_Driver
 {
 	/**
-	 * @var  array  http headers set for the request
-	 */
-	protected $headers = array();
-
-	/**
 	 * @var  string  to preserve the original resource url when using get
 	 */
 	protected $preserve_resource;
@@ -50,54 +45,6 @@ class Request_Curl extends Request_Driver
 	public function set_method($method)
 	{
 		$this->options[CURLOPT_CUSTOMREQUEST] = strtoupper($method);
-		return $this;
-	}
-
-	/**
-	 * set a request http header
-	 *
-	 * @param   string  $header
-	 * @param   string  $header
-	 * @return  Request_Curl
-	 */
-	public function set_header($header, $content = null)
-	{
-		if (is_null($content))
-		{
-			$this->headers[] = $header;
-		}
-		else
-		{
-			$this->headers[$header] = $content;
-		}
-
-		return $this;
-	}
-
-	/**
-	 * Collect all headers and parse into consistent string
-	 *
-	 * @return  array
-	 */
-	public function get_headers()
-	{
-		$headers = array();
-		foreach ($this->headers as $key => $value)
-		{
-			$headers = is_int($key) ? $value : $key.': '.$value;
-		}
-
-		return $headers;
-	}
-
-	public function set_mime_type($mime)
-	{
-		if (array_key_exists($mime, static::$supported_formats))
-		{
-			$mime = static::$supported_formats[$mime];
-		}
-
-		$this->set_header('Accept', $mime);
 		return $this;
 	}
 
