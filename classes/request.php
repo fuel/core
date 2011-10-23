@@ -86,11 +86,20 @@ class Request
 	 * @param   bool     Whether to use the routes to determine the Controller and Action
 	 * @return  Request  The new request object
 	 */
-	public static function forge($uri = null, $route = true)
+	public static function forge($uri = null, $options = true)
 	{
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
-		$request = new static($uri, $route);
+		is_bool($options) and $options = array('route' => $options);
+		is_string($options) and $options = array('driver' => $options);
+
+		if ( ! empty($options['driver']))
+		{
+			$class = \Inflector::words_to_upper('Request_'.$options['driver']);
+			return $class::forge($uri, $options);
+		}
+
+		$request = new static($uri, $options['route']);
 		if (static::$active)
 		{
 			$request->parent = static::$active;
