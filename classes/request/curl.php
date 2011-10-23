@@ -103,6 +103,7 @@ class Request_Curl extends Request_Driver
 	{
 		// Reset response
 		$this->response = null;
+		$this->response_info = array();
 
 		// Set two default options, and merge any extra ones in
 		if ( ! isset($this->options[CURLOPT_TIMEOUT]))
@@ -150,9 +151,9 @@ class Request_Curl extends Request_Driver
 
 		// Execute the request & and hide all output
 		$body = curl_exec($connection);
-		$headers = curl_getinfo($connection);
-		$mime = isset($this->headers['Accept']) ? $this->headers['Accept'] : $headers['content_type'];
-		$this->set_response($body, $headers['http_code'], $mime);
+		$this->response_info = curl_getinfo($connection);
+		$mime = isset($this->headers['Accept']) ? $this->headers['Accept'] : $this->response_info('content_type', 'text/plain');
+		$this->set_response($body, $this->response_info('http_code', 200), $mime);
 
 		// Request failed
 		if ($body === false or $this->response->status >= 400)

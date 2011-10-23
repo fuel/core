@@ -44,6 +44,11 @@ abstract class Request_Driver
 	protected $response;
 
 	/**
+	 * @var  array  info about the response
+	 */
+	protected $response_info = array();
+
+	/**
 	 * @var  bool  whether to attempt auto-formatting the response
 	 */
 	protected $auto_format = true;
@@ -256,6 +261,23 @@ abstract class Request_Driver
 	public function response()
 	{
 		return $this->response;
+	}
+
+	/**
+	 * Fetch the response info or a key from it
+	 *
+	 * @param   string  $key
+	 * @param   string  $default
+	 * @return  mixed
+	 */
+	public function response_info($key = null, $default = null)
+	{
+		if (func_num_args() == 0)
+		{
+			return $this->response_info;
+		}
+
+		return \Arr::get($this->response_info, $key, $default);
 	}
 
 	/**
