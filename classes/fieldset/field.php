@@ -278,8 +278,27 @@ class Fieldset_Field
 	 */
 	public function set_options($value, $label = null)
 	{
-		$value = is_array($value) ? $value : array($value => $label);
-		$this->options = \Arr::merge($this->options, $value);
+		if ( ! is_array($value))
+		{
+			\Arr::set($this->options, $value, $label);
+			return $this;
+		}
+
+		$merge = function($array, $new, $merge) {
+			foreach ($new as $k => $v)
+			{
+				if (is_array($array[$k]) and is_array($v))
+				{
+					$merge($array[$k], $v);
+				}
+				else
+				{
+					$array[$k] = $v;
+				}
+			}
+		};
+
+		empty($this->options) ? $this->options = $value : $merge(&$this->options, $value, $merge);
 
 		return $this;
 	}
