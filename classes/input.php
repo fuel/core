@@ -211,11 +211,21 @@ class Input
 	}
 
 	/**
-	 * Return's the referrer
+	 * Return's the referer
 	 *
 	 * @return  string
 	 */
 	public static function referrer($default = '')
+	{
+		return static::server('HTTP_REFERER', $default);
+	}
+
+	/**
+	 * Return's the (php spelt) referer
+	 *
+	 * @return string
+	 */
+	public static function referer($default = '')
 	{
 		return static::server('HTTP_REFERER', $default);
 	}
