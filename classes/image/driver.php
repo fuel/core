@@ -321,6 +321,7 @@ abstract class Image_Driver
 
 	public function crop_resize($width, $height = null)
 	{
+		is_null($height) and $height = $width;
 		$this->queue('crop_resize', $width, $height);
 		return $this;
 	}
