@@ -206,12 +206,23 @@ class Fieldset
 	 */
 	public function set_parent(Fieldset $fieldset)
 	{
-		if (is_null($fieldset->fieldset_tag))
+		if ( ! empty($this->fieldset_parent))
 		{
-			$fieldset->fieldset_tag = 'fieldset';
+			throw new \RuntimeException('Fieldset already has a parent, belongs to "'.$this->parent()->name.'".');
+		}
+
+		$children = $fieldset->children();
+		while ($child = array_shift($children))
+		{
+			if ($child === $this)
+			{
+				throw new \RuntimeException('Circular reference detected, adding a Fieldset that\'s already a child as a parent.');
+			}
+			$children = array_merge($child->children(), $children);
 		}
 
 		$this->fieldset_parent = $fieldset;
+		$fieldset->add_child($this);
 		return $this;
 	}
 
@@ -221,8 +232,13 @@ class Fieldset
 	 * @param   Fieldset  $fieldset
 	 * @return  Fieldset
 	 */
-	public function add_child(Fieldset $fieldset)
+	protected function add_child(Fieldset $fieldset)
 	{
+		if (is_null($fieldset->fieldset_tag))
+		{
+			$fieldset->fieldset_tag = 'fieldset';
+		}
+
 		$this->fieldset_children[$fieldset->name] = $fieldset;
 		return $this;
 	}
@@ -240,9 +256,9 @@ class Fieldset
 	{
 		if ($name instanceof Fieldset_Field)
 		{
-			if (isset($this->fields[$name->name]))
+			if (empty($name->name) or $this->field($name->name) !== false)
 			{
-				throw new \RuntimeException('Field with the name "'.$name->name.'" already exists in this Fieldset.');
+				throw new \RuntimeException('Fieldname empty or already exists in this Fieldset: "'.$name->name.'".');
 			}
 
 			$name->set_fieldset($this);
@@ -251,7 +267,12 @@ class Fieldset
 		}
 		elseif ($name instanceof Fieldset)
 		{
-			$name->set_parent($name);
+			if (empty($name->name) or $this->field($name->name) !== false)
+			{
+				throw new \RuntimeException('Fieldset name empty or already exists in this Fieldset: "'.$name->name.'".');
+			}
+
+			$name->set_parent($this);
 			$this->fields[$name->name] = $name;
 			return $name;
 		}
@@ -271,9 +292,9 @@ class Fieldset
 		}
 
 		// Check if it exists already, if so: return and give notice
-		if ($field = static::field($name))
+		if ($field = $this->field($name))
 		{
-			\Error::notice('Field with this name exists already, cannot be overwritten through add().');
+			\Error::notice('Field with this name exists already in this fieldset: "'.$name.'".');
 			return $field;
 		}
 
@@ -459,7 +480,7 @@ class Fieldset
 	}
 
 	/**
-	 * Alias for $this->form()->build() for this fieldset
+	 * Build the fieldset HTML
 	 *
 	 * @return  string
 	 */
@@ -471,19 +492,19 @@ class Fieldset
 			$attributes['action'] = $action;
 		}
 
-		$open = $this->fieldset_tag == 'form'
+		$open = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
 			? $this->form()->open($attributes).PHP_EOL
-			: $this->{$this->fieldset_parent.'_open'}($attributes);
+			: $this->form()->{$this->fieldset_tag.'_open'}($attributes);
 
 		$fields_output = '';
-		foreach ($this->fields as $f)
+		foreach ($this->field() as $f)
 		{
 			$fields_output .= $f->build().PHP_EOL;
 		}
 
-		$close = $this->fieldset_tag == 'form'
+		$close = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
 			? $this->form()->close($attributes).PHP_EOL
-			: $this->{$this->fieldset_parent.'_close'}($attributes);
+			: $this->form()->{$this->fieldset_tag.'_close'}($attributes);
 
 		$template = $this->get_config((empty($this->fieldset_tag) ? 'form' : $this->fieldset_tag).'_template',
 			"\n\t\t{open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{close}\n");
