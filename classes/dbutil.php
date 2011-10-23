@@ -160,6 +160,72 @@ class DBUtil
 		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
 
+	/**
+	 * Creates an index on that table.
+	 *
+	 * @access	public
+	 * @static
+	 * @param	string	$table
+	 * @param	string	$index_name
+	 * @param	string	$index (should be 'unique' or 'fulltext')
+	 * @return	bool
+	 * @author	Thomas Edwards
+	 */
+	public static function create_index($table, $index_name, $index = '')
+	{
+		static $accepted_index = array('UNIQUE', 'FULLTEXT', 'SPATIAL', 'NONCLUSTERED');
+
+		$sql = 'CREATE ';
+
+		$index !== '' and $index = strtoupper($index);
+		$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
+
+		$sql .= 'INDEX ';
+		$sql .= \DB::quote_identifier($index_name);
+		$sql .= ' ON ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table));
+		if (is_array($index_name))
+		{
+			$columns = '';
+			foreach ($index_name as $key => $value)
+			{
+				if (is_numeric($key))
+				{
+					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value);
+				}
+				else
+				{
+					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key).' '.strtoupper($value);
+				}
+			}
+			$sql .= ' ('.$columns.')';
+		}
+		else
+		{
+			$sql .= ' ('.\DB::quote_identifier($index_name).')';
+		}
+
+		return \DB::query($sql, \DB::UPDATE)->execute();
+	}
+
+	/**
+	 * Drop an index from a table.
+	 *
+	 * @access	public
+	 * @static
+	 * @param	string $table
+	 * @param	string $index_name
+	 * @return	bool
+	 * @author	Thomas Edwards
+	 */
+	public static function drop_index($table, $index_name)
+	{
+		$sql = 'DROP INDEX '.\DB::quote_identifier($index_name);
+		$sql .= ' ON '.\DB::quote_identifier(\DB::table_prefix($table));
+
+		return \DB::query($sql, \DB::UPDATE)->execute();
+	}
+
 	protected static function process_fields($fields, $prefix = '')
 	{
 		$sql_fields = array();
