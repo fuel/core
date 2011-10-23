@@ -97,6 +97,21 @@ class Fieldset
 	protected $name;
 
 	/**
+	 * @var  string  tag used to wrap this instance
+	 */
+	protected $fieldset_tag = null;
+
+	/**
+	 * @var  Fieldset  instance to which this instance belongs
+	 */
+	protected $fieldset_parent = null;
+
+	/**
+	 * @var  array  instances that belong to this one
+	 */
+	protected $fieldset_children = array();
+
+	/**
 	 * @var  array  array of Fieldset_Field objects
 	 */
 	protected $fields = array();
@@ -184,6 +199,35 @@ class Fieldset
 	}
 
 	/**
+	 * Set the parent Fieldset instance
+	 *
+	 * @param   Fieldset  parent fieldset to which this belongs
+	 * @return  Fieldset
+	 */
+	public function set_parent(Fieldset $fieldset)
+	{
+		if (is_null($fieldset->fieldset_tag))
+		{
+			$fieldset->fieldset_tag = 'fieldset';
+		}
+
+		$this->fieldset_parent = $fieldset;
+		return $this;
+	}
+
+	/**
+	 * Add a child Fieldset instance
+	 *
+	 * @param   Fieldset  $fieldset
+	 * @return  Fieldset
+	 */
+	public function add_child(Fieldset $fieldset)
+	{
+		$this->fieldset_children[$fieldset->name] = $fieldset;
+		return $this;
+	}
+
+	/**
 	 * Factory for Fieldset_Field objects
 	 *
 	 * @param   string
@@ -202,6 +246,12 @@ class Fieldset
 			}
 
 			$name->set_fieldset($this);
+			$this->fields[$name->name] = $name;
+			return $name;
+		}
+		elseif ($name instanceof Fieldset)
+		{
+			$name->set_parent($name);
 			$this->fields[$name->name] = $name;
 			return $name;
 		}
@@ -237,17 +287,36 @@ class Fieldset
 	 * Get Field instance
 	 *
 	 * @param   string|null           field name or null to fetch an array of all
+	 * @param   bool                  whether to get the fields array or flattened array
 	 * @return  Fieldset_Field|false  returns false when field wasn't found
 	 */
-	public function field($name = null)
+	public function field($name = null, $flatten = false)
 	{
 		if ($name === null)
 		{
-			return $this->fields;
+			if ( ! $flatten)
+			{
+				return $this->fields;
+			}
+
+			$fields = $this->fields;
+			foreach ($this->fieldset_children as $fs_name => $fieldset)
+			{
+				\Arr::insert_after_key($fields, $fieldset->field(null, true), $fs_name);
+				unset($fields[$fs_name]);
+			}
+			return $fields;
 		}
 
 		if ( ! array_key_exists($name, $this->fields))
 		{
+			foreach ($this->fieldset_children as $fieldset)
+			{
+				if (($field = $fieldset->field($name) !== false))
+				{
+					return $field;
+				}
+			}
 			return false;
 		}
 
@@ -332,7 +401,8 @@ class Fieldset
 	 */
 	public function populate($input, $repopulate = false)
 	{
-		foreach ($this->fields as $f)
+		$fields = $this->field(null, true);
+		foreach ($fields as $f)
 		{
 			if (is_array($input) or $input instanceof \ArrayAccess)
 			{
@@ -370,7 +440,8 @@ class Fieldset
 			return $this->populate($deprecated, true);
 		}
 
-		foreach ($this->fields as $f)
+		$fields = $this->field(null, true);
+		foreach ($fields as $f)
 		{
 			// Don't repopulate the CSRF field
 			if ($f->name === \Config::get('security.csrf_token_key', 'fuel_csrf_token'))
@@ -388,6 +459,42 @@ class Fieldset
 	}
 
 	/**
+	 * Alias for $this->form()->build() for this fieldset
+	 *
+	 * @return  string
+	 */
+	public function build($action = null)
+	{
+		$attributes = $this->get_config('form_attributes');
+		if ($action and ($this->fieldset_tag == 'form' or empty($this->fieldset_tag)))
+		{
+			$attributes['action'] = $action;
+		}
+
+		$open = $this->fieldset_tag == 'form'
+			? $this->form()->open($attributes).PHP_EOL
+			: $this->{$this->fieldset_parent.'_open'}($attributes);
+
+		$fields_output = '';
+		foreach ($this->fields as $f)
+		{
+			$fields_output .= $f->build().PHP_EOL;
+		}
+
+		$close = $this->fieldset_tag == 'form'
+			? $this->form()->close($attributes).PHP_EOL
+			: $this->{$this->fieldset_parent.'_close'}($attributes);
+
+		$template = $this->get_config((empty($this->fieldset_tag) ? 'form' : $this->fieldset_tag).'_template',
+			"\n\t\t{open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{close}\n");
+		$template = str_replace(array('{form_open}', '{open}', '{fields}', '{form_close}', '{close}'),
+			array($open, $open, $fields_output, $close, $close),
+			$template);
+
+		return $template;
+	}
+
+	/**
 	 * Magic method toString that will build this as a form
 	 *
 	 * @return  string
@@ -398,13 +505,23 @@ class Fieldset
 	}
 
 	/**
-	 * Alias for $this->form()->build() for this fieldset
+	 * Return parent Fieldset
 	 *
-	 * @return  string
+	 * @return Fieldset
 	 */
-	public function build($action = null)
+	public function parent()
 	{
-		return $this->form()->build($action);
+		return $this->fieldset_parent;
+	}
+
+	/**
+	 * Return the child fieldset instances
+	 *
+	 * @return  array
+	 */
+	public function children()
+	{
+		return $this->fieldset_children;
 	}
 
 	/**

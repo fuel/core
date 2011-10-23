@@ -342,7 +342,7 @@ class Validation
 		$this->validated = array();
 		$this->errors = array();
 		$this->input = $input ?: array();
-		$fields = $this->field();
+		$fields = $this->field(null, true);
 		foreach($fields as $field)
 		{
 			static::set_active_field($field);
@@ -596,9 +596,9 @@ class Validation
 	 *
 	 * @return  Fieldset_Field
 	 */
-	public function field($name = null)
+	public function field($name = null, $flatten = false)
 	{
-		return $this->fieldset->field($name);
+		return $this->fieldset->field($name, $flatten);
 	}
 
 	/* -------------------------------------------------------------------------------
