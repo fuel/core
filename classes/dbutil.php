@@ -73,7 +73,7 @@ class DBUtil
 		return \DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
 	}
 
-	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null)
+	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array())
 	{
 		$sql = 'CREATE TABLE';
 
@@ -87,6 +87,9 @@ class DBUtil
 			$primary_keys = \DB::quote_identifier($primary_keys);
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
+
+		! empty($foreign_keys) and $sql .= static::process_foreign_keys($foreign_keys);
+
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
 		$sql .= static::process_charset($charset, true).";";
@@ -168,7 +171,7 @@ class DBUtil
 	 * @param	string	$table
 	 * @param	string	$index_name
 	 * @param	string	$index_columns
-	 * @param	string	$index (should be 'unique' or 'fulltext')
+	 * @param	string	$index (should be 'unique', 'fulltext', 'spatial' or 'nonclustered')
 	 * @return	bool
 	 * @author	Thomas Edwards
 	 */
@@ -311,6 +314,59 @@ class DBUtil
 		$is_default and $charset = ' DEFAULT'.$charset;
 
 		return $charset;
+	}
+
+	/**
+	 * Returns string of foreign keys
+	 *
+	 * @param    array    $foreign_keys       Array of foreign key rules
+	 * @return   string    the formated foreign key string
+	 */
+	public static function process_foreign_keys($foreign_keys)
+	{
+		if ( ! is_array($foreign_keys))
+		{
+			throw new \Database_Exception('Foreign keys on create_table() must be specified as an array');
+		}
+
+		$fk_list = array();
+
+		foreach($foreign_keys as $definition)
+		{
+			// some sanity checks
+			if (empty($definition['key']))
+			{
+				throw new \Database_Exception('Foreign keys on create_table() must specify a foreign key name');
+			}
+			if ( empty($definition['reference']))
+			{
+				throw new \Database_Exception('Foreign keys on create_table() must specify a foreign key reference');
+			}
+			if (empty($definition['reference']['table']) or empty($definition['reference']['column']))
+			{
+				throw new \Database_Exception('Foreign keys on create_table() must specify a reference table and column name');
+			}
+
+			$sql = '';
+			! empty($definition['constraint']) and $sql .= " CONSTRAINT ".$definition['constraint'];
+			$sql .= " FOREIGN KEY (".$definition['key'].')';
+			$sql .= " REFERENCES ".$definition['reference']['table'].' (';
+			if (is_array($definition['reference']['column']))
+			{
+				$sql .= implode(', ', $definition['reference']['column']);
+			}
+			else
+			{
+				$sql .= $definition['reference']['column'];
+			}
+			$sql .= ')';
+			! empty($definition['on_update']) and $sql .= " ON UPDATE ".$definition['on_update'];
+			! empty($definition['on_delete']) and $sql .= " ON DELETE ".$definition['on_delete'];
+
+			$fk_list[] = "\n\t".ltrim($sql);
+		}
+
+		return ', '.implode(',', $fk_list);
 	}
 
 	/**
