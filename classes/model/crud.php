@@ -172,16 +172,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		is_string($select) and $select = array($select);
 		$query->select_array($select);
 
-		foreach ($where as $_field => $_value)
+		if ( ! empty($where))
 		{
-			$operator = '=';
-			if (is_array($_value))
-			{
-				$operator = reset($_value);
-				$_value = end($_value);
-			}
-
-			$query->where($_field, $operator, $_value);
+			$query->where($where);
 		}
 
 		foreach ($order_by as $_field => $_direction)
