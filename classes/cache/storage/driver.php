@@ -235,6 +235,8 @@ abstract class Cache_Storage_Driver
 		$this->expiration	= ($expiration !== false) ? $expiration : $this->expiration;
 		$this->dependencies	= ( ! empty($dependencies)) ? $dependencies : $this->dependencies;
 
+		$this->created = time();
+
 		// Create expiration timestamp when other then null
 		if ( ! is_null($this->expiration))
 		{
@@ -242,7 +244,7 @@ abstract class Cache_Storage_Driver
 			{
 				throw new \InvalidArgumentException('Expiration must be a valid number.');
 			}
-			$this->expiration = time() + intval($this->expiration);
+			$this->expiration = $this->created + intval($this->expiration);
 		}
 
 		// Convert dependency identifiers to string when set
@@ -254,8 +256,6 @@ abstract class Cache_Storage_Driver
 				$this->dependencies[$key] = $this->stringify_identifier($id);
 			}
 		}
-
-		$this->created = time();
 
 		// Turn everything over to the storage specific method
 		$this->_set();

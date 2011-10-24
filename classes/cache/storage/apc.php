@@ -202,8 +202,11 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 
 		$payload = $this->prep_contents();
 
+		// adjust the expiration, apc uses a TTL instead of a timestamp
+		$expiration = is_null($this->expiration) ? 0 : (int) ($this->expiration - $this->created);
+
 		// write it to the apc store
-		if (apc_store($key, $payload, ! is_null($this->expiration) ? (int) $this->expiration : 0) === false)
+		if (apc_store($key, $payload, $expiration) === false)
 		{
 			throw new \RuntimeException('APC returned failed to write. Check your configuration.');
 		}
