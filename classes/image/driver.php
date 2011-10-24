@@ -561,7 +561,7 @@ abstract class Image_Driver
 			$sides = explode(' ', $sides);
 			foreach ($sides as $side)
 			{
-				if ($side == 'tl' || $side == 'tr' || $side == 'bl' || $side == 'br')
+				if ($side == 'tl' or $side == 'tr' or $side == 'bl' or $side == 'br')
 				{
 					$$side = true;
 				}
@@ -737,7 +737,7 @@ abstract class Image_Driver
 			$input = floor((substr($input, 0, -1) / 100) * $size);
 		}
 		// Negatives are based off the bottom right
-		if ($x !== null && $input < 0)
+		if ($x !== null and $input < 0)
 		{
 			$input = $size + $input;
 		}
@@ -779,7 +779,7 @@ abstract class Image_Driver
 			$this->debug('', "<b>Executing <code>" . implode(", ", $tmpfunc) . "</code></b>");
 			call_user_func_array(array(&$this, '_' . $action[0]), array_slice($action, 1));
 		}
-		if (($clear === null && $this->config['clear_queue']) || $clear === true)
+		if (($clear === null and $this->config['clear_queue']) or $clear === true)
 		{
 			$this->queued_actions = array();
 		}
