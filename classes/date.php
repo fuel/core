@@ -114,7 +114,7 @@ class Date
 		\Config::load('date', 'date');
 
 		$pattern = \Config::get('date.patterns.'.$pattern_key, null);
-		$pattern = ($pattern === null) ? $pattern_key : $pattern;
+		empty($pattern) and $pattern = $pattern_key;
 
 		$time = strptime($input, $pattern);
 		if ($time === false)
@@ -140,7 +140,7 @@ class Date
 	{
 		$start     = ( ! $start instanceof Date) ? static::forge($start) : $start;
 		$end       = ( ! $end instanceof Date) ? static::forge($end) : $end;
-		$interval  = (is_int($interval)) ? $interval : strtotime($interval, $start->get_timestamp()) - $start->get_timestamp();
+		is_int($interval) or $interval = strtotime($interval, $start->get_timestamp()) - $start->get_timestamp();
 
 		if ($interval <= 0)
 		{
@@ -171,14 +171,14 @@ class Date
 		$year	= ! empty($year) ? (int) $year : (int) date('Y');
 		$month	= (int) $month;
 
-		if ($month < 1 || $month > 12)
+		if ($month < 1 or $month > 12)
 		{
 			\Error::notice('Invalid input for month given.');
 			return false;
 		}
 		elseif ($month == 2)
 		{
-			if ($year % 400 == 0 || ($year % 4 == 0 && $year % 100 != 0))
+			if ($year % 400 == 0 or ($year % 4 == 0 and $year % 100 != 0))
 			{
 				return 29;
 			}
@@ -242,8 +242,8 @@ class Date
 
 	public function __construct($timestamp = null, $timezone = null)
 	{
-		$timestamp  = is_null($timestamp) ? time() + static::$server_gmt_offset : $timestamp;
-		$timezone   = is_null($timezone) ? \Fuel::$timezone : $timezone;
+		! $timestamp and $timestamp = time() + static::$server_gmt_offset;
+		! $timezone and $timezone = \Fuel::$timezone;
 
 		$this->timestamp = $timestamp;
 		$this->set_timezone($timezone);

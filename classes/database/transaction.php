@@ -12,10 +12,19 @@
 namespace Fuel\Core;
 
 
-
-class Database_Transaction 
+/**
+ * @deprecated  remove in v1.2
+ */
+class Database_Transaction
 {
+	/**
+	 * @var  Database_Transaction  for Singleton-like usage
+	 */
 	protected static $_instance = null;
+
+	/**
+	 * @var  \Fuel\Core\Database_Connection
+	 */
 	protected $_db;
 
 	public static function instance()
@@ -29,7 +38,7 @@ class Database_Transaction
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory()
@@ -41,84 +50,87 @@ class Database_Transaction
 	/**
 	 * Creates a new instance
 	 *
-	 * @param	array	$config
+	 * @param  string  $instance
 	 */
-	public static function forge()
-	{		
-		return new static();
-	}
-	
-	/**
-	*	The constructor, duh
-	*/
-	public function __construct()
+	public static function forge($instance = null)
 	{
-		$this->_db = Database_Connection::instance();
+		logger(\Fuel::L_WARNING, 'The Database_Transaction class is deprecated, use the connection driver methods instead.', __METHOD__);
+		return new static($instance);
 	}
 
 	/**
-	*	Start your transaction before a set of dependent queries
+	* The constructor
+	 *
+	 * @param  string  $instance
 	*/
+	public function __construct($instance = null)
+	{
+		$this->_db = Database_Connection::instance($instance);
+	}
+
+	/**
+	 * Start your transaction before a set of dependent queries
+	 */
 	public function start()
-	{		
+	{
 		$this->_db->start_transaction();
 	}
 
 	/**
-	*	Complete your transaction on the set of queries
-	*/
+	 * Complete your transaction on the set of queries
+	 */
 	public function complete()
 	{
-		if ($this->_db->trans_errors === FALSE)
+		try
 		{
 			static::commit();
 		}
-		else
+		catch (\Exception $e)
 		{
 			static::rollback();
 		}
 	}
-	
+
 	/**
-	*	If the group of queries had no errors, this returns TRUE
-	*	Otherwise, will return FALSE
-	*	
-	*	@return boolean
-	*/
+	 * If the group of queries had no errors, this returns TRUE
+	 * Otherwise, will return FALSE
+	 *
+	 * @return  boolean
+	 */
 	public function status()
 	{
-		return ($this->_db->trans_errors === FALSE);
+		return true;
 	}
-	
+
 	/**
-	*	Commit the successful queries and reset AUTOCOMMIT
-	*	This is called automatically if you use Database_Transaction::complete()
-	*	It can also be used manually for testing
-	*/
+	 * Commit the successful queries and reset AUTOCOMMIT
+	 * This is called automatically if you use Database_Transaction::complete()
+	 * It can also be used manually for testing
+	 */
 	public function commit()
 	{
 		$this->_db->commit_transaction();
 	}
-	
+
 	/**
-	*	Rollback the failed queries and reset AUTOCOMMIT
-	*	This is called automatically if you use Database_Transaction::complete()
-	*	It can also be used manually for testing
-	*/
+	 * Rollback the failed queries and reset AUTOCOMMIT
+	 * This is called automatically if you use Database_Transaction::complete()
+	 * It can also be used manually for testing
+	 */
 	public function rollback()
 	{
 		$this->_db->rollback_transaction();
 	}
-	
+
 	/**
-	*	Return the database errors
-	*	
-	*	@return mixed (array or false)
-	*/
+	 * Return the database errors
+	 *
+	 * @return mixed (array or false)
+	 */
 	public function errors()
 	{
-		return $this->_db->trans_errors;
+		return false;
 	}
-	
 
-} // End Database_Transaction
+
+}

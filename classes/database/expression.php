@@ -63,4 +63,4 @@ class Database_Expression
 		return $this->value();
 	}
 
-} // End Database_Expression
+}

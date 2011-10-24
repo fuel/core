@@ -14,17 +14,24 @@ namespace Fuel\Core;
 
 class Database_PDO_Connection extends \Database_Connection
 {
+	/**
+	 * @var  \PDO  Raw server connection
+	 */
+	protected $_connection;
 
-	// PDO uses no quoting for identifiers
+	/**
+	 * @var  string  PDO uses no quoting by default for identifiers
+	 */
 	protected $_identifier = '';
 
-	// Allows transactions
-	protected $_trans_enabled = false;
+	/**
+	 * @var  bool  Allows transactions
+	 */
+	protected $_in_transaction = false;
 
-	// transaction errors
-	public $trans_errors = false;
-
-	// Know which kind of DB is used
+	/**
+	 * @var  string  Which kind of DB is used
+	 */
 	public $_db_type = '';
 
 	protected function __construct($name, array $config)
@@ -126,23 +133,8 @@ class Database_PDO_Connection extends \Database_Connection
 				Profiler::delete($benchmark);
 			}
 
-			if ($type !== \DB::SELECT && $this->_trans_enabled)
-			{
-				// If we are using transactions, throwing an exception would defeat the purpose
-				// We need to log the failures for transaction status
-				if ( ! is_array($this->trans_errors))
-				{
-					$this->trans_errors = array();
-				}
-
-				$this->trans_errors[] = $e->getMessage().' with query: "'.$sql.'"';
-				return false;
-			}
-			else
-			{
-				// Convert the exception in a database exception
-				throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"');
-			}
+			// Convert the exception in a database exception
+			throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"');
 		}
 
 		if (isset($benchmark))
@@ -207,29 +199,28 @@ class Database_PDO_Connection extends \Database_Connection
 		return $this->_connection->quote($value);
 	}
 
-	public function transactional($use_trans = true)
+	public function in_transaction()
 	{
-		if (is_bool($use_trans))
-		{
-			$this->_trans_enabled = $use_trans;
-		}
+		return $this->_in_transaction;
 	}
 
 	public function start_transaction()
 	{
-		$this->transactional();
 		$this->_connection or $this->connect();
-		$this->_connection->beginTransaction();
+		$this->_in_transaction = true;
+		return $this->_connection->beginTransaction();
 	}
 
 	public function commit_transaction()
 	{
-		$this->_connection->commit();
+		$this->_in_transaction = false;
+		return $this->_connection->commit();
 	}
 
 	public function rollback_transaction()
 	{
-		$this->_connection->rollBack();
+		$this->_in_transaction = false;
+		return $this->_connection->rollBack();
 	}
 
-} // End Database_PDO
+}

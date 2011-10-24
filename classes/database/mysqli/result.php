@@ -26,7 +26,7 @@ class Database_MySQLi_Result extends \Database_Result
 
 	public function __destruct()
 	{
-		if ($this->_result instanceof MySQLi_Result)
+		if ($this->_result instanceof \MySQLi_Result)
 		{
 			$this->_result->free();
 		}
@@ -34,28 +34,28 @@ class Database_MySQLi_Result extends \Database_Result
 
 	public function seek($offset)
 	{
-		if ($this->offsetExists($offset) AND $this->_result->data_seek($offset))
+		if ($this->offsetExists($offset) and $this->_result->data_seek($offset))
 		{
 			// Set the current row to the offset
 			$this->_current_row = $this->_internal_row = $offset;
 
-			return TRUE;
+			return true;
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
 
 	public function current()
 	{
-		if ($this->_current_row !== $this->_internal_row AND ! $this->seek($this->_current_row))
-			return FALSE;
+		if ($this->_current_row !== $this->_internal_row and ! $this->seek($this->_current_row))
+			return false;
 
 		// Increment internal row for optimization assuming rows are fetched in order
 		$this->_internal_row++;
 
-		if ($this->_as_object === TRUE)
+		if ($this->_as_object === true)
 		{
 			// Return an stdClass
 			return $this->_result->fetch_object();
@@ -73,4 +73,4 @@ class Database_MySQLi_Result extends \Database_Result
 		}
 	}
 
-} // End Database_MySQLi_Result_Select
+}

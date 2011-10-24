@@ -73,7 +73,7 @@ class DBUtil
 		return \DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
 	}
 
-	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null)
+	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array())
 	{
 		$sql = 'CREATE TABLE';
 
@@ -87,6 +87,9 @@ class DBUtil
 			$primary_keys = \DB::quote_identifier($primary_keys);
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
+
+		! empty($foreign_keys) and $sql .= static::process_foreign_keys($foreign_keys);
+
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
 		$sql .= static::process_charset($charset, true).";";
@@ -160,6 +163,97 @@ class DBUtil
 		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
 
+	/**
+	 * Creates an index on that table.
+	 *
+	 * @access	public
+	 * @static
+	 * @param	string	$table
+	 * @param	string	$index_name
+	 * @param	string	$index_columns
+	 * @param	string	$index (should be 'unique', 'fulltext', 'spatial' or 'nonclustered')
+	 * @return	bool
+	 * @author	Thomas Edwards
+	 */
+	public static function create_index($table, $index_columns, $index_name = '', $index = '')
+	{
+		static $accepted_index = array('UNIQUE', 'FULLTEXT', 'SPATIAL', 'NONCLUSTERED');
+
+		// make sure the index type is uppercase
+		$index !== '' and $index = strtoupper($index);
+
+		if (empty($index_name))
+		{
+			if (is_array($index_columns))
+			{
+				foreach ($index_columns as $key => $value)
+				{
+					if (is_numeric($key))
+					{
+						$index_name .= ($columns=='' ? '' : '_').$value;
+					}
+					else
+					{
+						$index_name .= ($columns=='' ? '' : '_').str_replace(array('(', ')', ' '), '', $key);
+					}
+				}
+			}
+			else
+			{
+				$index_name = $index_columns;
+			}
+		}
+
+		$sql = 'CREATE ';
+
+		$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
+
+		$sql .= 'INDEX ';
+		$sql .= \DB::quote_identifier($index_name);
+		$sql .= ' ON ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table));
+		if (is_array($index_columns))
+		{
+			$columns = '';
+			foreach ($index_columns as $key => $value)
+			{
+				if (is_numeric($key))
+				{
+					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value);
+				}
+				else
+				{
+					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key).' '.strtoupper($value);
+				}
+			}
+			$sql .= ' ('.$columns.')';
+		}
+		else
+		{
+			$sql .= ' ('.\DB::quote_identifier($index_columns).')';
+		}
+
+		return \DB::query($sql, \DB::UPDATE)->execute();
+	}
+
+	/**
+	 * Drop an index from a table.
+	 *
+	 * @access	public
+	 * @static
+	 * @param	string $table
+	 * @param	string $index_name
+	 * @return	bool
+	 * @author	Thomas Edwards
+	 */
+	public static function drop_index($table, $index_name)
+	{
+		$sql = 'DROP INDEX '.\DB::quote_identifier($index_name);
+		$sql .= ' ON '.\DB::quote_identifier(\DB::table_prefix($table));
+
+		return \DB::query($sql, \DB::UPDATE)->execute();
+	}
+
 	protected static function process_fields($fields, $prefix = '')
 	{
 		$sql_fields = array();
@@ -220,6 +314,59 @@ class DBUtil
 		$is_default and $charset = ' DEFAULT'.$charset;
 
 		return $charset;
+	}
+
+	/**
+	 * Returns string of foreign keys
+	 *
+	 * @param    array    $foreign_keys       Array of foreign key rules
+	 * @return   string    the formated foreign key string
+	 */
+	public static function process_foreign_keys($foreign_keys)
+	{
+		if ( ! is_array($foreign_keys))
+		{
+			throw new \Database_Exception('Foreign keys on create_table() must be specified as an array');
+		}
+
+		$fk_list = array();
+
+		foreach($foreign_keys as $definition)
+		{
+			// some sanity checks
+			if (empty($definition['key']))
+			{
+				throw new \Database_Exception('Foreign keys on create_table() must specify a foreign key name');
+			}
+			if ( empty($definition['reference']))
+			{
+				throw new \Database_Exception('Foreign keys on create_table() must specify a foreign key reference');
+			}
+			if (empty($definition['reference']['table']) or empty($definition['reference']['column']))
+			{
+				throw new \Database_Exception('Foreign keys on create_table() must specify a reference table and column name');
+			}
+
+			$sql = '';
+			! empty($definition['constraint']) and $sql .= " CONSTRAINT ".$definition['constraint'];
+			$sql .= " FOREIGN KEY (".$definition['key'].')';
+			$sql .= " REFERENCES ".$definition['reference']['table'].' (';
+			if (is_array($definition['reference']['column']))
+			{
+				$sql .= implode(', ', $definition['reference']['column']);
+			}
+			else
+			{
+				$sql .= $definition['reference']['column'];
+			}
+			$sql .= ')';
+			! empty($definition['on_update']) and $sql .= " ON UPDATE ".$definition['on_update'];
+			! empty($definition['on_delete']) and $sql .= " ON DELETE ".$definition['on_delete'];
+
+			$fk_list[] = "\n\t".ltrim($sql);
+		}
+
+		return ', '.implode(',', $fk_list);
 	}
 
 	/**

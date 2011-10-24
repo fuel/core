@@ -16,31 +16,42 @@ namespace Fuel\Core;
 class Database_MySQL_Connection extends \Database_Connection
 {
 
-	// Database in use by each connection
+	/**
+	 * @var  array  Database in use by each connection
+	 */
 	protected static $_current_databases = array();
 
-	// Use SET NAMES to set the character set
+	/**
+	 * @var  bool  Use SET NAMES to set the character set
+	 */
 	protected static $_set_names;
 
-	// Identifier for this connection within the PHP driver
+	/**
+	 * @var  string  Identifier for this connection within the PHP driver
+	 */
 	protected $_connection_id;
 
-	// MySQL uses a backtick for identifiers
+	/**
+	 * @var  string  MySQL uses a backtick for identifiers
+	 */
 	protected $_identifier = '`';
 
-	// Allows transactions
-	protected $_trans_enabled = false;
+	/**
+	 * @var  bool  Allows transactions
+	 */
+	protected $_in_transaction = false;
 
-	// transaction errors
-	public $trans_errors = false;
-
-	// Know which kind of DB is used
+	/**
+	 * @var  string  Which kind of DB is used
+	 */
 	public $_db_type = 'mysql';
 
 	public function connect()
 	{
 		if ($this->_connection)
+		{
 			return;
+		}
 
 		if (static::$_set_names === null)
 		{
@@ -85,7 +96,7 @@ class Database_MySQL_Connection extends \Database_Connection
 				$this->_connection = mysql_connect($hostname, $username, $password, true);
 			}
 		}
-		catch (ErrorException $e)
+		catch (\ErrorException $e)
 		{
 			// No connection exists
 			$this->_connection = null;
@@ -180,7 +191,8 @@ class Database_MySQL_Connection extends \Database_Connection
 			$benchmark = Profiler::start("Database ({$this->_instance})", $sql);
 		}
 
-		if ( ! empty($this->_config['connection']['persistent']) and $this->_config['connection']['database'] !== static::$_current_databases[$this->_connection_id])
+		if ( ! empty($this->_config['connection']['persistent'])
+			and $this->_config['connection']['database'] !== static::$_current_databases[$this->_connection_id])
 		{
 			// Select database on persistent connections
 			$this->_select_db($this->_config['connection']['database']);
@@ -195,21 +207,7 @@ class Database_MySQL_Connection extends \Database_Connection
 				Profiler::delete($benchmark);
 			}
 
-			if ($type !== \DB::SELECT && $this->_trans_enabled)
-			{
-				// If we are using transactions, throwing an exception would defeat the purpose
-				// We need to log the failures for transaction status
-				if ( ! is_array($this->trans_errors))
-				{
-					$this->trans_errors = array();
-				}
-
-				$this->trans_errors[] = mysql_errno($this->_connection).': '.mysql_error($this->_connection).' [ '.$sql.' ]';
-			}
-			else
-			{
-				throw new \Database_Exception(mysql_error($this->_connection).' [ '.$sql.' ]', mysql_errno($this->_connection));
-			}
+			throw new \Database_Exception(mysql_error($this->_connection).' [ '.$sql.' ]', mysql_errno($this->_connection));
 		}
 
 		if (isset($benchmark))
@@ -317,7 +315,7 @@ class Database_MySQL_Connection extends \Database_Connection
 		if (is_string($like))
 		{
 			// Search for column names
-			$result = $this->query(\DB::SELECT, 'SHOW FULL COLUMNS FROM '.$table.' LIKE '.$this->quote($like), FALSE);
+			$result = $this->query(\DB::SELECT, 'SHOW FULL COLUMNS FROM '.$table.' LIKE '.$this->quote($like), false);
 		}
 		else
 		{
@@ -407,31 +405,33 @@ class Database_MySQL_Connection extends \Database_Connection
 		return "'$value'";
 	}
 
-	public function transactional($use_trans = true)
+	public function in_transaction()
 	{
-		if (is_bool($use_trans))
-		{
-			$this->_trans_enabled = $use_trans;
-		}
+		return $this->_in_transaction;
 	}
 
 	public function start_transaction()
 	{
-		$this->transactional();
 		$this->query(0, 'SET AUTOCOMMIT=0', false);
 		$this->query(0, 'START TRANSACTION', false);
+		$this->_in_transaction = true;
+		return true;
 	}
 
 	public function commit_transaction()
 	{
 		$this->query(0, 'COMMIT', false);
 		$this->query(0, 'SET AUTOCOMMIT=1', false);
+		$this->_in_transaction = false;
+		return true;
 	}
 
 	public function rollback_transaction()
 	{
 		$this->query(0, 'ROLLBACK', false);
 		$this->query(0, 'SET AUTOCOMMIT=1', false);
+		$this->_in_transaction = false;
+		return true;
 	}
 
-} // End Database_MySQL
+}

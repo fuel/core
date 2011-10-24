@@ -334,7 +334,20 @@ class Session
 	}
 
 	// --------------------------------------------------------------------
+	
+	/**
+	 * rotate the session id
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+	public static function rotate()
+	{
+		return static::instance()->rotate();
+	}
 
+	// --------------------------------------------------------------------
+	
 	/**
 	 * destroy the current session
 	 *

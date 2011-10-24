@@ -222,6 +222,12 @@ class Error
 	 */
 	public static function show_production_error(\Exception $e)
 	{
+		// when we're on CLI, always show the php error
+		if (\Fuel::$is_cli)
+		{
+			return static::show_php_error($e);
+		}
+
 		if ( ! headers_sent())
 		{
 			$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';

@@ -160,18 +160,16 @@ function setup_autoloader()
 		'Fuel\\Core\\PackageNotFoundException'  => COREPATH.'classes/package.php',
 		'Fuel\\Core\\Pagination'           => COREPATH.'classes/pagination.php',
 		'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
+
 		'Fuel\\Core\\Request'              => COREPATH.'classes/request.php',
 		'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
+		'Fuel\\Core\\Request_Driver'       => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\RequestException'     => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\Request_Curl'         => COREPATH.'classes/request/curl.php',
+		'Fuel\\Core\\Request_Soap'         => COREPATH.'classes/request/soap.php',
 
 		'Fuel\\Core\\Redis'                => COREPATH.'classes/redis.php',
 		'Fuel\\Core\\RedisException'       => COREPATH.'classes/redis.php',
-
-		'Fuel\\Core\\Rest'            => COREPATH.'classes/rest.php',
-		'Fuel\\Core\\RestException'   => COREPATH.'classes/rest.php',
-		'Fuel\\Core\\Rest_Driver'     => COREPATH.'classes/rest/driver.php',
-		'Fuel\\Core\\Rest_Curl'       => COREPATH.'classes/rest/curl.php',
-		'Fuel\\Core\\Rest_Wrapper'    => COREPATH.'classes/rest/wrapper.php',
-		'Fuel\\Core\\Rest_Sockets'    => COREPATH.'classes/rest/sockets.php',
 
 		'Fuel\\Core\\Response'  => COREPATH.'classes/response.php',
 		'Fuel\\Core\\Route'     => COREPATH.'classes/route.php',

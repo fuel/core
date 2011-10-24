@@ -27,11 +27,11 @@ class Form
 	 * Valid types for input tags (including HTML5)
 	 */
 	protected static $_valid_inputs = array(
-		'button','checkbox','color','date','datetime',
-		'datetime-local','email','file','hidden','image',
-		'month','number','password','radio','range',
-		'reset','search','submit','tel','text','time',
-		'url','week'
+		'button', 'checkbox', 'color', 'date', 'datetime',
+		'datetime-local', 'email', 'file', 'hidden', 'image',
+		'month', 'number', 'password', 'radio', 'range',
+		'reset', 'search', 'submit', 'tel', 'text', 'time',
+		'url', 'week'
 	);
 
 	/**
@@ -608,170 +608,17 @@ class Form
 	}
 
 	/**
-	 * Build the form
-	 *
-	 * @param   string  overwrite for the default action
-	 * @return  string
-	 */
-	public function build($action = null)
-	{
-		$attributes = $this->get_config('form_attributes');
-		$action && $attributes['action'] = $action;
-
-		$open = static::open($attributes).PHP_EOL;
-		$fields = $this->field();
-		$fields_output = '';
-
-		foreach ($fields as $f)
-		{
-			$fields_output .= $this->build_field($f).PHP_EOL;
-		}
-		$close = static::close();
-
-		$template =  $this->get_config('form_template', "\n\t\t{form_open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{form_close}\n");
-		$template = str_replace(array('{form_open}', '{fields}', '{form_close}'),
-			array($open, $fields_output, $close),
-			$template);
-		return $template;
-	}
-
-	/**
 	 * Build & template individual field
 	 *
-	 * @param   string|Fieldset_Field   field 		instance or name of a field in this form's fieldset
+	 * @param   string|Fieldset_Field  field instance or name of a field in this form's fieldset
 	 * @return  string
+	 * @depricated until v1.2
 	 */
 	public function build_field($field)
 	{
 		! $field instanceof Fieldset_Field && $field = $this->field($field);
 
-		$required = $field->get_attribute('required', null);
-
-		// Add IDs when auto-id is on
-		if ($this->get_config('auto_id', false) === true and $field->get_attribute('id') == '')
-		{
-			$field->set_attribute('id', $this->get_config('auto_id_prefix', '').$field->name);
-		}
-
-		switch($field->type)
-		{
-			case 'hidden':
-				$build_field = static::hidden($field->name, $field->value, $field->attributes);
-				break;
-			case 'radio': case 'checkbox':
-				if ($field->options)
-				{
-					$build_field = array();
-					$i = 0;
-					foreach ($field->options as $value => $label)
-					{
-						$attributes = $field->attributes;
-						$attributes['name'] = $field->name;
-						$field->type == 'checkbox' and $attributes['name'] .= '['.$i.']';
-
-						$attributes['value'] = $value;
-						$attributes['label'] = $label;
-
-						if (is_array($field->value) ? in_array($value, $field->value) : $value == $field->value)
-						{
-							$attributes['checked'] = 'checked';
-						}
-
-						if( ! empty($attributes['id']))
-						{
-							$attributes['id'] .= '_'.$i;
-						}
-						else
-						{
-							$attributes['id'] = null;
-						}
-
-						$build_field[static::label($label, $attributes['id'])] = $field->type == 'radio'
-							? static::radio($attributes)
-							: static::checkbox($attributes);
-
-						$i++;
-					}
-				}
-				else
-				{
-					$build_field = $field->type == 'radio'
-						? static::radio($field->name, $field->value, $field->attributes)
-						: static::checkbox($field->name, $field->value, $field->attributes);
-				}
-				break;
-			case 'select':
-				$attributes = $field->attributes;
-				unset($attributes['type']);
-				$build_field = static::select($field->name, $field->value, $field->options, $attributes);
-				break;
-			case 'textarea':
-				$attributes = $field->attributes;
-				unset($attributes['type']);
-				$build_field = static::textarea($field->name, $field->value, $attributes);
-				break;
-			case 'button':
-				$build_field = static::button($field->name, $field->value, $field->attributes);
-				break;
-			case false:
-				$build_field = '';
-				break;
-			default:
-				$build_field = static::input($field->name, $field->value, $field->attributes);
-				break;
-		}
-
-		$output = $field->type != 'hidden' ? $this->field_template($build_field, $field, $required) : "\t\t".$build_field.PHP_EOL;
-
-		return $output;
-	}
-
-	/**
-	 * Allows for templating fields
-	 *
-	 * @param   string
-	 * @param   Fieldset_Field
-	 * @param   bool
-	 * @return  string
-	 */
-	protected function field_template($build_field, Fieldset_Field $field, $required)
-	{
-		$required_mark = $required ? $this->get_config('required_mark', null) : null;
-		$label = $field->label ? static::label($field->label, $field->get_attribute('id', null)) : '';
-		$error_template = $this->get_config('error_template', "");
-		$error_msg = ($this->get_config('inline_errors') && $field->error()) ? str_replace('{error_msg}', $field->error(), $error_template) : '';
-		$error_class = $field->error() ? $this->get_config('error_class') : '';
-
-		if (is_array($build_field))
-		{
-			$label = $field->label ? static::label($field->label) : '';
-			$template = $field->template ?: $this->get_config('multi_field_template', '\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n');
-			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
-			{
-				$build_fields = '';
-				foreach ($build_field as $lbl => $bf)
-				{
-					$bf_temp = str_replace('{label}', $lbl, $match[1]);
-					$bf_temp = str_replace('{required}', $required_mark, $bf_temp);
-					$bf_temp = str_replace('{field}', $bf, $bf_temp);
-					$build_fields .= $bf_temp;
-				}
-
-				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}'), array($label, $required_mark, $build_fields, $error_msg, $error_class), $template);
-
-				return $template;
-			}
-
-			// still here? wasn't a multi field template available, try the normal one with imploded $build_field
-			$build_field = implode(' ', $build_field);
-		}
-
-		$template = $field->template ?: $this->get_config('field_template', '\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {error_msg}</td>\n\t\t</tr>\n');
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class),
-			$template);
-		return $template;
+		return $field->build();
 	}
 
 	/**
@@ -821,8 +668,8 @@ class Form
 			foreach ($key as $k)
 			{
 				$output[$k] = $this->fieldset->get_config($k, null) === null
-							? $this->fieldset->get_config($k, $default)
-							: \Config::get('form.'.$k, $default);
+					? $this->fieldset->get_config($k, $default)
+					: \Config::get('form.'.$k, $default);
 			}
 			return $output;
 		}
@@ -871,6 +718,14 @@ class Form
 	}
 
 	/**
+	 * Alias for $this->fieldset->build()
+	 */
+	public function build($action = null)
+	{
+		return $this->fieldset()->build($action);
+	}
+
+	/**
 	 * Alias for $this->fieldset->add()
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
@@ -893,9 +748,9 @@ class Form
 	/**
 	 * Alias for $this->fieldset->field()
 	 */
-	public function field($name = null)
+	public function field($name = null, $flatten = false)
 	{
-		return $this->fieldset->field($name);
+		return $this->fieldset->field($name, $flatten);
 	}
 
 	/**

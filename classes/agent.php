@@ -257,7 +257,7 @@ class Agent
 	/**
 	 * Get all browser properties
 	 *
-	 * @return	string
+	 * @return	array
 	 */
 	public static function properties()
 	{

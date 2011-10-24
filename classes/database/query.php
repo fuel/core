@@ -16,20 +16,30 @@ namespace Fuel\Core;
 class Database_Query
 {
 
-	// Query type
+	/**
+	 * @var  int  Query type
+	 */
 	protected $_type;
 
-	// Cache lifetime
+	/**
+	 * @var  int  Cache lifetime
+	 */
 	protected $_lifetime;
 
-	// SQL statement
+	/**
+	 * @var  string  SQL statement
+	 */
 	protected $_sql;
 
-	// Quoted query parameters
+	/**
+	 * @var  array  Quoted query parameters
+	 */
 	protected $_parameters = array();
 
-	// Return results as associative arrays or objects
-	protected $_as_object = FALSE;
+	/**
+	 * @var  bool  Return results as associative arrays or objects
+	 */
+	protected $_as_object = false;
 
 	/**
 	 * Creates a new SQL query of the specified type.
@@ -56,7 +66,7 @@ class Database_Query
 			// Return the SQL string
 			return $this->compile(\Database_Connection::instance());
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			return $e->getMessage();
 		}
@@ -92,7 +102,7 @@ class Database_Query
 	 */
 	public function as_assoc()
 	{
-		$this->_as_object = FALSE;
+		$this->_as_object = false;
 
 		return $this;
 	}
@@ -100,10 +110,10 @@ class Database_Query
 	/**
 	 * Returns results as objects
 	 *
-	 * @param   string  classname or TRUE for stdClass
+	 * @param   string  classname or true for stdClass
 	 * @return  $this
 	 */
-	public function as_object($class = TRUE)
+	public function as_object($class = true)
 	{
 		$this->_as_object = $class;
 
@@ -168,7 +178,7 @@ class Database_Query
 			// Get the database instance
 			$db = \Database_Connection::instance($db);
 		}
-		
+
 		// Import the SQL locally
 		$sql = $this->_sql;
 
@@ -203,19 +213,6 @@ class Database_Query
 		// Compile the SQL query
 		$sql = $this->compile($db);
 
-/*		if ( ! empty($this->_lifetime) AND $this->_type === DB::SELECT)
-		{
-			// Set the cache key based on the database instance name and SQL
-			$cache_key = 'Database_Connection::query("'.$db.'", "'.$sql.'")';
-
-			if ($result = Kohana::cache($cache_key, NULL, $this->_lifetime))
-			{
-				// Return a cached result
-				return new Database_Result_Cached($result, $sql, $this->_as_object);
-			}
-		}
-*/
-
 		switch(strtoupper(substr($sql, 0, 6)))
 		{
 			case 'SELECT':
@@ -226,18 +223,28 @@ class Database_Query
 				$this->_type = \DB::INSERT;
 				break;
 		}
+		
+		if ( ! empty($this->_lifetime) and $this->_type === DB::SELECT)
+		{
+			$cache = \Cache::forge(md5('Database_Connection::query("'.$db.'", "'.$sql.'")'));
+			try
+			{
+				$result = $cache->get();
+				return new Database_Result_Cached($result, $sql, $this->_as_object);
+			}
+			catch (CacheNotFoundException $e) {}
+		}
 
 		\DB::$query_count++;
 		// Execute the query
 		$result = $db->query($this->_type, $sql, $this->_as_object);
 
-/*		if (isset($cache_key))
+		if (isset($cache))
 		{
-			// Cache the result array
-			Kohana::cache($cache_key, $result->as_array(), $this->_lifetime);
+			$cache->set_expiration($this->_lifetime)->set_contents($result->as_array())->set();
 		}
-*/
+
 		return $result;
 	}
 
-} // End Database_Query
+}

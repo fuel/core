@@ -83,14 +83,23 @@ class Request
 	 *     Request::forge('hello/world');
 	 *
 	 * @param   string   The URI of the request
-	 * @param   bool     Whether to use the routes to determine the Controller and Action
+	 * @param   mixed    Internal: whether to use the routes; external: driver type or array with settings (driver key must be set)
 	 * @return  Request  The new request object
 	 */
-	public static function forge($uri = null, $route = true)
+	public static function forge($uri = null, $options = true)
 	{
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
-		$request = new static($uri, $route);
+		is_bool($options) and $options = array('route' => $options);
+		is_string($options) and $options = array('driver' => $options);
+
+		if ( ! empty($options['driver']))
+		{
+			$class = \Inflector::words_to_upper('Request_'.$options['driver']);
+			return $class::forge($uri, $options);
+		}
+
+		$request = new static($uri, isset($options['route']) ? $options['route'] : true);
 		if (static::$active)
 		{
 			$request->parent = static::$active;
