@@ -229,7 +229,7 @@ class DBUtil
 		{
 			$sql .= ' ('.\DB::quote_identifier($index_columns).')';
 		}
-\Debug::dump($sql);die();
+
 		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
 
