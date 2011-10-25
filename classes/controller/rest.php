@@ -156,9 +156,9 @@ abstract class Controller_Rest extends \Controller
 	protected function _detect_format()
 	{
 		// A format has been passed as an argument in the URL and it is supported
-		if (\Input::get_post('format') and $this->_supported_formats[\Input::get_post('format')])
+		if (\Input::param('format') and $this->_supported_formats[\Input::param('format')])
 		{
-			return \Input::get_post('format');
+			return \Input::param('format');
 		}
 
 		// Otherwise, check the HTTP_ACCEPT (if it exists and we are allowed)
