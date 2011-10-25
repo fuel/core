@@ -440,7 +440,7 @@ class Arr
 
 		foreach ($array as $k=>$v)
 		{
-			$b[$k] = static::element($v, $key);
+			$b[$k] = static::get($v, $key);
 		}
 
 		switch ($order)
