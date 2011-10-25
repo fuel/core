@@ -85,7 +85,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		}
 		else
 		{
-			$config['where'] = array($column => array($operator, $value));
+			$config['where'] = array(array($column, $operator, $value));
 		}
 
 		$result = static::find($config);
@@ -124,7 +124,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			}
 			else
 			{
-				$config['where'] = array($column => array($operator, $value));
+				$config['where'] = array(array($column, $operator, $value));
 			}
 		}
 
