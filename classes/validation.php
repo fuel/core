@@ -168,7 +168,7 @@ class Validation
 	 * @param   string      Field name
 	 * @param   string      Field label
 	 * @param   string      Rules as a piped string
-	 * @return  Validation  $this to allow chaining
+	 * @return  Fieldset_Field  $this to allow chaining
 	 */
 	public function add_field($name, $label, $rules)
 	{
