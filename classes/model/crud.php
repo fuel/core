@@ -159,32 +159,39 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			->from(static::$_table_name)
 			->as_object(get_called_class());
 
-		$config = $config + array(
-			'select' => array('*'),
-			'where' => array(),
-			'order_by' => array(),
-			'limit' => null,
-			'offset' => 0,
-		);
-
-		extract($config);
-
-		is_string($select) and $select = array($select);
-		$query->select_array($select);
-
-		if ( ! empty($where))
+		if ($config instanceof \Closure)
 		{
-			$query->where($where);
+			$query = $config($query);
 		}
-
-		foreach ($order_by as $_field => $_direction)
+		else
 		{
-			$query->order_by($_field, $_direction);
-		}
+			$config = $config + array(
+				'select' => array('*'),
+				'where' => array(),
+				'order_by' => array(),
+				'limit' => null,
+				'offset' => 0,
+			);
 
-		if ($limit !== null)
-		{
-			$query = $query->limit($limit)->offset($offset);
+			extract($config);
+
+			is_string($select) and $select = array($select);
+			$query->select_array($select);
+
+			if ( ! empty($where))
+			{
+				$query->where($where);
+			}
+
+			foreach ($order_by as $_field => $_direction)
+			{
+				$query->order_by($_field, $_direction);
+			}
+
+			if ($limit !== null)
+			{
+				$query = $query->limit($limit)->offset($offset);
+			}
 		}
 
 		$query = static::pre_find($query);
