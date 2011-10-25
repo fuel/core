@@ -33,7 +33,7 @@ class Arr
 	 */
 	public static function get($array, $key, $default = null)
 	{
-		if ( ! is_array($array) or $array instanceof \ArrayAccess)
+		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
 		{
 			throw new \InvalidArgumentException('First parameter must be an array or ArrayAccess object.');
 		}
@@ -106,7 +106,7 @@ class Arr
 
 		$array[array_shift($keys)] = $value;
 	}
-	
+
 	/**
 	 * Array_key_exists with a dot-notated key from an array.
 	 *
@@ -577,7 +577,7 @@ class Arr
 
 		return $array;
 	}
-	
+
 	/**
 	 * Prepends a value with an asociative key to an array.
 	 * Will overwrite if the value exists.
