@@ -808,7 +808,7 @@ class Validation
 			{
 				$flags = array('alpha', 'numeric', 'dashes');
 			}
-			elseif ($flags == 'integer')
+			elseif ($flags == 'integer' or $flags == 'numeric')
 			{
 				$flags = array('numeric');
 			}

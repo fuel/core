@@ -384,100 +384,96 @@ class Request
 			throw new \HttpNotFoundException();
 		}
 
-		if ($this->route->callable !== null)
+		try
 		{
-			logger(\Fuel::L_INFO, 'Calling closure', __METHOD__);
-			try
+			if ($this->route->callable !== null)
 			{
 				$response = call_user_func_array($this->route->callable, array($this));
 			}
-			catch (HttpNotFoundException $e)
+			else
 			{
-				static::reset_request();
-				throw $e;
-			}
-		}
-		else
-		{
-			$method_prefix = 'action_';
-			$class = $this->controller;
+				$method_prefix = 'action_';
+				$class = $this->controller;
 
-			// If the class doesn't exist then 404
-			if ( ! class_exists($class))
-			{
-				static::reset_request();
-				throw new \HttpNotFoundException();
-			}
-
-			logger(\Fuel::L_INFO, 'Loading controller '.$class, __METHOD__);
-			$this->controller_instance = $controller = new $class($this, new \Response);
-
-			$this->action = $this->action ?: (property_exists($controller, 'default_action') ? $controller->default_action : 'index');
-			$method = $method_prefix.$this->action;
-
-			// Allow override of method params from execute
-			if (is_array($method_params))
-			{
-				$this->method_params = array_merge($this->method_params, $method_params);
-			}
-
-			// Allow to do in controller routing if method router(action, params) exists
-			if (method_exists($controller, 'router'))
-			{
-				$method = 'router';
-				$this->method_params = array($this->action, $this->method_params);
-			}
-
-			if (is_callable(array($controller, $method)))
-			{
-				// Call the before method if it exists
-				if (method_exists($controller, 'before'))
+				// Allow override of method params from execute
+				if (is_array($method_params))
 				{
-					logger(\Fuel::L_INFO, 'Calling '.$class.'::before', __METHOD__);
-					$controller->before();
+					$this->method_params = array_merge($this->method_params, $method_params);
 				}
 
-				logger(\Fuel::L_INFO, 'Calling '.$class.'::'.$method, __METHOD__);
-				try
+				// If the class doesn't exist then 404
+				if ( ! class_exists($class))
 				{
-					$response = call_user_func_array(array($controller, $method), $this->method_params);
-				}
-				catch (HttpNotFoundException $e)
-				{
-					static::reset_request();
-					throw $e;
+					throw new \HttpNotFoundException();
 				}
 
-				// Call the after method if it exists
-				if (method_exists($controller, 'after'))
+				// Load the controller using reflection
+				$class = new \ReflectionClass($class);
+
+				if ($class->isAbstract())
 				{
-					logger(\Fuel::L_INFO, 'Calling '.$class.'::after', __METHOD__);
-					$response_after = $controller->after($response);
+					throw new \HttpNotFoundException();
+				}
+
+				$this->action = $this->action ?: ($class->hasProperty('default_action') ? $class->getProperty('default_action') : 'index');
+				$method = $method_prefix.$this->action;
+
+
+				// Create a new instance of the controller
+				$this->controller_instance = $class->newInstance($this, new \Response);
+
+
+				// Allow to do in controller routing if method router(action, params) exists
+				if ($class->hasMethod('router'))
+				{
+					$method = 'router';
+					$this->method_params = array($this->action, $this->method_params);
+				}
+
+				if ($class->hasMethod($method))
+				{
+					$action = $class->getMethod($method);
+
+					if ( ! $action->isPublic())
+					{
+						throw new \HttpNotFoundException();
+					}
+
+					$class->getMethod('before')->invoke($this->controller_instance);
+
+					$response = $action->invokeArgs($this->controller_instance, $this->method_params);
+
+					$response_after = $class->getMethod('after')->invoke($this->controller_instance, $response);
 
 					// @TODO let the after method set the response directly
 					if (is_null($response_after))
 					{
-						logger(\Fuel::L_WARNING, 'The '.get_class($controller).'::after() method should accept and return the Controller\'s response, empty return for the after() method is deprecated.', __METHOD__);
+						logger(\Fuel::L_WARNING, 'The '.$class->getName().'::after() method should accept and return the Controller\'s response, empty return for the after() method is deprecated.', __METHOD__);
 					}
 					else
 					{
 						$response = $response_after;
 					}
 				}
-			}
-			else
-			{
-				static::reset_request();
-				throw new \HttpNotFoundException();
+				else
+				{
+					throw new \HttpNotFoundException();
+				}
 			}
 		}
+		catch (\Exception $e)
+		{
+			static::reset_request();
+			throw $e;
+		}
+
 
 		// Get the controller's output
 		if (is_null($response))
 		{
 			// @TODO remove this in a future version as we will get rid of it.
-			logger(\Fuel::L_WARNING, 'The '.get_class($controller).' controller should return a string or a Response object, support for the $controller->response object is deprecated.', __METHOD__);
-			$this->response = $controller->response;
+			logger(\Fuel::L_WARNING, 'The '.$class->getName().' controller should return a string or a Response object, support for the $controller->response object is deprecated.', __METHOD__);
+			$this->response = $this->controller_instance->response;
 		}
 		elseif ($response instanceof \Response)
 		{
