@@ -197,7 +197,7 @@ class Image_Imagemagick extends \Image_Driver
 		$old = '"'.$this->image_temp.'"';
 		$new = '"'.$filename.'"';
 		
-		if(($filetype == 'jpeg' || $filetype == 'jpg') and $this->config['quality'] != 100)
+		if(($filetype == 'jpeg' or $filetype == 'jpg') and $this->config['quality'] != 100)
 		{
 			$quality = '"'.$this->config['quality'].'%"';
 			$this->exec('convert', $old.' -quality '.$quality.' '.strtolower($filetype).' '.$new);
@@ -224,7 +224,7 @@ class Image_Imagemagick extends \Image_Driver
 		
 		$image = '"'.$this->image_temp.'"';
 		
-		if(($filetype == 'jpeg' || $filetype == 'jpg') and $this->config['quality'] != 100)
+		if(($filetype == 'jpeg' or $filetype == 'jpg') and $this->config['quality'] != 100)
 		{
 			$quality = '"'.$this->config['quality'].'%"';
 			$this->exec('convert', $image.' -quality '.$quality.' '.strtolower($filetype).':-', true);
