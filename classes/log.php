@@ -26,6 +26,13 @@ class Log
 	public static function _init()
 	{
 		\Config::load('file', true);
+
+		// make sure the configured chmod values are octal
+		$chmod = \Config::get('file.chmod.folders', 0777);
+		is_string($chmod) and \Config::set('file.chmod.folders', octdec($chmod));
+
+		$chmod = \Config::get('file.chmod.files', 0666);
+		is_string($chmod) and \Config::set('file.chmod.files', octdec($chmod));
 	}
 
 	/**
@@ -111,9 +118,8 @@ class Log
 		if ( ! is_dir($filepath))
 		{
 			$old = umask(0);
-			
+
 			mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
-			chmod($filepath, \Config::get('file.chmod.folders', 0777));
 			umask($old);
 		}
 
