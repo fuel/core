@@ -322,7 +322,7 @@ class Input
 	 */
 	public static function file($index = null, $default = null)
 	{
-		return (is_null($index) and func_num_args() === 0) ? $_FILE : \Arr::get($_FILE, $index, $default);
+		return (is_null($index) and func_num_args() === 0) ? $_FILES : \Arr::get($_FILES, $index, $default);
 	}
 
 	/**
