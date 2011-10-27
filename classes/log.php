@@ -111,8 +111,9 @@ class Log
 		if ( ! is_dir($filepath))
 		{
 			$old = umask(0);
-			mkdir($filepath, octdec(\Config::get('file.chmod.folders', 0777)), true);
-			chmod($filepath, octdec(\Config::get('file.chmod.folders', 0777)));
+			
+			mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
+			chmod($filepath, \Config::get('file.chmod.folders', 0777));
 			umask($old);
 		}
 
@@ -148,7 +149,7 @@ class Log
 		if ( ! $exists)
 		{
 			$old = umask(0);
-			@chmod($filename, octdec(\Config::get('file.chmod.files', 0666)));
+			@chmod($filename, \Config::get('file.chmod.files', 0666));
 			umask($old);
 		}
 
