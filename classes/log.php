@@ -113,7 +113,6 @@ class Log
 			$old = umask(0);
 			
 			mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
-			chmod($filepath, \Config::get('file.chmod.folders', 0777));
 			umask($old);
 		}
 
