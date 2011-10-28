@@ -25,7 +25,7 @@ class Database_Query
 	 * @var  int  Cache lifetime
 	 */
 	protected $_lifetime;
-	
+
 	/**
 	 * @var  string  Cache key
 	 */
@@ -229,10 +229,11 @@ class Database_Query
 				$this->_type = \DB::INSERT;
 				break;
 		}
-		
+
 		if ( ! empty($this->_lifetime) and $this->_type === DB::SELECT)
 		{
-			$cache_key = empty($this->_cache_key) ? md5('Database_Connection::query("'.$db.'", "'.$sql.'")') : $this->_cache_key;
+			$cache_key = empty($this->_cache_key) ?
+				'db.'.md5('Database_Connection::query("'.$db.'", "'.$sql.'")') : $this->_cache_key;
 			$cache = \Cache::forge($cache_key);
 			try
 			{
