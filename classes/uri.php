@@ -95,7 +95,7 @@ class Uri
 		$uri = $uri ?: static::string();
 
 		// If the given uri is not a full URL
-		if( ! preg_match("#^(http|https|ftp)://#i", $uri))
+		if( ! preg_match("#^(http|https|ftp|mailto)://#i", $uri))
 		{
 			$url .= \Config::get('base_url');
 
