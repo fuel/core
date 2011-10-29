@@ -187,6 +187,10 @@ class Validation
 				{
 					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), array($param[1])));
 				}
+				elseif (in_array($rule, array('valid_string')))
+				{
+					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), array(explode(',', $param[1]))));
+				}
 				else
 				{
 					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), explode(',', $param[1])));
