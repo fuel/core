@@ -18,7 +18,7 @@ class Image_Imagemagick extends \Image_Driver
 {
 
 	private $image_temp = null;
-	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
+	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg', 'bmp');
 	private $size_cache = null;
 	private $im_path = null;
 

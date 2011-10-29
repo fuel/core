@@ -18,7 +18,7 @@ class Image_Gd extends \Image_Driver
 {
 
 	private $image_data = null;
-	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
+	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg', 'bmp');
 	protected $gdresizefunc = "imagecopyresampled";
 
 	public function load($filename, $return_data = false)
@@ -523,5 +523,218 @@ class Image_Gd extends \Image_Driver
 		imagealphablending($image, false);
 		imagecopymerge($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height, $alpha);
 		imagealphablending($image, true);
+	}
+}
+
+/**
+ * Workaround for GD2 lack of BMP support
+ * 
+ * @param	string		Filename
+ * @return	resource	GD2 image
+ */
+if( ! function_exists('imagecreatefrombmp'))
+{
+	function imagecreatefrombmp($src) {
+		// Open source file for reading
+		if(!($srch = fopen($src, 'rb')))
+		{
+			throw new \OutOfBoundsException("Image file $src does not exist.");
+		}
+	
+		// Get the headers
+		extract(unpack('vtype/Vsize/Vreserved/Voffset/Vsize/Vwidth/Vheight/vplanes/vbits/Vcompression/Vimagesize/Vxres/Vyres/Vcolor/Vimportant', fread($srch, 54)));
+	
+		// Check for BMP signature
+		if($type != 0x4D42)
+		{
+			throw new \InvalidArgumentException('Source image is not a BMP.');
+		}
+		
+		// Create the temp file to handle
+		$tmpfile = tempnam(APPPATH.'tmp'.DS, uniqid('bmp2gd'));
+		$fp = fopen($tmpfile, 'wb');
+	
+		// Set the pallete
+		$palette_size = $offset - 54;
+		$ncolor = $palette_size / 4;
+	
+		// True-color vs. palette
+		$gd_header = ($palette_size == 0)?"\xFF\xFE":"\xFF\xFF";
+		$gd_header .= pack('n2', $width, $height);
+		$gd_header .= ($palette_size == 0)?"\x01":"\x00";
+		if ($palette_size) { $gd_header .= pack('n', $ncolor); }
+		
+		// Do not allow transparency
+		$gd_header .= "\xFF\xFF\xFF\xFF";
+		
+		// Write the destination headers
+		fwrite($fp, $gd_header);
+		unset($gd_header);
+	
+		// if we have a palette
+		if ($palette_size) {
+			// read the palette
+			$palette = fread($srch, $palette_size);
+			// begin the gd palette
+			$gd_palette = '';
+			$j = 0;
+			// loop of the palette
+			while ($j < $palette_size) {
+				$b = $palette{$j++};
+				$g = $palette{$j++};
+				$r = $palette{$j++};
+				$a = $palette{$j++};
+				// assemble the gd palette
+				$gd_palette .= $r.$g.$b.$a;
+			}
+			// finish the palette
+			$gd_palette .= str_repeat("\x00\x00\x00\x00", 256 - $ncolor);
+			// write the gd palette
+			fwrite($fp, $gd_palette);
+			unset($gd_palette);
+		}
+	
+		// scan line size and alignment
+		$scan_line_size = (($bits * $width) + 7) >> 3;
+		$scan_line_align = ($scan_line_size & 0x03) ? 4 - ($scan_line_size & 0x03):0;
+	
+		// main loop
+		for ($i = 0, $l = $height - 1; $i < $height; $i++, $l--) {
+			// create scan lines starting from bottom
+			fseek($srch, $offset + (($scan_line_size + $scan_line_align) * $l));
+			$scan_line = fread($srch, $scan_line_size);
+			$gd_scan_line = '';
+			if($bits == 24) {
+				$j = 0;
+				while($j < $scan_line_size) {
+					$b = $scan_line{$j++};
+					$g = $scan_line{$j++};
+					$r = $scan_line{$j++};
+					$gd_scan_line .= "\x00".$r.$g.$b;
+				}
+			}
+			elseif($bits == 8) { $gd_scan_line = $scan_line; }
+			elseif($bits == 4) {
+				$j = 0;
+				while($j < $scan_line_size) {
+					$byte = ord($scan_line{$j++});
+					$p1 = chr($byte >> 4);
+					$p2 = chr($byte & 0x0F);
+					$gd_scan_line .= $p1.$p2;
+				}
+				$gd_scan_line = substr($gd_scan_line, 0, $width);
+			}
+			elseif($bits == 1) {
+			  $j = 0;
+			  while($j < $scan_line_size) {
+				  $byte = ord($scan_line{$j++});
+				  $p1 = chr((int) (($byte & 0x80) != 0));
+				  $p2 = chr((int) (($byte & 0x40) != 0));
+				  $p3 = chr((int) (($byte & 0x20) != 0));
+				  $p4 = chr((int) (($byte & 0x10) != 0));
+				  $p5 = chr((int) (($byte & 0x08) != 0));
+				  $p6 = chr((int) (($byte & 0x04) != 0));
+				  $p7 = chr((int) (($byte & 0x02) != 0));
+				  $p8 = chr((int) (($byte & 0x01) != 0));
+				  $gd_scan_line .= $p1.$p2.$p3.$p4.$p5.$p6.$p7.$p8;
+			  }
+				// put the gd scan lines together
+				$gd_scan_line = substr($gd_scan_line, 0, $width);
+			}
+			// write the gd scan lines
+			fwrite($fp, $gd_scan_line);
+			unset($gd_scan_line);
+		}
+		// close the source file
+		fclose($fp);
+		
+		$gd = imagecreatefromgd($tmpfile);
+		unlink($tmpfile);
+		
+		return $gd;
+	}
+}
+
+/**
+ * Workaround for GD2 lack of BMP support
+ * 
+ * @param	resource	GD Image
+ * @param	string		(optional) Filename to save the image, instead output to the browser
+ * @return	void
+ */
+if( ! function_exists('imagebmp'))
+{
+	function imagebmp($gd_image, $filename = null){
+		
+		if( ! is_resource($gd_image))
+		{
+			throw new \InvalidArgumentException("Input image is not a valid GD resource.");
+		}
+		
+		if($filename !== null and ! is_file($filename))
+		{
+			throw new \OutOfBoundsException("File $filename not found!");
+		}
+		
+		if($filename !== null and ! is_writable($filename))
+		{
+			throw new \OutOfBoundsException("You don't have permissions to write to file $filename.");
+		}
+		
+		// Helper function for generate header
+		$LittleEndian2String = function ($number, $minbytes=1) {
+			$intstring = '';
+			while ($number > 0) {
+				$intstring = $intstring.chr($number & 255);
+				$number >>= 8;
+			}
+			return str_pad($intstring, $minbytes, "\x00", STR_PAD_RIGHT);
+		};
+		
+		$imageX = imagesx($gd_image);
+		$imageY = imagesy($gd_image);
+
+		$raw = '';
+		for ($y = ($imageY - 1); $y >= 0; $y--) {
+			$thisline = '';
+			for ($x = 0; $x < $imageX; $x++) {
+				$argb = imagecolorsforindex($gd_image, imagecolorat($gd_image, $x, $y));
+				$thisline .= chr($argb['blue']).chr($argb['green']).chr($argb['red']);
+			}
+			while (strlen($thisline) % 4) {
+				$thisline .= "\x00";
+			}
+			$raw .= $thisline;
+		}
+
+		$bmpSize = strlen($raw) + 54;
+		// BITMAPFILEHEADER [14 bytes] - http://msdn.microsoft.com/library/en-us/gdi/bitmaps_62uq.asp
+		$header  = 'BM';                                                           // WORD    bfType;
+		$header .= $LittleEndian2String($bmpSize, 4); // DWORD   bfSize;
+		$header .= $LittleEndian2String(       0, 2); // WORD    bfReserved1;
+		$header .= $LittleEndian2String(       0, 2); // WORD    bfReserved2;
+		$header .= $LittleEndian2String(      54, 4); // DWORD   bfOffBits;
+
+		// BITMAPINFOHEADER - [40 bytes] http://msdn.microsoft.com/library/en-us/gdi/bitmaps_1rw2.asp
+		$header .= $LittleEndian2String(      40, 4); // DWORD  biSize;
+		$header .= $LittleEndian2String( $imageX, 4); // LONG   biWidth;
+		$header .= $LittleEndian2String( $imageY, 4); // LONG   biHeight;
+		$header .= $LittleEndian2String(       1, 2); // WORD   biPlanes;
+		$header .= $LittleEndian2String(      24, 2); // WORD   biBitCount;
+		$header .= $LittleEndian2String(       0, 4); // DWORD  biCompression;
+		$header .= $LittleEndian2String(       0, 4); // DWORD  biSizeImage;
+		$header .= $LittleEndian2String(    2835, 4); // LONG   biXPelsPerMeter;
+		$header .= $LittleEndian2String(    2835, 4); // LONG   biYPelsPerMeter;
+		$header .= $LittleEndian2String(       0, 4); // DWORD  biClrUsed;
+		$header .= $LittleEndian2String(       0, 4); // DWORD  biClrImportant;
+
+		if($filename === null)
+		{
+			echo $header.$raw;
+		}
+		else
+		{
+			file_put_contents($filename, $header.$raw);
+		}
 	}
 }
