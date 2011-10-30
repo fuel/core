@@ -129,11 +129,6 @@ class Request_Curl extends \Request_Driver
 			}
 		}
 
-		if ( ! empty($this->headers))
-		{
-			$this->set_option(CURLOPT_HTTPHEADER, $this->get_headers());
-		}
-
 		$additional_params and $this->params = \Arr::merge($this->params, $additional_params);
 
 		if ( ! empty($this->options[CURLOPT_CUSTOMREQUEST]))
@@ -147,7 +142,25 @@ class Request_Curl extends \Request_Driver
 
 		$connection = $this->connection();
 
-		curl_setopt_array($connection, $this->options);
+		$temp_headers = array();
+		if ( ! empty($this->headers))
+		{	
+			if ( is_array($this->headers) )
+			{
+				//format headers for cURL
+				foreach ($this->headers as $k => $v)
+				{
+					$temp_headers[] = $k . ': ' . $v;
+				}
+			}
+			else
+			{
+				//assume headers are already formatted for cURL
+				$temp_headers = array($this->headers);
+			}			
+		}
+		
+		curl_setopt_array($connection, \Arr::merge($this->options, array(CURLOPT_HTTPHEADER => $temp_headers)));
 
 		// Execute the request & and hide all output
 		$body = curl_exec($connection);
