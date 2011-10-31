@@ -210,7 +210,11 @@ class Fuel
 		\Router::add(\Config::get('routes'));
 
 		// Set  locale
-		static::$locale and setlocale(LC_ALL, static::$locale);
+		if (!empty(static::$locale))
+		{
+			setlocale(LC_ALL, static::$locale, static::$locale.'.'.strtolower(str_replace('-', '', static::$encoding)))
+			or logger(\Fuel::L_WARNING, 'The configured locale '.static::$locale.' is not installed on your system.', __METHOD__);
+		}
 
 		static::$initialized = true;
 
