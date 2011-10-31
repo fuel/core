@@ -441,11 +441,12 @@ class Fieldset_Field
 				break;
 		}
 
-		$output = $this->type != 'hidden'
-			? $this->template($build_field)
-			: "\t\t".$build_field.PHP_EOL;
+		if (empty($build_field) or $this->type == 'hidden')
+		{
+			return $build_field;
+		}
 
-		return $output;
+		return $this->template($build_field);
 	}
 
 	protected function template($build_field)
