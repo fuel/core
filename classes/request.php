@@ -415,13 +415,11 @@ class Request
 					throw new \HttpNotFoundException();
 				}
 
-				$this->action = $this->action ?: ($class->hasProperty('default_action') ? $class->getProperty('default_action') : 'index');
-				$method = $method_prefix.$this->action;
-
-
 				// Create a new instance of the controller
 				$this->controller_instance = $class->newInstance($this, new \Response);
 
+				$this->action = $this->action ?: ($class->hasProperty('default_action') ? $class->getProperty('default_action')->getValue($this->controller_instance) : 'index');
+				$method = $method_prefix.$this->action;
 
 				// Allow to do in controller routing if method router(action, params) exists
 				if ($class->hasMethod('router'))
