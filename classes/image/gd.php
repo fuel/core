@@ -34,11 +34,11 @@ class Image_Gd extends \Image_Driver
 		}
 
 		// Check if the function exists
-		if (function_exists('imagecreatefrom'.$image_extension))
+		if (function_exists(($function_name = 'imagecreatefrom'.$image_extension)) or is_callable(($function_name = array($this, 'imagecreatefrom'.$image_extension))))
 		{
 			// Create a new transparent image.
 			$sizes = $this->sizes($image_fullpath);
-			$tmpImage = call_user_func('imagecreatefrom'.$image_extension, $image_fullpath);
+			$tmpImage = call_user_func($function_name, $image_fullpath);
 			$image = $this->create_transparent_image($sizes->width, $sizes->height, $tmpImage);
 			if ( ! $return_data)
 			{
@@ -302,7 +302,10 @@ class Image_Gd extends \Image_Driver
 			$vars[] = floor(($this->config['quality'] / 100) * 9);
 		}
 
-		call_user_func_array('image'.$filetype, $vars);
+		is_callable(($function_name = array($this, 'image'.$filetype))) or $function_name = 'image'.$filetype;
+
+		call_user_func_array($function_name, $vars);
+
 		if ($this->config['persistence'] === false)
 		{
 			$this->reload();
@@ -330,8 +333,10 @@ class Image_Gd extends \Image_Driver
 		{
 			$vars[] = floor(($this->config['quality'] / 100) * 9);
 		}
+		
+		is_callable(($function_name = array($this, 'image'.$filetype))) or $function_name = 'image'.$filetype;
 
-		call_user_func_array('image'.$filetype, $vars);
+		call_user_func_array($function_name, $vars);
 
 		if ($this->config['persistence'] === false)
 		{
@@ -524,17 +529,127 @@ class Image_Gd extends \Image_Driver
 		imagecopymerge($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height, $alpha);
 		imagealphablending($image, true);
 	}
-}
+	
+	/**
+	 * Output BMP image to browser or file.
+	 * 
+	 * @copyright	Original code from Worf Data (2006) released under public domain and adapted for FuelPHP by Kriansa
+	 * @link		http://www.phpclasses.org/package/3391-PHP-Generate-a-file-in-BMP-format-from-a-GD-image.html
+	 * @param		resource	GD Image
+	 * @param		string		Filename to save the image, instead output to the browser
+	 */
+	public static function imagebmp($img, $filename = null)
+	{
+		
+		if( ! is_resource($img))
+		{
+			throw new \InvalidArgumentException("Input image is not a valid GD resource.");
+		}
+		
+		if($filename !== null and ! is_file($filename))
+		{
+			throw new \OutOfBoundsException("File $filename not found!");
+		}
+		
+		if($filename !== null and ! is_writable($filename))
+		{
+			throw new \OutOfBoundsException("You don't have permissions to write to file $filename.");
+		}
+		
+		// Helper functions to handle with header
+		$int_to_dword = function($n){
+	      return chr($n & 255).chr(($n >> 8) & 255).chr(($n >> 16) & 255).chr(($n >> 24) & 255);
+	    };
+		
+	    $int_to_word = function($n){
+	      return chr($n & 255).chr(($n >> 8) & 255);
+	    };
+		
+		// And here we go
+		
+		$widthOrig = imagesx($img);
+		// width = 16*x
+		$widthFloor = ((floor($widthOrig/16))*16);
+		$widthCeil = ((ceil($widthOrig/16))*16);
+		$height = imagesy($img);
+  
+		$size = ($widthCeil*$height*3)+54;
+  
+		// Bitmap File Header
+		$result = 'BM';     // header (2b)
+		$result .= $int_to_dword($size); // size of file (4b)
+		$result .= $int_to_dword(0); // reserved (4b)
+		$result .= $int_to_dword(54);  // byte location in the file which is first byte of IMAGE (4b)
+		// Bitmap Info Header
+		$result .= $int_to_dword(40);  // Size of BITMAPINFOHEADER (4b)
+		$result .= $int_to_dword($widthCeil);  // width of bitmap (4b)
+		$result .= $int_to_dword($height); // height of bitmap (4b)
+		$result .= $int_to_word(1);  // biPlanes = 1 (2b)
+		$result .= $int_to_word(24); // biBitCount = {1 (mono) or 4 (16 clr ) or 8 (256 clr) or 24 (16 Mil)} (2b)
+		$result .= $int_to_dword(0); // RLE COMPRESSION (4b)
+		$result .= $int_to_dword(0); // width x height (4b)
+		$result .= $int_to_dword(0); // biXPelsPerMeter (4b)
+		$result .= $int_to_dword(0); // biYPelsPerMeter (4b)
+		$result .= $int_to_dword(0); // Number of palettes used (4b)
+		$result .= $int_to_dword(0); // Number of important colour (4b)
+		
+		// is faster than chr()
+		$arrChr = array();
+		for($i=0; $i<256; $i++){
+			$arrChr[$i] = chr($i);
+		}
+  
+		// creates image data
+		$bgfillcolor = array("red"=>0, "green"=>0, "blue"=>0);
+  
+		// bottom to top - left to right - attention blue green red !!!
+		$y=$height-1;
+		for ($y2=0; $y2<$height; $y2++) {
+			for ($x=0; $x<$widthFloor;  ) {
+				$rgb = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+				$rgb = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+				$rgb = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+				$rgb = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+				$rgb = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+				$rgb = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+				$rgb = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+				$rgb = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+			}
+			for ($x=$widthFloor; $x<$widthCeil; $x++) {
+				$rgb = ($x<$widthOrig) ? imagecolorsforindex($img, imagecolorat($img, $x, $y)) : $bgfillcolor;
+				$result .= $arrChr[$rgb["blue"]].$arrChr[$rgb["green"]].$arrChr[$rgb["red"]];
+			}
+			$y--;
+		}
 
-/**
- * Workaround for GD2 lack of BMP support
- * 
- * @param	string		Filename
- * @return	resource	GD2 image
- */
-if( ! function_exists('imagecreatefrombmp'))
-{
-	function imagecreatefrombmp($src) {
+		if($filename === null)
+		{
+			echo $result;
+		}
+		else
+		{
+			file_put_contents($filename, $result);
+		}
+	}
+
+	/**
+	 * Create a new image from file or URL
+	 * 
+	 * @copyright	Code taken from PHPRO and adapted for FuelPHP by Kriansa
+	 * @link		http://www.phpro.org/examples/Convert-BMP-to-JPG.html
+	 * @param		string		Filename
+	 * @return		resource	GD2 image
+	 */
+	public static function imagecreatefrombmp($src)
+	{
 		// Open source file for reading
 		if(!($srch = fopen($src, 'rb')))
 		{
@@ -652,89 +767,5 @@ if( ! function_exists('imagecreatefrombmp'))
 		unlink($tmpfile);
 		
 		return $gd;
-	}
-}
-
-/**
- * Workaround for GD2 lack of BMP support
- * 
- * @param	resource	GD Image
- * @param	string		(optional) Filename to save the image, instead output to the browser
- * @return	void
- */
-if( ! function_exists('imagebmp'))
-{
-	function imagebmp($gd_image, $filename = null){
-		
-		if( ! is_resource($gd_image))
-		{
-			throw new \InvalidArgumentException("Input image is not a valid GD resource.");
-		}
-		
-		if($filename !== null and ! is_file($filename))
-		{
-			throw new \OutOfBoundsException("File $filename not found!");
-		}
-		
-		if($filename !== null and ! is_writable($filename))
-		{
-			throw new \OutOfBoundsException("You don't have permissions to write to file $filename.");
-		}
-		
-		// Helper function for generate header
-		$LittleEndian2String = function ($number, $minbytes=1) {
-			$intstring = '';
-			while ($number > 0) {
-				$intstring = $intstring.chr($number & 255);
-				$number >>= 8;
-			}
-			return str_pad($intstring, $minbytes, "\x00", STR_PAD_RIGHT);
-		};
-		
-		$imageX = imagesx($gd_image);
-		$imageY = imagesy($gd_image);
-
-		$raw = '';
-		for ($y = ($imageY - 1); $y >= 0; $y--) {
-			$thisline = '';
-			for ($x = 0; $x < $imageX; $x++) {
-				$argb = imagecolorsforindex($gd_image, imagecolorat($gd_image, $x, $y));
-				$thisline .= chr($argb['blue']).chr($argb['green']).chr($argb['red']);
-			}
-			while (strlen($thisline) % 4) {
-				$thisline .= "\x00";
-			}
-			$raw .= $thisline;
-		}
-
-		$bmpSize = strlen($raw) + 54;
-		// BITMAPFILEHEADER [14 bytes] - http://msdn.microsoft.com/library/en-us/gdi/bitmaps_62uq.asp
-		$header  = 'BM';                                                           // WORD    bfType;
-		$header .= $LittleEndian2String($bmpSize, 4); // DWORD   bfSize;
-		$header .= $LittleEndian2String(       0, 2); // WORD    bfReserved1;
-		$header .= $LittleEndian2String(       0, 2); // WORD    bfReserved2;
-		$header .= $LittleEndian2String(      54, 4); // DWORD   bfOffBits;
-
-		// BITMAPINFOHEADER - [40 bytes] http://msdn.microsoft.com/library/en-us/gdi/bitmaps_1rw2.asp
-		$header .= $LittleEndian2String(      40, 4); // DWORD  biSize;
-		$header .= $LittleEndian2String( $imageX, 4); // LONG   biWidth;
-		$header .= $LittleEndian2String( $imageY, 4); // LONG   biHeight;
-		$header .= $LittleEndian2String(       1, 2); // WORD   biPlanes;
-		$header .= $LittleEndian2String(      24, 2); // WORD   biBitCount;
-		$header .= $LittleEndian2String(       0, 4); // DWORD  biCompression;
-		$header .= $LittleEndian2String(       0, 4); // DWORD  biSizeImage;
-		$header .= $LittleEndian2String(    2835, 4); // LONG   biXPelsPerMeter;
-		$header .= $LittleEndian2String(    2835, 4); // LONG   biYPelsPerMeter;
-		$header .= $LittleEndian2String(       0, 4); // DWORD  biClrUsed;
-		$header .= $LittleEndian2String(       0, 4); // DWORD  biClrImportant;
-
-		if($filename === null)
-		{
-			echo $header.$raw;
-		}
-		else
-		{
-			file_put_contents($filename, $header.$raw);
-		}
 	}
 }
