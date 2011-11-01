@@ -53,7 +53,6 @@ class Config
 		{
 			$info = pathinfo($file);
 			$type = isset($info['extension']) ? $info['extension'] : 'php';
-			$file = $info['filename'];
 			$class = '\\Config_'.ucfirst($type);
 
 			if (class_exists($class))
