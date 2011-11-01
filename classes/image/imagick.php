@@ -225,7 +225,7 @@ class Image_Imagick extends \Image_Driver
 			$this->imagick->setImageFormat($filetype);
 		}
 		
-		if($this->imagick->getImageFormat() == 'jpeg')
+		if($this->imagick->getImageFormat() == 'jpeg' and $this->config['quality'] != 100)
 		{
 			$this->imagick->setImageCompression(\Imagick::COMPRESSION_JPEG); 
 			$this->imagick->setImageCompressionQuality($this->config['quality']); 
