@@ -334,7 +334,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			throw new \Exception('Cannot modify a frozen row.');
 		}
 
-		$vars = $this->prep_values($this->to_array());
+		$vars = $this->to_array();
 
 		// Set default if there are any
 		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
@@ -352,6 +352,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				return false;
 			}
 		}
+		
+		$vars = $this->prep_values($vars);
 
 		if ($this->is_new())
 		{
