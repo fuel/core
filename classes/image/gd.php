@@ -351,7 +351,7 @@ class Image_Gd extends \Image_Driver
 	 */
 	protected function create_color(&$image, $hex, $alpha)
 	{
-		export($this->create_hex_color($hex));
+		extract($this->create_hex_color($hex));
 		
 		// Handling alpha is different among drivers
 		if ($hex == null)
