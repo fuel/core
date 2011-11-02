@@ -639,6 +639,26 @@ class Mongo_Db
 	}
 
 	/**
+	* Get one document based upon the passwed parameters
+	 *
+	 *	@param	string	$collection		the collection name
+	 *	@usage	$mongodb->get('foo');
+	 */
+	 public function get_one($collection = "")
+	{
+		if (empty($collection))
+		{
+			throw new \Mongo_DbException("In order to retrieve documents from MongoDB");
+		}
+
+		$returns = $this->db->{$collection}->findOne($this->wheres, $this->selects);
+
+		$this->_clear();
+
+		return $returns;
+	}
+
+	/**
 	 *	Count the documents based upon the passed parameters
 	 *
 	 *	@param	string	$collection		the collection name
