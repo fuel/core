@@ -218,22 +218,26 @@ class Pagination
 	 * @param string $value The text displayed in link
 	 * @return mixed    The next link
 	 */
-	public static function next_link($value)
+	public static function next_link($value = null)
 	{
 		if (static::$total_pages == 1)
 		{
 			return '';
 		}
 
+		$next;
+
 		if (static::$current_page == static::$total_pages)
 		{
-			return $value.static::$template['next_mark'];
+			$next = $value.static::$template['next_mark'];
 		}
 		else
 		{
-			$next_page = static::$current_page + 1;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']);
+			$uri = rtrim(static::$pagination_url, '/').'/'.(static::$current_page + 1);
+			$next = \Html::anchor($uri, $value.static::$template['next_mark']);
 		}
+
+		return static::$template['next_start'].$next.static::$template['next_end'];
 	}
 
 	// --------------------------------------------------------------------
@@ -245,24 +249,25 @@ class Pagination
 	 * @param string $value The text displayed in link
 	 * @return mixed    The previous link
 	 */
-	public static function prev_link($value)
+	public static function prev_link($value = null)
 	{
 		if (static::$total_pages == 1)
 		{
 			return '';
 		}
 
+		$previous;
+
 		if (static::$current_page == 1)
 		{
-			return static::$template['previous_mark'].$value;
+			$previous = static::$template['previous_mark'].$value;
 		}
 		else
 		{
-			$previous_page = static::$current_page - 1;
-			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value);
+			$previous_page = (static::$current_page == 2) ? '' : '/'.(static::$current_page -1);
+			$previous = \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value);
 		}
+
+		return static::$template['previous_start'].$previous.static::$template['previous_end'];
 	}
 }
-
-
