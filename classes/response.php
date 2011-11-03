@@ -137,7 +137,7 @@ class Response {
 	 */
 	public function __construct($body = null, $status = 200, array $headers = array())
 	{
-		foreach($headers as $k=>$v)
+		foreach($headers as $k => $v)
 		{
 			$this->set_header($k, $v);
 		}
