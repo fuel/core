@@ -52,7 +52,12 @@ class Config
 		elseif (is_string($file))
 		{
 			$info = pathinfo($file);
-			$type = isset($info['extension']) ? $info['extension'] : 'php';
+			$type = 'php';
+			if (isset($info['extension']))
+			{
+				$type = $info['extension'];
+				$file = substr($file, 0, -(strlen($type) + 1));
+			}
 			$class = '\\Config_'.ucfirst($type);
 
 			if (class_exists($class))
