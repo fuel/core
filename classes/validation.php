@@ -168,7 +168,7 @@ class Validation
 	 * @param   string      Field name
 	 * @param   string      Field label
 	 * @param   string      Rules as a piped string
-	 * @return  Validation  $this to allow chaining
+	 * @return  Fieldset_Field  $this to allow chaining
 	 */
 	public function add_field($name, $label, $rules)
 	{
@@ -186,6 +186,10 @@ class Validation
 				if (in_array($rule, array('match_pattern')))
 				{
 					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), array($param[1])));
+				}
+				elseif (in_array($rule, array('valid_string')))
+				{
+					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), array(explode(',', $param[1]))));
 				}
 				else
 				{
@@ -808,7 +812,7 @@ class Validation
 			{
 				$flags = array('alpha', 'numeric', 'dashes');
 			}
-			elseif ($flags == 'integer')
+			elseif ($flags == 'integer' or $flags == 'numeric')
 			{
 				$flags = array('numeric');
 			}

@@ -256,7 +256,7 @@ class Fieldset
 	{
 		if ($name instanceof Fieldset_Field)
 		{
-			if (empty($name->name) or $this->field($name->name) !== false)
+			if ($name->name == '' or $this->field($name->name) !== false)
 			{
 				throw new \RuntimeException('Fieldname empty or already exists in this Fieldset: "'.$name->name.'".');
 			}

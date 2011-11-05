@@ -162,7 +162,7 @@ abstract class Session_Driver
 	 * @param	string	name of the variable to get, default is 'session_id'
 	 * @return	mixed	contents of the requested variable, or false if not found
 	 */
-	public function key($name)
+	public function key($name = 'session_id')
 	{
 		return isset($this->keys[$name]) ? $this->keys[$name] : false;
 	}
@@ -449,7 +449,7 @@ abstract class Session_Driver
 	 protected function _get_cookie()
 	 {
 		// was the cookie posted?
-		$cookie = \Input::get_post($this->config['post_cookie_name'], false);
+		$cookie = \Input::param($this->config['post_cookie_name'], false);
 
 		// if not found, fetch the regular cookie
 		if ($cookie === false)

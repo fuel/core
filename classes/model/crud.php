@@ -85,7 +85,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		}
 		else
 		{
-			$config['where'] = array($column => array($operator, $value));
+			$config['where'] = array(array($column, $operator, $value));
 		}
 
 		$result = static::find($config);
@@ -124,7 +124,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			}
 			else
 			{
-				$config['where'] = array($column => array($operator, $value));
+				$config['where'] = array(array($column, $operator, $value));
 			}
 		}
 
@@ -159,39 +159,39 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			->from(static::$_table_name)
 			->as_object(get_called_class());
 
-		$config = $config + array(
-			'select' => array('*'),
-			'where' => array(),
-			'order_by' => array(),
-			'limit' => null,
-			'offset' => 0,
-		);
-
-		extract($config);
-
-		is_string($select) and $select = array($select);
-		$query->select_array($select);
-
-		foreach ($where as $_field => $_value)
+		if ($config instanceof \Closure)
 		{
-			$operator = '=';
-			if (is_array($_value))
+			$query = $config($query);
+		}
+		else
+		{
+			$config = $config + array(
+				'select' => array('*'),
+				'where' => array(),
+				'order_by' => array(),
+				'limit' => null,
+				'offset' => 0,
+			);
+
+			extract($config);
+
+			is_string($select) and $select = array($select);
+			$query->select_array($select);
+
+			if ( ! empty($where))
 			{
-				$operator = reset($_value);
-				$_value = end($_value);
+				$query->where($where);
 			}
 
-			$query->where($_field, $operator, $_value);
-		}
+			foreach ($order_by as $_field => $_direction)
+			{
+				$query->order_by($_field, $_direction);
+			}
 
-		foreach ($order_by as $_field => $_direction)
-		{
-			$query->order_by($_field, $_direction);
-		}
-
-		if ($limit !== null)
-		{
-			$query = $query->limit($limit)->offset($offset);
+			if ($limit !== null)
+			{
+				$query = $query->limit($limit)->offset($offset);
+			}
 		}
 
 		$query = static::pre_find($query);
@@ -334,7 +334,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			throw new \Exception('Cannot modify a frozen row.');
 		}
 
-		$vars = $this->prep_values($this->to_array());
+		$vars = $this->to_array();
 
 		// Set default if there are any
 		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
@@ -352,6 +352,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				return false;
 			}
 		}
+		
+		$vars = $this->prep_values($vars);
 
 		if ($this->is_new())
 		{

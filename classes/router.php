@@ -130,7 +130,7 @@ class Router
 	 */
 	protected static function parse_match($match)
 	{
-		$namespace = '\\';
+		$namespace = '';
 		$segments = $match->segments;
 		$module = false;
 
@@ -157,7 +157,7 @@ class Router
 		}
 	}
 
-	protected static function parse_segments($segments, $namespace = '\\', $module = false)
+	protected static function parse_segments($segments, $namespace = '', $module = false)
 	{
 		$temp_segments = $segments;
 

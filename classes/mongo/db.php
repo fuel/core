@@ -111,7 +111,7 @@ class Mongo_Db
 		{
 			\Config::load('db', true);
 		}
-		
+
 		if ( ! ($config = \Config::get('db.mongo.'.$name)))
 		{
 			throw new \Mongo_DbException('Invalid instance name given.');
@@ -294,13 +294,13 @@ class Mongo_Db
 	 *	@usage	$mongodb->where(array('foo' => 'bar'))->get('foobar');
 	 */
 	public function where($wheres = array())
-	 {
-	 	foreach ($wheres as $wh => $val)
-	 	{
-	 		$this->wheres[$wh] = $val;
-	 	}
-	 	return $this;
-	 }
+	{
+		foreach ($wheres as $wh => $val)
+		{
+			$this->wheres[$wh] = $val;
+		}
+		return $this;
+	}
 
 	/**
 	 *	Get the documents where the value of a $field may be something else
@@ -513,27 +513,27 @@ class Mongo_Db
 	 *	@usage	$mongodb->like('foo', 'bar', 'im', false, TRUE);
 	 */
 	public function like($field = '', $value = '', $flags = 'i', $enable_start_wildcard = TRUE, $enable_end_wildcard = TRUE)
-	 {
-	 	$field = (string) trim($field);
-	 	$this->_where_init($field);
-	 	$value = (string) trim($value);
-	 	$value = quotemeta($value);
+	{
+		$field = (string) trim($field);
+		$this->_where_init($field);
+		$value = (string) trim($value);
+		$value = quotemeta($value);
 
-	 	if ($enable_start_wildcard !== TRUE)
-	 	{
-	 		$value = '^' . $value;
-	 	}
+		if ($enable_start_wildcard !== TRUE)
+		{
+			$value = '^' . $value;
+		}
 
-	 	if ($enable_end_wildcard !== TRUE)
-	 	{
-	 		$value .= '$';
-	 	}
+		if ($enable_end_wildcard !== TRUE)
+		{
+			$value .= '$';
+		}
 
-	 	$regex = "/$value/$flags";
-	 	$this->wheres[$field] = new \MongoRegex($regex);
-	 	
-	 	return $this;
-	 }
+		$regex = "/$value/$flags";
+		$this->wheres[$field] = new \MongoRegex($regex);
+
+		return $this;
+	}
 
 	/**
 	 *	Sort the documents based on the parameters passed. To set values to descending order,
@@ -613,7 +613,7 @@ class Mongo_Db
 	 *	@usage	$mongodb->get('foo', array('bar' => 'something'));
 	 */
 	 public function get($collection = "")
-	 {
+	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("In order to retrieve documents from MongoDB");
@@ -632,9 +632,9 @@ class Mongo_Db
 				$returns[] = $doc;
 			}
 		}
-		
+
 		$this->_clear();
-		
+
 		return $returns;
 	}
 
@@ -642,16 +642,18 @@ class Mongo_Db
 	 *	Count the documents based upon the passed parameters
 	 *
 	 *	@param	string	$collection		the collection name
+	 *	@param	boolean	$foundonly		send cursor limit and skip information to the count function, if applicable.
 	 *	@usage	$mongodb->get('foo');
 	 */
 
-	public function count($collection = '') {
+	public function count($collection = '', $foundonly = false)
+	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("In order to retrieve a count of documents from MongoDB");
 		}
 
-		$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count();
+		$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count($foundonly);
 		$this->_clear();
 		return ($count);
 	}
@@ -728,7 +730,6 @@ class Mongo_Db
 		{
 			throw new \Mongo_DbException("Update of data into MongoDB failed: {$e->getMessage()}");
 		}
-
 	}
 
 	/**
@@ -785,7 +786,6 @@ class Mongo_Db
 		{
 			throw new \Mongo_DbException("Delete of data into MongoDB failed: {$e->getMessage()}");
 		}
-
 	}
 
 	/**
@@ -794,8 +794,8 @@ class Mongo_Db
 	 *	@param	string	$collection		the collection name
 	 *	@usage	$mongodb->delete_all('foo');
 	 */
-	 public function delete_all($collection = '')
-	 {
+	public function delete_all($collection = '')
+	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection selected to delete from");
@@ -811,7 +811,6 @@ class Mongo_Db
 		{
 			throw new \Mongo_DbException("Delete of data into MongoDB failed: {$e->getMessage()}");
 		}
-
 	}
 
 	/**
