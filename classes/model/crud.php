@@ -166,7 +166,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		else
 		{
 			$config = $config + array(
-				'select' => array('*'),
+				'select' => array(static::$_table_name.'.*'),
 				'where' => array(),
 				'order_by' => array(),
 				'limit' => null,
