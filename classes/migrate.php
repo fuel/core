@@ -178,11 +178,12 @@ class Migrate
 			static::$version[$type][$name] = $ver;
 		}
 
-		// If we are migrating down to 0, but the lowest migration is above that
-		// we need to make sure we update the DB to say we are at 0
-		if ($version === 0 and static::$version[$type][$name] != $version)
+		// When migrating down the version is always one below the last called migration
+		if ($method === 'down')
 		{
-			static::_update_schema_version(static::$version[$type][$name], $version, $name, $type);
+			--$ver;
+			static::_update_schema_version(static::$version[$type][$name], $ver, $name, $type);
+			static::$version[$type][$name] = $ver;
 		}
 
 		logger(Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
