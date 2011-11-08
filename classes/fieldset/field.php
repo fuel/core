@@ -215,7 +215,7 @@ class Fieldset_Field
 		// Set required setting for forms when rule was applied
 		if ($callback === 'required')
 		{
-			$this->set_attribute('required', true);
+			$this->set_attribute('required', 'required');
 		}
 
 		return $this;
