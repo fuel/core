@@ -228,7 +228,6 @@ class Migrate
 			$end_version = $temp_version;
 		}
 
-
 		$migrations = array();
 		foreach ($files as $index => $file)
 		{
@@ -246,7 +245,7 @@ class Migrate
 
 		if ($direction === 'down')
 		{
-			$migrations = array_reverse($migrations);
+			$migrations = array_reverse($migrations, true);
 		}
 
 		return $migrations;
