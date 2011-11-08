@@ -203,6 +203,38 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	}
 
 	/**
+	 * Count all of the rows in the table.
+	 *
+	 * @param   string  Column to count by
+	 * @param   bool    Whether to count only distinct rows (by column)
+	 * @return  int     The number of rows OR false
+	 */
+	public static function count($column = null, $distinct = true)
+	{
+		$select = $column ?: static::primary_key();
+
+		// Get the columns
+		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
+			\Database_Connection::instance()->quote_identifier($select).
+			') AS count_result');
+
+		// Remove the current select and
+		$query = \DB::select($columns);
+
+		// Set from table
+		$query->from(static::$_table_name);
+
+		$count = $query->execute()->get('count_result');
+
+		if ($count === null)
+		{
+			return false;
+		}
+
+		return (int) $count;
+	}
+
+	/**
 	 * Implements dynamic Model_Crud::find_by_{column} and Model_Crud::find_one_by_{column}
 	 * methods.
 	 *
@@ -352,7 +384,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				return false;
 			}
 		}
-		
+
 		$vars = $this->prep_values($vars);
 
 		if ($this->is_new())
