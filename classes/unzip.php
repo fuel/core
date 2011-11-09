@@ -273,19 +273,19 @@ class Unzip
 
 		if ( ! isset($this->compressed_list[$compressed_file_name]))
 		{
-			throw new \FuelException('File "<strong>$compressed_file_name</strong>" is not compressed in the zip.');
+			throw new \FuelException('File "<strong>' . $compressed_file_name . '</strong>" is not compressed in the zip.');
 			return false;
 		}
 
 		if (substr($compressed_file_name, -1) == '/')
 		{
-			throw new \FuelException('Trying to unzip a folder name "<strong>$compressed_file_name</strong>".');
+			throw new \FuelException('Trying to unzip a folder name "<strong>' . $compressed_file_name . '</strong>".');
 			return false;
 		}
 
 		if ( ! $fdetails['uncompressed_size'])
 		{
-			$this->set_debug('File "<strong>$compressed_file_name</strong>" is empty.');
+			$this->set_debug('File "<strong>' . $compressed_file_name . '</strong>" is empty.');
 
 			return $target_file_name ? file_put_contents($target_file_name, '') : '';
 		}
