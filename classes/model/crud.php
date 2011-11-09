@@ -471,7 +471,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function validation()
 	{
-		$this->_validation or $this->_validation = \Validation::forge(md5(microtime(true)));
+		$this->_validation or $this->_validation = \Validation::forge(\Str::random('alnum', 32));
 
 		return $this->_validation;
 	}
