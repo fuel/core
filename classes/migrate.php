@@ -178,14 +178,6 @@ class Migrate
 			static::$version[$type][$name] = $ver;
 		}
 
-		// When migrating down the version is always one below the last called migration
-		if ($method === 'down')
-		{
-			--$ver;
-			static::_update_schema_version(static::$version[$type][$name], $ver, $name, $type);
-			static::$version[$type][$name] = $ver;
-		}
-
 		logger(Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
 
 		return static::$version[$type][$name];
@@ -238,6 +230,7 @@ class Migrate
 			{
 				if ($end_version === null or $version <= $end_version)
 				{
+					$direction === 'down' and --$version;
 					$migrations[$version] = $full_paths[$index];
 				}
 			}
