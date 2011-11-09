@@ -191,7 +191,7 @@ abstract class Request_Driver
 		$headers = array();
 		foreach ($this->headers as $key => $value)
 		{
-			$headers = is_int($key) ? $value : $key.': '.$value;
+			$headers[] = is_int($key) ? $value : $key.': '.$value;
 		}
 
 		return $headers;

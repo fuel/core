@@ -163,9 +163,9 @@ abstract class ViewModel
 	/**
 	 * Fetches an existing value from the template
 	 *
-	 * @return	mixed
+	 * @return  mixed
 	 */
-	public function __get($name)
+	public function & __get($name)
 	{
 		return $this->get($name);
 	}
@@ -173,9 +173,9 @@ abstract class ViewModel
 	/**
 	 * Gets a variable from the template
 	 *
-	 * @param	string
+	 * @param  string
 	 */
-	public function &get($key, $default = null)
+	public function & get($key, $default = null)
 	{
 		if (is_null($default) and func_num_args() === 1)
 		{

@@ -42,8 +42,8 @@ class Migrate
 		\Config::load('migrations', true);
 
 		// get Cli options
-		$modules = \Cli::option('modules');
-		$packages = \Cli::option('packages');
+		$modules = \Cli::option('modules', \Cli::option('m'));
+		$packages = \Cli::option('packages', \Cli::option('p'));
 		$default = \Cli::option('default');
 		$all = \Cli::option('all');
 
@@ -337,10 +337,10 @@ Fuel options:
 
     # The following disable default migrations unless you add --default to the command
     --default # re-enables default migration
-    --modules # Migrates all modules
-    --modules=item1,item2 # Migrates specific modules
-    --packages # Migrates all packages
-    --packages=item1,item2 # Migrates specific modules
+    --modules -m # Migrates all modules
+    --modules=item1,item2 -m=item1,item2 # Migrates specific modules
+    --packages -p # Migrates all packages
+    --packages=item1,item2 -p=item1,item2 # Migrates specific modules
     --all # shortcut for --modules --packages --default
 
 Description:

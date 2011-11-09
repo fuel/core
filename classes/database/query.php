@@ -27,6 +27,11 @@ class Database_Query
 	protected $_lifetime;
 
 	/**
+	 * @var  string  Cache key
+	 */
+	protected $_cache_key = null;
+
+	/**
 	 * @var  string  SQL statement
 	 */
 	protected $_sql;
@@ -88,9 +93,10 @@ class Database_Query
 	 * @param   integer  number of seconds to cache or null for default
 	 * @return  $this
 	 */
-	public function cached($lifetime = NULL)
+	public function cached($lifetime = null, $cache_key = null)
 	{
 		$this->_lifetime = $lifetime;
+		is_string($cache_key) and $this->_cache_key = $cache_key;
 
 		return $this;
 	}
@@ -223,10 +229,12 @@ class Database_Query
 				$this->_type = \DB::INSERT;
 				break;
 		}
-		
+
 		if ( ! empty($this->_lifetime) and $this->_type === DB::SELECT)
 		{
-			$cache = \Cache::forge(md5('Database_Connection::query("'.$db.'", "'.$sql.'")'));
+			$cache_key = empty($this->_cache_key) ?
+				'db.'.md5('Database_Connection::query("'.$db.'", "'.$sql.'")') : $this->_cache_key;
+			$cache = \Cache::forge($cache_key);
 			try
 			{
 				$result = $cache->get();
