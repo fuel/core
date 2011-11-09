@@ -166,7 +166,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		else
 		{
 			$config = $config + array(
-				'select' => array('*'),
+				'select' => array(static::$_table_name.'.*'),
 				'where' => array(),
 				'order_by' => array(),
 				'limit' => null,
@@ -200,6 +200,38 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		$result = ($result->count() === 0) ? null : $result->as_array($key);
 
 		return static::post_find($result);
+	}
+
+	/**
+	 * Count all of the rows in the table.
+	 *
+	 * @param   string  Column to count by
+	 * @param   bool    Whether to count only distinct rows (by column)
+	 * @return  int     The number of rows OR false
+	 */
+	public static function count($column = null, $distinct = true)
+	{
+		$select = $column ?: static::primary_key();
+
+		// Get the columns
+		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
+			\Database_Connection::instance()->quote_identifier($select).
+			') AS count_result');
+
+		// Remove the current select and
+		$query = \DB::select($columns);
+
+		// Set from table
+		$query->from(static::$_table_name);
+
+		$count = $query->execute()->get('count_result');
+
+		if ($count === null)
+		{
+			return false;
+		}
+
+		return (int) $count;
 	}
 
 	/**
@@ -352,7 +384,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				return false;
 			}
 		}
-		
+
 		$vars = $this->prep_values($vars);
 
 		if ($this->is_new())
@@ -439,7 +471,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function validation()
 	{
-		$this->_validation or $this->_validation = \Validation::forge(md5(microtime(true)));
+		$this->_validation or $this->_validation = \Validation::forge(\Str::random('alnum', 32));
 
 		return $this->_validation;
 	}

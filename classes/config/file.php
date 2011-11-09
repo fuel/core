@@ -58,7 +58,7 @@ abstract class Config_File implements Config_Interface
 	 */
 	public function group()
 	{
-		return pathinfo($this->file, PATHINFO_FILENAME);
+		return $this->file;
 	}
 
 	/**

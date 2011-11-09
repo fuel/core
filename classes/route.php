@@ -15,26 +15,59 @@ namespace Fuel\Core;
 class Route
 {
 
+	/**
+	 * @var  array  segments array
+	 */
 	public $segments = array();
 
+	/**
+	 * @var  array  named params array
+	 */
 	public $named_params = array();
 
+	/**
+	 * @var  array  method params array
+	 */
 	public $method_params = array();
 
+	/**
+	 * @var  string  route path
+	 */
 	public $path = '';
 
+	/**
+	 * @var  string  route module
+	 */
 	public $module = null;
 
+	/**
+	 * @var  string  route directory
+	 */
 	public $directory = null;
 
+	/**
+	 * @var  string  controller name
+	 */
 	public $controller = null;
 
+	/**
+	 * @var  string  default controller action
+	 */
 	public $action = 'index';
 
+	/**
+	 * @var  mixed  route translation
+	 */
 	public $translation = null;
 
+	/**
+	 * @var  closure
+	 */
 	public $callable = null;
 
+	/**
+	 * @var  mixed  the compiled route regex
+	 */
 	protected $search = null;
 
 	public function __construct($path, $translation = null)
@@ -44,6 +77,11 @@ class Route
 		$this->search = ($translation == stripslashes($path)) ? $path : $this->compile();
 	}
 
+	/**
+	 * Compiles a route. Replaces named params and regex shortcuts.
+	 *
+	 * @return  string  compiled route.
+	 */
 	protected function compile()
 	{
 		if ($this->path === '_root_')
@@ -99,7 +137,7 @@ class Route
 	 *
 	 * @access	public
 	 * @param	string	The matched route
-	 * @return	array
+	 * @return	object  $this
 	 */
 	public function matched($uri = '', $named_params = array())
 	{
