@@ -205,6 +205,11 @@ class Migrate
 		$method = '_find_'.$type;
 		$files = static::$method($name);
 
+		if ( ! $files)
+		{
+			return array();
+		}
+
 		// Keep the full paths for use in the return array
 		$full_paths = $files;
 
