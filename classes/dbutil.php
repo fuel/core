@@ -166,7 +166,7 @@ class DBUtil
 		}
 		else
 		{
-			$use_brackets = ! in_array($type, array('CHANGE', 'MODIFY'));
+			$use_brackets = ! in_array($type, array('ADD', 'CHANGE', 'MODIFY'));
 			$use_brackets and $sql .= $type.' ';
 			$use_brackets and $sql .= '(';
 			$sql .= static::process_fields($fields, (( ! $use_brackets) ? $type.' ' : ''));
@@ -302,6 +302,16 @@ class DBUtil
 			{
 				$sql .= ' AUTO_INCREMENT';
 			}
+
+			if (array_key_exists('FIRST', $attr) and $attr['FIRST'] === true)
+			{
+				$sql .= ' FIRST';
+			}
+			elseif (array_key_exists('AFTER', $attr) and strval($attr['AFTER']))
+			{
+				$sql .= ' AFTER '.\DB::quote_identifier($attr['AFTER']);
+			}
+			
 			$sql_fields[] = $sql;
 		}
 
