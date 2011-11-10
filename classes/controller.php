@@ -50,6 +50,17 @@ abstract class Controller
 	{
 		return $response;
 	}
+	/**
+	 * Sets a named parameter
+	 *
+	 * @param   string  $param    Name of the parameter
+	 * @param   mixed   $value  New value
+	 * @return  mixed
+	 */
+	public function set_param($param, $value)
+	{
+		$this->request->set_param($param, $value);
+	}
 
 	/**
 	 * This method returns the named parameter requested, or all of them
