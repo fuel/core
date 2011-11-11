@@ -232,7 +232,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			{
 				$where = array($where);
 			}
-			$query->where($where);
+			$query = $query->where($where);
 		}
 
 		if ( ! empty($group_by))
