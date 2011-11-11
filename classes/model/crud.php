@@ -225,7 +225,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		// Set from table
 		$query = $query->from(static::$_table_name);
-		
+
 		if ( ! empty($where))
 		{
 			if ( ! is_array($where[0]))
@@ -237,9 +237,16 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ( ! empty($group_by))
 		{
-			return $query = $query->select($group_by)->group_by($group_by)->execute();
+			$result = $query->select($group_by)->group_by($group_by)->execute()->as_array();
+			$counts = array();
+			foreach ($result as $res)
+			{
+				$counts[$res[$group_by]] = $res['count_result'];
+			}
+
+			return $counts;
 		}
-		
+
 		$count = $query->execute()->get('count_result');
 
 		if ($count === null)
