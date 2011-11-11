@@ -207,9 +207,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 *
 	 * @param   string  Column to count by
 	 * @param   bool    Whether to count only distinct rows (by column)
+	 * @param   array   Query where clause(s)
+	 * @param   string  Column to group by
 	 * @return  int     The number of rows OR false
 	 */
-	public static function count($column = null, $distinct = true)
+	public static function count($column = null, $distinct = true, $where = array(), $group_by = null)
 	{
 		$select = $column ?: static::primary_key();
 
@@ -223,7 +225,24 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		// Set from table
 		$query->from(static::$_table_name);
+		
+		if ( ! empty($where))
+		{
+			if ( ! is_array($where[0]))
+			{
+				$where = array($where);
+			}
+			$query->where($where);
+		}
 
+		if ( ! empty($group_by))
+		{
+			$query->select($group_by);
+			$query->group_by($group_by);
+
+			return $query->execute();
+		}
+		
 		$count = $query->execute()->get('count_result');
 
 		if ($count === null)
