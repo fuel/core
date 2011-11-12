@@ -134,7 +134,6 @@ class Arr
 	 *
 	 * @param   array   $array    The search array
 	 * @param   mixed   $key      The dot-notated key or array of keys
-	 * @param   string  $default  The default value
 	 * @return  mixed
 	 */
 	public static function delete(&$array, $key)
