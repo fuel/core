@@ -245,7 +245,7 @@ else {
 	$return_output .='<table class="side" cellspacing="0">
 		  <tr><td><var>'.$output['queryTotals']['count'].'</var><h4>Total Queries</h4></td></tr>
 		  <tr><td class="alt"><var>'.$output['queryTotals']['time'].'</var> <h4>Total Time</h4></td></tr>
-		  <tr><td><var>0</var> <h4>Duplicates</h4></td></tr>
+		  <tr><td><var>'.$output['queryTotals']['duplicates'].'</var> <h4>Duplicates</h4></td></tr>
 		 </table>
 		<table class="main" cellspacing="0">';
 
@@ -260,8 +260,9 @@ else {
 					isset($query['explain']['type']) and $return_output .='Type: <b>'.$query['explain']['type'].'</b> &middot;';
 					isset($query['explain']['type']) and $return_output .='Rows: <b>'.$query['explain']['rows'].'</b> &middot;';
 			}
-			$return_output .='Speed: <b>'.$query['time'].'</b>
-					</em></td></tr>';
+			$return_output .='Speed: <b>'.$query['time'].'</b>';
+			$query['duplicate'] and $return_output .=' &middot; <b>DUPLICATE</b>';
+			$return_output .='</em></td></tr>';
 			if($class == '') $class = 'alt';
 			else $class = '';
 		}
