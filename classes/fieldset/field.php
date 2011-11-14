@@ -390,7 +390,7 @@ class Fieldset_Field
 						$attributes['value'] = $value;
 						$attributes['label'] = $label;
 
-						if (is_array($this->value) ? in_array($value, $this->value) : $value == $this->value)
+						if (is_array($this->value) ? in_array($value, $this->value) : $value === $this->value)
 						{
 							$attributes['checked'] = 'checked';
 						}
