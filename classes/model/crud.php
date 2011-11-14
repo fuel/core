@@ -417,8 +417,13 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			$query = $this->pre_save($query);
 			$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
-			$result[1] > 0 and $this->set($vars);
-			$this->{static::primary_key()} = $result[0];
+
+			if ($result[1] > 0)
+			{
+				 $this->set($vars);
+				 $this->{static::primary_key()} = $result[0];
+				 $this->is_new(false);
+			}
 
 			return $this->post_save($result);
 		}
