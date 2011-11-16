@@ -255,10 +255,10 @@ else {
 				<td class="'.$class.'">'.$query['sql'];
 			$return_output .='<em>';
 			if(isset($query['explain'])) {
-					$return_output .='Possible keys: <b>'.$query['explain']['possible_keys'].'</b> &middot;
-						Key Used: <b>'.$query['explain']['key'].'</b> &middot;
-						Type: <b>'.$query['explain']['type'].'</b> &middot;
-						Rows: <b>'.$query['explain']['rows'].'</b> &middot;';
+					isset($query['explain']['possible_keys']) and $return_output .='Possible keys: <b>'.$query['explain']['possible_keys'].'</b> &middot;';
+					isset($query['explain']['key']) and $return_output .='Key Used: <b>'.$query['explain']['key'].'</b> &middot;';
+					isset($query['explain']['type']) and $return_output .='Type: <b>'.$query['explain']['type'].'</b> &middot;';
+					isset($query['explain']['type']) and $return_output .='Rows: <b>'.$query['explain']['rows'].'</b> &middot;';
 			}
 			$return_output .='Speed: <b>'.$query['time'].'</b>
 					</em></td></tr>';
