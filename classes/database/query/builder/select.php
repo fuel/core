@@ -53,7 +53,7 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 		}
 
 		// Start the query with no actual SQL statement
-		parent::__construct(\DB::SELECT, '');
+		parent::__construct('', \DB::SELECT);
 	}
 
 	/**
