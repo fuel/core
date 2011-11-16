@@ -356,6 +356,8 @@ class Fieldset
 	 */
 	public function add_model($class, $instance = null, $method = 'set_form_fields')
 	{
+		is_string($class) and $class = ltrim($class, '\\');
+		
 		// Add model to validation callables for validation rules
 		$this->validation()->add_callable($class);
 
