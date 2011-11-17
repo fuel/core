@@ -477,7 +477,7 @@ class Fieldset_Field
 		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
 		$error_class = $this->error() ? $form->get_config('error_class') : '';
 		$message_template = $form->get_config('message_template', "");
-		$field_msg = ($form->get_config('error_replaces_message') && $this->error()) ? '' : str_replace('{field_msg}', $this->message, $message_template);
+		$field_msg = ($this->message && !($form->get_config('error_replaces_message') && $this->error())) ? str_replace('{field_msg}', $this->message, $message_template) : '';
 
 		if (is_array($build_field))
 		{
