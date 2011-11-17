@@ -49,8 +49,8 @@ class Database_Query
 	/**
 	 * Creates a new SQL query of the specified type.
 	 *
-	 * @param   integer  query type: DB::SELECT, DB::INSERT, etc
 	 * @param   string   query string
+	 * @param   integer  query type: DB::SELECT, DB::INSERT, etc
 	 * @return  void
 	 */
 	public function __construct($sql, $type = null)

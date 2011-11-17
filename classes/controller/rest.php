@@ -162,7 +162,7 @@ abstract class Controller_Rest extends \Controller
 		}
 
 		// Otherwise, check the HTTP_ACCEPT (if it exists and we are allowed)
-		if (\Config::get('rest.ignore_http_accept') !== false and \Input::server('HTTP_ACCEPT'))
+		if (\Input::server('HTTP_ACCEPT') and \Config::get('rest.ignore_http_accept') === true)
 		{
 			// Check all formats against the HTTP_ACCEPT header
 			foreach (array_keys($this->_supported_formats) as $format)

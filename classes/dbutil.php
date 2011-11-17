@@ -101,7 +101,7 @@ class DBUtil
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 
-		! empty($foreign_keys) and $sql .= static::process_foreign_keys($foreign_keys);
+		empty($foreign_keys) or $sql .= static::process_foreign_keys($foreign_keys);
 
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
