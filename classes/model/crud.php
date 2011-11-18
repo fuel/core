@@ -183,9 +183,16 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				$query->where($where);
 			}
 
-			foreach ($order_by as $_field => $_direction)
+			if (is_array($order_by))
 			{
-				$query->order_by($_field, $_direction);
+				foreach ($order_by as $_field => $_direction)
+				{
+					$query->order_by($_field, $_direction);
+				}
+			}
+			else
+			{
+				$query->order_by($order_by);
 			}
 
 			if ($limit !== null)
