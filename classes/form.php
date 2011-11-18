@@ -207,7 +207,17 @@ class Form
 			$attributes['id'] = \Config::get('form.auto_id_prefix', 'form_').$attributes['name'];
 		}
 
-		return html_tag('input', static::attr_to_string($attributes));
+		if (!empty($attributes['before']) || !empty($attributes['after']))
+		{
+			$attributes['before'] = !isset($attributes['before']) ? $attributes['before'] = '' : $attributes['before'];
+			$attributes['after'] = !isset($attributes['after']) ? $attributes['after'] = '' : $attributes['after'];
+
+			return html_tag('label', array(), $attributes['before'].' '.html_tag('input', static::attr_to_string($attributes)).' '.$attributes['after']);
+		} 
+		else 
+		{
+			return html_tag('input', static::attr_to_string($attributes));
+		}
 	}
 
 	/**
