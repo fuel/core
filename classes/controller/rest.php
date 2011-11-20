@@ -249,7 +249,7 @@ abstract class Controller_Rest extends \Controller
 			return false;
 		}
 
-		$valid_logins = & \Config::get('rest.valid_logins');
+		$valid_logins = \Config::get('rest.valid_logins');
 
 		if (!array_key_exists($username, $valid_logins))
 		{
