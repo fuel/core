@@ -327,7 +327,7 @@ abstract class Controller_Rest extends \Controller
 			static::_force_login($uniqid);
 		}
 
-		$valid_logins = & \Config::get('rest.valid_logins');
+		$valid_logins = \Config::get('rest.valid_logins');
 		$valid_pass = $valid_logins[$digest['username']];
 
 		// This is the valid response expected
