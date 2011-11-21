@@ -354,7 +354,7 @@ abstract class Controller_Rest extends \Controller
 		}
 		elseif (\Config::get('rest.auth') == 'digest')
 		{
-			header('WWW-Authenticate: Digest realm="' . \Config::get('rest.realm') . '" qop="auth" nonce="' . $nonce . '" opaque="' . md5(\Config::get('rest.realm')) . '"');
+			header('WWW-Authenticate: Digest realm="' . \Config::get('rest.realm') . '", qop="auth", nonce="' . $nonce . '", opaque="' . md5(\Config::get('rest.realm')) . '"');
 		}
 
 		exit('Not authorized.');
