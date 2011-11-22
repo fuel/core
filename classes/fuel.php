@@ -327,7 +327,7 @@ class Fuel
 	{
 		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::instance()->add_path() instead.', __METHOD__);
 
-		return \Finder::instance()->add_path($path, ($prefix ? 1 : null));
+		return \Finder::instance()->add_path($path, ($prefix ? -1 : null));
 	}
 
 	/**
