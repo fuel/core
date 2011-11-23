@@ -69,7 +69,10 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	 */
 	public function columns(array $columns)
 	{
-		$this->_columns = $columns;
+		// Get all of the passed column names
+		$columns = func_get_args();
+
+		$this->_columns = array_merge($this->_columns, $columns);
 
 		return $this;
 	}
@@ -141,7 +144,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 			// Get the database instance
 			$db = \Database_Connection::instance($db);
 		}
-		
+
 		// Start an insertion query
 		$query = 'INSERT INTO '.$db->quote_table($this->_table);
 
