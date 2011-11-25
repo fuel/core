@@ -75,17 +75,19 @@ class DBUtil
 
 	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array())
 	{
-		$sql = 'CREATE TABLE';
+		if ($if_not_exists and \DBUtil::table_exists(static::$table))
+		{
+			return;
+		}
 
-		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
+		$sql = 'CREATE TABLE';
 
 		$sql .= \DB::quote_identifier(DB::table_prefix($table)).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{
-			$key_name = \DB::quote_identifier(implode('_', $primary_keys));
 			$primary_keys = \DB::quote_identifier($primary_keys);
-			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
+			$sql .= ",\n\tPRIMARY KEY (" . implode(', ', $primary_keys) . ")";
 		}
 
 		! empty($foreign_keys) and $sql .= static::process_foreign_keys($foreign_keys);
@@ -312,7 +314,6 @@ class DBUtil
 		}
 
 		$is_default and $charset = ' DEFAULT'.$charset;
-
 		return $charset;
 	}
 
