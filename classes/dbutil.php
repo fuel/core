@@ -156,11 +156,10 @@ class DBUtil
 		elseif ($type === 'ADD')
 		{
 			$sql .= $type.' ';
-
 			// pgsql can't add multiple columns in a single alter table command
 			foreach ($fields as $column => $attr) {
 				$tmpsql = $sql.static::process_fields(array($column => $attr));
-				\DB::query($sql, \DB::UPDATE)->execute();
+				\DB::query($tmpsql, \DB::UPDATE)->execute();
 			}
 			return;
 		}
