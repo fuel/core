@@ -101,7 +101,7 @@ class DBUtil
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 
-		! empty($foreign_keys) and $sql .= static::process_foreign_keys($foreign_keys);
+		empty($foreign_keys) or $sql .= static::process_foreign_keys($foreign_keys);
 
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
@@ -287,15 +287,18 @@ class DBUtil
 				$sql .= ' UNSIGNED';
 			}
 
-			$sql .= array_key_exists('DEFAULT', $attr) ? ' DEFAULT '. (($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT'])) : '';
-
-			if(array_key_exists('NULL', $attr))
+			if(array_key_exists('DEFAULT', $attr))
 			{
-				$sql .= $attr['NULL'] === true ? ' NULL' : ' NOT NULL';
+				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT']));
 			}
-			elseif( ! array_key_exists('DEFAULT', $attr))
+
+			if(array_key_exists('NULL', $attr) and $attr['NULL'] === true)
 			{
 				$sql .= ' NULL';
+			}
+			else
+			{
+				$sql .= ' NOT NULL';
 			}
 
 			if (array_key_exists('AUTO_INCREMENT', $attr) and $attr['AUTO_INCREMENT'] === true)

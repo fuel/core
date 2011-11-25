@@ -183,9 +183,16 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				$query->where($where);
 			}
 
-			foreach ($order_by as $_field => $_direction)
+			if (is_array($order_by))
 			{
-				$query->order_by($_field, $_direction);
+				foreach ($order_by as $_field => $_direction)
+				{
+					$query->order_by($_field, $_direction);
+				}
+			}
+			else
+			{
+				$query->order_by($order_by);
 			}
 
 			if ($limit !== null)
@@ -207,9 +214,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 *
 	 * @param   string  Column to count by
 	 * @param   bool    Whether to count only distinct rows (by column)
+	 * @param   array   Query where clause(s)
+	 * @param   string  Column to group by
 	 * @return  int     The number of rows OR false
 	 */
-	public static function count($column = null, $distinct = true)
+	public static function count($column = null, $distinct = true, $where = array(), $group_by = null)
 	{
 		$select = $column ?: static::primary_key();
 
@@ -222,7 +231,28 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		$query = \DB::select($columns);
 
 		// Set from table
-		$query->from(static::$_table_name);
+		$query = $query->from(static::$_table_name);
+
+		if ( ! empty($where))
+		{
+			if ( ! is_array($where[0]))
+			{
+				$where = array($where);
+			}
+			$query = $query->where($where);
+		}
+
+		if ( ! empty($group_by))
+		{
+			$result = $query->select($group_by)->group_by($group_by)->execute()->as_array();
+			$counts = array();
+			foreach ($result as $res)
+			{
+				$counts[$res[$group_by]] = $res['count_result'];
+			}
+
+			return $counts;
+		}
 
 		$count = $query->execute()->get('count_result');
 
@@ -394,8 +424,13 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			$query = $this->pre_save($query);
 			$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
-			$result[1] > 0 and $this->set($vars);
-			$this->{static::primary_key()} = $result[0];
+
+			if ($result[1] > 0)
+			{
+				 $this->set($vars);
+				 $this->{static::primary_key()} = $result[0];
+				 $this->is_new(false);
+			}
 
 			return $this->post_save($result);
 		}

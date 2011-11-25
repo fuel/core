@@ -162,7 +162,7 @@ abstract class Controller_Rest extends \Controller
 		}
 
 		// Otherwise, check the HTTP_ACCEPT (if it exists and we are allowed)
-		if (\Config::get('rest.ignore_http_accept') !== false and \Input::server('HTTP_ACCEPT'))
+		if (\Input::server('HTTP_ACCEPT') and \Config::get('rest.ignore_http_accept') === true)
 		{
 			// Check all formats against the HTTP_ACCEPT header
 			foreach (array_keys($this->_supported_formats) as $format)
@@ -249,7 +249,7 @@ abstract class Controller_Rest extends \Controller
 			return false;
 		}
 
-		$valid_logins = & \Config::get('rest.valid_logins');
+		$valid_logins = \Config::get('rest.valid_logins');
 
 		if (!array_key_exists($username, $valid_logins))
 		{
@@ -327,7 +327,7 @@ abstract class Controller_Rest extends \Controller
 			static::_force_login($uniqid);
 		}
 
-		$valid_logins = & \Config::get('rest.valid_logins');
+		$valid_logins = \Config::get('rest.valid_logins');
 		$valid_pass = $valid_logins[$digest['username']];
 
 		// This is the valid response expected
@@ -354,7 +354,7 @@ abstract class Controller_Rest extends \Controller
 		}
 		elseif (\Config::get('rest.auth') == 'digest')
 		{
-			header('WWW-Authenticate: Digest realm="' . \Config::get('rest.realm') . '" qop="auth" nonce="' . $nonce . '" opaque="' . md5(\Config::get('rest.realm')) . '"');
+			header('WWW-Authenticate: Digest realm="' . \Config::get('rest.realm') . '", qop="auth", nonce="' . $nonce . '", opaque="' . md5(\Config::get('rest.realm')) . '"');
 		}
 
 		exit('Not authorized.');
