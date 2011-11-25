@@ -287,7 +287,8 @@ class DBUtil
 			}
 
 			$sql .= array_key_exists('DEFAULT', $attr) ? ' DEFAULT '. (($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT'])) : '';
-			$sql .= (array_key_exists('NULL', $attr) && ($attr['NULL'] === true)) ? ' NULL' : ' NOT NULL';
+			$sql .= (array_key_exists('NULL', $attr) && ($attr['NULL'] === false)) ? ' NOT NULL' : ' ';
+			$sql .= (array_key_exists('UNIQUE', $attr) && ($attr['UNIQUE'] === true)) ? ' UNIQUE' : '';
 
 			if (array_key_exists('AUTO_INCREMENT', $attr) and $attr['AUTO_INCREMENT'] === true)
 			{
