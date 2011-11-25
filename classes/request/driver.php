@@ -2,7 +2,7 @@
 
 namespace Fuel\Core;
 
-class RequestException extends HttpNotFoundException {}
+class RequestException extends \HttpNotFoundException {}
 
 abstract class Request_Driver
 {
@@ -109,7 +109,7 @@ abstract class Request_Driver
 	 * @param   array  $params
 	 * @return  Request_Driver
 	 */
-	public function set_params(array $params)
+	public function set_params($params)
 	{
 		$this->params = $params;
 		return $this;
