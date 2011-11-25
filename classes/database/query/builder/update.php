@@ -116,7 +116,7 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 			$query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
 		}
 
-		if ($this->_limit !== NULL && substr($db->_db_type, 0, 6) !== 'sqlite')
+		if ($this->_limit !== NULL && substr($db->_db_type, 0, 6) !== 'sqlite' && substr($db->_db_type, 0, 5) !== 'pgsql')
 		{
 			// Add limiting
 			$query .= ' LIMIT '.$this->_limit;
