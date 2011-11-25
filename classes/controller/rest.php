@@ -249,7 +249,7 @@ abstract class Controller_Rest extends \Controller
 			return false;
 		}
 
-		$valid_logins = & \Config::get('rest.valid_logins');
+		$valid_logins = \Config::get('rest.valid_logins');
 
 		if (!array_key_exists($username, $valid_logins))
 		{
@@ -327,7 +327,7 @@ abstract class Controller_Rest extends \Controller
 			static::_force_login($uniqid);
 		}
 
-		$valid_logins = & \Config::get('rest.valid_logins');
+		$valid_logins = \Config::get('rest.valid_logins');
 		$valid_pass = $valid_logins[$digest['username']];
 
 		// This is the valid response expected
