@@ -308,23 +308,8 @@ class DBUtil
 	 */
 	protected static function process_charset($charset = null, $is_default = false)
 	{
-		$charset or $charset = \Config::get('db.'.\Fuel::$env.'.charset', null);
-		if (empty($charset))
-		{
-			return '';
-		}
-
-		if (($pos = stripos($charset, '_')) !== false)
-		{
-			$charset = ' CHARACTER SET '.substr($charset, 0, $pos).' COLLATE '.$charset;
-		}
-		else
-		{
-			$charset = ' CHARACTER SET '.$charset;
-		}
-
-		$is_default and $charset = ' DEFAULT'.$charset;
-		return $charset;
+		// pgsql doesn't support per-table charsets
+		return '';
 	}
 
 	/**
