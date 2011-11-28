@@ -18,7 +18,6 @@ namespace Fuel\Core;
  *
  * @package     Fuel
  * @subpackage  Core
- * @author      Dan Horrigan <dan@dhorrigan.com>
  */
 class Finder
 {

@@ -22,7 +22,7 @@ namespace Fuel\Core;
  *
  * @package   Fuel
  * @category  Core
- * @link      http://fuelphp.com/docs/classes/view.html
+ * @link      http://docs.fuelphp.com/classes/view.html
  */
 class View
 {

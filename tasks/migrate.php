@@ -20,7 +20,7 @@ namespace Fuel\Tasks;
  * @package		Fuel
  * @version		1.0
  * @author		Phil Sturgeon
- * @link		http://fuelphp.com/docs/general/migrations.html
+ * @link		http://docs.fuelphp.com/general/migrations.html
  */
 
 class Migrate

@@ -21,7 +21,7 @@ namespace Fuel\Core;
  * @category   Core
  * @author     Fuel Development Team
  * @copyright  2010 - 2011 Fuel Development Team
- * @link       http://fuelphp.com/docs/classes/format.html
+ * @link       http://docs.fuelphp.com/classes/format.html
  */
 class Format
 {

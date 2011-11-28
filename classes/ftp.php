@@ -24,7 +24,7 @@ class FtpFileAccessException extends \FuelException {}
  * @package		Fuel
  * @category	Core
  * @author		Phil Sturgeon
- * @link		http://fuelphp.com/docs/classes/ftp.html
+ * @link		http://docs.fuelphp.com/classes/ftp.html
  */
 class Ftp
 {

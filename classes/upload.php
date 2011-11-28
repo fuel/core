@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @package		Fuel
  * @category	Core
  * @author		Harro "WanWizard" Verton
- * @link		http://fuelphp.com/docs/classes/upload.html
+ * @link		http://docs.fuelphp.com/classes/upload.html
  */
 class Upload
 {

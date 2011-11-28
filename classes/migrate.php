@@ -17,7 +17,7 @@ namespace Fuel\Core;
  *
  * @package		Fuel
  * @category	Migrations
- * @link		http://fuelphp.com/docs/classes/migrate.html
+ * @link		http://docs.fuelphp.com/classes/migrate.html
  */
 class Migrate
 {
