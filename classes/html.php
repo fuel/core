@@ -23,7 +23,7 @@ namespace Fuel\Core;
  * @subpackage	Core
  * @category	Core
  * @author		Alfredo Rivera
- * @link		http://fuelphp.com/docs/classes/html.html
+ * @link		http://docs.fuelphp.com/classes/html.html
  */
 class Html
 {

@@ -159,32 +159,46 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			->from(static::$_table_name)
 			->as_object(get_called_class());
 
-		$config = $config + array(
-			'select' => array('*'),
-			'where' => array(),
-			'order_by' => array(),
-			'limit' => null,
-			'offset' => 0,
-		);
-
-		extract($config);
-
-		is_string($select) and $select = array($select);
-		$query->select_array($select);
-
-		if ( ! empty($where))
+		if ($config instanceof \Closure)
 		{
-			$query->where($where);
+			$query = $config($query);
 		}
-
-		foreach ($order_by as $_field => $_direction)
+		else
 		{
-			$query->order_by($_field, $_direction);
-		}
+			$config = $config + array(
+				'select' => array(static::$_table_name.'.*'),
+				'where' => array(),
+				'order_by' => array(),
+				'limit' => null,
+				'offset' => 0,
+			);
 
-		if ($limit !== null)
-		{
-			$query = $query->limit($limit)->offset($offset);
+			extract($config);
+
+			is_string($select) and $select = array($select);
+			$query->select_array($select);
+
+			if ( ! empty($where))
+			{
+				$query->where($where);
+			}
+
+			if (is_array($order_by))
+			{
+				foreach ($order_by as $_field => $_direction)
+				{
+					$query->order_by($_field, $_direction);
+				}
+			}
+			else
+			{
+				$query->order_by($order_by);
+			}
+
+			if ($limit !== null)
+			{
+				$query = $query->limit($limit)->offset($offset);
+			}
 		}
 
 		$query = static::pre_find($query);
@@ -193,6 +207,61 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		$result = ($result->count() === 0) ? null : $result->as_array($key);
 
 		return static::post_find($result);
+	}
+
+	/**
+	 * Count all of the rows in the table.
+	 *
+	 * @param   string  Column to count by
+	 * @param   bool    Whether to count only distinct rows (by column)
+	 * @param   array   Query where clause(s)
+	 * @param   string  Column to group by
+	 * @return  int     The number of rows OR false
+	 */
+	public static function count($column = null, $distinct = true, $where = array(), $group_by = null)
+	{
+		$select = $column ?: static::primary_key();
+
+		// Get the columns
+		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
+			\Database_Connection::instance()->quote_identifier($select).
+			') AS count_result');
+
+		// Remove the current select and
+		$query = \DB::select($columns);
+
+		// Set from table
+		$query = $query->from(static::$_table_name);
+
+		if ( ! empty($where))
+		{
+			if ( ! is_array($where[0]))
+			{
+				$where = array($where);
+			}
+			$query = $query->where($where);
+		}
+
+		if ( ! empty($group_by))
+		{
+			$result = $query->select($group_by)->group_by($group_by)->execute()->as_array();
+			$counts = array();
+			foreach ($result as $res)
+			{
+				$counts[$res[$group_by]] = $res['count_result'];
+			}
+
+			return $counts;
+		}
+
+		$count = $query->execute()->get('count_result');
+
+		if ($count === null)
+		{
+			return false;
+		}
+
+		return (int) $count;
 	}
 
 	/**
@@ -327,7 +396,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			throw new \Exception('Cannot modify a frozen row.');
 		}
 
-		$vars = $this->prep_values($this->to_array());
+		$vars = $this->to_array();
 
 		// Set default if there are any
 		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
@@ -346,6 +415,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			}
 		}
 
+		$vars = $this->prep_values($vars);
+
 		if ($this->is_new())
 		{
 			$query = \DB::insert(static::$_table_name)
@@ -353,8 +424,13 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			$query = $this->pre_save($query);
 			$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
-			$result[1] > 0 and $this->set($vars);
-			$this->{static::primary_key()} = $result[0];
+
+			if ($result[1] > 0)
+			{
+				 $this->set($vars);
+				 $this->{static::primary_key()} = $result[0];
+				 $this->is_new(false);
+			}
 
 			return $this->post_save($result);
 		}
@@ -430,7 +506,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function validation()
 	{
-		$this->_validation or $this->_validation = \Validation::forge(md5(microtime(true)));
+		$this->_validation or $this->_validation = \Validation::forge(\Str::random('alnum', 32));
 
 		return $this->_validation;
 	}

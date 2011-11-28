@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @package		Fuel
  * @category	Core
  * @copyright	Flinn Mueller
- * @link		http://fuelphp.com/docs/classes/inlector.html
+ * @link		http://docs.fuelphp.com/classes/inlector.html
  */
 class Inflector
 {

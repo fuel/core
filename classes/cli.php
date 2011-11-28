@@ -20,7 +20,7 @@ namespace Fuel\Core;
  * @package		Fuel
  * @category	Core
  * @author		Phil Sturgeon
- * @link		http://fuelphp.com/docs/classes/cli.html
+ * @link		http://docs.fuelphp.com/classes/cli.html
  */
 class Cli
 {

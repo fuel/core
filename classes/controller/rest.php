@@ -37,18 +37,7 @@ abstract class Controller_Rest extends \Controller
 	public function before()
 	{
 		parent::before();
-
-		\Config::load('rest', true);
-
-		if (\Config::get('rest.auth') == 'basic')
-		{
-			$this->_prepare_basic_auth();
-		}
-		elseif (\Config::get('rest.auth') == 'digest')
-		{
-			$this->_prepare_digest_auth();
-		}
-
+		
 		// Some Methods cant have a body
 		$this->request->body = null;
 
@@ -81,6 +70,9 @@ abstract class Controller_Rest extends \Controller
 	 */
 	public function router($resource, array $arguments)
 	{
+	
+		\Config::load('rest', true);
+		
 		$pattern = '/\.(' . implode('|', array_keys($this->_supported_formats)) . ')$/';
 
 		// Check if a file extension is used
@@ -96,19 +88,37 @@ abstract class Controller_Rest extends \Controller
 			// Which format should the data be returned in?
 			$this->format = $this->_detect_format();
 		}
-
-		// If they call user, go to $this->post_user();
-		$controller_method = strtolower(\Input::method()) . '_' . $resource;
-
-		// If method is not available, set status code to 404
-		if (method_exists($this, $controller_method))
+		
+		//Check method is authorized if required
+		if (\Config::get('rest.auth') == 'basic')
 		{
-			call_user_func_array(array($this, $controller_method), $arguments);
+			$valid_login = $this->_prepare_basic_auth();
+		}
+		elseif (\Config::get('rest.auth') == 'digest')
+		{
+			$valid_login = $this->_prepare_digest_auth();
+		}
+		
+		//If the request passes auth then execute as normal
+		if(\Config::get('rest.auth') == '' or $valid_login)
+		{
+			// If they call user, go to $this->post_user();
+			$controller_method = strtolower(\Input::method()) . '_' . $resource;
+
+			// If method is not available, set status code to 404
+			if (method_exists($this, $controller_method))
+			{
+				call_user_func_array(array($this, $controller_method), $arguments);
+			}
+			else
+			{
+				$this->response->status = 404;
+				return;
+			}
 		}
 		else
 		{
-			$this->response->status = 404;
-			return;
+			$this->response(array('status'=>0, 'error'=> 'Not Authorized'), 401);
 		}
 	}
 
@@ -156,13 +166,13 @@ abstract class Controller_Rest extends \Controller
 	protected function _detect_format()
 	{
 		// A format has been passed as an argument in the URL and it is supported
-		if (\Input::get_post('format') and $this->_supported_formats[\Input::get_post('format')])
+		if (\Input::param('format') and $this->_supported_formats[\Input::param('format')])
 		{
-			return \Input::get_post('format');
+			return \Input::param('format');
 		}
 
 		// Otherwise, check the HTTP_ACCEPT (if it exists and we are allowed)
-		if (\Config::get('rest.ignore_http_accept') !== false and \Input::server('HTTP_ACCEPT'))
+		if (\Input::server('HTTP_ACCEPT') and \Config::get('rest.ignore_http_accept') === true)
 		{
 			// Check all formats against the HTTP_ACCEPT header
 			foreach (array_keys($this->_supported_formats) as $format)
@@ -249,7 +259,7 @@ abstract class Controller_Rest extends \Controller
 			return false;
 		}
 
-		$valid_logins = & \Config::get('rest.valid_logins');
+		$valid_logins = \Config::get('rest.valid_logins');
 
 		if (!array_key_exists($username, $valid_logins))
 		{
@@ -289,7 +299,10 @@ abstract class Controller_Rest extends \Controller
 		if ( ! static::_check_login($username, $password))
 		{
 			static::_force_login();
+			return FALSE;
 		}
+		
+		return TRUE;
 	}
 
 	protected function _prepare_digest_auth()
@@ -316,6 +329,7 @@ abstract class Controller_Rest extends \Controller
 		if (empty($digest_string))
 		{
 			static::_force_login($uniqid);
+			return FALSE;
 		}
 
 		// We need to retrieve authentication informations from the $auth_data variable
@@ -325,9 +339,10 @@ abstract class Controller_Rest extends \Controller
 		if ( ! array_key_exists('username', $digest) or ! static::_check_login($digest['username']))
 		{
 			static::_force_login($uniqid);
+			return FALSE;
 		}
 
-		$valid_logins = & \Config::get('rest.valid_logins');
+		$valid_logins = \Config::get('rest.valid_logins');
 		$valid_pass = $valid_logins[$digest['username']];
 
 		// This is the valid response expected
@@ -337,27 +352,22 @@ abstract class Controller_Rest extends \Controller
 
 		if ($digest['response'] != $valid_response)
 		{
-			header('HTTP/1.0 401 Unauthorized');
-			header('HTTP/1.1 401 Unauthorized');
-			exit;
+			return FALSE;
 		}
+		
+		return TRUE;
 	}
 
 	protected function _force_login($nonce = '')
 	{
-		header('HTTP/1.0 401 Unauthorized');
-		header('HTTP/1.1 401 Unauthorized');
-
 		if (\Config::get('rest.auth') == 'basic')
 		{
-			header('WWW-Authenticate: Basic realm="' . \Config::get('rest.realm') . '"');
+			$this->response->set_header('WWW-Authenticate', 'Basic realm="'. \Config::get('rest.realm') . '"');
 		}
 		elseif (\Config::get('rest.auth') == 'digest')
 		{
-			header('WWW-Authenticate: Digest realm="' . \Config::get('rest.realm') . '" qop="auth" nonce="' . $nonce . '" opaque="' . md5(\Config::get('rest.realm')) . '"');
+			$this->response->set_header('WWW-Authenticate', 'Digest realm="' . \Config::get('rest.realm') . '", qop="auth", nonce="' . $nonce . '", opaque="' . md5(\Config::get('rest.realm')) . '"');
 		}
-
-		exit('Not authorized.');
 	}
 
 }

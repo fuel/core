@@ -63,7 +63,7 @@ class DBUtil
 	/**
 	 * Renames a table.  Will throw a Database_Exception if it cannot.
 	 *
-	 * @throws	Fuel\Database_Exception
+	 * @throws	\Database_Exception
 	 * @param	string	$table			the old table name
 	 * @param	string	$new_table_name	the new table name
 	 * @return	int		the number of affected
@@ -73,6 +73,19 @@ class DBUtil
 		return \DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
 	}
 
+	/**
+	 * Creates a table. 
+	 *
+	 * @throws	 \Database_Exception
+	 * @param    string    $table          the table name
+	 * @param    array     $fields         the fields array
+	 * @param    array     $primary_keys   an array of primary keys
+	 * @param    boolean   $if_not_exists  whether to add an IF NOT EXISTS statement.
+	 * @param    string    $engine         storage engine overwrite
+	 * @param    string    $charset        default charset overwrite
+	 * @param    array     $foreign_keys   an array of foreign keys
+	 * @return   int       number of affected rows.
+	 */
 	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array())
 	{
 		$sql = 'CREATE TABLE';
@@ -88,7 +101,7 @@ class DBUtil
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 
-		! empty($foreign_keys) and $sql .= static::process_foreign_keys($foreign_keys);
+		empty($foreign_keys) or $sql .= static::process_foreign_keys($foreign_keys);
 
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
@@ -274,8 +287,19 @@ class DBUtil
 				$sql .= ' UNSIGNED';
 			}
 
-			$sql .= array_key_exists('DEFAULT', $attr) ? ' DEFAULT '. (($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT'])) : '';
-			$sql .= (array_key_exists('NULL', $attr) && ($attr['NULL'] === true)) ? ' NULL' : ' NOT NULL';
+			if(array_key_exists('DEFAULT', $attr))
+			{
+				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT']));
+			}
+
+			if(array_key_exists('NULL', $attr) and $attr['NULL'] === true)
+			{
+				$sql .= ' NULL';
+			}
+			else
+			{
+				$sql .= ' NOT NULL';
+			}
 
 			if (array_key_exists('AUTO_INCREMENT', $attr) and $attr['AUTO_INCREMENT'] === true)
 			{

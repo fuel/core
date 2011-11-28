@@ -52,7 +52,7 @@ class Agent
 		'javaapplets'         => false,
 		'activexcontrols'     => false,
 		'isbanned'            => false,
-		'ismobile'            => false,
+		'ismobiledevice'      => false,
 		'issyndicationreader' => false,
 		'crawler'             => false,
 		'cssversion'          => 0,
@@ -83,7 +83,7 @@ class Agent
 		'javaapplets'         => 'R',
 		'activexcontrols'     => 'S',
 		'isbanned'            => 'T',
-		'ismobile'            => 'U',
+		'ismobiledevice'      => 'U',
 		'issyndicationreader' => 'V',
 		'crawler'             => 'W',
 		'cssversion'          => 'X',
@@ -282,10 +282,23 @@ class Agent
 	 * check if the current browser is mobile device
 	 *
 	 * @return	bool
+	 * @deprecated until 1.2
 	 */
 	public static function is_mobile()
 	{
-		return static::$properties['ismobile'];
+		return static::is_mobiledevice();
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * check if the current browser is mobile device
+	 *
+	 * @return	bool
+	 */
+	public static function is_mobiledevice()
+	{
+		return static::$properties['ismobiledevice'];
 	}
 
 	// --------------------------------------------------------------------

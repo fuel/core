@@ -34,7 +34,7 @@ class Fuel
 	/**
 	 * @var  string  The version of Fuel
 	 */
-	const VERSION = '1.1-rc1';
+	const VERSION = '1.1-rc2';
 
 	/**
 	 * @var  string  constant used for when in testing mode
@@ -209,8 +209,12 @@ class Fuel
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
-		// Set  locale
-		static::$locale and setlocale(LC_ALL, static::$locale);
+		// Set locale, log warning when it fails
+		if (static::$locale)
+		{
+			setlocale(LC_ALL, static::$locale) or
+				logger(\Fuel::L_WARNING, 'The configured locale '.static::$locale.' is not installed on your system.', __METHOD__);
+		}
 
 		static::$initialized = true;
 
@@ -323,7 +327,7 @@ class Fuel
 	{
 		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::instance()->add_path() instead.', __METHOD__);
 
-		return \Finder::instance()->add_path($path, ($prefix ? 1 : null));
+		return \Finder::instance()->add_path($path, ($prefix ? -1 : null));
 	}
 
 	/**

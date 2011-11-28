@@ -33,7 +33,7 @@ class Arr
 	 */
 	public static function get($array, $key, $default = null)
 	{
-		if ( ! is_array($array) or $array instanceof \ArrayAccess)
+		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
 		{
 			throw new \InvalidArgumentException('First parameter must be an array or ArrayAccess object.');
 		}
@@ -106,7 +106,7 @@ class Arr
 
 		$array[array_shift($keys)] = $value;
 	}
-	
+
 	/**
 	 * Array_key_exists with a dot-notated key from an array.
 	 *
@@ -134,7 +134,6 @@ class Arr
 	 *
 	 * @param   array   $array    The search array
 	 * @param   mixed   $key      The dot-notated key or array of keys
-	 * @param   string  $default  The default value
 	 * @return  mixed
 	 */
 	public static function delete(&$array, $key)
@@ -440,7 +439,7 @@ class Arr
 
 		foreach ($array as $k=>$v)
 		{
-			$b[$k] = static::element($v, $key);
+			$b[$k] = static::get($v, $key);
 		}
 
 		switch ($order)
@@ -577,7 +576,7 @@ class Arr
 
 		return $array;
 	}
-	
+
 	/**
 	 * Prepends a value with an asociative key to an array.
 	 * Will overwrite if the value exists.

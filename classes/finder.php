@@ -18,7 +18,6 @@ namespace Fuel\Core;
  *
  * @package     Fuel
  * @subpackage  Core
- * @author      Dan Horrigan <dan@dhorrigan.com>
  */
 class Finder
 {
@@ -279,7 +278,7 @@ class Finder
 		// absolute path requested?
 		if ($file[0] === '/' or $file[1] === ':')
 		{
-			return $file;
+			return $multiple ? array($file) : $file;
 		}
 
 		$found = $multiple ? array() : false;

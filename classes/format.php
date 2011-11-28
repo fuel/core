@@ -21,7 +21,7 @@ namespace Fuel\Core;
  * @category   Core
  * @author     Fuel Development Team
  * @copyright  2010 - 2011 Fuel Development Team
- * @link       http://fuelphp.com/docs/classes/format.html
+ * @link       http://docs.fuelphp.com/classes/format.html
  */
 class Format
 {
@@ -248,7 +248,7 @@ class Format
 	 */
 	public function to_jsonp($data = null)
 	{
-		 $callback = \Input::get_post('callback', null);
+		 $callback = \Input::param('callback');
 		 is_null($callback) and $callback = 'response';
 
 		 return $callback.'('.$this->to_json($data).')';

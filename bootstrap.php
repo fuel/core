@@ -148,6 +148,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Input'      => COREPATH.'classes/input.php',
 		'Fuel\\Core\\Lang'       => COREPATH.'classes/lang.php',
 		'Fuel\\Core\\Log'        => COREPATH.'classes/log.php',
+		'Fuel\\Core\\Markdown'   => COREPATH.'classes/markdown.php',
 		'Fuel\\Core\\Migrate'    => COREPATH.'classes/migrate.php',
 		'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
 		'Fuel\\Core\\Model_Crud' => COREPATH.'classes/model/crud.php',

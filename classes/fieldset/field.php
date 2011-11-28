@@ -215,7 +215,7 @@ class Fieldset_Field
 		// Set required setting for forms when rule was applied
 		if ($callback === 'required')
 		{
-			$this->set_attribute('required', true);
+			$this->set_attribute('required', 'required');
 		}
 
 		return $this;
@@ -441,11 +441,12 @@ class Fieldset_Field
 				break;
 		}
 
-		$output = $this->type != 'hidden'
-			? $this->template($build_field)
-			: "\t\t".$build_field.PHP_EOL;
+		if (empty($build_field) or $this->type == 'hidden')
+		{
+			return $build_field;
+		}
 
-		return $output;
+		return $this->template($build_field);
 	}
 
 	protected function template($build_field)
@@ -461,7 +462,7 @@ class Fieldset_Field
 		if (is_array($build_field))
 		{
 			$label = $this->label ? $form->label($this->label) : '';
-			$template = $this->template ?: $form->get_config('multi_field_template', '\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n');
+			$template = $this->template ?: $form->get_config('multi_field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n");
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
@@ -483,7 +484,7 @@ class Fieldset_Field
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $this->template ?: $form->get_config('field_template', '\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {error_msg}</td>\n\t\t</tr>\n');
+		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {error_msg}</td>\n\t\t</tr>\n");
 		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}'),
 			array($label, $required_mark, $build_field, $error_msg, $error_class),
 			$template);

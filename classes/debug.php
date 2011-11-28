@@ -20,7 +20,7 @@ namespace Fuel\Core;
  * @package		Fuel
  * @category	Core
  * @author		Phil Sturgeon
- * @link		http://fuelphp.com/docs/classes/debug.html
+ * @link		http://docs.fuelphp.com/classes/debug.html
  */
 class Debug
 {
