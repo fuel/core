@@ -55,13 +55,12 @@ class Arr
 
 		foreach (explode('.', $key) as $key_part)
 		{
-			if($array instanceof \ArrayAccess and isset($array[$key_part]))
+			if( ($array instanceof \ArrayAccess and isset($array[$key_part])) === false )
 			{
-				return $array[$key_part];
-			}
-			elseif ( ! is_array($array) or ! array_key_exists($key_part, $array))
-			{
-				return \Fuel::value($default);
+				if ( ! is_array($array) or ! array_key_exists($key_part, $array))
+				{
+					return \Fuel::value($default);
+				}
 			}
 
 			$array = $array[$key_part];
