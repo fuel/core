@@ -313,6 +313,12 @@ class Fuel
 
 			// Add a slash if it is missing
 			$base_url = rtrim($base_url, '/').'/';
+			
+			// Remove public folder
+			if (\Config::get('public_folder', false) === true)
+			{
+				$base_url = str_replace('public/', '', $base_url);
+			}
 		}
 		return $base_url;
 	}
