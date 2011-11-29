@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @package		Fuel
  * @category	Logging
  * @author		Phil Sturgeon
- * @link		http://fuelphp.com/docs/classes/log.html
+ * @link		http://docs.fuelphp.com/classes/log.html
  */
 class Log
 {

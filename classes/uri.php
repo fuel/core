@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @package   Fuel
  * @category  Core
  * @author    Dan Horrigan
- * @link      http://fuelphp.com/docs/classes/uri.html
+ * @link      http://docs.fuelphp.com/classes/uri.html
  */
 class Uri
 {

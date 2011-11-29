@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @package		Fuel
  * @category	Core
  * @author		Phil Sturgeon
- * @link		http://fuelphp.com/docs/classes/lang.html
+ * @link		http://docs.fuelphp.com/classes/lang.html
  */
 class Lang
 {

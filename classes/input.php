@@ -20,7 +20,7 @@ namespace Fuel\Core;
  *
  * @package   Fuel
  * @category  Core
- * @link      http://fuelphp.com/docs/classes/input.html
+ * @link      http://docs.fuelphp.com/classes/input.html
  */
 class Input
 {

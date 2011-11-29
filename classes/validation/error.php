@@ -88,7 +88,7 @@ class Validation_Error extends \Exception
 		{
 			$msg = $this->field->fieldset()->validation()->get_message($this->rule);
 			$msg = $msg === false
-				? __('validation.'.$this->rule) ?: __('validation.'.Arr::get(explode(':', $this->rule), 0))
+				? \Lang::line('validation.'.$this->rule) ?: \Lang::line('validation.'.Arr::get(explode(':', $this->rule), 0))
 				: $msg;
 		}
 		if ($msg == false)

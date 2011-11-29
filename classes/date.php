@@ -21,7 +21,7 @@ namespace Fuel\Core;
  * @package     Fuel
  * @subpackage  Core
  * @category    Core
- * @link        http://fuelphp.com/docs/classes/date.html
+ * @link        http://docs.fuelphp.com/classes/date.html
  *
  * Notes:
  * - Always returns Date objects, will accept both Date objects and UNIX timestamps
