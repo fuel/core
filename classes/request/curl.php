@@ -211,7 +211,8 @@ class Request_Curl extends \Request_Driver
 	 */
 	protected function method_post()
 	{
-		$params = http_build_query($this->params, null, '&');
+		// TODO this should encode based on content type
+		$params = is_array($this->params) ? http_build_query($this->params, null, '&') : $this->params;
 
 		$this->set_option(CURLOPT_POST, true);
 		$this->set_option(CURLOPT_POSTFIELDS, $params);
