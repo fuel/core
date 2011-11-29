@@ -57,7 +57,8 @@ class Config
 			{
 				$type = $info['extension'];
 				// Keep extension when it's an absolute path, because the finder won't add it
-				if ($file[0] !== '/' and $file[1] !== ':') {
+				if ($file[0] !== '/' and $file[1] !== ':')
+				{
 					$file = substr($file, 0, -(strlen($type) + 1));
 				}
 			}
