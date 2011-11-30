@@ -297,7 +297,7 @@ class Mongo_Db
 	{
 		foreach ($wheres as $wh => $val)
 		{
-			$this->wheres[$wh] = (string) $val;
+			$this->wheres[$wh] = $val;
 		}
 		return $this;
 	}
@@ -319,7 +319,7 @@ class Mongo_Db
 
 			foreach ($wheres as $wh => $val)
 			{
-				$this->wheres['$or'][] = array($wh => (string) $val);
+				$this->wheres['$or'][] = array($wh => $val);
 			}
 		}
 		return $this;
