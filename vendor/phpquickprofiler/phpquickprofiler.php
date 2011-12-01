@@ -96,7 +96,9 @@ class PhpQuickProfiler {
 		$queryTotals = array();
 		$queryTotals['count'] = 0;
 		$queryTotals['time'] = 0;
+		$queryTotals['duplicates'] = 0;
 		$queries = array();
+		$unique_queries = array();
 
 		if($this->db != '') {
 			$queryTotals['count'] += $this->db->queryCount;
@@ -104,6 +106,15 @@ class PhpQuickProfiler {
 				$query = $this->attemptToExplainQuery($query);
 				$queryTotals['time'] += $query['time'];
 				$query['time'] = $this->getReadableTime($query['time']);
+				$duplicate = false;
+				if ( in_array($query['sql'], $unique_queries) ) {
+					$duplicate = true;
+					$queryTotals['duplicates']++;
+				}
+				else {
+					$unique_queries[] = $query['sql'];
+				}
+				$query['duplicate'] = $duplicate;
 				$queries[] = $query;
 			}
 		}
