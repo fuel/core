@@ -56,7 +56,11 @@ class Config
 			if (isset($info['extension']))
 			{
 				$type = $info['extension'];
-				$file = substr($file, 0, -(strlen($type) + 1));
+				// Keep extension when it's an absolute path, because the finder won't add it
+				if ($file[0] !== '/' and $file[1] !== ':')
+				{
+					$file = substr($file, 0, -(strlen($type) + 1));
+				}
 			}
 			$class = '\\Config_'.ucfirst($type);
 
