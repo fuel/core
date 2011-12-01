@@ -235,10 +235,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ( ! empty($where))
 		{
-			if ( ! is_array($where[0]))
-			{
-				$where = array($where);
-			}
+			is_array($where) or $where = array($where);
 			$query = $query->where($where);
 		}
 
