@@ -65,6 +65,17 @@ function displayPqp($output) {
 			PQP_HEIGHT = "short";
 		}
 	}
+	function toggleBottom(){
+		var container = document.getElementById('pqp-container');
+		if (container.style.position == "inherit")
+		{
+			container.style.position="absolute";
+		}
+		else
+		{
+			container.style.position="inherit";
+		}
+	}
 
 	function loadCSS() {
 		var sheet = document.createElement("style");
@@ -335,6 +346,7 @@ $return_output .=<<<FOOTER
 			<td class="actions">
 				<a href="#" onclick="toggleDetails();return false">Details</a>
 				<a class="heightToggle" href="#" onclick="toggleHeight();return false">Height</a>
+				<a href="#" onclick="toggleBottom();return false">Bottom</a>
 			</td>
 		</tr>
 	</table>
