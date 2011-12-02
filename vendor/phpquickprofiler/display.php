@@ -25,17 +25,20 @@ function displayPqp($output) {
 #pQp .pqp-box h3{font-weight:normal;line-height:200px;padding:0 15px;color:#fff}
 .pQp,.pQp td{color:#444}
 #pqp-metrics{background:#000;width:100%}
-#pqp-console,#pqp-speed,#pqp-queries,#pqp-memory,#pqp-files,#pqp-config{background-color:#000;border-top:1px solid #ccc;height:200px;overflow:auto}
+#pqp-console,#pqp-speed,#pqp-queries,#pqp-memory,#pqp-files,#pqp-config,#pqp-session,#pqp-get,#pqp-post{background-color:#000;border-top:1px solid #ccc;height:200px;overflow:auto}
 .pQp .green{color:#588e13!important}
 .pQp .blue{color:#3769a0!important}
 .pQp .purple{color:#953fa1!important}
 .pQp .orange{color:#d28c00!important}
 .pQp .red{color:#b72f09!important}
 .pQp .yellow{color:#CDCF3A!important}
-#pQp,#pqp-console,#pqp-speed,#pqp-queries,#pqp-memory,#pqp-files,#pqp-config{display:none}
-.pQp .console,.pQp .speed,.pQp .queries,.pQp .memory,.pQp .files,.pQp .config{display:block!important}
-.pQp .console #pqp-console,.pQp .speed #pqp-speed,.pQp .queries #pqp-queries,.pQp .memory #pqp-memory,.pQp .files #pqp-files,.pQp .config #pqp-config{display:block}
-.console td.green,.speed td.blue,.queries td.purple,.memory td.orange,.files td.red,.config td.yellow{background:#222!important;border-bottom:6px solid #fff!important;cursor:default!important}
+.pQp .cyan{color:#3EC4D3!important}
+.pQp .pink{color:#FF7CAD!important}
+.pQp .flesh{color:#FFA46E!important}
+#pQp,#pqp-console,#pqp-speed,#pqp-queries,#pqp-memory,#pqp-files,#pqp-config,#pqp-session,#pqp-get,#pqp-post{display:none}
+.pQp .console,.pQp .speed,.pQp .queries,.pQp .memory,.pQp .files,.pQp .config,.pQp .session,.pQp .get,.pQp .post{display:block!important}
+.pQp .console #pqp-console,.pQp .speed #pqp-speed,.pQp .queries #pqp-queries,.pQp .memory #pqp-memory,.pQp .files #pqp-files,.pQp .config #pqp-config,.pQp .session #pqp-session,.pQp .get #pqp-get,.pQp .post #pqp-post{display:block}
+.console td.green,.speed td.blue,.queries td.purple,.memory td.orange,.files td.red,.config td.yellow,.session td.cyan,.get td.pink,.post td.flesh{background:#222!important;border-bottom:6px solid #fff!important;cursor:default!important}
 .tallDetails #pQp .pqp-box{height:500px}
 .tallDetails #pQp .pqp-box h3{line-height:500px}
 .hideDetails #pQp .pqp-box{display:none!important}
@@ -44,7 +47,7 @@ function displayPqp($output) {
 .hideDetails #pQp var{font-size:18px;margin:0 0 2px 0}
 .hideDetails #pQp h4{font-size:10px}
 .hideDetails .heightToggle{visibility:hidden}
-#pqp-metrics td{height:80px;width:17%;text-align:center;cursor:pointer;border:1px solid #000;border-bottom:6px solid #444;-webkit-border-top-left-radius:10px;-moz-border-radius-topleft:10px;-webkit-border-top-right-radius:10px;-moz-border-radius-topright:10px}
+#pqp-metrics td{height:80px;width:11%;text-align:center;cursor:pointer;border:1px solid #000;border-bottom:6px solid #444;-webkit-border-top-left-radius:10px;-moz-border-radius-topleft:10px;-webkit-border-top-right-radius:10px;-moz-border-radius-topright:10px}
 #pqp-metrics td:hover{background:#222;border-bottom:6px solid #777}
 #pqp-metrics .green{border-left:none}
 #pqp-metrics .red{border-right:none}
@@ -96,6 +99,12 @@ function displayPqp($output) {
 #pqp-files .side td.alt{background-color:#9b2700;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
 #pqp-config .side{background-color:#CDCF3A;border-bottom:1px solid #CDCF3A;border-left:1px solid #CDCF3A}
 #pqp-config .side td.alt{background-color:#CDCF3A;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
+#pqp-session .side{background-color:#3EC4D3;border-bottom:1px solid #3EC4D3;border-left:1px solid #3EC4D3}
+#pqp-session .side td.alt{background-color:#3EC4D3;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
+#pqp-get .side{background-color:#FF7CAD;border-bottom:1px solid #FF7CAD;border-left:1px solid #FF7CAD}
+#pqp-get .side td.alt{background-color:#FF7CAD;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
+#pqp-post .side{background-color:#FFA46E;border-bottom:1px solid #FFA46E;border-left:1px solid #FFA46E}
+#pqp-post .side td.alt{background-color:#FFA46E;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
 #pqp-footer{width:100%;background:#000;font-size:11px;border-top:1px solid #ccc}
 #pqp-footer td{padding:0!important;border:none!important}
 #pqp-footer strong{color:#fff}
@@ -131,6 +140,9 @@ CSS
 		removeClassName(pQp, 'memory');
 		removeClassName(pQp, 'files');
 		removeClassName(pQp, 'config');
+		removeClassName(pQp, 'session');
+		removeClassName(pQp, 'get');
+		removeClassName(pQp, 'post');
 	}
 
 	function toggleDetails(){
@@ -232,16 +244,15 @@ JAVASCRIPT;
 
 $logCount = count($output['logs']['console']);
 $fileCount = count($output['files']);
-$configCount = 0;
 $memoryUsed = $output['memoryTotals']['used'];
 $queryCount = $output['queryTotals']['count'];
 $speedTotal = $output['speedTotals']['total'];
 
-$configitem = function($items, $depth, &$class) use(&$configitem, &$configCount)
+$printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 {
 	$output = '';
 	foreach($items as $item => $value) {
-		$configCount++;
+		$count++;
 		$output .='<tr><td class="'.$class.'">';
 		if (is_bool($value))
 		{
@@ -257,15 +268,26 @@ $configitem = function($items, $depth, &$class) use(&$configitem, &$configCount)
 		}
 		$output .= str_repeat('&raquo;&nbsp;', $depth).$item.'</td></tr>';
 		if($class == '') $class = 'alt'; else $class = '';
-		is_array($value) and $output .= $configitem($value, $depth + 1, $class);
+		is_array($value) and $output .= $printarray($value, $depth + 1, $class);
 	}
 	return $output;
 };
 
 $class = '';
-$output['configItems'] = $configitem(\Config::$items, 0, $class);
+$configCount = 0;
+$output['configItems'] = $printarray(\Config::$items, 0, $class, $configCount);
 
+$class = '';
+$sessionCount = 0;
+$output['sessionItems'] = $printarray(\Session::get(null), 0, $class, $sessionCount);
 
+$class = '';
+$getCount = 0;
+$output['getItems'] = $printarray(\Input::get(), 0, $class, $getCount);
+
+$class = '';
+$postCount = 0;
+$output['postItems'] = $printarray(\Input::post(), 0, $class, $postCount);
 
 	$return_output .=<<<PQPTABS
 <div id="pQp" class="console">
@@ -294,6 +316,18 @@ $output['configItems'] = $configitem(\Config::$items, 0, $class);
 	<td class="yellow" onclick="changeTab('config');">
 		<var>{$configCount} Config</var>
 		<h4>items loaded</h4>
+	</td>
+	<td class="cyan" onclick="changeTab('session');">
+		<var>{$sessionCount} Session</var>
+		<h4>vars loaded</h4>
+	</td>
+	<td class="pink" onclick="changeTab('get');">
+		<var>{$getCount} GET</var>
+		<h4>vars loaded</h4>
+	</td>
+	<td class="flesh" onclick="changeTab('post');">
+		<var>{$postCount} POST</var>
+		<h4>vars loaded</h4>
 	</td>
 </tr>
 </table>
@@ -465,8 +499,8 @@ $return_output .='</div>';
 
 $return_output .='<div id="pqp-config" class="pqp-box">';
 
-if($output['fileTotals']['count'] ==  0) {
-	$return_output .='<h3>This panel has no log items.</h3>';
+if($configCount ==  0) {
+	$return_output .='<h3>This panel has no config items.</h3>';
 }
 else {
 	$return_output .='<table class="side" cellspacing="0">
@@ -474,32 +508,61 @@ else {
 		 </table>
 		<table class="main" cellspacing="0">';
 
-		$configitem = function($items, $depth, &$class) use(&$configitem)
-		{
-			$output = '';
-			foreach($items as $item => $value) {
-				$output .='<tr><td class="'.$class.'">';
-				if (is_bool($value))
-				{
-					$output .= '<b>'.($value?'true':'false').'</b>';
-				}
-				elseif (is_null($value))
-				{
-					$output .= '<b>null</b>';
-				}
-				elseif( ! is_array($value))
-				{
-					$output .= '<b>'.$value.'</b>';
-				}
-				$output .= str_repeat('&raquo;&nbsp;', $depth).$item.'</td></tr>';
-				if($class == '') $class = 'alt'; else $class = '';
-				is_array($value) and $output .= $configitem($value, $depth + 1, $class);
-			}
-			return $output;
-		};
-
 		$return_output .= $output['configItems'];
 
+		$return_output .='</table>';
+}
+
+$return_output .='</div>';
+
+$return_output .='<div id="pqp-session" class="pqp-box">';
+
+if($sessionCount ==  0) {
+	$return_output .='<h3>This panel has no session variables.</h3>';
+}
+else {
+	$return_output .='<table class="side" cellspacing="0">
+			<tr><td class="alt"><var>'.$sessionCount.'</var> <h4>Session variables</h4></td></tr>
+		 </table>
+		<table class="main" cellspacing="0">';
+
+		$return_output .= $output['sessionItems'];
+
+		$return_output .='</table>';
+}
+
+$return_output .='</div>';
+
+$return_output .='<div id="pqp-get" class="pqp-box">';
+
+if($getCount ==  0) {
+	$return_output .='<h3>This panel has no GET variables.</h3>';
+}
+else {
+	$return_output .='<table class="side" cellspacing="0">
+			<tr><td class="alt"><var>'.$getCount.'</var> <h4>GET variables</h4></td></tr>
+		 </table>
+		<table class="main" cellspacing="0">';
+
+		$return_output .= $output['getItems'];
+
+		$return_output .='</table>';
+}
+
+$return_output .='</div>';
+
+$return_output .='<div id="pqp-post" class="pqp-box">';
+
+if($postCount ==  0) {
+	$return_output .='<h3>This panel has no POST variables.</h3>';
+}
+else {
+	$return_output .='<table class="side" cellspacing="0">
+			<tr><td class="alt"><var>'.$postCount.'</var> <h4>POST variables</h4></td></tr>
+		 </table>
+		<table class="main" cellspacing="0">';
+
+		$return_output .= $output['postItems'];
 
 		$return_output .='</table>';
 }
@@ -511,6 +574,7 @@ $return_output .=<<<FOOTER
 		<tr>
 			<td class="credit">
 				<a href="http://particletree.com" target="_blank">
+				Based on
 				<strong>PHP</strong>
 				<b class="green">Q</b><b class="blue">u</b><b class="purple">i</b><b class="orange">c</b><b class="red">k</b>
 				Profiler</a></td>
