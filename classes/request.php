@@ -88,8 +88,6 @@ class Request
 	 */
 	public static function forge($uri = null, $options = true)
 	{
-		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
-
 		is_bool($options) and $options = array('route' => $options);
 		is_string($options) and $options = array('driver' => $options);
 
@@ -298,6 +296,8 @@ class Request
 	public function __construct($uri, $route = true)
 	{
 		$this->uri = new \Uri($uri);
+
+		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->uri.'"', __METHOD__);
 
 		// check if a module was requested
 		if (count($this->uri->segments) and $module_path = \Fuel::module_exists($this->uri->segments[0]))

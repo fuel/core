@@ -36,6 +36,8 @@ class Request_Soap extends \Request_Driver
 			throw new \RuntimeException('Your PHP installation doesn\'t have Soap enabled. Rebuild PHP with --enable-soap');
 		}
 
+		logger(\Fuel::L_INFO, 'Creating a new SOAP Request with URI = "'.$resource.'"', __METHOD__);
+
 		// If authentication is enabled use it
 		if ( ! empty($options['user']) and ! empty($options['pass']))
 		{
