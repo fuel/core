@@ -268,7 +268,7 @@ $printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 		}
 		$output .= str_repeat('&raquo;&nbsp;', $depth).$item.'</td></tr>';
 		if($class == '') $class = 'alt'; else $class = '';
-		is_array($value) and $output .= $printarray($value, $depth + 1, $class);
+		is_array($value) and $output .= $printarray($value, $depth + 1, $class, $count);
 	}
 	return $output;
 };
