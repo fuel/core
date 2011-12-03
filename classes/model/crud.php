@@ -424,9 +424,14 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			if ($result[1] > 0)
 			{
-				 $this->set($vars);
-				 $this->{static::primary_key()} = $result[0];
-				 $this->is_new(false);
+				// workaround for PDO connections not returning the insert_id
+				if ($result[0] === false and isset($vars[static::primary_key()]))
+				{
+					$result[0] = $vars[static::primary_key()];
+				}
+				$this->set($vars);
+				$this->{static::primary_key()} = $result[0];
+				$this->is_new(false);
 			}
 
 			return $this->post_save($result);
