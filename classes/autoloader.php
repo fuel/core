@@ -286,6 +286,13 @@ class Autoloader
 			}
 		}
 
+		// deal with incorrect file/class combinations
+		empty($full_class) and $full_class = $class;
+		if ( ! class_exists($full_class, false) and ! interface_exists($full_class, false))
+		{
+			$loaded = false;
+		}
+
 		// Prevent failed load from keeping other classes from initializing
 		if (static::$auto_initialize == $class)
 		{
