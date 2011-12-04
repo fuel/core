@@ -215,6 +215,13 @@ class Autoloader
 	 */
 	public static function load($class)
 	{
+		// deal with funny is_callable('static::classname') side-effect
+		if (strpos($class, 'static::') === 0)
+		{
+			// is called from within the class, so it's already loaded
+			return true;
+		}
+
 		$loaded = false;
 		$class = ltrim($class, '\\');
 		$namespaced = ($pos = strripos($class, '\\')) !== false;
