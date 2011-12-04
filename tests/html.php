@@ -57,6 +57,10 @@ class Tests_Html extends TestCase
 	 */
 	public function test_anchor()
 	{
+		// Query string tests
+		Config::set('url_suffix', '');
+		Config::set('index_file', '');
+
 		// External uri
 		$output = Html::anchor('http://google.com', 'Go to Google');
 		$expected = '<a href="http://google.com">Go to Google</a>';
@@ -70,18 +74,27 @@ class Tests_Html extends TestCase
 		$expected = '<a rel="example" class="sample" style="color:red;" href="http://google.com">Go to Google</a>';
 		$this->assertEquals($expected, $output);
 
+		// External secure uri
+		$output = Html::anchor('http://google.com', 'Go to Google', array('rel' => 'example', 'class' => 'sample', 'style' => 'color:red;'), true);
+		$expected = '<a rel="example" class="sample" style="color:red;" href="https://google.com">Go to Google</a>';
+		$this->assertEquals($expected, $output);
+
 		// Internal uri
 		$output = Html::anchor('controller/method', 'Method');
-		$expected = '<a href="' . Uri::create('controller/method') . '">Method</a>';
+		$expected = '<a href="controller/method">Method</a>';
 		$this->assertEquals($expected, $output);
+
+		// Internal secure uri
+		$host = \Input::server('http_host');
+		$_SERVER['HTTP_HOST'] = 'fuelphp.com';
+		$output = Html::anchor('controller/method', 'Method', array(), true);
+		$expected = '<a href="https://'.\Input::server('http_host').'/controller/method">Method</a>';
+		$this->assertEquals($expected, $output);
+		$_SERVER['HTTP_HOST'] = $host;
 
 		// Get original values to reset once done
 		$index_file = Config::get('index_file');
 		$url_suffix = Config::get('url_suffix');
-
-		// Query string tests
-		Config::set('url_suffix', '');
-		Config::set('index_file', '');
 
 		$output = Html::anchor('search?q=query', 'Search');
 		$expected = '<a href="search?q=query">Search</a>';
