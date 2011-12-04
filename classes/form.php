@@ -543,7 +543,7 @@ class Form
 		unset($attributes['label']);
 		unset($attributes['id']);
 
-		return html_tag('label', $attributes, \Lang::line($label) ?: $label);
+		return html_tag('label', $attributes, \Lang::get($label) ?: $label);
 	}
 
 	/**
