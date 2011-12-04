@@ -535,7 +535,11 @@ class Form
 			isset($attributes['id']) and $id = $attributes['id'];
 		}
 
-		$attributes['for'] = $id;
+		if (empty($attributes['for']) && \Config::get('form.auto_id', false) == true)
+		{
+			$attributes['for'] = \Config::get('form.auto_id_prefix', 'form_').$id;
+		}
+		
 		unset($attributes['label']);
 		unset($attributes['id']);
 
