@@ -52,14 +52,23 @@ class Router
 				$options = $options[0];
 			}
 		}
+		// If there are only arrays in options then this contain multiple routes
+		if (is_array($options) && count(array_filter($options, "is_array"))==count($options)) {
+			$route_destination=array();
+			foreach ($options as $route_options) {
+				$route_destination[] = new \Route($path, $route_options);
+			}
+		} else {
+			$route_destination = new \Route($path, $options);
+		}
 
 		if ($prepend)
 		{
-			\Arr::prepend(static::$routes, $name, new \Route($path, $options));
+			\Arr::prepend(static::$routes, $name, $route_destination);
 			return;
 		}
 
-		static::$routes[$name] = new \Route($path, $options);
+		static::$routes[$name] = $route_destination;
 	}
 
 	/**
@@ -100,9 +109,12 @@ class Router
 		{
 			foreach (static::$routes as $route)
 			{
-				if ($match = $route->parse($request))
-				{
-					break;
+				$route_junction = is_array($route) ? $route: array($route);
+				foreach ($route_junction as $route) {
+					if ($match = $route->parse($request))
+					{
+						break 2;
+					}
 				}
 			}
 		}

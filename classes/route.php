@@ -26,6 +26,21 @@ class Route
 	public $named_params = array();
 
 	/**
+	 * @var  array  the required params to generate a url
+	 */
+	public $required_params = array();
+
+	/**
+	 * @var  array  any additional restrictions on the url
+	 */
+	public $url_restrictions = array();
+
+	/**
+	 * @var  array  the HTTP method this route requires
+	 */
+	public $required_method = null;
+
+	/**
 	 * @var  array  method params array
 	 */
 	public $method_params = array();
@@ -73,8 +88,31 @@ class Route
 	public function __construct($path, $translation = null)
 	{
 		$this->path = $path;
-		$this->translation = ($translation === null) ? $path : $translation;
+		$this->translation = ($translation === null) ? $path : $this->parse_translation($translation);
 		$this->search = ($translation == stripslashes($path)) ? $path : $this->compile();
+	}
+
+	protected function parse_translation($translation)
+	{
+		$destination = $translation;
+
+		if (!is_array($translation)) {
+			return $translation;
+		}
+
+		//$translation is array of options
+		foreach ($translation as $name=>$value) {
+			if (is_numeric($name) && is_string($value)) {
+				if (in_array(strtoupper($value), array('GET', 'POST', 'PUT', 'DELETE'))) {
+					$this->required_method = strtoupper($value);
+				} else {
+					$destination = $value;
+				}
+			} elseif(is_numeric($name) && is_array($value)) {
+				$this->url_restrictions = $value;
+			}
+		}
+		return $destination;
 	}
 
 	/**
@@ -102,8 +140,29 @@ class Route
 			'[[:alpha:]]+',
 			'[^/]*',
 		), $this->path);
-					
-		return preg_replace('#(?<!\[\[):([a-z\_]+)(?!:\]\])#uD', '(?P<$1>.+?)', $search);
+
+		$required_parameters = array();
+		$params_regexes = is_null($this->url_restrictions) ? array() : $this->url_restrictions;
+		$callback = function ($match) use (&$required_parameters, $params_regexes)
+		{
+			static $used_names = array();
+
+			$match = $match[1];
+			//Leave the duplicates as-is
+			if (array_key_exists($match, $used_names)) {
+				return ":$match";
+			}
+			else {
+				$used_names[$match] = true;
+			}
+			//Add the named parameter to required route parameters
+			$required_parameters[] = $match;
+			$regex = isset($params_regexes[$match]) ? $params_regexes[$match] : '.+';
+			return sprintf('(?P<%s>'.$regex.'?)', $match);
+		};
+		$result = preg_replace_callback('#(?<!\[\[):([a-z\_]+)(?!:\]\])#uD', $callback, $search);
+		$this->required_params = $required_parameters;
+		return $result;
 	}
 
 	/**
@@ -184,25 +243,14 @@ class Route
 			$route = $this;
 		}
 
-		if (is_array($route->translation))
-		{
-			foreach ($route->translation as $r)
-			{
-				$verb = $r[0];
-
-				if (\Input::method() == strtoupper($verb))
-				{
-					$r[1]->search = $route->search;
-					$result = $route->_parse_search($uri, $r[1]);
-
-					if ($result)
-					{
-						return $result;
-					}
-				}
-			}
-
+		if (!is_null($route->required_method) && \Input::method() != $route->required_method) {
 			return false;
+		}
+
+		if ($route->translation instanceof static) {
+			$route->translation->search = $route->search;
+			$result = $route->_parse_search($uri, $route->translation);
+			return $result ? $result : false;
 		}
 
 		if (preg_match('#^'.$route->search.'$#uD', $uri, $params) != false)
