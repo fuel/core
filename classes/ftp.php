@@ -54,8 +54,8 @@ class Ftp
 	 *
 	 *     $ftp = static::forge('group');
 	 *
-	 * @param   string  Ftp filename
-	 * @param   array   array of values
+	 * @param   string|array  The name of the config group to use, or a configuration array.
+	 * @param   bool          Automatically connect to this server.
 	 * @return  Ftp
 	 */
 	public static function forge($config = 'default', $connect = true)
@@ -71,8 +71,8 @@ class Ftp
 	/**
 	 * Sets the initial Ftp filename and local data.
 	 *
-	 * @param   string  Ftp filename
-	 * @param   array   array of values
+	 * @param   string|array  The name of the config group to use, or a configuration array.
+	 * @param   bool          Automatically connect to this server.
 	 * @return  void
 	 */
 	public function __construct($config = 'default')
