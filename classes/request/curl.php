@@ -262,37 +262,40 @@ class Request_Curl extends \Request_Driver
 		// Detect the request content type, default to 'text/plain'
 		$content_type = isset($this->headers['Content-Type']) ? $this->headers['Content-Type'] : $this->response_info('content_type', 'text/plain');
 		
-		switch($content_type)
+		// Get the correct format for the current content type
+		$format = \Arr::key_exists(static::$auto_detect_formats, $content_type) ? static::$auto_detect_formats[$content_type] : null;
+		
+		switch($format)
 		{
 			// Format as XML
-			case static::$supported_formats['xml']:
-					$base_node = key($this->params);
-					return \Format::forge($this->params[$base_node])->to_xml(null, null, $base_node);
+			case 'xml':
+					$base_node = key($input);
+					return \Format::forge($input[$base_node])->to_xml(null, null, $base_node);
 				break;
 
 			// Format as JSON
-			case static::$supported_formats['json']:
-					return \Format::forge($this->params)->to_json();
+			case 'json':
+					return \Format::forge($input)->to_json();
 				break;
 
 			// Format as PHP Serialized Array
-			case static::$supported_formats['serialize']:
-					return \Format::forge($this->params)->to_serialize();
+			case 'serialize':
+					return \Format::forge($input)->to_serialize();
 				break;
 
 			// Format as PHP Array
-			case static::$supported_formats['php']:
-					return \Format::forge($this->params)->to_php();
+			case 'php':
+					return \Format::forge($input)->to_php();
 				break;
 
 			// Format as CSV
-			case static::$supported_formats['csv']:
-					return \Format::forge($this->params)->to_csv();
+			case 'csv':
+					return \Format::forge($input)->to_csv();
 				break;
 
 			// Format as Query String
 			default:
-					return http_build_query($this->params, null, '&');
+					return http_build_query($input, null, '&');
 				break;
 		}
 	}
