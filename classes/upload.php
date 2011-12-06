@@ -428,8 +428,8 @@ class Upload
 	/**
 	 * Upload files with Ftp
 	 *
-	 * @param   string  Ftp filename
-	 * @param   array   array of values
+	 * @param   string|array  The name of the config group to use, or a configuration array.
+	 * @param   bool          Automatically connect to this server.
 	 */
 	public static function with_ftp($config = 'default', $connect = true)
 	{
