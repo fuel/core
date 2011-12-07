@@ -727,17 +727,19 @@ class Mongo_Db
 			throw new \Mongo_DbException("No Mongo collection selected to insert into");
 		}
 
-		if (empty($insert) or ! is_array($insert))
+		$values = (empty($insert) OR ! is_array($insert)) ? $this->values : $insert;
+
+		if (empty($values) or ! is_array($values))
 		{
 			throw new \Mongo_DbException("Nothing to insert into Mongo collection or insert is not an array");
 		}
 
 		try
 		{
-			$this->db->{$collection}->insert($insert, array('fsync' => true));
-			if (isset($insert['_id']))
+			$this->db->{$collection}->insert($values, array('fsync' => true));
+			if (isset($values['_id']))
 			{
-				return $insert['_id'];
+				return $values['_id'];
 			}
 			else
 			{
@@ -767,7 +769,9 @@ class Mongo_Db
 			throw new \Mongo_DbException("No Mongo collection selected to insert into");
 		}
 
-		if (empty($data) or ! is_array($data))
+		$values = (empty($data) OR ! is_array($data)) ? $this->values : $data;
+
+		if (empty($values) or ! is_array($values))
 		{
 			throw new \Mongo_DbException("Nothing to update in Mongo collection or update is not an array");
 		}
@@ -775,7 +779,7 @@ class Mongo_Db
 		try
 		{
 			$options = array_merge($options, array('fsync' => true, 'multiple' => false));
-			$this->db->{$collection}->update($this->wheres, array('$set' => $data), $options);
+			$this->db->{$collection}->update($this->wheres, array('$set' => $values), $options);
 			$this->_clear();
 			return true;
 		}
@@ -801,14 +805,16 @@ class Mongo_Db
 			throw new \Mongo_DbException("No Mongo collection selected to insert into");
 		}
 
-		if (empty($data) or ! is_array($data))
+		$values = (empty($data) OR ! is_array($data)) ? $this->values : $data;
+
+		if (empty($values) or ! is_array($values))
 		{
 			throw new \Mongo_DbException("Nothing to update in Mongo collection or update is not an array");
 		}
 
 		try
 		{
-			$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('fsync' => true, 'multiple' => true));
+			$this->db->{$collection}->update($this->wheres, array('$set' => $values), array('fsync' => true, 'multiple' => true));
 			$this->_clear();
 			return true;
 		}
