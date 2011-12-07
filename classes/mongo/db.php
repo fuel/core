@@ -64,6 +64,11 @@ class Mongo_Db
 	protected $selects = array();
 
 	/**
+	 * @var $values Holds all the values to be inserted/updated
+	 */
+	protected $values = array();
+
+	/**
 	 * Holds all the where options.
 	 *
 	 * @var  array
@@ -288,6 +293,23 @@ class Mongo_Db
 	 		}
 	 	}
 	 	return $this;
+	}
+
+	/**
+	 * Set the values to be inserted or updated. The $values array should be an associative
+	 * array with the field as key and the value as the search criteria.
+	 *
+	 *	@param	array	$values		an associative array with conditions, array(field => value)
+	 *	@usage	$mongodb->set(array('foo' => 'bar'))->insert('foobar');
+	 */
+	public function set($values = array())
+	{
+		foreach ($values as $va => $val)
+		{
+			$this->values[$va] = $val;
+		}
+
+		return $this;
 	}
 
 	/**
