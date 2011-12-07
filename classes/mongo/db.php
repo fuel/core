@@ -686,7 +686,7 @@ class Mongo_Db
 	}
 
 	/**
-	* Get one document based upon the passwed parameters
+	* Get one document based upon the passed parameters
 	 *
 	 *	@param	string	$collection		the collection name
 	 *	@usage	$mongodb->get('foo');
@@ -719,7 +719,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No MongoDB collection selected in order to retrieve a count of documents");
 		}
 
 		$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count($foundonly);
@@ -786,7 +786,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection selected to update");
 		}
 
 		$values = (empty($data) OR ! is_array($data)) ? $this->values : $data;
@@ -822,7 +822,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection selected to update");
 		}
 
 		$values = (empty($data) OR ! is_array($data)) ? $this->values : $data;
@@ -856,7 +856,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection selected to delete from");
 		}
 
 		try
@@ -883,7 +883,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection selected to delete from");
 		}
 
 		try
@@ -935,7 +935,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection specified to add index to");
 		}
 
 		if (empty($keys) or ! is_array($keys))
@@ -981,7 +981,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection specified to remove index from");
 		}
 
 		if (empty($keys) or ! is_array($keys))
@@ -1012,7 +1012,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection specified to remove all indexes from");
 		}
 
 		$this->db->{$collection}->deleteIndexes();
@@ -1032,7 +1032,7 @@ class Mongo_Db
 
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection specified to list all indexes from");
 		}
 
 		return ($this->db->{$collection}->getIndexInfo());
