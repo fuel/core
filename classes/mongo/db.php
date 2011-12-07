@@ -686,13 +686,16 @@ class Mongo_Db
 	}
 
 	/**
-	* Get one document based upon the passed parameters
+	 * Get one document based upon the passed parameters. The collection parameter
+	 * is optional if we used $mongo->collection('name').
 	 *
 	 *	@param	string	$collection		the collection name
-	 *	@usage	$mongodb->get('foo');
+	 *	@usage	$mongodb->get_one('foo');
 	 */
 	 public function get_one($collection = "")
 	{
+		$collection = (empty($collection)) ? $this->collection : $collection;
+		
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("In order to retrieve documents from MongoDB");
