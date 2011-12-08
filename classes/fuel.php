@@ -20,7 +20,7 @@ class FuelException extends \Exception {}
 /**
  * @deprecated  Keep until v1.2
  */
-class Fuel_Exception extends \FuelException {}
+class Fuel_Exception extends FuelException {}
 
 /**
  * The core of the framework.
