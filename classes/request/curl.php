@@ -269,8 +269,19 @@ class Request_Curl extends \Request_Driver
 		{
 			// Format as XML
 			case 'xml':
-					$base_node = key($input);
-					return \Format::forge($input[$base_node])->to_xml(null, null, $base_node);
+					/**
+					 * If the input array has one item in the top level
+					 * then use that item as the root XML element.
+					 */
+					if(count($input) === 1)
+					{
+						$base_node = key($input);
+						return \Format::forge($input[$base_node])->to_xml(null, null, $base_node);
+					}
+					else
+					{
+						return \Format::forge($input)->to_xml();
+					}
 				break;
 
 			// Format as JSON
