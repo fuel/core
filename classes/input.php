@@ -193,7 +193,7 @@ class Input
 	{
 		if ((static::server('HTTPS') !== null and static::server('HTTPS') != 'off')
 			or (static::server('HTTPS') === null and static::server('SERVER_PORT') == 443)
-			or (static::server('HTTP_X_FORWARDED_PROTO') !== null and static::server('HTTP_X_FORWARDED_PROTO') != off)
+			or (static::server('HTTP_X_FORWARDED_PROTO') !== null and static::server('HTTP_X_FORWARDED_PROTO') != 'off')
 			or (static::server('HTTP_X_FORWARDED_PROTO') === null and static::server('HTTP_X_FORWARDED_PORT') == 443))
 		{
 			return 'https';
