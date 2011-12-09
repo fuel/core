@@ -17,7 +17,7 @@ namespace Fuel\Core;
 class Image_Gd extends \Image_Driver
 {
 
-	private $image_data = null;
+	protected $image_data = null;
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
 	protected $gdresizefunc = "imagecopyresampled";
 
@@ -351,37 +351,18 @@ class Image_Gd extends \Image_Driver
 	 */
 	protected function create_color(&$image, $hex, $alpha)
 	{
+		extract($this->create_hex_color($hex));
+		
+		// Handling alpha is different among drivers
 		if ($hex == null)
 		{
-			$red = 0;
-			$green = 0;
-			$blue = 0;
 			$alpha = 127;
 		}
 		else
 		{
-			// Check if theres a # in front
-			if (substr($hex, 0, 1) == '#')
-			{
-				$hex = substr($hex, 1);
-			}
-
-			// Break apart the hex
-			if (strlen($hex) == 6)
-			{
-				$red   = hexdec(substr($hex, 0, 2));
-				$green = hexdec(substr($hex, 2, 2));
-				$blue  = hexdec(substr($hex, 4, 2));
-			}
-			else
-			{
-				$red   = hexdec(substr($hex, 0, 1).substr($hex, 0, 1));
-				$green = hexdec(substr($hex, 1, 1).substr($hex, 1, 1));
-				$blue  = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
-			}
 			$alpha = 127 - floor($alpha * 1.27);
 		}
-
+		
 		// Check if the transparency is allowed
 		return imagecolorallocatealpha($image, $red, $green, $blue, $alpha);
 	}

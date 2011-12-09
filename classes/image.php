@@ -274,6 +274,11 @@ class Image
 		return static::instance()->sizes($filename);
 	}
 
+	/**
+	 * Reloads the image.
+	 *
+	 * @return  Image_Driver
+	 */
 	public static function reload()
 	{
 		return static::instance()->reload();
