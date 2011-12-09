@@ -55,10 +55,10 @@ function displayPqp($output) {
 .side var{text-shadow:#444 1px 1px 1px}
 .pQp var{font-size:23px;font-weight:bold;font-style:normal;margin:0 0 3px 0;display:block}
 .pQp h4{font-size:12px;color:#fff;margin:0 0 4px 0}
-.pQp .main{width:80%}
+.pQp .main{width:80%;}
 *+html .pQp .main{width:78%}
 * html .pQp .main{width:77%}
-.pQp .main td{padding:7px 15px;text-align:left;background:#151515;border-left:1px solid #333;border-right:1px solid #333;border-bottom:1px dotted #323232;color:#FFF}
+.pQp .main td{padding:7px 15px;text-align:left;background:#151515;border-left:1px solid #333;border-right:1px solid #333;border-bottom:1px dotted #323232;color:#FFF;}
 .pQp .main td,pre{font-family:Monaco,"Consolas","Lucida Console","Courier New",monospace;font-size:11px; background: transparent}
 .pQp .main td.alt{background:#111}
 .pQp .main tr.alt td{background:#2e2e2e;border-top:1px dotted #4e4e4e}
@@ -349,7 +349,7 @@ else {
 			<td class="alt4"><var>'.$output['logs']['speedCount'].'</var> <h4>Speed</h4></td>
 		</tr>
 		</table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$class = '';
 		foreach($output['logs']['console'] as $log) {
@@ -374,7 +374,7 @@ else {
 			else $class = '';
 		}
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
@@ -389,7 +389,7 @@ else {
 		  <tr><td><var>'.$output['speedTotals']['total'].'</var><h4>Load Time</h4></td></tr>
 		  <tr><td class="alt"><var>'.$output['speedTotals']['allowed'].'</var> <h4>Max Execution Time</h4></td></tr>
 		 </table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$class = '';
 		foreach($output['logs']['console'] as $log) {
@@ -403,7 +403,7 @@ else {
 			}
 		}
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
@@ -419,7 +419,7 @@ else {
 		  <tr><td><var>'.$output['queryTotals']['time'].'</var> <h4>Total Time</h4></td></tr>
 		  <tr><td class="alt"><var>'.$output['queryTotals']['duplicates'].'</var> <h4>Duplicates</h4></td></tr>
 		 </table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$class = '';
 		foreach($output['queries'] as $query) {
@@ -439,7 +439,7 @@ else {
 			else $class = '';
 		}
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
@@ -454,7 +454,7 @@ else {
 		  <tr><td><var>'.$output['memoryTotals']['used'].'</var><h4>Used Memory</h4></td></tr>
 		  <tr><td class="alt"><var>'.$output['memoryTotals']['total'].'</var> <h4>Total Available</h4></td></tr>
 		 </table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$class = '';
 		foreach($output['logs']['console'] as $log) {
@@ -467,7 +467,7 @@ else {
 			}
 		}
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
@@ -483,7 +483,7 @@ else {
 			<tr><td><var>'.$output['fileTotals']['size'].'</var> <h4>Total Size</h4></td></tr>
 			<tr><td class="alt"><var>'.$output['fileTotals']['largest'].'</var> <h4>Largest</h4></td></tr>
 		 </table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$class ='';
 		foreach($output['files'] as $file) {
@@ -492,7 +492,7 @@ else {
 			else $class = '';
 		}
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
@@ -506,11 +506,11 @@ else {
 	$return_output .='<table class="side" cellspacing="0">
 			<tr><td class="alt"><var>'.$configCount.'</var> <h4>Configuration items</h4></td></tr>
 		 </table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$return_output .= $output['configItems'];
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
@@ -524,11 +524,11 @@ else {
 	$return_output .='<table class="side" cellspacing="0">
 			<tr><td class="alt"><var>'.$sessionCount.'</var> <h4>Session variables</h4></td></tr>
 		 </table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$return_output .= $output['sessionItems'];
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
@@ -542,11 +542,11 @@ else {
 	$return_output .='<table class="side" cellspacing="0">
 			<tr><td class="alt"><var>'.$getCount.'</var> <h4>GET variables</h4></td></tr>
 		 </table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$return_output .= $output['getItems'];
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
@@ -560,11 +560,11 @@ else {
 	$return_output .='<table class="side" cellspacing="0">
 			<tr><td class="alt"><var>'.$postCount.'</var> <h4>POST variables</h4></td></tr>
 		 </table>
-		<table class="main" cellspacing="0">';
+		<div class="main"><table cellspacing="0">';
 
 		$return_output .= $output['postItems'];
 
-		$return_output .='</table>';
+		$return_output .='</table></div>';
 }
 
 $return_output .='</div>';
