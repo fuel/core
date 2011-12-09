@@ -22,7 +22,7 @@ class Test_Lang extends TestCase
 {
 
 	/**
-	 * Test for Lang::line()
+	 * Test for Lang::get()
 	 *
 	 * @test
 	 */
@@ -35,7 +35,7 @@ class Test_Lang extends TestCase
 	}
 
 	/**
-	 * Test for Lang::line()
+	 * Test for Lang::get()
 	 *
 	 * @test
 	 */

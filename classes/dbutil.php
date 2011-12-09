@@ -330,7 +330,7 @@ class DBUtil
 	 */
 	protected static function process_charset($charset = null, $is_default = false)
 	{
-		$charset or $charset = \Config::get('db.'.\Fuel::$env.'.charset', null);
+		$charset or $charset = \Config::get('db.'.\Config::get('db.active').'.charset', null);
 		if (empty($charset))
 		{
 			return '';

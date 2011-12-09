@@ -275,13 +275,20 @@ class Finder
 	 */
 	public function locate($dir, $file, $ext = '.php', $multiple = false, $cache = true)
 	{
+		$found = $multiple ? array() : false;
+
 		// absolute path requested?
 		if ($file[0] === '/' or $file[1] === ':')
 		{
+			if ( ! is_file($file))
+			{
+				// at this point, found would be either empty array or false
+				return $found;
+			}
+
 			return $multiple ? array($file) : $file;
 		}
 
-		$found = $multiple ? array() : false;
 		$cache_id = $multiple ? 'M.' : 'S.';
 		$paths = array();
 
