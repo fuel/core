@@ -278,7 +278,7 @@ class Finder
 		$found = $multiple ? array() : false;
 
 		// absolute path requested?
-		if ($file[0] === '/' or $file[1] === ':')
+		if ($file[0] === '/' or (isset($file[1]) and $file[1] === ':'))
 		{
 			if ( ! is_file($file))
 			{
