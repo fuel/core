@@ -56,6 +56,7 @@ function displayPqp($output) {
 .pQp var{font-size:23px;font-weight:bold;font-style:normal;margin:0 0 3px 0;display:block}
 .pQp h4{font-size:12px;color:#fff;margin:0 0 4px 0}
 .pQp .main{width:80%;}
+.pQp .main table{width:100%;}
 *+html .pQp .main{width:78%}
 * html .pQp .main{width:77%}
 .pQp .main td{padding:7px 15px;text-align:left;background:#151515;border-left:1px solid #333;border-right:1px solid #333;border-bottom:1px dotted #323232;color:#FFF;}
