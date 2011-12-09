@@ -26,9 +26,9 @@ class Profiler
 		Console::logSpeed($label);
 	}
 
-	public static function mark_memory($label)
+	public static function mark_memory($var = false, $name = 'PHP')
 	{
-		Console::logMemory($label);
+		Console::logMemory($var, $name);
 	}
 
 	public static function console($text)
