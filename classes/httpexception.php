@@ -36,7 +36,7 @@ class HttpNotFoundException extends \Request404Exception
 	}
 }
 
-class HttpServerErrorException extends \HttpException
+class HttpServerErrorException extends HttpException
 {
 	/**
 	 * When this type of exception isn't caught this method is called by
