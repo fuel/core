@@ -243,16 +243,30 @@ class Fuel
 			// Grab the output buffer and flush it, we will rebuffer later
 			$output = ob_get_clean();
 
-			\Profiler::mark('End of Fuel Execution');
-			if (preg_match("|</body>.*?</html>|is", $output))
+			$headers = headers_list();
+			$show = true;
+
+			foreach ($headers as $header)
 			{
-				$output  = preg_replace("|</body>.*?</html>|is", '', $output);
-				$output .= \Profiler::output();
-				$output .= '</body></html>';
+				if (stripos($header, 'content-type') === 0 and stripos($header, 'text/html') === false)
+				{
+					$show = false;
+				}
 			}
-			else
+
+			if ($show)
 			{
-				$output .= \Profiler::output();
+				\Profiler::mark('End of Fuel Execution');
+				if (preg_match("|</body>.*?</html>|is", $output))
+				{
+					$output  = preg_replace("|</body>.*?</html>|is", '', $output);
+					$output .= \Profiler::output();
+					$output .= '</body></html>';
+				}
+				else
+				{
+					$output .= \Profiler::output();
+				}
 			}
 			// Restart the output buffer and send the new output
 			ob_start();
