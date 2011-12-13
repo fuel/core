@@ -14,11 +14,23 @@ class Profiler
 
 	protected static $query = null;
 
+	protected static $initialized = false;
+
+	public static function _init()
+	{
+		static::init();
+	}
+
 	public static function init()
 	{
+		if (static::$initialized)
+		{
+			return;
+		}
 		static::$profiler = new PhpQuickProfiler(FUEL_START_TIME);
 		static::$profiler->queries = array();
 		static::$profiler->queryCount = 0;
+		static::$initialized = true;
 	}
 
 	public static function mark($label)
