@@ -107,6 +107,8 @@ class Session_Db extends \Session_Driver
 			// record found?
 			if ($this->record->count())
 			{
+                                // previous id used, correctly set session id so it wont be overwritten with previous id.
+                                $this->keys['session_id'] = $this->record->get('session_id');                             
 				$payload = $this->_unserialize($this->record->get('payload'));
 			}
 			else

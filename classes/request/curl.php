@@ -24,6 +24,8 @@ class Request_Curl extends \Request_Driver
 			throw new \RuntimeException('Your PHP installation doesn\'t have cURL enabled. Rebuild PHP with --with-curl');
 		}
 
+		logger(\Fuel::L_INFO, 'Creating a new CURL Request with URI = "'.$resource.'"', __METHOD__);
+
 		// If authentication is enabled use it
 		if ( ! empty($options['auth']) and ! empty($options['user']) and ! empty($options['pass']))
 		{
@@ -211,7 +213,7 @@ class Request_Curl extends \Request_Driver
 	 */
 	protected function method_post()
 	{
-		$params = http_build_query($this->params, null, '&');
+		$params = is_array($this->params) ? $this->encode($this->params) : $this->params;
 
 		$this->set_option(CURLOPT_POST, true);
 		$this->set_option(CURLOPT_POSTFIELDS, $params);
@@ -225,7 +227,7 @@ class Request_Curl extends \Request_Driver
 	 */
 	protected function method_put()
 	{
-		$params = http_build_query($this->params, null, '&');
+		$params = is_array($this->params) ? $this->encode($this->params) : $this->params;
 
 		$this->set_option(CURLOPT_POSTFIELDS, $params);
 
@@ -241,11 +243,71 @@ class Request_Curl extends \Request_Driver
 	 */
 	protected function method_delete()
 	{
-		$params = http_build_query($this->params, null, '&');
+		$params = is_array($this->params) ? $this->encode($this->params) : $this->params;
 
 		$this->set_option(CURLOPT_POSTFIELDS, $params);
 
 		// Override method, I think this makes $_POST DELETE data but... we'll see eh?
 		$this->set_header('X-HTTP-Method-Override', 'DELETE');
+	}
+	
+	/**
+	 * Function to encode input array depending on the content type
+	 * 
+	 * @param   array $input
+	 * @return  mixed encoded output
+	 */
+	protected function encode(array $input)
+	{
+		// Detect the request content type, default to 'text/plain'
+		$content_type = isset($this->headers['Content-Type']) ? $this->headers['Content-Type'] : $this->response_info('content_type', 'text/plain');
+		
+		// Get the correct format for the current content type
+		$format = \Arr::key_exists(static::$auto_detect_formats, $content_type) ? static::$auto_detect_formats[$content_type] : null;
+		
+		switch($format)
+		{
+			// Format as XML
+			case 'xml':
+					/**
+					 * If the input array has one item in the top level
+					 * then use that item as the root XML element.
+					 */
+					if(count($input) === 1)
+					{
+						$base_node = key($input);
+						return \Format::forge($input[$base_node])->to_xml(null, null, $base_node);
+					}
+					else
+					{
+						return \Format::forge($input)->to_xml();
+					}
+				break;
+
+			// Format as JSON
+			case 'json':
+					return \Format::forge($input)->to_json();
+				break;
+
+			// Format as PHP Serialized Array
+			case 'serialize':
+					return \Format::forge($input)->to_serialize();
+				break;
+
+			// Format as PHP Array
+			case 'php':
+					return \Format::forge($input)->to_php();
+				break;
+
+			// Format as CSV
+			case 'csv':
+					return \Format::forge($input)->to_csv();
+				break;
+
+			// Format as Query String
+			default:
+					return http_build_query($input, null, '&');
+				break;
+		}
 	}
 }

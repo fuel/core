@@ -235,16 +235,13 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ( ! empty($where))
 		{
-			if ( ! is_array($where[0]))
-			{
-				$where = array($where);
-			}
+			is_array($where) or $where = array($where);
 			$query = $query->where($where);
 		}
 
 		if ( ! empty($group_by))
 		{
-			$result = $query->select($group_by)->group_by($group_by)->execute()->as_array();
+			$result = $query->select($group_by)->group_by($group_by)->execute(isset(static::$_connection) ? static::$_connection : null)->as_array();
 			$counts = array();
 			foreach ($result as $res)
 			{
@@ -254,7 +251,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			return $counts;
 		}
 
-		$count = $query->execute()->get('count_result');
+		$count = $query->execute(isset(static::$_connection) ? static::$_connection : null)->get('count_result');
 
 		if ($count === null)
 		{
@@ -427,9 +424,14 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			if ($result[1] > 0)
 			{
-				 $this->set($vars);
-				 $this->{static::primary_key()} = $result[0];
-				 $this->is_new(false);
+				// workaround for PDO connections not returning the insert_id
+				if ($result[0] === false and isset($vars[static::primary_key()]))
+				{
+					$result[0] = $vars[static::primary_key()];
+				}
+				$this->set($vars);
+				$this->{static::primary_key()} = $result[0];
+				$this->is_new(false);
 			}
 
 			return $this->post_save($result);

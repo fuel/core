@@ -15,12 +15,12 @@ namespace Fuel\Core;
 /**
  * General Fuel Exception class
  */
-class FuelException extends \Exception {}
+class Fuel_Exception extends \Exception {}
 
 /**
  * @deprecated  Keep until v1.2
  */
-class Fuel_Exception extends \FuelException {}
+class FuelException extends \Fuel_Exception {}
 
 /**
  * The core of the framework.
@@ -34,7 +34,7 @@ class Fuel
 	/**
 	 * @var  string  The version of Fuel
 	 */
-	const VERSION = '1.1-rc2';
+	const VERSION = '1.1';
 
 	/**
 	 * @var  string  constant used for when in testing mode
@@ -243,16 +243,30 @@ class Fuel
 			// Grab the output buffer and flush it, we will rebuffer later
 			$output = ob_get_clean();
 
-			\Profiler::mark('End of Fuel Execution');
-			if (preg_match("|</body>.*?</html>|is", $output))
+			$headers = headers_list();
+			$show = true;
+
+			foreach ($headers as $header)
 			{
-				$output  = preg_replace("|</body>.*?</html>|is", '', $output);
-				$output .= \Profiler::output();
-				$output .= '</body></html>';
+				if (stripos($header, 'content-type') === 0 and stripos($header, 'text/html') === false)
+				{
+					$show = false;
+				}
 			}
-			else
+
+			if ($show)
 			{
-				$output .= \Profiler::output();
+				\Profiler::mark('End of Fuel Execution');
+				if (preg_match("|</body>.*?</html>|is", $output))
+				{
+					$output  = preg_replace("|</body>.*?</html>|is", '', $output);
+					$output .= \Profiler::output();
+					$output .= '</body></html>';
+				}
+				else
+				{
+					$output .= \Profiler::output();
+				}
 			}
 			// Restart the output buffer and send the new output
 			ob_start();

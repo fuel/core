@@ -44,7 +44,8 @@ abstract class ViewModel
 	 */
 	public static function forge($viewmodel, $method = 'view', $auto_filter = null)
 	{
-		$class = ucfirst(\Request::active()->module).'\\View_'.ucfirst(str_replace(array('/', DS), '_', $viewmodel));
+		$namespace = \Request::active() ? ucfirst(\Request::active()->module) : '';
+		$class = $namespace.'\\View_'.ucfirst(str_replace(array('/', DS), '_', $viewmodel));
 
 		if ( ! class_exists($class))
 		{

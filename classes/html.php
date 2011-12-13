@@ -36,14 +36,19 @@ class Html
 	 * @param	string	the url
 	 * @param	string	the text value
 	 * @param	array	the attributes array
+	 * @param	bool	true to force https, false to force http
 	 * @return	string	the html link
 	 */
-	public static function anchor($href, $text = null, $attr = array())
+	public static function anchor($href, $text = null, $attr = array(), $secure = null)
 	{
 		if ( ! preg_match('#^(\w+://|javascript:|\#)# i', $href))
 		{
 			$urlparts = explode('?', $href, 2);
-			$href = \Uri::create($urlparts[0], array(), isset($urlparts[1])?$urlparts[1]:array());
+			$href = \Uri::create($urlparts[0], array(), isset($urlparts[1])?$urlparts[1]:array(), $secure);
+		}
+		elseif ( ! preg_match('#^(javascript:|\#)# i', $href) and  is_bool($secure))
+		{
+			$href = http_build_url($href, array('scheme' => $secure ? 'https' : 'http'));
 		}
 
 		// Create and display a URL hyperlink

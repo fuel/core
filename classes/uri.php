@@ -87,9 +87,10 @@ class Uri
 	 * @param   string  $uri            The uri to create the URL for
 	 * @param   array   $variables      Some variables for the URL
 	 * @param   array   $get_variables  Any GET urls to append via a query string
+	 * @param   bool    $secure         If false, force http. If true, force https
 	 * @return  string
 	 */
-	public static function create($uri = null, $variables = array(), $get_variables = array())
+	public static function create($uri = null, $variables = array(), $get_variables = array(), $secure = null)
 	{
 		$url = '';
 		$uri = $uri ?: static::string();
@@ -128,6 +129,8 @@ class Uri
 		array_walk($variables, function ($val, $key) use (&$url) {
 			$url = str_replace(':'.$key, $val, $url);
 		});
+
+		is_bool($secure) and $url = http_build_url($url, array('scheme' => $secure ? 'https' : 'http'));
 
 		return $url;
 	}
