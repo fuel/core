@@ -73,6 +73,11 @@ class Pagination
 	 * @var	mixed	The pagination URL
 	 */
 	protected static $pagination_url;
+	
+	/**
+	 * @var	mixed	The querystring to append to the urls
+	 */
+	protected static $querystring = '';
 
 	/**
 	 * Init
@@ -142,6 +147,16 @@ class Pagination
 
 		// The current page must be zero based so that the offset for page 1 is 0.
 		static::$offset = (static::$current_page - 1) * static::$per_page;
+		
+		//tidy up and normalise the querystring
+		if(is_array(static::$querystring))
+		{
+			static::$querystring = '?'.http_build_query(static::$querystring);
+		}
+		else if(static::$querystring)
+		{
+			static::$querystring = '?'.ltrim(static::$querystring, '?');
+		}
 	}
 
 	// --------------------------------------------------------------------
@@ -202,7 +217,7 @@ class Pagination
 			else
 			{
 				$url = ($i == 1) ? '' : '/'.$i;
-				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/').$url, $i);
+				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/').$url.static::$querystring, $i);
 			}
 		}
 
@@ -232,7 +247,7 @@ class Pagination
 		else
 		{
 			$next_page = static::$current_page + 1;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']);
+			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page.static::$querystring, $value.static::$template['next_mark']);
 		}
 	}
 
@@ -260,7 +275,7 @@ class Pagination
 		{
 			$previous_page = static::$current_page - 1;
 			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value);
+			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page.static::$querystring, static::$template['previous_mark'].$value);
 		}
 	}
 }
