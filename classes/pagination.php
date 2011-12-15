@@ -186,6 +186,7 @@ class Pagination
 		}
 
 		$pagination = '';
+		$show_current_link = (isset(static::$template['show_current_link']) && static::$template['show_current_link'] == true? true: false); //eggsurplus: force the link creation even if it current page
 
 		// Let's get the starting page number, this is determined using num_links
 		$start = ((static::$current_page - static::$num_links) > 0) ? static::$current_page - (static::$num_links - 1) : 1;
@@ -195,14 +196,19 @@ class Pagination
 
 		for($i = $start; $i <= $end; $i++)
 		{
-			if (static::$current_page == $i)
+			//eggsurplus: optionally show active link
+			if (static::$current_page == $i && $show_current_link == true) {
+				$url = ($i == 1) ? '' : '/'.$i;
+				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/').$url, $i, static::$template['page_current_link_attrs']);
+			}
+			else if (static::$current_page == $i)
 			{
 				$pagination .= static::$template['active_start'].$i.static::$template['active_end'];
 			}
 			else
 			{
 				$url = ($i == 1) ? '' : '/'.$i;
-				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/').$url, $i);
+				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/').$url, $i, static::$template['page_link_attrs']); //eggsurplus: support passing link attributes
 			}
 		}
 
@@ -225,14 +231,20 @@ class Pagination
 			return '';
 		}
 
-		if (static::$current_page == static::$total_pages)
+		//eggsurplus: optionally show current link
+		$show_current_link = (isset(static::$template['show_current_link']) && static::$template['show_current_link'] == true? true: false); 
+		if (static::$current_page == static::$total_pages && $show_current_link == true) {
+			$next_page = static::$current_page + 1;
+			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark'], static::$template['next_current_link_attrs']); //eggsurplus: support passing link attributes
+		}
+		else if (static::$current_page == static::$total_pages)
 		{
 			return $value.static::$template['next_mark'];
 		}
 		else
 		{
 			$next_page = static::$current_page + 1;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']);
+			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark'], static::$template['next_link_attrs']); //eggsurplus: support passing link attributes
 		}
 	}
 
@@ -251,8 +263,15 @@ class Pagination
 		{
 			return '';
 		}
-
-		if (static::$current_page == 1)
+		
+		//eggsurplus: optionally show current link
+		$show_current_link = (isset(static::$template['show_current_link']) && static::$template['show_current_link'] == true? true: false); 
+		if (static::$current_page == 1 && $show_current_link == true) {
+			$previous_page = static::$current_page - 1;
+			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
+			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value, static::$template['previous_current_link_attrs']); //eggsurplus: support passing link attributes
+		}
+		else if (static::$current_page == 1)
 		{
 			return static::$template['previous_mark'].$value;
 		}
@@ -260,7 +279,7 @@ class Pagination
 		{
 			$previous_page = static::$current_page - 1;
 			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value);
+			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value, static::$template['previous_link_attrs']); //eggsurplus: support passing link attributes
 		}
 	}
 }
