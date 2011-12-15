@@ -515,8 +515,8 @@ class File
 	 */
 	public static function symlink($path, $link_path, $is_file = true, $area = null)
 	{
-		$path      = rtrim(static::instance($area)->get_path($path), '\\/').DS;
-		$link_path = rtrim(static::instance($area)->get_path($link_path), '\\/').DS;
+		$path      = rtrim(static::instance($area)->get_path($path), '\\/');
+		$link_path = rtrim(static::instance($area)->get_path($link_path), '\\/');
 
 		if ($is_file and ! is_file($path))
 		{
