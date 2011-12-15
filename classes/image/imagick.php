@@ -261,7 +261,7 @@ class Image_Imagick extends \Image_Driver
 	 */
 	protected function create_color($hex, $alpha)
 	{
-		export($this->create_hex_color($hex));
+		extract($this->create_hex_color($hex));
 		return new \ImagickPixel('rgba('.$red.', '.$green.', '.$blue.', '.round($alpha / 100, 2).')');
 	}
 }
