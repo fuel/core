@@ -383,7 +383,7 @@ class Cli
 	 */
 	public static function color($text, $foreground, $background = null)
 	{
-		if (static::is_windows())
+		if (static::is_windows() and !Input::server('ANSICON'))
 		{
 			return $text;
 		}
