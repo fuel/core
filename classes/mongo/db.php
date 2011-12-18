@@ -639,7 +639,7 @@ class Mongo_Db
 	}
 
 	/**
-	* Get one document based upon the passwed parameters
+	 * Get one document based upon the passwed parameters
 	 *
 	 *	@param	string	$collection		the collection name
 	 *	@usage	$mongodb->get('foo');
