@@ -43,6 +43,7 @@ class Lang
 	 *
 	 * @param   string
 	 * @param   string|null  name of the group to load to, null for global
+	 * @param   string|null  name of the language to load, null for the configurated language
 	 */
 	public static function load($file, $group = null, $language = null)
 	{
