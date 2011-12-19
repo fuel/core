@@ -146,7 +146,7 @@ abstract class Controller_Rest extends \Controller
 			// Set the correct format header
 			$this->response->set_header('Content-Type', $this->_supported_formats[$this->format]);
 
-			$this->response->body(Format::forge($data)->{'to_'.$this->format}());
+			$this->response->body(\Format::forge($data)->{'to_'.$this->format}());
 		}
 
 		// Format not supported, output directly
