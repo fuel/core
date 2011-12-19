@@ -23,23 +23,28 @@ class Theme implements \ArrayAccess, \Iterator
 {
 
 	/**
-	 * @var  Theme  $instance  Singleton instance
+	 * All the Theme instances
+	 *
+	 * @var  array
 	 */
-	protected static $instance = null;
+	protected static $instances = array();
 
 	/**
-	 * Gets a default (singleton) instance of the Theme class.
+	 * Acts as a Multiton.  Will return the requested instance, or will create
+	 * a new named one if it does not exist.
+	 *
+	 * @param   string    $name  The instance name
 	 *
 	 * @return  Theme
 	 */
-	public static function instance()
+	public static function instance($name = '_default_', array $config = array())
 	{
-		if (static::$instance === null)
+		if ( ! \array_key_exists($name, static::$instances))
 		{
-			static::$instance = new static;
+			static::$instances[$name] = static::forge($config);
 		}
 
-		return static::$instance;
+		return static::$instances[$name];
 	}
 
 	/**
@@ -89,6 +94,7 @@ class Theme implements \ArrayAccess, \Iterator
 		'view_ext' => '.html',
 		'require_info_file' => false,
 		'info_file_name' => 'theme.info',
+		'info_file_type' => 'php',
 	);
 
 	/**
@@ -415,10 +421,6 @@ class Theme implements \ArrayAccess, \Iterator
 
 			case 'yaml':
 				$info = \Format::forge(file_get_contents($file), 'yaml')->to_array();
-			break;
-
-			case 'yaml':
-				$info = \Format::forge(file_get_contents($path.$this->config['info_file_name']), 'yaml')->to_array();
 			break;
 
 			case 'php':
