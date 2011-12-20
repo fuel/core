@@ -227,7 +227,7 @@ class Input
 	 */
 	public static function method($default = 'GET')
 	{
-		return static::server('REQUEST_METHOD', $default);
+		return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', static::server('REQUEST_METHOD', $default));
 	}
 
 	/**
