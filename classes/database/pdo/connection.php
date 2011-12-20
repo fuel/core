@@ -73,7 +73,7 @@ class Database_PDO_Connection extends \Database_Connection
 		if ( ! empty($persistent))
 		{
 			// Make the connection persistent
-			$attrs[\PDO::ATTR_PERSISTENT] = TRUE;
+			$attrs[\PDO::ATTR_PERSISTENT] = true;
 		}
 
 		try
@@ -98,7 +98,7 @@ class Database_PDO_Connection extends \Database_Connection
 		// Destroy the PDO object
 		$this->_connection = null;
 
-		return TRUE;
+		return true;
 	}
 
 	public function set_charset($charset)
@@ -118,7 +118,7 @@ class Database_PDO_Connection extends \Database_Connection
 		if ( ! empty($this->_config['profiling']))
 		{
 			// Benchmark this query for the current instance
-			$benchmark = Profiler::start("Database ({$this->_instance})", $sql);
+			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql);
 		}
 
 		try
@@ -130,7 +130,7 @@ class Database_PDO_Connection extends \Database_Connection
 			if (isset($benchmark))
 			{
 				// This benchmark is worthless
-				Profiler::delete($benchmark);
+				\Profiler::delete($benchmark);
 			}
 
 			// Convert the exception in a database exception
@@ -139,7 +139,7 @@ class Database_PDO_Connection extends \Database_Connection
 
 		if (isset($benchmark))
 		{
-			Profiler::stop($benchmark);
+			\Profiler::stop($benchmark);
 		}
 
 		// Set the last query
@@ -148,7 +148,7 @@ class Database_PDO_Connection extends \Database_Connection
 		if ($type === \DB::SELECT)
 		{
 			// Convert the result into an array, as PDOStatement::rowCount is not reliable
-			if ($as_object === FALSE)
+			if ($as_object === false)
 			{
 				$result->setFetchMode(\PDO::FETCH_ASSOC);
 			}
