@@ -45,6 +45,21 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	// protected static $_defaults = array();
 
 	/**
+	 * @var  bool  set true to use MySQL timestamp instead of UNIX timestamp
+	 */
+	//protected static $_mysql_timestamp = false;
+
+	/**
+	 * @var  string  fieldname of created_at field, uncomment to use.
+	 */
+	//protected static $_created_at = 'created_at';
+
+	/**
+	 * @var  string  fieldname of updated_at field, uncomment to use.
+	 */
+	//protected static $_updated_at = 'updated_at';
+
+	/**
 	 * Forges new Model_Crud objects.
 	 *
 	 * @param   array  $data  Model data
@@ -416,6 +431,18 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ($this->is_new())
 		{
+			if(isset(static::$_created_at))
+			{
+				if(isset(static::$_mysql_timestamp) and static::$_mysql_timestamp === true)
+				{
+					$vars[static::$_created_at] = \Date::forge()->format('mysql');
+				}
+				else
+				{
+					$vars[static::$_created_at] = \Date::forge()->get_timestamp();
+				}
+			}
+
 			$query = \DB::insert(static::$_table_name)
 			            ->set($vars);
 
@@ -435,6 +462,18 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			}
 
 			return $this->post_save($result);
+		}
+
+		if(isset(static::$_updated_at))
+		{
+			if(isset(static::$_mysql_timestamp) and static::$_mysql_timestamp === true)
+			{
+				$vars[static::$_updated_at] = \Date::forge()->format('mysql');
+			}
+			else
+			{
+				$vars[static::$_updated_at] = \Date::forge()->get_timestamp();
+			}
 		}
 
 		$query = \DB::update(static::$_table_name)
