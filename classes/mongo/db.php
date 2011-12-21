@@ -663,7 +663,7 @@ class Mongo_Db
 	 *
 	 *	@param	string	$collection		the collection name
 	 *	@param	boolean	$foundonly		send cursor limit and skip information to the count function, if applicable.
-	 *	@usage	$mongodb->get('foo');
+	 *	@usage	$mongodb->count('foo');
 	 */
 
 	public function count($collection = '', $foundonly = false)
