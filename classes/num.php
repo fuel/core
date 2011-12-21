@@ -90,14 +90,14 @@ class Num
 		// Verify the size format and store the matching parts
 		if (!preg_match($pattern, $size, $matches))
 		{
-			throw new Exception('The byte unit size, "'.$size.'", is improperly formatted.');
+			throw new \Exception('The byte unit size, "'.$size.'", is improperly formatted.');
 		}
 
 		// Find the float value of the size
 		$size = (float) $matches[1];
 
 		// Find the actual unit, assume B if no unit specified
-		$unit = Arr::element($matches, 2, 'B');
+		$unit = \Arr::element($matches, 2, 'B');
 
 		// Convert the size into bytes
 		$bytes = $size * pow(2, static::$byte_units[$unit]);
