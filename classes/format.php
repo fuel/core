@@ -190,10 +190,10 @@ class Format
 	 * To CSV conversion
 	 *
 	 * @param   mixed   $data
-	 * @param   mixed   $headers
+	 * @param   bool    $include_headers
 	 * @return  string
 	 */
-	public function to_csv($data = null, $headers = null)
+	public function to_csv($data = null, $include_headers = false)
 	{
 		if ($data == null)
 		{
@@ -214,7 +214,7 @@ class Format
 		}
 
 		// Does the user want headers?
-		if($headers)
+		if($include_headers)
 		{
 			$output = implode(',', $headings) . "\n";
 		}
