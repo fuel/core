@@ -183,7 +183,7 @@ class Error
 		}
 		catch (\FuelException $e)
 		{
-			echo $e->getMessage().Html::br();
+			echo $e->getMessage().'<br />';
 		}
 	}
 
