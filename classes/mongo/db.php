@@ -639,10 +639,10 @@ class Mongo_Db
 	}
 
 	/**
-	* Get one document based upon the passwed parameters
+	 * Get one document based upon the passed parameters
 	 *
 	 *	@param	string	$collection		the collection name
-	 *	@usage	$mongodb->get('foo');
+	 *	@usage	$mongodb->get_one('foo');
 	 */
 	 public function get_one($collection = "")
 	{
@@ -663,7 +663,7 @@ class Mongo_Db
 	 *
 	 *	@param	string	$collection		the collection name
 	 *	@param	boolean	$foundonly		send cursor limit and skip information to the count function, if applicable.
-	 *	@usage	$mongodb->get('foo');
+	 *	@usage	$mongodb->count('foo');
 	 */
 
 	public function count($collection = '', $foundonly = false)
