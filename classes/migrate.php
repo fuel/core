@@ -42,7 +42,7 @@ class Migrate
 	 */
 	public static function _init()
 	{
-		logger(Fuel::L_DEBUG, 'Migrate class initialized');
+		logger(\Fuel::L_DEBUG, 'Migrate class initialized');
 
 		\Config::load('migrations', true);
 
@@ -153,32 +153,32 @@ class Migrate
 
 				if ( ! class_exists($class, false))
 				{
-					throw new FuelException(sprintf('Migration "%s" does not contain expected class "%s"', $file, $class));
+					throw new \FuelException(sprintf('Migration "%s" does not contain expected class "%s"', $file, $class));
 				}
 
 				if ( ! is_callable(array($class, 'up')) || ! is_callable(array($class, 'down')))
 				{
-					throw new FuelException(sprintf('Migration class "%s" must include public methods "up" and "down"', $name));
+					throw new \FuelException(sprintf('Migration class "%s" must include public methods "up" and "down"', $name));
 				}
 
 				$runnable_migrations[$ver] = $class;
 			}
 			else
 			{
-				throw new FuelException(sprintf('Invalid Migration filename "%s"', $file));
+				throw new \FuelException(sprintf('Invalid Migration filename "%s"', $file));
 			}
 		}
 
 		// Loop through the runnable migrations and run them
 		foreach ($runnable_migrations as $ver => $class)
 		{
-			logger(Fuel::L_INFO, 'Migrating to: '.$ver);
+			logger(\Fuel::L_INFO, 'Migrating to: '.$ver);
 			call_user_func(array(new $class, $method));
 			static::_update_schema_version(static::$version[$type][$name], $ver, $name, $type);
 			static::$version[$type][$name] = $ver;
 		}
 
-		logger(Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
+		logger(\Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
 
 		return static::$version[$type][$name];
 	}

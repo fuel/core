@@ -13,7 +13,7 @@
 namespace Fuel\Core;
 
 
-abstract class HttpException extends FuelException
+abstract class HttpException extends \FuelException
 {
 	abstract public function handle();
 }
