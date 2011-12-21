@@ -642,7 +642,7 @@ class Mongo_Db
 	 * Get one document based upon the passed parameters
 	 *
 	 *	@param	string	$collection		the collection name
-	 *	@usage	$mongodb->get('foo');
+	 *	@usage	$mongodb->get_one('foo');
 	 */
 	 public function get_one($collection = "")
 	{
