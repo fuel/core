@@ -69,7 +69,7 @@ class Cli
 	{
 		if ( ! \Fuel::$is_cli)
 		{
-			throw new Exception('Cli class cannot be used outside of the command line.');
+			throw new \Exception('Cli class cannot be used outside of the command line.');
 		}
 		for ($i = 1; $i < $_SERVER['argc']; $i++)
 		{

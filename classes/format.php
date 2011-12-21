@@ -71,7 +71,7 @@ class Format
 
 			else
 			{
-				throw new FuelException('Format class does not support conversion from "' . $from_type . '".');
+				throw new \FuelException('Format class does not support conversion from "' . $from_type . '".');
 			}
 		}
 
