@@ -124,7 +124,30 @@ class View
 
 		if ($file !== null)
 		{
-			$this->set_filename($file);
+			if (is_array($file) and ! empty($file))
+			{
+				// Check for multiple views
+				foreach ($file as $single_file)
+				{
+					try
+					{
+						$this->set_filename($single_file);
+						break;
+					}
+					catch(\Exception $e)
+					{
+						if (end($file) === $single_file)
+						{
+							// Re-throw the exception
+							throw $e;
+						}
+					}
+				}
+			}
+			else
+			{
+				$this->set_filename($file);
+			}
 		}
 
 		if ($data !== null)
