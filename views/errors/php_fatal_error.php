@@ -86,7 +86,7 @@
 
 <?php if ( ! empty($contents)): ?>
 		<h2>Prior Contents (<a href="#" onclick="javascript:fuel_toggle('prior_contents');return false;">show</a>)</h2>
-		<pre id="prior_contents" class="fuel_debug_source" style="display: none;""><?php echo e($contents); ?></pre>
+		<pre id="prior_contents" class="fuel_debug_source" style="display: none;"><?php echo e($contents); ?></pre>
 <?php endif; ?>
 
 		<p class="footer">
