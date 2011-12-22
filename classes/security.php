@@ -229,7 +229,7 @@ class Security
 			if ( ! method_exists($value, '__toString'))
 			{
 				throw new \RuntimeException('Object class "'.get_class($value).'" could not be converted to string or '.
-					'sanitized as ArrayAcces. Whitelist it in security.whitelisted_classes in app/config/config.php '.
+					'sanitized as ArrayAccess. Whitelist it in security.whitelisted_classes in app/config/config.php '.
 					'to allow it to be passed unchecked.');
 			}
 
