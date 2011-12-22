@@ -36,7 +36,7 @@ class Router
 			}
 			return;
 		}
-		elseif ($options instanceof \Route)
+		elseif ($options instanceof Route)
 		{
 			static::$routes[$path] = $options;
 			return;

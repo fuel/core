@@ -75,13 +75,13 @@ class Config
 			}
 		}
 
-		if ($file instanceof \Config_Interface)
+		if ($file instanceof Config_Interface)
 		{
 			try
 			{
 				$config = $file->load($overwrite);
 			}
-			catch (\ConfigException $e)
+			catch (ConfigException $e)
 			{
 				$config = array();
 			}

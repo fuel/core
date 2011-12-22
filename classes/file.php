@@ -70,7 +70,7 @@ class File
 	 */
 	public static function instance($area = null)
 	{
-		if ($area instanceof \File_Area)
+		if ($area instanceof File_Area)
 		{
 			return $area;
 		}

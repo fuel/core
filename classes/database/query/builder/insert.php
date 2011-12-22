@@ -136,7 +136,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	 */
 	public function compile($db = null)
 	{
-		if ( ! $db instanceof \Database_Connection)
+		if ( ! $db instanceof Database_Connection)
 		{
 			// Get the database instance
 			$db = \Database_Connection::instance($db);

@@ -162,7 +162,7 @@ class Fieldset
 	 */
 	public function validation($instance = true)
 	{
-		if ($instance instanceof \Validation)
+		if ($instance instanceof Validation)
 		{
 			$this->validation = $instance;
 			return $instance;
@@ -184,7 +184,7 @@ class Fieldset
 	 */
 	public function form($instance = true)
 	{
-		if ($instance instanceof \Form)
+		if ($instance instanceof Form)
 		{
 			$this->form = $instance;
 			return $instance;
@@ -254,7 +254,7 @@ class Fieldset
 	 */
 	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
-		if ($name instanceof \Fieldset_Field)
+		if ($name instanceof Fieldset_Field)
 		{
 			if ($name->name == '' or $this->field($name->name) !== false)
 			{
@@ -265,7 +265,7 @@ class Fieldset
 			$this->fields[$name->name] = $name;
 			return $name;
 		}
-		elseif ($name instanceof \Fieldset)
+		elseif ($name instanceof Fieldset)
 		{
 			if (empty($name->name) or $this->field($name->name) !== false)
 			{

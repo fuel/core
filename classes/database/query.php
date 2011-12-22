@@ -179,7 +179,7 @@ class Database_Query
 	 */
 	public function compile($db = null)
 	{
-		if ( ! $db instanceof \Database_Connection)
+		if ( ! $db instanceof Database_Connection)
 		{
 			// Get the database instance
 			$db = \Database_Connection::instance($db);
@@ -240,7 +240,7 @@ class Database_Query
 				$result = $cache->get();
 				return new Database_Result_Cached($result, $sql, $this->_as_object);
 			}
-			catch (\CacheNotFoundException $e) {}
+			catch (CacheNotFoundException $e) {}
 		}
 
 		\DB::$query_count++;

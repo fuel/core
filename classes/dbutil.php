@@ -289,7 +289,7 @@ class DBUtil
 
 			if(array_key_exists('DEFAULT', $attr))
 			{
-				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT']));
+				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT']));
 			}
 
 			if(array_key_exists('NULL', $attr) and $attr['NULL'] === true)
@@ -472,7 +472,7 @@ class DBUtil
 			\DB::select()->from($table)->limit(1)->execute();
 			return true;
 		}
-		catch (\Database_Exception $e)
+		catch (Database_Exception $e)
 		{
 			return false;
 		}
@@ -497,7 +497,7 @@ class DBUtil
 			\DB::select_array($columns)->from($table)->limit(1)->execute();
 			return true;
 		}
-		catch (\Database_Exception $e)
+		catch (Database_Exception $e)
 		{
 			return false;
 		}

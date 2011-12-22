@@ -64,7 +64,7 @@ class Form
 			($set = \Fieldset::instance($fieldset)) and $fieldset = $set;
 		}
 
-		if ($fieldset instanceof \Fieldset)
+		if ($fieldset instanceof Fieldset)
 		{
 			if ($fieldset->form(false) != null)
 			{
@@ -585,7 +585,7 @@ class Form
 
 	protected function __construct($fieldset, array $config = array())
 	{
-		if ($fieldset instanceof \Fieldset)
+		if ($fieldset instanceof Fieldset)
 		{
 			$fieldset->form($this);
 			$this->fieldset = $fieldset;
@@ -620,7 +620,7 @@ class Form
 	 */
 	public function build_field($field)
 	{
-		! $field instanceof \Fieldset_Field && $field = $this->field($field);
+		! $field instanceof Fieldset_Field && $field = $this->field($field);
 
 		return $field->build();
 	}

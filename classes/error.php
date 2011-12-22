@@ -171,7 +171,7 @@ class Error
 			{
 				exit(\View::forge('errors'.DS.'php_fatal_error', $data, false));
 			}
-			catch (\FuelException $view_exception)
+			catch (FuelException $view_exception)
 			{
 				exit($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line']);
 			}
@@ -181,7 +181,7 @@ class Error
 		{
 			echo \View::forge('errors'.DS.'php_error', $data, false);
 		}
-		catch (\FuelException $e)
+		catch (FuelException $e)
 		{
 			echo $e->getMessage().'<br />';
 		}

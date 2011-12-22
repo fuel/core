@@ -439,12 +439,12 @@ abstract class Database_Connection
 		}
 		elseif (is_object($value))
 		{
-			if ($value instanceof \Database_Query)
+			if ($value instanceof Database_Query)
 			{
 				// Create a sub-query
 				return '('.$value->compile($this).')';
 			}
-			elseif ($value instanceof \Database_Expression)
+			elseif ($value instanceof Database_Expression)
 			{
 				// Use a raw expression
 				return $value->value();
@@ -498,7 +498,7 @@ abstract class Database_Connection
 		}
 
 		// deal with the sub-query objects first
-		if ($table instanceof \Database_Query)
+		if ($table instanceof Database_Query)
 		{
 			// Create a sub-query
 			$table = '('.$table->compile($this).')';
@@ -580,12 +580,12 @@ abstract class Database_Connection
 		}
 		elseif (is_object($value))
 		{
-			if ($value instanceof \Database_Query)
+			if ($value instanceof Database_Query)
 			{
 				// Create a sub-query
 				return '('.$value->compile($this).')';
 			}
-			elseif ($value instanceof \Database_Expression)
+			elseif ($value instanceof Database_Expression)
 			{
 				// Use a raw expression
 				return $value->value();

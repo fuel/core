@@ -312,7 +312,7 @@ abstract class Cache_Storage_Driver
 		{
 			$this->get();
 		}
-		catch (\CacheNotFoundException $e)
+		catch (CacheNotFoundException $e)
 		{
 			// Create the contents
 			$contents = call_user_func_array($callback, $args);

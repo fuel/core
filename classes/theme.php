@@ -396,7 +396,7 @@ class Theme implements \ArrayAccess, \Iterator
 		{
 			$file = $this->find_file($this->config['info_file_name'], array($theme));
 		}
-		catch (\ThemeException $e)
+		catch (ThemeException $e)
 		{
 			if ($this->config['require_info_file'])
 			{

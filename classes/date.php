@@ -138,8 +138,8 @@ class Date
 	 */
 	public static function range_to_array($start, $end, $interval = '+1 Day')
 	{
-		$start     = ( ! $start instanceof \Date) ? static::forge($start) : $start;
-		$end       = ( ! $end instanceof \Date) ? static::forge($end) : $end;
+		$start     = ( ! $start instanceof Date) ? static::forge($start) : $start;
+		$end       = ( ! $end instanceof Date) ? static::forge($end) : $end;
 		is_int($interval) or $interval = strtotime($interval, $start->get_timestamp()) - $start->get_timestamp();
 
 		if ($interval <= 0)
