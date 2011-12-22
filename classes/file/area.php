@@ -280,5 +280,3 @@ class File_Area
 		return \File::get_size($path, $this);
 	}
 }
-
-

@@ -302,5 +302,3 @@ abstract class ViewModel
 		}
 	}
 }
-
-

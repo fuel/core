@@ -89,4 +89,3 @@ abstract class Controller
 		$this->response->body .= \View::forge($view, $data, $auto_encode);
 	}
 }
-

@@ -161,5 +161,4 @@ class Log
 
 		return true;
 	}
-
 }

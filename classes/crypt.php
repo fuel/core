@@ -196,5 +196,3 @@ class Crypt
 		return $result == 0;
 	}
 }
-
-

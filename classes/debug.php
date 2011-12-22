@@ -414,6 +414,4 @@ JS;
 			'result' => $result
 		);
 	}
-
 }
-

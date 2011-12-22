@@ -167,5 +167,4 @@ class Redis
 
 		return $response;
 	}
-
 }

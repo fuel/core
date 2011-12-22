@@ -661,6 +661,4 @@ class Ftp
 	{
 		$this->close();
 	}
-
 }
-

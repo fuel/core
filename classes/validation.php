@@ -56,7 +56,7 @@ class Validation
 			($set = \Fieldset::instance($fieldset)) and $fieldset = $set;
 		}
 
-		if ($fieldset instanceof Fieldset)
+		if ($fieldset instanceof \Fieldset)
 		{
 			if ($fieldset->validation(false) != null)
 			{
@@ -139,7 +139,7 @@ class Validation
 
 	protected function __construct($fieldset)
 	{
-		if ($fieldset instanceof Fieldset)
+		if ($fieldset instanceof \Fieldset)
 		{
 			$fieldset->validation($this);
 			$this->fieldset = $fieldset;
@@ -367,7 +367,7 @@ class Validation
 				}
 				$this->validated[$field->name] = $value;
 			}
-			catch (Validation_Error $v)
+			catch (\Validation_Error $v)
 			{
 				$this->errors[$field->name] = $v;
 			}

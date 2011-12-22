@@ -268,7 +268,4 @@ class Error
 
 		return $data;
 	}
-
 }
-
-

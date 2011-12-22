@@ -81,7 +81,7 @@ class Fieldset_Field
 	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), $fieldset = null)
 	{
 		$this->name = (string) $name;
-		$this->fieldset = $fieldset instanceof Fieldset ? $fieldset : null;
+		$this->fieldset = $fieldset instanceof \Fieldset ? $fieldset : null;
 
 		// Don't allow name in attributes
 		unset($attributes['name']);

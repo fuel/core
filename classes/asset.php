@@ -358,5 +358,3 @@ class Asset
 		return false;
 	}
 }
-
-

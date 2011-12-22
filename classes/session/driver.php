@@ -669,7 +669,4 @@ abstract class Session_Driver
 
 		return $validated;
 	}
-
 }
-
-

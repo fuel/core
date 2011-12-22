@@ -858,4 +858,3 @@ abstract class Image_Driver
 		}
 	}
 }
-

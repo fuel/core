@@ -501,7 +501,7 @@ class Fuel
 						// Cache has expired
 						unlink($dir.$file);
 					}
-					catch (Exception $e)
+					catch (\Exception $e)
 					{
 						// Cache has mostly likely already been deleted,
 						// let return happen normally.
@@ -530,7 +530,7 @@ class Fuel
 			// Write the cache
 			return (bool) file_put_contents($dir.$file, $data, LOCK_EX);
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			// Failed to write cache
 			return false;

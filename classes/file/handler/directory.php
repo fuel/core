@@ -196,5 +196,3 @@ class File_Handler_Directory
 		throw new \BadMethodCallException('Get_size method is unavailable on directories.');
 	}
 }
-
-

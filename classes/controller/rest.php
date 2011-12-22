@@ -369,6 +369,4 @@ abstract class Controller_Rest extends \Controller
 			$this->response->set_header('WWW-Authenticate', 'Digest realm="' . \Config::get('rest.realm') . '", qop="auth", nonce="' . $nonce . '", opaque="' . md5(\Config::get('rest.realm')) . '"');
 		}
 	}
-
 }
-

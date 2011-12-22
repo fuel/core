@@ -75,7 +75,7 @@ class Config
 			}
 		}
 
-		if ($file instanceof Config_Interface)
+		if ($file instanceof \Config_Interface)
 		{
 			try
 			{

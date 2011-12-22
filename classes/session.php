@@ -358,7 +358,4 @@ class Session
 	{
 		return static::instance()->destroy();
 	}
-
 }
-
-

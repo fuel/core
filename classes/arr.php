@@ -592,7 +592,4 @@ class Arr
 	{
 		$arr = (is_array($key) ? $key : array($key => $value)) + $arr;
 	}
-
 }
-
-

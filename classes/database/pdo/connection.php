@@ -222,5 +222,4 @@ class Database_PDO_Connection extends \Database_Connection
 		$this->_in_transaction = false;
 		return $this->_connection->rollBack();
 	}
-
 }

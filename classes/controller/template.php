@@ -58,5 +58,4 @@ abstract class Controller_Template extends \Controller
 
 		return parent::after($response);
 	}
-
 }

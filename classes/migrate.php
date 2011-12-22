@@ -370,4 +370,3 @@ class Migrate
 		}
 	}
 }
-
