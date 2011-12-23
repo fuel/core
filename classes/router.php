@@ -147,6 +147,7 @@ class Router
 		if ($info = static::parse_segments($segments, $namespace, $module))
 		{
 			$match->controller = $info['controller'];
+			$match->controller_name = $info['controller_name'];
 			$match->action = $info['action'];
 			$match->method_params = $info['method_params'];
 			return $match;
@@ -163,14 +164,16 @@ class Router
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
-			$class = $namespace.'Controller_'.\Inflector::words_to_upper(implode('_', $temp_segments));
+			$controller_name = implode('_', $temp_segments);
+			$class = $namespace.'Controller_'.\Inflector::words_to_upper($controller_name);
 			array_pop($temp_segments);
 			if (class_exists($class))
 			{
 				return array(
-					'controller'    => $class,
-					'action'        => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
-					'method_params' => array_slice($segments, $key + 2),
+					'controller'      => $class,
+					'controller_name' => $controller_name,
+					'action'          => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
+					'method_params'   => array_slice($segments, $key + 2),
 				);
 			}
 		}

@@ -46,9 +46,14 @@ class Route
 	public $directory = null;
 
 	/**
-	 * @var  string  controller name
+	 * @var  string  controller class name
 	 */
 	public $controller = null;
+
+	/**
+	 * @var  string  base name of the loaded controller class
+	 */
+	public $controller_name;
 
 	/**
 	 * @var  string  default controller action
