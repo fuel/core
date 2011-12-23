@@ -339,6 +339,7 @@ class Request
 
 		$this->module = $this->route->module;
 		$this->controller = $this->route->controller;
+		$this->controller_name = $this->route->controller_name;
 		$this->action = $this->route->action;
 		$this->method_params = $this->route->method_params;
 		$this->named_params = $this->route->named_params;
