@@ -21,7 +21,7 @@ ported from Forensics CodeIgniter lonnieezell<https://github.com/lonnieezell/>
 $return_output = '';
 $return_output .= <<<CSS
 <style type="text/css">
-	#profiler { clear: both; background: #222; opacity: 0.45; padding: 0 5px; font-family: Helvetica, sans-serif; font-size: 10px !important; line-height: 12px; position: fixed; width: auto; min-width: 70em; max-width: 90%; z-index: 1000; }
+	#profiler { clear: both; background: #222; opacity: 0.45; padding: 0 5px; font-family: Helvetica, sans-serif; font-size: 10px !important; line-height: 12px; position: fixed; width: auto; min-width: 80em; max-width: 90%; z-index: 1000; }
 	#profiler:hover { background: #101010; opacity: 1.0; }
 	
 	#profiler.bottom-right { bottom:0; right: 0; -webkit-border-top-left-radius: 7px; -moz-border-radius-topleft: 7px; border-top-left-radius: 7px; -webkit-box-shadow: -1px -1px 10px #222; -moz-box-shadow: -1px -1px 10px #222; box-shadow: -1px -1px 10px #222; }	
@@ -32,7 +32,7 @@ $return_output .= <<<CSS
 	.profiler-box { padding: 10px; margin: 0 0 10px 0; max-height: 400px; overflow: auto; color: #fff; font-family: Monaco, 'Lucida Console', 'Courier New', monospace; font-size: 11px !important; }
 	.profiler-box h2 { font-family: Helvetica, sans-serif; font-weight: bold; font-size: 16px !important; padding: 0; line-height: 2.0; }
 	
-	#profiler-menu a:link, #profiler-menu a:visited { display: inline-block; padding: 7px 0; margin: 0; color: #ccc; text-decoration: none; font-weight: lighter; cursor: pointer; text-align: center; width: 11.5%; border-bottom: 4px solid #444; }
+	#profiler-menu a:link, #profiler-menu a:visited { display: inline-block; padding: 7px 0; margin: 0; color: #ccc; text-decoration: none; font-weight: lighter; cursor: pointer; text-align: center; width: 10.5%; border-bottom: 4px solid #444; }
 	#profiler-menu a:hover, #profiler-menu a.current { background-color: #666; border-color: #999; }
 	#profiler-menu a span { display: block; font-weight: bold; font-size: 14px !important; line-height: 1.2; }
 	
@@ -184,8 +184,15 @@ $return_output .='
 		
 		if (isset($output['getItems'])) :
 			$return_output .= '<!-- Get -->
-			<a href="#" id="profiler-menu-gets-posts" onclick="show(\'profiler-gets-posts\', \'profiler-menu-gets-posts\'); return false;">
-				<span>'. $getCount.'</span> Gets or Posts
+			<a href="#" id="profiler-menu-gets" onclick="show(\'profiler-gets\', \'profiler-menu-gets\'); return false;">
+				<span>'. $getCount.'</span> Gets
+			</a>';
+		endif;
+		
+		if (isset($output['postItems'])) :
+			$return_output .= '<!-- Post -->
+			<a href="#" id="profiler-menu-posts" onclick="show(\'profiler-posts\', \'profiler-menu-posts\'); return false;">
+				<span>'. $postCount.'</span> Posts
 			</a>';
 		endif;
 		
@@ -363,12 +370,19 @@ if (@count($output['logs']) > 0) :
 	
 	
 	if (isset($output['getItems']) or isset($output['postItems'])) :
-		$return_output .= '<!-- Gets and Posts-->
-		<div id="profiler-gets-posts" class="profiler-box" style="display: none">
+		$return_output .= '<!-- Gets  -->
+		<div id="profiler-gets" class="profiler-box" style="display: none">
 			<h2>Gets Item</h2>
 			<table class="main" cellspacing="0">
 				'.$output['getItems'].'
 			</table>
+			
+		</div>';
+	endif; 
+	
+	if (isset($output['getItems']) or isset($output['postItems'])) :
+		$return_output .= '<!-- Posts -->
+		<div id="profiler-posts" class="profiler-box" style="display: none">
 			
 			<h2>Posts Item</h2>
 			<table class="main" cellspacing="0">
@@ -377,7 +391,6 @@ if (@count($output['logs']) > 0) :
 			
 		</div>';
 	endif; 
-	
 	
 	if (isset($output['queries'])) :
 		$return_output .= '<!-- Queries -->
