@@ -1,3 +1,22 @@
+<?php
+/* --------------------------------------------------------
+  
+Title : HTML Output for Php Quick Profiler
+Author : Created by Ryan Campbell
+URL : http://particletree.com
+
+Last Updated : April 22, 2009
+Description : This is a horribly ugly function used to output
+the PQP HTML. This is great because it will just work in your project,
+but it is hard to maintain and read. See the README file for how to use
+the Smarty file we provided with PQP.
+
+This templates was modify by
+Purwandi <pur@purwandi.me>
+ported from Forensics CodeIgniter lonnieezell<https://github.com/lonnieezell/>
+
+-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+?>
 <style type="text/css">
 	#profiler { clear: both; background: #222; opacity: 0.45; padding: 0 5px; font-family: Helvetica, sans-serif; font-size: 10px !important; line-height: 12px; position: fixed; width: auto; min-width: 70em; max-width: 90%; z-index: 1000; }
 	#profiler:hover { background: #101010; opacity: 1.0; }
