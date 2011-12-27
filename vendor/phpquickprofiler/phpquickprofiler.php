@@ -75,7 +75,6 @@ class PhpQuickProfiler {
 		$fileTotals['largest'] = $this->getReadableFileSize($fileTotals['largest']);
 		$this->output['files'] = $fileList;
 		$this->output['fileTotals'] = $fileTotals;
-		return $this->output;
 	}
 
 	/*-------------------------------------------
@@ -87,7 +86,6 @@ class PhpQuickProfiler {
 		$memoryTotals['used'] = $this->getReadableFileSize(memory_get_peak_usage());
 		$memoryTotals['total'] = ini_get("memory_limit");
 		$this->output['memoryTotals'] = $memoryTotals;
-		return $this->output;
 	}
 
 	/*--------------------------------------------------------
@@ -124,7 +122,6 @@ class PhpQuickProfiler {
 		$queryTotals['time'] = $this->getReadableTime($queryTotals['time']);
 		$this->output['queries'] = $queries;
 		$this->output['queryTotals'] = $queryTotals;
-		return $this->output;
 	}
 
 	/*--------------------------------------------------------
@@ -158,7 +155,6 @@ class PhpQuickProfiler {
 		$speedTotals['total'] = $this->getReadableTime((static::getMicroTime() - $this->startTime)*1000);
 		$speedTotals['allowed'] = ini_get("max_execution_time");
 		$this->output['speedTotals'] = $speedTotals;
-		return $this->output;
 	}
 
 	/*-------------------------------------------
@@ -214,11 +210,10 @@ class PhpQuickProfiler {
 		$this->gatherMemoryData();
 		$this->gatherQueryData();
 		$this->gatherSpeedData();
-		$output = $this->output;
-		require_once('new_display.php');
-		// return displayPqp($this->output);
+		// $output = $this->output;
+		require_once('display.php');
+		return output($this->output);
 	}
-
 }
 
 ?>

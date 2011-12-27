@@ -1,4 +1,6 @@
 <?php
+function output ($output)
+{
 /* --------------------------------------------------------
   
 Title : HTML Output for Php Quick Profiler
@@ -16,7 +18,8 @@ Purwandi <pur@purwandi.me>
 ported from Forensics CodeIgniter lonnieezell<https://github.com/lonnieezell/>
 
 -- - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-?>
+$return_output = '';
+$return_output .= <<<CSS
 <style type="text/css">
 	#profiler { clear: both; background: #222; opacity: 0.45; padding: 0 5px; font-family: Helvetica, sans-serif; font-size: 10px !important; line-height: 12px; position: fixed; width: auto; min-width: 70em; max-width: 90%; z-index: 1000; }
 	#profiler:hover { background: #101010; opacity: 1.0; }
@@ -53,7 +56,8 @@ ported from Forensics CodeIgniter lonnieezell<https://github.com/lonnieezell/>
 	
 	#profiler-menu-exit { background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAIhSURBVDjLlZPrThNRFIWJicmJz6BWiYbIkYDEG0JbBiitDQgm0PuFXqSAtKXtpE2hNuoPTXwSnwtExd6w0pl2OtPlrphKLSXhx07OZM769qy19wwAGLhM1ddC184+d18QMzoq3lfsD3LZ7Y3XbE5DL6Atzuyilc5Ciyd7IHVfgNcDYTQ2tvDr5crn6uLSvX+Av2Lk36FFpSVENDe3OxDZu8apO5rROJDLo30+Nlvj5RnTlVNAKs1aCVFr7b4BPn6Cls21AWgEQlz2+Dl1h7IdA+i97A/geP65WhbmrnZZ0GIJpr6OqZqYAd5/gJpKox4Mg7pD2YoC2b0/54rJQuJZdm6Izcgma4TW1WZ0h+y8BfbyJMwBmSxkjw+VObNanp5h/adwGhaTXF4NWbLj9gEONyCmUZmd10pGgf1/vwcgOT3tUQE0DdicwIod2EmSbwsKE1P8QoDkcHPJ5YESjgBJkYQpIEZ2KEB51Y6y3ojvY+P8XEDN7uKS0w0ltA7QGCWHCxSWWpwyaCeLy0BkA7UXyyg8fIzDoWHeBaDN4tQdSvAVdU1Aok+nsNTipIEVnkywo/FHatVkBoIhnFisOBoZxcGtQd4B0GYJNZsDSiAEadUBCkstPtN3Avs2Msa+Dt9XfxoFSNYF/Bh9gP0bOqHLAm2WUF1YQskwrVFYPWkf3h1iXwbvqGfFPSGW9Eah8HSS9fuZDnS32f71m8KFY7xs/QZyu6TH2+2+FAAAAABJRU5ErkJggg==) 0% 0% no-repeat; padding-left: 20px; position: absolute; right: 5px; top: 10px; }
 </style>
-
+CSS;
+$return_output .= <<<JAVASCRIPT
 <script type="text/javascript">
 current = null;
 currentvar = null;
@@ -86,8 +90,8 @@ function remove_class(obj, clas){
 	}
 }
 </script>
+JAVASCRIPT;
 
-<?php
 $logCount = count($output['logs']['console']);
 $fileCount = count($output['files']);
 $memoryUsed = $output['memoryTotals']['used'];
@@ -125,7 +129,7 @@ $output['configItems'] = $printarray(\Config::$items, 0, $class, $configCount);
 
 $class = '';
 $sessionCount = 0;
-$output['sessionItems'] = $printarray(\Session::get(), 0, $class, $sessionCount);
+$output['sessionItems'] = $printarray(\Session::get(null), 0, $class, $sessionCount);
 
 $class = '';
 $getCount = 0;
@@ -135,278 +139,289 @@ $class = '';
 $postCount = 0;
 $output['postItems'] = $printarray(\Input::post(), 0, $class, $postCount);
 
-?>
-
+$return_output .='
 <div id="profiler" class="bottom-right">
 	
 	<div id="profiler-menu">
 		
-		<!-- Console -->
-		<?php if (isset($output['logs'])) : ?>
-			<a href="#" id="profiler-menu-console" onclick="show('profiler-console', 'profiler-menu-console');return false;">
-				<span><?php echo $logCount ?></span> Console
-			</a>
-		<?php endif; ?>
+		<!-- Console -->';
+		if (isset($output["logs"])):
+			$return_output .= '<a href="#" id="profiler-menu-console" onclick="show(\'profiler-console\', \'profiler-menu-console\');return false;">
+				<span>'.$logCount .'</span> Console
+			</a>';
+		endif;
 		
-		<!-- Benchmarks -->
-		<?php if (isset($output['logs'])) :?>
-			<a href="#" id="profiler-menu-time" onclick="show('profiler-benchmarks', 'profiler-menu-time'); return false;">
-				<span><?php echo $speedTotal ?></span>
+		if (isset($output['logs'])) :
+			$return_output .='<!-- Benchmarks -->
+				<a href="#" id="profiler-menu-time" onclick="show(\'profiler-benchmarks\', \'profiler-menu-time\'); return false;">
+				<span>'. $speedTotal.'</span>
 				Load Time
-			</a>
+			</a>';
 			
-		<?php endif; ?>
+		endif;
                 
-                <!-- Memories -->
-		<?php if (isset($output['memoryTotals'])) :?>
-                <a href="#" id="profiler-menu-memory" onclick="show('profiler-memory', 'profiler-menu-memory'); return false;">
-				<span><?php echo $memoryUsed ?></span> Memory Used
-			</a>
-		<?php endif;?>
+		if (isset($output['memoryTotals'])) :
+			$return_output .='<!-- Memories -->
+				<a href="#" id="profiler-menu-memory" onclick="show(\'profiler-memory\', \'profiler-menu-memory\'); return false;">
+				<span>'.$memoryUsed .'</span> Memory Used
+			</a>';
+		endif;
                 
-                <!-- Files -->
-		<?php if (isset($output['files'])) : ?>
-			<a href="#" id="profiler-menu-files" onclick="show('profiler-files', 'profiler-menu-files'); return false;">
-				<span><?php echo $fileCount ?></span> Files
-			</a>
-		<?php endif; ?>
-                
-		<!-- Vars and Config -->
-		<?php if (isset($output['files'])) : ?>
-			<a href="#" id="profiler-menu-vars" onclick="show('profiler-vars', 'profiler-menu-vars'); return false;">
-				<span><?php echo $configCount;?></span> Items loaded
-			</a>
-		<?php endif; ?>
+               
+		if (isset($output['files'])) :
+			$return_output .= ' <!-- Files -->
+			<a href="#" id="profiler-menu-files" onclick="show(\'profiler-files\', \'profiler-menu-files\'); return false;">
+				<span>'. $fileCount .'</span> Files
+			</a>';
+		endif;
+               
+		if (isset($output['files'])) :
+			$return_output .= '<!-- Vars and Config -->
+			<a href="#" id="profiler-menu-vars" onclick="show(\'profiler-vars\', \'profiler-menu-vars\'); return false;">
+				<span>'. $configCount .'</span> Items loaded
+			</a>';
+		endif;
 		
-		<!-- Get -->
-		<?php if (isset($output['getItems'])) : ?>
-			<a href="#" id="profiler-menu-gets-posts" onclick="show('profiler-gets-posts', 'profiler-menu-gets-posts'); return false;">
-				<span><?php echo $getCount;?></span> Gets or Posts
-			</a>
-		<?php endif; ?>
+		if (isset($output['getItems'])) :
+			$return_output .= '<!-- Get -->
+			<a href="#" id="profiler-menu-gets-posts" onclick="show(\'profiler-gets-posts\', \'profiler-menu-gets-posts\'); return false;">
+				<span>'. $getCount.'</span> Gets or Posts
+			</a>';
+		endif;
 		
-                <!-- Queries -->
-		<?php if (isset($output['queries'])) : ?>
-			<a href="#" id="profiler-menu-queries" onclick="show('profiler-queries', 'profiler-menu-queries'); return false;">
-				<span> <?php echo $queryCount;?></span> Queries
-		<?php endif; ?>
+		if (isset($output['queries'])) :
+			$return_output .= '<!-- Queries -->
+			<a href="#" id="profiler-menu-queries" onclick="show(\'profiler-queries\', \'profiler-menu-queries\'); return false;">
+				<span> '. $queryCount .'</span> Queries
+			</a>';
+				
+		endif;
 			
-		<!-- Session -->
-		<?php if (isset($output['sessionItems'])) : ?>
+		
+		if (isset($output['sessionItems'])) :
+			$return_output .='<!-- Session -->
+			<a href="#" id="profiler-menu-session" onclick="show(\'profiler-session\', \'profiler-menu-session\'); return false;">
+				<span>'. $sessionCount.' </span> Session
+			</a>';
+		endif;
 			
-			<a href="#" id="profiler-menu-session" onclick="show('profiler-session', 'profiler-menu-session'); return false;">
-				<span><?php echo $sessionCount;?> </span> Session
-			</a>
-		<?php endif; ?>
-			
-		<a href="#" id="profiler-menu-exit" onclick="close_bar(); return false;" style="width: 2em"></a>
-	</div>
+		$return_output .=' <a href="#" id="profiler-menu-exit" onclick="close_bar(); return false;" style="width: 2em"></a>
+	</div>';
 
-<?php if (@count($output['logs']) > 0) : ?>
-	<!-- Console -->
-	<?php if (isset($output['logs'])) :?>
+if (@count($output['logs']) > 0) :
+	
+	if (isset($output['logs'])) :
+		$return_output .=' <!-- Console -->
 		<div id="profiler-console" class="profiler-box" style="display: none">
-			<h2>Console</h2>
+			<h2>Console</h2>';
 			
-			<?php if ($output['logs']) : ?>
+			if (is_array($output['logs'])) :
 				
-				<table class="main">
-				<?php foreach ($output['logs']['console'] as $log) : ?>
+				$return_output .='<table class="main">';
+				foreach ($output['logs']['console'] as $log) :
 					
-					<?php if ($log['type'] == 'log') : ?>
-						<tr>
-							<td><?php echo $log['type'] ?></td>
-							<td class="faded"><pre><?php echo $log['data'] ?></pre></td>
+					if ($log['type'] == 'log') :
+						$return_output .='<tr>
+							<td>'. $log['type'].'</td>
+							<td class="faded"><pre>'.$log['data'] .'</pre></td>
 							<td></td>
-						</tr>
-					<?php elseif ($log['type'] == 'memory')  :?>
-						<tr>
-							<td><?php echo $log['type'] ?></td>
+						</tr>';
+					elseif ($log['type'] == 'memory')  :
+						$return_output .='<tr>
+							<td>'.$log['type'] .'</td>
 							<td>
-								<em><?php echo $log['data_type'] ?></em>: 
-								<?php echo $log['name']; ?>
+								<em>'.$log['data_type'] .'</em>: 
+								'.$log['name'] .'
 							</td>
-							<td class="hilight" style="width: 9em"><?php echo $log['data'] ?></td>
-						</tr>
-                                        <?php elseif($log['type'] == 'speed'):?>
-                                                <tr>
-							<td><?php echo $log['type'] ?></td>
+							<td class="hilight" style="width: 9em">'.$log['data'] .'</td>
+						</tr>';
+                                        elseif($log['type'] == 'speed'):
+                                                $return_output .='<tr>
+							<td>'.$log['type'] .'</td>
 							<td>
-								<em><?php echo $log['data'] ?></em>: 
-								<?php echo $log['name']; ?>
+								<em>'.$log['data'] .'</em>: 
+								'.$log['name'] .'
 							</td>
-							<td class="hilight" style="width: 9em"><?php echo $log['data'] ?></td>
-						</tr>
-                                        <?php elseif($log['type'] == 'error'):?>
-                                                <tr>
-							<td><?php echo $log['type'] ?></td>
+							<td class="hilight" style="width: 9em">'.$log['data'] .'</td>
+						</tr>';
+                                        elseif($log['type'] == 'error'):
+                                                $return_output .='<tr>
+							<td>'.$log['type'] .'</td>
 							<td>
-								<em><?php echo $log['data_type'] ?></em>: 
-								<?php echo $log['name']; ?>
+								<em>'.$log['data_type'] .'</em>: 
+								'.$log['name'] .'
 							</td>
-							<td class="hilight" style="width: 9em"><?php echo $log['data'] ?></td>
-						</tr>
-					<?php endif; ?>
-				<?php endforeach; ?>
-				</table>
+							<td class="hilight" style="width: 9em">'.$log['data'] .'</td>
+						</tr>';
+					endif;
+				endforeach;
+				$return_output .='</table>';
 
-			<?php else : ?>
+			else : 
 
-				<?php echo $output['logs']; ?>
+				$return_output .= $output['logs'];
 
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
+			endif;
+		$return_output .='</div>';
+	endif;
 	
-	<!-- Benchmarks -->
-	<?php if (isset($output['logs'])) :?>
+	
+	if (isset($output['logs'])) :
+		$return_output .='<!-- Benchmarks -->
 		<div id="profiler-benchmarks" class="profiler-box" style="display: none">
-                        <h2>Benchmarks</h2>
-			<?php if (is_array($output['logs'])) : ?>
+                        <h2>Benchmarks</h2>';
+			if (is_array($output['logs'])) :
 				
-				<table class="main">
-				<?php foreach ($output['logs']['console'] as $log) : ?>
+				$return_output .=' <table class="main">';
+				foreach ($output['logs']['console'] as $log) :
 					
-                                        <?php if($log['type'] == 'speed'):?>
+                                        if($log['type'] == 'speed'):
+						$return_output .='
                                                 <tr>
-							<td><?php echo $log['type'] ?></td>
+							<td>'.$log['type'] .'</td>
 							<td>
-								<em><?php echo $log['data'] ?></em>: 
-								<?php echo $log['name']; ?>
+								<em>'.$log['data'] .'</em>: 
+								'.$log['name'] .'
 							</td>
-							<td class="hilight" style="width: 9em"><?php echo $log['data'] ?></td>
-						</tr>
-					<?php endif; ?>
+							<td class="hilight" style="width: 9em">'.$log['data'] .'</td>
+						</tr>';
+					endif;
                                         
-				<?php endforeach; ?>
-				</table>
+				endforeach;
+				$return_output .='</table>';
 
-			<?php else : ?>
+			else :
 
-				<?php echo $sections['console']; ?>
+				$return_output .= $output['logs']['console'];
 
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
+			endif;
+		$return_output .= '</div>';
+	endif;
 
-        <!-- Memory -->
-	<?php if (isset($output['memoryTotals'])) :?>
+	if (isset($output['memoryTotals'])) :
+		$return_output .='<!-- Memory -->
 		<div id="profiler-memory" class="profiler-box" style="display: none">
-			<h2>Memory Usage</h2>
-			<?php if (is_array($output['memoryTotals'])) : ?>
-				
-				<table class="main">
-				<?php foreach ($output['memoryTotals'] as $key => $val) : ?>
-					<tr><td><?php echo $key ?></td><td class="hilight"><?php echo $val ?></td></tr>
-				<?php endforeach; ?>
-				</table>
+			<h2>Memory Usage</h2>';
+			
+			if (is_array($output['memoryTotals'])) :
+				$return_output .='<table class="main">';
+					foreach ($output['memoryTotals'] as $key => $val) :
+						$return_output .='<tr><td>'.$key .'</td><td class="hilight">'.$val .'</td></tr>';
+					endforeach;
+				$return_output .='</table>';
 
-			<?php else : ?>
+			else : 
 
-				<?php echo $sections['benchmarks']; ?>
+				$return_output .= $sections['benchmarks'];
 
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
+			endif;
+		$return_output .='</div>';
+	endif;
 	
-        <!-- Files -->
-	<?php if (isset($output['files'])) :?>
+        if (isset($output['files'])) :
+		$return_output .='<!-- Files -->
 		<div id="profiler-files" class="profiler-box" style="display: none">
 			<h2>Loaded Files</h2>
                        
-                        Total Files : <span class="faded small"><?php echo $output['fileTotals']['count'] ?></span> <br />
-                        Total Size : <span class="faded small"><?php echo $output['fileTotals']['size'] ?></span> <br />
-                        Largest : <span class="faded small"><?php echo $output['fileTotals']['largest'] ?></span> <br /> <br />
-			<?php if (is_array($output['files'])) : ?>
+                        Total Files : <span class="faded small">'.$output['fileTotals']['count'] .'</span> <br />
+                        Total Size : <span class="faded small">'.$output['fileTotals']['size'] .'</span> <br />
+                        Largest : <span class="faded small">'.$output['fileTotals']['largest'] .'</span> <br /> <br />';
+			
+			if (is_array($output['files'])) :
+				$return_output .='<table class="main">';
 				
-				<table class="main">
-				<?php foreach ($output['files'] as $file) : ?>
+				foreach ($output['files'] as $file) :
+					$return_output .='
 					<tr>
 						<td class="hilight">
-							<?php echo $file['name'] ?>
-							<br/><span class="faded small"><?php echo $file['size'] ?></span>
+							'.$file['name'] .'
+							<br/><span class="faded small">'.$file['size'] .'</span>
 						</td>
-					</tr>
-				<?php endforeach; ?>
+					</tr>';
+				endforeach;
                                        
-				</table>
+				$return_output .= '</table>';
 
-			<?php else : ?>
+			else :
 
-				<?php echo $output['files']; ?>
+				$return_output .= $output['files'];
 
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
+			endif;
+		$return_output .= '</div>';
+	endif;
 	
-        <!-- Config Items -->
-	<?php if (isset($output['configItems'])) :?>
+        
+	if (isset($output['configItems'])) :
+		$return_output .= '<!-- Config Items -->
 		<div id="profiler-vars" class="profiler-box" style="display: none">
 			<h2>Config Item</h2>
 			<table class="main" cellspacing="0">
-				<?php echo $output['configItems'];?>
+				'.$output['configItems'].'
 			</table>
-		</div>
-	<?php endif; ?>
+		</div>';
+	endif;
 	
-	<!-- Gets and Posts-->
-	<?php if (isset($output['getItems']) or isset($output['postItems'])) :?>
+	
+	if (isset($output['getItems']) or isset($output['postItems'])) :
+		$return_output .= '<!-- Gets and Posts-->
 		<div id="profiler-gets-posts" class="profiler-box" style="display: none">
 			<h2>Gets Item</h2>
 			<table class="main" cellspacing="0">
-				<?php echo $output['getItems'];?>
+				'.$output['getItems'].'
 			</table>
 			
 			<h2>Posts Item</h2>
 			<table class="main" cellspacing="0">
-				<?php echo $output['postItems'];?>
+				'.$output['postItems'].'
 			</table>
 			
-		</div>
-	<?php endif; ?>
+		</div>';
+	endif; 
 	
 	
-	
-	
-	<!-- Queries -->
-	<?php if (isset($output['queries'])) :?>
+	if (isset($output['queries'])) :
+		$return_output .= '<!-- Queries -->
 		<div id="profiler-queries" class="profiler-box" style="display: none">
-			<h2>Queries</h2>
+			<h2>Queries</h2>';
 			
-			<?php if (is_array($output['queries'])) : ?>
+			if (is_array($output['queries'])) :
 				
-				<table class="main" cellspacing="0">
-				<?php foreach ($output['queries'] as $key => $val) : ?>
-					<tr><td class="hilight"><?php echo $key ?></td><td><?php echo $val ?></td></tr>
-				<?php endforeach; ?>
-				</table>
+				$return_output .= '<table class="main" cellspacing="0">';
+				
+				foreach ($output['queries'] as $key => $val) :
+					$return_output .= '<tr><td class="hilight">'.$key .'</td><td>'.$val .'</td></tr>';
+				endforeach;
+				
+				$return_output .='</table>';
 
-			<?php else : ?>
+			else :
 
-				<?php echo $output['queries']; ?>
+				$return_output .= $output['queries'];
 
-			<?php endif; ?>
-		</div>
-	<?php endif; ?>
+			endif;
+		$return_output .='</div>';
+	endif;
 	
-	<!-- Session -->
-	<?php if (isset($output['sessionItems'])) :?>
+	if (isset($output['sessionItems'])) :
+		$return_output .= '<!-- Session -->
 		<div id="profiler-session" class="profiler-box" style="display: none">
 			<h2>Session Item</h2>
 			<table class="main" cellspacing="0">
-				<?php echo $output['sessionItems'];?>
+				'.$output['sessionItems'].'
 			</table>
 			
-		</div>
-	<?php endif; ?>
+		</div>';
+	 endif;
 	
 	
 
 	
-<?php else: ?>
+else:
 
-	<p class="profiler-box">No profiller profile ;)</p>
+	$return_output .='<p class="profiler-box">No profiller profile ;)</p>';
 
-<?php endif; ?>
+endif;
 
-</div>
+$return_output .='</div>';
+return $return_output;
+} ?>
