@@ -337,23 +337,20 @@ class Theme implements \ArrayAccess, \Iterator
 	{
 		if ($theme === null)
 		{
-			if (isset($this->active['info'][$var]))
+			if (($value = \Arr::get($this->active['info'], $var, null)) !== null)
 			{
-				return $this->active['info'][$var];
+				return $value;
 			}
-			elseif (isset($this->fallback['info'][$var]))
+			elseif (($value = \Arr::get($this->fallback['info'], $var, null)) !== null)
 			{
-				return $this->fallback['info'][$var];
+				return $value;
 			}
 		}
 
 		if ($theme !== null)
 		{
 			$info = $this->all_info($theme);
-			if (isset($info[$var]))
-			{
-				return $info[$var];
-			}
+			return \Arr::get($info, $var, $default);
 		}
 
 		return $default;
