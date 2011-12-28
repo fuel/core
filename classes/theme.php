@@ -337,23 +337,20 @@ class Theme implements \ArrayAccess, \Iterator
 	{
 		if ($theme === null)
 		{
-			if (isset($this->active['info'][$var]))
+			if (($value = \Arr::get($this->active['info'], $var, null)) !== null)
 			{
-				return $this->active['info'][$var];
+				return $value;
 			}
-			elseif (isset($this->fallback['info'][$var]))
+			elseif (($value = \Arr::get($this->fallback['info'], $var, null)) !== null)
 			{
-				return $this->fallback['info'][$var];
+				return $value;
 			}
 		}
 
 		if ($theme !== null)
 		{
 			$info = $this->all_info($theme);
-			if (isset($info[$var]))
-			{
-				return $info[$var];
-			}
+			return \Arr::get($info, $var, $default);
 		}
 
 		return $default;
@@ -573,12 +570,30 @@ class Theme implements \ArrayAccess, \Iterator
 		if ( ! isset($theme['asset_base']))
 		{
 			$assets_folder = rtrim($this->config['assets_folder'], DS).DS;
-			if (strpos($path, DOCROOT) === 0 and is_dir($path.$assets_folder))
+
+			// theme files are inside the docroot
+			if (strpos($path, DOCROOT) === 0)
 			{
-				$path = str_replace(DOCROOT, '', $path).$assets_folder;
-				$theme['asset_base'] = Config::get('base_url').$path;
+				if (is_dir($path.$assets_folder))
+				{
+					$path = str_replace(DOCROOT, '', $path).$assets_folder;
+					$theme['asset_base'] = Config::get('base_url').$path;
+				}
+				else
+				{
+					$theme['asset_base'] = Config::get('base_url').$assets_folder.$theme['name'].DS;
+				}
+			}
+
+			// theme files are outside the docroot
+			else
+			{
+				$theme['asset_base'] = \Config::get('base_url').$assets_folder.$theme['name'].DS;
 			}
 		}
+
+		// asset_base always uses forward slashes (DS is a backslash on Windows)
+		$theme['asset_base'] = str_replace(DS, '/', $theme['asset_base']);
 
 		return $theme;
 	}
