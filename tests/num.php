@@ -17,6 +17,9 @@ namespace Fuel\Core;
  * @package		Fuel
  * @category	Core
  * @author      Chase "Syntaqx" Hutchins
+ *
+ * @group Core
+ * @group Num
  */
 class Tests_Num extends TestCase
 {
