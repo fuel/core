@@ -207,6 +207,28 @@ class Validation
 	}
 
 	/**
+	 * Allows multiple fields to be set with a single array
+	 * @param   string      Field array
+	 * @return  Validation  this, to allow chaining	
+	 */
+	public function add_fields($field_array)
+	{
+		foreach ($field_array as $field)
+		{
+			if (count($field) === 3)
+			{
+				call_user_func_array(array($this, 'add_field'), $field);
+			}
+			else
+			{
+				throw new \InvalidArgumentException('Invalid parameter count for add_fields.');
+			}
+		}
+		
+		return $this;
+	}
+
+	/**
 	 * This will overwrite lang file messages for this validation instance
 	 *
 	 * @param   string
