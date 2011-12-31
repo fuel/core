@@ -91,7 +91,7 @@ class PhpQuickProfiler {
 	/*--------------------------------------------------------
 	     QUERY DATA -- DATABASE OBJECT WITH LOGGING REQUIRED
 	----------------------------------------------------------*/
-
+	
 	public function gatherQueryData() {
 		$queryTotals = array();
 		$queryTotals['count'] = 0;
@@ -123,7 +123,8 @@ class PhpQuickProfiler {
 		$this->output['queries'] = $queries;
 		$this->output['queryTotals'] = $queryTotals;
 	}
-
+	
+	
 	/*--------------------------------------------------------
 	     CALL SQL EXPLAIN ON THE QUERY TO FIND MORE INFO
 	----------------------------------------------------------*/
@@ -210,7 +211,6 @@ class PhpQuickProfiler {
 		$this->gatherMemoryData();
 		$this->gatherQueryData();
 		$this->gatherSpeedData();
-		// $output = $this->output;
 		require_once('display.php');
 		return output($this->output);
 	}

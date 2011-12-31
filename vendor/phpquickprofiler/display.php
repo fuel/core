@@ -1,6 +1,7 @@
 <?php
 function output ($output)
 {
+
 /* --------------------------------------------------------
   
 Title : HTML Output for Php Quick Profiler
@@ -402,7 +403,13 @@ if (@count($output['logs']) > 0) :
 				$return_output .= '<table class="main" cellspacing="0">';
 				
 				foreach ($output['queries'] as $key => $val) :
-					$return_output .= '<tr><td class="hilight">'.$key .'</td><td>'.$val .'</td></tr>';
+					$return_output .= '<tr><td width="60px">'.$val['time'] .'</td><td class="hilight">'. $val['sql'] .'<br /><br/><span class="faded small">';
+						if (@$val['explain'] === TRUE):
+							foreach ($val['explain'] as $item=>$val_item):
+								$return_output .= $item .'=>'.$val_item.'&nbsp; , ';
+							endforeach;
+						endif;
+					$return_output .= '</span></td></tr>';
 				endforeach;
 				
 				$return_output .='</table>';
