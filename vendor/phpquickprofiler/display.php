@@ -45,8 +45,9 @@ $return_output .= <<<CSS
 	#profiler-menu-console span, #profiler-console h2 { color: #5a8616; }
 	
 	#profiler table { width: 100%; border: none; }
+	
 	#profiler table.main tr:hover { cursor: pointer;}
-	#profiler table.main td { font-family: Consolas, Lucida;  padding: 5px 8px; text-align: left; vertical-align: top; color: #aaa; border-bottom: 1px dotted #444; line-height: 1.5; background: #101010 !important; font-size: 11px !important; }
+	#profiler table.main td { font-family: Consolas, Lucida;  padding: 5px 8px; text-align: left; vertical-align: top; color: #aaa; border: none; border-bottom: 1px dotted #444; line-height: 1.5; background: #101010 !important; font-size: 11px !important; }
 	#profiler table.main tr:hover td { background: #292929 !important; }
 	#profiler table.main code {  padding: 0; background: transparent; border: 0; color: #fff; }
 	#profiler table.main td b { float:right;font-weight:normal;color:#e6f387}
@@ -341,10 +342,8 @@ if (@count($output['logs']) > 0) :
 				foreach ($output['files'] as $file) :
 					$return_output .='
 					<tr>
-						<td class="hilight">
-							'.$file['name'] .'
-							<br/><span class="faded small">'.$file['size'] .'</span>
-						</td>
+						<td class="hilight">'.$file['name'] .'</td>
+						<td><span class="faded small">'.$file['size'] .'</span></td>
 					</tr>';
 				endforeach;
                                        
@@ -402,9 +401,9 @@ if (@count($output['logs']) > 0) :
 				
 				$return_output .= '<table class="main" cellspacing="0">';
 				
-				foreach ($output['queries'] as $key => $val) :
+				foreach ($output['queries'] as $val) :
 					$return_output .= '<tr><td width="60px">'.$val['time'] .'</td><td class="hilight">'. $val['sql'] .'<br /><br/><span class="faded small">';
-						if (@$val['explain'] === TRUE):
+						if ( isset($val['explain'])):
 							foreach ($val['explain'] as $item=>$val_item):
 								$return_output .= $item .'=>'.$val_item.'&nbsp; , ';
 							endforeach;
