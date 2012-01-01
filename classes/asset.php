@@ -75,8 +75,9 @@ class Asset
 	 *
 	 * @return  Theme
 	 */
-	public static function instance($name = '_default_', array $config = array())
+	public static function instance($name = null, array $config = array())
 	{
+		is_null($name) and $name = '_default_';
 		array_key_exists($name, static::$instances) or static::$instances[$name] = static::forge($config);
 		return static::$instances[$name];
 	}
