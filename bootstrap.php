@@ -50,9 +50,10 @@ function setup_autoloader()
 	Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
 	Autoloader::add_classes(array(
-		'Fuel\\Core\\Agent'  => COREPATH.'classes/agent.php',
-		'Fuel\\Core\\Arr'    => COREPATH.'classes/arr.php',
-		'Fuel\\Core\\Asset'  => COREPATH.'classes/asset.php',
+		'Fuel\\Core\\Agent'           => COREPATH.'classes/agent.php',
+		'Fuel\\Core\\Arr'             => COREPATH.'classes/arr.php',
+		'Fuel\\Core\\Asset'           => COREPATH.'classes/asset.php',
+		'Fuel\\Core\\Asset_Instance'  => COREPATH.'classes/asset/instance.php',
 
 		'Fuel\\Core\\Cache'                     => COREPATH.'classes/cache.php',
 		'Fuel\\Core\\CacheNotFoundException'    => COREPATH.'classes/cache.php',
