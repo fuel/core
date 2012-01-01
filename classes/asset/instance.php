@@ -371,8 +371,9 @@ class Asset_Instance
 
 			if (is_file($path.$folder.ltrim($file, '/')))
 			{
-				$file = realpath($path.$folder.ltrim($file, '/'));
+				$file = $path.$folder.ltrim($file, '/');
 				strpos($file, DOCROOT) === 0 and $file = substr($file, strlen(DOCROOT));
+
 				return $file;
 			}
 		}
