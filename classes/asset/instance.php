@@ -332,8 +332,8 @@ class Asset_Instance
 
 		if ( ! isset($group))
 		{
-			$group = (string) $temp_group++;
 			$render = $this->_auto_render;
+			$group = $render ? (string) (++$temp_group) : '_default_';
 		}
 		else
 		{
@@ -344,8 +344,7 @@ class Asset_Instance
 
 		if ($render)
 		{
-			$render = $this->_auto_render;
-			$group = $render ? (string) (++$temp_group) : '_default_';
+			return $this->render($group, $raw);
 		}
 
 		return '';
