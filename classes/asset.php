@@ -90,7 +90,7 @@ class Asset
 	 */
 	public static function forge(array $config = array())
 	{
-		return new Asset_Instance(array_merge(static::$default_config, \Config::get('asset'), $config));
+		return new \Asset_Instance(array_merge(static::$default_config, \Config::get('asset'), $config));
 	}
 
 	/**
