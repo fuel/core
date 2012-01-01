@@ -344,7 +344,7 @@ class Asset_Instance
 
 		if ($render)
 		{
-			return $this->render($group, $raw);
+			return $this->render($group);
 		}
 
 		return '';
