@@ -241,7 +241,7 @@ CSS
 </script>
 JAVASCRIPT;
 
-	$return_output .='<div id="pqp-container" class="pQp" style="display:none">';
+	$return_output .='<div id="pqp-container" class="pQp" style="display:none;position:inherit;">';
 
 $logCount = count($output['logs']['console']);
 $fileCount = count($output['files']);
