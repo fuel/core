@@ -27,72 +27,69 @@ class Asset
 {
 
 	/**
-	 * @var  array  the asset paths to be searched
+	 * All the Asset instances
+	 *
+	 * @var  array
 	 */
-	protected static $_asset_paths = array();
+	protected static $instances = array();
+
 
 	/**
-	 * @var  string  the URL to be prepended to all assets
+	 * Default configuration values
+	 *
+	 * @var  array
 	 */
-	protected static $_asset_url = '/';
-
-	/**
-	 * @var  bool  whether to append the file mtime to the url
-	 */
-	protected static $_add_mtime = true;
-
-	/**
-	 * @var  string  the folder names
-	 */
-	protected static $_folders = array(
-		'css'  =>  'css/',
-		'js'   =>  'js/',
-		'img'  =>  'img/',
+	protected static $default_config = array(
+		'paths' => array('assets/'),
+		'img_dir' => 'img/',
+		'js_dir' => 'js/',
+		'css_dir' => 'css/',
+		'folders' => array(
+			'css' => array(),
+			'js'  => array(),
+			'img' => array(),
+		),
+		'url' => '/',
+		'add_mtime' => true,
+		'indent_level' => 1,
+		'indent_with' => "\t",
+		'auto_render' => true,
 	);
 
 	/**
-	 * @var  array  Holds the groups of assets
-	 */
-	protected static $_groups = array();
-
-	/**
-	 * @var  bool  Get this baby going
-	 */
-	public static $initialized = false;
-
-	/**
 	 * This is called automatically by the Autoloader.  It loads in the config
-	 * and gets things going.
 	 *
 	 * @return  void
 	 */
 	public static function _init()
 	{
-		// Prevent multiple initializations
-		if (static::$initialized)
-		{
-			return;
-		}
+		\Config::load('asset', true, false, true);
+	}
 
-		\Config::load('asset', true);
+	/**
+	 * Acts as a Multiton.  Will return the requested instance, or will create
+	 * a new named one if it does not exist.
+	 *
+	 * @param   string    $name    The instance name
+	 * @param   array     $config  default config overrides
+	 *
+	 * @return  Theme
+	 */
+	public static function instance($name = '_default_', array $config = array())
+	{
+		array_key_exists($name, static::$instances) or static::$instances[$name] = static::forge($config);
+		return static::$instances[$name];
+	}
 
-		$paths = \Config::get('asset.paths');
-
-		foreach($paths as $path)
-		{
-			static::add_path($path);
-		}
-
-		static::$_add_mtime = \Config::get('asset.add_mtime', true);
-		static::$_asset_url = \Config::get('asset.url');
-
-		static::$_folders = array(
-			'css'	=>	\Config::get('asset.css_dir'),
-			'js'	=>	\Config::get('asset.js_dir'),
-			'img'	=>	\Config::get('asset.img_dir')
-		);
-
-		static::$initialized = true;
+	/**
+	 * Gets a new instance of the Asset class.
+	 *
+	 * @param   array  $config  default config overrides
+	 * @return  Theme
+	 */
+	public static function forge(array $config = array())
+	{
+		return new Asset_Instance(array_merge(static::$default_config, \Config::get('asset'), $config));
 	}
 
 	/**
@@ -102,9 +99,9 @@ class Asset
 	 * @param   string  the path to add
 	 * @return  void
 	 */
-	public static function add_path($path)
+	public static function add_path($path, $type = null)
 	{
-		array_unshift(static::$_asset_paths, str_replace('../', '', $path));
+		static::instance()->add_path($path, $type);
 	}
 
 	/**
@@ -113,12 +110,9 @@ class Asset
 	 * @param   string  the path to remove
 	 * @return  void
 	 */
-	public static function remove_path($path)
+	public static function remove_path($path, $type = null)
 	{
-		if (($key = array_search(str_replace('../', '', $path), static::$_asset_paths)) !== false)
-		{
-			unset(static::$_asset_paths[$key]);
-		}
+		static::instance()->remove_path($path, $type);
 	}
 
 	/**
@@ -133,69 +127,7 @@ class Asset
 	 */
 	public static function render($group, $raw = false)
 	{
-		if (is_string($group))
-		{
-			$group = isset(static::$_groups[$group]) ? static::$_groups[$group] : array();
-		}
-
-		$css = '';
-		$js = '';
-		$img = '';
-		foreach ($group as $key => $item)
-		{
-			$type = $item['type'];
-			$filename = $item['file'];
-			$attr = $item['attr'];
-
-			if ( ! preg_match('|^(\w+:)?//|', $filename))
-			{
-				if ( ! ($file = static::find_file($filename, static::$_folders[$type])))
-				{
-					throw new \FuelException('Could not find asset: '.$filename);
-				}
-
-				$raw or $file = static::$_asset_url.$file.(static::$_add_mtime ? '?'.filemtime($file) : '');
-			}
-			else
-			{
-				$file = $filename;
-			}
-
-			switch($type)
-			{
-				case 'css':
-					if ($raw)
-					{
-						return '<style type="text/css">'.PHP_EOL.file_get_contents($file).PHP_EOL.'</style>';
-					}
-					$attr['rel'] = 'stylesheet';
-					$attr['type'] = 'text/css';
-					$attr['href'] = $file;
-
-					$css .= html_tag('link', $attr).PHP_EOL;
-				break;
-				case 'js':
-					if ($raw)
-					{
-						return html_tag('script', array('type' => 'text/javascript'), PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
-					}
-					$attr['type'] = 'text/javascript';
-					$attr['src'] = $file;
-
-					$js .= html_tag('script', $attr, '').PHP_EOL;
-				break;
-				case 'img':
-					$attr['src'] = $file;
-					$attr['alt'] = isset($attr['alt']) ? $attr['alt'] : '';
-
-					$img .= html_tag('img', $attr );
-				break;
-			}
-
-		}
-
-		// return them in the correct order
-		return $css.$js.$img;
+		return static::instance()->render($group, $raw);
 	}
 
 	// --------------------------------------------------------------------
@@ -213,23 +145,7 @@ class Asset
 	 */
 	public static function css($stylesheets = array(), $attr = array(), $group = NULL, $raw = false)
 	{
-		static $temp_group = 1000000;
-
-		$render = false;
-		if ($group === NULL)
-		{
-			$group = (string) (++$temp_group);
-			$render = true;
-		}
-
-		static::_parse_assets('css', $stylesheets, $attr, $group);
-
-		if ($render)
-		{
-			return static::render($group, $raw);
-		}
-
-		return '';
+		return static::instance()->css($stylesheets, $attr, $group, $raw);
 	}
 
 	// --------------------------------------------------------------------
@@ -247,23 +163,7 @@ class Asset
 	 */
 	public static function js($scripts = array(), $attr = array(), $group = NULL, $raw = false)
 	{
-		static $temp_group = 2000000;
-
-		$render = false;
-		if ( ! isset($group))
-		{
-			$group = (string) $temp_group++;
-			$render = true;
-		}
-
-		static::_parse_assets('js', $scripts, $attr, $group);
-
-		if ($render)
-		{
-			return static::render($group, $raw);
-		}
-
-		return '';
+		return static::instance()->js($scripts, $attr, $group, $raw);
 	}
 
 	// --------------------------------------------------------------------
@@ -281,82 +181,6 @@ class Asset
 	 */
 	public static function img($images = array(), $attr = array(), $group = NULL)
 	{
-		static $temp_group = 3000000;
-
-		$render = false;
-		if ( ! isset($group))
-		{
-			$group = (string) $temp_group++;
-			$render = true;
-		}
-
-		static::_parse_assets('img', $images, $attr, $group);
-
-		if ($render)
-		{
-			return static::render($group);
-		}
-
-		return '';
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Parse Assets
-	 *
-	 * Pareses the assets and adds them to the group
-	 *
-	 * @access	private
-	 * @param	string	The asset type
-	 * @param	mixed	The file name, or an array files.
-	 * @param	array	An array of extra attributes
-	 * @param	string	The asset group name
-	 * @return	string
-	 */
-	protected static function _parse_assets($type, $assets, $attr, $group)
-	{
-		if ( ! is_array($assets))
-		{
-			$assets = array($assets);
-		}
-
-		foreach ($assets as $key => $asset)
-		{
-			static::$_groups[$group][] = array(
-				'type'	=>	$type,
-				'file'	=>	$asset,
-				'attr'	=>	(array) $attr
-			);
-		}
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Find File
-	 *
-	 * Locates a file in all the asset paths.
-	 *
-	 * @access	public
-	 * @param	string	The filename to locate
-	 * @param	string	The sub-folder to look in (optional)
-	 * @return	mixed	Either the path to the file or false if not found
-	 */
-	public static function find_file($file, $folder = '')
-	{
-		foreach (static::$_asset_paths as $path)
-		{
-			empty($folder) or $folder = trim($folder, '/').'/';
-
-			if (is_file($path.$folder.ltrim($file, '/')))
-			{
-				return $path.$folder.ltrim($file, '/');
-			}
-		}
-
-		return false;
+		return static::instance()->img($images, $attr, $group);
 	}
 }
-
-
