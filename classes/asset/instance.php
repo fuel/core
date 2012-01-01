@@ -229,7 +229,7 @@ class Asset_Instance
 					$attr['src'] = $file;
 					$attr['alt'] = isset($attr['alt']) ? $attr['alt'] : '';
 
-					$img .= $this->_indent.html_tag('img', $attr ).PHP_EOL;
+					$img .= $this->_indent.html_tag('img', $attr );
 				break;
 			}
 
