@@ -12,7 +12,7 @@
 
 namespace Fuel\Core;
 
-class ThemeException extends \FuelException { }
+class ThemeException extends \FuelException {}
 
 /**
  * Handles loading theme views and assets.
@@ -177,7 +177,7 @@ class Theme implements \ArrayAccess, \Iterator
 			}
 		}
 
-		throw new \ThemeException(sprintf('Could not locate view "%s" in the theme.', $view));
+		throw new \ThemeException(sprintf('Could not locate view "%s" in the theme "%s".', $view, $this->active['name']));
 	}
 
 	/**
