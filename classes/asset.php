@@ -27,12 +27,18 @@ class Asset
 {
 
 	/**
+	 * default instance
+	 *
+	 * @var  array
+	 */
+	protected static $_instance = null;
+
+	/**
 	 * All the Asset instances
 	 *
 	 * @var  array
 	 */
-	protected static $instances = array();
-
+	protected static $_instances = array();
 
 	/**
 	 * Default configuration values
@@ -67,30 +73,54 @@ class Asset
 	}
 
 	/**
-	 * Acts as a Multiton.  Will return the requested instance, or will create
-	 * a new named one if it does not exist.
+	 * Return a specific instance, or the default instance (is created if necessary)
 	 *
-	 * @param   string    $name    The instance name
-	 * @param   array     $config  default config overrides
-	 *
-	 * @return  Theme
+	 * @param   string  instance name
+	 * @return  Asset_Instance
 	 */
-	public static function instance($name = null, array $config = array())
+	public static function instance($instance = null)
 	{
-		is_null($name) and $name = '_default_';
-		array_key_exists($name, static::$instances) or static::$instances[$name] = static::forge($config);
-		return static::$instances[$name];
+		if ($instance !== null)
+		{
+			if ( ! array_key_exists($instance, static::$_instances))
+			{
+				return false;
+			}
+
+			return static::$_instances[$instance];
+		}
+
+		if (static::$_instance === null)
+		{
+			static::$_instance = static::forge();
+		}
+
+		return static::$_instance;
 	}
 
 	/**
 	 * Gets a new instance of the Asset class.
 	 *
+	 * @param   string  instance name
 	 * @param   array  $config  default config overrides
-	 * @return  Theme
+	 * @return  Asset_Instance
 	 */
-	public static function forge(array $config = array())
+	public static function forge($name = 'default', array $config = array())
 	{
-		return new \Asset_Instance(array_merge(static::$default_config, \Config::get('asset'), $config));
+		if ($exists = static::instance($name))
+		{
+			\Error::notice('Asset with this name exists already, cannot be overwritten.');
+			return $exists;
+		}
+
+		static::$_instances[$name] = new \Asset_Instance(array_merge(static::$default_config, \Config::get('asset'), $config));
+
+		if ($name == 'default')
+		{
+			static::$_instance = static::$_instances[$name];
+		}
+
+		return static::$_instances[$name];
 	}
 
 	/**
