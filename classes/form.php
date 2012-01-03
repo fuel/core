@@ -80,7 +80,7 @@ class Form
 	 * @param   string|array  action string or array with more tag attribute settings
 	 * @return  string
 	 */
-	public function open($attributes = array(), array $hidden = array())
+	public static function open($attributes = array(), array $hidden = array())
 	{
 		return static::$instance->open($attributes, $hidden);
 	}
