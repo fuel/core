@@ -249,10 +249,10 @@ class Asset_Instance
 	 * Either adds the stylesheet to the group, or returns the CSS tag.
 	 *
 	 * @access	public
-	 * @param	mixed	The file name, or an array files.
-	 * @param	array	An array of extra attributes
-	 * @param	string	The asset group name
-	 * @return	string
+	 * @param	mixed	       The file name, or an array files.
+	 * @param	array	       An array of extra attributes
+	 * @param	string	       The asset group name
+	 * @return	string|object  Rendered asset or current instance when adding to group
 	 */
 	public function css($stylesheets = array(), $attr = array(), $group = null, $raw = false)
 	{
@@ -275,7 +275,7 @@ class Asset_Instance
 			return $this->render($group, $raw);
 		}
 
-		return '';
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -286,10 +286,10 @@ class Asset_Instance
 	 * Either adds the javascript to the group, or returns the script tag.
 	 *
 	 * @access	public
-	 * @param	mixed	The file name, or an array files.
-	 * @param	array	An array of extra attributes
-	 * @param	string	The asset group name
-	 * @return	string
+	 * @param	mixed	       The file name, or an array files.
+	 * @param	array	       An array of extra attributes
+	 * @param	string	       The asset group name
+	 * @return	string|object  Rendered asset or current instance when adding to group
 	 */
 	public function js($scripts = array(), $attr = array(), $group = null, $raw = false)
 	{
@@ -312,7 +312,7 @@ class Asset_Instance
 			return $this->render($group, $raw);
 		}
 
-		return '';
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -323,10 +323,10 @@ class Asset_Instance
 	 * Either adds the image to the group, or returns the image tag.
 	 *
 	 * @access	public
-	 * @param	mixed	The file name, or an array files.
-	 * @param	array	An array of extra attributes
-	 * @param	string	The asset group name
-	 * @return	string
+	 * @param	mixed	       The file name, or an array files.
+	 * @param	array	       An array of extra attributes
+	 * @param	string	       The asset group name
+	 * @return	string|object  Rendered asset or current instance when adding to group
 	 */
 	public function img($images = array(), $attr = array(), $group = null)
 	{
@@ -349,7 +349,7 @@ class Asset_Instance
 			return $this->render($group);
 		}
 
-		return '';
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
