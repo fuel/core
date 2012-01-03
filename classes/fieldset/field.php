@@ -50,6 +50,11 @@ class Fieldset_Field
 	protected $value;
 
 	/**
+	 * @var  string  Text that will be displayed next to the field
+	 */
+	protected $message = '';
+
+	/**
 	 * @var  array  Rules for validation
 	 */
 	protected $rules = array();
@@ -183,6 +188,19 @@ class Fieldset_Field
 
 		$this->value = $value;
 		$this->set_attribute('value', $value);
+
+		return $this;
+	}
+
+	/**
+	 * Change the field's message
+	 *
+	 * @param   string
+	 * @return  Fieldset_Field  this, to allow chaining
+	 */
+	public function set_message($message)
+	{
+		$this->message = (string) $message;
 
 		return $this;
 	}
@@ -458,11 +476,21 @@ class Fieldset_Field
 		$error_template = $form->get_config('error_template', "");
 		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
 		$error_class = $this->error() ? $form->get_config('error_class') : '';
+		$message_template = $form->get_config('message_template', "");
+
+		if ($this->message && ! ($form->get_config('error_replaces_message') && $this->error()))
+		{
+			$field_msg = str_replace('{field_msg}', $this->message, $message_template);
+		}
+		else
+		{
+			$field_msg = '';
+		}
 
 		if (is_array($build_field))
 		{
 			$label = $this->label ? $form->label($this->label) : '';
-			$template = $this->template ?: $form->get_config('multi_field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n");
+			$template = $this->template ?: $form->get_config('multi_field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t{field_msg}\n\t\t\t</td>\n\t\t</tr>\n");
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
 				$build_fields = '';
@@ -475,7 +503,7 @@ class Fieldset_Field
 				}
 
 				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}'), array($label, $required_mark, $build_fields, $error_msg, $error_class), $template);
+				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '(field_msg}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $field_msg), $template);
 
 				return $template;
 			}
@@ -484,9 +512,9 @@ class Fieldset_Field
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {error_msg}</td>\n\t\t</tr>\n");
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class),
+		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {error_msg} {field_msg}</td>\n\t\t</tr>\n");
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{field_msg}'),
+			array($label, $required_mark, $build_field, $error_msg, $error_class, $field_msg),
 			$template);
 		return $template;
 	}
