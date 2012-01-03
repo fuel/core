@@ -110,7 +110,7 @@ class Asset_Instance
 	 *
 	 * @param   string  the path to add
 	 * @param   string  optional path type (js, css or img)
-	 * @return  void
+	 * @return  object  current instance
 	 */
 	public function add_path($path, $type = null)
 	{
@@ -137,7 +137,7 @@ class Asset_Instance
 	 *
 	 * @param   string  the path to remove
 	 * @param   string  optional path type (js, css or img)
-	 * @return  void
+	 * @return  object  current instance
 	 */
 	public function remove_path($path, $type = null)
 	{
@@ -161,6 +161,8 @@ class Asset_Instance
 				unset($this->_asset_paths[$type][$key]);
 			}
 		}
+
+		return $this;
 	}
 
 	/**
