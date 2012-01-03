@@ -458,7 +458,7 @@ class Fieldset_Field
 		$error_template = $form->get_config('error_template', "");
 		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
 		$error_class = $this->error() ? $form->get_config('error_class') : '';
-		$help_text = ($help_text = $this->get_attribute('help_text', '')) ? str_replace('{help_text}', $help_text, $form->get_config('help_text', '')) : '';
+		$help_text = ($help_text = $this->get_attribute('help_text', '')) != '' ? str_replace('{help_text}', $help_text, $form->get_config('help_text', '')) : '';
 
 		if (is_array($build_field))
 		{
@@ -476,7 +476,7 @@ class Fieldset_Field
 				}
 
 				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}'), array($label, $required_mark, $build_fields, $error_msg, $error_class), $template);
+				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{help_text}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $help_text), $template);
 
 				return $template;
 			}
