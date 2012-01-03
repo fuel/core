@@ -14,7 +14,17 @@ abstract class Controller_Rest extends \Controller
 	 * @var  array  contains a list of method properties such as limit, log and level
 	 */
 	protected $methods = array();
-	
+
+	/**
+	 * @var  integer  status code to return in case a not defined action is called
+	 */
+	protected $no_method_status = 404;
+
+	/**
+	 * @var  integer  status code to return in case the called action doesn't return data
+	 */
+	protected $no_data_status = 404;
+
 	/**
 	 * @var  string  the detected response format
 	 */
@@ -37,13 +47,13 @@ abstract class Controller_Rest extends \Controller
 	public function before()
 	{
 		parent::before();
-		
+
 		// Some Methods cant have a body
 		$this->request->body = null;
 
 		// Which format should the data be returned in?
 		$this->request->lang = $this->_detect_lang();
-		
+
 		$this->response = \Response::forge();
 	}
 
@@ -70,9 +80,9 @@ abstract class Controller_Rest extends \Controller
 	 */
 	public function router($resource, array $arguments)
 	{
-	
+
 		\Config::load('rest', true);
-		
+
 		$pattern = '/\.(' . implode('|', array_keys($this->_supported_formats)) . ')$/';
 
 		// Check if a file extension is used
@@ -88,7 +98,7 @@ abstract class Controller_Rest extends \Controller
 			// Which format should the data be returned in?
 			$this->format = $this->_detect_format();
 		}
-		
+
 		//Check method is authorized if required
 		if (\Config::get('rest.auth') == 'basic')
 		{
@@ -98,7 +108,7 @@ abstract class Controller_Rest extends \Controller
 		{
 			$valid_login = $this->_prepare_digest_auth();
 		}
-		
+
 		//If the request passes auth then execute as normal
 		if(\Config::get('rest.auth') == '' or $valid_login)
 		{
@@ -112,7 +122,7 @@ abstract class Controller_Rest extends \Controller
 			}
 			else
 			{
-				$this->response->status = 404;
+				$this->response->status = $this->no_method_status;
 				return;
 			}
 		}
@@ -134,7 +144,7 @@ abstract class Controller_Rest extends \Controller
 	{
 		if ((is_array($data) and empty($data)) or ($data == ''))
 		{
-			$this->response->status = 404;
+			$this->response->status = $this->no_data_status;
 			return;
 		}
 
@@ -235,7 +245,7 @@ abstract class Controller_Rest extends \Controller
 			$langs = explode(',', $lang);
 
 			$return_langs = array();
-			
+
 			foreach ($langs as $lang)
 			{
 				// Remove weight and strip space
@@ -301,7 +311,7 @@ abstract class Controller_Rest extends \Controller
 			static::_force_login();
 			return FALSE;
 		}
-		
+
 		return TRUE;
 	}
 
@@ -354,7 +364,7 @@ abstract class Controller_Rest extends \Controller
 		{
 			return FALSE;
 		}
-		
+
 		return TRUE;
 	}
 
