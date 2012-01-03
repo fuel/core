@@ -495,8 +495,11 @@ class Form_Instance
 
 		unset($attributes['selected']);
 
+		// workaround to access the current object context in the closure
+		$current_obj =& $this;
+
 		// closure to recusively process the options array
-		$listoptions = function (array $options, $selected, $level = 1) use (&$listoptions) {
+		$listoptions = function (array $options, $selected, $level = 1) use (&$listoptions, &$current_obj) {
 
 			$input = PHP_EOL;
 			foreach ($options as $key => $val)
@@ -512,8 +515,8 @@ class Form_Instance
 					$opt_attr = array('value' => $key, 'style' => 'text-indent: '.(10*($level-1)).'px;');
 					(in_array((string)$key, $selected, TRUE)) && $opt_attr[] = 'selected';
 					$input .= str_repeat("\t", $level);
-					$opt_attr['value'] = ($this->get_config('prep_value', true) && empty($attributes['dont_prep'])) ?
-						\Form::prep_value($opt_attr['value']) : $opt_attr['value'];
+					$opt_attr['value'] = ($current_obj->get_config('prep_value', true) && empty($attributes['dont_prep'])) ?
+						$current_obj->prep_value($opt_attr['value']) : $opt_attr['value'];
 					$input .= html_tag('option', $opt_attr, $val).PHP_EOL;
 				}
 			}
