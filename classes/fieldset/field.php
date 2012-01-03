@@ -89,6 +89,9 @@ class Fieldset_Field
 		// Take rules out of attributes
 		unset($attributes['rules']);
 
+		// only when non-empty, will overwrite what was given in $name
+		$label && $this->set_label($label);
+
 		// Set certain types through specific setter
 		foreach (array('label', 'type', 'value', 'options') as $prop)
 		{
@@ -103,9 +106,6 @@ class Fieldset_Field
 		if (empty($attributes['type'])) $this->set_type($this->type);
 
 		$this->attributes = array_merge($this->attributes, $attributes);
-
-		// only when non-empty, will overwrite what was given in $name
-		$label && $this->set_label($label);
 
 		foreach ($rules as $rule)
 		{
@@ -458,6 +458,7 @@ class Fieldset_Field
 		$error_template = $form->get_config('error_template', "");
 		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
 		$error_class = $this->error() ? $form->get_config('error_class') : '';
+		$help_text = ($help_text = $this->get_attribute('help_text', '')) ? str_replace('{help_text}', $help_text, $form->get_config('help_text', '')) : '';
 
 		if (is_array($build_field))
 		{
@@ -484,9 +485,9 @@ class Fieldset_Field
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {error_msg}</td>\n\t\t</tr>\n");
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class),
+		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {help_text} {error_msg}</td>\n\t\t</tr>\n");
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{help_text}'),
+			array($label, $required_mark, $build_field, $error_msg, $error_class, $help_text),
 			$template);
 		return $template;
 	}
