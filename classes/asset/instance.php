@@ -207,15 +207,15 @@ class Asset_Instance
 			switch($type)
 			{
 				case 'css':
-					if ( ! isset($attr['type']) or ! empty($attr['type']))
-					{
-						$attr['type'] = 'text/css';
-					}
+					$attr['type'] = 'text/css';
 					if ($raw)
 					{
 						return html_tag('style', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
-					$attr['rel'] = 'stylesheet';
+					if ( ! isset($attr['rel']) or empty($attr['rel']))
+					{
+						$attr['rel'] = 'stylesheet';
+					}
 					$attr['href'] = $file;
 
 					$css .= $this->_indent.html_tag('link', $attr).PHP_EOL;
