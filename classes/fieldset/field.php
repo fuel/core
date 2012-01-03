@@ -367,7 +367,7 @@ class Fieldset_Field
 		// Add IDs when auto-id is on
 		if ($form->get_config('auto_id', false) === true and $this->get_attribute('id') == '')
 		{
-			$auto_id = str_replace(array('[', ']'), array('-', ''), $form->get_config('auto_id_prefix', '').$this->name);
+			$auto_id = str_replace(array('[', ']'), array('-', ''), $this->name);
 			$this->set_attribute('id', $auto_id);
 		}
 
