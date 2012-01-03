@@ -207,22 +207,25 @@ class Asset_Instance
 			switch($type)
 			{
 				case 'css':
+					if ( ! isset($attr['type']) or ! empty($attr['type']))
+					{
+						$attr['type'] = 'text/css';
+					}
 					if ($raw)
 					{
-						return '<style type="text/css">'.PHP_EOL.file_get_contents($file).PHP_EOL.'</style>';
+						return html_tag('style', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
 					$attr['rel'] = 'stylesheet';
-					$attr['type'] = 'text/css';
 					$attr['href'] = $file;
 
 					$css .= $this->_indent.html_tag('link', $attr).PHP_EOL;
 				break;
 				case 'js':
+					$attr['type'] = 'text/javascript';
 					if ($raw)
 					{
-						return html_tag('script', array('type' => 'text/javascript'), PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
+						return html_tag('script', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
-					$attr['type'] = 'text/javascript';
 					$attr['src'] = $file;
 
 					$js .= $this->_indent.html_tag('script', $attr, '').PHP_EOL;
