@@ -259,7 +259,7 @@ class Form
 	 */
 	public static function select($field, $values = null, array $options = array(), array $attributes = array())
 	{
-		return static::$instance->select($field, $value, $options, $attributes);
+		return static::$instance->select($field, $values, $options, $attributes);
 	}
 
 	/**
