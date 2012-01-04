@@ -89,9 +89,6 @@ class Fieldset_Field
 		// Take rules out of attributes
 		unset($attributes['rules']);
 
-		// only when non-empty, will overwrite what was given in $name
-		$label && $this->set_label($label);
-
 		// Set certain types through specific setter
 		foreach (array('label', 'type', 'value', 'options') as $prop)
 		{
@@ -104,6 +101,9 @@ class Fieldset_Field
 
 		// Add default "type" attribute if not specified
 		if (empty($attributes['type'])) $this->set_type($this->type);
+
+		// only when non-empty, will overwrite what was given in $name
+		$label && $this->set_label($label);
 
 		$this->attributes = array_merge($this->attributes, $attributes);
 
