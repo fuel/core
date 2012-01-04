@@ -250,9 +250,11 @@ class Fieldset
 	 * @param   string
 	 * @param   array
 	 * @param   array
+	 * @param   bool    (internal use only)
+	 * @param   string  (internal use only)
 	 * @return  Fieldset_Field
 	 */
-	public function add($name, $label = '', array $attributes = array(), array $rules = array())
+	public function add($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null, $after_fieldname = false)
 	{
 		if ($name instanceof Fieldset_Field)
 		{
@@ -299,9 +301,60 @@ class Fieldset
 		}
 
 		$field = new \Fieldset_Field($name, $label, $attributes, $rules, $this);
-		$this->fields[$name] = $field;
+
+		if ( is_string($fieldname))
+		{
+			if ($after_fieldname)
+			{
+				if ( ! \Arr::insert_after_key($this->fields, array($name => $field), $fieldname))
+				{
+					throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
+				}
+			}
+			else
+			{
+				if ( ! \Arr::insert_before_key($this->fields, array($name => $field), $fieldname))
+				{
+					throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
+				}
+			}
+		}
+		else
+		{
+			$this->fields[$name] = $field;
+		}
 
 		return $field;
+	}
+
+	/**
+	 * Add a new Fieldset_Field before an existing field in a Fieldset
+	 *
+	 * @param   string
+	 * @param   string
+	 * @param   array
+	 * @param   array
+	 * @param   string
+	 * @return  Fieldset
+	 */
+	public function add_before($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
+	{
+		return $this->add($name, $label, $attributes, $rules, $field, false);
+	}
+
+	/**
+	 * Add a new Fieldset_Field after an existing field in a Fieldset
+	 *
+	 * @param   string
+	 * @param   string
+	 * @param   array
+	 * @param   array
+	 * @param   string
+	 * @return  Fieldset
+	 */
+	public function add_after($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
+	{
+		return $this->add($name, $label, $attributes, $rules, $fieldname, true);
 	}
 
 	/**
