@@ -250,11 +250,9 @@ class Fieldset
 	 * @param   string
 	 * @param   array
 	 * @param   array
-	 * @param   bool    (internal use only)
-	 * @param   string  (internal use only)
 	 * @return  Fieldset_Field
 	 */
-	public function add($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null, $after_fieldname = false)
+	public function add($name, $label = '', array $attributes = array(), array $rules = array())
 	{
 		if ($name instanceof Fieldset_Field)
 		{
@@ -300,29 +298,7 @@ class Fieldset
 			return $field;
 		}
 
-		$field = new \Fieldset_Field($name, $label, $attributes, $rules, $this);
-
-		if ( is_string($fieldname))
-		{
-			if ($after_fieldname)
-			{
-				if ( ! \Arr::insert_after_key($this->fields, array($name => $field), $fieldname))
-				{
-					throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
-				}
-			}
-			else
-			{
-				if ( ! \Arr::insert_before_key($this->fields, array($name => $field), $fieldname))
-				{
-					throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
-				}
-			}
-		}
-		else
-		{
-			$this->fields[$name] = $field;
-		}
+		$this->fields[$name] = new \Fieldset_Field($name, $label, $attributes, $rules, $this);
 
 		return $field;
 	}
@@ -330,31 +306,49 @@ class Fieldset
 	/**
 	 * Add a new Fieldset_Field before an existing field in a Fieldset
 	 *
-	 * @param   string
-	 * @param   string
-	 * @param   array
-	 * @param   array
-	 * @param   string
-	 * @return  Fieldset
+	 * @param   string  $name
+	 * @param   string  $label
+	 * @param   array   $attributes
+	 * @param   array   $rules
+	 * @param   string  $fieldname   fieldname before which the new field is inserted in the fieldset
+	 * @return  Fieldset_Field
 	 */
 	public function add_before($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
 	{
-		return $this->add($name, $label, $attributes, $rules, $field, false);
+		$field = $this->add($name, $label, $attributes, $rules);
+
+		// Remove from tail and reinsert at correct location
+		unset($this->fields[$field->name]);
+		if ( ! \Arr::insert_before_key($this->fields, array($name => $field), $fieldname))
+		{
+			throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
+		}
+
+		return $field;
 	}
 
 	/**
 	 * Add a new Fieldset_Field after an existing field in a Fieldset
 	 *
-	 * @param   string
-	 * @param   string
-	 * @param   array
-	 * @param   array
-	 * @param   string
-	 * @return  Fieldset
+	 * @param   string  $name
+	 * @param   string  $label
+	 * @param   array   $attributes
+	 * @param   array   $rules
+	 * @param   string  $fieldname   fieldname after which the new field is inserted in the fieldset
+	 * @return  Fieldset_Field
 	 */
 	public function add_after($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
 	{
-		return $this->add($name, $label, $attributes, $rules, $fieldname, true);
+		$field = $this->add($name, $label, $attributes, $rules, $fieldname, true);
+
+		// Remove from tail and reinsert at correct location
+		unset($this->fields[$field->name]);
+		if ( ! \Arr::insert_after_key($this->fields, array($name => $field), $fieldname))
+		{
+			throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
+		}
+
+		return $field;
 	}
 
 	/**
