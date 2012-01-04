@@ -102,7 +102,7 @@ class Fieldset_Field
 		// Add default "type" attribute if not specified
 		if (empty($attributes['type'])) $this->set_type($this->type);
 
-		// only when non-empty, will overwrite what was given in $name
+		// only when non-empty, will supersede what was given in $attributes
 		$label && $this->set_label($label);
 
 		$this->attributes = array_merge($this->attributes, $attributes);
