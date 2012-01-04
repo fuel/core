@@ -214,4 +214,21 @@ class Asset
 	{
 		return static::instance()->img($images, $attr, $group);
 	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Get File
+	 *
+	 * Locates a file in all the asset paths, and return it relative to the docroot
+	 *
+	 * @access	public
+	 * @param	string	The filename to locate
+	 * @param	string	The sub-folder to look in (optional)
+	 * @return	mixed	Either the path to the file or false if not found
+	 */
+	public static function get_file($file, $type, $folder = '')
+	{
+		return static::instance()->get_file($file, $type, $folder);
+	}
 }

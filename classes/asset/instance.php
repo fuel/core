@@ -388,6 +388,28 @@ class Asset_Instance
 	// --------------------------------------------------------------------
 
 	/**
+	 * Get File
+	 *
+	 * Locates a file in all the asset paths, and return it relative to the docroot
+	 *
+	 * @access	public
+	 * @param	string	The filename to locate
+	 * @param	string	The sub-folder to look in (optional)
+	 * @return	mixed	Either the path to the file or false if not found
+	 */
+	public function get_file($file, $type, $folder = '')
+	{
+		if ($file = $this->find_file($file, $type, $folder))
+		{
+			return $this->_asset_url.$file;
+		}
+
+		return false;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Parse Assets
 	 *
 	 * Pareses the assets and adds them to the group
