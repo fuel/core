@@ -356,6 +356,26 @@ class Fieldset_Field
 	}
 
 	/**
+	 * Alias for $this->fieldset->add_before() to allow chaining
+	 *
+	 * @return Fieldset_Field
+	 */
+	public function add_before($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
+	{
+		return $this->fieldset()->add_before($name, $label, $attributes, $rules, $fieldname);
+	}
+
+	/**
+	 * Alias for $this->fieldset->add_after() to allow chaining
+	 *
+	 * @return Fieldset_Field
+	 */
+	public function add_after($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
+	{
+		return $this->fieldset()->add_after($name, $label, $attributes, $rules, $fieldname);
+	}
+
+	/**
 	 * Build the field
 	 *
 	 * @return  string
