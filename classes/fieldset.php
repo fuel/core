@@ -300,7 +300,7 @@ class Fieldset
 
 		$this->fields[$name] = new \Fieldset_Field($name, $label, $attributes, $rules, $this);
 
-		return $field;
+		return $this->fields[$name];
 	}
 
 	/**
@@ -339,7 +339,7 @@ class Fieldset
 	 */
 	public function add_after($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
 	{
-		$field = $this->add($name, $label, $attributes, $rules, $fieldname, true);
+		$field = $this->add($name, $label, $attributes, $rules);
 
 		// Remove from tail and reinsert at correct location
 		unset($this->fields[$field->name]);
