@@ -167,14 +167,15 @@ class Validation
 	 *
 	 * @param   string      Field name
 	 * @param   string      Field label
-	 * @param   string      Rules as a piped string
+	 * @param   mixed       Rules as a piped string or an array
 	 * @return  Fieldset_Field  $this to allow chaining
 	 */
 	public function add_field($name, $label, $rules)
 	{
 		$field = $this->add($name, $label);
 
-		$rules = explode('|', $rules);
+		is_string($rules) and $rules = explode('|', $rules);
+
 		foreach ($rules as $rule)
 		{
 			if (($pos = strpos($rule, '[')) !== false)
