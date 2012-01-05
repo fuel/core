@@ -206,7 +206,6 @@ abstract class Controller_Rest extends \Controller
 					if (strpos($next, 'q=') === 0)
 					{
 						list($key, $quality) = explode('=', $next);
-						$quality = $quality;
 						$next_is_quality = true;
 					}
 				}
@@ -217,8 +216,8 @@ abstract class Controller_Rest extends \Controller
 			// Sort the formats by score in descending order
 			uasort($acceptable, function($a, $b)
 			{
-				$a = (float)$a;
-				$b = (float)$b;
+				$a = (float) $a;
+				$b = (float) $b;
 				return ($a > $b) ? -1 : 1;
 			});
 
