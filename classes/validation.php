@@ -165,16 +165,17 @@ class Validation
 	/**
 	 * Simpler alias for Validation->add()
 	 *
-	 * @param   string      Field name
-	 * @param   string      Field label
-	 * @param   mixed       Rules as a piped string or an array
+	 * @param   string  Field name
+	 * @param   string  Field label
+	 * @param   string  Rules as a piped string
 	 * @return  Fieldset_Field  $this to allow chaining
+	 * @depricated  Remove in v2.0, passing rules as string is to be removed use add() instead
 	 */
 	public function add_field($name, $label, $rules)
 	{
 		$field = $this->add($name, $label);
 
-		is_string($rules) and $rules = explode('|', $rules);
+		$rules = explode('|', $rules);
 
 		foreach ($rules as $rule)
 		{
