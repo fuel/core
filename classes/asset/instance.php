@@ -195,8 +195,13 @@ class Asset_Instance
 			$filename = $item['file'];
 			$attr = $item['attr'];
 
-			if ( ! preg_match('|^(\w+:)?//|', $filename) and ($file = $this->find_file($filename, $type)))
+			if ( ! preg_match('|^(\w+:)?//|', $filename))
 			{
+				if ( ! ($file = $this->find_file($filename, $type)))
+				{
+					throw new \FuelException('Could not find asset: '.$filename);
+				}
+				
 				$raw or $file = $this->_asset_url.$file.($this->_add_mtime ? '?'.filemtime($file) : '');
 			}
 			else
