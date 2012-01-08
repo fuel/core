@@ -191,6 +191,7 @@ abstract class Controller_Rest extends \Controller
 			$next_is_quality = false;
 			foreach ($fragments as $fragment)
 			{
+				$quality = 1;
 				// Skip the fragment if it is a quality score
 				if ($next_is_quality)
 				{
@@ -201,7 +202,6 @@ abstract class Controller_Rest extends \Controller
 				// If next fragment exists and is a quality score, set the quality score
 				elseif ($fragments->hasNext())
 				{
-					$quality = 1;
 					$next = $fragments->getInnerIterator()->current();
 					if (strpos($next, 'q=') === 0)
 					{
