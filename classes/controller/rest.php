@@ -61,7 +61,7 @@ abstract class Controller_Rest extends \Controller
 	{
 		// If the response is a Response object, we will use their instead of
 		// ours.
-		if ( ! $response instanceof \Response)
+		if ( ! $response instanceof Response)
 		{
 			$response = $this->response;
 		}
@@ -402,5 +402,4 @@ abstract class Controller_Rest extends \Controller
 			$this->response->set_header('WWW-Authenticate', 'Digest realm="' . \Config::get('rest.realm') . '", qop="auth", nonce="' . $nonce . '", opaque="' . md5(\Config::get('rest.realm')) . '"');
 		}
 	}
-
 }

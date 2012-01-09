@@ -191,4 +191,3 @@ class Event
 		return false;
 	}
 }
-

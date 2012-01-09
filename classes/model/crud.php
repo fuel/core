@@ -776,5 +776,4 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	{
 		return $values;
 	}
-
 }

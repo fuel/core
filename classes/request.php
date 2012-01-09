@@ -473,7 +473,7 @@ class Request
 			logger(\Fuel::L_WARNING, 'The '.$class->getName().' controller should return a string or a Response object, support for the $controller->response object is deprecated.', __METHOD__);
 			$this->response = $this->controller_instance->response;
 		}
-		elseif ($response instanceof \Response)
+		elseif ($response instanceof Response)
 		{
 			$this->response = $response;
 		}

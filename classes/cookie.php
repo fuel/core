@@ -117,5 +117,3 @@ class Cookie
 		return static::set($name, null, -86400, $path, $domain, $secure, $http_only);
 	}
 }
-
-

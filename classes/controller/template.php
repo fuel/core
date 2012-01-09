@@ -50,7 +50,7 @@ abstract class Controller_Template extends \Controller
 	public function after($response)
 	{
 		// If the response is a Response object, we don't want to create a new one
-		if ($this->auto_render === true and ! $response instanceof \Response)
+		if ($this->auto_render === true and ! $response instanceof Response)
 		{
 			$response = $this->response; 
 			$response->body = $this->template;
@@ -58,5 +58,4 @@ abstract class Controller_Template extends \Controller
 
 		return parent::after($response);
 	}
-
 }

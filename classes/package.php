@@ -111,5 +111,4 @@ class Package
 
 		return array_key_exists($package, static::$packages);
 	}
-
 }

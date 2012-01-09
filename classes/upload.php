@@ -704,7 +704,4 @@ class Upload
 		// reset the umask
 		umask($oldumask);
 	}
-
 }
-
-

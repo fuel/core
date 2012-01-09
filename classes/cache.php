@@ -154,4 +154,3 @@ class Cache
 		return $cache->delete_all($section);
 	}
 }
-

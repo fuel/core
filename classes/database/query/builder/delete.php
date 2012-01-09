@@ -56,7 +56,7 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 	 */
 	public function compile($db = null)
 	{
-		if ( ! $db instanceof \Database_Connection)
+		if ( ! $db instanceof Database_Connection)
 		{
 			// Get the database instance
 			$db = \Database_Connection::instance($db);

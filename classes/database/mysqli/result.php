@@ -72,5 +72,4 @@ class Database_MySQLi_Result extends \Database_Result
 			return $this->_result->fetch_assoc();
 		}
 	}
-
 }

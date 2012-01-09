@@ -33,7 +33,7 @@ class DBUtil
 	public static function create_database($database, $charset = null)
 	{
 		$charset = static::process_charset($charset, true);
-		return \DB::query('CREATE DATABASE '.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
+		return \DB::query('CREATE DATABASE '.\DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
 	}
 
 	/**
@@ -45,7 +45,7 @@ class DBUtil
 	 */
 	public static function drop_database($database)
 	{
-		return \DB::query('DROP DATABASE '.DB::quote_identifier($database), \DB::DELETE)->execute();
+		return \DB::query('DROP DATABASE '.\DB::quote_identifier($database), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -57,7 +57,7 @@ class DBUtil
 	 */
 	public static function drop_table($table)
 	{
-		return \DB::query('DROP TABLE IF EXISTS '.DB::quote_identifier(DB::table_prefix($table)), \DB::DELETE)->execute();
+		return \DB::query('DROP TABLE IF EXISTS '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -70,7 +70,7 @@ class DBUtil
 	 */
 	public static function rename_table($table, $new_table_name)
 	{
-		return \DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
+		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute();
 	}
 
 	/**
@@ -92,7 +92,7 @@ class DBUtil
 
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$sql .= \DB::quote_identifier(DB::table_prefix($table)).' (';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{
@@ -289,7 +289,7 @@ class DBUtil
 
 			if(array_key_exists('DEFAULT', $attr))
 			{
-				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT']));
+				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT']));
 			}
 
 			if(array_key_exists('NULL', $attr) and $attr['NULL'] === true)
@@ -472,7 +472,7 @@ class DBUtil
 			\DB::select()->from($table)->limit(1)->execute();
 			return true;
 		}
-		catch (\Database_Exception $e)
+		catch (Database_Exception $e)
 		{
 			return false;
 		}
@@ -497,7 +497,7 @@ class DBUtil
 			\DB::select_array($columns)->from($table)->limit(1)->execute();
 			return true;
 		}
-		catch (\Database_Exception $e)
+		catch (Database_Exception $e)
 		{
 			return false;
 		}
@@ -540,6 +540,4 @@ class DBUtil
 	{
 		\Config::load('db', true);
 	}
-
 }
-

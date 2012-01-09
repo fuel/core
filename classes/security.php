@@ -372,5 +372,3 @@ class Security
 		return $output;
 	}
 }
-
-

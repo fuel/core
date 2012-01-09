@@ -554,5 +554,4 @@ class View
 
 		return $return;
 	}
-
 }

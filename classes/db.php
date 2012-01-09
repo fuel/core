@@ -380,5 +380,4 @@ class DB
 	{
 		return \Database_Connection::instance($db)->rollback_transaction();
 	}
-
 }

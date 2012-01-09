@@ -643,5 +643,3 @@ class Fieldset
 		return $this->validation()->show_errors($config);
 	}
 }
-
-

@@ -350,7 +350,4 @@ class Session_File extends \Session_Driver
 		// validate all global settings as well
 		return parent::_validate_config($validated);
 	}
-
 }
-
-

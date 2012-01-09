@@ -118,7 +118,4 @@ class Lang
 		$key = ($group ? $group.'.' : '').$line;
 		\Arr::set(static::$lines, $key, $value);
 	}
-
 }
-
-

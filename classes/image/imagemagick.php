@@ -328,4 +328,3 @@ class Image_Imagemagick extends \Image_Driver
 		unlink($this->image_temp);
 	}
 }
-

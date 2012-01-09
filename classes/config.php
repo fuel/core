@@ -81,7 +81,7 @@ class Config
 			{
 				$config = $file->load($overwrite);
 			}
-			catch (\ConfigException $e)
+			catch (ConfigException $e)
 			{
 				$config = array();
 			}

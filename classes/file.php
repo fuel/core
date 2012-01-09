@@ -770,7 +770,4 @@ class File
 
 		exit;
 	}
-
 }
-
-

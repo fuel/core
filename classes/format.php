@@ -155,7 +155,7 @@ class Format
 			if (is_numeric($key))
 			{
 				// make string key...
-				$key = (Inflector::singularize($basenode) != $basenode) ? Inflector::singularize($basenode) : 'item';
+				$key = (\Inflector::singularize($basenode) != $basenode) ? \Inflector::singularize($basenode) : 'item';
 			}
 
 			// replace anything not alpha numeric
@@ -432,6 +432,4 @@ class Format
 	{
 		return unserialize(trim($string));
 	}
-
 }
-

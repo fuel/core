@@ -207,4 +207,3 @@ class File_Handler_File
 		return $this->area->get_size($this->path);
 	}
 }
-

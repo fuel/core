@@ -322,5 +322,3 @@ class Date
 		return $this->format();
 	}
 }
-
-

@@ -334,5 +334,3 @@ class Num
 		return static::mask_string($string, $format);
 	}
 }
-
-/* End of file num.php */

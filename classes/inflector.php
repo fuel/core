@@ -383,4 +383,3 @@ class Inflector
 		return ! (\in_array(\Str::lower(\strval($word)), static::$uncountable_words));
 	}
 }
-

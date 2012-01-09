@@ -990,4 +990,3 @@ class Mongo_Db
 		}
 	}
 }
-

@@ -77,7 +77,7 @@ class Crypt
 			{
 				\Config::save('crypt', static::$config);
 			}
-			catch (\FileAccessException $e)
+			catch (FileAccessException $e)
 			{
 				// failed to write the config file, inform the user
 				echo \View::forge('errors/crypt_keys', array(
@@ -196,5 +196,3 @@ class Crypt
 		return $result == 0;
 	}
 }
-
-

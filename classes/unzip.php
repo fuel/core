@@ -618,5 +618,3 @@ class Unzip
 		return false;
 	}
 }
-
-

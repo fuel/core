@@ -153,5 +153,3 @@ class Validation_Error extends \Exception
 		return $this->get_message();
 	}
 }
-
-

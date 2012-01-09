@@ -179,7 +179,7 @@ class Database_Query
 	 */
 	public function compile($db = null)
 	{
-		if ( ! $db instanceof \Database_Connection)
+		if ( ! $db instanceof Database_Connection)
 		{
 			// Get the database instance
 			$db = \Database_Connection::instance($db);
@@ -230,7 +230,7 @@ class Database_Query
 				break;
 		}
 
-		if ( ! empty($this->_lifetime) and $this->_type === DB::SELECT)
+		if ( ! empty($this->_lifetime) and $this->_type === \DB::SELECT)
 		{
 			$cache_key = empty($this->_cache_key) ?
 				'db.'.md5('Database_Connection::query("'.$db.'", "'.$sql.'")') : $this->_cache_key;
