@@ -184,32 +184,55 @@ abstract class Controller_Rest extends \Controller
 		// Otherwise, check the HTTP_ACCEPT (if it exists and we are allowed)
 		if (\Input::server('HTTP_ACCEPT') and \Config::get('rest.ignore_http_accept') !== true)
 		{
-			// Check all formats against the HTTP_ACCEPT header
-			foreach (array_keys($this->_supported_formats) as $format)
+
+			// Split the Accept header and build an array of quality scores for each format
+			$fragments = new \CachingIterator(new \ArrayIterator(preg_split('/[,;]/', \Input::server('HTTP_ACCEPT'))));
+			$acceptable = array();
+			$next_is_quality = false;
+			foreach ($fragments as $fragment)
 			{
-				// Has this format been requested?
-				if (strpos(\Input::server('HTTP_ACCEPT'), $format) !== false)
+				$quality = 1;
+				// Skip the fragment if it is a quality score
+				if ($next_is_quality)
 				{
-					// If not HTML or XML assume its right and send it on its way
-					if ($format != 'html' and $format != 'xml')
+					$next_is_quality = false;
+					continue;
+				}
+
+				// If next fragment exists and is a quality score, set the quality score
+				elseif ($fragments->hasNext())
+				{
+					$next = $fragments->getInnerIterator()->current();
+					if (strpos($next, 'q=') === 0)
+					{
+						list($key, $quality) = explode('=', $next);
+						$next_is_quality = true;
+					}
+				}
+
+				$acceptable[$fragment] = $quality;
+			}
+
+			// Sort the formats by score in descending order
+			uasort($acceptable, function($a, $b)
+			{
+				$a = (float) $a;
+				$b = (float) $b;
+				return ($a > $b) ? -1 : 1;
+			});
+
+			// Check each of the acceptable formats against the supported formats
+			foreach ($acceptable as $pattern => $quality)
+			{
+				// The Accept header can contain wildcards in the format
+				$find = array('*', '/');
+				$replace = array('.*', '\/');
+				$pattern = '/^' . str_replace($find, $replace, $pattern) . '$/';
+				foreach ($this->_supported_formats as $format => $mime)
+				{
+					if (preg_match($pattern, $mime))
 					{
 						return $format;
-					}
-
-					// HTML or XML have shown up as a match
-					else
-					{
-						// If it is truly HTML, it wont want any XML
-						if ($format == 'html' and strpos(\Input::server('HTTP_ACCEPT'), 'xml') === false)
-						{
-							return $format;
-						}
-
-						// If it is truly XML, it wont want any HTML
-						elseif ($format == 'xml' and strpos(\Input::server('HTTP_ACCEPT'), 'html') === false)
-						{
-							return $format;
-						}
 					}
 				}
 			}
@@ -381,4 +404,3 @@ abstract class Controller_Rest extends \Controller
 	}
 
 }
-
