@@ -614,7 +614,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function offsetExists($offset)
 	{
-		return isset($this->{$offset});
+		return property_exists($this, $offset);
 	}
 
 	/**
@@ -636,7 +636,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function offsetGet($offset)
 	{
-		if (isset($this->{$offset}))
+		if (property_exists($this, $offset))
 		{
 			return $this->{$offset};
 		}
