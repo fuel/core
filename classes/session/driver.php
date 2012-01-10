@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -360,7 +360,7 @@ abstract class Session_Driver
 	public function set_config($name, $value = null)
 	{
 		if (isset($this->config[$name])) $this->config[$name] = $value;
-		
+
 		return $this;
 	}
 

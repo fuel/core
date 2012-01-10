@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -109,7 +109,7 @@ class Upload
 	 * @var bool indicator of valid uploads
 	 */
 	protected static $valid = false;
-	
+
 	/**
 	 * @var object Ftp object
 	 */
@@ -672,13 +672,13 @@ class Upload
 						{
 							@chmod(static::$files[$key]['saved_to'].static::$files[$key]['saved_as'], static::$config['file_chmod']);
 						}
-	
+
 						// after callback defined?
 						if (array_key_exists('after', static::$callbacks) and ! is_null(static::$callbacks['after']))
 						{
 							// get the callback method
 							$callback = static::$callbacks['after'][0];
-	
+
 							// call the callback
 							if (is_callable($callback))
 							{

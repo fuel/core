@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -107,7 +107,7 @@ class Cli
 		return static::$args[$name];
 	}
 
-	
+
 	/**
 	 * Get input from the shell, using readline or the standard STDIN
 	 *
@@ -337,7 +337,7 @@ class Cli
 	 * if operating system === windows
 	 */
  	public static function is_windows()
- 	{ 
+ 	{
  		return 'win' === strtolower(substr(php_uname("s"), 0, 3));
  	}
 
@@ -387,7 +387,7 @@ class Cli
 		{
 			return $text;
 		}
-		
+
 		if ( ! array_key_exists($foreground, static::$foreground_colors))
 		{
 			throw new \FuelException('Invalid CLI foreground color: '.$foreground);
@@ -409,7 +409,7 @@ class Cli
 
 		return $string;
 	}
-	
+
 	/**
 	* Spawn Background Process
 	*
@@ -426,9 +426,9 @@ class Cli
 		{
 			pclose(popen('start /b '.$call, 'r'));
 	    }
-	
+
 		// Some sort of UNIX
-		else 
+		else
 		{
 			pclose(popen($call.' > '.$output.' &', 'r'));
 	    }
