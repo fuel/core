@@ -419,7 +419,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 			if ($validated)
 			{
-				$vars = $this->validation()->validated() + $vars;
+				$validated = array_filter($this->validation()->validated(), function($val){
+					return ($val !== null);
+				});
+				$vars = $validated + $vars;
 			}
 			else
 			{
