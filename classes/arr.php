@@ -324,7 +324,10 @@ class Arr
 			if (isset($array[$key]))
 			{
 				$remove or $return[$key] = $array[$key];
-				$remove and unset($array[$key]);
+				if($remove)
+				{
+					unset($array[$key]);
+				}
 			}
 		}
 		return $remove ? $array : $return;
