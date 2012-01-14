@@ -227,12 +227,12 @@ class Pagination
 
 		if (static::$current_page == static::$total_pages)
 		{
-			return $value.static::$template['next_mark'];
+			return static::$template['next_start'].$value.static::$template['next_mark'].static::$template['next_end'];
 		}
 		else
 		{
 			$next_page = static::$current_page + 1;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']);
+			return static::$template['next_start'].\Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']).static::$template['next_end'];
 		}
 	}
 
@@ -254,13 +254,13 @@ class Pagination
 
 		if (static::$current_page == 1)
 		{
-			return static::$template['previous_mark'].$value;
+			return static::$template['previous_start'].static::$template['previous_mark'].$value.static::$template['previous_end'];
 		}
 		else
 		{
 			$previous_page = static::$current_page - 1;
 			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value);
+			return static::$template['previous_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value).static::$template['previous_end'];
 		}
 	}
 }
