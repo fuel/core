@@ -109,9 +109,16 @@ class Router
 
 		if ( ! $match)
 		{
-			// Since we didn't find a match, we will create a new route.
-			$match = new Route(preg_quote($request->uri->get(), '#'), $request->uri->get());
-			$match->parse($request);
+			if (\Config::get('defined_routes_only', false))
+			{
+				return null;
+			}
+			else
+			{
+				// Since we didn't find a match, we will create a new route.
+				$match = new Route(preg_quote($request->uri->get(), '#'), $request->uri->get());
+				$match->parse($request);
+			}
 		}
 
 		if ($match->callable !== null)
@@ -191,5 +198,3 @@ class Router
 		return false;
 	}
 }
-
-
