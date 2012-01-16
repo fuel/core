@@ -247,7 +247,7 @@ class Database_Query
 		// Execute the query
 		$result = $db->query($this->_type, $sql, $this->_as_object);
 
-		if (isset($cache))
+		if (isset($cache) and $result->count())
 		{
 			$cache->set_expiration($this->_lifetime)->set_contents($result->as_array())->set();
 		}
