@@ -66,7 +66,7 @@ class Lang
 
 		if ($group === null)
 		{
-			static::$lines = \Arr::merge($lines, static::$lines);
+			static::$lines = \Arr::merge(static::$lines, $lines);
 		}
 		else
 		{
@@ -75,7 +75,7 @@ class Lang
 			{
 				static::$lines[$group] = array();
 			}
-			static::$lines[$group] = $overwrite ? array_merge($lines, static::$lines[$group]) : \Arr::merge($lines, static::$lines[$group]);
+			static::$lines[$group] = $overwrite ? array_merge(static::$lines[$group], $lines) : \Arr::merge(static::$lines[$group], $lines);
 		}
 	}
 
