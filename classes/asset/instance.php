@@ -195,14 +195,23 @@ class Asset_Instance
 			$filename = $item['file'];
 			$attr = $item['attr'];
 
+			// only do a file search if the asset is not a URI
 			if ( ! preg_match('|^(\w+:)?//|', $filename))
 			{
-				if ( ! ($file = $this->find_file($filename, $type)))
+				// and only if the asset is local to the applications base_url
+				if ( ! preg_match('|^(\w+:)?//|', $this->_asset_url) or strpos($this->_asset_url, \Config::get('base_url')) === 0)
 				{
-					throw new \FuelException('Could not find asset: '.$filename);
-				}
+					if ( ! ($file = $this->find_file($filename, $type)))
+					{
+						throw new \FuelException('Could not find asset: '.$filename);
+					}
 
-				$raw or $file = $this->_asset_url.$file.($this->_add_mtime ? '?'.filemtime($file) : '');
+					$raw or $file = $this->_asset_url.$file.($this->_add_mtime ? '?'.filemtime($file) : '');
+				}
+				else
+				{
+					$raw or $file = $this->_asset_url.$filename;
+				}
 			}
 			else
 			{
