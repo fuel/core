@@ -113,7 +113,8 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Finder'         => COREPATH.'classes/finder.php',
 
-		'Fuel\\Core\\Date'    => COREPATH.'classes/date.php',
+		'Fuel\\Core\\Date'                            => COREPATH.'classes/date.php',
+		'Fuel\\Core\\DateInvalidContentTypeException' => COREPATH.'classes/date.php',
 
 		'Fuel\\Core\\Debug'   => COREPATH.'classes/debug.php',
 
