@@ -499,8 +499,8 @@ class Form_Instance
 		$current_obj =& $this;
 
 		// closure to recusively process the options array
-		$listoptions = function (array $options, $selected, $level = 1) use (&$listoptions, &$current_obj) {
-
+		$listoptions = function (array $options, $selected, $level = 1) use (&$listoptions, &$current_obj)
+		{
 			$input = PHP_EOL;
 			foreach ($options as $key => $val)
 			{

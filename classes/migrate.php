@@ -248,7 +248,8 @@ class Migrate
 			$replacement = $keys;
 			array_unshift($replacement, $start_version);
 
-			for ($i=0; $i < count($keys); $i++) {
+			for ($i=0; $i < count($keys); $i++)
+			{
 				$keys[$i] = $replacement[$i];
 			}
 
