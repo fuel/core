@@ -40,18 +40,22 @@ class Pagination
 	 * @var array The HTML for the display
 	 */
 	public static $template = array(
-		'wrapper_start'  => '<div class="pagination"> ',
-		'wrapper_end'    => ' </div>',
-		'page_start'     => '<span class="page-links"> ',
-		'page_end'       => ' </span>',
-		'previous_start' => '<span class="previous"> ',
-		'previous_end'   => ' </span>',
-		'previous_mark'  => '&laquo; ',
-		'next_start'     => '<span class="next"> ',
-		'next_end'       => ' </span>',
-		'next_mark'      => ' &raquo;',
-		'active_start'   => '<span class="active"> ',
-		'active_end'     => ' </span>',
+		'wrapper_start'  	  => '<div class="pagination"> ',
+		'wrapper_end'    	  => ' </div>',
+		'page_start'     	  => '<span class="page-links"> ',
+		'page_end'       	  => ' </span>',
+		'previous_start' 	  => '<span class="previous"> ',
+		'previous_end'   	  => ' </span>',
+		'previous_inactive_start' => ' <span class="previous-inactive">',
+		'previous_inactive_end'   => ' </span>',
+		'previous_mark'  	  => '&laquo; ',
+		'next_start'     	  => '<span class="next"> ',
+		'next_end'       	  => ' </span>',
+		'next_inactive_start'     => ' <span class="next-inactive">',
+		'next_inactive_end'       => ' </span>',
+		'next_mark'      	  => ' &raquo;',
+		'active_start'   	  => '<span class="active"> ',
+		'active_end'     	  => ' </span>',
 	);
 
 	/**
@@ -227,12 +231,12 @@ class Pagination
 
 		if (static::$current_page == static::$total_pages)
 		{
-			return $value.static::$template['next_mark'];
+			return static::$template['next_inactive_start'].$value.static::$template['next_mark'].static::$template['next_inactive_end'];
 		}
 		else
 		{
 			$next_page = static::$current_page + 1;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']);
+			return static::$template['next_start'].\Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']).static::$template['next_end'];
 		}
 	}
 
@@ -254,13 +258,13 @@ class Pagination
 
 		if (static::$current_page == 1)
 		{
-			return static::$template['previous_mark'].$value;
+			return static::$template['previous_inactive_start'].static::$template['previous_mark'].$value.static::$template['previous_inactive_end'];
 		}
 		else
 		{
 			$previous_page = static::$current_page - 1;
 			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return \Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value);
+			return static::$template['previous_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value).static::$template['previous_end'];
 		}
 	}
 }
