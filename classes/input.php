@@ -131,8 +131,11 @@ class Input
 		}
 
 		// Strip the defined url suffix from the uri if needed
-		static::$detected_ext = preg_replace('#(.*)\.#', '', $uri);
-		empty(static::$detected_ext) or $uri = substr($uri,0,-(strlen(static::$detected_ext)+1));
+		if (strpos($uri, '.') !== false)
+		{
+			static::$detected_ext = preg_replace('#(.*)\.#', '', $uri);
+			$uri = substr($uri,0,-(strlen(static::$detected_ext)+1));
+		}
 
 		// Do some final clean up of the uri
 		static::$detected_uri = \Security::clean_uri($uri, true);
