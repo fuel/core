@@ -129,7 +129,7 @@ abstract class Session_Driver
 	 */
 	public function set($name, $value = null)
 	{
-		\Arr::set($this->data, $name, $value);
+		is_null($name) or \Arr::set($this->data, $name, $value);
 
 		return $this;
 	}
