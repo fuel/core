@@ -85,18 +85,22 @@ abstract class Controller_Rest extends \Controller
 
 		$pattern = '/\.(' . implode('|', array_keys($this->_supported_formats)) . ')$/';
 
-		// Check if a file extension is used
-		if (preg_match($pattern, $resource, $matches))
+		// If no (or an invalid) format is given, auto detect the format
+		if (is_null($this->format) or ! array_key_exists($this->format, $this->_supported_formats))
 		{
-			// Remove the extension from arguments too
-			$resource = preg_replace($pattern, '', $resource);
+			// Check if a file extension is used
+			if (preg_match($pattern, $resource, $matches))
+			{
+				// Remove the extension from arguments too
+				$resource = preg_replace($pattern, '', $resource);
 
-			$this->format = $matches[1];
-		}
-		else
-		{
-			// Which format should the data be returned in?
-			$this->format = $this->_detect_format();
+				$this->format = $matches[1];
+			}
+			else
+			{
+				// Which format should the data be returned in?
+				$this->format = $this->_detect_format();
+			}
 		}
 
 		//Check method is authorized if required
