@@ -32,6 +32,11 @@ class Input
 	protected static $detected_uri = null;
 
 	/**
+	 * @var  $detected_ext  The URI extension that was detected automatically
+	 */
+	protected static $detected_ext = null;
+
+	/**
 	 * @var  $input  All of the input (GET, POST, PUT, DELETE)
 	 */
 	protected static $input = null;
@@ -126,13 +131,25 @@ class Input
 		}
 
 		// Strip the defined url suffix from the uri if needed
-		$ext = \Config::get('url_suffix');
-		strrchr($uri, '.') === $ext and $uri = substr($uri,0,-strlen($ext));
+		static::$detected_ext = preg_replace('#(.*)\.#', '', $uri);
+		empty(static::$detected_ext) or $uri = substr($uri,0,-(strlen(static::$detected_ext)+1));
 
 		// Do some final clean up of the uri
 		static::$detected_uri = \Security::clean_uri($uri, true);
 
 		return static::$detected_uri;
+	}
+
+	/**
+	 * Detects and returns the current URI extension
+	 *
+	 * @return  string
+	 */
+	public static function extension()
+	{
+		is_null(static::$detected_ext) and static::uri();
+
+		return static::$detected_ext;
 	}
 
 	/**
