@@ -1,19 +1,46 @@
-<?php
+<?
 /**
- * Simple task to create the session db table.
- * Date: 1/23/12
- * Time: 11:22 AM
+ * Sessions DB Table Task
+ *
+ * Run this task to set add/remove/clear the db sessions table
+ * for your app. This could be expanded in app/tasks for application specific stuff.
+ *
+ * @version		1.0
+ * @author		Daniel Berry
+ * @license     MIT License
  */
 
 namespace Fuel\Tasks;
 
 class Session {
 
+    public function run()
+    {
+        // Will only accept the options in the array
+        $option = \Cli::prompt('What would you like to do?', array('create','remove', 'clear', 'help'));
+
+        switch($option)
+        {
+            case "create":
+                return self::create();
+                break;
+            case "remove":
+                return self::remove();
+                break;
+            case "clear":
+                return self::clear();
+                break;
+            default:
+                return self::help();
+                break;
+        }
+    }
+
     /*
      * create the sessions table
-     * php oil r session
+     * php oil r session:create
      */
-    public function run()
+    public function create()
     {
         \Config::load('session', true);
 
@@ -39,11 +66,13 @@ class Session {
         }
     }
 
+
+
     /*
      * remove the sessions table
-     * php oil r session:down
+     * php oil r session:remove
      */
-    public function down()
+    public function remove()
     {
         \Config::load('session', true);
 
@@ -61,14 +90,14 @@ class Session {
 
     /*
      * truncate the sessions table
-     * php oil r session:truncate
+     * php oil r session:clear
      */
-    public function truncate()
+    public function clear()
     {
         \Config::load('session', true);
 
         // Will only accept the options in the array
-        $iamsure = \Cli::prompt('Are you sure you want to truncate the sessions table?', array('y','n'));
+        $iamsure = \Cli::prompt('Are you sure you want to clear the sessions table?', array('y','n'));
 
         if ($iamsure === 'y')
         {
@@ -76,7 +105,7 @@ class Session {
             return \Cli::color("Session database table successfully truncated.", 'green');
         }
 
-        return \Cli::color("Session database table was not truncated.", 'red');
+        return \Cli::color("Session database table was not cleared.", 'red');
     }
 
     /**
@@ -92,13 +121,13 @@ class Session {
                 The session task will create the nessecary db tables.
 
             Examples:
-                php oil r session
-                php oil r session:down
-                php oil r migrate:truncate
+                php oil r session:create
+                php oil r session:remove
+                php oil r migrate:clear
                 php oil r migrate:help
-                
+
 HELP;
     }
 }
 
-/* End of file tasks/session.php */
+/* End of file tasks/robots.php */
