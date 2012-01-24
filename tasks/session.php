@@ -1,22 +1,45 @@
 <?
 /**
- * Sessions DB Table Task
+ * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
- * Run this task to set add/remove/clear the db sessions table
- * for your app. This could be expanded in app/tasks for application specific stuff.
+ * @package    Fuel
+ * @version    1.1
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2011 Fuel Development Team
+ * @link       http://fuelphp.com
  *
- * @version		1.0
- * @author		Daniel Berry
- * @license     MIT License
  */
 
 namespace Fuel\Tasks;
 
+/**
+ * Sessions DB Table Task
+ *
+ * @PullRequest https://github.com/fuel/core/pull/786
+ *
+ * Run this task to set add/remove/clear the db sessions table
+ * Table name will be generated from your config file.
+ * for your app. This could be expanded in app/tasks for application specific stuff.
+ *
+ * @package     Fuel
+ * @version		1.1
+ * @author		Daniel Berry
+ * @license     MIT License
+ *
+ * Usage:
+ * php oil r session         = will prompt with menu
+ * php oil r session:create  = create the db table.
+ * php oil r session:remove  = remove the sessions table
+ * php oil r session:clear   = clear the sessions table
+ */
+
 class Session {
 
+    // default function if no command is selected. Provided user with menu
     public function run()
     {
-        // Will only accept the options in the array
+        // Prompt the user with menu options
         $option = \Cli::prompt('What would you like to do?', array('create','remove', 'clear', 'help'));
 
         switch($option)
@@ -42,10 +65,14 @@ class Session {
      */
     public function create()
     {
+        // load session config
         \Config::load('session', true);
 
+        // make sure session driver is set to db
         if (\Config::get('session.driver') === 'db')
         {
+
+            // create the session table using the table name from the config file
             \DBUtil::create_table(\Config::get('session.db.table'), array(
                 'session_id'   => array('constraint' => 40, 'type' => 'varchar'),
                 'previous_id'  => array('constraint' => 40, 'type' => 'varchar'),
@@ -56,12 +83,15 @@ class Session {
                 'payload'      => array('type' => 'longtext'),
             ), array('session_id'), false, 'InnoDB', 'utf8');
 
+            // make previous_id a unique_key. speeds up query and prevents duplicate id's
             \DBUtil::create_index(\Config::get('session.db.table'), 'previous_id', 'previous_id', 'unique');
 
+            // return success message.
             return \Cli::color("Success! Your session table has been created!", 'green');
         }
         else
         {
+            // driver is not set to db, so inform the user.
             return \Cli::color("Oops, your driver is currently set to ".\Config::get('session.driver').'. Please set your driver type to db before continuing.', 'red');
         }
     }
@@ -74,37 +104,43 @@ class Session {
      */
     public function remove()
     {
+        // load session config
         \Config::load('session', true);
 
-        // Will only accept the options in the array
+        // prompt the user to confirm they want to remove the table.
         $iamsure = \Cli::prompt('Are you sure you want to delete the sessions table?', array('y','n'));
 
+        // if they are sure, then let's drop it
         if ($iamsure === 'y')
         {
             \DBUtil::drop_table(\Config::get('session.db.table'));
             return \Cli::color("Session database table deleted.", 'green');
         }
 
+        // if we made it to here, than that means the user said no.
         return \Cli::color("Session database table was not deleted.", 'red');
     }
 
     /*
-     * truncate the sessions table
+     * clear the sessions table
      * php oil r session:clear
      */
     public function clear()
     {
+        // load session config
         \Config::load('session', true);
 
-        // Will only accept the options in the array
+        // prompt the user to confirm they want to clear the table.
         $iamsure = \Cli::prompt('Are you sure you want to clear the sessions table?', array('y','n'));
 
+        // if they are sure, then let's drop it
         if ($iamsure === 'y')
         {
             \DBUtil::truncate_table(\Config::get('session.db.table'));
             return \Cli::color("Session database table successfully truncated.", 'green');
         }
 
+        // if we made it to here, than that means the user said no.
         return \Cli::color("Session database table was not cleared.", 'red');
     }
 
@@ -130,4 +166,4 @@ HELP;
     }
 }
 
-/* End of file tasks/robots.php */
+/* End of file tasks/session.php */
