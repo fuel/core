@@ -11,3 +11,5 @@ fuel/app/cache/*/*
 nbproject/
 .idea
 *.tmproj
+*.sublime-project
+*.sublime-workspace
