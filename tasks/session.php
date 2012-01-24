@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Fuel is a fast, lightweight, community driven PHP5 framework.
  *
@@ -68,11 +68,18 @@ class Session {
         // load session config
         \Config::load('session', true);
 
-        // make sure session driver is set to db
-        if (\Config::get('session.driver') === 'db')
+        if (\Config::get('session.driver') != 'db')
         {
+            // prompt the user to confirm they want to remove the table.
+            $continue = \Cli::prompt(\Cli::color('Your current driver type is not set db. Would you like to continue and add the sessions table anyway?', 'yellow'), array('y','n'));
 
-            // create the session table using the table name from the config file
+            if ($continue === 'n')
+            {
+                return \Cli::color('Database sessions table was not created.', 'red');
+            }
+        }
+
+        // create the session table using the table name from the config file
             \DBUtil::create_table(\Config::get('session.db.table'), array(
                 'session_id'   => array('constraint' => 40, 'type' => 'varchar'),
                 'previous_id'  => array('constraint' => 40, 'type' => 'varchar'),
@@ -86,13 +93,15 @@ class Session {
             // make previous_id a unique_key. speeds up query and prevents duplicate id's
             \DBUtil::create_index(\Config::get('session.db.table'), 'previous_id', 'previous_id', 'unique');
 
+        if (\Config::get('session.driver') === 'db')
+        {
             // return success message.
-            return \Cli::color("Success! Your session table has been created!", 'green');
+            return \Cli::color('Success! Your session table has been created!', 'green');
         }
         else
         {
-            // driver is not set to db, so inform the user.
-            return \Cli::color("Oops, your driver is currently set to ".\Config::get('session.driver').'. Please set your driver type to db before continuing.', 'red');
+            // return success message notifying that the driver is not db.
+            return \Cli::color('Success! Your session table has been created! Your current session driver type is set to '.\Config::get('session.driver').'. In order to use the table you just created to manage your sessions, you will need to set your drive type to "db" in your session config file.', 'green');
         }
     }
 
@@ -159,8 +168,8 @@ class Session {
             Examples:
                 php oil r session:create
                 php oil r session:remove
-                php oil r migrate:clear
-                php oil r migrate:help
+                php oil r session:clear
+                php oil r session:help
 
 HELP;
     }
