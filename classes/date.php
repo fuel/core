@@ -55,7 +55,7 @@ class Date
 			function strptime($input, $format)
 			{
 				$ts = strtotime($input);
-				return array(
+				return $ts === false ? false : array(
 					'tm_year'	=> date('y', $ts),
 					'tm_mon'	=> date('n', $ts) - 1,
 					'tm_mday'	=> date('j', $ts),
