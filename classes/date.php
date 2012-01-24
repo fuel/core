@@ -12,9 +12,6 @@
 
 namespace Fuel\Core;
 
-// Invalid content exception, thrown when conversion of pattern is not possible
-class DateInvalidContentTypeException extends \UnexpectedValueException {}
-
 /**
  * Date Class
  *
@@ -122,7 +119,7 @@ class Date
 		$time = strptime($input, $pattern);
 		if ($time === false)
 		{
-			throw new \DateInvalidContentTypeException('Input was not recognized by pattern.');
+			throw new \UnexpectedValueException('Input was not recognized by pattern.');
 		}
 		$timestamp = mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],
 						$time['tm_mon'] + 1, $time['tm_mday'], $time['tm_year'] + 1900);
@@ -146,7 +143,7 @@ class Date
 
 		if ($interval <= 0)
 		{
-			throw new \DateInvalidContentTypeException('Input was not recognized by pattern.');
+			throw new \UnexpectedValueException('Input was not recognized by pattern.');
 		}
 
 		$range    = array();
@@ -174,7 +171,7 @@ class Date
 
 		if ($month < 1 or $month > 12)
 		{
-			throw new \DateInvalidContentTypeException('Invalid input for month given.');
+			throw new \UnexpectedValueException('Invalid input for month given.');
 		}
 		elseif ($month == 2)
 		{
