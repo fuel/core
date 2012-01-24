@@ -37,7 +37,7 @@ namespace Fuel\Tasks;
 class Session {
 
     // default function if no command is selected. Provided user with menu
-    public function run()
+    public static function run()
     {
         // Prompt the user with menu options
         $option = \Cli::prompt('What would you like to do?', array('create','remove', 'clear', 'help'));
@@ -45,16 +45,16 @@ class Session {
         switch($option)
         {
             case "create":
-                return self::create();
+                return static::create();
                 break;
             case "remove":
-                return self::remove();
+                return static::remove();
                 break;
             case "clear":
-                return self::clear();
+                return static::clear();
                 break;
             default:
-                return self::help();
+                return static::help();
                 break;
         }
     }
@@ -63,7 +63,7 @@ class Session {
      * create the sessions table
      * php oil r session:create
      */
-    public function create()
+    public static function create()
     {
         // load session config
         \Config::load('session', true);
@@ -102,7 +102,7 @@ class Session {
      * remove the sessions table
      * php oil r session:remove
      */
-    public function remove()
+    public static function remove()
     {
         // load session config
         \Config::load('session', true);
@@ -125,7 +125,7 @@ class Session {
      * clear the sessions table
      * php oil r session:clear
      */
-    public function clear()
+    public static function clear()
     {
         // load session config
         \Config::load('session', true);
@@ -166,4 +166,4 @@ HELP;
     }
 }
 
-/* End of file tasks/session.php */ 
+/* End of file tasks/session.php */
