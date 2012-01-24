@@ -231,7 +231,8 @@ class View
 	 */
 	protected function process_file($file_override = false)
 	{
-		$clean_room = function($__file_name, array $__data) {
+		$clean_room = function($__file_name, array $__data)
+		{
 			extract($__data, EXTR_REFS);
 
 			// Capture the view output
@@ -267,7 +268,8 @@ class View
 	 */
 	protected function get_data()
 	{
-		$clean_it = function ($data, $rules, $auto_filter) {
+		$clean_it = function ($data, $rules, $auto_filter)
+		{
 			foreach ($data as $key => $value)
 			{
 				$filter = array_key_exists($key, $rules) ? $rules[$key] : null;

@@ -126,9 +126,13 @@ class Uri
 			}
 		}
 
-		array_walk($variables, function ($val, $key) use (&$url) {
-			$url = str_replace(':'.$key, $val, $url);
-		});
+		array_walk(
+			$variables,
+			function ($val, $key) use (&$url)
+			{
+				$url = str_replace(':'.$key, $val, $url);
+			}
+		);
 
 		is_bool($secure) and $url = http_build_url($url, array('scheme' => $secure ? 'https' : 'http'));
 

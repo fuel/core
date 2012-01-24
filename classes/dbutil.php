@@ -203,11 +203,11 @@ class DBUtil
 				{
 					if (is_numeric($key))
 					{
-						$index_name .= ($columns=='' ? '' : '_').$value;
+						$index_name .= ($index_name == '' ? '' : '_').$value;
 					}
 					else
 					{
-						$index_name .= ($columns=='' ? '' : '_').str_replace(array('(', ')', ' '), '', $key);
+						$index_name .= ($index_name == '' ? '' : '_').str_replace(array('(', ')', ' '), '', $key);
 					}
 				}
 			}

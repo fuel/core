@@ -329,7 +329,7 @@ class Validation
 	 */
 	public function run($input = null, $allow_partial = false, $temp_callables = array())
 	{
-		if (empty($input) && \Input::method() != 'POST')
+		if (is_null($input) && \Input::method() != 'POST')
 		{
 			return false;
 		}

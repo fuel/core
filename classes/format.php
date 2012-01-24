@@ -357,9 +357,13 @@ class Format
 		$rows = explode("\n", trim($string));
 
 		// TODO: This means any headers with , will be split, but this is less likley thay a value containing it
-		$headings = array_map(function($value) {
+		$headings = array_map(
+			function($value)
+			{
 				return trim($value, '"');
-			}, explode(',', array_shift($rows)));
+			},
+			explode(',', array_shift($rows))
+		);
 
 		$join_row = null;
 
