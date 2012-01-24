@@ -123,11 +123,11 @@ class Session {
         if ($iamsure === 'y')
         {
             \DBUtil::drop_table(\Config::get('session.db.table'));
-            return \Cli::color("Session database table deleted.", 'green');
+            return \Cli::color('Session database table deleted.', 'green');
         }
 
         // if we made it to here, than that means the user said no.
-        return \Cli::color("Session database table was not deleted.", 'red');
+        return \Cli::color('Session database table was not deleted.', 'red');
     }
 
     /*
@@ -146,11 +146,11 @@ class Session {
         if ($iamsure === 'y')
         {
             \DBUtil::truncate_table(\Config::get('session.db.table'));
-            return \Cli::color("Session database table successfully truncated.", 'green');
+            return \Cli::color('Session database table successfully truncated.', 'green');
         }
 
         // if we made it to here, than that means the user said no.
-        return \Cli::color("Session database table was not cleared.", 'red');
+        return \Cli::color('Session database table was not cleared.', 'red');
     }
 
     /**
