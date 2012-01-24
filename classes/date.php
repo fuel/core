@@ -34,9 +34,9 @@ class Date
 	/**
 	 * Time constants (and only those that are constant, thus not MONTH/YEAR)
 	 */
-	const WEEK = 604800;
-	const DAY = 86400;
-	const HOUR = 3600;
+	const WEEK   = 604800;
+	const DAY    = 86400;
+	const HOUR   = 3600;
 	const MINUTE = 60;
 
 	/**
@@ -55,13 +55,13 @@ class Date
 			function strptime($input, $format)
 			{
 				$ts = strtotime($input);
-				return $ts === false ? false : array(
-					'tm_year'	=> date('y', $ts),
-					'tm_mon'	=> date('n', $ts) - 1,
-					'tm_mday'	=> date('j', $ts),
-					'tm_hour'	=> date('H', $ts),
-					'tm_min'	=> date('i', $ts),
-					'tm_sec'	=> date('s', $ts)
+				return array(
+					'tm_year' => date('y', $ts),
+					'tm_mon'  => date('n', $ts) - 1,
+					'tm_mday' => date('j', $ts),
+					'tm_hour' => date('H', $ts),
+					'tm_min'  => date('i', $ts),
+					'tm_sec'  => date('s', $ts)
 				);
 				// This really is some fugly code, but someone at PHP HQ decided strptime should
 				// output this awful array instead of a timestamp LIKE EVERYONE ELSE DOES!!!
@@ -119,8 +119,7 @@ class Date
 		$time = strptime($input, $pattern);
 		if ($time === false)
 		{
-			\Error::notice('Input was not recognized by pattern.');
-			return false;
+			throw new \UnexpectedValueException('Input was not recognized by pattern.');
 		}
 		$timestamp = mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],
 						$time['tm_mon'] + 1, $time['tm_mday'], $time['tm_year'] + 1900);
@@ -138,18 +137,19 @@ class Date
 	 */
 	public static function range_to_array($start, $end, $interval = '+1 Day')
 	{
-		$start     = ( ! $start instanceof Date) ? static::forge($start) : $start;
-		$end       = ( ! $end instanceof Date) ? static::forge($end) : $end;
+		$start = ( ! $start instanceof Date) ? static::forge($start) : $start;
+		$end   = ( ! $end instanceof Date) ? static::forge($end) : $end;
+		
 		is_int($interval) or $interval = strtotime($interval, $start->get_timestamp()) - $start->get_timestamp();
 
 		if ($interval <= 0)
 		{
-			\Error::notice('Input was not recognized by pattern.');
-			return false;
+			throw new \UnexpectedValueException('Input was not recognized by pattern.');
 		}
 
-		$range    = array();
-		$current  = $start;
+		$range   = array();
+		$current = $start;
+
 		while ($current->get_timestamp() <= $end->get_timestamp())
 		{
 			$range[] = $current;
@@ -168,13 +168,12 @@ class Date
 	 */
 	public static function days_in_month($month, $year = null)
 	{
-		$year	= ! empty($year) ? (int) $year : (int) date('Y');
-		$month	= (int) $month;
+		$year  = ! empty($year) ? (int) $year : (int) date('Y');
+		$month = (int) $month;
 
 		if ($month < 1 or $month > 12)
 		{
-			\Error::notice('Invalid input for month given.');
-			return false;
+			throw new \UnexpectedValueException('Invalid input for month given.');
 		}
 		elseif ($month == 2)
 		{
@@ -207,9 +206,9 @@ class Date
 
 		\Lang::load('date', true);
 
-		$difference  = $from_timestamp - $timestamp;
-		$periods     = array('second', 'minute', 'hour', 'day', 'week', 'month', 'years', 'decade');
-		$lengths     = array(60, 60, 24, 7, 4.35, 12, 10);
+		$difference = $from_timestamp - $timestamp;
+		$periods    = array('second', 'minute', 'hour', 'day', 'week', 'month', 'years', 'decade');
+		$lengths    = array(60, 60, 24, 7, 4.35, 12, 10);
 
 		for ($j = 0; isset($lengths[$j]) and $difference >= $lengths[$j]; $j++)
 		{
@@ -243,7 +242,7 @@ class Date
 	public function __construct($timestamp = null, $timezone = null)
 	{
 		! $timestamp and $timestamp = time() + static::$server_gmt_offset;
-		! $timezone and $timezone = \Fuel::$timezone;
+		! $timezone and $timezone   = \Fuel::$timezone;
 
 		$this->timestamp = $timestamp;
 		$this->set_timezone($timezone);
