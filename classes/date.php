@@ -54,18 +54,48 @@ class Date
 		{
 			function strptime($input, $format)
 			{
-				$ts = strtotime($input);
-				return array(
-					'tm_year' => date('y', $ts),
-					'tm_mon'  => date('n', $ts) - 1,
-					'tm_mday' => date('j', $ts),
-					'tm_hour' => date('H', $ts),
-					'tm_min'  => date('i', $ts),
-					'tm_sec'  => date('s', $ts)
-				);
-				// This really is some fugly code, but someone at PHP HQ decided strptime should
-				// output this awful array instead of a timestamp LIKE EVERYONE ELSE DOES!!!
+				if ($ts = strtotime($input))
+				{
+					return array(
+						'tm_year' => date('y', $ts),
+						'tm_mon'  => date('n', $ts) - 1,
+						'tm_mday' => date('j', $ts),
+						'tm_hour' => date('H', $ts),
+						'tm_min'  => date('i', $ts),
+						'tm_sec'  => date('s', $ts),
+					);
+				}
+				else
+				{
+					$masks = array( 
+						'%d' => '(?P<d>[0-9]{2})',
+						'%m' => '(?P<m>[0-9]{2})',
+						'%Y' => '(?P<Y>[0-9]{4})',
+						'%H' => '(?P<H>[0-9]{2})',
+						'%M' => '(?P<M>[0-9]{2})',
+						'%S' => '(?P<S>[0-9]{2})',
+					); 
+
+					$rexep = "#" . strtr(preg_quote($format), $masks) . "#";
+
+					if ( ! preg_match($rexep, $input, $result))
+					{
+						return false; 
+					}
+
+					return array( 
+						"tm_sec"  => isset($result['S']) ? (int) $result['S'] : 0, 
+						"tm_min"  => isset($result['M']) ? (int) $result['M'] : 0,
+						"tm_hour" => isset($result['H']) ? (int) $result['H'] : 0, 
+						"tm_mday" => isset($result['d']) ? (int) $result['d'] : 0, 
+						"tm_mon"  => isset($result['m']) ? ($result['m'] ? $result['m'] - 1 : 0) : 0, 
+						"tm_year" => isset($result['Y']) ? ($result['Y'] > 1900 ? $result['Y'] - 1900 : 0) : 0,
+					);
+				}
 			}
+			
+			// This really is some fugly code, but someone at PHP HQ decided strptime should
+			// output this awful array instead of a timestamp LIKE EVERYONE ELSE DOES!!!
 		}
 	}
 
