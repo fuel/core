@@ -47,6 +47,13 @@ class Fieldset
 		return static::forge($name, $config);
 	}
 
+	/**
+	 * Create Fieldset object
+	 *
+	 * @param   string    Identifier for this fieldset
+	 * @param   array     Configuration array
+	 * @return  Fieldset
+	 */
 	public static function forge($name = 'default', array $config = array())
 	{
 		if ($exists = static::instance($name))
