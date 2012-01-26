@@ -244,10 +244,10 @@ class Arr
 		{
 			if ( ! is_int($key))
 			{
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 
 	/**
