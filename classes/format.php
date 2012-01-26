@@ -202,7 +202,14 @@ class Format
 		// Multi-dimentional array
 		if (is_array($data) and isset($data[0]))
 		{
-			$headings = array_keys($data[0]);
+			if (\Arr::is_assoc($data[0]))
+			{
+				$headings = array_keys($data[0]);
+			}
+			else
+			{
+				$headings = array_shift($data);
+			}
 		}
 
 		// Single array
