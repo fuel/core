@@ -233,6 +233,24 @@ class Arr
 	}
 
 	/**
+	 * Checks if the given array is an assoc array.
+	 *
+	 * @param   array  $arr  the array to check
+	 * @return  bool   true if its an assoc array, false if not
+	 */
+	public static function is_assoc($arr)
+	{
+		foreach ($arr as $key => $unused)
+		{
+			if ( ! is_int($key))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Flattens a multi-dimensional associative array down into a 1 dimensional
 	 * associative array.
 	 *
