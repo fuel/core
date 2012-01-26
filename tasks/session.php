@@ -34,7 +34,8 @@ namespace Fuel\Tasks;
  * php oil r session:clear   = clear the sessions table
  */
 
-class Session {
+class Session
+{
 
     // default function if no command is selected. Provided user with menu
     public static function run()
@@ -88,7 +89,7 @@ class Session {
                 'created'      => array('constraint' => 10, 'type' => 'int', 'unsigned' => true),
                 'updated'      => array('constraint' => 10, 'type' => 'int', 'unsigned' => true),
                 'payload'      => array('type' => 'longtext'),
-            ), array('session_id'), false, 'InnoDB', 'utf8');
+            ), array('session_id'), false, 'InnoDB', \Config::get('db.default.charset'));
 
             // make previous_id a unique_key. speeds up query and prevents duplicate id's
             \DBUtil::create_index(\Config::get('session.db.table'), 'previous_id', 'previous_id', 'unique');
