@@ -49,6 +49,12 @@ class Validation
 		return static::forge($fieldset);
 	}
 
+	/**
+	* Gets a new instance of the Validation class.
+	*
+	* @param   string      The name or instance of the Fieldset to link to
+	* @return  Validation
+	*/
 	public static function forge($fieldset = 'default')
 	{
 		if (is_string($fieldset))
