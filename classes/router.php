@@ -47,18 +47,22 @@ class Router
 		{
 			$name = $options['name'];
 			unset($options['name']);
-			if (count($options) == 1 and ! is_array($options[0]))
+			if (count($options) == 1 and !is_array($options[0]))
 			{
 				$options = $options[0];
 			}
 		}
-		// If there are only arrays in options then this contain multiple routes
-		if (is_array($options) && count(array_filter($options, "is_array"))==count($options)) {
-			$route_destination=array();
-			foreach ($options as $route_options) {
+		// If there are only arrays in $options then $options contains multiple routes
+		if (is_array($options) && count(array_filter($options, "is_array")) == count($options))
+		{
+			$route_destination = array();
+			foreach ($options as $route_options)
+			{
 				$route_destination[] = new \Route($path, $route_options);
 			}
-		} else {
+		}
+		else
+		{
 			$route_destination = new \Route($path, $options);
 		}
 
@@ -109,8 +113,9 @@ class Router
 		{
 			foreach (static::$routes as $route)
 			{
-				$route_junction = is_array($route) ? $route: array($route);
-				foreach ($route_junction as $route) {
+				$route_junction = is_array($route) ? $route : array($route);
+				foreach ($route_junction as $route)
+				{
 					if ($match = $route->parse($request))
 					{
 						break 2;
@@ -119,7 +124,7 @@ class Router
 			}
 		}
 
-		if ( ! $match)
+		if (!$match)
 		{
 			// Since we didn't find a match, we will create a new route.
 			$match = new Route(preg_quote($request->uri->get(), '#'), $request->uri->get());
@@ -152,7 +157,7 @@ class Router
 			// make the module known to the autoloader
 			\Fuel::add_module($segments[0]);
 			$match->module = array_shift($segments);
-			$namespace .= ucfirst($match->module).'\\';
+			$namespace .= ucfirst($match->module) . '\\';
 			$module = $match->module;
 		}
 
@@ -175,13 +180,13 @@ class Router
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
-			$class = $namespace.'Controller_'.\Inflector::words_to_upper(implode('_', $temp_segments));
+			$class = $namespace . 'Controller_' . \Inflector::words_to_upper(implode('_', $temp_segments));
 			array_pop($temp_segments);
 			if (class_exists($class))
 			{
 				return array(
-					'controller'    => $class,
-					'action'        => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
+					'controller' => $class,
+					'action' => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
 					'method_params' => array_slice($segments, $key + 2),
 				);
 			}
@@ -190,12 +195,12 @@ class Router
 		// Fall back for default module controllers
 		if ($module)
 		{
-			$class = $namespace.'Controller_'.$module;
+			$class = $namespace . 'Controller_' . $module;
 			if (class_exists($class))
 			{
 				return array(
-					'controller'    => $class,
-					'action'        => isset($segments[0]) ? $segments[0] : null,
+					'controller' => $class,
+					'action' => isset($segments[0]) ? $segments[0] : null,
 					'method_params' => array_slice($segments, 1),
 				);
 			}
