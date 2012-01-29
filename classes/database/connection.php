@@ -65,8 +65,8 @@ abstract class Database_Connection
 				throw new \FuelException("Database type not defined in {$name} configuration");
 			}
 
-			// Set the driver class name
-			$driver = 'Fuel\\Core\\Database_'.ucfirst($config['type']).'_Connection';
+            // Set the driver class name
+            $driver = '\\Database_'.ucfirst($config['type']).'_Connection';
 
 			// Create the database connection instance
 			new $driver($name, $config);
