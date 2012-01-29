@@ -197,7 +197,7 @@ class Database_PDO_Connection extends \Database_Connection
 		! is_null($like) and $like = str_replace('%', '.*', $like);
 		foreach ($result as $row)
 		{
-			if (! is_null($like) and preg_match($like, $row['Field'])) continue;
+			if ( ! is_null($like) and preg_match($like, $row['Field'])) continue;
 			list($type, $length) = $this->_parse_type($row['Type']);
 
 			$column = $this->datatype($type);
