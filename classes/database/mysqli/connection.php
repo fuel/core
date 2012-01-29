@@ -46,6 +46,11 @@ class Database_MySQLi_Connection extends \Database_Connection
 	protected $_in_transaction = false;
 
 	/**
+	 * @var  bool  Allows nested transactions
+	 */
+	protected $_transaction_level = 0;
+
+	/**
 	 * @var  string  Which kind of DB is used
 	 */
 	public $_db_type = 'mysql';

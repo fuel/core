@@ -30,6 +30,11 @@ class Database_PDO_Connection extends \Database_Connection
 	protected $_in_transaction = false;
 
 	/**
+	 * @var  bool  Allows nested transactions
+	 */
+	protected $_transaction_level = 0;
+
+	/**
 	 * @var  string  Which kind of DB is used
 	 */
 	public $_db_type = '';
@@ -277,20 +282,65 @@ class Database_PDO_Connection extends \Database_Connection
 	public function start_transaction()
 	{
 		$this->_connection or $this->connect();
-		$this->_in_transaction = true;
-		return $this->_connection->beginTransaction();
+
+		if (in_array($this->_db_type, \DB::$workarounds['nested_transactions']['savepoint']) && $this->_transaction_level > 0)
+		{
+			$this->_connection->exec("SAVEPOINT LEVEL{$this->_transaction_level}");
+			//savepoint doesn't indicate an error in any way
+			$started_transaction = true;
+		}
+		else
+		{
+			if (!($started_transaction = $this->_connection->beginTransaction()) && $this->_transaction_level > 0)
+			{
+				//when a database, other then the ones using the savepoint workaround,
+				//attempts to start a nested transaction and fails
+				throw new \PDOException('PDO attempted to start a nested transaction for a database of the type: ' . $this->_db_type);
+			}
+		}
+		$this->_in_transaction = $started_transaction;
+		$this->_in_transaction && $this->_transaction_level++;
+		return $this->_in_transaction;
 	}
 
 	public function commit_transaction()
 	{
-		$this->_in_transaction = false;
-		return $this->_connection->commit();
+		$this->_transaction_level--;
+		if (in_array($this->_db_type, \DB::$workarounds['nested_transactions']['savepoint']) && $this->_transaction_level != 0)
+		{
+			//fires an exception if such savepoint doesn't exist
+			$this->_connection->exec("RELEASE SAVEPOINT LEVEL{$this->_transaction_level}");
+			return true;
+		}
+		else
+		{
+			$this->_in_transaction = false;
+			//when this method is called without start_transaction before that
+			//_transaction_level is negative
+			$this->_transaction_level = 0;
+			//fires no error if called before start_transaction was called
+			return $this->_connection->commit();
+		}
 	}
 
 	public function rollback_transaction()
 	{
-		$this->_in_transaction = false;
-		return $this->_connection->rollBack();
+		$this->_transaction_level--;
+
+		if (in_array($this->_db_type, \DB::$workarounds['nested_transactions']['savepoint']) && $this->_transaction_level != 0)
+		{
+			$this->_connection->exec("ROLLBACK TO SAVEPOINT LEVEL{$this->_transaction_level}");
+			return true;
+		}
+		else
+		{
+			$this->_in_transaction = false;
+			//when this method is called without start_transaction before that
+			//_transaction_level is negative
+			$this->_transaction_level = 0;
+			//fires no error if called before start_transaction was called
+			return $this->_connection->rollBack();
+		}
 	}
 
 }
