@@ -177,31 +177,29 @@ class Validation
 	 * @return  Fieldset_Field  $this to allow chaining
 	 * @depricated  Remove in v2.0, passing rules as string is to be removed use add() instead
 	 */
-	public function add_field($name, $label, $rules)
+	public function add_field($name, $label, $rules, array $messages = array())
 	{
-		$field = $this->add($name, $label);
+		$field = $this->add($name, $label, array(), array(), $messages);
 
 		$rules = explode('|', $rules);
 
 		foreach ($rules as $rule)
 		{
-			if (($pos = strpos($rule, '[')) !== false)
+			list($rule, $parameters) = $this->parse_string_rule($rule);
+			if (!empty($parameters))
 			{
-				preg_match('#\[(.*)\]#', $rule, $param);
-				$rule = substr($rule, 0, $pos);
-
 				// deal with rules that have comma's in the rule parameter
 				if (in_array($rule, array('match_pattern')))
 				{
-					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), array($param[1])));
+					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), $parameters));
 				}
 				elseif (in_array($rule, array('valid_string')))
 				{
-					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), array(explode(',', $param[1]))));
+					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), array($parameters)));
 				}
 				else
 				{
-					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), explode(',', $param[1])));
+					call_user_func_array(array($field, 'add_rule'), array_merge(array($rule), $parameters));
 				}
 			}
 			else
@@ -212,6 +210,40 @@ class Validation
 
 		return $field;
 
+	}
+
+	public function parse_string_rule($rule)
+	{
+		if (($pos = strpos($rule, '[')) !== false)
+		{
+			preg_match('#\[(.*)\]#', $rule, $param);
+			$id     = substr($rule, 0, $pos);
+			$params = explode(',', $param[1]);
+			foreach ($params as &$param)
+			{
+				if (is_numeric($param))
+				{
+					if (strpos($param, ',') || strpos($param, '.'))
+					{
+						$param = floatval($param);
+					}
+					else
+					{
+						$param = intval($param);
+					}
+				}
+			}
+
+		}
+		else
+		{
+			$id     = $rule;
+			$params = array();
+		}
+		return array(
+			$id,
+			$params
+		);
 	}
 
 	/**
@@ -241,14 +273,15 @@ class Validation
 	 * @param   string
 	 * @return  string
 	 */
-	public function get_message($rule)
+	public function get_message($rule, $field = null, $params = array())
 	{
-		if ( ! array_key_exists($rule, $this->error_messages))
+		$field_custom_err_msg = $field->get_message($rule, $params);
+		if ($field_custom_err_msg == false && !array_key_exists($rule, $this->error_messages))
 		{
 			return false;
 		}
 
-		return $this->error_messages[$rule];
+		return $field_custom_err_msg == false ? $this->error_messages[$rule] : $field_custom_err_msg;
 	}
 
 	/**
@@ -586,9 +619,9 @@ class Validation
 	 *
 	 * @return  Fieldset_Field
 	 */
-	public function add($name, $label = '', array $attributes = array(), array $rules = array())
+	public function add($name, $label = '', array $attributes = array(), array $rules = array(), array $messages = array())
 	{
-		return $this->fieldset->add($name, $label, $attributes, $rules);
+		return $this->fieldset->add($name, $label, $attributes, $rules, $messages);
 	}
 
 	/**
