@@ -88,8 +88,9 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 		{
 			throw new \FuelException('INSERT INTO ... SELECT statements cannot be combined with INSERT INTO ... VALUES');
 		}
-		$values = func_get_args();
+		
 		// Get all of the passed values
+		$values = func_get_args();
 		if ( ! is_array($overwrite) and $overwrite)
 		{
 			$current_values = &$this->_values[0];
