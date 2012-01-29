@@ -257,9 +257,10 @@ class Fieldset
 	 * @param   string
 	 * @param   array
 	 * @param   array
+	 * @param   array
 	 * @return  Fieldset_Field
 	 */
-	public function add($name, $label = '', array $attributes = array(), array $rules = array())
+	public function add($name, $label = '', array $attributes = array(), array $rules = array(), array $messages = array())
 	{
 		if ($name instanceof Fieldset_Field)
 		{
@@ -305,7 +306,7 @@ class Fieldset
 			return $field;
 		}
 
-		$this->fields[$name] = new \Fieldset_Field($name, $label, $attributes, $rules, $this);
+		$this->fields[$name] = new \Fieldset_Field($name, $label, $attributes, $rules, $this, $messages);
 
 		return $this->fields[$name];
 	}

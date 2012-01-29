@@ -55,6 +55,19 @@ class Fieldset_Field
 	protected $rules = array();
 
 	/**
+	 * @var  array  Messages used in validation
+	 */
+	protected $messages = array();
+
+	/**
+	 * @var  array  Map of the hashed serialized representation of
+	 * 				an array containing rule name as string and rule parameters as array
+	 * 				to the originally passed string rule declaration which includes
+	 *				the rule parameters in the string
+	 */
+	protected $messages_parse_map = array();
+
+	/**
 	 * @var  array  Attributes for form generation
 	 */
 	protected $attributes = array();
@@ -77,8 +90,9 @@ class Fieldset_Field
 	 * @param  array
 	 * @param  array
 	 * @param  Fieldset
+	 * @param  array
 	 */
-	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), $fieldset = null)
+	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), $fieldset = null, $messages = array())
 	{
 		$this->name = (string) $name;
 		$this->fieldset = $fieldset instanceof Fieldset ? $fieldset : null;
@@ -111,6 +125,18 @@ class Fieldset_Field
 		{
 			call_user_func_array(array($this, 'add_rule'), $rule);
 		}
+		//set messages after the added rules - the $messages array can contain info for not yet set rules
+		if (!empty($messages))
+		{
+			//must be associative array
+			foreach ($messages as $rule_id => $msg)
+			{
+				$this->set_message($rule_id, $msg);
+			}
+		}
+
+		// Take messages out of attributes
+		unset($attributes['messages']);
 	}
 
 	/**
@@ -219,6 +245,69 @@ class Fieldset_Field
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Sets a message for a specific validation rule bound to this field only.
+	 * $this->set_message('min_length','Should be longer')
+	 * $this->set_message('min_length[3]','Should be than 3 chars')
+	 * $this->set_message('min_length[4]','Should be than 4 chars')
+	 *
+	 * @param 	string			$rule 		The string representation of rule or rule and its parameters
+	 * @param 	string			$message 	The message you want to set
+	 * @return	Fieldset_Field
+	 */
+	public function set_message($rule, $message)
+	{
+		$id = $rule;
+		if (isset($this->messages_parse_map[$rule]))
+		{
+			$id = $this->messages_parse_map[$rule];
+		} else
+		{
+			$rule_id = $rule;
+			list($rule, $parameters) = $this->fieldset()->validation()->parse_string_rule($rule);
+			$id                                 = empty($parameters) ? $rule_id : $this->get_rule_instance_id($rule, $parameters);
+			$this->messages_parse_map[$rule_id] = $id;
+		}
+		$this->messages[$id] = $message;
+		return $this;
+	}
+
+	/**
+	 * Gets a message for a specific validation rule bound to this field only.
+	 * $this->get_message('min_length')
+	 * $this->get_message('min_length', array(3)
+	 * $this->get_message('min_length', array(4))
+	 *
+	 * @param	string		$rule	The string representation of rule or rule and its parameters
+	 * @param	array|null	$params	Array of string parameters
+	 * @return 	bool|string			The message
+	 */
+	public function get_message($rule, $params = null)
+	{
+		$id = $rule;
+		if (!is_null($params) && isset($this->messages_parse_map[$rule]))
+		{
+			$id = $this->messages_parse_map[$rule];
+		} else
+		{
+			$id = $this->get_rule_instance_id($rule, $params);
+		}
+		return isset($this->messages[$id]) ? $this->messages[$id] : false;
+	}
+
+	/**
+	 * Used to get a unique string based on the validation rule string name and rule parameters
+	 * $this->get_rule_instance_id('min_length', array(5));
+	 *
+	 * @param	string	$rule	The rule name (min_length, max_length...or any other custom name)
+	 * @param	array	$params	Array of the rule parameters
+	 * @return	string		 	The hashed serialization of the inputs
+	 */
+	protected function get_rule_instance_id($rule, array $params = array())
+	{
+		return sha1(serialize(array($rule, $params)));
 	}
 
 	/**
@@ -351,9 +440,9 @@ class Fieldset_Field
 	 *
 	 * @return Fieldset_Field
 	 */
-	public function add($name, $label = '', array $attributes = array(), array $rules = array())
+	public function add($name, $label = '', array $attributes = array(), array $rules = array(), $messages = array())
 	{
-		return $this->fieldset()->add($name, $label, $attributes, $rules);
+		return $this->fieldset()->add($name, $label, $attributes, $rules, $messages);
 	}
 
 	/**
