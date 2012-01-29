@@ -194,7 +194,7 @@ class Database_PDO_Connection extends \Database_Connection
 		$result = $q->fetchAll();
 		$count = 0;
 		$columns = array();
-		is_null($like) and str_replace('%', '.*', $like);
+		!is_null($like) and str_replace('%', '.*', $like);
 		foreach ($result as $row)
 		{
 			if (!is_null($like) and preg_match($like, $row['Field'])) continue;
