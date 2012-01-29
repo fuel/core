@@ -77,21 +77,31 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	/**
 	 * Adds or overwrites values. Multiple value sets can be added.
 	 *
-	 * @param   array   values list
-	 * @param   ...
+	 * @param   array		values list
+	 * @param   array|bool	Another set of values or a boolean indicating whether to add the $values or merge
+	 * 						with the current set ($this->_values[0])
 	 * @return  $this
 	 */
-	public function values(array $values)
+	public function values(array $values, $overwrite = false)
 	{
 		if ( ! is_array($this->_values))
 		{
 			throw new \FuelException('INSERT INTO ... SELECT statements cannot be combined with INSERT INTO ... VALUES');
 		}
-
-		// Get all of the passed values
 		$values = func_get_args();
+		// Get all of the passed values
+		if ( ! is_array($overwrite) and $overwrite)
+		{
+			$current_values = &$this->_values[0];
+			$values         = $values[0];
+		}
+		else
+		{
+			$current_values = &$this->_values;
+			! is_array(end($values)) and array_pop($values);
+		}
 
-		$this->_values = array_merge($this->_values, $values);
+		$current_values = array_merge($current_values, $values);
 
 		return $this;
 	}
@@ -100,12 +110,13 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	 * This is a wrapper function for calling columns() and values().
 	 *
 	 * @param	array	column value pairs
+	 * @param	bool	Indicates whether to add or merge the values with the current set
 	 * @return	$this
 	 */
-	public function set(array $pairs)
+	public function set(array $pairs, $overwrite = false)
 	{
 		$this->columns(array_keys($pairs));
-		$this->values($pairs);
+		$this->values($pairs, $overwrite);
 
 		return $this;
 	}
