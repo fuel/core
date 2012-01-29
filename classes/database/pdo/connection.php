@@ -189,23 +189,23 @@ class Database_PDO_Connection extends \Database_Connection
 	public function list_columns($table, $like = null)
 	{
 		$this->_connection or $this->connect();
-		$q = $this->_connection->prepare("DESCRIBE " . $table);
+		$q = $this->_connection->prepare("DESCRIBE ".$table);
 		$q->execute();
-		$result = $q->fetchAll();
-		$count = 0;
+		$result  = $q->fetchAll();
+		$count   = 0;
 		$columns = array();
-		! is_null($like) and str_replace('%', '.*', $like);
+		! is_null($like) and $like = str_replace('%', '.*', $like);
 		foreach ($result as $row)
 		{
-			if (!is_null($like) and preg_match($like, $row['Field'])) continue;
+			if (! is_null($like) and preg_match($like, $row['Field'])) continue;
 			list($type, $length) = $this->_parse_type($row['Type']);
 
 			$column = $this->datatype($type);
 
-			$column['name'] = $row['Field'];
-			$column['default'] = $row['Default'];
-			$column['data_type'] = $type;
-			$column['null'] = ($row['Null'] == 'YES');
+			$column['name']             = $row['Field'];
+			$column['default']          = $row['Default'];
+			$column['data_type']        = $type;
+			$column['null']             = ($row['Null'] == 'YES');
 			$column['ordinal_position'] = ++$count;
 			switch ($column['type'])
 			{
@@ -243,16 +243,16 @@ class Database_PDO_Connection extends \Database_Connection
 						case 'enum':
 						case 'set':
 							$column['collation_name'] = @$row['Collation'];
-							$column['options'] = explode('\',\'', substr($length, 1, -1));
+							$column['options']        = explode('\',\'', substr($length, 1, - 1));
 							break;
 					}
 					break;
 			}
 
 			// MySQL attributes
-			$column['comment'] = @$row['Comment'];
-			$column['extra'] = $row['Extra'];
-			$column['key'] = $row['Key'];
+			$column['comment']    = @$row['Comment'];
+			$column['extra']      = $row['Extra'];
+			$column['key']        = $row['Key'];
 			$column['privileges'] = @ $row['Privileges'];
 
 			$columns[$row['Field']] = $column;
