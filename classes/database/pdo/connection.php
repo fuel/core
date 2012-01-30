@@ -237,12 +237,12 @@ class Database_PDO_Connection extends \Database_Connection
 						case 'tinytext':
 						case 'mediumtext':
 						case 'longtext':
-							$column['collation_name'] = @$row['Collation'];
+							$column['collation_name'] = isset($row['Collation']) ? $row['Collation'] : null;
 							break;
 
 						case 'enum':
 						case 'set':
-							$column['collation_name'] = @$row['Collation'];
+							$column['collation_name'] = isset($row['Collation']) ? $row['Collation'] : null;
 							$column['options']        = explode('\',\'', substr($length, 1, - 1));
 							break;
 					}
@@ -250,10 +250,10 @@ class Database_PDO_Connection extends \Database_Connection
 			}
 
 			// MySQL attributes
-			$column['comment']    = @$row['Comment'];
+			$column['comment']    = isset($row['Comment']) ? $row['Comment'] : null;
 			$column['extra']      = $row['Extra'];
 			$column['key']        = $row['Key'];
-			$column['privileges'] = @ $row['Privileges'];
+			$column['privileges'] = isset($row['Privileges']) ? $row['Privileges'] : null;
 
 			$columns[$row['Field']] = $column;
 		}
