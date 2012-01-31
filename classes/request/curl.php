@@ -158,10 +158,15 @@ class Request_Curl extends \Request_Driver
 		$this->set_response($body, $this->response_info('http_code', 200), $mime);
 
 		// Request failed
-		if ($body === false or $this->response->status >= 400)
+		if ($body === false)
 		{
 			$this->set_defaults();
 			throw new \RequestException(curl_error($connection), curl_errno($connection));
+		}
+		else if ($this->response->status >= 400)
+		{
+			$this->set_defaults();
+			throw new \RequestException($body, $this->response->status);
 		}
 		else
 		{
