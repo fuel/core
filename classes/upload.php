@@ -81,7 +81,7 @@ class Upload
 		'overwrite'       => false,
 		'randomize'       => false,
 		'normalize'       => false,
-		'str_sep'         => '-',
+		'str_sep'         => '_',
 		'change_case'     => false,
 		'ftp_mode'        => 'auto',
 		'ftp_permissions' => null
