@@ -188,6 +188,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
 		'Fuel\\Core\\Request_Driver'       => COREPATH.'classes/request/driver.php',
 		'Fuel\\Core\\RequestException'     => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\RequestStatusException'    => COREPATH.'classes/request/driver.php',
 		'Fuel\\Core\\Request_Curl'         => COREPATH.'classes/request/curl.php',
 		'Fuel\\Core\\Request_Soap'         => COREPATH.'classes/request/soap.php',
 

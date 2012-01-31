@@ -163,10 +163,10 @@ class Request_Curl extends \Request_Driver
 			$this->set_defaults();
 			throw new \RequestException(curl_error($connection), curl_errno($connection));
 		}
-		else if ($this->response->status >= 400)
+		elseif ($this->response->status >= 400)
 		{
 			$this->set_defaults();
-			throw new \RequestException($body, $this->response->status);
+			throw new \RequestStatusException($body, $this->response->status);
 		}
 		else
 		{
