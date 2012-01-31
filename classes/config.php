@@ -126,7 +126,7 @@ class Config
 <?php
 
 CONF;
-		$content .= 'return '.str_replace(array('  ', 'array ('), array("\t", 'array('), var_export($config, true)).";\n";
+		$content .= 'return '.str_replace(array('  ', 'array (', '\''.APPPATH, '\''.DOCROOT, '\''.COREPATH), array("\t", 'array(', 'APPPATH.\'', 'DOCROOT.\'', 'COREPATH.\''), var_export($config, true)).";\n";
 
 		if ( ! $path = \Finder::search('config', $file, '.php'))
 		{
