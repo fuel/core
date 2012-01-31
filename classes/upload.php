@@ -81,6 +81,7 @@ class Upload
 		'overwrite'       => false,
 		'randomize'       => false,
 		'normalize'       => false,
+		'str_sep'         => '-',
 		'change_case'     => false,
 		'ftp_mode'        => 'auto',
 		'ftp_permissions' => null
@@ -539,7 +540,7 @@ class Upload
 				$filename  = $file['filename'];
 				if ( (bool) static::$config['normalize'])
 				{
-					$filename = \Inflector::friendly_title($filename, '_');
+					$filename = \Inflector::friendly_title($filename, static::$config['str_sep']);
 				}
 			}
 
