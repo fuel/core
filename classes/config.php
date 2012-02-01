@@ -152,6 +152,12 @@ CONF;
 
 		}
 
+		// absolute path requested?
+		if ($file[0] === '/' or (isset($file[1]) and $file[1] === ':'))
+		{
+			$path = $file;
+		}
+
 		// make sure we have a fallback
 		$path or $path = APPPATH.'config'.DS.$file.'.php';
 
