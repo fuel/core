@@ -17,9 +17,9 @@ namespace Fuel\Core;
  *
  * A base controller for easily creating templated output.
  *
- * @package		Fuel
- * @category	Core
- * @author		Fuel Development Team
+ * @package   Fuel
+ * @category  Core
+ * @author    Fuel Development Team
  */
 abstract class Controller_Template extends \Controller
 {
@@ -30,14 +30,11 @@ abstract class Controller_Template extends \Controller
 	public $template = 'template';
 
 	/**
-	* @var boolean auto render template
-	**/
-	public $auto_render = true;
-
-	// Load the template and create the $this->template object
+	 * Load the template and create the $this->template object
+	 */
 	public function before()
 	{
-		if ($this->auto_render === true)
+		if ( ! empty($this->template) and is_string($this->template))
 		{
 			// Load the template
 			$this->template = \View::forge($this->template);
@@ -46,14 +43,24 @@ abstract class Controller_Template extends \Controller
 		return parent::before();
 	}
 
-	// After controller method has run output the template
+	/**
+	 * After controller method has run output the template
+	 *
+	 * @param  Response  $response
+	 */
 	public function after($response)
 	{
+		// If nothing was returned default to the template
+		if (empty($response))
+		{
+			$response = $this->template;
+		}
+
 		// If the response is a Response object, we don't want to create a new one
-		if ($this->auto_render === true and ! $response instanceof \Response)
+		if ( ! $response instanceof Response)
 		{
 			$response = $this->response;
-			$response->body = $this->template;
+			$response->body = $response;
 		}
 
 		return parent::after($response);
