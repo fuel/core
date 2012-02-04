@@ -60,7 +60,7 @@ class Session
         }
     }
 
-    /*
+    /**
      * create the sessions table
      * php oil r session:create
      */
@@ -81,18 +81,18 @@ class Session
         }
 
         // create the session table using the table name from the config file
-            \DBUtil::create_table(\Config::get('session.db.table'), array(
-                'session_id'   => array('constraint' => 40, 'type' => 'varchar'),
-                'previous_id'  => array('constraint' => 40, 'type' => 'varchar'),
-                'user_agent'   => array('type' => 'text', 'null' => false),
-                'ip_hash'      => array('constraint' => 32, 'type' => 'char'),
-                'created'      => array('constraint' => 10, 'type' => 'int', 'unsigned' => true),
-                'updated'      => array('constraint' => 10, 'type' => 'int', 'unsigned' => true),
-                'payload'      => array('type' => 'longtext'),
-            ), array('session_id'), false, 'InnoDB', \Config::get('db.default.charset'));
+        \DBUtil::create_table(\Config::get('session.db.table'), array(
+            'session_id'   => array('constraint' => 40, 'type' => 'varchar'),
+            'previous_id'  => array('constraint' => 40, 'type' => 'varchar'),
+            'user_agent'   => array('type' => 'text', 'null' => false),
+            'ip_hash'      => array('constraint' => 32, 'type' => 'char'),
+            'created'      => array('constraint' => 10, 'type' => 'int', 'unsigned' => true),
+            'updated'      => array('constraint' => 10, 'type' => 'int', 'unsigned' => true),
+            'payload'      => array('type' => 'longtext'),
+        ), array('session_id'), false, 'InnoDB', \Config::get('db.default.charset'));
 
-            // make previous_id a unique_key. speeds up query and prevents duplicate id's
-            \DBUtil::create_index(\Config::get('session.db.table'), 'previous_id', 'previous_id', 'unique');
+        // make previous_id a unique_key. speeds up query and prevents duplicate id's
+        \DBUtil::create_index(\Config::get('session.db.table'), 'previous_id', 'previous_id', 'unique');
 
         if (\Config::get('session.driver') === 'db')
         {
@@ -108,7 +108,7 @@ class Session
 
 
 
-    /*
+    /**
      * remove the sessions table
      * php oil r session:remove
      */
@@ -131,7 +131,7 @@ class Session
         return \Cli::color('Session database table was not deleted.', 'red');
     }
 
-    /*
+    /**
      * clear the sessions table
      * php oil r session:clear
      */
