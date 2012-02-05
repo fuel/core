@@ -184,16 +184,16 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
 
-		'Fuel\\Core\\Request'              => COREPATH.'classes/request.php',
-		'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
-		'Fuel\\Core\\Request_Driver'       => COREPATH.'classes/request/driver.php',
-		'Fuel\\Core\\RequestException'     => COREPATH.'classes/request/driver.php',
-		'Fuel\\Core\\RequestStatusException'    => COREPATH.'classes/request/driver.php',
-		'Fuel\\Core\\Request_Curl'         => COREPATH.'classes/request/curl.php',
-		'Fuel\\Core\\Request_Soap'         => COREPATH.'classes/request/soap.php',
+		'Fuel\\Core\\Request'                 => COREPATH.'classes/request.php',
+		'Fuel\\Core\\Request404Exception'     => COREPATH.'classes/request.php',
+		'Fuel\\Core\\Request_Driver'          => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\RequestException'        => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\RequestStatusException'  => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\Request_Curl'            => COREPATH.'classes/request/curl.php',
+		'Fuel\\Core\\Request_Soap'            => COREPATH.'classes/request/soap.php',
 
-		'Fuel\\Core\\Redis'                => COREPATH.'classes/redis.php',
-		'Fuel\\Core\\RedisException'       => COREPATH.'classes/redis.php',
+		'Fuel\\Core\\Redis'                   => COREPATH.'classes/redis.php',
+		'Fuel\\Core\\RedisException'          => COREPATH.'classes/redis.php',
 
 		'Fuel\\Core\\Response'  => COREPATH.'classes/response.php',
 

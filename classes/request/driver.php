@@ -260,7 +260,7 @@ abstract class Request_Driver
 	{
 		if ($this->auto_format and array_key_exists($mime, static::$auto_detect_formats))
 		{
-			$body = Format::forge($body, static::$auto_detect_formats[$mime])->to_array();
+			$body = \Format::forge($body, static::$auto_detect_formats[$mime])->to_array();
 		}
 
 		$this->response = \Response::forge($body, $status);
