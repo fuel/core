@@ -237,9 +237,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	{
 		$select = $column ?: static::primary_key();
 
+		// Get the database group / connection
+		$connection = isset(static::$_connection) ? static::$_connection : null;
+
 		// Get the columns
 		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
-			\Database_Connection::instance()->quote_identifier($select).
+			\Database_Connection::instance($connection)->quote_identifier($select).
 			') AS count_result');
 
 		// Remove the current select and
@@ -256,7 +259,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ( ! empty($group_by))
 		{
-			$result = $query->select($group_by)->group_by($group_by)->execute(isset(static::$_connection) ? static::$_connection : null)->as_array();
+			$result = $query->select($group_by)->group_by($group_by)->execute($connection)->as_array();
 			$counts = array();
 			foreach ($result as $res)
 			{
@@ -266,7 +269,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			return $counts;
 		}
 
-		$count = $query->execute(isset(static::$_connection) ? static::$_connection : null)->get('count_result');
+		$count = $query->execute($connection)->get('count_result');
 
 		if ($count === null)
 		{
