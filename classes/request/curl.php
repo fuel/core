@@ -155,7 +155,27 @@ class Request_Curl extends \Request_Driver
 		$body = curl_exec($connection);
 		$this->response_info = curl_getinfo($connection);
 		$mime = isset($this->headers['Accept']) ? $this->headers['Accept'] : $this->response_info('content_type', 'text/plain');
-		$this->set_response($body, $this->response_info('http_code', 200), $mime);
+
+		// Was header data requested?
+		$headers = array();
+		if (isset($this->options[CURLOPT_HEADER]) and $this->options[CURLOPT_HEADER])
+		{
+			// Split the headers from the body
+			$raw_headers = explode("\n", str_replace("\r", "", substr($body, 0, $this->response_info['header_size'])));
+			$body = substr($body, $this->response_info['header_size']);
+
+			// Convert the header data
+			foreach ($raw_headers as $header)
+			{
+				$header = explode(':', $header, 2);
+				if (isset($header[1]))
+				{
+					$headers[trim($header[0])] = trim($header[1]);
+				}
+			}
+		}
+
+		$this->set_response($body, $this->response_info('http_code', 200), $mime, $headers);
 
 		// Request failed
 		if ($body === false)
@@ -255,10 +275,10 @@ class Request_Curl extends \Request_Driver
 		// Override method, I think this makes $_POST DELETE data but... we'll see eh?
 		$this->set_header('X-HTTP-Method-Override', 'DELETE');
 	}
-	
+
 	/**
 	 * Function to encode input array depending on the content type
-	 * 
+	 *
 	 * @param   array $input
 	 * @return  mixed encoded output
 	 */
@@ -266,10 +286,10 @@ class Request_Curl extends \Request_Driver
 	{
 		// Detect the request content type, default to 'text/plain'
 		$content_type = isset($this->headers['Content-Type']) ? $this->headers['Content-Type'] : $this->response_info('content_type', 'text/plain');
-		
+
 		// Get the correct format for the current content type
 		$format = \Arr::key_exists(static::$auto_detect_formats, $content_type) ? static::$auto_detect_formats[$content_type] : null;
-		
+
 		switch($format)
 		{
 			// Format as XML
