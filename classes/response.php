@@ -181,6 +181,24 @@ class Response
 	}
 
 	/**
+	 * Gets header information from the queue
+	 *
+	 * @param   string  The header name, or null for all headers
+	 * @return  mixed
+	 */
+	public function get_header($name = null)
+	{
+		if (func_num_args())
+		{
+			return isset($this->headers[$name]) ? $this->headers[$name] : null;
+		}
+		else
+		{
+			return $this->headers;
+		}
+	}
+
+	/**
 	 * Sets (or returns) the body for the response
 	 *
 	 * @param   string  The response content
