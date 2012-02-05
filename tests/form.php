@@ -99,6 +99,18 @@ class Test_Form extends TestCase
 	}
 
 	/**
+	* Tests Form::prep_value()
+	*
+	* @test
+	*/
+	public function test_prep_value()
+	{
+		$output = Form::prep_value('<"\'H&M\'">');
+		$expected = '&lt;&quot;&#039;H&amp;M&#039;&quot;&gt;';
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
 	* Tests Form::select()
 	*
 	* test for dont_prep
@@ -120,6 +132,22 @@ class Test_Form extends TestCase
 	<option value="key_H&amp;M" style="text-indent: 0px;">val_H&amp;M</option>
 	<option value="key_&quot;&#39;&quot;" style="text-indent: 0px;">val_&quot;&#39;&quot;</option>
 </select>';
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	* Tests Form::prep_value()
+	*
+	* test of invalid string
+	*
+	* @test
+	*/
+	public function test_prep_value_invalid_utf8()
+	{
+		// 6 byte UTF-8 string, which is invalid now
+		$utf8_string = "\xFC\x84\x80\x80\x80\x80";
+		$output = Form::prep_value($utf8_string);
+		$expected = '';
 		$this->assertEquals($expected, $output);
 	}
 }
