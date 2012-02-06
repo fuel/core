@@ -39,6 +39,16 @@ class Validation
 	protected static $active_field;
 
 	/**
+	 * Loads in the validation config file
+	 *
+	 * @return  void
+	 */
+	public static function _init()
+	{
+		\Config::load('validation', true);
+	}
+
+	/**
 	 * This method is deprecated...use forge() instead.
 	 *
 	 * @deprecated until 1.2
