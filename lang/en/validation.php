@@ -4,7 +4,7 @@ return array(
 	'required'      => 'The field :label is required and must contain a value.',
 	'min_length'    => 'The field :label has to contain at least :param:1 characters.',
 	'max_length'    => 'The field :label may not contain more than :param:1 characters.',
-	'exact_length'  => 'The field :label must containly exactly :param:1 characters.',
+	'exact_length'  => 'The field :label must contain exactly :param:1 characters.',
 	'match_value'   => 'The field :label must contain the value :param:1.',
 	'match_pattern' => 'The field :label must match the pattern :param:1.',
 	'match_field'   => 'The field :label must match the field :param:1.',
