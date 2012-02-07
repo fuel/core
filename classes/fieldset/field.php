@@ -389,7 +389,7 @@ class Fieldset_Field
 		if ($form->get_config('auto_id', false) === true and $this->get_attribute('id') == '')
 		{
 			$auto_id = str_replace(array('[', ']'), array('-', ''), $this->name);
-			$this->set_attribute('id', $auto_id);
+			$this->set_attribute('id', $this->fieldset()->get_config('auto_id_prefix', 'form_').$auto_id);
 		}
 
 		switch($this->type)
@@ -475,7 +475,7 @@ class Fieldset_Field
 		$form = $this->fieldset()->form();
 
 		$required_mark = $this->get_attribute('required', null) ? $form->get_config('required_mark', null) : null;
-		$label = $this->label ? $form->label($this->label, $this->get_attribute('id', null)) : '';
+		$label = $this->label ? $form->label($this->label, null, array('for' => $this->get_attribute('id', null))) : '';
 		$error_template = $form->get_config('error_template', "");
 		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
 		$error_class = $this->error() ? $form->get_config('error_class') : '';
