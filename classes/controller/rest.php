@@ -23,7 +23,7 @@ abstract class Controller_Rest extends \Controller
 	/**
 	 * @var  integer  status code to return in case the called action doesn't return data
 	 */
-	protected $no_data_status = 404;
+	protected $no_data_status = 204;
 
 	/**
 	 * @var  string  the detected response format
