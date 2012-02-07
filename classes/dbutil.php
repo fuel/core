@@ -28,12 +28,17 @@ class DBUtil
 	 * @throws	Fuel\Database_Exception
 	 * @param	string	$database	the database name
 	 * @param	string	$database	the character set
+	 * @param	boolean	$if_not_exists  whether to add an IF NOT EXISTS statement.
 	 * @return	int		the number of affected rows
 	 */
-	public static function create_database($database, $charset = null)
+	public static function create_database($database, $charset = null, $if_not_exists = true)
 	{
+		$sql = 'CREATE DATABASE';
+		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
+
 		$charset = static::process_charset($charset, true);
-		return \DB::query('CREATE DATABASE '.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
+
+		return \DB::query($sql.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
 	}
 
 	/**
