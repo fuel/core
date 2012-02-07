@@ -216,7 +216,7 @@ class Form_Instance
 			unset($attributes['dont_prep']);
 		}
 
-		if (empty($attributes['id']) && $this->get_config('auto_id', false) == true)
+		if (!empty($attributes['id']) && $this->get_config('auto_id', false) == true)
 		{
 			$attributes['id'] = $this->get_config('auto_id_prefix', 'form_').$attributes['name'];
 		}
@@ -443,7 +443,7 @@ class Form_Instance
 			unset($attributes['dont_prep']);
 		}
 
-		if (empty($attributes['id']) && $this->get_config('auto_id', false) == true)
+		if (!empty($attributes['id']) && $this->get_config('auto_id', false) == true)
 		{
 			$attributes['id'] = $this->get_config('auto_id_prefix', '').$attributes['name'];
 		}
@@ -527,7 +527,7 @@ class Form_Instance
 		// generate the select options list
 		$input = $listoptions($options, $selected).str_repeat("\t", 0);
 
-		if (empty($attributes['id']) && $this->get_config('auto_id', false) == true)
+		if (!empty($attributes['id']) && $this->get_config('auto_id', false) == true)
 		{
 			$attributes['id'] = $this->get_config('auto_id_prefix', '').$attributes['name'];
 		}
