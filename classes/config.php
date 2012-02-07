@@ -161,6 +161,11 @@ CONF;
 		$path or $path = APPPATH.'config'.DS.$file.'.php';
 
 		$path = pathinfo($path);
+		
+		if ( ! is_dir($path['dirname']))
+		{
+			mkdir($path['dirname'], 0777, true);
+		}
 
 		return \File::update($path['dirname'], $path['basename'], $content);
 	}
