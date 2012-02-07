@@ -126,8 +126,7 @@ class Config
 <?php
 
 CONF;
-		$content .= 'return '.str_replace(array('  ', 'array ('), array("\t", 'array('), var_export($config, true)).";\n";
-
+		$content .= 'return '.str_replace(array('  ', 'array (', '\''.APPPATH, '\''.DOCROOT, '\''.COREPATH, '\''.PKGPATH), array("\t", 'array(', 'APPPATH.\'', 'DOCROOT.\'', 'COREPATH.\'', 'PKGPATH.\''), var_export($config, true)).";\n";
 		if ( ! $path = \Finder::search('config', $file, '.php'))
 		{
 			if ($pos = strripos($file, '::'))
