@@ -88,6 +88,7 @@ class Pagination
 	 */
 	public static function _init()
 	{
+		\Config::load('pagination', true);
 		$config = \Config::get('pagination', array());
 
 		static::set_config($config);
