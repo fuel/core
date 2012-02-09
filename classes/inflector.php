@@ -234,6 +234,9 @@ class Inflector
 		// Decode all entities to their simpler forms
 		$str = html_entity_decode($str, ENT_QUOTES, 'UTF-8');
 
+		// Remove all quotes.
+		$str = preg_replace("#[\"\']#", '', $str);
+
 		// Only allow 7bit characters
 		$str = static::ascii($str);
 
