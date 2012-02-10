@@ -114,7 +114,62 @@ class DBUtil
 
 		return \DB::query($sql, \DB::UPDATE)->execute();
 	}
-
+	
+	/**
+	 * Alters a table.
+	 *
+	 * @throws	 \Database_Exception
+	 * @param    string    $table          the table name
+	 * @param    array     $fields         the fields array
+	 * @param    array     $foreign_keys   an array of foreign keys
+	 * @return   int       number of affected rows.
+	 */
+	public static function alter_table($table, $fields, $foreign_keys = array())
+	{
+		$fields_sql = array();		
+		$sql = 'ALTER TABLE ';
+		$sql .= \DB::quote_identifier(DB::table_prefix($table)).' ';
+		
+		foreach($fields as $type => $fields)
+		{
+			$key = strtoupper($type);
+			if ( ! in_array($key, array('DROP', 'ADD', 'CHANGE', 'MODIFY')))
+			{
+				$field = array($type => $field);
+				$key = 'ADD'; // Add by default if no type has been defined
+			}
+			
+			if ($key == 'DROP')
+			{
+				foreach($fields as $field)
+				{
+					if (is_array($field))
+					{
+						throw new  \Database_Exception('DROP on alter_table() must be specified as an array of strings');
+					}
+					$fields_sql[] = 'DROP '.\DB::quote_identifier($field);
+				}
+			}
+			else
+			{
+				$field_sql = '';
+				$use_brackets = ! in_array($key, array('ADD', 'CHANGE', 'MODIFY'));
+				$use_brackets and $field_sql .= $key.' ';
+				$use_brackets and $field_sql .= '(';
+				$field_sql .= static::process_fields($fields, (( ! $use_brackets) ? $key.' ' : ''));
+				$use_brackets and $field_sql .= ')';
+				
+				$fields_sql[] = $field_sql;
+			}
+		}
+		
+		$sql .= implode(', ', $fields_sql);
+		
+		empty($foreign_keys) or $sql .= static::process_foreign_keys($foreign_keys);
+		
+		return \DB::query($sql, \DB::UPDATE)->execute();
+	}	
+	
 	/**
 	 * Adds fields to a table a table.  Will throw a Database_Exception if it cannot.
 	 *
