@@ -87,6 +87,14 @@ abstract class Config_File implements Config_Interface
 	protected function find_file()
 	{
 		$paths = \Finder::search('config', $this->file, $this->ext, true);
+
+		// absolute path requested?
+		if ($this->file[0] === '/' or (isset($this->file[1]) and $this->file[1] === ':'))
+		{
+			// don't search further, load only the requested file
+			return $paths;
+		}
+
 		$paths = array_merge(\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true), $paths);
 
 		if (count($paths) > 0)
