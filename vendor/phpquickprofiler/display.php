@@ -263,13 +263,14 @@ $printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 		{
 			$output .= '<b>null</b>';
 		}
-		elseif( ! is_array($value))
+		elseif( ! is_array($value) AND ! is_object($value))
 		{
 			$output .= '<b>'.$value.'</b>';
 		}
 		$output .= str_repeat('&rsaquo;&nbsp;', $depth).$item.'</td></tr>';
 		if($class == '') $class = 'alt'; else $class = '';
 		is_array($value) and $output .= $printarray($value, $depth + 1, $class, $count);
+		is_object($value) and $output .= $printarray($value, $depth + 1, $class, $count);
 	}
 	return $output;
 };
