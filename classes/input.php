@@ -133,8 +133,26 @@ class Input
 		// Strip the defined url suffix from the uri if needed
 		if (strpos($uri, '.') !== false)
 		{
-			static::$detected_ext = preg_replace('#(.*)\.#', '', $uri);
-			$uri = substr($uri,0,-(strlen(static::$detected_ext)+1));
+			// Find position of .
+			$dot_pos = strpos($uri, '.');
+
+			// Remove everything before and including the .
+			$ext = substr($uri, ($dot_pos + 1));
+
+			// Check if there are further parameters
+			if (strpos($ext, '/') !== false) {
+				// Find position of /
+				$slash_pos = strpos($ext, '/');
+
+				// Remove everything after and including the /
+				$ext = substr($ext, 0, $slash_pos);
+			}
+
+			// Set Extension
+			static::$detected_ext = $ext;
+
+			// Now remove the .extension so everything else works as it normally would
+			$uri = str_replace('.' . $ext, '', $uri);
 		}
 
 		// Do some final clean up of the uri
