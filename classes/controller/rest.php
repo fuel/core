@@ -44,6 +44,40 @@ abstract class Controller_Rest extends \Controller
 		'csv' => 'application/csv'
 	);
 
+	protected $exposable = array();
+
+	protected function exposable($model)
+	{
+		return;
+	}
+
+	public function expose($models)
+	{
+		$exposed = array();
+		if (is_array($models))
+		{
+			foreach ($models as $model)
+			{
+				$exposed[] = $this->_expose_one($model);
+			}
+		}
+		else {
+			$exposed[] = $this->_expose_one($model);
+		}
+		return $exposed;
+	}
+
+	protected function _expose_one($model)
+	{
+		$exposed = array();
+		foreach ($this->exposable as $key)
+		{
+			$exposed[$key] = $model->$key;
+		}
+		$dynamic = $this->exposable($model);
+		return array_merge($exposed, $dynamic);
+	}
+
 	public function before()
 	{
 		parent::before();
