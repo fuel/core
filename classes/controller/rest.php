@@ -44,12 +44,9 @@ abstract class Controller_Rest extends \Controller
 		'csv' => 'application/csv'
 	);
 
-	protected $exposable = array();
+	protected $_exposable = array();
 
-	protected function exposable($model)
-	{
-		return;
-	}
+	protected function _exposable($model) {}
 
 	public function expose($models)
 	{
@@ -62,7 +59,7 @@ abstract class Controller_Rest extends \Controller
 			}
 		}
 		else {
-			$exposed[] = $this->_expose_one($model);
+			$exposed[] = $this->_expose_one($models);
 		}
 		return $exposed;
 	}
@@ -70,12 +67,14 @@ abstract class Controller_Rest extends \Controller
 	protected function _expose_one($model)
 	{
 		$exposed = array();
-		foreach ($this->exposable as $key)
+		foreach ($this->_exposable as $key)
 		{
 			$exposed[$key] = $model->$key;
 		}
-		$dynamic = $this->exposable($model);
-		return array_merge($exposed, $dynamic);
+		$dynamic = $this->_exposable($model);
+		if (is_array($dynamic))
+			return array_merge($exposed, $dynamic);
+		return $exposed;
 	}
 
 	public function before()
