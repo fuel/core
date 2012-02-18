@@ -131,10 +131,11 @@ class Input
 		}
 
 		// Strip the defined url suffix from the uri if needed
-		if (strpos($uri, '.') !== false)
+		$uri_info = pathinfo($uri);
+		if ($uri_info['extension'])
 		{
-			static::$detected_ext = preg_replace('#(.*)\.#', '', $uri);
-			$uri = substr($uri,0,-(strlen(static::$detected_ext)+1));
+			static::$detected_ext = $uri_info['extension'];
+			$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
 		}
 
 		// Do some final clean up of the uri
