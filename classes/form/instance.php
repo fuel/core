@@ -221,7 +221,17 @@ class Form_Instance
 			$attributes['id'] = $this->get_config('auto_id_prefix', 'form_').$attributes['name'];
 		}
 
-		return html_tag('input', $this->attr_to_string($attributes));
+		if (empty($attributes['tag']))
+		{
+			$tag = 'input';
+		}
+		else
+		{
+			$tag = $attributes['tag'];
+			unset($attributes['tag']);
+		}
+
+		return html_tag($tag, $this->attr_to_string($attributes));
 	}
 
 	/**
