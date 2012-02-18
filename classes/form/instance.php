@@ -221,15 +221,8 @@ class Form_Instance
 			$attributes['id'] = $this->get_config('auto_id_prefix', 'form_').$attributes['name'];
 		}
 
-		if (empty($attributes['tag']))
-		{
-			$tag = 'input';
-		}
-		else
-		{
-			$tag = $attributes['tag'];
-			unset($attributes['tag']);
-		}
+		$tag = ! empty($attributes['tag']) ? $attributes['tag'] : 'input';
+		unset($attributes['tag']);
 
 		return html_tag($tag, $this->attr_to_string($attributes));
 	}
