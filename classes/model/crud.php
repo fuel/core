@@ -35,7 +35,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	// protected static $_rules = array();
 
 	/**
-	 * @var  array  $_proprties  The table column names (must set this in your Model to use)
+	 * @var  array  $_properties  The table column names (must set this in your Model to use)
 	 */
 	// protected static $_properties = array();
 
