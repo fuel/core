@@ -440,11 +440,6 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		$vars = $this->prep_values($vars);
 		
-		if (isset(static::$_properties))
-		{
-			$vars = \Arr::filter_keys($vars, static::$_properties);
-		}
-		
 		if(isset(static::$_updated_at))
 		{
 			if(isset(static::$_mysql_timestamp) and static::$_mysql_timestamp === true)
