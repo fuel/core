@@ -35,11 +35,6 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	// protected static $_rules = array();
 
 	/**
-	 * @var  array  $_properties  The table column names (must set this in your Model to use)
-	 */
-	// protected static $_properties = array();
-
-	/**
 	 * @var array  $_labels  Field labels (must set this in your Model to use)
 	 */
 	// protected static $_labels = array();
@@ -439,11 +434,6 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		}
 
 		$vars = $this->prep_values($vars);
-		
-		if (isset(static::$_properties))
-		{
-			$vars = \Arr::filter_keys($vars, static::$_properties);
-		}
 		
 		if(isset(static::$_updated_at))
 		{
