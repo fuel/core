@@ -579,8 +579,7 @@ class Form_Instance
 	 */
 	public function prep_value($value)
 	{
-		$value = htmlspecialchars($value);
-		$value = str_replace(array("'", '"'), array("&#39;", "&quot;"), $value);
+		$value = \Security::htmlentities($value);
 
 		return $value;
 	}
