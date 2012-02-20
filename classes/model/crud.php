@@ -407,9 +407,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Saves the object to the database by either creating a new record
 	 * or updating an existing record. Sets the default values if set.
 	 *
+	 * @param   bool   $validate  wether to validate the input
 	 * @return  mixed  Rows affected and or insert ID
 	 */
-	public function save()
+	public function save($validate = true)
 	{
 		if ($this->frozen())
 		{
@@ -421,7 +422,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		// Set default if there are any
 		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
 
-		if (isset(static::$_rules) and count(static::$_rules) > 0)
+		if ($validate and isset(static::$_rules) and count(static::$_rules) > 0)
 		{
 			$validated = $this->run_validation($vars);
 
