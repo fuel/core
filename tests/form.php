@@ -29,8 +29,8 @@ class Test_Form extends TestCase
 	*/
 	public function test_input_prep()
 	{
-		$output = Form::input('name', '"\'H&M\'"');
-		$expected = '<input name="name" value="&quot;&#39;H&amp;M&#39;&quot;" type="text" id="form_name" />';
+		$output = Form::input('name', '"H&M"');
+		$expected = '<input name="name" value="&quot;H&amp;M&quot;" type="text" id="form_name" />';
 		$this->assertEquals($expected, $output);
 	}
 
@@ -57,8 +57,8 @@ class Test_Form extends TestCase
 	*/
 	public function test_textarea_prep()
 	{
-		$output = Form::textarea('name', '"\'H&M\'"');
-		$expected = '<textarea name="name" id="form_name">&quot;&#39;H&amp;M&#39;&quot;</textarea>';
+		$output = Form::textarea('name', '"H&M"');
+		$expected = '<textarea name="name" id="form_name">&quot;H&amp;M&quot;</textarea>';
 		$this->assertEquals($expected, $output);
 	}
 
@@ -88,12 +88,12 @@ class Test_Form extends TestCase
 		$output = Form::select('fieldname', null,
 			array(
 						'key_H&M' => 'val_H&M',
-						'key_"\'"' => 'val_"\'"',
+						'key_""' => 'val_""',
 			)
 		);
 		$expected = '<select name="fieldname" id="form_fieldname">
 	<option value="key_H&amp;M" style="text-indent: 0px;">val_H&amp;M</option>
-	<option value="key_&quot;&#39;&quot;" style="text-indent: 0px;">val_&quot;&#39;&quot;</option>
+	<option value="key_&quot;&quot;" style="text-indent: 0px;">val_&quot;&quot;</option>
 </select>';
 		$this->assertEquals($expected, $output);
 	}
@@ -105,8 +105,8 @@ class Test_Form extends TestCase
 	*/
 	public function test_prep_value()
 	{
-		$output = Form::prep_value('<"\'H&M\'">');
-		$expected = '&lt;&quot;&#039;H&amp;M&#039;&quot;&gt;';
+		$output = Form::prep_value('<"H&M">');
+		$expected = '&lt;&quot;H&amp;M&quot;&gt;';
 		$this->assertEquals($expected, $output);
 	}
 
