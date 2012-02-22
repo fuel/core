@@ -669,6 +669,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function validates()
 	{
+		if ( ! isset(static::$_rules) or count(static::$_rules) < 0)
+		{
+			return true;
+		}
+
 		$vars = $this->to_array();
 
 		// Set default if there are any
@@ -686,7 +691,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	protected function run_validation($vars)
 	{
-		if ( ! isset(static::$_rules) and count(static::$_rules) > 0)
+		if ( ! isset(static::$_rules) or count(static::$_rules) < 0)
 		{
 			return true;
 		}
