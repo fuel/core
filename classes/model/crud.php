@@ -424,7 +424,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ($validate and isset(static::$_rules) and count(static::$_rules) > 0)
 		{
-			$validated = $this->run_validation($vars);
+			$vars = $this->pre_validate($vars);
+			$validated = $this->post_validate($this->run_validation($vars));
 
 			if ($validated)
 			{
@@ -662,6 +663,22 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	}
 
 	/**
+	 * Returns wether the instance will pass validation.
+	 *
+	 * @return  bool  wether the instance passed validation
+	 */
+	public function validates()
+	{
+		$vars = $this->to_array();
+
+		// Set default if there are any
+		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
+		$vars = $this->pre_validate($vars);
+
+		return $this->run_validation($vars);
+	}
+
+	/**
 	 * Run validation
 	 *
 	 * @param   array  $vars  array to validate
@@ -669,7 +686,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	protected function run_validation($vars)
 	{
-		if ( ! isset(static::$_rules))
+		if ( ! isset(static::$_rules) and count(static::$_rules) > 0)
 		{
 			return true;
 		}
@@ -683,11 +700,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			$this->_validation->add_field($field, $label, $rules);
 		}
 
-		$vars = $this->pre_validate($vars);
-
-		$result = $this->_validation->run($vars);
-
-		return $this->post_validate($result);
+		return $this->_validation->run($vars);
 	}
 
 	/**
