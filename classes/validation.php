@@ -627,7 +627,7 @@ class Validation
 	 */
 	public function _validation_required($val)
 	{
-		return ! $this->_empty($val);
+		return ! self::_empty($val);
 	}
 
 	/**
@@ -652,7 +652,7 @@ class Validation
 	public function _validation_match_value($val, $compare, $strict = false)
 	{
 		// first try direct match
-		if ($this->_empty($val) || $val === $compare || ( ! $strict && $val == $compare))
+		if (self::_empty($val) || $val === $compare || ( ! $strict && $val == $compare))
 		{
 			return true;
 		}
@@ -682,7 +682,7 @@ class Validation
 	 */
 	public function _validation_match_pattern($val, $pattern)
 	{
-		return $this->_empty($val) || preg_match($pattern, $val) > 0;
+		return self::_empty($val) || preg_match($pattern, $val) > 0;
 	}
 
 	/**
@@ -695,7 +695,7 @@ class Validation
 	 */
 	public function _validation_match_field($val, $field)
 	{
-		return $this->_empty($val) || $this->input($field) === $val;
+		return self::_empty($val) || $this->input($field) === $val;
 	}
 
 	/**
@@ -707,7 +707,7 @@ class Validation
 	 */
 	public function _validation_min_length($val, $length)
 	{
-		return $this->_empty($val) || (MBSTRING ? mb_strlen($val) : strlen($val)) >= $length;
+		return self::_empty($val) || (MBSTRING ? mb_strlen($val) : strlen($val)) >= $length;
 	}
 
 	/**
@@ -719,7 +719,7 @@ class Validation
 	 */
 	public function _validation_max_length($val, $length)
 	{
-		return $this->_empty($val) || (MBSTRING ? mb_strlen($val) : strlen($val)) <= $length;
+		return self::_empty($val) || (MBSTRING ? mb_strlen($val) : strlen($val)) <= $length;
 	}
 
 	/**
@@ -731,7 +731,7 @@ class Validation
 	 */
 	public function _validation_exact_length($val, $length)
 	{
-		return $this->_empty($val) || (MBSTRING ? mb_strlen($val) : strlen($val)) == $length;
+		return self::_empty($val) || (MBSTRING ? mb_strlen($val) : strlen($val)) == $length;
 	}
 
 	/**
@@ -742,7 +742,7 @@ class Validation
 	 */
 	public function _validation_valid_email($val)
 	{
-		return $this->_empty($val) || filter_var($val, FILTER_VALIDATE_EMAIL);
+		return self::_empty($val) || filter_var($val, FILTER_VALIDATE_EMAIL);
 	}
 
 	/**
@@ -753,7 +753,7 @@ class Validation
 	 */
 	public function _validation_valid_emails($val)
 	{
-		if ($this->_empty($val))
+		if (self::_empty($val))
 		{
 			return true;
 		}
@@ -778,7 +778,7 @@ class Validation
 	 */
 	public function _validation_valid_url($val)
 	{
-		return $this->_empty($val) || filter_var($val, FILTER_VALIDATE_URL);
+		return self::_empty($val) || filter_var($val, FILTER_VALIDATE_URL);
 	}
 
 	/**
@@ -789,7 +789,7 @@ class Validation
 	 */
 	public function _validation_valid_ip($val)
 	{
-		return $this->_empty($val) || filter_var($val, FILTER_VALIDATE_IP);
+		return self::_empty($val) || filter_var($val, FILTER_VALIDATE_IP);
 	}
 
 	/**
@@ -801,7 +801,7 @@ class Validation
 	 */
 	public function _validation_valid_string($val, $flags = array('alpha', 'utf8'))
 	{
-		if ($this->_empty($val))
+		if (self::_empty($val))
 		{
 			return true;
 		}
@@ -863,7 +863,7 @@ class Validation
 	 */
 	public function _validation_numeric_min($val, $min_val)
 	{
-		return $this->_empty($val) || floatval($val) >= floatval($min_val);
+		return self::_empty($val) || floatval($val) >= floatval($min_val);
 	}
 
 	/**
@@ -875,6 +875,6 @@ class Validation
 	 */
 	public function _validation_numeric_max($val, $max_val)
 	{
-		return $this->_empty($val) || floatval($val) <= floatval($max_val);
+		return self::_empty($val) || floatval($val) <= floatval($max_val);
 	}
 }
