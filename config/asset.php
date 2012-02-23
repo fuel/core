@@ -103,7 +103,8 @@ return array(
 	'auto_render' => true,
 
 	/**
-	 * Set to false to 
+	 * Set to false to prevent an exception from being throw when a file is not found.
+	 * The asset will then be skippen.
 	 */
 	'fail_silently' => false,
 );
