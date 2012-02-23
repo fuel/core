@@ -87,8 +87,8 @@ return array(
 	'add_mtime' => true,
 
 	/**
-	* The amount of indents to prefix to the generated asset tag(s).
-	*/
+	 * The amount of indents to prefix to the generated asset tag(s).
+	 */
 	'indent_level' => 1,
 
 	/**
@@ -97,8 +97,13 @@ return array(
 	'indent_with' => "\t",
 
 	/**
-	* What to do when an asset method is called without a group name. If true, it will
-	* return the generated asset tag. If false, it will add it to the default group.
-	*/
+	 * What to do when an asset method is called without a group name. If true, it will
+	 * return the generated asset tag. If false, it will add it to the default group.
+	 */
 	'auto_render' => true,
+
+	/**
+	 * Set to false to 
+	 */
+	'fail_silently' => false,
 );
