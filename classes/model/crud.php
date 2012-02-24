@@ -99,7 +99,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			'limit' => 1,
 		);
 
-		if (is_array($column))
+		if (is_array($column) or ($column instanceof \Closure))
 		{
 			$config['where'] = $column;
 		}
@@ -138,7 +138,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ($column !== null)
 		{
-			if (is_array($column))
+			if (is_array($column) or ($column instanceof \Closure))
 			{
 				$config['where'] = $column;
 			}
