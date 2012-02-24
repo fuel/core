@@ -258,7 +258,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ( ! empty($where))
 		{
-			is_array($where) or $where = array($where);
+			//is_array($where) or $where = array($where);
+			if ( ! is_array($where) and ($where instanceof \Closure) === false)
+			{
+				throw new \FuelException(get_called_class().'::count where statement must be an array or a closure.');
+			}
 			$query = $query->where($where);
 		}
 
