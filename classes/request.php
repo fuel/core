@@ -557,6 +557,20 @@ class Request
 		return $this->paths;
 	}
 
+
+	/**
+	 * Sets a named parameter
+	 *
+	 * @param   string  $param    Name of the parameter
+	 * @param   mixed   $value  New value
+	 * @return  mixed
+	 */
+	public function set_param($param, $value)
+	{
+		$this->named_params[$param] = $value;
+		return $this;
+	}
+
 	/**
 	 * Gets a specific named parameter
 	 *
