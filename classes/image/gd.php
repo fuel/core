@@ -105,6 +105,9 @@ class Image_Gd extends \Image_Driver
 			$wsizes = $this->sizes($filename);
 			$sizes = $this->sizes();
 
+			// Preserve the previous extension before loading the watermark image
+			$ext = $this->image_extension;
+
 			// Load the watermark preserving transparency
 			$watermark = $this->load($filename, true);
 
@@ -134,6 +137,9 @@ class Image_Gd extends \Image_Driver
 			// Used as a workaround for lack of alpha support in imagecopymerge.
 			$this->debug("Coords for watermark are $x , $y");
 			$this->image_merge($this->image_data, $watermark, $x, $y, $this->config['watermark_alpha']);
+			
+			// Reset the original image extension
+			$this->image_extension = $ext;
 		}
 	}
 
