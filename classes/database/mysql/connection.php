@@ -188,7 +188,7 @@ class Database_MySQL_Connection extends \Database_Connection
 		if ( ! empty($this->_config['profiling']))
 		{
 			// Benchmark this query for the current instance
-			$benchmark = Profiler::start("Database ({$this->_instance})", $sql);
+			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql);
 		}
 
 		if ( ! empty($this->_config['connection']['persistent'])
@@ -204,7 +204,7 @@ class Database_MySQL_Connection extends \Database_Connection
 			if (isset($benchmark))
 			{
 				// This benchmark is worthless
-				Profiler::delete($benchmark);
+				\Profiler::delete($benchmark);
 			}
 
 			throw new \Database_Exception(mysql_error($this->_connection).' [ '.$sql.' ]', mysql_errno($this->_connection));
@@ -212,7 +212,7 @@ class Database_MySQL_Connection extends \Database_Connection
 
 		if (isset($benchmark))
 		{
-			Profiler::stop($benchmark);
+			\Profiler::stop($benchmark);
 		}
 
 		// Set the last query
