@@ -53,7 +53,6 @@ class Debug
 		}
 
 		$arguments = func_get_args();
-		$total_arguments = count($arguments);
 
 		$callee['file'] = \Fuel::clean_path($callee['file']);
 
