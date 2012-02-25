@@ -196,11 +196,7 @@ class Fuel
 		\Event::register('shutdown', 'Fuel::finish');
 
 		//Load in the packages
-		foreach (\Config::get('always_load.packages', array()) as $package => $path)
-		{
-			is_string($package) and $path = array($package => $path);
-			\Package::load($path);
-		}
+		\Package::load(\Config::get('always_load.packages', array()));
 
 		// Always load classes, config & language set in always_load.php config
 		static::always_load();
