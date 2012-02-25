@@ -121,7 +121,7 @@ abstract class Image_Driver
 		if (file_exists($filename))
 		{
 			// Check the extension
-			$ext = $this->check_extension($filename);
+			$ext = $this->check_extension($filename, false);
 			if ($ext !== false)
 			{
 				$return = array_merge($return, array(
@@ -749,7 +749,7 @@ abstract class Image_Driver
 	protected function check_extension($filename, $writevar = true)
 	{
 		$return = false;
-		foreach ($this->accepted_extensions AS $ext)
+		foreach ($this->accepted_extensions as $ext)
 		{
 			if (strtolower(substr($filename, strlen($ext) * -1)) == strtolower($ext))
 			{
@@ -813,7 +813,7 @@ abstract class Image_Driver
 	 */
 	public function run_queue($clear = null)
 	{
-		foreach ($this->queued_actions AS $action)
+		foreach ($this->queued_actions as $action)
 		{
 			$tmpfunc = array();
 			for ($i = 0; $i < count($action); $i++)
