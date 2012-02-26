@@ -200,7 +200,7 @@ class Image_Imagemagick extends \Image_Driver
 		if(($filetype == 'jpeg' or $filetype == 'jpg') and $this->config['quality'] != 100)
 		{
 			$quality = '"'.$this->config['quality'].'%"';
-			$this->exec('convert', $old.' -quality '.$quality.' '.strtolower($filetype).' '.$new);
+			$this->exec('convert', $old.' -quality '.$quality.' '.$new);
 		}
 		else
 		{
