@@ -504,7 +504,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		$query = $this->pre_update($query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
-		$result[1] > 0 and $this->set($vars);
+		$result > 0 and $this->set($vars);
 
 		return $this->post_update($result);
 	}
