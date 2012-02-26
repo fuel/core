@@ -160,16 +160,29 @@ class Upload
 	 */
 	public static function get_files($index = null)
 	{
+		// if no parameters were passed, return all files successfully uploaded
 		if (func_num_args() == 0)
 		{
 			return array_filter(static::$files, function($file) { return $file['error'] === false; } );
 		}
+
+		// if an index number was given, return that file only (if that was successful)
 		elseif (isset(static::$files[$index]) and static::$files[$index]['error'] === false)
 		{
 			return static::$files[$index];
 		}
+
+		// if an field name was given, return that file only (if that was successful)
 		else
 		{
+			foreach (static::$files as $file)
+			{
+				if ($file['field'] == $index and $file['error'] === false)
+				{
+					return $file;
+				}
+			}
+
 			throw new \FuelException('No valid uploaded file exists with index "'.$index.'"');
 		}
 	}
@@ -183,16 +196,29 @@ class Upload
 	 */
 	public static function get_errors($index = null)
 	{
+		// if no parameters were passed, return all files in error
 		if (func_num_args() == 0)
 		{
 			return array_filter(static::$files, function($file) { return $file['error'] === true; } );
 		}
+
+		// if an index number was given, return that file only (if it is in error)
 		elseif (isset(static::$files[$index]) and static::$files[$index]['error'] === true)
 		{
 			return static::$files[$index];
 		}
+
+		// if an field name was given, return that file only (if it is in error)
 		else
 		{
+			foreach (static::$files as $file)
+			{
+				if ($file['field'] == $index and $file['error'] === true)
+				{
+					return $file;
+				}
+			}
+
 			throw new \FuelException('No invalid uploaded file exists with index "'.$index.'"');
 		}
 	}
