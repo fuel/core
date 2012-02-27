@@ -71,12 +71,12 @@ return array(
 		/**
 		 * Permissions for newly created files
 		 */
-		'files'  => '0666',
+		'files'  => 0666,
 
 		/**
 		 * Permissions for newly created directories
 		 */
-		'folders'  => '0777',
+		'folders'  => 0777,
 	),
 
 );
