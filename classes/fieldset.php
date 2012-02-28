@@ -534,6 +534,25 @@ class Fieldset
 	}
 
 	/**
+	 * Return an associative array indexed by the name of the field containing the value of the field
+	 *
+	 * @return  array         the associative array containing field names => values
+	 */
+	public function values()
+	{
+		$field_data = array();
+		$fields = $this->field(null, true);
+		foreach ($fields as $f)
+		{
+			$name = $f->__get('name');
+			$value = $f->__get('value');
+			$field_data[$name] = $value;
+		}
+		return $field_data;
+	}
+
+
+	/**
 	 * Build the fieldset HTML
 	 *
 	 * @return  string
