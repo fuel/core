@@ -239,7 +239,7 @@ class Date
 		\Lang::load('date', true);
 
 		$difference = $from_timestamp - $timestamp;
-		$periods    = array('second', 'minute', 'hour', 'day', 'week', 'month', 'years', 'decade');
+		$periods    = array('second', 'minute', 'hour', 'day', 'week', 'month', 'year', 'decade');
 		$lengths    = array(60, 60, 24, 7, 4.35, 12, 10);
 
 		for ($j = 0; isset($lengths[$j]) and $difference >= $lengths[$j] and (empty($unit) or $unit != $periods[$j]); $j++)
