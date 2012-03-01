@@ -177,9 +177,11 @@ class Security
 		return $value;
 	}
 
-	public static function htmlentities($value)
+	public static function htmlentities($value, $flags = null)
 	{
 		static $already_cleaned = array();
+
+		is_null($flags) and $flags = \Config::get('security.htmlentities_flags', ENT_QUOTES);
 
 		// Nothing to escape for non-string scalars, or for already processed values
 		if (is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned, true))
@@ -189,7 +191,7 @@ class Security
 
 		if (is_string($value))
 		{
-			$value = htmlentities($value, ENT_COMPAT, \Fuel::$encoding, false);
+			$value = htmlentities($value, $flags, \Fuel::$encoding, false);
 		}
 		elseif (is_array($value) or ($value instanceof \Iterator and $value instanceof \ArrayAccess))
 		{
@@ -198,7 +200,7 @@ class Security
 
 			foreach ($value as $k => $v)
 			{
-				$value[$k] = static::htmlentities($v);
+				$value[$k] = static::htmlentities($v, $flags);
 			}
 		}
 		elseif ($value instanceof \Iterator or get_class($value) == 'stdClass')
@@ -208,7 +210,7 @@ class Security
 
 			foreach ($value as $k => $v)
 			{
-				$value->{$k} = static::htmlentities($v);
+				$value->{$k} = static::htmlentities($v, $flags);
 			}
 		}
 		elseif (is_object($value))
@@ -233,7 +235,7 @@ class Security
 					'to allow it to be passed unchecked.');
 			}
 
-			$value = static::htmlentities((string) $value);
+			$value = static::htmlentities((string) $value, $flags);
 		}
 
 		return $value;

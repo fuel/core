@@ -50,7 +50,7 @@ class DBUtil
 	 */
 	public static function drop_database($database)
 	{
-		return \DB::query('DROP DATABASE '.DB::quote_identifier($database), \DB::DELETE)->execute();
+		return \DB::query('DROP DATABASE '.\DB::quote_identifier($database), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -62,7 +62,7 @@ class DBUtil
 	 */
 	public static function drop_table($table)
 	{
-		return \DB::query('DROP TABLE IF EXISTS '.DB::quote_identifier(DB::table_prefix($table)), \DB::DELETE)->execute();
+		return \DB::query('DROP TABLE IF EXISTS '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -75,7 +75,7 @@ class DBUtil
 	 */
 	public static function rename_table($table, $new_table_name)
 	{
-		return \DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
+		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute();
 	}
 
 	/**
@@ -97,7 +97,7 @@ class DBUtil
 
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$sql .= \DB::quote_identifier(DB::table_prefix($table)).' (';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{

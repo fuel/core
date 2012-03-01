@@ -213,15 +213,18 @@ class Form_Instance
 		if ($this->get_config('prep_value', true) && empty($attributes['dont_prep']))
 		{
 			$attributes['value'] = $this->prep_value($attributes['value']);
-			unset($attributes['dont_prep']);
 		}
+		unset($attributes['dont_prep']);
 
 		if (empty($attributes['id']) && $this->get_config('auto_id', false) == true)
 		{
 			$attributes['id'] = $this->get_config('auto_id_prefix', 'form_').$attributes['name'];
 		}
 
-		return html_tag('input', $this->attr_to_string($attributes));
+		$tag = ! empty($attributes['tag']) ? $attributes['tag'] : 'input';
+		unset($attributes['tag']);
+
+		return html_tag($tag, $this->attr_to_string($attributes));
 	}
 
 	/**
@@ -440,8 +443,8 @@ class Form_Instance
 		if ($this->get_config('prep_value', true) && empty($attributes['dont_prep']))
 		{
 			$value = $this->prep_value($value);
-			unset($attributes['dont_prep']);
 		}
+		unset($attributes['dont_prep']);
 
 		if (empty($attributes['id']) && $this->get_config('auto_id', false) == true)
 		{
@@ -499,7 +502,7 @@ class Form_Instance
 		$current_obj =& $this;
 
 		// closure to recusively process the options array
-		$listoptions = function (array $options, $selected, $level = 1) use (&$listoptions, &$current_obj)
+		$listoptions = function (array $options, $selected, $level = 1) use (&$listoptions, &$current_obj, &$attributes)
 		{
 			$input = PHP_EOL;
 			foreach ($options as $key => $val)
@@ -513,13 +516,16 @@ class Form_Instance
 				else
 				{
 					$opt_attr = array('value' => $key, 'style' => 'text-indent: '.(10*($level-1)).'px;');
-					(in_array((string)$key, $selected, TRUE)) && $opt_attr[] = 'selected';
+					(in_array((string)$key, $selected, true)) && $opt_attr[] = 'selected';
 					$input .= str_repeat("\t", $level);
 					$opt_attr['value'] = ($current_obj->get_config('prep_value', true) && empty($attributes['dont_prep'])) ?
 						$current_obj->prep_value($opt_attr['value']) : $opt_attr['value'];
+					$val = ($current_obj->get_config('prep_value', true) && empty($attributes['dont_prep'])) ?
+						$current_obj->prep_value($val) : $val;
 					$input .= html_tag('option', $opt_attr, $val).PHP_EOL;
 				}
 			}
+			unset($attributes['dont_prep']);
 
 			return $input;
 		};
@@ -573,8 +579,7 @@ class Form_Instance
 	 */
 	public function prep_value($value)
 	{
-		$value = htmlspecialchars($value);
-		$value = str_replace(array("'", '"'), array("&#39;", "&quot;"), $value);
+		$value = \Security::htmlentities($value, ENT_QUOTES);
 
 		return $value;
 	}

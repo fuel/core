@@ -70,6 +70,11 @@ class Asset_Instance
 	protected $_auto_render = true;
 
 	/**
+	 * @var  bool  if true the 'not found' exception will not be thrown and the asset is ignored.
+	 */
+	protected $_fail_silently = false;
+
+	/**
 	 * Parse the config and initialize the object instance
 	 *
 	 * @return  void
@@ -102,6 +107,7 @@ class Asset_Instance
 		$this->_asset_url = $config['url'];
 		$this->_indent = str_repeat($config['indent_with'], $config['indent_level']);
 		$this->_auto_render = $config['auto_render'];
+		$this->_fail_silently = $config['fail_silently'];
 	}
 
 	/**
@@ -203,6 +209,11 @@ class Asset_Instance
 				{
 					if ( ! ($file = $this->find_file($filename, $type)))
 					{
+						if ($this->_fail_silently)
+						{
+							continue;
+						}
+
 						throw new \FuelException('Could not find asset: '.$filename);
 					}
 

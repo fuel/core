@@ -47,12 +47,12 @@ class Package
 	{
 		if (is_array($package))
 		{
-			foreach ($package as $pkg)
+			foreach ($package as $pkg => $path)
 			{
-				$path = null;
-				if (is_array($pkg))
+				if (is_numeric($pkg))
 				{
-					list($pkg, $path) = $pkg;
+					$pkg = $path;
+					$path = null;
 				}
 				static::load($pkg, $path);
 			}

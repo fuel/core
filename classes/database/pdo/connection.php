@@ -261,6 +261,15 @@ class Database_PDO_Connection extends \Database_Connection
 		return $columns;
 	}
 
+	public function datatype($type)
+	{
+		// try to determine the datatype
+		$datatype = parent::datatype($type);
+
+		// if not an ANSI database, assume it's string
+		return empty($datatype) ? array('type' => 'string') : $datatype;
+	}
+
 	public function escape($value)
 	{
 		// Make sure the database is connected

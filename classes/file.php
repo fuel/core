@@ -38,6 +38,12 @@ class File
 	{
 		\Config::load('file', true);
 
+		// make sure the configured chmod values are octal
+		$chmod = \Config::get('file.chmod.folders', 0777);
+		is_string($chmod) and \Config::set('file.chmod.folders', octdec($chmod));
+		$chmod = \Config::get('file.chmod.files', 0666);
+		is_string($chmod) and \Config::set('file.chmod.files', octdec($chmod));
+
 		static::$areas[null] = \File_Area::forge(\Config::get('file.base_config', array()));
 
 		foreach (\Config::get('file.areas', array()) as $name => $config)
@@ -143,7 +149,7 @@ class File
 	{
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_dir	= static::instance($area)->get_path($basepath.$name);
-		is_null($chmod) and $chmod = octdec(\Config::get('file.chmod.folders', 0777));
+		is_null($chmod) and $chmod = \Config::get('file.chmod.folders', 0777);
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{
