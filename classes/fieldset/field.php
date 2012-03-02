@@ -392,7 +392,7 @@ class Fieldset_Field
 			$this->set_attribute('id', $auto_id);
 		}
 
-		switch($this->type)
+		switch(!empty($this->attributes['tag']) ? $this->attributes['tag'] : $this->type)
 		{
 			case 'hidden':
 				$build_field = $form->hidden($this->name, $this->value, $this->attributes);
