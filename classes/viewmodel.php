@@ -130,9 +130,16 @@ abstract class ViewModel
 	 *
 	 * @return  Object  any object on which the template vars can be set and which has a toString method
 	 */
-	protected function set_view()
+	protected function set_view($new_view = false)
 	{
-		$this->_view = \View::forge($this->_view);
+		if($new_view != false)
+		{
+			$this->_view = \View::forge($new_view);
+		}
+		else
+		{
+			$this->_view = \View::forge($this->_view);
+		}
 	}
 
 	/**
