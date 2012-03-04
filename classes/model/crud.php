@@ -697,7 +697,6 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			return true;
 		}
 
-		$this->_validation = null;
 		$this->_validation = $this->validation();
 
 		foreach (static::$_rules as $field => $rules)
