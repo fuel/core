@@ -284,9 +284,20 @@ class DBUtil
 			$sql .= \DB::quote_identifier($field);
 			$sql .= array_key_exists('NAME', $attr) ? ' '.\DB::quote_identifier($attr['NAME']).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
-			$sql .= array_key_exists('CONSTRAINT', $attr) ? '('.$attr['CONSTRAINT'].')' : '';
 			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET']) : '';
-
+			
+			if(array_key_exists('CONSTRAINT',$attr))
+			{
+				if(is_array($attr['CONSTRAINT']))
+				{
+					$sql .= "('".implode("', '",$attr['CONSTRAINT'])."')";
+				}
+				else
+				{
+					$sql .= '('.$attr['CONSTRAINT'].')';
+				}
+			}
+			
 			if (array_key_exists('UNSIGNED', $attr) and $attr['UNSIGNED'] === true)
 			{
 				$sql .= ' UNSIGNED';
