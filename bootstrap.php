@@ -58,7 +58,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Asset_Instance'  => COREPATH.'classes/asset/instance.php',
 
 		'Fuel\\Core\\Cache'                     => COREPATH.'classes/cache.php',
-		'Fuel\\Core\\CacheNotFoundException'    => COREPATH.'classes/cache.php',
+		'Fuel\\Core\\CacheNotFoundException'    => COREPATH.'classes/cache/notfound.php',
 		'Fuel\\Core\\CacheExpiredException'     => COREPATH.'classes/cache.php',
 		'Fuel\\Core\\Cache_Handler_Driver'      => COREPATH.'classes/cache/handler/driver.php',
 		'Fuel\\Core\\Cache_Handler_Json'        => COREPATH.'classes/cache/handler/json.php',
