@@ -89,7 +89,7 @@ class Arr
 		{
 			foreach ($key as $k => $v)
 			{
-				static::set($array, $k, $value);
+				static::set($array, $k, $v);
 			}
 		}
 
