@@ -57,7 +57,7 @@ class Cookie
 	 * @param   mixed   default value to return
 	 * @return  string
 	 */
-	public static function get($name, $default = null)
+	public static function get($name = null, $default = null)
 	{
 		return \Input::cookie($name, $default);
 	}
