@@ -23,7 +23,7 @@ namespace Fuel\Core;
 class Form
 {
 	/*
-	 * @var	Form_Instance	the default form instance
+	 * @var  Form_Instance  the default form instance
 	 */
 	protected static $instance;
 
@@ -68,6 +68,12 @@ class Form
 		return new \Form_Instance($fieldset, $config);
 	}
 
+	/**
+	 * Returns the 'default' instance of Form
+	 *
+	 * @param   null|string  $name
+	 * @return  Form_Instance
+	 */
 	public static function instance($name = null)
 	{
 		$fieldset = \Fieldset::instance($name);
@@ -161,12 +167,13 @@ class Form
 	 *
 	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
 	 * @param   string
+	 * @param   mixed         either attributes (array) or bool/string to set checked status
 	 * @param   array
 	 * @return  string
 	 */
-	public static function radio($field, $value = null, array $attributes = array())
+	public static function radio($field, $value = null, $checked = null, array $attributes = array())
 	{
-		return static::$instance->radio($field, $value, $attributes);
+		return static::$instance->radio($field, $value, $checked, $attributes);
 	}
 
 	/**
@@ -174,12 +181,13 @@ class Form
 	 *
 	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
 	 * @param   string
+	 * @param   mixed         either attributes (array) or bool/string to set checked status
 	 * @param   array
 	 * @return  string
 	 */
-	public static function checkbox($field, $value = null, array $attributes = array())
+	public static function checkbox($field, $value = null, $checked = null, array $attributes = array())
 	{
-		return static::$instance->checkbox($field, $value, $attributes);
+		return static::$instance->checkbox($field, $value, $checked, $attributes);
 	}
 
 	/**

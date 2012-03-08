@@ -280,10 +280,11 @@ class Form_Instance
 	 *
 	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
 	 * @param   string
+	 * @param   mixed         either attributes (array) or bool/string to set checked status
 	 * @param   array
 	 * @return  string
 	 */
-	public function radio($field, $value = null, array $attributes = array())
+	public static function radio($field, $value = null, $checked = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -291,8 +292,13 @@ class Form_Instance
 		}
 		else
 		{
+			is_array($checked) and $attributes = $checked;
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
+			if ( ! is_array($checked))
+			{
+				$attributes['checked'] = is_bool($checked) ? $checked : $value == $checked;
+			}
 		}
 		$attributes['type'] = 'radio';
 
@@ -304,10 +310,11 @@ class Form_Instance
 	 *
 	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
 	 * @param   string
+	 * @param   mixed         either attributes (array) or bool/string to set checked status
 	 * @param   array
 	 * @return  string
 	 */
-	public function checkbox($field, $value = null, array $attributes = array())
+	public static function checkbox($field, $value = null, $checked = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -315,8 +322,13 @@ class Form_Instance
 		}
 		else
 		{
+			is_array($checked) and $attributes = $checked;
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
+			if ( ! is_array($checked))
+			{
+				$attributes['checked'] = is_bool($checked) ? $checked : $value == $checked;
+			}
 		}
 		$attributes['type'] = 'checkbox';
 
