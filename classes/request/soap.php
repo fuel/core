@@ -122,7 +122,7 @@ class Request_Soap extends \Request_Driver
 			$body = $this->connection()->__soapCall($this->function, $this->params, array(), $this->get_headers(), $headers);
 			$this->response_info = $headers;
 			$mime = isset($this->headers['Accept']) ? $this->headers['Accept'] : null;
-			$this->set_response($body, $this->response_info('http_code', 200), $mime);
+			$this->set_response($body, $this->response_info('http_code', 200), $mime, $headers);
 
 			$this->set_defaults();
 			return $this;

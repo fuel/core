@@ -24,7 +24,7 @@ namespace Fuel\Core;
  */
 
 
-class Mongo_DbException extends FuelException {}
+class Mongo_DbException extends \FuelException {}
 
 
 class Mongo_Db
@@ -639,10 +639,10 @@ class Mongo_Db
 	}
 
 	/**
-	* Get one document based upon the passwed parameters
+	 * Get one document based upon the passed parameters
 	 *
 	 *	@param	string	$collection		the collection name
-	 *	@usage	$mongodb->get('foo');
+	 *	@usage	$mongodb->get_one('foo');
 	 */
 	 public function get_one($collection = "")
 	{
@@ -663,7 +663,7 @@ class Mongo_Db
 	 *
 	 *	@param	string	$collection		the collection name
 	 *	@param	boolean	$foundonly		send cursor limit and skip information to the count function, if applicable.
-	 *	@usage	$mongodb->get('foo');
+	 *	@usage	$mongodb->count('foo');
 	 */
 
 	public function count($collection = '', $foundonly = false)
@@ -727,7 +727,7 @@ class Mongo_Db
 	 *	@param	array	$options		an associative array of options
 	 *	@usage	$mongodb->update('foo', $data = array());
 	 */
-	public function update($collection = '', $data = array(), $options = array())
+	public function update($collection = '', $data = array(), $options = array(), $literal = false)
 	{
 		if (empty($collection))
 		{
@@ -742,7 +742,7 @@ class Mongo_Db
 		try
 		{
 			$options = array_merge($options, array('fsync' => true, 'multiple' => false));
-			$this->db->{$collection}->update($this->wheres, array('$set' => $data), $options);
+			$this->db->{$collection}->update($this->wheres, (($literal) ? $data : array('$set' => $data)), $options);
 			$this->_clear();
 			return true;
 		}
@@ -759,7 +759,7 @@ class Mongo_Db
 	 *	@param	array	$data			an associative array of values, array(field => value)
 	 *	@usage	$mongodb->update_all('foo', $data = array());
 	 */
-	public function update_all($collection = "", $data = array())
+	public function update_all($collection = "", $data = array(), $literal = false)
 	{
 		if (empty($collection))
 		{
@@ -773,7 +773,7 @@ class Mongo_Db
 
 		try
 		{
-			$this->db->{$collection}->update($this->wheres, array('$set' => $data), array('fsync' => true, 'multiple' => true));
+			$this->db->{$collection}->update($this->wheres, (($literal) ? $data : array('$set' => $data)), array('fsync' => true, 'multiple' => true));
 			$this->_clear();
 			return true;
 		}

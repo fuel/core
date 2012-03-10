@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -126,9 +126,13 @@ class Uri
 			}
 		}
 
-		array_walk($variables, function ($val, $key) use (&$url) {
-			$url = str_replace(':'.$key, $val, $url);
-		});
+		array_walk(
+			$variables,
+			function ($val, $key) use (&$url)
+			{
+				$url = str_replace(':'.$key, $val, $url);
+			}
+		);
 
 		is_bool($secure) and $url = http_build_url($url, array('scheme' => $secure ? 'https' : 'http'));
 

@@ -155,13 +155,38 @@ class Request_Curl extends \Request_Driver
 		$body = curl_exec($connection);
 		$this->response_info = curl_getinfo($connection);
 		$mime = isset($this->headers['Accept']) ? $this->headers['Accept'] : $this->response_info('content_type', 'text/plain');
-		$this->set_response($body, $this->response_info('http_code', 200), $mime);
+
+		// Was header data requested?
+		$headers = array();
+		if (isset($this->options[CURLOPT_HEADER]) and $this->options[CURLOPT_HEADER])
+		{
+			// Split the headers from the body
+			$raw_headers = explode("\n", str_replace("\r", "", substr($body, 0, $this->response_info['header_size'])));
+			$body = substr($body, $this->response_info['header_size']);
+
+			// Convert the header data
+			foreach ($raw_headers as $header)
+			{
+				$header = explode(':', $header, 2);
+				if (isset($header[1]))
+				{
+					$headers[trim($header[0])] = trim($header[1]);
+				}
+			}
+		}
+
+		$this->set_response($body, $this->response_info('http_code', 200), $mime, $headers);
 
 		// Request failed
-		if ($body === false or $this->response->status >= 400)
+		if ($body === false)
 		{
 			$this->set_defaults();
 			throw new \RequestException(curl_error($connection), curl_errno($connection));
+		}
+		elseif ($this->response->status >= 400)
+		{
+			$this->set_defaults();
+			throw new \RequestStatusException($body, $this->response->status);
 		}
 		else
 		{
@@ -213,8 +238,7 @@ class Request_Curl extends \Request_Driver
 	 */
 	protected function method_post()
 	{
-		// TODO this should encode based on content type
-		$params = is_array($this->params) ? http_build_query($this->params, null, '&') : $this->params;
+		$params = is_array($this->params) ? $this->encode($this->params) : $this->params;
 
 		$this->set_option(CURLOPT_POST, true);
 		$this->set_option(CURLOPT_POSTFIELDS, $params);
@@ -228,7 +252,7 @@ class Request_Curl extends \Request_Driver
 	 */
 	protected function method_put()
 	{
-		$params = http_build_query($this->params, null, '&');
+		$params = is_array($this->params) ? $this->encode($this->params) : $this->params;
 
 		$this->set_option(CURLOPT_POSTFIELDS, $params);
 
@@ -244,11 +268,71 @@ class Request_Curl extends \Request_Driver
 	 */
 	protected function method_delete()
 	{
-		$params = http_build_query($this->params, null, '&');
+		$params = is_array($this->params) ? $this->encode($this->params) : $this->params;
 
 		$this->set_option(CURLOPT_POSTFIELDS, $params);
 
 		// Override method, I think this makes $_POST DELETE data but... we'll see eh?
 		$this->set_header('X-HTTP-Method-Override', 'DELETE');
+	}
+
+	/**
+	 * Function to encode input array depending on the content type
+	 *
+	 * @param   array $input
+	 * @return  mixed encoded output
+	 */
+	protected function encode(array $input)
+	{
+		// Detect the request content type, default to 'text/plain'
+		$content_type = isset($this->headers['Content-Type']) ? $this->headers['Content-Type'] : $this->response_info('content_type', 'text/plain');
+
+		// Get the correct format for the current content type
+		$format = \Arr::key_exists(static::$auto_detect_formats, $content_type) ? static::$auto_detect_formats[$content_type] : null;
+
+		switch($format)
+		{
+			// Format as XML
+			case 'xml':
+					/**
+					 * If the input array has one item in the top level
+					 * then use that item as the root XML element.
+					 */
+					if(count($input) === 1)
+					{
+						$base_node = key($input);
+						return \Format::forge($input[$base_node])->to_xml(null, null, $base_node);
+					}
+					else
+					{
+						return \Format::forge($input)->to_xml();
+					}
+				break;
+
+			// Format as JSON
+			case 'json':
+					return \Format::forge($input)->to_json();
+				break;
+
+			// Format as PHP Serialized Array
+			case 'serialize':
+					return \Format::forge($input)->to_serialize();
+				break;
+
+			// Format as PHP Array
+			case 'php':
+					return \Format::forge($input)->to_php();
+				break;
+
+			// Format as CSV
+			case 'csv':
+					return \Format::forge($input)->to_csv();
+				break;
+
+			// Format as Query String
+			default:
+					return http_build_query($input, null, '&');
+				break;
+		}
 	}
 }

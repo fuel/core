@@ -195,7 +195,7 @@ class Router
 		// Fall back for default module controllers
 		if ($module)
 		{
-			$class = $namespace . 'Controller_' . $module;
+			$class = $namespace.'Controller_'.ucfirst($module);
 			if (class_exists($class))
 			{
 				return array(

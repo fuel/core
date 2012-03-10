@@ -6,7 +6,7 @@
  * @version    1.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -47,12 +47,12 @@ class Package
 	{
 		if (is_array($package))
 		{
-			foreach ($package as $pkg)
+			foreach ($package as $pkg => $path)
 			{
-				$path = null;
-				if (is_array($pkg))
+				if (is_numeric($pkg))
 				{
-					list($pkg, $path) = $pkg;
+					$pkg = $path;
+					$path = null;
 				}
 				static::load($pkg, $path);
 			}

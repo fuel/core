@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -51,10 +51,10 @@ class Error
 		if ($last_error AND in_array($last_error['type'], static::$fatal_levels))
 		{
 			$severity = static::$levels[$last_error['type']];
-			logger(Fuel::L_ERROR, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line']);
+			logger(\Fuel::L_ERROR, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line']);
 
 			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
-			if (\Fuel::$env != Fuel::PRODUCTION)
+			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
 				static::show_php_error($error);
 			}
@@ -81,9 +81,9 @@ class Error
 		}
 
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
-		logger(Fuel::L_ERROR, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
+		logger(\Fuel::L_ERROR, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
 
-		if (\Fuel::$env != Fuel::PRODUCTION)
+		if (\Fuel::$env != \Fuel::PRODUCTION)
 		{
 			static::show_php_error($e);
 		}
@@ -106,7 +106,7 @@ class Error
 	{
 		if (static::$count <= Config::get('errors.throttling', 10))
 		{
-			logger(Fuel::L_ERROR, $severity.' - '.$message.' in '.$filepath.' on line '.$line);
+			logger(\Fuel::L_ERROR, $severity.' - '.$message.' in '.$filepath.' on line '.$line);
 
 			if (\Fuel::$env != \Fuel::PRODUCTION and ($severity & error_reporting()) == $severity)
 			{
@@ -183,7 +183,7 @@ class Error
 		}
 		catch (\FuelException $e)
 		{
-			echo $e->getMessage().Html::br();
+			echo $e->getMessage().'<br />';
 		}
 	}
 
@@ -198,7 +198,7 @@ class Error
 	public static function notice($msg, $always_show = false)
 	{
 		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::element(debug_backtrace(), 1));
-		logger(Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
+		logger(\Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
 
 		if (\Fuel::$is_test or ( ! $always_show and (\Fuel::$env == \Fuel::PRODUCTION or \Config::get('errors.notices', true) === false)))
 		{

@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -71,12 +71,12 @@ return array(
 		/**
 		 * Permissions for newly created files
 		 */
-		'files'  => '0666',
+		'files'  => 0666,
 
 		/**
 		 * Permissions for newly created directories
 		 */
-		'folders'  => '0777',
+		'folders'  => 0777,
 	),
 
 );

@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -49,6 +49,7 @@ class Upload
 	const UPLOAD_ERR_MOVE_FAILED          = 109;
 	const UPLOAD_ERR_DUPLICATE_FILE       = 110;
 	const UPLOAD_ERR_MKDIR_FAILED         = 111;
+	const UPLOAD_ERR_FTP_FAILED           = 112;
 
 	/* ---------------------------------------------------------------------------
 	 * STATIC PROPERTIES
@@ -58,29 +59,32 @@ class Upload
 	 * @var array default configuration values
 	 */
 	protected static $_defaults = array(
-		'auto_process'		=> false,
+		'auto_process'    => false,
 		// validation settings
-		'max_size'       => 0,
-		'max_length'     => 0,
-		'ext_whitelist'  => array(),
-		'ext_blacklist'  => array(),
-		'type_whitelist' => array(),
-		'type_blacklist' => array(),
-		'mime_whitelist' => array(),
-		'mime_blacklist' => array(),
+		'max_size'        => 0,
+		'max_length'      => 0,
+		'ext_whitelist'   => array(),
+		'ext_blacklist'   => array(),
+		'type_whitelist'  => array(),
+		'type_blacklist'  => array(),
+		'mime_whitelist'  => array(),
+		'mime_blacklist'  => array(),
 		// save settings
-		'path'           => '',
-		'prefix'         => '',
-		'suffix'         => '',
-		'extension'      => '',
-		'create_path'    => true,
-		'path_chmod'     => 0777,
-		'file_chmod'     => 0666,
-		'auto_rename'    => true,
-		'overwrite'      => false,
-		'randomize'      => false,
-		'normalize'      => false,
-		'change_case'    => false
+		'path'            => '',
+		'prefix'          => '',
+		'suffix'          => '',
+		'extension'       => '',
+		'create_path'     => true,
+		'path_chmod'      => 0777,
+		'file_chmod'      => 0666,
+		'auto_rename'     => true,
+		'overwrite'       => false,
+		'randomize'       => false,
+		'normalize'       => false,
+		'normalize_separator' => '_',
+		'change_case'     => false,
+		'ftp_mode'        => 'auto',
+		'ftp_permissions' => null
 	);
 
 	/**
@@ -106,6 +110,11 @@ class Upload
 	 * @var bool indicator of valid uploads
 	 */
 	protected static $valid = false;
+
+	/**
+	 * @var object Ftp object
+	 */
+	protected static $with_ftp = false;
 
 	/* ---------------------------------------------------------------------------
 	 * STATIC METHODS
@@ -151,16 +160,29 @@ class Upload
 	 */
 	public static function get_files($index = null)
 	{
+		// if no parameters were passed, return all files successfully uploaded
 		if (func_num_args() == 0)
 		{
 			return array_filter(static::$files, function($file) { return $file['error'] === false; } );
 		}
+
+		// if an index number was given, return that file only (if that was successful)
 		elseif (isset(static::$files[$index]) and static::$files[$index]['error'] === false)
 		{
 			return static::$files[$index];
 		}
+
+		// if an field name was given, return that file only (if that was successful)
 		else
 		{
+			foreach (static::$files as $file)
+			{
+				if ($file['field'] == $index and $file['error'] === false)
+				{
+					return $file;
+				}
+			}
+
 			throw new \FuelException('No valid uploaded file exists with index "'.$index.'"');
 		}
 	}
@@ -174,16 +196,29 @@ class Upload
 	 */
 	public static function get_errors($index = null)
 	{
+		// if no parameters were passed, return all files in error
 		if (func_num_args() == 0)
 		{
 			return array_filter(static::$files, function($file) { return $file['error'] === true; } );
 		}
+
+		// if an index number was given, return that file only (if it is in error)
 		elseif (isset(static::$files[$index]) and static::$files[$index]['error'] === true)
 		{
 			return static::$files[$index];
 		}
+
+		// if an field name was given, return that file only (if it is in error)
 		else
 		{
+			foreach (static::$files as $file)
+			{
+				if ($file['field'] == $index and $file['error'] === true)
+				{
+					return $file;
+				}
+			}
+
 			throw new \FuelException('No invalid uploaded file exists with index "'.$index.'"');
 		}
 	}
@@ -418,6 +453,19 @@ class Upload
 	// ---------------------------------------------------------------------------
 
 	/**
+	 * Upload files with Ftp
+	 *
+	 * @param   string|array  The name of the config group to use, or a configuration array.
+	 * @param   bool          Automatically connect to this server.
+	 */
+	public static function with_ftp($config = 'default', $connect = true)
+	{
+		static::$with_ftp = \Ftp::forge($config, $connect);
+	}
+
+	// ---------------------------------------------------------------------------
+
+	/**
 	 * save uploaded file(s)
 	 *
 	 * @param	mixed	if int, $files element to move. if array, list of elements to move, if none, move all elements
@@ -518,7 +566,7 @@ class Upload
 				$filename  = $file['filename'];
 				if ( (bool) static::$config['normalize'])
 				{
-					$filename = \Inflector::friendly_title($filename, '_');
+					$filename = \Inflector::friendly_title($filename, static::$config['normalize_separator']);
 				}
 			}
 
@@ -629,30 +677,44 @@ class Upload
 				// move the uploaded file
 				if ( ! static::$files[$key]['error'])
 				{
-					if( ! @move_uploaded_file($file['file'], static::$files[$key]['saved_to'].static::$files[$key]['saved_as']) )
+					// check if file should be uploaded with ftp
+					if (static::$with_ftp)
 					{
-						static::$files[$key]['error'] = true;
-						static::$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_MOVE_FAILED);
+						$uploaded = static::$with_ftp->upload($file['file'], static::$config['path'].static::$files[$key]['saved_as'], static::$config['ftp_mode'], static::$config['ftp_permissions']);
+
+						if ( ! $uploaded)
+						{
+							static::$files[$key]['error'] = true;
+							static::$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_FTP_FAILED);
+						}
 					}
 					else
 					{
-						@chmod(static::$files[$key]['saved_to'].static::$files[$key]['saved_as'], static::$config['file_chmod']);
-					}
-
-					// after callback defined?
-					if (array_key_exists('after', static::$callbacks) and ! is_null(static::$callbacks['after']))
-					{
-						// get the callback method
-						$callback = static::$callbacks['after'][0];
-
-						// call the callback
-						if (is_callable($callback))
+						if( ! @move_uploaded_file($file['file'], static::$files[$key]['saved_to'].static::$files[$key]['saved_as']) )
 						{
-							$result = call_user_func_array($callback, array(&static::$files[$key]));
-							if (is_numeric($result))
+							static::$files[$key]['error'] = true;
+							static::$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_MOVE_FAILED);
+						}
+						else
+						{
+							@chmod(static::$files[$key]['saved_to'].static::$files[$key]['saved_as'], static::$config['file_chmod']);
+						}
+
+						// after callback defined?
+						if (array_key_exists('after', static::$callbacks) and ! is_null(static::$callbacks['after']))
+						{
+							// get the callback method
+							$callback = static::$callbacks['after'][0];
+
+							// call the callback
+							if (is_callable($callback))
 							{
-								static::$files[$key]['error'] = true;
-								static::$files[$key]['errors'][] = array('error' => $result);
+								$result = call_user_func_array($callback, array(&static::$files[$key]));
+								if (is_numeric($result))
+								{
+									static::$files[$key]['error'] = true;
+									static::$files[$key]['errors'][] = array('error' => $result);
+								}
 							}
 						}
 					}

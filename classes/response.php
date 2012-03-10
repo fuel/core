@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -178,6 +178,24 @@ class Response
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Gets header information from the queue
+	 *
+	 * @param   string  The header name, or null for all headers
+	 * @return  mixed
+	 */
+	public function get_header($name = null)
+	{
+		if (func_num_args())
+		{
+			return isset($this->headers[$name]) ? $this->headers[$name] : null;
+		}
+		else
+		{
+			return $this->headers;
+		}
 	}
 
 	/**

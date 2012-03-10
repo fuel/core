@@ -14,7 +14,17 @@ abstract class Controller_Rest extends \Controller
 	 * @var  array  contains a list of method properties such as limit, log and level
 	 */
 	protected $methods = array();
-	
+
+	/**
+	 * @var  integer  status code to return in case a not defined action is called
+	 */
+	protected $no_method_status = 404;
+
+	/**
+	 * @var  integer  status code to return in case the called action doesn't return data
+	 */
+	protected $no_data_status = 204;
+
 	/**
 	 * @var  string  the detected response format
 	 */
@@ -37,13 +47,13 @@ abstract class Controller_Rest extends \Controller
 	public function before()
 	{
 		parent::before();
-		
+
 		// Some Methods cant have a body
 		$this->request->body = null;
 
 		// Which format should the data be returned in?
 		$this->request->lang = $this->_detect_lang();
-		
+
 		$this->response = \Response::forge();
 	}
 
@@ -70,25 +80,16 @@ abstract class Controller_Rest extends \Controller
 	 */
 	public function router($resource, array $arguments)
 	{
-	
+
 		\Config::load('rest', true);
-		
-		$pattern = '/\.(' . implode('|', array_keys($this->_supported_formats)) . ')$/';
 
-		// Check if a file extension is used
-		if (preg_match($pattern, $resource, $matches))
+		// If no (or an invalid) format is given, auto detect the format
+		if (is_null($this->format) or ! array_key_exists($this->format, $this->_supported_formats))
 		{
-			// Remove the extension from arguments too
-			$resource = preg_replace($pattern, '', $resource);
+			// auto-detect the format
+			$this->format = array_key_exists(\Input::extension(), $this->_supported_formats) ? \Input::extension() : $this->_detect_format();
+		}
 
-			$this->format = $matches[1];
-		}
-		else
-		{
-			// Which format should the data be returned in?
-			$this->format = $this->_detect_format();
-		}
-		
 		//Check method is authorized if required
 		if (\Config::get('rest.auth') == 'basic')
 		{
@@ -98,7 +99,7 @@ abstract class Controller_Rest extends \Controller
 		{
 			$valid_login = $this->_prepare_digest_auth();
 		}
-		
+
 		//If the request passes auth then execute as normal
 		if(\Config::get('rest.auth') == '' or $valid_login)
 		{
@@ -112,7 +113,7 @@ abstract class Controller_Rest extends \Controller
 			}
 			else
 			{
-				$this->response->status = 404;
+				$this->response->status = $this->no_method_status;
 				return;
 			}
 		}
@@ -134,7 +135,7 @@ abstract class Controller_Rest extends \Controller
 	{
 		if ((is_array($data) and empty($data)) or ($data == ''))
 		{
-			$this->response->status = 404;
+			$this->response->status = $this->no_data_status;
 			return;
 		}
 
@@ -146,7 +147,7 @@ abstract class Controller_Rest extends \Controller
 			// Set the correct format header
 			$this->response->set_header('Content-Type', $this->_supported_formats[$this->format]);
 
-			$this->response->body(Format::forge($data)->{'to_'.$this->format}());
+			$this->response->body(\Format::forge($data)->{'to_'.$this->format}());
 		}
 
 		// Format not supported, output directly
@@ -172,34 +173,57 @@ abstract class Controller_Rest extends \Controller
 		}
 
 		// Otherwise, check the HTTP_ACCEPT (if it exists and we are allowed)
-		if (\Input::server('HTTP_ACCEPT') and \Config::get('rest.ignore_http_accept') === true)
+		if (\Input::server('HTTP_ACCEPT') and \Config::get('rest.ignore_http_accept') !== true)
 		{
-			// Check all formats against the HTTP_ACCEPT header
-			foreach (array_keys($this->_supported_formats) as $format)
+
+			// Split the Accept header and build an array of quality scores for each format
+			$fragments = new \CachingIterator(new \ArrayIterator(preg_split('/[,;]/', \Input::server('HTTP_ACCEPT'))));
+			$acceptable = array();
+			$next_is_quality = false;
+			foreach ($fragments as $fragment)
 			{
-				// Has this format been requested?
-				if (strpos(\Input::server('HTTP_ACCEPT'), $format) !== false)
+				$quality = 1;
+				// Skip the fragment if it is a quality score
+				if ($next_is_quality)
 				{
-					// If not HTML or XML assume its right and send it on its way
-					if ($format != 'html' and $format != 'xml')
+					$next_is_quality = false;
+					continue;
+				}
+
+				// If next fragment exists and is a quality score, set the quality score
+				elseif ($fragments->hasNext())
+				{
+					$next = $fragments->getInnerIterator()->current();
+					if (strpos($next, 'q=') === 0)
+					{
+						list($key, $quality) = explode('=', $next);
+						$next_is_quality = true;
+					}
+				}
+
+				$acceptable[$fragment] = $quality;
+			}
+
+			// Sort the formats by score in descending order
+			uasort($acceptable, function($a, $b)
+			{
+				$a = (float) $a;
+				$b = (float) $b;
+				return ($a > $b) ? -1 : 1;
+			});
+
+			// Check each of the acceptable formats against the supported formats
+			foreach ($acceptable as $pattern => $quality)
+			{
+				// The Accept header can contain wildcards in the format
+				$find = array('*', '/');
+				$replace = array('.*', '\/');
+				$pattern = '/^' . str_replace($find, $replace, $pattern) . '$/';
+				foreach ($this->_supported_formats as $format => $mime)
+				{
+					if (preg_match($pattern, $mime))
 					{
 						return $format;
-					}
-
-					// HTML or XML have shown up as a match
-					else
-					{
-						// If it is truly HTML, it wont want any XML
-						if ($format == 'html' and strpos(\Input::server('HTTP_ACCEPT'), 'xml') === false)
-						{
-							return $format;
-						}
-
-						// If it is truly XML, it wont want any HTML
-						elseif ($format == 'xml' and strpos(\Input::server('HTTP_ACCEPT'), 'html') === false)
-						{
-							return $format;
-						}
 					}
 				}
 			}
@@ -235,7 +259,7 @@ abstract class Controller_Rest extends \Controller
 			$langs = explode(',', $lang);
 
 			$return_langs = array();
-			
+
 			foreach ($langs as $lang)
 			{
 				// Remove weight and strip space
@@ -301,7 +325,7 @@ abstract class Controller_Rest extends \Controller
 			static::_force_login();
 			return FALSE;
 		}
-		
+
 		return TRUE;
 	}
 
@@ -354,7 +378,7 @@ abstract class Controller_Rest extends \Controller
 		{
 			return FALSE;
 		}
-		
+
 		return TRUE;
 	}
 
@@ -371,4 +395,3 @@ abstract class Controller_Rest extends \Controller
 	}
 
 }
-

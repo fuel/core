@@ -23,7 +23,6 @@ class PhpQuickProfiler {
 	public function __construct($startTime, $config = '') {
 		$this->startTime = $startTime;
 		$this->config = $config;
-		require_once('console.php');
 	}
 
 	/*-------------------------------------------

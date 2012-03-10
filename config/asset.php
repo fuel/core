@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -23,18 +23,57 @@
 return array(
 
 	/**
-	 * An array of paths that will be searched for assets. Each asset is a
-	 * RELATIVE path from the base_url WITH a trailing slash:
+	 * An array of paths that will be searched for assets. Each path is a
+	 * RELATIVE path from the speficied url:
 	 *
 	 * array('assets/')
+	 *
+	 * These MUST include the trailing slash ('/')
+	 *
+	 * Paths specified here are suffixed with the sub-folder paths defined below.
 	 */
 	'paths' => array('assets/'),
 
 	/**
-	 * URL to your Fuel root. Typically this will be your base URL,
-	 * WITH a trailing slash:
+	 * Asset Sub-folders
+	 *
+	 * Names for the img, js and css folders (inside the asset search path).
+	 *
+	 * Examples:
+	 *
+	 * img/
+	 * js/
+	 * css/
+	 *
+	 * This MUST include the trailing slash ('/')
+	 */
+	'img_dir' => 'img/',
+	'js_dir' => 'js/',
+	'css_dir' => 'css/',
+
+	/**
+	 * You can also specify one or more per asset-type folders. You don't have
+	 * to specify all of them. 	 * Each folder is a RELATIVE path from the url
+	 * speficied below:
+	 *
+	 * array('css' => 'assets/css/')
+	 *
+	 * These MUST include the trailing slash ('/')
+	 *
+	 * Paths specified here are expected to contain the assets they point to
+	 */
+	'folders' => array(
+		'css' => array(),
+		'js'  => array(),
+		'img' => array(),
+	),
+
+	/**
+	 * URL to your Fuel root. Typically this will be your base URL:
 	 *
 	 * Config::get('base_url')
+	 *
+	 * These MUST include the trailing slash ('/')
 	 */
 	'url' => Config::get('base_url'),
 
@@ -48,21 +87,24 @@ return array(
 	'add_mtime' => true,
 
 	/**
-	 * Asset Sub-folders
-	 *
-	 * Names for the img, js and css folders (inside the asset path).
-	 *
-	 * Examples:
-	 *
-	 * img/
-	 * js/
-	 * css/
-	 *
-	 * This MUST include the trailing slash ('/')
+	 * The amount of indents to prefix to the generated asset tag(s).
 	 */
-	'img_dir' => 'img/',
-	'js_dir' => 'js/',
-	'css_dir' => 'css/'
+	'indent_level' => 1,
+
+	/**
+	* What to use for indenting.
+	*/
+	'indent_with' => "\t",
+
+	/**
+	 * What to do when an asset method is called without a group name. If true, it will
+	 * return the generated asset tag. If false, it will add it to the default group.
+	 */
+	'auto_render' => true,
+
+	/**
+	 * Set to false to prevent an exception from being throw when a file is not found.
+	 * The asset will then be skipped.
+	 */
+	'fail_silently' => false,
 );
-
-

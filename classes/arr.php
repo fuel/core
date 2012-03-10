@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -89,7 +89,7 @@ class Arr
 		{
 			foreach ($key as $k => $v)
 			{
-				static::set($array, $k, $value);
+				static::set($array, $k, $v);
 			}
 		}
 
@@ -233,6 +233,24 @@ class Arr
 	}
 
 	/**
+	 * Checks if the given array is an assoc array.
+	 *
+	 * @param   array  $arr  the array to check
+	 * @return  bool   true if its an assoc array, false if not
+	 */
+	public static function is_assoc($arr)
+	{
+		foreach ($arr as $key => $unused)
+		{
+			if ( ! is_int($key))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Flattens a multi-dimensional associative array down into a 1 dimensional
 	 * associative array.
 	 *
@@ -321,13 +339,13 @@ class Arr
 		$return = array();
 		foreach ($keys as $key)
 		{
-			if (isset($array[$key]) and  ! $remove)
+			if (isset($array[$key]))
 			{
-				$return[$key] = $array[$key];
-			}
-			elseif (isset($array[$key]) and $remove)
-			{
-				unset($array[$key]);
+				$remove or $return[$key] = $array[$key];
+				if($remove)
+				{
+					unset($array[$key]);
+				}
 			}
 		}
 		return $remove ? $array : $return;
@@ -380,6 +398,27 @@ class Arr
 
 		array_splice($original, $pos, 0, $value);
 		return true;
+	}
+
+	/**
+	 * Insert value(s) into an array before a specific key
+	 * WARNING: original array is edited by reference, only boolean success is returned
+	 *
+	 * @param   array        the original array (by reference)
+	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
+	 * @param   string|int   the key before which to insert
+	 * @return  bool         false when key isn't found in the array, otherwise true
+	 */
+	public static function insert_before_key(array &$original, $value, $key)
+	{
+		$pos = array_search($key, array_keys($original));
+		if ($pos === false)
+		{
+			\Error::notice('Unknown key before which to insert the new value into the array.');
+			return false;
+		}
+
+		return static::insert($original, $value, $pos);
 	}
 
 	/**

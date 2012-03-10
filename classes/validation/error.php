@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -88,7 +88,7 @@ class Validation_Error extends \Exception
 		{
 			$msg = $this->field->fieldset()->validation()->get_message($this->rule);
 			$msg = $msg === false
-				? \Lang::get('validation.'.$this->rule) ?: \Lang::get('validation.'.Arr::get(explode(':', $this->rule), 0))
+				? \Lang::get('validation.'.$this->rule) ?: \Lang::get('validation.'.\Arr::get(explode(':', $this->rule), 0))
 				: $msg;
 		}
 		if ($msg == false)

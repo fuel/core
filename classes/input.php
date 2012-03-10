@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -30,6 +30,11 @@ class Input
 	 * @var  $detected_uri  The URI that was detected automatically
 	 */
 	protected static $detected_uri = null;
+
+	/**
+	 * @var  $detected_ext  The URI extension that was detected automatically
+	 */
+	protected static $detected_ext = null;
 
 	/**
 	 * @var  $input  All of the input (GET, POST, PUT, DELETE)
@@ -126,13 +131,29 @@ class Input
 		}
 
 		// Strip the defined url suffix from the uri if needed
-		$ext = \Config::get('url_suffix');
-		strrchr($uri, '.') === $ext and $uri = substr($uri,0,-strlen($ext));
+		$uri_info = pathinfo($uri);
+		if ( ! empty($uri_info['extension']))
+		{
+			static::$detected_ext = $uri_info['extension'];
+			$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
+		}
 
 		// Do some final clean up of the uri
 		static::$detected_uri = \Security::clean_uri($uri, true);
 
 		return static::$detected_uri;
+	}
+
+	/**
+	 * Detects and returns the current URI extension
+	 *
+	 * @return  string
+	 */
+	public static function extension()
+	{
+		is_null(static::$detected_ext) and static::uri();
+
+		return static::$detected_ext;
 	}
 
 	/**
@@ -227,7 +248,7 @@ class Input
 	 */
 	public static function method($default = 'GET')
 	{
-		return static::server('REQUEST_METHOD', $default);
+		return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', static::server('REQUEST_METHOD', $default));
 	}
 
 	/**

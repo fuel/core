@@ -3,6 +3,7 @@
 namespace Fuel\Core;
 
 class RequestException extends \HttpNotFoundException {}
+class RequestStatusException extends \RequestException {}
 
 abstract class Request_Driver
 {
@@ -253,16 +254,17 @@ abstract class Request_Driver
 	 * @param   string  $body
 	 * @param   int     $status
 	 * @param   string  $mime
+	 * @param   array   $headers
 	 * @return  Response
 	 */
-	public function set_response($body, $status, $mime = null)
+	public function set_response($body, $status, $mime = null, $headers = array())
 	{
 		if ($this->auto_format and array_key_exists($mime, static::$auto_detect_formats))
 		{
-			$body = Format::forge($body, static::$auto_detect_formats[$mime])->to_array();
+			$body = \Format::forge($body, static::$auto_detect_formats[$mime])->to_array();
 		}
 
-		$this->response = \Response::forge($body, $status);
+		$this->response = \Response::forge($body, $status, $headers);
 		return $this->response;
 	}
 

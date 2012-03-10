@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -107,6 +107,8 @@ class Session_Db extends \Session_Driver
 			// record found?
 			if ($this->record->count())
 			{
+                                // previous id used, correctly set session id so it wont be overwritten with previous id.
+                                $this->keys['session_id'] = $this->record->get('session_id');
 				$payload = $this->_unserialize($this->record->get('payload'));
 			}
 			else
@@ -156,7 +158,7 @@ class Session_Db extends \Session_Driver
 			}
 			else
 			{
-				logger(Fuel::L_ERROR, 'Session update failed, session record could not be found. Concurrency issue?');
+				logger(\Fuel::L_ERROR, 'Session update failed, session record could not be found. Concurrency issue?');
 			}
 
 			// do some garbage collection

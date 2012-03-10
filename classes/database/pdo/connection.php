@@ -73,7 +73,7 @@ class Database_PDO_Connection extends \Database_Connection
 		if ( ! empty($persistent))
 		{
 			// Make the connection persistent
-			$attrs[\PDO::ATTR_PERSISTENT] = TRUE;
+			$attrs[\PDO::ATTR_PERSISTENT] = true;
 		}
 
 		try
@@ -98,7 +98,7 @@ class Database_PDO_Connection extends \Database_Connection
 		// Destroy the PDO object
 		$this->_connection = null;
 
-		return TRUE;
+		return true;
 	}
 
 	public function set_charset($charset)
@@ -118,7 +118,7 @@ class Database_PDO_Connection extends \Database_Connection
 		if ( ! empty($this->_config['profiling']))
 		{
 			// Benchmark this query for the current instance
-			$benchmark = Profiler::start("Database ({$this->_instance})", $sql);
+			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql);
 		}
 
 		try
@@ -130,7 +130,7 @@ class Database_PDO_Connection extends \Database_Connection
 			if (isset($benchmark))
 			{
 				// This benchmark is worthless
-				Profiler::delete($benchmark);
+				\Profiler::delete($benchmark);
 			}
 
 			// Convert the exception in a database exception
@@ -139,7 +139,7 @@ class Database_PDO_Connection extends \Database_Connection
 
 		if (isset($benchmark))
 		{
-			Profiler::stop($benchmark);
+			\Profiler::stop($benchmark);
 		}
 
 		// Set the last query
@@ -148,7 +148,7 @@ class Database_PDO_Connection extends \Database_Connection
 		if ($type === \DB::SELECT)
 		{
 			// Convert the result into an array, as PDOStatement::rowCount is not reliable
-			if ($as_object === FALSE)
+			if ($as_object === false)
 			{
 				$result->setFetchMode(\PDO::FETCH_ASSOC);
 			}
@@ -188,7 +188,86 @@ class Database_PDO_Connection extends \Database_Connection
 
 	public function list_columns($table, $like = null)
 	{
-		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
+		$this->_connection or $this->connect();
+		$q = $this->_connection->prepare("DESCRIBE ".$table);
+		$q->execute();
+		$result  = $q->fetchAll();
+		$count   = 0;
+		$columns = array();
+		! is_null($like) and $like = str_replace('%', '.*', $like);
+		foreach ($result as $row)
+		{
+			if ( ! is_null($like) and preg_match($like, $row['Field'])) continue;
+			list($type, $length) = $this->_parse_type($row['Type']);
+
+			$column = $this->datatype($type);
+
+			$column['name']             = $row['Field'];
+			$column['default']          = $row['Default'];
+			$column['data_type']        = $type;
+			$column['null']             = ($row['Null'] == 'YES');
+			$column['ordinal_position'] = ++$count;
+			switch ($column['type'])
+			{
+				case 'float':
+					if (isset($length))
+					{
+						list($column['numeric_precision'], $column['numeric_scale']) = explode(',', $length);
+					}
+					break;
+				case 'int':
+					if (isset($length))
+					{
+						// MySQL attribute
+						$column['display'] = $length;
+					}
+					break;
+				case 'string':
+					switch ($column['data_type'])
+					{
+						case 'binary':
+						case 'varbinary':
+							$column['character_maximum_length'] = $length;
+							break;
+
+						case 'char':
+						case 'varchar':
+							$column['character_maximum_length'] = $length;
+						case 'text':
+						case 'tinytext':
+						case 'mediumtext':
+						case 'longtext':
+							$column['collation_name'] = isset($row['Collation']) ? $row['Collation'] : null;
+							break;
+
+						case 'enum':
+						case 'set':
+							$column['collation_name'] = isset($row['Collation']) ? $row['Collation'] : null;
+							$column['options']        = explode('\',\'', substr($length, 1, - 1));
+							break;
+					}
+					break;
+			}
+
+			// MySQL attributes
+			$column['comment']    = isset($row['Comment']) ? $row['Comment'] : null;
+			$column['extra']      = $row['Extra'];
+			$column['key']        = $row['Key'];
+			$column['privileges'] = isset($row['Privileges']) ? $row['Privileges'] : null;
+
+			$columns[$row['Field']] = $column;
+		}
+
+		return $columns;
+	}
+
+	public function datatype($type)
+	{
+		// try to determine the datatype
+		$datatype = parent::datatype($type);
+
+		// if not an ANSI database, assume it's string
+		return empty($datatype) ? array('type' => 'string') : $datatype;
 	}
 
 	public function escape($value)

@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -20,7 +20,7 @@ namespace Fuel\Core;
  * @package    Fuel
  * @category   Core
  * @author     Fuel Development Team
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://docs.fuelphp.com/classes/format.html
  */
 class Format
@@ -71,7 +71,7 @@ class Format
 
 			else
 			{
-				throw new FuelException('Format class does not support conversion from "' . $from_type . '".');
+				throw new \FuelException('Format class does not support conversion from "' . $from_type . '".');
 			}
 		}
 
@@ -155,7 +155,7 @@ class Format
 			if (is_numeric($key))
 			{
 				// make string key...
-				$key = (Inflector::singularize($basenode) != $basenode) ? Inflector::singularize($basenode) : 'item';
+				$key = (\Inflector::singularize($basenode) != $basenode) ? \Inflector::singularize($basenode) : 'item';
 			}
 
 			// replace anything not alpha numeric
@@ -202,7 +202,14 @@ class Format
 		// Multi-dimentional array
 		if (is_array($data) and isset($data[0]))
 		{
-			$headings = array_keys($data[0]);
+			if (\Arr::is_assoc($data[0]))
+			{
+				$headings = array_keys($data[0]);
+			}
+			else
+			{
+				$headings = array_shift($data);
+			}
 		}
 
 		// Single array
@@ -357,9 +364,13 @@ class Format
 		$rows = explode("\n", trim($string));
 
 		// TODO: This means any headers with , will be split, but this is less likley thay a value containing it
-		$headings = array_map(function($value) {
+		$headings = array_map(
+			function($value)
+			{
 				return trim($value, '"');
-			}, explode(',', array_shift($rows)));
+			},
+			explode(',', array_shift($rows))
+		);
 
 		$join_row = null;
 

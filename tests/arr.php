@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -72,7 +72,7 @@ class Tests_Arr extends TestCase
 		$output = Arr::assoc_to_keyval($assoc, 'color', 'name');
 		$this->assertEquals($expected, $output);
 	}
-	
+
 	/**
 	 * Tests Arr::key_exists()
 	 *
@@ -85,7 +85,7 @@ class Tests_Arr extends TestCase
 		$output = Arr::key_exists($person, "name");
 		$this->assertEquals($expected, $output);
 	}
-	
+
 	/**
 	 * Tests Arr::key_exists()
 	 *
@@ -98,7 +98,7 @@ class Tests_Arr extends TestCase
 		$output = Arr::key_exists($person, "unknown");
 		$this->assertEquals($expected, $output);
 	}
-	
+
 	/**
 	 * Tests Arr::key_exists()
 	 *
@@ -539,7 +539,7 @@ class Tests_Arr extends TestCase
 		$expected = null;
 		$this->assertEquals($expected, Arr::to_assoc($arr));
 	}
-	
+
 	/**
 	 * Tests Arr::prepend()
 	 *
@@ -559,7 +559,7 @@ class Tests_Arr extends TestCase
 		Arr::prepend($arr, 'one', 1);
 		$this->assertEquals($expected, $arr);
 	}
-	
+
 	/**
 	 * Tests Arr::prepend()
 	 *

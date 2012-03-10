@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -53,7 +53,6 @@ class Debug
 		}
 
 		$arguments = func_get_args();
-		$total_arguments = count($arguments);
 
 		$callee['file'] = \Fuel::clean_path($callee['file']);
 

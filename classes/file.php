@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -37,6 +37,12 @@ class File
 	public static function _init()
 	{
 		\Config::load('file', true);
+
+		// make sure the configured chmod values are octal
+		$chmod = \Config::get('file.chmod.folders', 0777);
+		is_string($chmod) and \Config::set('file.chmod.folders', octdec($chmod));
+		$chmod = \Config::get('file.chmod.files', 0666);
+		is_string($chmod) and \Config::set('file.chmod.files', octdec($chmod));
 
 		static::$areas[null] = \File_Area::forge(\Config::get('file.base_config', array()));
 
@@ -143,7 +149,7 @@ class File
 	{
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_dir	= static::instance($area)->get_path($basepath.$name);
-		is_null($chmod) and $chmod = octdec(\Config::get('file.chmod.folders', 0777));
+		is_null($chmod) and $chmod = \Config::get('file.chmod.folders', 0777);
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{
@@ -515,8 +521,8 @@ class File
 	 */
 	public static function symlink($path, $link_path, $is_file = true, $area = null)
 	{
-		$path      = rtrim(static::instance($area)->get_path($path), '\\/').DS;
-		$link_path = rtrim(static::instance($area)->get_path($link_path), '\\/').DS;
+		$path      = rtrim(static::instance($area)->get_path($path), '\\/');
+		$link_path = rtrim(static::instance($area)->get_path($link_path), '\\/');
 
 		if ($is_file and ! is_file($path))
 		{

@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>Fuel PHP Framework</title>
+	<title>FuelPHP Framework</title>
 	<style type="text/css">
 		* { margin: 0; padding: 0; }
 		body { background-color: #EEE; font-family: sans-serif; font-size: 16px; line-height: 20px; margin: 40px; }
@@ -86,11 +86,11 @@
 
 <?php if ( ! empty($contents)): ?>
 		<h2>Prior Contents (<a href="#" onclick="javascript:fuel_toggle('prior_contents');return false;">show</a>)</h2>
-		<pre id="prior_contents" class="fuel_debug_source" style="display: none;""><?php echo e($contents); ?></pre>
+		<pre id="prior_contents" class="fuel_debug_source" style="display: none;"><?php echo e($contents); ?></pre>
 <?php endif; ?>
 
 		<p class="footer">
-			<a href="http://fuelphp.com">Fuel PHP</a> is released under the MIT license.
+			<a href="http://fuelphp.com">FuelPHP</a> is released under the MIT license.
 		</p>
 	</div>
 </body>

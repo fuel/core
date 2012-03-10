@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -179,8 +179,8 @@ class Crypt
 		return (static::secure_compare(static::safe_b64encode(static::$hasher->hash($value)), $hmac)) ? $value : false;
 	}
 
-	private static function secure_compare($a, $b) {
-
+	private static function secure_compare($a, $b)
+	{
 		// make sure we're only comparing equal length strings
 		if (strlen($a) !== strlen($b))
 		{

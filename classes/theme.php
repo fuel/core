@@ -12,7 +12,7 @@
 
 namespace Fuel\Core;
 
-class ThemeException extends FuelException { }
+class ThemeException extends \FuelException {}
 
 /**
  * Handles loading theme views and assets.
@@ -23,23 +23,28 @@ class Theme implements \ArrayAccess, \Iterator
 {
 
 	/**
-	 * @var  Theme  $instance  Singleton instance
+	 * All the Theme instances
+	 *
+	 * @var  array
 	 */
-	protected static $instance = null;
+	protected static $instances = array();
 
 	/**
-	 * Gets a default (singleton) instance of the Theme class.
+	 * Acts as a Multiton.  Will return the requested instance, or will create
+	 * a new named one if it does not exist.
+	 *
+	 * @param   string    $name  The instance name
 	 *
 	 * @return  Theme
 	 */
-	public static function instance()
+	public static function instance($name = '_default_', array $config = array())
 	{
-		if (static::$instance === null)
+		if ( ! \array_key_exists($name, static::$instances))
 		{
-			static::$instance = new static;
+			static::$instances[$name] = static::forge($config);
 		}
 
-		return static::$instance;
+		return static::$instances[$name];
 	}
 
 	/**
@@ -89,6 +94,7 @@ class Theme implements \ArrayAccess, \Iterator
 		'view_ext' => '.html',
 		'require_info_file' => false,
 		'info_file_name' => 'theme.info',
+		'info_file_type' => 'php',
 	);
 
 	/**
@@ -171,7 +177,7 @@ class Theme implements \ArrayAccess, \Iterator
 			}
 		}
 
-		throw new \ThemeException(sprintf('Could not locate view "%s" in the theme.', $view));
+		throw new \ThemeException(sprintf('Could not locate view "%s" in the theme "%s".', $view, $this->active['name']));
 	}
 
 	/**
@@ -331,23 +337,20 @@ class Theme implements \ArrayAccess, \Iterator
 	{
 		if ($theme === null)
 		{
-			if (isset($this->active['info'][$var]))
+			if (($value = \Arr::get($this->active['info'], $var, null)) !== null)
 			{
-				return $this->active['info'][$var];
+				return $value;
 			}
-			elseif (isset($this->fallback['info'][$var]))
+			elseif (($value = \Arr::get($this->fallback['info'], $var, null)) !== null)
 			{
-				return $this->fallback['info'][$var];
+				return $value;
 			}
 		}
 
 		if ($theme !== null)
 		{
 			$info = $this->all_info($theme);
-			if (isset($info[$var]))
-			{
-				return $info[$var];
-			}
+			return \Arr::get($info, $var, $default);
 		}
 
 		return $default;
@@ -415,10 +418,6 @@ class Theme implements \ArrayAccess, \Iterator
 
 			case 'yaml':
 				$info = \Format::forge(file_get_contents($file), 'yaml')->to_array();
-			break;
-
-			case 'yaml':
-				$info = \Format::forge(file_get_contents($path.$this->config['info_file_name']), 'yaml')->to_array();
 			break;
 
 			case 'php':
@@ -571,12 +570,30 @@ class Theme implements \ArrayAccess, \Iterator
 		if ( ! isset($theme['asset_base']))
 		{
 			$assets_folder = rtrim($this->config['assets_folder'], DS).DS;
-			if (strpos($path, DOCROOT) === 0 and is_dir($path.$assets_folder))
+
+			// theme files are inside the docroot
+			if (strpos($path, DOCROOT) === 0)
 			{
-				$path = str_replace(DOCROOT, '', $path).$assets_folder;
-				$theme['asset_base'] = Config::get('base_url').$path;
+				if (is_dir($path.$assets_folder))
+				{
+					$path = str_replace(DOCROOT, '', $path).$assets_folder;
+					$theme['asset_base'] = Config::get('base_url').$path;
+				}
+				else
+				{
+					$theme['asset_base'] = Config::get('base_url').$assets_folder.$theme['name'].DS;
+				}
+			}
+
+			// theme files are outside the docroot
+			else
+			{
+				$theme['asset_base'] = \Config::get('base_url').$assets_folder.$theme['name'].DS;
 			}
 		}
+
+		// asset_base always uses forward slashes (DS is a backslash on Windows)
+		$theme['asset_base'] = str_replace(DS, '/', $theme['asset_base']);
 
 		return $theme;
 	}

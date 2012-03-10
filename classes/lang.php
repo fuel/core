@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -43,8 +43,10 @@ class Lang
 	 *
 	 * @param   string
 	 * @param   string|null  name of the group to load to, null for global
+	 * @param   string|null  name of the language to load, null for the configurated language
+	 * @param    bool     $overwrite    true for array_merge, false for \Arr::merge
 	 */
-	public static function load($file, $group = null, $language = null)
+	public static function load($file, $group = null, $language = null, $overwrite = false)
 	{
 		$languages = static::$fallback;
 		array_unshift($languages, $language ?: \Config::get('language'));
@@ -56,7 +58,7 @@ class Lang
 			{
 				foreach ($path as $p)
 				{
-					$lines = \Arr::merge(\Fuel::load($p), $lines);
+					$lines = $overwrite ? array_merge(\Fuel::load($p), $lines) : \Arr::merge(\Fuel::load($p), $lines);
 				}
 				break;
 			}
@@ -64,7 +66,7 @@ class Lang
 
 		if ($group === null)
 		{
-			static::$lines = \Arr::merge($lines, static::$lines);
+			static::$lines = \Arr::merge(static::$lines, $lines);
 		}
 		else
 		{
@@ -73,7 +75,7 @@ class Lang
 			{
 				static::$lines[$group] = array();
 			}
-			static::$lines[$group] = \Arr::merge($lines, static::$lines[$group]);
+			static::$lines[$group] = $overwrite ? array_merge(static::$lines[$group], $lines) : \Arr::merge(static::$lines[$group], $lines);
 		}
 	}
 

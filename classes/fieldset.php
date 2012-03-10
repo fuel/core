@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -47,6 +47,13 @@ class Fieldset
 		return static::forge($name, $config);
 	}
 
+	/**
+	 * Create Fieldset object
+	 *
+	 * @param   string    Identifier for this fieldset
+	 * @param   array     Configuration array
+	 * @return  Fieldset
+	 */
 	public static function forge($name = 'default', array $config = array())
 	{
 		if ($exists = static::instance($name))
@@ -298,8 +305,55 @@ class Fieldset
 			return $field;
 		}
 
-		$field = new \Fieldset_Field($name, $label, $attributes, $rules, $this);
-		$this->fields[$name] = $field;
+		$this->fields[$name] = new \Fieldset_Field($name, $label, $attributes, $rules, $this);
+
+		return $this->fields[$name];
+	}
+
+	/**
+	 * Add a new Fieldset_Field before an existing field in a Fieldset
+	 *
+	 * @param   string  $name
+	 * @param   string  $label
+	 * @param   array   $attributes
+	 * @param   array   $rules
+	 * @param   string  $fieldname   fieldname before which the new field is inserted in the fieldset
+	 * @return  Fieldset_Field
+	 */
+	public function add_before($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
+	{
+		$field = $this->add($name, $label, $attributes, $rules);
+
+		// Remove from tail and reinsert at correct location
+		unset($this->fields[$field->name]);
+		if ( ! \Arr::insert_before_key($this->fields, array($name => $field), $fieldname))
+		{
+			throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
+		}
+
+		return $field;
+	}
+
+	/**
+	 * Add a new Fieldset_Field after an existing field in a Fieldset
+	 *
+	 * @param   string  $name
+	 * @param   string  $label
+	 * @param   array   $attributes
+	 * @param   array   $rules
+	 * @param   string  $fieldname   fieldname after which the new field is inserted in the fieldset
+	 * @return  Fieldset_Field
+	 */
+	public function add_after($name, $label = '', array $attributes = array(), array $rules = array(), $fieldname = null)
+	{
+		$field = $this->add($name, $label, $attributes, $rules);
+
+		// Remove from tail and reinsert at correct location
+		unset($this->fields[$field->name]);
+		if ( ! \Arr::insert_after_key($this->fields, array($name => $field), $fieldname))
+		{
+			throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
+		}
 
 		return $field;
 	}

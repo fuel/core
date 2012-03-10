@@ -167,9 +167,9 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	 * @param   mixed   column value
 	 * @return  $this
 	 */
-	public function having($column, $op, $value = NULL)
+	public function having($column, $op = null, $value = NULL)
 	{
-		return $this->and_having($column, $op, $value);
+		return call_user_func_array(array($this, 'and_having'), func_get_args());
 	}
 
 	/**
@@ -180,8 +180,22 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	 * @param   mixed   column value
 	 * @return  $this
 	 */
-	public function and_having($column, $op, $value = NULL)
+	public function and_having($column, $op = null, $value = null)
 	{
+		if($column instanceof \Closure)
+		{
+			$this->and_having_open();
+			$column($this);
+			$this->and_having_close();
+			return $this;
+		}
+
+		if(func_num_args() === 2)
+		{
+			$value = $op;
+			$op = '=';
+		}
+
 		$this->_having[] = array('AND' => array($column, $op, $value));
 
 		return $this;
@@ -195,8 +209,22 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	 * @param   mixed   column value
 	 * @return  $this
 	 */
-	public function or_having($column, $op, $value = NULL)
+	public function or_having($column, $op = null, $value = null)
 	{
+		if($column instanceof \Closure)
+		{
+			$this->or_having_open();
+			$column($this);
+			$this->or_having_close();
+			return $this;
+		}
+
+		if(func_num_args() === 2)
+		{
+			$value = $op;
+			$op = '=';
+		}
+
 		$this->_having[] = array('OR' => array($column, $op, $value));
 
 		return $this;

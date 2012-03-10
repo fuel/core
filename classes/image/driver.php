@@ -121,7 +121,7 @@ abstract class Image_Driver
 		if (file_exists($filename))
 		{
 			// Check the extension
-			$ext = $this->check_extension($filename);;
+			$ext = $this->check_extension($filename, false);
 			if ($ext !== false)
 			{
 				$return = array_merge($return, array(
@@ -696,6 +696,50 @@ abstract class Image_Driver
 	abstract protected function add_background();
 
 	/**
+	 * Creates a new color usable by all drivers.
+	 *
+	 * @param   string   $hex    The hex code of the color
+	 * @return  array    rgba representation of the hex and alpha values.
+	 */
+	protected function create_hex_color($hex)
+	{
+		if ($hex == null)
+		{
+			$red = 0;
+			$green = 0;
+			$blue = 0;
+		}
+		else
+		{
+			// Check if theres a # in front
+			if (substr($hex, 0, 1) == '#')
+			{
+				$hex = substr($hex, 1);
+			}
+
+			// Break apart the hex
+			if (strlen($hex) == 6)
+			{
+				$red   = hexdec(substr($hex, 0, 2));
+				$green = hexdec(substr($hex, 2, 2));
+				$blue  = hexdec(substr($hex, 4, 2));
+			}
+			else
+			{
+				$red   = hexdec(substr($hex, 0, 1).substr($hex, 0, 1));
+				$green = hexdec(substr($hex, 1, 1).substr($hex, 1, 1));
+				$blue  = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
+			}
+		}
+		
+		return array(
+			'red' => $red,
+			'green' => $green,
+			'blue' => $blue,
+		);
+	}
+
+	/**
 	 * Checks if the extension is accepted by this library, and if its valid sets the $this->image_extension variable.
 	 *
 	 * @param   string   $filename
@@ -705,7 +749,7 @@ abstract class Image_Driver
 	protected function check_extension($filename, $writevar = true)
 	{
 		$return = false;
-		foreach ($this->accepted_extensions AS $ext)
+		foreach ($this->accepted_extensions as $ext)
 		{
 			if (strtolower(substr($filename, strlen($ext) * -1)) == strtolower($ext))
 			{
@@ -769,7 +813,7 @@ abstract class Image_Driver
 	 */
 	public function run_queue($clear = null)
 	{
-		foreach ($this->queued_actions AS $action)
+		foreach ($this->queued_actions as $action)
 		{
 			$tmpfunc = array();
 			for ($i = 0; $i < count($action); $i++)

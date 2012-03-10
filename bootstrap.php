@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -50,12 +50,15 @@ function setup_autoloader()
 	Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
 	Autoloader::add_classes(array(
-		'Fuel\\Core\\Agent'  => COREPATH.'classes/agent.php',
-		'Fuel\\Core\\Arr'    => COREPATH.'classes/arr.php',
-		'Fuel\\Core\\Asset'  => COREPATH.'classes/asset.php',
+		'Fuel\\Core\\Agent'           => COREPATH.'classes/agent.php',
+
+		'Fuel\\Core\\Arr'             => COREPATH.'classes/arr.php',
+
+		'Fuel\\Core\\Asset'           => COREPATH.'classes/asset.php',
+		'Fuel\\Core\\Asset_Instance'  => COREPATH.'classes/asset/instance.php',
 
 		'Fuel\\Core\\Cache'                     => COREPATH.'classes/cache.php',
-		'Fuel\\Core\\CacheNotFoundException'    => COREPATH.'classes/cache.php',
+		'Fuel\\Core\\CacheNotFoundException'    => COREPATH.'classes/cache/notfound.php',
 		'Fuel\\Core\\CacheExpiredException'     => COREPATH.'classes/cache.php',
 		'Fuel\\Core\\Cache_Handler_Driver'      => COREPATH.'classes/cache/handler/driver.php',
 		'Fuel\\Core\\Cache_Handler_Json'        => COREPATH.'classes/cache/handler/json.php',
@@ -75,9 +78,11 @@ function setup_autoloader()
 		'Fuel\\Core\\Config_Interface'     => COREPATH.'classes/config/interface.php',
 		'Fuel\\Core\\Config_Php'           => COREPATH.'classes/config/php.php',
 		'Fuel\\Core\\Config_Yml'          => COREPATH.'classes/config/yml.php',
+
 		'Fuel\\Core\\Controller'           => COREPATH.'classes/controller.php',
 		'Fuel\\Core\\Controller_Rest'      => COREPATH.'classes/controller/rest.php',
 		'Fuel\\Core\\Controller_Template'  => COREPATH.'classes/controller/template.php',
+
 		'Fuel\\Core\\Cookie'               => COREPATH.'classes/cookie.php',
 
 		'Fuel\\Core\\DB'      => COREPATH.'classes/db.php',
@@ -105,14 +110,21 @@ function setup_autoloader()
 		'Fuel\\Core\\Fuel'           => COREPATH.'classes/fuel.php',
 		'Fuel\\Core\\FuelException'  => COREPATH.'classes/fuel.php',
 		'Fuel\\Core\\Fuel_Exception' => COREPATH.'classes/fuel.php',
+
 		'Fuel\\Core\\Finder'         => COREPATH.'classes/finder.php',
 
-		'Fuel\\Core\\Date'    => COREPATH.'classes/date.php',
+		'Fuel\\Core\\Date' => COREPATH.'classes/date.php',
+
 		'Fuel\\Core\\Debug'   => COREPATH.'classes/debug.php',
+
 		'Fuel\\Core\\Cli'     => COREPATH.'classes/cli.php',
+
 		'Fuel\\Core\\Crypt'   => COREPATH.'classes/crypt.php',
+
 		'Fuel\\Core\\Event'   => COREPATH.'classes/event.php',
+
 		'Fuel\\Core\\Error'   => COREPATH.'classes/error.php',
+
 		'Fuel\\Core\\Format'  => COREPATH.'classes/format.php',
 
 		'Fuel\\Core\\Fieldset'        => COREPATH.'classes/fieldset.php',
@@ -126,15 +138,16 @@ function setup_autoloader()
 		'Fuel\\Core\\File_Handler_File'       => COREPATH.'classes/file/handler/file.php',
 		'Fuel\\Core\\File_Handler_Directory'  => COREPATH.'classes/file/handler/directory.php',
 
-		'Fuel\\Core\\Form'  => COREPATH.'classes/form.php',
+		'Fuel\\Core\\Form'           => COREPATH.'classes/form.php',
+		'Fuel\\Core\\Form_Instance'  => COREPATH.'classes/form/instance.php',
 
 		'Fuel\\Core\\Ftp'                     => COREPATH.'classes/ftp.php',
 		'Fuel\\Core\\FtpConnectionException'  => COREPATH.'classes/ftp.php',
 		'Fuel\\Core\\FtpFileAccessException'  => COREPATH.'classes/ftp.php',
 
 		'Fuel\\Core\\HttpException'             => COREPATH.'classes/httpexception.php',
-		'Fuel\\Core\\HttpNotFoundException'     => COREPATH.'classes/httpexception.php',
-		'Fuel\\Core\\HttpServerErrorException'  => COREPATH.'classes/httpexception.php',
+		'Fuel\\Core\\HttpNotFoundException'     => COREPATH.'classes/httpexceptions.php',
+		'Fuel\\Core\\HttpServerErrorException'  => COREPATH.'classes/httpexceptions.php',
 
 		'Fuel\\Core\\Html'  => COREPATH.'classes/html.php',
 
@@ -145,11 +158,17 @@ function setup_autoloader()
 		'Fuel\\Core\\Image_Imagick'      => COREPATH.'classes/image/imagick.php',
 
 		'Fuel\\Core\\Inflector'  => COREPATH.'classes/inflector.php',
+
 		'Fuel\\Core\\Input'      => COREPATH.'classes/input.php',
+
 		'Fuel\\Core\\Lang'       => COREPATH.'classes/lang.php',
+
 		'Fuel\\Core\\Log'        => COREPATH.'classes/log.php',
+
 		'Fuel\\Core\\Markdown'   => COREPATH.'classes/markdown.php',
+
 		'Fuel\\Core\\Migrate'    => COREPATH.'classes/migrate.php',
+
 		'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
 		'Fuel\\Core\\Model_Crud' => COREPATH.'classes/model/crud.php',
 
@@ -157,24 +176,30 @@ function setup_autoloader()
 		'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
 
 		'Fuel\\Core\\Output'               => COREPATH.'classes/output.php',
-		'Fuel\\Core\\Package'              => COREPATH.'classes/package.php',
+
+		'Fuel\\Core\\Package'                   => COREPATH.'classes/package.php',
 		'Fuel\\Core\\PackageNotFoundException'  => COREPATH.'classes/package.php',
+
 		'Fuel\\Core\\Pagination'           => COREPATH.'classes/pagination.php',
+
 		'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
 
-		'Fuel\\Core\\Request'              => COREPATH.'classes/request.php',
-		'Fuel\\Core\\Request404Exception'  => COREPATH.'classes/request.php',
-		'Fuel\\Core\\Request_Driver'       => COREPATH.'classes/request/driver.php',
-		'Fuel\\Core\\RequestException'     => COREPATH.'classes/request/driver.php',
-		'Fuel\\Core\\Request_Curl'         => COREPATH.'classes/request/curl.php',
-		'Fuel\\Core\\Request_Soap'         => COREPATH.'classes/request/soap.php',
+		'Fuel\\Core\\Request'                 => COREPATH.'classes/request.php',
+		'Fuel\\Core\\Request404Exception'     => COREPATH.'classes/request.php',
+		'Fuel\\Core\\Request_Driver'          => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\RequestException'        => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\RequestStatusException'  => COREPATH.'classes/request/driver.php',
+		'Fuel\\Core\\Request_Curl'            => COREPATH.'classes/request/curl.php',
+		'Fuel\\Core\\Request_Soap'            => COREPATH.'classes/request/soap.php',
 
-		'Fuel\\Core\\Redis'                => COREPATH.'classes/redis.php',
-		'Fuel\\Core\\RedisException'       => COREPATH.'classes/redis.php',
+		'Fuel\\Core\\Redis'                   => COREPATH.'classes/redis.php',
+		'Fuel\\Core\\RedisException'          => COREPATH.'classes/redis.php',
 
 		'Fuel\\Core\\Response'  => COREPATH.'classes/response.php',
+
 		'Fuel\\Core\\Route'     => COREPATH.'classes/route.php',
 		'Fuel\\Core\\Router'    => COREPATH.'classes/router.php',
+
 		'Fuel\\Core\\Security'  => COREPATH.'classes/security.php',
 
 		'Fuel\\Core\\Session'            => COREPATH.'classes/session.php',
@@ -186,14 +211,18 @@ function setup_autoloader()
 		'Fuel\\Core\\Session_Redis'      => COREPATH.'classes/session/redis.php',
 
 		'Fuel\\Core\\Num'       => COREPATH.'classes/num.php',
+
 		'Fuel\\Core\\Str'       => COREPATH.'classes/str.php',
+
 		'Fuel\\Core\\TestCase'  => COREPATH.'classes/testcase.php',
 
 		'Fuel\\Core\\Theme'          => COREPATH.'classes/theme.php',
 		'Fuel\\Core\\ThemeException' => COREPATH.'classes/theme.php',
 
 		'Fuel\\Core\\Uri'       => COREPATH.'classes/uri.php',
+
 		'Fuel\\Core\\Unzip'     => COREPATH.'classes/unzip.php',
+
 		'Fuel\\Core\\Upload'    => COREPATH.'classes/upload.php',
 
 		'Fuel\\Core\\Validation'        => COREPATH.'classes/validation.php',

@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -52,7 +52,7 @@ class File_Handler_Directory
 
 	/**
 	 * This method is deprecated...use forge() instead.
-	 * 
+	 *
 	 * @deprecated until 1.2
 	 */
 	public static function factory($path, array $config = array(), File_Area $area = null, $content = array())
@@ -91,10 +91,10 @@ class File_Handler_Directory
 		$new_name = str_replace(array('..', '/', '\\'), array('', '', ''), $new_name);
 
 		$new_path = $info['dirname'].DS.$new_name;
-		
+
 		$return =  $this->area->rename_dir($this->path, $new_path);
 		$return and $this->path = $new_path;
-		
+
 		return $return;
 	}
 
@@ -113,7 +113,7 @@ class File_Handler_Directory
 
 		$return =  $this->area->rename_dir($this->path, $new_path);
 		$return and $this->path = $new_path;
-		
+
 		return $return;
 	}
 
@@ -154,7 +154,7 @@ class File_Handler_Directory
 		// should also destroy object but not possible in PHP right?
 		return $this->area->delete_dir($this->path, $recursive, $delete_top);
 	}
-	
+
 	/**
 	 * Get the url.
 	 *
@@ -164,7 +164,7 @@ class File_Handler_Directory
 	{
 		throw new \BadMethodCallException('Get_url method is unavailable on directories.');
 	}
-	
+
 	/**
 	 * Get the directory permissions.
 	 *
@@ -174,7 +174,7 @@ class File_Handler_Directory
 	{
 		return $this->area->get_permissions($this->path);
 	}
-	
+
 	/**
 	 * Get directory's the created or modified timestamp.
 	 *
@@ -185,7 +185,7 @@ class File_Handler_Directory
 	{
 		return $this->area->get_time($this->path, $type);
 	}
-	
+
 	/**
 	 * Get the size.
 	 *

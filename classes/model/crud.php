@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -35,6 +35,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	// protected static $_rules = array();
 
 	/**
+	 * @var  array  $_properties  The table column names (must set this in your Model to use)
+	 */
+	// protected static $_properties = array();
+
+	/**
 	 * @var array  $_labels  Field labels (must set this in your Model to use)
 	 */
 	// protected static $_labels = array();
@@ -43,6 +48,21 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @var array  $_defaults  Field defaults (must set this in your Model to use)
 	 */
 	// protected static $_defaults = array();
+
+	/**
+	 * @var  bool  set true to use MySQL timestamp instead of UNIX timestamp
+	 */
+	//protected static $_mysql_timestamp = false;
+
+	/**
+	 * @var  string  fieldname of created_at field, uncomment to use.
+	 */
+	//protected static $_created_at = 'created_at';
+
+	/**
+	 * @var  string  fieldname of updated_at field, uncomment to use.
+	 */
+	//protected static $_updated_at = 'updated_at';
 
 	/**
 	 * Forges new Model_Crud objects.
@@ -79,7 +99,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			'limit' => 1,
 		);
 
-		if (is_array($column))
+		if (is_array($column) or ($column instanceof \Closure))
 		{
 			$config['where'] = $column;
 		}
@@ -118,7 +138,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ($column !== null)
 		{
-			if (is_array($column))
+			if (is_array($column) or ($column instanceof \Closure))
 			{
 				$config['where'] = $column;
 			}
@@ -161,7 +181,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ($config instanceof \Closure)
 		{
-			$query = $config($query);
+			$config(&$query);
 		}
 		else
 		{
@@ -201,7 +221,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			}
 		}
 
-		$query = static::pre_find($query);
+		static::pre_find(&$query);
 
 		$result =  $query->execute(isset(static::$_connection) ? static::$_connection : null);
 		$result = ($result->count() === 0) ? null : $result->as_array($key);
@@ -222,9 +242,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	{
 		$select = $column ?: static::primary_key();
 
+		// Get the database group / connection
+		$connection = isset(static::$_connection) ? static::$_connection : null;
+
 		// Get the columns
 		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
-			\Database_Connection::instance()->quote_identifier($select).
+			\Database_Connection::instance($connection)->quote_identifier($select).
 			') AS count_result');
 
 		// Remove the current select and
@@ -235,13 +258,17 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ( ! empty($where))
 		{
-			is_array($where) or $where = array($where);
+			//is_array($where) or $where = array($where);
+			if ( ! is_array($where) and ($where instanceof \Closure) === false)
+			{
+				throw new \FuelException(get_called_class().'::count where statement must be an array or a closure.');
+			}
 			$query = $query->where($where);
 		}
 
 		if ( ! empty($group_by))
 		{
-			$result = $query->select($group_by)->group_by($group_by)->execute(isset(static::$_connection) ? static::$_connection : null)->as_array();
+			$result = $query->select($group_by)->group_by($group_by)->execute($connection)->as_array();
 			$counts = array();
 			foreach ($result as $res)
 			{
@@ -251,7 +278,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			return $counts;
 		}
 
-		$count = $query->execute(isset(static::$_connection) ? static::$_connection : null)->get('count_result');
+		$count = $query->execute($connection)->get('count_result');
 
 		if ($count === null)
 		{
@@ -297,12 +324,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Gets called before the query is executed.  Must return the query object.
 	 *
 	 * @param   Database_Query  $query  The query object
-	 * @return  Database_Query
+	 * @return  void
 	 */
-	protected static function pre_find($query)
-	{
-		return $query;
-	}
+	protected static function pre_find($query){}
 
 	/**
 	 * Gets called after the query is executed and right before it is returned.
@@ -384,9 +408,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Saves the object to the database by either creating a new record
 	 * or updating an existing record. Sets the default values if set.
 	 *
+	 * @param   bool   $validate  wether to validate the input
 	 * @return  mixed  Rows affected and or insert ID
 	 */
-	public function save()
+	public function save($validate = true)
 	{
 		if ($this->frozen())
 		{
@@ -398,13 +423,17 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		// Set default if there are any
 		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
 
-		if (isset(static::$_rules) and count(static::$_rules) > 0)
+		if ($validate and isset(static::$_rules) and count(static::$_rules) > 0)
 		{
-			$validated = $this->run_validation($vars);
+			$vars = $this->pre_validate($vars);
+			$validated = $this->post_validate($this->run_validation($vars));
 
 			if ($validated)
 			{
-				$vars = $this->validation()->validated() + $vars;
+				$validated = array_filter($this->validation()->validated(), function($val){
+					return ($val !== null);
+				});
+				$vars = $validated + $vars;
 			}
 			else
 			{
@@ -413,13 +442,42 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		}
 
 		$vars = $this->prep_values($vars);
+		
+		if (isset(static::$_properties))
+		{
+			$vars = \Arr::filter_keys($vars, static::$_properties);
+		}
+		
+		if(isset(static::$_updated_at))
+		{
+			if(isset(static::$_mysql_timestamp) and static::$_mysql_timestamp === true)
+			{
+				$vars[static::$_updated_at] = \Date::forge()->format('mysql');
+			}
+			else
+			{
+				$vars[static::$_updated_at] = \Date::forge()->get_timestamp();
+			}
+		}
 
 		if ($this->is_new())
 		{
+			if(isset(static::$_created_at))
+			{
+				if(isset(static::$_mysql_timestamp) and static::$_mysql_timestamp === true)
+				{
+					$vars[static::$_created_at] = \Date::forge()->format('mysql');
+				}
+				else
+				{
+					$vars[static::$_created_at] = \Date::forge()->get_timestamp();
+				}
+			}
+
 			$query = \DB::insert(static::$_table_name)
 			            ->set($vars);
 
-			$query = $this->pre_save($query);
+			$this->pre_save(&$query);
 			$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
 
 			if ($result[1] > 0)
@@ -441,9 +499,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		         ->set($vars)
 		         ->where(static::primary_key(), '=', $this->{static::primary_key()});
 
-		$query = $this->pre_update($query);
+		$this->pre_update(&$query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
-		$result[1] > 0 and $this->set($vars);
+		$result > 0 and $this->set($vars);
 
 		return $this->post_update($result);
 	}
@@ -459,7 +517,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		$query = \DB::delete(static::$_table_name)
 		            ->where(static::primary_key(), '=', $this->{static::primary_key()});
 
-		$query = $this->pre_delete($query);
+		$this->pre_delete(&$query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
 
 		return $this->post_delete($result);
@@ -575,7 +633,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function offsetExists($offset)
 	{
-		return isset($this->{$offset});
+		return property_exists($this, $offset);
 	}
 
 	/**
@@ -597,12 +655,33 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function offsetGet($offset)
 	{
-		if (isset($this->{$offset}))
+		if (property_exists($this, $offset))
 		{
 			return $this->{$offset};
 		}
 
 		throw new \OutOfBoundsException('Property "'.$offset.'" not found for '.get_called_class().'.');
+	}
+
+	/**
+	 * Returns wether the instance will pass validation.
+	 *
+	 * @return  bool  wether the instance passed validation
+	 */
+	public function validates()
+	{
+		if ( ! isset(static::$_rules) or count(static::$_rules) < 0)
+		{
+			return true;
+		}
+
+		$vars = $this->to_array();
+
+		// Set default if there are any
+		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
+		$vars = $this->pre_validate($vars);
+
+		return $this->run_validation($vars);
 	}
 
 	/**
@@ -613,12 +692,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	protected function run_validation($vars)
 	{
-		if ( ! isset(static::$_rules))
+		if ( ! isset(static::$_rules) or count(static::$_rules) < 0)
 		{
 			return true;
 		}
 
-		$this->_validation = null;
 		$this->_validation = $this->validation();
 
 		foreach (static::$_rules as $field => $rules)
@@ -627,11 +705,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			$this->_validation->add_field($field, $label, $rules);
 		}
 
-		$vars = $this->pre_validate($vars);
-
-		$result = $this->_validation->run($vars);
-
-		return $this->post_validate($result);
+		return $this->_validation->run($vars);
 	}
 
 	/**
@@ -639,12 +713,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * the query object.
 	 *
 	 * @param   Database_Query  $query  The query object
-	 * @return  Database_Query
+	 * @return  void
 	 */
-	protected function pre_save($query)
-	{
-		return $query;
-	}
+	protected function pre_save($query){}
 
 	/**
 	 * Gets called after the insert query is executed and right before
@@ -662,12 +733,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Gets called before the update query is executed.  Must return the query object.
 	 *
 	 * @param   Database_Query  $query  The query object
-	 * @return  Database_Query
+	 * @return  void
 	 */
-	protected function pre_update($query)
-	{
-		return $query;
-	}
+	protected function pre_update($query){}
 
 	/**
 	 * Gets called after the update query is executed and right before
@@ -685,12 +753,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * Gets called before the delete query is executed.  Must return the query object.
 	 *
 	 * @param   Database_Query  $query  The query object
-	 * @return  Database_Query
+	 * @return  void
 	 */
-	protected function pre_delete($query)
-	{
-		return $query;
-	}
+	protected function pre_delete($query){}
 
 	/**
 	 * Gets called after the delete query is executed and right before

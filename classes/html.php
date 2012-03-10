@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -27,7 +27,7 @@ namespace Fuel\Core;
  */
 class Html
 {
-	public static $doctypes = array();
+	public static $doctypes = null;
 	public static $html5 = false;
 
 	/**
@@ -104,7 +104,7 @@ class Html
 	 * @param	string	The subject
 	 * @return	string	The mailto link
 	 */
-	public static function mail_to($email, $text = NULL, $subject = NULL, $attr = array())
+	public static function mail_to($email, $text = null, $subject = null, $attr = array())
 	{
 		$text or $text = $email;
 
@@ -181,8 +181,12 @@ class Html
 	 */
 	public static function doctype($type = 'xhtml1-trans')
 	{
-		\Config::load('doctypes', true);
-		static::$doctypes = \Config::get('doctypes');
+		if(static::$doctypes === null)
+		{
+			\Config::load('doctypes', true);
+			static::$doctypes = \Config::get('doctypes', array());
+		}
+
 		if(is_array(static::$doctypes) and isset(static::$doctypes[$type]))
 		{
 			if($type == "html5")

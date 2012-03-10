@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -126,8 +126,7 @@ class Config
 <?php
 
 CONF;
-		$content .= 'return '.str_replace(array('  ', 'array ('), array("\t", 'array('), var_export($config, true)).";\n";
-
+		$content .= 'return '.str_replace(array('  ', 'array (', '\''.APPPATH, '\''.DOCROOT, '\''.COREPATH, '\''.PKGPATH), array("\t", 'array(', 'APPPATH.\'', 'DOCROOT.\'', 'COREPATH.\'', 'PKGPATH.\''), var_export($config, true)).";\n";
 		if ( ! $path = \Finder::search('config', $file, '.php'))
 		{
 			if ($pos = strripos($file, '::'))
@@ -152,10 +151,21 @@ CONF;
 
 		}
 
+		// absolute path requested?
+		if ($file[0] === '/' or (isset($file[1]) and $file[1] === ':'))
+		{
+			$path = $file;
+		}
+
 		// make sure we have a fallback
 		$path or $path = APPPATH.'config'.DS.$file.'.php';
 
 		$path = pathinfo($path);
+		
+		if ( ! is_dir($path['dirname']))
+		{
+			mkdir($path['dirname'], 0777, true);
+		}
 
 		return \File::update($path['dirname'], $path['basename'], $content);
 	}

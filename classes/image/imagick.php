@@ -74,7 +74,7 @@ class Image_Imagick extends \Image_Driver
 		extract(parent::_watermark($filename, $position, $padding));
 		$wmimage = new \Imagick();
 		$wmimage->readImage($filename);
-		$wmimage->setImageOpacity($this->config['watermark_alpha'] / 100);
+		$wmimage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $this->config['watermark_alpha'] / 100, \Imagick::CHANNEL_ALPHA);
 		$this->imagick->compositeImage($wmimage, \Imagick::COMPOSITE_DEFAULT, $x, $y);
 	}
 
@@ -181,9 +181,21 @@ class Image_Imagick extends \Image_Driver
 
 		$filetype = $this->image_extension;
 
+		if ($filetype == 'jpg' or $filetype == 'jpeg')
+		{
+			$filetype = 'jpeg';
+		}
+		
 		if ($this->imagick->getImageFormat() != $filetype)
 		{
 			$this->imagick->setImageFormat($filetype);
+		}
+		
+		if($this->imagick->getImageFormat() == 'jpeg' and $this->config['quality'] != 100)
+		{
+			$this->imagick->setImageCompression(\Imagick::COMPRESSION_JPEG); 
+			$this->imagick->setImageCompressionQuality($this->config['quality']); 
+			$this->imagick->stripImage(); 
 		}
 
 		file_put_contents($filename, $this->imagick->getImageBlob());
@@ -202,10 +214,22 @@ class Image_Imagick extends \Image_Driver
 
 		$this->run_queue();
 		$this->add_background();
+		
+		if ($filetype == 'jpg' or $filetype == 'jpeg')
+		{
+			$filetype = 'jpeg';
+		}
 
 		if ($this->imagick->getImageFormat() != $filetype)
 		{
 			$this->imagick->setImageFormat($filetype);
+		}
+		
+		if($this->imagick->getImageFormat() == 'jpeg' and $this->config['quality'] != 100)
+		{
+			$this->imagick->setImageCompression(\Imagick::COMPRESSION_JPEG); 
+			$this->imagick->setImageCompressionQuality($this->config['quality']); 
+			$this->imagick->stripImage(); 
 		}
 
 		if ( ! $this->config['debug'])
@@ -218,15 +242,18 @@ class Image_Imagick extends \Image_Driver
 
 	protected function add_background()
 	{
-		$tmpimage = new \Imagick();
-		$sizes = $this->sizes();
-		$tmpimage->newImage($sizes->width, $sizes->height, $this->create_color($this->config['bgcolor'], $this->config['bgcolor'] == null ? 0 : 100), 'png');
-		$tmpimage->compositeImage($this->imagick, \Imagick::COMPOSITE_DEFAULT, 0, 0);
-		$this->imagick = $tmpimage;
+		if($this->config['bgcolor'] != null)
+		{
+			$tmpimage = new \Imagick();
+			$sizes = $this->sizes();
+			$tmpimage->newImage($sizes->width, $sizes->height, $this->create_color($this->config['bgcolor'], $this->config['bgcolor'] == null ? 0 : 100), 'png');
+			$tmpimage->compositeImage($this->imagick, \Imagick::COMPOSITE_DEFAULT, 0, 0);
+			$this->imagick = $tmpimage;
+		}
 	}
 
 	/**
-	 * Creates a new color usable by ImageMagick.
+	 * Creates a new color usable by Imagick.
 	 *
 	 * @param  string   $hex    The hex code of the color
 	 * @param  integer  $alpha  The alpha of the color, 0 (trans) to 100 (opaque)
@@ -234,34 +261,7 @@ class Image_Imagick extends \Image_Driver
 	 */
 	protected function create_color($hex, $alpha)
 	{
-		if ($hex == null)
-		{
-			$red = 0;
-			$green = 0;
-			$blue = 0;
-		}
-		else
-		{
-			// Check if theres a # in front
-			if (substr($hex, 0, 1) == '#')
-			{
-				$hex = substr($hex, 1);
-			}
-
-			// Break apart the hex
-			if (strlen($hex) == 6)
-			{
-				$red   = hexdec(substr($hex, 0, 2));
-				$green = hexdec(substr($hex, 2, 2));
-				$blue  = hexdec(substr($hex, 4, 2));
-			}
-			else
-			{
-				$red   = hexdec(substr($hex, 0, 1).substr($hex, 0, 1));
-				$green = hexdec(substr($hex, 1, 1).substr($hex, 1, 1));
-				$blue  = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
-			}
-		}
+		extract($this->create_hex_color($hex));
 		return new \ImagickPixel('rgba('.$red.', '.$green.', '.$blue.', '.round($alpha / 100, 2).')');
 	}
 }

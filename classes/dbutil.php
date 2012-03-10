@@ -6,7 +6,7 @@
  * @version    1.0
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2011 Fuel Development Team
+ * @copyright  2010 - 2012 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -28,12 +28,17 @@ class DBUtil
 	 * @throws	Fuel\Database_Exception
 	 * @param	string	$database	the database name
 	 * @param	string	$database	the character set
+	 * @param	boolean	$if_not_exists  whether to add an IF NOT EXISTS statement.
 	 * @return	int		the number of affected rows
 	 */
-	public static function create_database($database, $charset = null)
+	public static function create_database($database, $charset = null, $if_not_exists = true)
 	{
+		$sql = 'CREATE DATABASE';
+		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
+
 		$charset = static::process_charset($charset, true);
-		return \DB::query('CREATE DATABASE '.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
+
+		return \DB::query($sql.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
 	}
 
 	/**
@@ -45,7 +50,7 @@ class DBUtil
 	 */
 	public static function drop_database($database)
 	{
-		return \DB::query('DROP DATABASE '.DB::quote_identifier($database), \DB::DELETE)->execute();
+		return \DB::query('DROP DATABASE '.\DB::quote_identifier($database), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -57,7 +62,7 @@ class DBUtil
 	 */
 	public static function drop_table($table)
 	{
-		return \DB::query('DROP TABLE IF EXISTS '.DB::quote_identifier(DB::table_prefix($table)), \DB::DELETE)->execute();
+		return \DB::query('DROP TABLE IF EXISTS '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::DELETE)->execute();
 	}
 
 	/**
@@ -70,11 +75,11 @@ class DBUtil
 	 */
 	public static function rename_table($table, $new_table_name)
 	{
-		return \DB::query('RENAME TABLE '.DB::quote_identifier(DB::table_prefix($table)).' TO '.DB::quote_identifier(DB::table_prefix($new_table_name)),DB::UPDATE)->execute();
+		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute();
 	}
 
 	/**
-	 * Creates a table. 
+	 * Creates a table.
 	 *
 	 * @throws	 \Database_Exception
 	 * @param    string    $table          the table name
@@ -92,7 +97,7 @@ class DBUtil
 
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$sql .= \DB::quote_identifier(DB::table_prefix($table)).' (';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{
@@ -203,11 +208,11 @@ class DBUtil
 				{
 					if (is_numeric($key))
 					{
-						$index_name .= ($columns=='' ? '' : '_').$value;
+						$index_name .= ($index_name == '' ? '' : '_').$value;
 					}
 					else
 					{
-						$index_name .= ($columns=='' ? '' : '_').str_replace(array('(', ')', ' '), '', $key);
+						$index_name .= ($index_name == '' ? '' : '_').str_replace(array('(', ')', ' '), '', $key);
 					}
 				}
 			}
@@ -279,9 +284,20 @@ class DBUtil
 			$sql .= \DB::quote_identifier($field);
 			$sql .= array_key_exists('NAME', $attr) ? ' '.\DB::quote_identifier($attr['NAME']).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
-			$sql .= array_key_exists('CONSTRAINT', $attr) ? '('.$attr['CONSTRAINT'].')' : '';
 			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET']) : '';
-
+			
+			if(array_key_exists('CONSTRAINT',$attr))
+			{
+				if(is_array($attr['CONSTRAINT']))
+				{
+					$sql .= "('".implode("', '",$attr['CONSTRAINT'])."')";
+				}
+				else
+				{
+					$sql .= '('.$attr['CONSTRAINT'].')';
+				}
+			}
+			
 			if (array_key_exists('UNSIGNED', $attr) and $attr['UNSIGNED'] === true)
 			{
 				$sql .= ' UNSIGNED';
@@ -314,7 +330,7 @@ class DBUtil
 			{
 				$sql .= ' AFTER '.\DB::quote_identifier($attr['AFTER']);
 			}
-			
+
 			$sql_fields[] = $sql;
 		}
 
@@ -330,7 +346,7 @@ class DBUtil
 	 */
 	protected static function process_charset($charset = null, $is_default = false)
 	{
-		$charset or $charset = \Config::get('db.'.\Fuel::$env.'.charset', null);
+		$charset or $charset = \Config::get('db.'.\Config::get('db.active').'.charset', null);
 		if (empty($charset))
 		{
 			return '';
