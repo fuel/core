@@ -26,6 +26,15 @@ class Route
 	public $named_params = array();
 
 	/**
+	 * @var  array  named params array
+	 */
+	public $named_params_transforms = array();
+	/**
+	 * @var  array  named params array
+	 */
+	public static $supported_named_params_transforms = array('prefix');
+
+	/**
 	 * @var  array  the required params to generate a url
 	 */
 	public $required_params = array();
@@ -81,43 +90,45 @@ class Route
 	public $callable = null;
 
 	/**
+	 * @var  null|boolean Whether https or non-https is forced to the url
+	 */
+	public $is_secure = null;
+
+	/**
 	 * @var  mixed  the compiled route regex
 	 */
 	protected $search = null;
 
+
 	public function __construct($path, $translation = null)
 	{
-		$this->path = $path;
+		$this->path        = $path;
 		$this->translation = ($translation === null) ? $path : $this->parse_translation($translation);
-		$this->search = ($translation == stripslashes($path)) ? $path : $this->compile();
+		$this->search      = rtrim(($translation == stripslashes($path)) ? $path : $this->compile(), '/');
 	}
 
-	/**
-	 *
-	 * Identifies options and their order when $translation is an array.
-	 *
-	 * Examples:
-	 * array('controller/action', 'GET')
-	 * array('GET','controller/action')
-	 * array('controller/action', array('id'=>'[0-9]+'))
-	 * array('controller/action', GET, array('id'=>'[0-9]+'))
-	 *
-	 * @param mixed $translation String that identifies controller and action or array of routing options
-	 * @return mixed
-	 */
+
 	protected function parse_translation($translation)
 	{
 		$destination = $translation;
 
-		//translation is the route
-		if (!is_array($translation)) return $translation;
+		if (! is_array($translation))
+		{
+			return $translation;
+		}
 
 		//$translation is array of options
 		foreach ($translation as $name => $value)
 		{
 			if (is_numeric($name) && is_string($value))
 			{
-				if (in_array(strtoupper($value), array('GET', 'POST', 'PUT', 'DELETE')))
+				if (in_array(strtoupper($value),
+					array('GET',
+						'POST',
+						'PUT',
+						'DELETE'
+					))
+				)
 				{
 					$this->required_method = strtoupper($value);
 				}
@@ -128,14 +139,40 @@ class Route
 			}
 			elseif (is_numeric($name) && is_array($value))
 			{
-				$this->url_restrictions = $value;
+				foreach ($value as $param_name=> $options)
+				{
+					if (! is_array($options))
+					{
+						$this->url_restrictions[$param_name] = $options;
+						continue;
+					}
+					foreach ($options as $option=> $option_value)
+					{
+						if (in_array($option, static::$supported_named_params_transforms))
+						{
+							if (! isset($this->named_params_transforms[$param_name]))
+							{
+								$this->named_params_transforms[$param_name] = array();
+							}
+							$this->named_params_transforms[$param_name][$option] = $option_value;
+						}
+						elseif ($option == 'regex')
+						{
+							$this->url_restrictions[$param_name] = $option_value;
+						}
+					}
+				}
+			}
+			elseif ($name == 'secure')
+			{
+				$this->is_secure = $value;
 			}
 		}
 		return $destination;
 	}
 
 	/**
-	 * Compiles a route.Identifies, stores and replaces named params and regex shortcuts.
+	 * Compiles a route. Replaces named params and regex shortcuts.
 	 *
 	 * @return  string  compiled route.
 	 */
@@ -145,25 +182,23 @@ class Route
 		{
 			return '';
 		}
-		$search = str_replace(
-			array(
-			     ':any',
-			     ':alnum',
-			     ':num',
-			     ':alpha',
-			     ':segment',
-			), array(
-			        '.+',
-			        '[[:alnum:]]+',
-			        '[[:digit:]]+',
-			        '[[:alpha:]]+',
-			        '[^/]*',
-			   ), $this->path
-		);
 
-		$required_parameters = array();
-		$params_regexes = is_null($this->url_restrictions) ? array() : $this->url_restrictions;
-		$callback = function ($match) use (&$required_parameters, $params_regexes)
+		$search = str_replace(array(':any',
+				':alnum',
+				':num',
+				':alpha',
+				':segment',
+			),
+			array('.+',
+				'[[:alnum:]]+',
+				'[[:digit:]]+',
+				'[[:alpha:]]+',
+				'[^/]*',
+			), $this->path);
+
+		$required_parameters   = array();
+		$params_regexes        = is_null($this->url_restrictions) ? array() : $this->url_restrictions;
+		$callback              = function ($match) use (&$required_parameters, $params_regexes)
 		{
 			static $used_names = array();
 
@@ -179,10 +214,10 @@ class Route
 			}
 			//Add the named parameter to required route parameters
 			$required_parameters[] = $match;
-			$regex = isset($params_regexes[$match]) ? $params_regexes[$match] : '.+';
-			return sprintf('(?P<%s>' . $regex . '?)', $match);
+			$regex                 = isset($params_regexes[$match]) ? $params_regexes[$match] : '.+';
+			return sprintf('(?P<%s>'.$regex.'?)', $match);
 		};
-		$result = preg_replace_callback('#(?<!\[\[):([a-z\_]+)(?!:\]\])#uD', $callback, $search);
+		$result                = preg_replace_callback('#(?<!\[\[):([a-z\_]+)(?!:\]\])#uD', $callback, $search);
 		$this->required_params = $required_parameters;
 		return $result;
 	}
@@ -228,7 +263,20 @@ class Route
 			if (is_numeric($key))
 			{
 				unset($named_params[$key]);
+				continue;
 			}
+			if (! isset($this->named_params_transforms[$key])) continue;
+			foreach ($this->named_params_transforms[$key] as $transformation=> $params)
+			{
+				$params = (array)$params;
+				switch ($transformation)
+				{
+					case "prefix":
+						$named_params[$key] = $params[0].$val;
+						break;
+				}
+			}
+
 		}
 
 		$this->named_params = $named_params;
@@ -243,7 +291,7 @@ class Route
 
 			if ($uri != '')
 			{
-				$path = preg_replace('#^' . $this->search . '$#uD', $this->translation, $uri);
+				$path = preg_replace('#^'.$this->search.'$#uD', $this->translation, $uri);
 			}
 
 			$this->segments = explode('/', trim($path, '/'));
@@ -265,7 +313,7 @@ class Route
 			$route = $this;
 		}
 
-		if (!is_null($route->required_method) and \Input::method() != $route->required_method)
+		if ( ! is_null($route->required_method) and \Input::method() != $route->required_method)
 		{
 			return false;
 		}
@@ -273,11 +321,10 @@ class Route
 		if ($route->translation instanceof static)
 		{
 			$route->translation->search = $route->search;
-			$result = $route->_parse_search($uri, $route->translation);
+			$result                     = $route->_parse_search($uri, $route->translation);
 			return $result ? $result : false;
 		}
-
-		if (preg_match('#^' . $route->search . '$#uD', $uri, $params) != false)
+		if (preg_match('#^'.$route->search.'$#uD', $uri, $params) != false)
 		{
 			return $route->matched($uri, $params);
 		}
@@ -287,5 +334,3 @@ class Route
 		}
 	}
 }
-
-

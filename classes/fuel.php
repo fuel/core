@@ -204,6 +204,7 @@ class Fuel
 		// Load in the routes
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
+		\Router::load_definitions_from_modules();
 
 		// Set locale, log warning when it fails
 		if (static::$locale)
