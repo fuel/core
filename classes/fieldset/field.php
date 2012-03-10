@@ -292,7 +292,7 @@ class Fieldset_Field
 		{
 			foreach ($new as $k => $v)
 			{
-				if (is_array($array[$k]) and is_array($v))
+				if (isset($array[$k]) and is_array($array[$k]) and is_array($v))
 				{
 					$merge($array[$k], $v);
 				}
