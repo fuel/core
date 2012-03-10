@@ -76,6 +76,15 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	}
 
 	/**
+	 * Access to the table name
+	 *
+	 * @return string The table name
+	 */
+	public static function get_table_name() {
+		return static::$_table_name;
+	}
+
+	/**
 	 * Finds a row with the given primary key value.
 	 *
 	 * @param   mixed  $value  The primary key value to find
