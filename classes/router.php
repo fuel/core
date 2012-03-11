@@ -297,4 +297,10 @@ class Router
 		}
 		return false;
 	}
+
+	public static function get_name(\Route $route)
+	{
+		return array_search($route, static::$routes);
+	}
+
 }
