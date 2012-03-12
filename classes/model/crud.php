@@ -326,7 +326,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @param   Database_Query  $query  The query object
 	 * @return  void
 	 */
-	protected static function pre_find($query){}
+	protected static function pre_find(&$query){}
 
 	/**
 	 * Gets called after the query is executed and right before it is returned.
@@ -715,7 +715,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @param   Database_Query  $query  The query object
 	 * @return  void
 	 */
-	protected function pre_save($query){}
+	protected function pre_save(&$query){}
 
 	/**
 	 * Gets called after the insert query is executed and right before
@@ -735,7 +735,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @param   Database_Query  $query  The query object
 	 * @return  void
 	 */
-	protected function pre_update($query){}
+	protected function pre_update(&$query){}
 
 	/**
 	 * Gets called after the update query is executed and right before
@@ -755,7 +755,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 * @param   Database_Query  $query  The query object
 	 * @return  void
 	 */
-	protected function pre_delete($query){}
+	protected function pre_delete(&$query){}
 
 	/**
 	 * Gets called after the delete query is executed and right before
