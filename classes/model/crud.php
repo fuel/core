@@ -181,7 +181,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ($config instanceof \Closure)
 		{
-			$config(&$query);
+			$config($query);
 		}
 		else
 		{
@@ -221,7 +221,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			}
 		}
 
-		static::pre_find(&$query);
+		static::pre_find($query);
 
 		$result =  $query->execute(isset(static::$_connection) ? static::$_connection : null);
 		$result = ($result->count() === 0) ? null : $result->as_array($key);
@@ -477,7 +477,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 			$query = \DB::insert(static::$_table_name)
 			            ->set($vars);
 
-			$this->pre_save(&$query);
+			$this->pre_save($query);
 			$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
 
 			if ($result[1] > 0)
@@ -499,7 +499,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		         ->set($vars)
 		         ->where(static::primary_key(), '=', $this->{static::primary_key()});
 
-		$this->pre_update(&$query);
+		$this->pre_update($query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
 		$result > 0 and $this->set($vars);
 
@@ -517,7 +517,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		$query = \DB::delete(static::$_table_name)
 		            ->where(static::primary_key(), '=', $this->{static::primary_key()});
 
-		$this->pre_delete(&$query);
+		$this->pre_delete($query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
 
 		return $this->post_delete($result);
