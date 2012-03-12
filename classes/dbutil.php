@@ -58,7 +58,7 @@ class DBUtil
 
 		$charset = static::process_charset($charset, true);
 
-		return \DB::query($sql.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute($db ? $db : static::$connection);
+		return \DB::query($sql.\DB::quote_identifier($database, $db ? $db : static::$connection).$charset, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -70,7 +70,7 @@ class DBUtil
 	 */
 	public static function drop_database($database, $db = null)
 	{
-		return \DB::query('DROP DATABASE '.\DB::quote_identifier($database), \DB::DELETE)->execute($db ? $db : static::$connection);
+		return \DB::query('DROP DATABASE '.\DB::quote_identifier($database, $db ? $db : static::$connection), \DB::DELETE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -82,7 +82,7 @@ class DBUtil
 	 */
 	public static function drop_table($table, $db = null)
 	{
-		return \DB::query('DROP TABLE IF EXISTS '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::DELETE)->execute($db ? $db : static::$connection);
+		return \DB::query('DROP TABLE IF EXISTS '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection), \DB::DELETE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -95,7 +95,7 @@ class DBUtil
 	 */
 	public static function rename_table($table, $new_table_name, $db = null)
 	{
-		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute($db ? $db : static::$connection);
+		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -117,12 +117,12 @@ class DBUtil
 
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' (';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{
-			$key_name = \DB::quote_identifier(implode('_', $primary_keys));
-			$primary_keys = \DB::quote_identifier($primary_keys);
+			$key_name = \DB::quote_identifier(implode('_', $primary_keys), $db ? $db : static::$connection);
+			$primary_keys = \DB::quote_identifier($primary_keys, $db ? $db : static::$connection);
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 
@@ -145,7 +145,7 @@ class DBUtil
 	 */
 	public static function add_fields($table, $fields, $db = null)
 	{
-		return static::alter_fields('ADD', $table, $fields);
+		return static::alter_fields('ADD', $table, $fields, $db);
 	}
 
 	/**
@@ -158,7 +158,7 @@ class DBUtil
 	 */
 	public static function modify_fields($table, $fields, $db = null)
 	{
-		return static::alter_fields('MODIFY', $table, $fields);
+		return static::alter_fields('MODIFY', $table, $fields, $db);
 	}
 
 	/**
@@ -171,12 +171,12 @@ class DBUtil
 	 */
 	public static function drop_fields($table, $fields, $db = null)
 	{
-		return static::alter_fields('DROP', $table, $fields);
+		return static::alter_fields('DROP', $table, $fields, $db);
 	}
 
 	protected static function alter_fields($type, $table, $fields, $db = null)
 	{
-		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' ';
+		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' ';
 
 		if ($type === 'DROP')
 		{
@@ -185,7 +185,7 @@ class DBUtil
 				$fields = array($fields);
 			}
 			$fields = array_map(function($field){
-				return 'DROP '.\DB::quote_identifier($field);
+				return 'DROP '.\DB::quote_identifier($field, $db ? $db : static::$connection);
 			}, $fields);
 			$sql .= implode(', ', $fields);
 		}
@@ -247,9 +247,9 @@ class DBUtil
 		$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
 
 		$sql .= 'INDEX ';
-		$sql .= \DB::quote_identifier($index_name);
+		$sql .= \DB::quote_identifier($index_name, $db ? $db : static::$connection);
 		$sql .= ' ON ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table));
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
 		if (is_array($index_columns))
 		{
 			$columns = '';
@@ -257,18 +257,18 @@ class DBUtil
 			{
 				if (is_numeric($key))
 				{
-					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value);
+					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value, $db ? $db : static::$connection);
 				}
 				else
 				{
-					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key).' '.strtoupper($value);
+					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key, $db ? $db : static::$connection).' '.strtoupper($value);
 				}
 			}
 			$sql .= ' ('.$columns.')';
 		}
 		else
 		{
-			$sql .= ' ('.\DB::quote_identifier($index_columns).')';
+			$sql .= ' ('.\DB::quote_identifier($index_columns, $db ? $db : static::$connection).')';
 		}
 
 		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
@@ -286,8 +286,8 @@ class DBUtil
 	 */
 	public static function drop_index($table, $index_name, $db = null)
 	{
-		$sql = 'DROP INDEX '.\DB::quote_identifier($index_name);
-		$sql .= ' ON '.\DB::quote_identifier(\DB::table_prefix($table));
+		$sql = 'DROP INDEX '.\DB::quote_identifier($index_name, $db ? $db : static::$connection);
+		$sql .= ' ON '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
 
 		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
@@ -302,9 +302,9 @@ class DBUtil
 			$attr = array_change_key_case($attr, CASE_UPPER);
 
 			$sql .= \DB::quote_identifier($field);
-			$sql .= array_key_exists('NAME', $attr) ? ' '.\DB::quote_identifier($attr['NAME']).' ' : '';
+			$sql .= array_key_exists('NAME', $attr) ? ' '.\DB::quote_identifier($attr['NAME'], $db ? $db : static::$connection).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
-			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET']) : '';
+			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET'], $db ? $db : static::$connection) : '';
 			
 			if(array_key_exists('CONSTRAINT',$attr))
 			{
@@ -348,7 +348,12 @@ class DBUtil
 			}
 			elseif (array_key_exists('AFTER', $attr) and strval($attr['AFTER']))
 			{
-				$sql .= ' AFTER '.\DB::quote_identifier($attr['AFTER']);
+				$sql .= ' AFTER '.\DB::quote_identifier($attr['AFTER'], $db ? $db : static::$connection);
+			}
+			
+			if (array_key_exists('COMMENT', $attr))
+			{
+				$sql .= ' COMMENT '.\DB::escape($attr['COMMENT'], $db ? $db : static::$connection);
 			}
 
 			$sql_fields[] = $sql;
@@ -366,7 +371,7 @@ class DBUtil
 	 */
 	protected static function process_charset($charset = null, $is_default = false, $db = null)
 	{
-		$charset or $charset = \Config::get('db.'.\Config::get('db.active').'.charset', null);
+		$charset or $charset = \Config::get('db.'.($db ? $db : \Config::get('db.active')).'.charset', null);
 		if (empty($charset))
 		{
 			return '';
@@ -448,7 +453,8 @@ class DBUtil
 	 */
 	public static function truncate_table($table, $db = null)
 	{
-		return \DB::query('TRUNCATE TABLE '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::DELETE)->execute($db ? $db : static::$connection);
+		return \DB::query('TRUNCATE TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection), \DB::DELETE)
+			->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -459,7 +465,7 @@ class DBUtil
 	 */
 	public static function analyze_table($table, $db = null)
 	{
-		return static::table_maintenance('ANALYZE TABLE', $table);
+		return static::table_maintenance('ANALYZE TABLE', $table, $db);
 	}
 
 	/**
@@ -470,7 +476,7 @@ class DBUtil
 	 */
 	public static function check_table($table, $db = null)
 	{
-		return static::table_maintenance('CHECK TABLE', $table);
+		return static::table_maintenance('CHECK TABLE', $table, $db);
 	}
 
 	/**
@@ -481,7 +487,7 @@ class DBUtil
 	 */
 	public static function optimize_table($table, $db = null)
 	{
-		return static::table_maintenance('OPTIMIZE TABLE', $table);
+		return static::table_maintenance('OPTIMIZE TABLE', $table, $db);
 	}
 
 	/**
@@ -492,7 +498,7 @@ class DBUtil
 	 */
 	public static function repair_table($table, $db = null)
 	{
-		return static::table_maintenance('REPAIR TABLE', $table);
+		return static::table_maintenance('REPAIR TABLE', $table, $db);
 	}
 
 	/**
@@ -548,7 +554,7 @@ class DBUtil
 	 */
 	protected static function table_maintenance($operation, $table, $db = null)
 	{
-		$result = \DB::query($operation.' '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::SELECT)->execute($db ? $db : static::$connection);
+		$result = \DB::query($operation.' '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection), \DB::SELECT)->execute($db ? $db : static::$connection);
 		$type = $result->get('Msg_type');
 		$message = $result->get('Msg_text');
 		$table = $result->get('Table');
