@@ -9,7 +9,7 @@ return array(
 	'match_pattern' => 'The field :label must match the pattern :param:1.',
 	'match_field'   => 'The field :label must match the field :param:1.',
 	'valid_email'   => 'The field :label must contain a valid email address.',
-	'valid_emails'  => 'The field :label must must contain a list of valid email addresses.',
+	'valid_emails'  => 'The field :label must contain a list of valid email addresses.',
 	'valid_url'     => 'The field :label must contain a valid URL.',
 	'valid_ip'      => 'The field :label must contain a valid IP address.',
 	'numeric_min'   => 'The minimum numeric value of :label must be :param:1',
