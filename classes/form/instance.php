@@ -284,7 +284,7 @@ class Form_Instance
 	 * @param   array
 	 * @return  string
 	 */
-	public static function radio($field, $value = null, $checked = null, array $attributes = array())
+	public function radio($field, $value = null, $checked = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
