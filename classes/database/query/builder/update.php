@@ -97,7 +97,7 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 			// Get the database instance
 			$db = \Database_Connection::instance($db);
 		}
-		
+
 		// Start an update query
 		$query = 'UPDATE '.$db->quote_table($this->_table);
 
@@ -114,6 +114,12 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 		{
 			// Add selection conditions
 			$query .= ' WHERE '.$this->_compile_conditions($db, $this->_where);
+		}
+
+		if ( ! empty($this->_order_by))
+		{
+			// Add sorting
+			$query .= ' '.$this->_compile_order_by($db, $this->_order_by);
 		}
 
 		if ($this->_limit !== NULL && substr($db->_db_type, 0, 6) !== 'sqlite')
