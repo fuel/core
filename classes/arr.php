@@ -185,13 +185,19 @@ class Arr
 	 * @param   string  $key_field  the field name of the key field
 	 * @param   string  $val_field  the field name of the value field
 	 * @return  array
+	 * @throws  \InvalidArgumentException
 	 */
 	public static function assoc_to_keyval($assoc, $key_field, $val_field)
 	{
-		$output = array();
-		foreach($assoc as $row)
+		if ( ! is_array($assoc) or $assoc instanceof \Iterator)
 		{
-			if(isset($row[$key_field]) and isset($row[$val_field]))
+			throw new \InvalidArgumentException('The first parameter must be an array.');
+		}
+
+		$output = array();
+		foreach ($assoc as $row)
+		{
+			if (isset($row[$key_field]) and isset($row[$val_field]))
 			{
 				$output[$row[$key_field]] = $row[$val_field];
 			}
