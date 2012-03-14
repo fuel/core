@@ -181,22 +181,17 @@ class Arr
 	/**
 	 * Converts a multi-dimensional associative array into an array of key => values with the provided field names
 	 *
-	 * @param   array   the array to convert
-	 * @param   string	the field name of the key field
-	 * @param   string	the field name of the value field
+	 * @param   array   $assoc      the array to convert
+	 * @param   string  $key_field  the field name of the key field
+	 * @param   string  $val_field  the field name of the value field
 	 * @return  array
 	 */
-	public static function assoc_to_keyval($assoc = null, $key_field = null, $val_field = null)
+	public static function assoc_to_keyval($assoc, $key_field, $val_field)
 	{
-		if(empty($assoc) OR empty($key_field) OR empty($val_field))
-		{
-			return null;
-		}
-
 		$output = array();
 		foreach($assoc as $row)
 		{
-			if(isset($row[$key_field]) AND isset($row[$val_field]))
+			if(isset($row[$key_field]) and isset($row[$val_field]))
 			{
 				$output[$row[$key_field]] = $row[$val_field];
 			}
@@ -215,12 +210,13 @@ class Arr
 	 *
 	 * @param   string      $arr  the array to change
 	 * @return  array|null  the new array or null
+	 * @throws  \BadMethodCallException
 	 */
 	public static function to_assoc($arr)
 	{
 		if (($count = count($arr)) % 2 > 0)
 		{
-			return null;
+			throw new \BadMethodCallException('Number of values in to_assoc must be even.');
 		}
 		$keys = $vals = array();
 
