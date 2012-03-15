@@ -176,7 +176,7 @@ class DBUtil
 
 	protected static function alter_fields($type, $table, $fields, $db = null)
 	{
-		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' ';
+		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ?: static::$connection), $db ?: static::$connection).' ';
 
 		if ($type === 'DROP')
 		{
@@ -184,10 +184,13 @@ class DBUtil
 			{
 				$fields = array($fields);
 			}
-			$fields = array_map(function($field){
-				return 'DROP '.\DB::quote_identifier($field, $db ? $db : static::$connection);
-			}, $fields);
-			$sql .= implode(', ', $fields);
+
+			$drop_fields = array();
+			foreach ($fields as $field)
+			{
+				$drop_fields[] = 'DROP '.\DB::quote_identifier($field, $db ?: static::$connection);
+			}
+			$sql .= implode(', ', $drop_fields);
 		}
 		else
 		{
@@ -198,7 +201,7 @@ class DBUtil
 			$use_brackets and $sql .= ')';
 		}
 
-		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
+		return \DB::query($sql, \DB::UPDATE)->execute($db ?: static::$connection);
 	}
 
 	/**
