@@ -132,7 +132,7 @@ class PhpQuickProfiler {
 		{
 			$rs = false;
 			try {
-				$sql = 'EXPLAIN '.$query['sql'];
+				$sql = 'EXPLAIN '.$query['raw_sql'];
 				$rs = \DB::query($sql, \DB::SELECT)->execute();
 			}
 			catch(Exception $e)
