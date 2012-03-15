@@ -102,6 +102,11 @@ class Format
 			$data = get_object_vars($data);
 		}
 
+		if (empty($data))
+		{
+			return array();
+		}
+
 		foreach ($data as $key => $value)
 		{
 			if (is_object($value) or is_array($value))
