@@ -481,6 +481,11 @@ class Arr
 			throw new \InvalidArgumentException('Arr::sort() - $array must be an array.');
 		}
 
+		if( empty($array) )
+		{
+			return $array;
+		}
+
 		foreach ($array as $k=>$v)
 		{
 			$b[$k] = static::get($v, $key);

@@ -492,6 +492,13 @@ class Tests_Arr extends TestCase
 		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'downer'), $expected);
 	}
 
+	public function test_sort_empty()
+	{
+		$expected = array();
+		$output = Arr::Sort(array(), 'test', 'test');
+		$this->assertEquals($expected, $output);
+	}
+
 	/**
 	 * Tests Arr::filter_keys()
 	 *
