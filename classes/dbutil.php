@@ -373,10 +373,12 @@ class DBUtil
 	 * @param	array 	$foreign_key	a single foreign key
 	 * @return 	int		number of affected rows
 	 */
-	public static function add_foreign_key($table, $foreign_key = array()) 
+	public static function add_foreign_key($table, $foreign_key) 
 	{
-		if ( ! $foreign_key)
-			return;
+		if ( ! is_array($foreign_key))
+		{
+			throw new InvalidArgumentException('Foreign key for add_foreign_key() must be specified as an array');
+		}
 		
 		$sql = 'ALTER TABLE ';
 		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' ';
