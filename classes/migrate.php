@@ -123,12 +123,8 @@ class Migrate
 		// make sure the requested migrations entry exists
 		isset(static::$migrations[$type][$name]) or static::$migrations[$type][$name] = array();
 
-		// get the current version, if none present, use ' ' (we assume it's always the lowest)
-		$start = end(static::$migrations[$type][$name]);
-		$start === false and $start = ' ';
-
 		// get all migrations in scope that still need to run
-		$result = static::find_migrations($name, $type, $start, $version);
+		$result = static::find_migrations($name, $type, ' ', $version);
 
 		// get the direction of migration and the actual migration files found
 		list($direction, $migrations) = $result;
@@ -139,12 +135,22 @@ class Migrate
 			return false;
 		}
 
+		// storage for runnable migrations
+		$runnable_migrations = array();
+
 		// we now prepare to actually DO the migrations
 		// but first let's make sure that everything is the way it should be
 		foreach ($migrations as $ver => $path)
 		{
 			// get the migration filename
 			$file = basename($path);
+
+			// did we already had this one?
+			if (in_array($file, static::$migrations[$type][$name]))
+			{
+				// yeah, so skip it
+				continue;
+			}
 
 			// filename validations
 			if (preg_match('/^\w+?_(\w+).php$/', $file, $match))
@@ -190,7 +196,7 @@ class Migrate
 		\Config::set('migrations.version.'.$type.'.'.$name, static::$migrations[$type][$name]);
 		\Config::save('migrations', 'migrations');
 
-		logger(\Fuel::L_INFO, 'Migrated '.$type.':'.$name.' to '.$migration['file'].' successfully.');
+		isset($migration) and logger(\Fuel::L_INFO, 'Migrated '.$type.':'.$name.' to '.$migration['file'].' successfully.');
 
 		return $migrations;
 	}
