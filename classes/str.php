@@ -37,6 +37,18 @@ class Str
 		$tags = array();
 		if ($is_html)
 		{
+			// Handle special characters.
+			preg_match_all('/&[a-z]+;/i', strip_tags($string), $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+			foreach ($matches as $match)
+			{
+				if ($match[0][1] >= $limit)
+				{
+					break;
+				}
+				$limit += (static::length($match[0][0]) - 1);
+			}
+
+			// Handle all the html tags.
 			preg_match_all('/<[^>]+>([^<]*)/', $string, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 			foreach ($matches as $match)
 			{

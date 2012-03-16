@@ -292,7 +292,7 @@ class Fieldset_Field
 		{
 			foreach ($new as $k => $v)
 			{
-				if (is_array($array[$k]) and is_array($v))
+				if (isset($array[$k]) and is_array($array[$k]) and is_array($v))
 				{
 					$merge($array[$k], $v);
 				}
@@ -392,7 +392,7 @@ class Fieldset_Field
 			$this->set_attribute('id', $auto_id);
 		}
 
-		switch($this->type)
+		switch( ! empty($this->attributes['tag']) ? $this->attributes['tag'] : $this->type)
 		{
 			case 'hidden':
 				$build_field = $form->hidden($this->name, $this->value, $this->attributes);

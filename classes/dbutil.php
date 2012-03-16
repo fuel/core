@@ -23,6 +23,26 @@ class DBUtil
 {
 
 	/**
+	 * @var  string  $connection  the database connection (identifier)
+	 */
+	protected static $connection = null;
+
+	/**
+	 * Sets the database connection to use for following DBUtil calls.
+	 *
+	 * @param  string|object  string connection name or \Database_Connection object, null for default
+	 */
+	public static function set_connection($connection, $db = null)
+	{
+		if ( ! is_string($connection) and ($connection instanceof Database_Connection))
+		{
+			throw new \FuelException('A connection must be supplied as a string or a Database_Connection object.');
+		}
+
+		static::$connection = $connection;
+	}
+
+	/**
 	 * Creates a database.  Will throw a Database_Exception if it cannot.
 	 *
 	 * @throws	Fuel\Database_Exception
@@ -31,14 +51,14 @@ class DBUtil
 	 * @param	boolean	$if_not_exists  whether to add an IF NOT EXISTS statement.
 	 * @return	int		the number of affected rows
 	 */
-	public static function create_database($database, $charset = null, $if_not_exists = true)
+	public static function create_database($database, $charset = null, $if_not_exists = true, $db = null)
 	{
 		$sql = 'CREATE DATABASE';
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
 		$charset = static::process_charset($charset, true);
 
-		return \DB::query($sql.DB::quote_identifier($database).$charset, \DB::UPDATE)->execute();
+		return \DB::query($sql.\DB::quote_identifier($database, $db ? $db : static::$connection).$charset, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -48,9 +68,9 @@ class DBUtil
 	 * @param	string	$database	the database name
 	 * @return	int		the number of affected rows
 	 */
-	public static function drop_database($database)
+	public static function drop_database($database, $db = null)
 	{
-		return \DB::query('DROP DATABASE '.\DB::quote_identifier($database), \DB::DELETE)->execute();
+		return \DB::query('DROP DATABASE '.\DB::quote_identifier($database, $db ? $db : static::$connection), \DB::DELETE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -60,9 +80,9 @@ class DBUtil
 	 * @param	string	$table	the table name
 	 * @return	int		the number of affected rows
 	 */
-	public static function drop_table($table)
+	public static function drop_table($table, $db = null)
 	{
-		return \DB::query('DROP TABLE IF EXISTS '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::DELETE)->execute();
+		return \DB::query('DROP TABLE IF EXISTS '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection), \DB::DELETE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -73,9 +93,9 @@ class DBUtil
 	 * @param	string	$new_table_name	the new table name
 	 * @return	int		the number of affected
 	 */
-	public static function rename_table($table, $new_table_name)
+	public static function rename_table($table, $new_table_name, $db = null)
 	{
-		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute();
+		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -91,18 +111,18 @@ class DBUtil
 	 * @param    array     $foreign_keys   an array of foreign keys
 	 * @return   int       number of affected rows.
 	 */
-	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array())
+	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array(), $db = null)
 	{
 		$sql = 'CREATE TABLE';
 
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' (';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' (';
 		$sql .= static::process_fields($fields);
 		if ( ! empty($primary_keys))
 		{
-			$key_name = \DB::quote_identifier(implode('_', $primary_keys));
-			$primary_keys = \DB::quote_identifier($primary_keys);
+			$key_name = \DB::quote_identifier(implode('_', $primary_keys), $db ? $db : static::$connection);
+			$primary_keys = \DB::quote_identifier($primary_keys, $db ? $db : static::$connection);
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 
@@ -112,7 +132,7 @@ class DBUtil
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
 		$sql .= static::process_charset($charset, true).";";
 
-		return \DB::query($sql, \DB::UPDATE)->execute();
+		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -123,9 +143,9 @@ class DBUtil
 	 * @param	array	$fields			the new fields
 	 * @return	int		the number of affected
 	 */
-	public static function add_fields($table, $fields)
+	public static function add_fields($table, $fields, $db = null)
 	{
-		return static::alter_fields('ADD', $table, $fields);
+		return static::alter_fields('ADD', $table, $fields, $db);
 	}
 
 	/**
@@ -136,9 +156,9 @@ class DBUtil
 	 * @param	array	$fields			the modified fields
 	 * @return	int		the number of affected
 	 */
-	public static function modify_fields($table, $fields)
+	public static function modify_fields($table, $fields, $db = null)
 	{
-		return static::alter_fields('MODIFY', $table, $fields);
+		return static::alter_fields('MODIFY', $table, $fields, $db);
 	}
 
 	/**
@@ -149,14 +169,14 @@ class DBUtil
 	 * @param	string|array	$fields			the fields
 	 * @return	int				the number of affected
 	 */
-	public static function drop_fields($table, $fields)
+	public static function drop_fields($table, $fields, $db = null)
 	{
-		return static::alter_fields('DROP', $table, $fields);
+		return static::alter_fields('DROP', $table, $fields, $db);
 	}
 
-	protected static function alter_fields($type, $table, $fields)
+	protected static function alter_fields($type, $table, $fields, $db = null)
 	{
-		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table)).' ';
+		$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ?: static::$connection), $db ?: static::$connection).' ';
 
 		if ($type === 'DROP')
 		{
@@ -164,10 +184,13 @@ class DBUtil
 			{
 				$fields = array($fields);
 			}
-			$fields = array_map(function($field){
-				return 'DROP '.\DB::quote_identifier($field);
-			}, $fields);
-			$sql .= implode(', ', $fields);
+
+			$drop_fields = array();
+			foreach ($fields as $field)
+			{
+				$drop_fields[] = 'DROP '.\DB::quote_identifier($field, $db ?: static::$connection);
+			}
+			$sql .= implode(', ', $drop_fields);
 		}
 		else
 		{
@@ -178,7 +201,7 @@ class DBUtil
 			$use_brackets and $sql .= ')';
 		}
 
-		return \DB::query($sql, \DB::UPDATE)->execute();
+		return \DB::query($sql, \DB::UPDATE)->execute($db ?: static::$connection);
 	}
 
 	/**
@@ -193,7 +216,7 @@ class DBUtil
 	 * @return	bool
 	 * @author	Thomas Edwards
 	 */
-	public static function create_index($table, $index_columns, $index_name = '', $index = '')
+	public static function create_index($table, $index_columns, $index_name = '', $index = '', $db = null)
 	{
 		static $accepted_index = array('UNIQUE', 'FULLTEXT', 'SPATIAL', 'NONCLUSTERED');
 
@@ -227,9 +250,9 @@ class DBUtil
 		$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
 
 		$sql .= 'INDEX ';
-		$sql .= \DB::quote_identifier($index_name);
+		$sql .= \DB::quote_identifier($index_name, $db ? $db : static::$connection);
 		$sql .= ' ON ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table));
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
 		if (is_array($index_columns))
 		{
 			$columns = '';
@@ -237,21 +260,21 @@ class DBUtil
 			{
 				if (is_numeric($key))
 				{
-					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value);
+					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value, $db ? $db : static::$connection);
 				}
 				else
 				{
-					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key).' '.strtoupper($value);
+					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key, $db ? $db : static::$connection).' '.strtoupper($value);
 				}
 			}
 			$sql .= ' ('.$columns.')';
 		}
 		else
 		{
-			$sql .= ' ('.\DB::quote_identifier($index_columns).')';
+			$sql .= ' ('.\DB::quote_identifier($index_columns, $db ? $db : static::$connection).')';
 		}
 
-		return \DB::query($sql, \DB::UPDATE)->execute();
+		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -264,15 +287,15 @@ class DBUtil
 	 * @return	bool
 	 * @author	Thomas Edwards
 	 */
-	public static function drop_index($table, $index_name)
+	public static function drop_index($table, $index_name, $db = null)
 	{
-		$sql = 'DROP INDEX '.\DB::quote_identifier($index_name);
-		$sql .= ' ON '.\DB::quote_identifier(\DB::table_prefix($table));
+		$sql = 'DROP INDEX '.\DB::quote_identifier($index_name, $db ? $db : static::$connection);
+		$sql .= ' ON '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
 
-		return \DB::query($sql, \DB::UPDATE)->execute();
+		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
-	protected static function process_fields($fields, $prefix = '')
+	protected static function process_fields($fields, $prefix = '', $db = null)
 	{
 		$sql_fields = array();
 
@@ -282,11 +305,22 @@ class DBUtil
 			$attr = array_change_key_case($attr, CASE_UPPER);
 
 			$sql .= \DB::quote_identifier($field);
-			$sql .= array_key_exists('NAME', $attr) ? ' '.\DB::quote_identifier($attr['NAME']).' ' : '';
+			$sql .= array_key_exists('NAME', $attr) ? ' '.\DB::quote_identifier($attr['NAME'], $db ? $db : static::$connection).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
-			$sql .= array_key_exists('CONSTRAINT', $attr) ? '('.$attr['CONSTRAINT'].')' : '';
-			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET']) : '';
-
+			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET'], $db ? $db : static::$connection) : '';
+			
+			if(array_key_exists('CONSTRAINT',$attr))
+			{
+				if(is_array($attr['CONSTRAINT']))
+				{
+					$sql .= "('".implode("', '",$attr['CONSTRAINT'])."')";
+				}
+				else
+				{
+					$sql .= '('.$attr['CONSTRAINT'].')';
+				}
+			}
+			
 			if (array_key_exists('UNSIGNED', $attr) and $attr['UNSIGNED'] === true)
 			{
 				$sql .= ' UNSIGNED';
@@ -317,7 +351,12 @@ class DBUtil
 			}
 			elseif (array_key_exists('AFTER', $attr) and strval($attr['AFTER']))
 			{
-				$sql .= ' AFTER '.\DB::quote_identifier($attr['AFTER']);
+				$sql .= ' AFTER '.\DB::quote_identifier($attr['AFTER'], $db ? $db : static::$connection);
+			}
+			
+			if (array_key_exists('COMMENT', $attr))
+			{
+				$sql .= ' COMMENT '.\DB::escape($attr['COMMENT'], $db ? $db : static::$connection);
 			}
 
 			$sql_fields[] = $sql;
@@ -333,9 +372,9 @@ class DBUtil
 	 * @param    bool      $is_default    whether to use default
 	 * @return   string    the formated charset sql
 	 */
-	protected static function process_charset($charset = null, $is_default = false)
+	protected static function process_charset($charset = null, $is_default = false, $db = null)
 	{
-		$charset or $charset = \Config::get('db.'.\Config::get('db.active').'.charset', null);
+		$charset or $charset = \Config::get('db.'.($db ? $db : \Config::get('db.active')).'.charset', null);
 		if (empty($charset))
 		{
 			return '';
@@ -354,6 +393,45 @@ class DBUtil
 
 		return $charset;
 	}
+	
+	/**
+	 * Adds a single foreign key to a table
+	 * 
+	 * @param	string	$table			the table name
+	 * @param	array 	$foreign_key	a single foreign key
+	 * @return 	int		number of affected rows
+	 */
+	public static function add_foreign_key($table, $foreign_key) 
+	{
+		if ( ! is_array($foreign_key))
+		{
+			throw new InvalidArgumentException('Foreign key for add_foreign_key() must be specified as an array');
+		}
+		
+		$sql = 'ALTER TABLE ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' ';
+		$sql .= 'ADD ';
+		$sql .= ltrim(static::process_foreign_keys(array($foreign_key)), ',');
+		
+		return \DB::query($sql, \DB::UPDATE)->execute();
+	}
+	
+	/**
+	 * Drops a foreign key from a table
+	 * 
+	 * @param	string	$table		the table name
+	 * @param	string	$fk_name	the foreign key name
+	 * @return 	int		number of affected rows
+	 */
+	public static function drop_foreign_key($table, $fk_name)
+	{
+		$sql = 'ALTER TABLE ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' ';
+		$sql .= 'DROP FOREIGN KEY '.\DB::quote_identifier($fk_name);
+		
+		return \DB::query($sql, \DB::UPDATE)->execute();
+	}
+	
 
 	/**
 	 * Returns string of foreign keys
@@ -361,7 +439,7 @@ class DBUtil
 	 * @param    array    $foreign_keys       Array of foreign key rules
 	 * @return   string    the formated foreign key string
 	 */
-	public static function process_foreign_keys($foreign_keys)
+	public static function process_foreign_keys($foreign_keys, $db = null)
 	{
 		if ( ! is_array($foreign_keys))
 		{
@@ -415,9 +493,10 @@ class DBUtil
 	 * @param     string    $table    the table name
 	 * @return    int       the number of affected rows
 	 */
-	public static function truncate_table($table)
+	public static function truncate_table($table, $db = null)
 	{
-		return \DB::query('TRUNCATE TABLE '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::DELETE)->execute();
+		return \DB::query('TRUNCATE TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection), \DB::DELETE)
+			->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -426,9 +505,9 @@ class DBUtil
 	 * @param     string    $table    the table name
 	 * @return    bool      whether the table is OK
 	 */
-	public static function analyze_table($table)
+	public static function analyze_table($table, $db = null)
 	{
-		return static::table_maintenance('ANALYZE TABLE', $table);
+		return static::table_maintenance('ANALYZE TABLE', $table, $db);
 	}
 
 	/**
@@ -437,9 +516,9 @@ class DBUtil
 	 * @param     string    $table    the table name
 	 * @return    bool      whether the table is OK
 	 */
-	public static function check_table($table)
+	public static function check_table($table, $db = null)
 	{
-		return static::table_maintenance('CHECK TABLE', $table);
+		return static::table_maintenance('CHECK TABLE', $table, $db);
 	}
 
 	/**
@@ -448,9 +527,9 @@ class DBUtil
 	 * @param     string    $table    the table name
 	 * @return    bool      whether the table has been optimized
 	 */
-	public static function optimize_table($table)
+	public static function optimize_table($table, $db = null)
 	{
-		return static::table_maintenance('OPTIMIZE TABLE', $table);
+		return static::table_maintenance('OPTIMIZE TABLE', $table, $db);
 	}
 
 	/**
@@ -459,9 +538,9 @@ class DBUtil
 	 * @param     string    $table    the table name
 	 * @return    bool      whether the table has been repaired
 	 */
-	public static function repair_table($table)
+	public static function repair_table($table, $db = null)
 	{
-		return static::table_maintenance('REPAIR TABLE', $table);
+		return static::table_maintenance('REPAIR TABLE', $table, $db);
 	}
 
 	/**
@@ -470,11 +549,11 @@ class DBUtil
 	 * @param   string  $table  Table name
 	 * @return  bool
 	 */
-	public static function table_exists($table)
+	public static function table_exists($table, $db = null)
 	{
 		try
 		{
-			\DB::select()->from($table)->limit(1)->execute();
+			\DB::select()->from($table)->limit(1)->execute($db ? $db : static::$connection);
 			return true;
 		}
 		catch (\Database_Exception $e)
@@ -490,7 +569,7 @@ class DBUtil
 	 * @param   string|array   $columns  columns to check
 	 * @return  bool
 	 */
-	public static function field_exists($table, $columns)
+	public static function field_exists($table, $columns, $db = null)
 	{
 		if ( ! is_array($columns))
 		{
@@ -499,7 +578,7 @@ class DBUtil
 
 		try
 		{
-			\DB::select_array($columns)->from($table)->limit(1)->execute();
+			\DB::select_array($columns)->from($table)->limit(1)->execute($db ? $db : static::$connection);
 			return true;
 		}
 		catch (\Database_Exception $e)
@@ -515,9 +594,9 @@ class DBUtil
 	 * @param     string    $table    the table name
 	 * @return    bool      whether the operation has succeeded
 	 */
-	protected static function table_maintenance($operation, $table)
+	protected static function table_maintenance($operation, $table, $db = null)
 	{
-		$result = \DB::query($operation.' '.\DB::quote_identifier(\DB::table_prefix($table)), \DB::SELECT)->execute();
+		$result = \DB::query($operation.' '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection), \DB::SELECT)->execute($db ? $db : static::$connection);
 		$type = $result->get('Msg_type');
 		$message = $result->get('Msg_text');
 		$table = $result->get('Table');

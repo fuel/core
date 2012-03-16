@@ -174,7 +174,7 @@ CSS
 		var container = document.getElementById('pqp-container');
 		if (container.style.position == "inherit")
 		{
-			container.style.position="absolute";
+			container.style.position="";
 		}
 		else
 		{
@@ -241,7 +241,7 @@ CSS
 </script>
 JAVASCRIPT;
 
-	$return_output .='<div id="pqp-container" class="pQp" style="display:none;position:inherit;">';
+$return_output .='<div style="clear:both;"></div><div id="pqp-container" class="pQp" style="display:none;position:inherit;">';
 
 $logCount = count($output['logs']['console']);
 $fileCount = count($output['files']);
@@ -589,7 +589,7 @@ $return_output .=<<<FOOTER
 	</table>
 FOOTER;
 
-	$return_output .='</div></div>';
+	$return_output .='</div></div></div>';
 
 	return $return_output;
 }

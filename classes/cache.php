@@ -13,9 +13,6 @@
 namespace Fuel\Core;
 
 
-// Exception thrown when the Cache wasn't found
-class CacheNotFoundException extends \OutOfBoundsException {}
-
 // Exception thrown when the Cache was found but expired (auto deleted)
 class CacheExpiredException extends \CacheNotFoundException {}
 

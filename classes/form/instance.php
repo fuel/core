@@ -280,10 +280,11 @@ class Form_Instance
 	 *
 	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
 	 * @param   string
+	 * @param   mixed         either attributes (array) or bool/string to set checked status
 	 * @param   array
 	 * @return  string
 	 */
-	public function radio($field, $value = null, array $attributes = array())
+	public function radio($field, $value = null, $checked = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -291,8 +292,13 @@ class Form_Instance
 		}
 		else
 		{
+			is_array($checked) and $attributes = $checked;
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
+			if ( ! is_array($checked))
+			{
+				$attributes['checked'] = is_bool($checked) ? $checked : $value == $checked;
+			}
 		}
 		$attributes['type'] = 'radio';
 
@@ -304,10 +310,11 @@ class Form_Instance
 	 *
 	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
 	 * @param   string
+	 * @param   mixed         either attributes (array) or bool/string to set checked status
 	 * @param   array
 	 * @return  string
 	 */
-	public function checkbox($field, $value = null, array $attributes = array())
+	public function checkbox($field, $value = null, $checked = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -315,8 +322,25 @@ class Form_Instance
 		}
 		else
 		{
+			is_array($checked) and $attributes = $checked;
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
+
+			# Added for 1.2 to allow checked true/false. in 3rd argument, used to be attributes
+			if ( ! is_array($checked))
+			{
+				// If it's true, then go for it
+				if (is_bool($checked) and $checked === true)
+				{
+					$attributes['checked'] = 'checked';
+				}
+
+				// Otherwise, if the string/number/whatever matches then do it
+				elseif (is_scalar($checked) and $checked == $value)
+				{
+					$attributes['checked'] = 'checked';
+				}
+			}
 		}
 		$attributes['type'] = 'checkbox';
 

@@ -154,7 +154,7 @@ class Asset_Instance
 			foreach ($type as $key => $folder)
 			{
 				is_numeric($key) and $key = $folder;
-				if (($found = array_search(str_replace('../', '', rtrim($path,'/').$folder.'/'), $this->_asset_paths[$key])) !== false)
+				if (($found = array_search(str_replace('../', '', rtrim($path,'/').'/'.rtrim($folder, '/').'/'), $this->_asset_paths[$key])) !== false)
 				{
 					unset($this->_asset_paths[$key][$found]);
 				}

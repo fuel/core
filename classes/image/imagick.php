@@ -74,7 +74,7 @@ class Image_Imagick extends \Image_Driver
 		extract(parent::_watermark($filename, $position, $padding));
 		$wmimage = new \Imagick();
 		$wmimage->readImage($filename);
-		$wmimage->setImageOpacity($this->config['watermark_alpha'] / 100);
+		$wmimage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $this->config['watermark_alpha'] / 100, \Imagick::CHANNEL_ALPHA);
 		$this->imagick->compositeImage($wmimage, \Imagick::COMPOSITE_DEFAULT, $x, $y);
 	}
 
