@@ -388,7 +388,8 @@ class Fieldset_Field
 		// Add IDs when auto-id is on
 		if ($form->get_config('auto_id', false) === true and $this->get_attribute('id') == '')
 		{
-			$auto_id = str_replace(array('[', ']'), array('-', ''), $this->name);
+			$auto_id = $form->get_config('auto_id_prefix', '')
+				.str_replace(array('[', ']'), array('-', ''), $this->name);
 			$this->set_attribute('id', $auto_id);
 		}
 
@@ -475,8 +476,8 @@ class Fieldset_Field
 		$form = $this->fieldset()->form();
 
 		$required_mark = $this->get_attribute('required', null) ? $form->get_config('required_mark', null) : null;
-		$label = $this->label ? $form->label($this->label, $this->get_attribute('id', null)) : '';
-		$error_template = $form->get_config('error_template', "");
+		$label = $this->label ? $form->label($this->label, null, array('for' => $this->get_attribute('id', null))) : '';
+		$error_template = $form->get_config('error_template', '');
 		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
 		$error_class = $this->error() ? $form->get_config('error_class') : '';
 		$help_text = ($help_text = $this->get_attribute('help_text', '')) != '' ? str_replace('{help_text}', $help_text, $form->get_config('help_text', '')) : '';
