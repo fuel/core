@@ -50,6 +50,11 @@ class Fieldset_Field
 	protected $value;
 
 	/**
+	 * @var  string  Description text to show with the field
+	 */
+	protected $description = '';
+
+	/**
 	 * @var  array  Rules for validation
 	 */
 	protected $rules = array();
@@ -183,6 +188,19 @@ class Fieldset_Field
 
 		$this->value = $value;
 		$this->set_attribute('value', $value);
+
+		return $this;
+	}
+
+	/**
+	 * Change the field description
+	 *
+	 * @param   string
+	 * @return  Fieldset_Field  this, to allow chaining
+	 */
+	public function set_description($description)
+	{
+		$this->description = $description;
 
 		return $this;
 	}
@@ -480,7 +498,6 @@ class Fieldset_Field
 		$error_template = $form->get_config('error_template', '');
 		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
 		$error_class = $this->error() ? $form->get_config('error_class') : '';
-		$help_text = ($help_text = $this->get_attribute('help_text', '')) != '' ? str_replace('{help_text}', $help_text, $form->get_config('help_text', '')) : '';
 
 		if (is_array($build_field))
 		{
@@ -498,7 +515,7 @@ class Fieldset_Field
 				}
 
 				$template = str_replace($match[0], '{fields}', $template);
-				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{help_text}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $help_text), $template);
+				$template = str_replace(array('{group_label}', '{required}', '{fields}', '{error_msg}', '{error_class}', '{description}'), array($label, $required_mark, $build_fields, $error_msg, $error_class, $this->description), $template);
 
 				return $template;
 			}
@@ -507,9 +524,9 @@ class Fieldset_Field
 			$build_field = implode(' ', $build_field);
 		}
 
-		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {help_text} {error_msg}</td>\n\t\t</tr>\n");
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{help_text}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class, $help_text),
+		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n");
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}'),
+			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description),
 			$template);
 		return $template;
 	}
