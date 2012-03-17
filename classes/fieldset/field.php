@@ -75,6 +75,11 @@ class Fieldset_Field
 	protected $template;
 
 	/**
+	 * @var  array  overwrites for default error messages
+	 */
+	protected $error_messages = array();
+
+	/**
 	 * Constructor
 	 *
 	 * @param  string
@@ -200,7 +205,7 @@ class Fieldset_Field
 	 */
 	public function set_description($description)
 	{
-		$this->description = $description;
+		$this->description = strval($description);
 
 		return $this;
 	}
@@ -216,6 +221,41 @@ class Fieldset_Field
 		$this->template = $template;
 
 		return $this;
+	}
+
+	/**
+	 * Overwrite a default error message
+	 *
+	 * @param   string  $rule
+	 * @param   string  $msg
+	 * @return  Fieldset_Field
+	 */
+	public function set_error_message($rule, $msg)
+	{
+		empty($rule) and $rule = 0;
+		$this->error_messages[$rule] = strval($msg);
+
+		return $this;
+	}
+
+	/**
+	 * Check if a rule has an error message overwrite
+	 *
+	 * @param   string  $rule
+	 * @return  null|string
+	 */
+	public function get_error_message($rule)
+	{
+		if (isset($this->error_messages[$rule]))
+		{
+			return $this->error_messages[$rule];
+		}
+		elseif (isset($this->error_messages[0]))
+		{
+			return $this->error_messages[0];
+		}
+
+		return null;
 	}
 
 	/**
