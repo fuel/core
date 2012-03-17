@@ -113,12 +113,15 @@ class Redis
 				}
 				$read = 0;
 				$size = substr($reply, 1);
-				do
+				if ($size > 0)
 				{
-					$block_size = ($size - $read) > 1024 ? 1024 : ($size - $read);
-					$response .= fread($this->connection, $block_size);
-					$read += $block_size;
-				} while ($read < $size);
+					do
+					{
+						$block_size = ($size - $read) > 1024 ? 1024 : ($size - $read);
+						$response .= fread($this->connection, $block_size);
+						$read += $block_size;
+					} while ($read < $size);
+				}
 				fread($this->connection, 2);
 			break;
 
