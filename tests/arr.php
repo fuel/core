@@ -495,7 +495,11 @@ class Tests_Arr extends TestCase
 	public function test_sort_empty()
 	{
 		$expected = array();
+<<<<<<< HEAD
 		$output = Arr::sort(array(), 'test', 'test');
+=======
+		$output = Arr::Sort(array(), 'test', 'test');
+>>>>>>> 85988a20a4cdc8acfaa251be68aac253939f0aed
 		$this->assertEquals($expected, $output);
 	}
 
