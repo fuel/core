@@ -551,7 +551,7 @@ class File
 	{
 		$path = rtrim(static::instance($area)->get_path($path), '\\/');
 
-		if ( ! is_file($path))
+		if ( ! is_file($path) and ! is_link($path))
 		{
 			throw new \InvalidPathException('Cannot delete file: given path "'.$path.'" is not a file.');
 		}
