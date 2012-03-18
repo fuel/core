@@ -46,6 +46,11 @@ class Database_MySQLi_Connection extends \Database_Connection
 	protected $_in_transaction = false;
 
 	/**
+	 * @var  bool  Allows nested transactions
+	 */
+	protected $_transaction_level = 0;
+
+	/**
 	 * @var  string  Which kind of DB is used
 	 */
 	public $_db_type = 'mysql';
@@ -422,25 +427,62 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 	public function start_transaction()
 	{
-		$this->query(0, 'SET AUTOCOMMIT=0', false);
-		$this->query(0, 'START TRANSACTION', false);
+		if ($this->_transaction_level>0)
+		{
+			//error is never fired
+			$this->query(0, "SAVEPOINT LEVEL{$this->_transaction_level}", false);
+		}
+		else
+		{
+			//error is never fired
+			$this->query(0, 'SET AUTOCOMMIT=0', false);
+			$this->query(0, 'START TRANSACTION', false);
+		}
 		$this->_in_transaction = true;
-		return true;
+		$this->_transaction_level++;
+		return $this->_in_transaction;
 	}
 
 	public function commit_transaction()
 	{
-		$this->query(0, 'COMMIT', false);
-		$this->query(0, 'SET AUTOCOMMIT=1', false);
-		$this->_in_transaction = false;
+		$this->_transaction_level--;
+		if ($this->_transaction_level!=0)
+		{
+			//fires an exception if such savepoint doesn't exist
+			$this->exec("RELEASE SAVEPOINT LEVEL{$this->_transaction_level}");
+		}
+		else
+		{
+			$this->_in_transaction = false;
+			//when this method is called without start_transaction before that
+			//_transaction_level is negative
+			$this->_transaction_level = 0;
+			//fire no error if called before start_transaction was called
+			$this->query(0, 'COMMIT', false);
+			$this->query(0, 'SET AUTOCOMMIT=1', false);
+		}
+
 		return true;
 	}
 
 	public function rollback_transaction()
 	{
-		$this->query(0, 'ROLLBACK', false);
-		$this->query(0, 'SET AUTOCOMMIT=1', false);
-		$this->_in_transaction = false;
+		$this->_transaction_level--;
+
+		if ($this->_transaction_level!=0)
+		{
+			$this->exec("ROLLBACK TO SAVEPOINT LEVEL{$this->_transaction_level}");
+		}
+		else
+		{
+			$this->_in_transaction = false;
+			//when this method is called without start_transaction before that
+			//_transaction_level is negative
+			$this->_transaction_level = 0;
+			//fires no error if called before start_transaction was called
+			$this->query(0, 'ROLLBACK', false);
+			$this->query(0, 'SET AUTOCOMMIT=1', false);
+		}
 		return true;
 	}
 

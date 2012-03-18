@@ -22,6 +22,16 @@ class DB
 	const UPDATE =  3;
 	const DELETE =  4;
 
+	/**
+	 * Array describing workaround mechanisms for certain type of non-globally supported actions across db types
+	 *
+	 * @var array
+	 */
+	public static $workarounds = array(
+		'nested_transactions' => array(
+			'savepoint' => array('mysql', 'pgsql')
+		)
+	);
 	public static $query_count = 0;
 
 
