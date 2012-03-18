@@ -84,12 +84,16 @@ class Validation_Error extends \Exception
 		$open   = empty($open)  ? \Config::get('validation.open_single_error', '')  : $open;
 		$close  = empty($close) ? \Config::get('validation.close_single_error', '') : $close;
 
-		if ($msg === false)
+		if ($msg === false and ! ($msg = $this->field->get_error_message($this->rule)))
 		{
-			$msg = $this->field->fieldset()->validation()->get_message($this->rule);
-			$msg = $msg === false
-				? \Lang::get('validation.'.$this->rule) ?: \Lang::get('validation.'.\Arr::get(explode(':', $this->rule), 0))
-				: $msg;
+			if (is_null($msg))
+			{
+				$msg = $this->field->fieldset()->validation()->get_message($this->rule);
+			}
+			if ($msg === false)
+			{
+				$msg = \Lang::get('validation.'.$this->rule) ?: \Lang::get('validation.'.\Arr::get(explode(':', $this->rule), 0));
+			}
 		}
 		if ($msg == false)
 		{
