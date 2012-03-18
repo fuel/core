@@ -304,6 +304,48 @@ class Arr
 	}
 
 	/**
+	 * Reverse a flattened array in its original form.
+	 *
+	 * @param   array   $array  flattened array
+	 * @param   string  $glue   glue used in flattening
+	 * @return  array   the unflattened array
+	 */
+	public static function reverse_flatten($array, $glue = ':')
+	{
+		$return = array();
+
+		foreach ($array as $key => $value)
+		{
+			if (stripos($key, $glue) !== false)
+			{
+				$keys = explode($glue, $key);
+				$temp =& $return;
+				while (count($keys) > 1)
+				{
+					$key = array_shift($keys);
+					$key = is_numeric($key) ? (int) $key : $key;
+					if ( ! isset($temp[$key]) or ! is_array($temp[$key]))
+					{
+						$temp[$key] = array();
+					}
+					$temp =& $temp[$key];
+				}
+
+				$key = array_shift($keys);
+				$key = is_numeric($key) ? (int) $key : $key;
+				$temp[$key] = $value;
+			}
+			else
+			{
+				$key = is_numeric($key) ? (int) $key : $key;
+				$return[$key] = $value;
+			}
+		}
+
+		return $return;
+	}
+
+	/**
 	 * Filters an array on prefixed associative keys.
 	 *
 	 * @param   array   the array to filter.
@@ -316,9 +358,9 @@ class Arr
 		$return = array();
 		foreach ($array as $key => $val)
 		{
-			if(preg_match('/^'.$prefix.'/', $key))
+			if (preg_match('/^'.$prefix.'/', $key))
 			{
-				if($remove_prefix === true)
+				if ($remove_prefix === true)
 				{
 					$key = preg_replace('/^'.$prefix.'/','',$key);
 				}
