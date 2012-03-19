@@ -138,7 +138,7 @@ class Migrate
 		// make sure the called name exists
 		if ( ! method_exists(get_called_class(), $name))
 		{
-			throw new \FuelException('Called method Migrate::'.$name.'() does not exist.');
+			return static::help();
 		}
 
 		// run app (default) migrations if default is true
@@ -167,62 +167,56 @@ class Migrate
 	 * @param string	type (app, module or package)
 	 * @param string	direction of migration (up or down)
 	 */
-	private static function _run($name, $type, $direction = 'up')
+	private static function _run($name, $type)
 	{
-		$current = \Config::get('migrations.version.'.$type.'.'.$name, array());
-
 		// -v or --version
-		$version = \Cli::option('v', \Cli::option('version'));
+		$version = \Cli::option('v', \Cli::option('version', ''));
 
 		// version is used as a flag, so show it
 		if ($version === true)
 		{
 			\Cli::write('Currently installed migrations for '.$type.':'.$name.':', 'green');
-			foreach ($current as $version)
+
+			foreach (\Config::get('migrations.version.'.$type.'.'.$name, array()) as $version)
 			{
 				\Cli::write('- '.$version);
 			}
 			return;
 		}
 
-		if (is_numeric($version) and $version >= 0)
+		// version contains a timestamp of sorts
+		elseif ($version !== '')
 		{
-			// specific timestamp number
-			$migrations = \Migrate::version($version, $name, $type, $direction);
+			// if version has a value, make sure only 1 item was passed
+			if (static::$default + static::$module_count + static::$package_count > 1)
+			{
+				\Cli::write('Migration: version only excepts 1 item.');
+				return;
+			}
+			$migrations = \Migrate::version($version, $name, $type);
 		}
+
+		// migrate to the latest version
 		else
 		{
-			// just go to the latest
 			$migrations = \Migrate::latest($name, $type);
 		}
 
+		// any migrations executed?
 		if ($migrations)
 		{
-			if ($direction == 'up')
-			{
-				\Cli::write('Newly installed migrations for '.$type.':'.$name.':', 'green');
-			}
-			else
-			{
-				\Cli::write('Migrations reverted for '.$type.':'.$name.':', 'green');
-			}
+			\Cli::write('Executed migrations for '.$type.':'.$name.':', 'green');
+
 			foreach ($migrations as $migration)
 			{
-				\Cli::write('- '.$migration, 'green');
+				\Cli::write($migration);
 			}
 		}
 		else
 		{
-			if (is_numeric($version) and $version >= 0)
+			if ($version !== '')
 			{
-				if ($direction == 'up')
-				{
-					\Cli::write('No new migrations were found for '.$type.':'.$name.' before version '.$version.'.');
-				}
-				else
-				{
-					\Cli::write('No migrations were reverted for '.$type.':'.$name.' after version '.$version.'.');
-				}
+				\Cli::write('No migrations were found for '.$type.':'.$name.'.');
 			}
 			else
 			{
@@ -239,6 +233,12 @@ class Migrate
 	 */
 	private static function _current($name, $type)
 	{
+		// -v or --version
+		if (\Cli::option('v', \Cli::option('version', '')) !== '')
+		{
+			\Cli::write('You can not define a version when using the "current" command.', 'red');
+		}
+
 		$migrations = \Migrate::current($name, $type);
 
 		if ($migrations)
@@ -246,13 +246,13 @@ class Migrate
 			\Cli::write('Newly installed migrations for '.$type.':'.$name.':', 'green');
 			foreach ($migrations as $migration)
 			{
-				\Cli::write('- '.$migration, 'green');
+				\Cli::write('- '.$migration);
 			}
 		}
 		else
 		{
 			// migration is already on current version
-			\Cli::write('Already on current migration version for '.$type.':'.$name.'.');
+			\Cli::write('Already on the current migration version for '.$type.':'.$name.'.');
 		}
 	}
 
@@ -265,14 +265,26 @@ class Migrate
 	private static function _up($name, $type)
 	{
 		// -v or --version
-		$version = \Cli::option('v', \Cli::option('version'));
-
-		if (is_null($version))
+		if (\Cli::option('v', \Cli::option('version', '')) !== '')
 		{
-			\Cli::write('As of version 1.2, "up" requires a version to migrate up to.', 'red');
+			\Cli::write('You can not define a version when using the "up" command.', 'red');
 		}
 
-		return static::_run($name, $type);
+		$migrations = \Migrate::up($name, $type);
+
+		if ($migrations)
+		{
+			\Cli::write('Newly installed migrations for '.$type.':'.$name.':', 'green');
+			foreach ($migrations as $migration)
+			{
+				\Cli::write('- '.$migration);
+			}
+		}
+		else
+		{
+			// there is no 'up'...
+			\Cli::write('You are already on the latest migration version for '.$type.':'.$name.'.');
+		}
 	}
 
 	/**
@@ -284,14 +296,26 @@ class Migrate
 	private static function _down($name, $type)
 	{
 		// -v or --version
-		$version = \Cli::option('v', \Cli::option('version'));
-
-		if (is_null($version))
+		if (\Cli::option('v', \Cli::option('version', '')) !== '')
 		{
-			\Cli::write('As of version 1.2, "down" requires a version to migrate down to.', 'red');
+			\Cli::write('You can not define a version when using the "up" command.', 'red');
 		}
 
-		return static::_run($name, $type, 'down');
+		$migrations = \Migrate::down($name, $type);
+
+		if ($migrations)
+		{
+			\Cli::write('Reverted migrations for '.$type.':'.$name.':', 'green');
+			foreach ($migrations as $migration)
+			{
+				\Cli::write('- '.$migration);
+			}
+		}
+		else
+		{
+			// there is no 'down'...
+			\Cli::write('You are already on the first migration for '.$type.':'.$name.'.');
+		}
 	}
 
 	/**
@@ -301,30 +325,38 @@ class Migrate
 	{
 		echo <<<HELP
 Usage:
-    php oil refine migrate [--version=X]
+    php oil refine migrate[:command] [--version=X]
+
+Fuel commands:
+    help    shows this text
+    current migrates to the version defined in the migration configuration file
+    up      migrate up to the next version
+    down    migrate down to the previous version
+    run     run all migrations (default)
 
 Fuel options:
-    -v, [--version]  # Migrate to a specific version timestamp
+    -v, [--version]  # Migrate to a specific version ( only 1 item at a time)
 
     # The following disable default migrations unless you add --default to the command
-    --default # re-enables default migration
-    --modules -m # Migrates all modules
-    --modules=item1,item2 -m=item1,item2 # Migrates specific modules
-    --packages -p # Migrates all packages
-    --packages=item1,item2 -p=item1,item2 # Migrates specific modules
-    --all # shortcut for --modules --packages --default
+    --default   # re-enables default migration
+    --modules -m   # Migrates all modules
+    --modules=item1,item2 -m=item1,item2   # Migrates specific modules
+    --packages -p   # Migrates all packages
+    --packages=item1,item2 -p=item1,item2   # Migrates specific modules
+    --all   # shortcut for --modules --packages --default
 
 Description:
-    The migrate task can run migrations. You can migrate up or down to a specific timestamp,
-    and select exactly what part of the application your want to have migrated.
+    The migrate task can run migrations. You can go up, down or by default go to the current migration marked in the config file.
 
 Examples:
     php oil r migrate
     php oil r migrate:current
-    php oil r migrate --version=1331553600
+    php oil r migrate:up
+    php oil r migrate:down
+    php oil r migrate --version=201203171206
     php oil r migrate --modules --packages --default
-    php oil r migrate --modules=module1,module2 --packages=package1,package2
-    php oil r migrate --module=module1 -v=1331553600
+    php oil r migrate:up --modules=module1,module2 --packages=package1
+    php oil r migrate --module=module1 -v=3
     php oil r migrate --all
 
 HELP;
