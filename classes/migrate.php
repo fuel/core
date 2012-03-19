@@ -70,6 +70,7 @@ class Migrate
 			->from(static::$table)
 			->order_by('type', 'ASC')
 			->order_by('name', 'ASC')
+			->order_by('migration', 'ASC')
 			->execute()
 			->as_array();
 
@@ -410,7 +411,10 @@ class Migrate
 			}
 		}
 
-		return $migrations;
+		// make sure the result is sorted properly with all version types
+		uksort($migrations, 'strnatcasecmp');
+
+		return $sorted_migrations;
 	}
 
 	/**
