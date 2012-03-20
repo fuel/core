@@ -181,22 +181,23 @@ class Arr
 	/**
 	 * Converts a multi-dimensional associative array into an array of key => values with the provided field names
 	 *
-	 * @param   array   the array to convert
-	 * @param   string	the field name of the key field
-	 * @param   string	the field name of the value field
+	 * @param   array   $assoc      the array to convert
+	 * @param   string  $key_field  the field name of the key field
+	 * @param   string  $val_field  the field name of the value field
 	 * @return  array
+	 * @throws  \InvalidArgumentException
 	 */
-	public static function assoc_to_keyval($assoc = null, $key_field = null, $val_field = null)
+	public static function assoc_to_keyval($assoc, $key_field, $val_field)
 	{
-		if(empty($assoc) OR empty($key_field) OR empty($val_field))
+		if ( ! is_array($assoc) or $assoc instanceof \Iterator)
 		{
-			return null;
+			throw new \InvalidArgumentException('The first parameter must be an array.');
 		}
 
 		$output = array();
-		foreach($assoc as $row)
+		foreach ($assoc as $row)
 		{
-			if(isset($row[$key_field]) AND isset($row[$val_field]))
+			if (isset($row[$key_field]) and isset($row[$val_field]))
 			{
 				$output[$row[$key_field]] = $row[$val_field];
 			}
@@ -215,12 +216,13 @@ class Arr
 	 *
 	 * @param   string      $arr  the array to change
 	 * @return  array|null  the new array or null
+	 * @throws  \BadMethodCallException
 	 */
 	public static function to_assoc($arr)
 	{
 		if (($count = count($arr)) % 2 > 0)
 		{
-			return null;
+			throw new \BadMethodCallException('Number of values in to_assoc must be even.');
 		}
 		$keys = $vals = array();
 
@@ -302,6 +304,48 @@ class Arr
 	}
 
 	/**
+	 * Reverse a flattened array in its original form.
+	 *
+	 * @param   array   $array  flattened array
+	 * @param   string  $glue   glue used in flattening
+	 * @return  array   the unflattened array
+	 */
+	public static function reverse_flatten($array, $glue = ':')
+	{
+		$return = array();
+
+		foreach ($array as $key => $value)
+		{
+			if (stripos($key, $glue) !== false)
+			{
+				$keys = explode($glue, $key);
+				$temp =& $return;
+				while (count($keys) > 1)
+				{
+					$key = array_shift($keys);
+					$key = is_numeric($key) ? (int) $key : $key;
+					if ( ! isset($temp[$key]) or ! is_array($temp[$key]))
+					{
+						$temp[$key] = array();
+					}
+					$temp =& $temp[$key];
+				}
+
+				$key = array_shift($keys);
+				$key = is_numeric($key) ? (int) $key : $key;
+				$temp[$key] = $value;
+			}
+			else
+			{
+				$key = is_numeric($key) ? (int) $key : $key;
+				$return[$key] = $value;
+			}
+		}
+
+		return $return;
+	}
+
+	/**
 	 * Filters an array on prefixed associative keys.
 	 *
 	 * @param   array   the array to filter.
@@ -314,9 +358,9 @@ class Arr
 		$return = array();
 		foreach ($array as $key => $val)
 		{
-			if(preg_match('/^'.$prefix.'/', $key))
+			if (preg_match('/^'.$prefix.'/', $key))
 			{
-				if($remove_prefix === true)
+				if ($remove_prefix === true)
 				{
 					$key = preg_replace('/^'.$prefix.'/','',$key);
 				}

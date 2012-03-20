@@ -284,7 +284,7 @@ class Form_Instance
 	 * @param   array
 	 * @return  string
 	 */
-	public static function radio($field, $value = null, $checked = null, array $attributes = array())
+	public function radio($field, $value = null, $checked = null, array $attributes = array())
 	{
 		if (is_array($field))
 		{
@@ -582,7 +582,7 @@ class Form_Instance
 			isset($attributes['id']) and $id = $attributes['id'];
 		}
 
-		if (empty($attributes['for']) && $this->get_config('auto_id', false) == true)
+		if (empty($attributes['for']) and $this->get_config('auto_id', false) == true)
 		{
 			$attributes['for'] = $this->get_config('auto_id_prefix', 'form_').$id;
 		}

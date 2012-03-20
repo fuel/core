@@ -695,7 +695,13 @@ class Validation
 	 */
 	public function _validation_match_field($val, $field)
 	{
-		return $this->_empty($val) || $this->input($field) === $val;
+		if ( ! $this->_empty($val) and $this->input($field) !== $val)
+		{
+			$validating = $this->active_field();
+			throw new \Validation_Error($validating, $val, array('match_field' => array($field)), array($this->field($field)->label));
+		}
+
+		return true;
 	}
 
 	/**
