@@ -248,7 +248,7 @@ class Migrate
 		foreach ($migrations as $ver => $migration)
 		{
 			logger(Fuel::L_INFO, 'Migrating to version: '.$ver);
-			call_user_func(array(new $class, $method));
+			call_user_func(array(new $migration['class'], $method));
 			$file = basename($migration['path']);
 			$method == 'up' ? static::write_install($name, $type, $file) : static::write_revert($name, $type, $file);
 			$done[] = $file;
