@@ -104,14 +104,18 @@ class Theme
 		'assets_folder' => 'themes',
 		'view_ext' => '.html',
 		'require_info_file' => false,
-		'info_file_name' => 'theme.info',
-		'info_file_type' => 'php',
+		'info_file_name' => 'theme.info.php',
 	);
 
 	/**
 	 * @var  array  $partials	Storage for defined template partials
 	 */
 	protected $partials = array();
+
+	/**
+	 * @var  array  $chrome	Storage for defined partial chrome
+	 */
+	protected $chrome = array();
 
 	/**
 	 * Sets up the theme object.  If a config is given, it will not use the config
@@ -270,7 +274,7 @@ class Theme
 	 */
 	public function render()
 	{
-		// make sure the partial entry exists
+		// make sure the template to be rendered is defined
 		if (empty($this->template))
 		{
 			throw new \ThemeException('No valid template could be found. Use set_template() to define a page template.');
@@ -287,13 +291,16 @@ class Theme
 			}
 
 			// store the rendered output
-			$this->partials[$key] = $output;
-		}
-
-		// do we have a template view?
-		if (empty($this->template))
-		{
-			throw new \ThemeException('No valid template could be found. Use set_template() to define a page template.');
+			if ( ! empty($output) and array_key_exists($key, $this->chrome))
+			{
+				// encapsulate the partial in the chrome template
+				$this->partials[$key] = $this->chrome[$key]->set($this->chrome['var'], $output, false);
+			}
+			else
+			{
+				// store the partial output
+				$this->partials[$key] = $output;
+			}
 		}
 
 		// assign the partials to the template
@@ -361,6 +368,46 @@ class Theme
 	}
 
 	/**
+	 * Sets a chrome for a partial
+	 *
+	 * @param   string  				$section	Name of the partial section in the template
+	 * @param   string|View|ViewModel	$view   	chrome View, or name of the view
+	 * @param   string  				$var		Name of the variable in the chome that will output the partial
+	 *
+	 * @return  void
+	 */
+	public function set_chrome($section, $view, $var = 'content')
+	{
+		// make sure the chrome is a view
+		if (is_string($view))
+		{
+			$view = $this->view($view);
+		}
+
+		$this->chrome[$section] = array('var' => $var, 'view' => $view);
+	}
+
+	/**
+	 * Get a set chrome view
+	 *
+	 * @param   string  				$section	Name of the partial section in the template
+	 * @param   string|View|ViewModel	$view   	chrome View, or name of the view
+	 * @param   string  				$var		Name of the variable in the chome that will output the partial
+	 *
+	 * @return  void
+	 */
+	public function get_chrome($section)
+	{
+		// make sure the partial entry exists
+		if ( ! array_key_exists($section, $this->chrome))
+		{
+			throw new \ThemeException(sprintf('No chrome for a partial named "%s" can be found.', $section));
+		}
+
+		return $this->chrome[$section]['view'];
+	}
+
+	/**
 	 * Adds the given path to the theme search path.
 	 *
 	 * @param   string  $path  Path to add
@@ -380,39 +427,6 @@ class Theme
 	public function add_paths(array $paths)
 	{
 		array_walk($paths, array($this, 'add_path'));
-	}
-
-	/**
-	 * Gets an option for the active theme.
-	 *
-	 * @param   string  $option   Option to get
-	 * @param   mixed   $default  Default value
-	 * @return  mixed
-	 */
-	public function option($option, $default = null)
-	{
-		if ( ! isset($this->active['info']['options'][$option]))
-		{
-			return $default;
-		}
-
-		return $this->active['info']['options'][$option];
-	}
-
-	/**
-	 * Sets an option for the active theme.
-	 *
-	 * NOTE: This does NOT update the theme.info file.
-	 *
-	 * @param   string  $option   Option to get
-	 * @param   mixed   $value    Value
-	 * @return  $this
-	 */
-	public function set_option($option, $value)
-	{
-		$this->active['info']['options'][$option] = $value;
-
-		return $this;
 	}
 
 	/**
@@ -456,16 +470,27 @@ class Theme
 	}
 
 	/**
+	 * This method is deprecated...use get_info() instead.
+	 *
+	 * @deprecated until 1.3
+	 */
+	public function info($var = null, $default = null, $theme = null)
+	{
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a get_info() instead.', __METHOD__);
+		return $this->get_info($var, $default, $theme);
+	}
+
+	/**
 	 * Get a value from the info array
 	 *
 	 * @return  mixed
 	 */
-	public function info($var = null, $default = null, $theme = null)
+	public function get_info($var = null, $default = null, $theme = null)
 	{
 		// if no theme is given
 		if ($theme === null)
 		{
-			// if no var to search is given return the entire info array
+			// if no var to search is given return the entire active info array
 			if ($var === null)
 			{
 				return $this->active['info'];
@@ -488,7 +513,7 @@ class Theme
 		else
 		{
 			// fetch the info from that theme
-			$info = $this->all_info($theme);
+			$info = $this->load_info($theme);
 
 			// and return the requested value
 			return $var === null ? $info : \Arr::get($info, $var, $default);
@@ -499,12 +524,43 @@ class Theme
 	}
 
 	/**
-	 * Reads in the theme.info file for the given (or active) theme.
+	 * Set a value in the info array
+	 *
+	 * @return  Theme
+	 */
+	public function set_info($var, $value = null, $type = 'active')
+	{
+		if ($type == 'active')
+		{
+			\Arr::set($this->active['info'], $var, $value);
+		}
+		elseif ($type == 'fallback')
+		{
+			\Arr::set($this->fallback['info'], $var, $value);
+		}
+
+		// return for chaining
+		return $this;
+	}
+
+	/**
+	 * This method is deprecated...use load_info() instead.
+	 *
+	 * @deprecated until 1.3
+	 */
+	public function all_info($theme = null)
+	{
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a load_info() instead.', __METHOD__);
+		return $this->load_info($theme);
+	}
+
+	/**
+	 * Load in the theme.info file for the given (or active) theme.
 	 *
 	 * @param   string  $theme  Name of the theme (null for active)
 	 * @return  array   Theme info array
 	 */
-	public function all_info($theme = null)
+	public function load_info($theme = null)
 	{
 		if ($theme === null)
 		{
@@ -543,30 +599,38 @@ class Theme
 			}
 		}
 
-		$type = strtolower($this->config['info_file_type']);
-		switch ($type)
+		return \Config::load($file, false);
+	}
+
+	/**
+	 * Save the theme.info file for the active (or fallback) theme.
+	 *
+	 * @param   string  $type  Name of the theme (null for active)
+	 * @return  array   Theme info array
+	 */
+	public function save_info($type = 'active')
+	{
+		if ($type == 'active')
 		{
-			case 'ini':
-				$info = parse_ini_file($file, true);
-			break;
-
-			case 'json':
-				$info = json_decode(file_get_contents($file), true);
-			break;
-
-			case 'yaml':
-				$info = \Format::forge(file_get_contents($file), 'yaml')->to_array();
-			break;
-
-			case 'php':
-				$info = include($file);
-			break;
-
-			default:
-				throw new \ThemeException(sprintf('Invalid info file type "%s".', $type));
+			$info = $this->active['info'];
+			$path = $this->active['path'];
+		}
+		elseif ($type == 'fallback')
+		{
+			$info = $this->fallback['info'];
+			$path = $this->fallback['path'];
+		}
+		else
+		{
+			throw new \ThemeException(sprintf('Unknown theme type "%s".', $type));
 		}
 
-		return $info;
+		if ( ! $path)
+		{
+			throw new \ThemeException(sprintf('Could not find theme "%s".', $theme));
+		}
+
+		return \Config::save($file, $info);
 	}
 
 	/**
@@ -673,7 +737,7 @@ class Theme
 		// load the theme info file
 		if ( ! isset($theme['info']))
 		{
-			$theme['info'] = $this->all_info($theme);
+			$theme['info'] = $this->load_info($theme);
 		}
 
 		if ( ! isset($theme['asset_base']))
