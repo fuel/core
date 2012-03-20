@@ -135,7 +135,7 @@ class Input
 		if ( ! empty($uri_info['extension']))
 		{
 			static::$detected_ext = $uri_info['extension'];
-			$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
+			$uri =  ltrim($uri_info['dirname'], '\\/').'/'.$uri_info['filename'];
 		}
 
 		// Do some final clean up of the uri
