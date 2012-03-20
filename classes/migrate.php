@@ -414,7 +414,7 @@ class Migrate
 		// make sure the result is sorted properly with all version types
 		uksort($migrations, 'strnatcasecmp');
 
-		return $sorted_migrations;
+		return $migrations;
 	}
 
 	/**
