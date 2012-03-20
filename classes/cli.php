@@ -327,7 +327,7 @@ class Cli
 			else
 			{
 				static::write(static::$wait_msg);
-				static::read();
+				static::input();
 			}
 		}
 	}
