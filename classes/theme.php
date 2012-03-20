@@ -699,10 +699,6 @@ class Theme
 		{
 			$theme['asset_path'] = DOCROOT.$theme['asset_base'];
 		}
-		else
-		{
-			$theme['asset_path'] = false;
-		}
 
 		// always uses forward slashes (DS is a backslash on Windows)
 		$theme['asset_base'] = str_replace(DS, '/', $theme['asset_base']);
