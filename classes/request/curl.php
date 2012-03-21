@@ -39,18 +39,6 @@ class Request_Curl extends \Request_Driver
 	}
 
 	/**
-	 * Change the HTTP method
-	 *
-	 * @param   string  $method
-	 * @return  Request_Curl
-	 */
-	public function set_method($method)
-	{
-		$this->options[CURLOPT_CUSTOMREQUEST] = strtoupper($method);
-		return $this;
-	}
-
-	/**
 	 * Fetch the connection, create if necessary
 	 *
 	 * @return  \resource
@@ -137,10 +125,12 @@ class Request_Curl extends \Request_Driver
 		}
 
 		$additional_params and $this->params = \Arr::merge($this->params, $additional_params);
+		$this->method and $this->options[CURLOPT_CUSTOMREQUEST] = $this->method;
 
-		if ( ! empty($this->options[CURLOPT_CUSTOMREQUEST]))
+		if ( ! empty($this->method))
 		{
-			$this->{'method_'.strtolower($this->options[CURLOPT_CUSTOMREQUEST])}();
+			$this->options[CURLOPT_CUSTOMREQUEST] = $this->method;
+			$this->{'method_'.strtolower($this->method)}();
 		}
 		else
 		{

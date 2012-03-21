@@ -116,13 +116,14 @@ class Route
 	public function parse(\Request $request)
 	{
 		$uri = $request->uri->get();
+		$method = $request->get_method();
 
 		if ($uri === '' and $this->path === '_root_')
 		{
 			return $this->matched();
 		}
 
-		$result = $this->_parse_search($uri);
+		$result = $this->_parse_search($uri, null, $method);
 
 		if ($result)
 		{
@@ -175,9 +176,11 @@ class Route
 	 * Parses an actual route - extracted out of parse() to make it recursive.
 	 *
 	 * @param   string  The URI object
+	 * @param   object  route object
+	 * @param   string  request method
 	 * @return  array|boolean
 	 */
-	protected function _parse_search($uri, $route = null)
+	protected function _parse_search($uri, $route = null, $method = null)
 	{
 		if ($route === null)
 		{
@@ -190,10 +193,10 @@ class Route
 			{
 				$verb = $r[0];
 
-				if (\Input::method() == strtoupper($verb))
+				if ($method == strtoupper($verb))
 				{
 					$r[1]->search = $route->search;
-					$result = $route->_parse_search($uri, $r[1]);
+					$result = $route->_parse_search($uri, $r[1], $method);
 
 					if ($result)
 					{

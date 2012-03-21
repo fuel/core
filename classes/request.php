@@ -67,7 +67,7 @@ class Request
 	 *
 	 * @deprecated until 1.2
 	 */
-	public static function factory($uri = null, $route = true)
+	public static function factory($uri = null, $route = true, $method = null)
 	{
 		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
 		return static::forge($uri, $route);
@@ -84,9 +84,10 @@ class Request
 	 *
 	 * @param   string   The URI of the request
 	 * @param   mixed    Internal: whether to use the routes; external: driver type or array with settings (driver key must be set)
+	 * @param   string   request method
 	 * @return  Request  The new request object
 	 */
-	public static function forge($uri = null, $options = true)
+	public static function forge($uri = null, $options = true, $method = null)
 	{
 		is_bool($options) and $options = array('route' => $options);
 		is_string($options) and $options = array('driver' => $options);
@@ -94,10 +95,10 @@ class Request
 		if ( ! empty($options['driver']))
 		{
 			$class = \Inflector::words_to_upper('Request_'.$options['driver']);
-			return $class::forge($uri, $options);
+			return $class::forge($uri, $options, $method);
 		}
 
-		$request = new static($uri, isset($options['route']) ? $options['route'] : true);
+		$request = new static($uri, isset($options['route']) ? $options['route'] : true, $method);
 		if (static::$active)
 		{
 			$request->parent = static::$active;
@@ -212,6 +213,11 @@ class Request
 	public $route = null;
 
 	/**
+	 * @var  string  $method  request method
+	 */
+	protected $method = null;
+
+	/**
 	 * The current module
 	 *
 	 * @var  string
@@ -291,11 +297,13 @@ class Request
 	 *
 	 * @param   string  the uri string
 	 * @param   bool    whether or not to route the URI
+	 * @param   string  request method
 	 * @return  void
 	 */
-	public function __construct($uri, $route = true)
+	public function __construct($uri, $route = true, $method = null)
 	{
 		$this->uri = new \Uri($uri);
+		$this->method = $method;
 
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->uri.'"', __METHOD__);
 
@@ -490,6 +498,28 @@ class Request
 		}
 
 		return $this;
+	}
+
+	/**
+	 * Sets the request method.
+	 *
+	 * @param   string  $method  request method
+	 * @return  object  current instance
+	 */
+	public function set_method($method)
+	{
+		$this->method = strtoupper($method);
+		return $this;
+	}
+
+	/**
+	 * Returns the request method. Defaults to \Input::method().
+	 *
+	 * @return  string  request method
+	 */
+	public function get_method()
+	{
+		return $this->method ?: \Input::method();
 	}
 
 	/**

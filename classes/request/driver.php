@@ -14,9 +14,9 @@ abstract class Request_Driver
 	 * @param   array   $options
 	 * @return  Request_Driver
 	 */
-	public static function forge($resource, array $options = array())
+	public static function forge($resource, array $options = array(), $method = null)
 	{
-		return new static($resource, $options);
+		return new static($resource, $options, $method);
 	}
 
 	/**
@@ -65,6 +65,11 @@ abstract class Request_Driver
 	protected $auto_format = true;
 
 	/**
+	 * @var  string  $method  request method
+	 */
+	protected $method = null;
+
+	/**
 	 * @var  array  supported response formats
 	 */
 	protected static $supported_formats = array(
@@ -88,9 +93,10 @@ abstract class Request_Driver
 		'application/vnd.php.serialized' => 'serialize',
 	);
 
-	public function __construct($resource, array $options)
+	public function __construct($resource, array $options, $method = null)
 	{
 		$this->resource  = $resource;
+		$this->method    = $method;
 
 		foreach ($options as $key => $value)
 		{
@@ -102,6 +108,28 @@ abstract class Request_Driver
 
 		$this->default_options  = $this->options;
 		$this->default_params   = $this->params;
+	}
+
+	/**
+	 * Sets the request method.
+	 *
+	 * @param   string  $method  request method
+	 * @return  object  current instance
+	 */
+	public function set_method($method)
+	{
+		$this->method = strtoupper($method);
+		return $this;
+	}
+
+	/**
+	 * Returns the request method.
+	 *
+	 * @return  string  request method
+	 */
+	public function get_method()
+	{
+		return $this->method;
 	}
 
 	/**
