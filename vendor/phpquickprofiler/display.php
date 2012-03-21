@@ -32,13 +32,14 @@ function displayPqp($output) {
 .pQp .orange{color:#d28c00!important}
 .pQp .red{color:#b72f09!important}
 .pQp .yellow{color:#CDCF3A!important}
+.pQp .green2{color:#A4CD7A!important}
 .pQp .cyan{color:#3EC4D3!important}
 .pQp .pink{color:#FF7CAD!important}
 .pQp .flesh{color:#FFA46E!important}
-#pQp,#pqp-console,#pqp-speed,#pqp-queries,#pqp-memory,#pqp-files,#pqp-config,#pqp-session,#pqp-get,#pqp-post{display:none}
-.pQp .console,.pQp .speed,.pQp .queries,.pQp .memory,.pQp .files,.pQp .config,.pQp .session,.pQp .get,.pQp .post{display:block!important}
-.pQp .console #pqp-console,.pQp .speed #pqp-speed,.pQp .queries #pqp-queries,.pQp .memory #pqp-memory,.pQp .files #pqp-files,.pQp .config #pqp-config,.pQp .session #pqp-session,.pQp .get #pqp-get,.pQp .post #pqp-post{display:block}
-.console td.green,.speed td.blue,.queries td.purple,.memory td.orange,.files td.red,.config td.yellow,.session td.cyan,.get td.pink,.post td.flesh{background:#222!important;border-bottom:6px solid #fff!important;cursor:default!important}
+#pQp,#pqp-console,#pqp-speed,#pqp-queries,#pqp-memory,#pqp-files,#pqp-paths,#pqp-config,#pqp-session,#pqp-get,#pqp-post{display:none}
+.pQp .console,.pQp .speed,.pQp .queries,.pQp .memory,.pQp .files,.pQp .paths,.pQp .config,.pQp .session,.pQp .get,.pQp .post{display:block!important}
+.pQp .console #pqp-console,.pQp .speed #pqp-speed,.pQp .queries #pqp-queries,.pQp .memory #pqp-memory,.pQp .files #pqp-files,.pQp .paths #pqp-paths,.pQp .config #pqp-config,.pQp .session #pqp-session,.pQp .get #pqp-get,.pQp .post #pqp-post{display:block}
+.console td.green,.speed td.blue,.queries td.purple,.memory td.orange,.files td.red,.paths td.green2,.config td.yellow,.session td.cyan,.get td.pink,.post td.flesh{background:#222!important;border-bottom:6px solid #fff!important;cursor:default!important}
 .tallDetails #pQp .pqp-box{height:500px}
 .tallDetails #pQp .pqp-box h3{line-height:500px}
 .hideDetails #pQp .pqp-box{display:none!important}
@@ -140,6 +141,7 @@ CSS
 		removeClassName(pQp, 'queries');
 		removeClassName(pQp, 'memory');
 		removeClassName(pQp, 'files');
+		removeClassName(pQp, 'paths');
 		removeClassName(pQp, 'config');
 		removeClassName(pQp, 'session');
 		removeClassName(pQp, 'get');
@@ -245,6 +247,7 @@ $return_output .='<div style="clear:both;"></div><div id="pqp-container" class="
 
 $logCount = count($output['logs']['console']);
 $fileCount = count($output['files']);
+$pathCount = count($output['paths']);
 $memoryUsed = $output['memoryTotals']['used'];
 $queryCount = $output['queryTotals']['count'];
 $speedTotal = $output['speedTotals']['total'];
@@ -314,6 +317,10 @@ $output['postItems'] = $printarray(\Input::post(), 0, $class, $postCount);
 	<td class="red" onclick="changeTab('files');">
 		<var>{$fileCount} Files</var>
 		<h4>Included</h4>
+	</td>
+	<td class="green2" onclick="changeTab('paths');">
+		<var>{$pathCount} Paths</var>
+		<h4>Added</h4>
 	</td>
 	<td class="yellow" onclick="changeTab('config');">
 		<var>{$configCount} Config</var>
@@ -492,6 +499,28 @@ else {
 			$return_output .='<tr><td class="'.$class.'"><b>'.$file['size'].'</b> '.$file['name'].'</td></tr>';
 			if($class == '') $class = 'alt';
 			else $class = '';
+		}
+
+		$return_output .='</table></div>';
+}
+
+$return_output .='</div>';
+
+$return_output .='<div id="pqp-paths" class="pqp-box">';
+
+if($output['pathTotals']['count'] ==  0) {
+	$return_output .='<h3>This panel has no items.</h3>';
+}
+else {
+	$return_output .='<table class="side" cellspacing="0">
+		  	<tr><td><var>'.$output['pathTotals']['count'].'</var><h4>Total Paths</h4></td></tr>
+		 </table>
+		<div class="main"><table cellspacing="0">';
+
+		$class ='';
+		foreach($output['paths'] as $path) {
+			$return_output .='<tr><td class="'.$class.'">'.$path.'</td></tr>';
+			$class = ($class == '') ? 'alt' : '';
 		}
 
 		$return_output .='</table></div>';

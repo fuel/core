@@ -77,6 +77,33 @@ class PhpQuickProfiler {
 	}
 
 	/*-------------------------------------------
+	    AGGREGATE DATA ON THE PATHS ADDED
+	-------------------------------------------*/
+
+	public function gatherPathData() {
+		$paths = \Finder::instance()->paths();
+
+		$totals = array(
+			'count' => count($paths),
+		);
+/*
+		foreach($files as $key => $file) {
+			$size = filesize($file);
+			$fileList[] = array(
+					'name' => $file,
+					'size' => $this->getReadableFileSize($size)
+				);
+			$fileTotals['size'] += $size;
+			if($size > $fileTotals['largest']) $fileTotals['largest'] = $size;
+		}
+
+		$fileTotals['size'] = $this->getReadableFileSize($fileTotals['size']);
+		$fileTotals['largest'] = $this->getReadableFileSize($fileTotals['largest']); */
+		$this->output['paths'] = $paths;
+		$this->output['pathTotals'] = $totals;
+	}
+
+	/*-------------------------------------------
 	     MEMORY USAGE AND MEMORY AVAILABLE
 	-------------------------------------------*/
 
@@ -206,6 +233,7 @@ class PhpQuickProfiler {
 		$this->db = $db;
 		$this->gatherConsoleData();
 		$this->gatherFileData();
+		$this->gatherPathData();
 		$this->gatherMemoryData();
 		$this->gatherQueryData();
 		$this->gatherSpeedData();
