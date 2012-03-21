@@ -48,6 +48,18 @@ class PhpQuickProfiler {
 	}
 
 	/*-------------------------------------------
+	AGGREGATE DATA ON THE PATHS ADDED
+	-------------------------------------------*/
+
+	public function gatherPathData()
+	{
+		$this->output['paths'] = \Finder::instance()->paths();
+		$this->output['pathTotals'] = array(
+			'count' => count($this->output['paths']),
+		);
+	}
+
+	/*-------------------------------------------
 	    AGGREGATE DATA ON THE FILES INCLUDED
 	-------------------------------------------*/
 
@@ -205,6 +217,7 @@ class PhpQuickProfiler {
 	public function display($db = '') {
 		$this->db = $db;
 		$this->gatherConsoleData();
+		$this->gatherPathData();
 		$this->gatherFileData();
 		$this->gatherMemoryData();
 		$this->gatherQueryData();

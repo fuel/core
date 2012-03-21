@@ -476,7 +476,7 @@ $return_output .='</div>';
 
 $return_output .='<div id="pqp-files" class="pqp-box">';
 
-if($output['fileTotals']['count'] ==  0) {
+if($output['fileTotals']['count'] + $output['pathTotals']['count'] ==  0) {
 	$return_output .='<h3>This panel has no log items.</h3>';
 }
 else {
@@ -488,6 +488,13 @@ else {
 		<div class="main"><table cellspacing="0">';
 
 		$class ='';
+		$return_output .='<tr><td><strong style="font-size:120%;">Finder paths:</strong></td></tr>';
+		foreach($output['paths'] as $path) {
+			$return_output .='<tr><td class="'.$class.'">'.$path.'</td></tr>';
+			if($class == '') $class = 'alt';
+			else $class = '';
+		}
+		$return_output .='<tr><td><strong style="font-size:120%;">Loaded files:</strong></td></tr>';
 		foreach($output['files'] as $file) {
 			$return_output .='<tr><td class="'.$class.'"><b>'.$file['size'].'</b> '.$file['name'].'</td></tr>';
 			if($class == '') $class = 'alt';
