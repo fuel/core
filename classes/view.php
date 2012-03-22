@@ -264,9 +264,10 @@ class View
 	 *
 	 *     $data = $this->get_data();
 	 *
-	 * @return  array
+	 * @param   string  $scope  local/glocal/all
+	 * @return  array   view data
 	 */
-	protected function get_data()
+	protected function get_data($scope = 'all')
 	{
 		$clean_it = function ($data, $rules, $auto_filter)
 		{
@@ -283,12 +284,12 @@ class View
 
 		$data = array();
 
-		if ( ! empty($this->data))
+		if (in_array($scope, array('all', 'local')) and ! empty($this->data))
 		{
 			$data += $clean_it($this->data, $this->local_filter, $this->auto_filter);
 		}
 
-		if ( ! empty(static::$global_data))
+		if (in_array($scope, array('all', 'global')) and ! empty(static::$global_data))
 		{
 			$data += $clean_it(static::$global_data, static::$global_filter, $this->auto_filter);
 		}
