@@ -341,9 +341,9 @@ class Inflector
 	 * @param   string  separator
 	 * @return  string
 	 */
-	public static function words_to_upper($class, $separator = '_')
+	public static function words_to_upper($class, $sep = '_')
 	{
-		return str_replace(' ', $separator, ucwords(str_replace($separator, ' ', $class)));
+		return str_replace(' ', $sep, ucwords(str_replace($sep, ' ', $class)));
 	}
 
 	/**
