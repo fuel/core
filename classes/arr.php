@@ -92,22 +92,24 @@ class Arr
 				static::set($array, $k, $v);
 			}
 		}
-
-		$keys = explode('.', $key);
-
-		while (count($keys) > 1)
+		else
 		{
-			$key = array_shift($keys);
+			$keys = explode('.', $key);
 
-			if ( ! isset($array[$key]) or ! is_array($array[$key]))
+			while (count($keys) > 1)
 			{
-				$array[$key] = array();
+				$key = array_shift($keys);
+
+				if ( ! isset($array[$key]) or ! is_array($array[$key]))
+				{
+					$array[$key] = array();
+				}
+
+				$array =& $array[$key];
 			}
 
-			$array =& $array[$key];
+			$array[array_shift($keys)] = $value;
 		}
-
-		$array[array_shift($keys)] = $value;
 	}
 
 	/**
