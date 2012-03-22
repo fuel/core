@@ -85,7 +85,7 @@ class Lang
 	 * @param   string  key for the line
 	 * @param   array   array of params to str_replace
 	 * @param   mixed   default value to return
-	 * @return  bool|string  either the line or false when not found
+	 * @return  mixed   either the line or default when not found
 	 */
 	public static function get($line, array $params = array(), $default = null)
 	{
