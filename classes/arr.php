@@ -481,7 +481,7 @@ class Arr
 			throw new \InvalidArgumentException('Arr::sort() - $array must be an array.');
 		}
 
-		if( empty($array) )
+		if (empty($array))
 		{
 			return $array;
 		}

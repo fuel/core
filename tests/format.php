@@ -152,7 +152,8 @@ line 2","Value 3"',
 		$this->assertEquals(Format::forge($expected)->to_php(), Format::forge($xml, 'xml')->to_php());
 	}
 
-	function test_to_array_empty(){
+	function test_to_array_empty()
+	{
 		$array = null;
 		$expected = array();
 		$this->assertEquals($expected, Format::forge($array)->to_array());
