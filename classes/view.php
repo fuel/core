@@ -284,12 +284,12 @@ class View
 
 		$data = array();
 
-		if (in_array($scope, array('all', 'local')) and ! empty($this->data))
+		if ( ! empty($this->data)  and ($scope === 'all' or $scope === 'local'))
 		{
 			$data += $clean_it($this->data, $this->local_filter, $this->auto_filter);
 		}
 
-		if (in_array($scope, array('all', 'global')) and ! empty(static::$global_data))
+		if ( ! empty(static::$global_data)  and ($scope === 'all' or $scope === 'global'))
 		{
 			$data += $clean_it(static::$global_data, static::$global_filter, $this->auto_filter);
 		}
