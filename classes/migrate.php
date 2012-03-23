@@ -164,12 +164,13 @@ class Migrate
 	/**
 	 * migrate up to the next version
 	 *
+	 * @param   mixed	version to migrate up to
 	 * @param   string  name of the package, module or app
 	 * @param   string  type of migration (package, module or app)
 	 *
 	 * @return	array
 	 */
-	public static function up($name = 'default', $type = 'app')
+	public static function up($version = null, $name = 'default', $type = 'app')
 	{
 		// get the current version info from the config
 		$current = \Config::get('migrations.version.'.$type.'.'.$name);
@@ -181,13 +182,13 @@ class Migrate
 			$current = end($current);
 
 			// get the available migrations after the current one
-			$migrations = static::find_migrations($name, $type, $current, null);
+			$migrations = static::find_migrations($name, $type, $current, $version);
 
 			// found any?
 			if ( ! empty($migrations))
 			{
-				// install the first migration found
-				return static::migrate(array(reset($migrations)), $name, $type, 'up');
+				// install migrations found
+				return static::migrate($migrations, $name, $type, 'up');
 			}
 		}
 
@@ -198,12 +199,13 @@ class Migrate
 	/**
 	 * migrate down to the previous version
 	 *
+	 * @param   mixed	version to migrate down to
 	 * @param   string  name of the package, module or app
 	 * @param   string  type of migration (package, module or app)
 	 *
 	 * @return	array
 	 */
-	public static function down($name = 'default', $type = 'app')
+	public static function down($version = null, $name = 'default', $type = 'app')
 	{
 		// get the current version info from the config
 		$current = \Config::get('migrations.version.'.$type.'.'.$name);
@@ -215,13 +217,16 @@ class Migrate
 			$current = end($current);
 
 			// get the available migrations before the last current one
-			$migrations = static::find_migrations($name, $type, null, $current);
+			$migrations = static::find_migrations($name, $type, $version, $current, 'down');
 
 			// found any?
 			if ( ! empty($migrations))
 			{
-				// revert the last migration installed
-				return static::migrate(array(end($migrations)), $name, $type, 'down');
+				// we're going down, so reverse the order of mygrations
+				$migrations = array_reverse($migrations, true);
+
+				// revert the installed migrations
+				return static::migrate($migrations, $name, $type, 'down');
 			}
 		}
 
@@ -331,7 +336,7 @@ class Migrate
 	 *
 	 * @return	array
 	 */
-	protected static function find_migrations($name, $type, $start = null, $end = null)
+	protected static function find_migrations($name, $type, $start = null, $end = null, $direction = 'up')
 	{
 		// Load all *_*.php files in the migrations path
 		$method = '_find_'.$type;
@@ -352,7 +357,11 @@ class Migrate
 			// if the version passed is numeric...
 			if (is_numeric($start) or is_numeric($end))
 			{
-				// strip leading zero's from the migration to do a numeric comparison
+				// strip leading zero's from start and end
+				is_null($start) or $start = ltrim($start, '0');
+				is_null($end) or $end = ltrim($end, '0');
+
+				// and from the migration to do a numeric comparison
 				$migration = ltrim(basename($file), '0');
 				$migration = (int) substr($migration, 0, strpos($migration, '_'));
 			}
@@ -364,12 +373,18 @@ class Migrate
 			}
 
 			// add the file to the migrations list if it's in between version bounds
-			if ((is_null($start) or $migration >= $start) and (is_null($end) or $migration < $end))
+			if ((is_null($start) or $migration > $start) and (is_null($end) or $migration <= $end))
 			{
 				// see if it is already installed
-				if ( ! in_array($migration, $current))
+				if ( in_array($migration, $current))
 				{
-					$migrations[$migration] = array('path' => $file);
+					// already installed. store it only if we're going down
+					$direction == 'down' and $migrations[$migration] = array('path' => $file);
+				}
+				else
+				{
+					// not installed yet. store it only if we're going up
+					$direction == 'up' and $migrations[$migration] = array('path' => $file);
 				}
 			}
 		}

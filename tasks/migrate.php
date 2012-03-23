@@ -265,12 +265,16 @@ class Migrate
 	private static function _up($name, $type)
 	{
 		// -v or --version
-		if (\Cli::option('v', \Cli::option('version', '')) !== '')
+		$version = \Cli::option('v', \Cli::option('version', null));
+
+		// if version has a value, make sure only 1 item was passed
+		if ($version and (static::$default + static::$module_count + static::$package_count > 1))
 		{
-			\Cli::write('You can not define a version when using the "up" command.', 'red');
+			\Cli::write('Migration: version only excepts 1 item.');
+			return;
 		}
 
-		$migrations = \Migrate::up($name, $type);
+		$migrations = \Migrate::up($version, $name, $type);
 
 		if ($migrations)
 		{
@@ -296,12 +300,16 @@ class Migrate
 	private static function _down($name, $type)
 	{
 		// -v or --version
-		if (\Cli::option('v', \Cli::option('version', '')) !== '')
+		$version = \Cli::option('v', \Cli::option('version', null));
+
+		// if version has a value, make sure only 1 item was passed
+		if ($version and (static::$default + static::$module_count + static::$package_count > 1))
 		{
-			\Cli::write('You can not define a version when using the "up" command.', 'red');
+			\Cli::write('Migration: version only excepts 1 item.');
+			return;
 		}
 
-		$migrations = \Migrate::down($name, $type);
+		$migrations = \Migrate::down($version, $name, $type);
 
 		if ($migrations)
 		{
@@ -351,7 +359,7 @@ Description:
 Examples:
     php oil r migrate
     php oil r migrate:current
-    php oil r migrate:up
+    php oil r migrate:up -v=6
     php oil r migrate:down
     php oil r migrate --version=201203171206
     php oil r migrate --modules --packages --default
