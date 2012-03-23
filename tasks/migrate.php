@@ -205,7 +205,7 @@ class Migrate
 		// any migrations executed?
 		if ($migrations)
 		{
-			\Cli::write('Executed migrations for '.$type.':'.$name.':', 'green');
+			\Cli::write('Performed migrations for '.$type.':'.$name.':', 'green');
 
 			foreach ($migrations as $migration)
 			{

@@ -106,8 +106,21 @@ class Migrate
 				// determine the direction
 				$direction = (is_null($version) or $match[1] < $version) ? 'up' : 'down';
 
+				// fetch the migrations
+				if ($direction == 'up')
+				{
+					$migrations = static::find_migrations($name, $type, $match[1], $version);
+				}
+				else
+				{
+					$migrations = static::find_migrations($name, $type, $version, $match[1], $direction);
+
+					// we're going down, so reverse the order of mygrations
+					$migrations = array_reverse($migrations, true);
+				}
+
 				// run migrations from current version to given version
-				return static::migrate(static::find_migrations($name, $type, $match[1], $version), $name, $type, $direction);
+				return static::migrate($migrations, $name, $type, $direction);
 			}
 			else
 			{
