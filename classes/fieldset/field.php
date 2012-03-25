@@ -99,21 +99,21 @@ class Fieldset_Field
 		// Take rules out of attributes
 		unset($attributes['rules']);
 
-		// Set certain types through specific setter
-		foreach (array('label', 'type', 'value', 'options') as $prop)
+		// Use specific setter when available
+		foreach ($attributes as $attr => $val)
 		{
-			if (array_key_exists($prop, $attributes))
+			if (method_exists($this, $method = 'set_'.$attr))
 			{
-				$this->{'set_'.$prop}($attributes[$prop]);
-				unset($attributes[$prop]);
+				$this->{$method}($val);
+				unset($attributes[$attr]);
 			}
 		}
 
 		// Add default "type" attribute if not specified
-		if (empty($attributes['type'])) $this->set_type($this->type);
+		empty($attributes['type']) and $this->set_type($this->type);
 
 		// only when non-empty, will supersede what was given in $attributes
-		$label && $this->set_label($label);
+		$label and $this->set_label($label);
 
 		$this->attributes = array_merge($this->attributes, $attributes);
 
