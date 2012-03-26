@@ -533,8 +533,8 @@ class View
 	{
 		if (class_exists('Request', false))
 		{
-			$current_request = Request::active();
-			Request::active($this->active_request);
+			$current_request = \Request::active();
+			\Request::active($this->active_request);
 		}
 
 		if ($file !== null)
@@ -552,7 +552,7 @@ class View
 
 		if (class_exists('Request', false))
 		{
-			Request::active($current_request);
+			\Request::active($current_request);
 		}
 
 		return $return;
