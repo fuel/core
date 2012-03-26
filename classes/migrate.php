@@ -554,16 +554,13 @@ class Migrate
 					// find the migrations for this entry
 					$migrations = static::find_migrations($migration['name'], $migration['type'], 0, $migration['version']);
 
-					// don't care about the direction returned as well...
-					$migrations = isset($migrations[1]) ? $migrations[1] : array();
-
 					// array to keep track of the migrations already run
 					$config = array();
 
 					// add the individual migrations found
 					foreach ($migrations as $file)
 					{
-						$file = pathinfo($file);
+						$file = pathinfo($file['path']);
 
 						// add this migration to the table
 						\DB::insert(static::$table)->set(array(
