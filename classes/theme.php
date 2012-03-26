@@ -147,6 +147,26 @@ class Theme
 	}
 
 	/**
+	 * Magic method, returns the output of [static::render].
+	 *
+	 * @return  string
+	 * @uses    Theme::render
+	 */
+	public function __toString()
+	{
+		try
+		{
+			return $this->render();
+		}
+		catch (\Exception $e)
+		{
+			\Error::exception_handler($e);
+
+			return '';
+		}
+	}
+
+	/**
 	 * Sets the currently active theme.  Will return the currently active
 	 * theme.  It will throw a \ThemeException if it cannot locate the theme.
 	 *
