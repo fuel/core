@@ -389,7 +389,7 @@ class Migrate
 			if ((is_null($start) or $migration > $start) and (is_null($end) or $migration <= $end))
 			{
 				// see if it is already installed
-				if ( in_array($migration, $current))
+				if ( in_array(basename($file), $current))
 				{
 					// already installed. store it only if we're going down
 					$direction == 'down' and $migrations[$migration] = array('path' => $file);
