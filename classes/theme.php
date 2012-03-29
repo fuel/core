@@ -324,7 +324,7 @@ class Theme
 		}
 
 		// assign the partials to the template
-		$this->template->set('partials', $this->partials, false);
+		$this->template->set_global('partials', $this->partials, false);
 
 		// return the template
 		return $this->template;
