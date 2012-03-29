@@ -295,9 +295,21 @@ class Form_Instance
 			is_array($checked) and $attributes = $checked;
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
+
+			# Added for 1.2 to allow checked true/false. in 3rd argument, used to be attributes
 			if ( ! is_array($checked))
 			{
-				$attributes['checked'] = is_bool($checked) ? $checked : $value == $checked;
+				// If it's true, then go for it
+				if (is_bool($checked) and $checked === true)
+				{
+					$attributes['checked'] = 'checked';
+				}
+
+				// Otherwise, if the string/number/whatever matches then do it
+				elseif (is_scalar($checked) and $checked == $value)
+				{
+					$attributes['checked'] = 'checked';
+				}
 			}
 		}
 		$attributes['type'] = 'radio';
