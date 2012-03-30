@@ -389,7 +389,7 @@ if($output['logs']['speedCount'] ==  0) {
 else {
 	$return_output .='<table class="pqp-side" cellspacing="0">
 		  <tr><td><var>'.$output['speedTotals']['total'].'</var><h4>Load Time</h4></td></tr>
-		  <tr><td class="alt"><var>'.$output['speedTotals']['allowed'].'</var> <h4>Max Execution Time</h4></td></tr>
+		  <tr><td class="alt"><var>'.$output['speedTotals']['allowed'].' s</var> <h4>Max Execution Time</h4></td></tr>
 		 </table>
 		<div class="main"><table cellspacing="0">';
 
