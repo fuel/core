@@ -303,13 +303,14 @@ class File
 		$basepath  = rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file  = static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) or ! is_writable($basepath))
-		{
-			throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
-		}
-
+		// Test the opening of the file first
 		if ( ! $file = static::open_file(@fopen($new_file, 'w'), true, $area) )
 		{
+			// Check why it failed afterwards
+			if ( ! is_dir($basepath) or ! is_writable($basepath))
+			{
+				throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
+			}
 			throw new \FileAccessException('No write access, cannot update a file.');
 		}
 		fwrite($file, $contents);
