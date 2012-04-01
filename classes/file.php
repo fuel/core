@@ -455,15 +455,22 @@ class File
 		$path      = static::instance($area)->get_path($path);
 		$new_path  = static::instance($area)->get_path($new_path);
 
-		if ( ! is_file($path))
-		{
-			throw new \InvalidPathException('Cannot copy file: given path is not a file.');
-		}
-		elseif (file_exists($new_path))
+		// PHP copy() function overwrites the destination file, so we need to perform this check before
+		if (file_exists($new_path))
 		{
 			throw new \FileAccessException('Cannot copy file: new path already exists.');
 		}
-		return copy($path, $new_path);
+
+		// Test the copy of the file first
+		if ( ! $copy = @copy($path, $new_path))
+		{
+			// Check why it failed afterwards
+			if ( ! is_file($path))
+			{
+				throw new \InvalidPathException('Cannot copy file: given path is not a file.');
+			}
+		}
+		return $copy;
 	}
 
 	/**
