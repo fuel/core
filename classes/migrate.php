@@ -512,7 +512,7 @@ class Migrate
 		}
 		else
 		{
-			// find all modules
+			// find all packages
 			$files = glob(PKGPATH.'*/'.\Config::get('migrations.folder').'*_*.php');
 		}
 
