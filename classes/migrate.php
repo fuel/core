@@ -596,4 +596,13 @@ class Migrate
 		}
 	}
 
+	/**
+	 * dummy, required to avoid PHP < 5.3.3. calling
+	 * the migrate() method as a fallback constructor.
+	 *
+	 * @return	void
+	 */
+	 public function __construct()
+	 {
+	 }
 }
