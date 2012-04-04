@@ -273,7 +273,7 @@ class Migrate
 		{
 			logger(Fuel::L_INFO, 'Migrating to version: '.$ver);
 			call_user_func(array(new $migration['class'], $method));
-			$file = basename($migration['path']);
+			$file = basename($migration['path'], '.php');
 			$method == 'up' ? static::write_install($name, $type, $file) : static::write_revert($name, $type, $file);
 			$done[] = $file;
 		}
@@ -370,32 +370,31 @@ class Migrate
 		// storage for the result
 		$migrations = array();
 
+		// normalize start and end values
+		if ( ! is_null($start))
+		{
+			$start = ltrim(substr($start, 0, strpos($start, '_')), '0');
+			is_numeric($start) and $start = (int) $start;
+		}
+		if ( ! is_null($end))
+		{
+			$end = ltrim(substr($end, 0, strpos($end, '_')), '0');
+			is_numeric($end) and $end = (int) $end;
+		}
+
 		// filter the migrations out of bounds
 		foreach ($files as $file)
 		{
-			// if the version passed is numeric...
-			if (is_numeric($start) or is_numeric($end))
-			{
-				// strip leading zero's from start and end
-				is_null($start) or $start = ltrim($start, '0');
-				is_null($end) or $end = ltrim($end, '0');
-
-				// and from the migration to do a numeric comparison
-				$migration = ltrim(basename($file), '0');
-				$migration = (int) substr($migration, 0, strpos($migration, '_'));
-			}
-			else
-			{
-				// get the version for this migration
-				$migration = basename($file);
-				$migration = substr($migration, 0, strpos($migration, '_'));
-			}
+			// get the version for this migration and normalize it
+			$migration = basename($file);
+			$migration = ltrim(substr($migration, 0, strpos($migration, '_')), '0');
+			is_numeric($migration) and $migration = (int) $migration;
 
 			// add the file to the migrations list if it's in between version bounds
 			if ((is_null($start) or $migration > $start) and (is_null($end) or $migration <= $end))
 			{
 				// see if it is already installed
-				if ( in_array(basename($file), $current))
+				if ( in_array(basename($file, '.php'), $current))
 				{
 					// already installed. store it only if we're going down
 					$direction == 'down' and $migrations[$migration] = array('path' => $file);
