@@ -104,7 +104,7 @@ class Error
 	 */
 	public static function error_handler($severity, $message, $filepath, $line)
 	{
-		if (static::$count <= Config::get('errors.throttling', 10))
+		if (static::$count <= Config::get('errors.throttle', 10))
 		{
 			logger(\Fuel::L_ERROR, $severity.' - '.$message.' in '.$filepath.' on line '.$line);
 
@@ -115,7 +115,7 @@ class Error
 			}
 		}
 		elseif (\Fuel::$env != \Fuel::PRODUCTION
-				and static::$count == (\Config::get('errors.throttling', 10) + 1)
+				and static::$count == (\Config::get('errors.throttle', 10) + 1)
 				and ($severity & error_reporting()) == $severity)
 		{
 			static::$count++;
