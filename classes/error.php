@@ -115,7 +115,7 @@ class Error
 			}
 		}
 		elseif (\Fuel::$env != \Fuel::PRODUCTION
-				and static::$count == (\Config::get('error_throttling', 10) + 1)
+				and static::$count == (\Config::get('errors.throttling', 10) + 1)
 				and ($severity & error_reporting()) == $severity)
 		{
 			static::$count++;
