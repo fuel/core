@@ -167,7 +167,7 @@ class Migrate
 	 * @param string	type (app, module or package)
 	 * @param string	direction of migration (up or down)
 	 */
-	private static function _run($name, $type)
+	protected static function _run($name, $type)
 	{
 		// -v or --version
 		$version = \Cli::option('v', \Cli::option('version', ''));
@@ -231,7 +231,7 @@ class Migrate
 	 * @param string	name of the type (in case of app, it's 'default')
 	 * @param string	type (app, module or package)
 	 */
-	private static function _current($name, $type)
+	protected static function _current($name, $type)
 	{
 		// -v or --version
 		if (\Cli::option('v', \Cli::option('version', '')) !== '')
@@ -262,7 +262,7 @@ class Migrate
 	 * @param string
 	 * @param string
 	 */
-	private static function _up($name, $type)
+	protected static function _up($name, $type)
 	{
 		// -v or --version
 		$version = \Cli::option('v', \Cli::option('version', null));
@@ -297,7 +297,7 @@ class Migrate
 	 * @param string
 	 * @param string
 	 */
-	private static function _down($name, $type)
+	protected static function _down($name, $type)
 	{
 		// -v or --version
 		$version = \Cli::option('v', \Cli::option('version', null));

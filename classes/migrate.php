@@ -486,6 +486,7 @@ class Migrate
 		else
 		{
 			// find all modules
+			$files = array();
 			foreach (\Config::get('module_paths') as $m)
 			{
 				$files = array_merge($files, glob($m.'*/'.\Config::get('migrations.folder').'*_*.php'));
@@ -511,7 +512,7 @@ class Migrate
 		}
 		else
 		{
-			// find all modules
+			// find all packages
 			$files = glob(PKGPATH.'*/'.\Config::get('migrations.folder').'*_*.php');
 		}
 
@@ -594,4 +595,13 @@ class Migrate
 		}
 	}
 
+	/**
+	 * dummy, required to avoid PHP < 5.3.3. calling
+	 * the migrate() method as a fallback constructor.
+	 *
+	 * @return	void
+	 */
+	 public function __construct()
+	 {
+	 }
 }
