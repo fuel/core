@@ -149,7 +149,7 @@ class Format
 		}
 
 		// Force it to be something useful
-		if ( ! is_array($data) AND ! is_object($data))
+		if ( ! is_array($data) and ! is_object($data))
 		{
 			$data = (array) $data;
 		}
@@ -167,7 +167,7 @@ class Format
 			$key = preg_replace('/[^a-z_\-0-9]/i', '', $key);
 
 			// if there is another array found recrusively call this function
-			if (is_array($value) || is_object($value))
+			if (is_array($value) or is_object($value))
 			{
 				$node = $structure->addChild($key);
 
@@ -199,7 +199,7 @@ class Format
 	 */
 	public function to_csv($data = null)
 	{
-		if ($data == null)
+		if ($data === null)
 		{
 			$data = $this->_data;
 		}
