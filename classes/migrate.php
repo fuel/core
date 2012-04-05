@@ -46,6 +46,19 @@ class Migrate
 	);
 
 	/**
+	 * dummy, required to avoid PHP < 5.3.3. calling
+	 * the migrate() method as a fallback constructor.
+	 *
+	 * note: have to be first, if defined after all statics,
+	 * the migrate() method will still be seen as the constructor!
+	 *
+	 * @return	void
+	 */
+	 public function __construct()
+	 {
+	 }
+
+	/**
 	 * loads in the migrations config file, checks to see if the migrations
 	 * table is set in the database (if not, create it), and reads in all of
 	 * the versions from the DB.
@@ -594,14 +607,4 @@ class Migrate
 			}
 		}
 	}
-
-	/**
-	 * dummy, required to avoid PHP < 5.3.3. calling
-	 * the migrate() method as a fallback constructor.
-	 *
-	 * @return	void
-	 */
-	 public function __construct()
-	 {
-	 }
 }
