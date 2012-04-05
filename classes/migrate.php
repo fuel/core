@@ -46,19 +46,6 @@ class Migrate
 	);
 
 	/**
-	 * dummy, required to avoid PHP < 5.3.3. calling
-	 * the migrate() method as a fallback constructor.
-	 *
-	 * note: have to be first, if defined after all statics,
-	 * the migrate() method will still be seen as the constructor!
-	 *
-	 * @return	void
-	 */
-	 public function __construct()
-	 {
-	 }
-
-	/**
 	 * loads in the migrations config file, checks to see if the migrations
 	 * table is set in the database (if not, create it), and reads in all of
 	 * the versions from the DB.
@@ -133,7 +120,7 @@ class Migrate
 				}
 
 				// run migrations from current version to given version
-				return static::migrate($migrations, $name, $type, $direction);
+				return static::run($migrations, $name, $type, $direction);
 			}
 			else
 			{
@@ -142,7 +129,7 @@ class Migrate
 		}
 
 		// run migrations from the beginning to given version
-		return static::migrate(static::find_migrations($name, $type, null, $version), $name, $type, 'up');
+		return static::run(static::find_migrations($name, $type, null, $version), $name, $type, 'up');
 	}
 
 	/**
@@ -179,7 +166,7 @@ class Migrate
 			if (preg_match('/^(.*?)_(.*)$/', end($current), $match))
 			{
 				// run migrations from start to current version
-				return static::migrate(static::find_migrations($name, $type, null, $match[1]), $name, $type, 'up');
+				return static::run(static::find_migrations($name, $type, null, $match[1]), $name, $type, 'up');
 			}
 		}
 
@@ -217,7 +204,7 @@ class Migrate
 				is_null($version) and $migrations = array(reset($migrations));
 
 				// install migrations found
-				return static::migrate($migrations, $name, $type, 'up');
+				return static::run($migrations, $name, $type, 'up');
 			}
 		}
 
@@ -258,7 +245,7 @@ class Migrate
 				is_null($version) and $migrations = array(reset($migrations));
 
 				// revert the installed migrations
-				return static::migrate($migrations, $name, $type, 'down');
+				return static::run($migrations, $name, $type, 'down');
 			}
 		}
 
@@ -276,7 +263,7 @@ class Migrate
 	 *
 	 * @return	array
 	 */
-	protected static function migrate($migrations, $name, $type, $method = 'up')
+	protected static function run($migrations, $name, $type, $method = 'up')
 	{
 		// storage for installed migrations
 		$done = array();
