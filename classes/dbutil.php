@@ -162,6 +162,20 @@ class DBUtil
 	}
 
 	/**
+	 * Changes fields in a table.  Will throw a Database_Exception if it cannot.
+	 * Use this over modify_fields when you need to change the field name.
+	 *
+	 * @throws	Fuel\Database_Exception
+	 * @param	string	$table			the table name
+	 * @param	array	$fields			the modified fields
+	 * @return	int		the number of affected
+	 */
+	public static function change_fields($table, $fields, $db = null)
+	{
+		return static::alter_fields('CHANGE', $table, $fields, $db);
+	}
+
+	/**
 	 * Drops fields from a table a table.  Will throw a Database_Exception if it cannot.
 	 *
 	 * @throws	Fuel\Database_Exception
