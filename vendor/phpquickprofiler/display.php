@@ -18,7 +18,7 @@
 function displayPqp($output) {
 
 	$css = str_replace("\n", "", <<<CSS
-.pQp {width:100%;z-index:9999;text-align:center;position:fixed;bottom:0}
+.pQp{width:100%;z-index:9999;text-align:center;position:fixed;bottom:0}
 * html .pQp{position:absolute}
 .pQp *{margin:0;padding:0;border:none}
 #pQp{margin:0 auto;width:85%;min-width:960px;background-color:#222;border:12px solid #000;border-bottom:none;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:15px;-webkit-border-top-right-radius:15px;-moz-border-radius-topleft:15px;-moz-border-radius-topright:15px}
@@ -60,7 +60,7 @@ function displayPqp($output) {
 *+html .pQp .main{width:78%}
 * html .pQp .main{width:77%}
 .pQp .main td{padding:7px 15px;text-align:left;background:#151515;border-left:1px solid #333;border-right:1px solid #333;border-bottom:1px dotted #323232;color:#FFF;}
-.pQp .main td,pre{font-family:Monaco,"Consolas","Lucida Console","Courier New",monospace;font-size:11px; background: transparent}
+.pQp .main td,.pQp .main pre{font-family:Monaco,"Consolas","Lucida Console","Courier New",monospace;font-size:11px; background: transparent}
 .pQp .main td.alt{background:#111}
 .pQp .main tr.alt td{background:#2e2e2e;border-top:1px dotted #4e4e4e}
 .pQp .main tr.alt td.alt{background:#333}
@@ -106,7 +106,7 @@ function displayPqp($output) {
 #pqp-get .pqp-side td.alt{background-color:#FF7CAD;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
 #pqp-post .pqp-side{background-color:#FFA46E;border-bottom:1px solid #FFA46E;border-left:1px solid #FFA46E}
 #pqp-post .pqp-side td.alt{background-color:#FFA46E;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
-#pqp-footer {width:100%;background:#000;font-size:11px;border-top:1px solid #ccc}
+#pqp-footer{width:100%;background:#000;font-size:11px;border-top:1px solid #ccc}
 #pqp-footer td{padding:0!important;border:none!important}
 #pqp-footer strong{color:#fff}
 #pqp-footer a{color:#999;padding:5px 10px;text-decoration:none}
@@ -265,7 +265,7 @@ $printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 		}
 		elseif( ! is_array($value) AND ! is_object($value))
 		{
-			$output .= '<b>'.$value.'</b>';
+			$output .= '<b>'.htmlentities($value).'</b>';
 		}
 		$output .= str_repeat('&rsaquo;&nbsp;', $depth).$item.'</td></tr>';
 		if($class == '') $class = 'alt'; else $class = '';
