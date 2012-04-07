@@ -19,4 +19,20 @@ class Config_Php extends \Config_File
 	{
 		return \Fuel::load($file);
 	}
+
+	/**
+	 * Returns the formatted config file contents.
+	 *
+	 * @param   array   $content  config array
+	 * @return  string  formatted config file contents
+	 */
+	protected function export_format($contents)
+	{
+		$output = <<<CONF
+<?php
+
+CONF;
+		$output .= 'return '.str_replace(array('  ', 'array (', '\''.APPPATH, '\''.DOCROOT, '\''.COREPATH, '\''.PKGPATH), array("\t", 'array(', 'APPPATH.\'', 'DOCROOT.\'', 'COREPATH.\'', 'PKGPATH.\''), var_export($contents, true)).";\n";
+		return $output;
+	}
 }

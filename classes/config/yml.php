@@ -20,4 +20,21 @@ class Config_Yml extends \Config_File
 		$contents = $this->parse_vars(file_get_contents($file));
 		return \Format::forge($contents, 'yaml')->to_array();
 	}
+
+	/**
+	 * Returns the formatted config file contents.
+	 *
+	 * @param   array   $content  config array
+	 * @return  string  formatted config file contents
+	 */
+	protected function export_format($contents)
+	{
+		if ( ! function_exists('spyc_load'))
+		{
+			import('spyc/spyc', 'vendor');
+		}
+
+		$this->prep_vars($contents);
+		return \Spyc::YAMLDump($contents);
+	}
 }
