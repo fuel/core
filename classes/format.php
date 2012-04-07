@@ -237,9 +237,10 @@ class Format
 	 * To JSON conversion
 	 *
 	 * @param   mixed  $data
+	 * @param   bool   wether to make the json pretty
 	 * @return  string
 	 */
-	public function to_json($data = null)
+	public function to_json($data = null, $pretty = false)
 	{
 		if ($data == null)
 		{
@@ -249,21 +250,22 @@ class Format
 		// To allow exporting ArrayAccess objects like Orm\Model instances they need to be
 		// converted to an array first
 		$data = (is_array($data) or is_object($data)) ? $this->to_array($data) : $data;
-		return json_encode($data);
+		return $pretty ? static::pretty_json($data) : json_encode($data);
 	}
 
 	/**
 	 * To JSONP conversion
 	 *
-	 * @param mixed $data
-	 * @return string
+	 * @param   mixed  $data
+	 * @param   bool   wether to make the json pretty
+	 * @return  string
 	 */
-	public function to_jsonp($data = null)
+	public function to_jsonp($data = null, $pretty = false)
 	{
 		 $callback = \Input::param('callback');
 		 is_null($callback) and $callback = 'response';
 
-		 return $callback.'('.$this->to_json($data).')';
+		 return $callback.'('.$this->to_json($data, $pretty).')';
 	}
 
 	/**
@@ -449,5 +451,89 @@ class Format
 		return unserialize(trim($string));
 	}
 
+	/**
+	 * Makes json pretty the json output.
+	 * Barrowed from http://www.php.net/manual/en/function.json-encode.php#80339
+	 *
+	 * @param   string  $json  json encoded array
+	 * @return  string|false  pretty json output or false when the input was not valid
+	 */
+	protected static function pretty_json($data)
+	{
+		$json = json_encode($data);
+		if ( ! $json)
+		{
+			return false;
+		}
+
+		$tab = "\t";
+		$newline = "\n";
+		$new_json = "";
+		$indent_level = 0;
+		$in_string = false;
+		$len = strlen($json);
+
+		for ($c = 0; $c < $len; $c++)
+		{
+			$char = $json[$c];
+			switch($char)
+			{
+				case '{':
+				case '[':
+					if ( ! $in_string)
+					{
+						$new_json .= $char.$newline.str_repeat($tab, $indent_level+1);
+						$indent_level++;
+					}
+					else
+					{
+						$new_json .= $char;
+					}
+					break;
+				case '}':
+				case ']':
+					if ( ! $in_string)
+					{
+						$indent_level--;
+						$new_json .= $newline.str_repeat($tab, $indent_level).$char;
+					}
+					else
+					{
+						$new_json .= $char;
+					}
+					break;
+				case ',':
+					if ( ! $in_string)
+					{
+						$new_json .= ','.$newline.str_repeat($tab, $indent_level);
+					}
+					else
+					{
+						$new_json .= $char;
+					}
+					break;
+				case ':':
+					if ( ! $in_string)
+					{
+						$new_json .= ': ';
+					}
+					else
+					{
+						$new_json .= $char;
+					}
+					break;
+				case '"':
+					if ($c > 0 and $json[$c-1] !== '\\')
+					{
+						$in_string = ! $in_string;
+					}
+				default:
+					$new_json .= $char;
+					break;
+			}
+		}
+
+		return $new_json;
+	}
 }
 
