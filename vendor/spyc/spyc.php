@@ -1,11 +1,11 @@
 <?php
 /**
    * Spyc -- A Simple PHP YAML Class
-   * @version 0.4.5
+   * @version 0.5
    * @author Vlad Andersen <vlad.andersen@gmail.com>
    * @author Chris Wanstrath <chris@ozmm.org>
    * @link http://code.google.com/p/spyc/
-   * @copyright Copyright 2005-2006 Chris Wanstrath, 2006-2009 Vlad Andersen
+   * @copyright Copyright 2005-2006 Chris Wanstrath, 2006-2011 Vlad Andersen
    * @license http://www.opensource.org/licenses/mit-license.php MIT License
    * @package Spyc
    */
@@ -57,6 +57,8 @@ if (!function_exists('spyc_load_file')) {
 class Spyc {
 
   // SETTINGS
+
+  const REMPTY = "\0\0\0\0\0";
 
   /**
    * Setting this to true will force YAMLDump to enclose any string value in
@@ -230,12 +232,11 @@ class Spyc {
 
     // Start at the base of the array and move through it.
     if ($array) {
-      $array = (array)$array;
-      $first_key = key($array);
-      
+      $array = (array)$array; 
       $previous_key = -1;
       foreach ($array as $key => $value) {
-        $string .= $this->_yamlize($key,$value,0,$previous_key, $first_key);
+        if (!isset($first_key)) $first_key = $key;
+        $string .= $this->_yamlize($key,$value,0,$previous_key, $first_key, $array);
         $previous_key = $key;
       }
     }
@@ -250,20 +251,20 @@ class Spyc {
      * @param $value The value of the item
      * @param $indent The indent of the current node
      */
-  private function _yamlize($key,$value,$indent, $previous_key = -1, $first_key = 0) {
+  private function _yamlize($key,$value,$indent, $previous_key = -1, $first_key = 0, $source_array = null) {
     if (is_array($value)) {
       if (empty ($value))
-        return $this->_dumpNode($key, array(), $indent, $previous_key, $first_key);
+        return $this->_dumpNode($key, array(), $indent, $previous_key, $first_key, $source_array);
       // It has children.  What to do?
       // Make it the right kind of item
-      $string = $this->_dumpNode($key, NULL, $indent, $previous_key, $first_key);
+      $string = $this->_dumpNode($key, self::REMPTY, $indent, $previous_key, $first_key, $source_array);
       // Add the indent
       $indent += $this->_dumpIndent;
       // Yamlize the array
       $string .= $this->_yamlizeArray($value,$indent);
     } elseif (!is_array($value)) {
       // It doesn't have children.  Yip.
-      $string = $this->_dumpNode($key, $value, $indent, $previous_key, $first_key);
+      $string = $this->_dumpNode($key, $value, $indent, $previous_key, $first_key, $source_array);
     }
     return $string;
   }
@@ -279,9 +280,9 @@ class Spyc {
     if (is_array($array)) {
       $string = '';
       $previous_key = -1;
-      $first_key = key($array);
       foreach ($array as $key => $value) {
-        $string .= $this->_yamlize($key, $value, $indent, $previous_key, $first_key);
+        if (!isset($first_key)) $first_key = $key;
+        $string .= $this->_yamlize($key, $value, $indent, $previous_key, $first_key, $array);
         $previous_key = $key;
       }
       return $string;
@@ -298,31 +299,43 @@ class Spyc {
      * @param $value The value of the item
      * @param $indent The indent of the current node
      */
-  private function _dumpNode($key, $value, $indent, $previous_key = -1, $first_key = 0) {
+  private function _dumpNode($key, $value, $indent, $previous_key = -1, $first_key = 0, $source_array = null) {
     // do some folding here, for blocks
     if (is_string ($value) && ((strpos($value,"\n") !== false || strpos($value,": ") !== false || strpos($value,"- ") !== false ||
-      strpos($value,"*") !== false || strpos($value,"#") !== false || strpos($value,"<") !== false || strpos($value,">") !== false ||
-      strpos($value,"[") !== false || strpos($value,"]") !== false || strpos($value,"{") !== false || strpos($value,"}") !== false) || substr ($value, -1, 1) == ':')) {
+      strpos($value,"*") !== false || strpos($value,"#") !== false || strpos($value,"<") !== false || strpos($value,">") !== false || strpos ($value, '  ') !== false ||
+      strpos($value,"[") !== false || strpos($value,"]") !== false || strpos($value,"{") !== false || strpos($value,"}") !== false) || strpos($value,"&") !== false || strpos($value, "'") !== false || strpos($value, "!") === 0 ||
+      substr ($value, -1, 1) == ':')
+    ) {
       $value = $this->_doLiteralBlock($value,$indent);
     } else {
       $value  = $this->_doFolding($value,$indent);
-      if (is_bool($value)) {
-        $value = ($value) ? "true" : "false";
-      }
     }
 
     if ($value === array()) $value = '[ ]';
+    if (in_array ($value, array ('true', 'TRUE', 'false', 'FALSE', 'y', 'Y', 'n', 'N', 'null', 'NULL'), true)) {
+       $value = $this->_doLiteralBlock($value,$indent);
+    }
+    if (trim ($value) != $value)
+       $value = $this->_doLiteralBlock($value,$indent);
+
+    if (is_bool($value)) {
+       $value = ($value) ? "true" : "false";
+    }
+    
+    if ($value === null) $value = 'null';
+    if ($value === "'" . self::REMPTY . "'") $value = null;
 
     $spaces = str_repeat(' ',$indent);
 
-    if (is_int($key) && $key - 1 == $previous_key && $first_key===0) {
+    //if (is_int($key) && $key - 1 == $previous_key && $first_key===0) {
+    if (is_array ($source_array) && array_keys($source_array) === range(0, count($source_array) - 1)) {
       // It's a sequence
       $string = $spaces.'- '.$value."\n";
     } else {
-      if ($first_key===0)  throw new Exception('Keys are all screwy.  The first one was zero, now it\'s "'. $key .'"');
+      // if ($first_key===0)  throw new Exception('Keys are all screwy.  The first one was zero, now it\'s "'. $key .'"');
       // It's mapped
-      if (strpos($key, ":") !== false) { $key = '"' . $key . '"'; }
-      $string = $spaces.$key.': '.$value."\n";
+      if (strpos($key, ":") !== false || strpos($key, "#") !== false) { $key = '"' . $key . '"'; }
+      $string = rtrim ($spaces.$key.': '.$value)."\n";
     }
     return $string;
   }
@@ -335,6 +348,7 @@ class Spyc {
      * @param $indent int The value of the indent
      */
   private function _doLiteralBlock($value,$indent) {
+    if ($value === "\n") return '\n';
     if (strpos($value, "\n") === false && strpos($value, "'") === false) {
       return sprintf ("'%s'", $value);
     }
@@ -346,7 +360,7 @@ class Spyc {
     $indent  += $this->_dumpIndent;
     $spaces   = str_repeat(' ',$indent);
     foreach ($exploded as $line) {
-      $newValue .= "\n" . $spaces . trim($line);
+      $newValue .= "\n" . $spaces . ($line);
     }
     return $newValue;
   }
@@ -366,7 +380,7 @@ class Spyc {
       $wrapped = wordwrap($value,$this->_dumpWordWrap,"\n$indent");
       $value   = ">\n".$indent.$wrapped;
     } else {
-      if ($this->setting_dump_force_quotes && is_string ($value))
+      if ($this->setting_dump_force_quotes && is_string ($value) && $value !== self::REMPTY)
         $value = '"' . $value . '"';
     }
 
@@ -412,9 +426,9 @@ class Spyc {
         $line = rtrim ($line, $literalBlockStyle . " \n");
         $literalBlock = '';
         $line .= $this->LiteralPlaceHolder;
-
+        $literal_block_indent = strlen($Source[$i+1]) - strlen(ltrim($Source[$i+1]));
         while (++$i < $cnt && $this->literalBlockContinues($Source[$i], $this->indent)) {
-          $literalBlock = $this->addLiteralLine($literalBlock, $Source[$i], $literalBlockStyle);
+          $literalBlock = $this->addLiteralLine($literalBlock, $Source[$i], $literalBlockStyle, $literal_block_indent);
         }
         $i--;
       }
@@ -471,8 +485,8 @@ class Spyc {
   private function _parseLine($line) {
     if (!$line) return array();
     $line = trim($line);
-
     if (!$line) return array();
+
     $array = array();
 
     $group = $this->nodeContainsGroup($line);
@@ -520,8 +534,10 @@ class Spyc {
     if ($is_quoted)
       return strtr(substr ($value, 1, -1), array ('\\"' => '"', '\'\'' => '\'', '\\\'' => '\''));
     
-    if (strpos($value, ' #') !== false)
+    if (strpos($value, ' #') !== false && !$is_quoted)
       $value = preg_replace('/\s+#(.+)$/','',$value);
+
+    if (!$is_quoted) $value = str_replace('\n', "\n", $value);
 
     if ($first_character == '[' && $last_character == ']') {
       // Take out strings sequences and mappings
@@ -568,7 +584,7 @@ class Spyc {
       return null;
     }
 
-    if (intval($first_character) > 0 && preg_match ('/^[1-9]+[0-9]*$/', $value)) {
+    if ( is_numeric($value) && preg_match ('/^(-|)[1-9]+[0-9]*$/', $value) ){
       $intvalue = (int)$value;
       if ($intvalue != PHP_INT_MAX)
         $value = $intvalue;
@@ -587,7 +603,7 @@ class Spyc {
 
     if (is_numeric($value)) {
       if ($value === '0') return 0;
-      if (trim ($value, 0) === $value)
+      if (rtrim ($value, 0) === $value)
         $value = (float)$value;
       return $value;
     }
@@ -772,7 +788,10 @@ class Spyc {
 
       $_arr = array_merge ($_arr, $value);
     } else if ($key || $key === '' || $key === '0') {
-      $_arr[$key] = $value;
+      if (!is_array ($_arr))
+        $_arr = array ($key=>$value);
+      else
+        $_arr[$key] = $value;
     } else {
       if (!is_array ($_arr)) { $_arr = array ($value); $key = 0; }
       else { $_arr[] = $value; end ($_arr); $key = key ($_arr); }
@@ -820,8 +839,11 @@ class Spyc {
     return false;
   }
 
-  private function addLiteralLine ($literalBlock, $line, $literalBlockStyle) {
-    $line = self::stripIndent($line);
+  private function addLiteralLine ($literalBlock, $line, $literalBlockStyle, $indent = -1) {
+    $line = self::stripIndent($line, $indent);
+    if ($literalBlockStyle !== '|') {
+        $line = self::stripIndent($line);
+    }
     $line = rtrim ($line, "\r\n\t ") . "\n";
     if ($literalBlockStyle == '|') {
       return $literalBlock . $line;
@@ -1008,3 +1030,17 @@ class Spyc {
     return $line;
   }
 }
+
+// Enable use of Spyc from command line
+// The syntax is the following: php spyc.php spyc.yaml
+
+define ('SPYC_FROM_COMMAND_LINE', false);
+
+do {
+  if (!SPYC_FROM_COMMAND_LINE) break;
+  if (empty ($_SERVER['argc']) || $_SERVER['argc'] < 2) break;
+  if (empty ($_SERVER['PHP_SELF']) || $_SERVER['PHP_SELF'] != 'spyc.php') break;
+  $file = $argv[1];
+  printf ("Spyc loading file: %s\n", $file);
+  print_r (spyc_load_file ($file));
+} while (0);
