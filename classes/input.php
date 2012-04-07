@@ -24,8 +24,6 @@ namespace Fuel\Core;
  */
 class Input
 {
-
-
 	/**
 	 * @var  $detected_uri  The URI that was detected automatically
 	 */
