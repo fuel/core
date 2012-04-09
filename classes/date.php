@@ -44,9 +44,16 @@ class Date
 	 */
 	protected static $server_gmt_offset = 0;
 
+	/**
+	 * @var string the timezone to be used to output formatted data
+	 */
+	public static $display_timezone = null;
+
 	public static function _init()
 	{
 		static::$server_gmt_offset	= \Config::get('server_gmt_offset', 0);
+
+		static::$display_timezone = \Config::get('default_timezone', null);
 
 		// Ugly temporary windows fix because windows doesn't support strptime()
 		// Better fix will accept custom pattern parsing but only parse numeric input on windows servers
@@ -130,6 +137,18 @@ class Date
 	public static function time($timezone = null)
 	{
 		return static::forge(null, $timezone);
+	}
+
+	/**
+	 * Returns the current time with offset
+	 *
+	 * @return  string
+	 */
+	public static function display_timezone($timezone = null)
+	{
+		is_string($timezone) and static::$display_timezone = $timezone;
+
+		return static::$display_timezone;
 	}
 
 	/**
@@ -283,26 +302,31 @@ class Date
 	/**
 	 * Returns the date formatted according to the current locale
 	 *
-	 * @param   string  either a named pattern from date config file or a pattern, defaults to 'local'
+	 * @param   string	either a named pattern from date config file or a pattern, defaults to 'local'
+	 * @param   mixed 	vald timezone, or if true, output the time in local time instead of system time
 	 * @return  string
 	 */
-	public function format($pattern_key = 'local')
+	public function format($pattern_key = 'local', $timezone = null)
 	{
 		\Config::load('date', 'date');
 
 		$pattern = \Config::get('date.patterns.'.$pattern_key, $pattern_key);
 
+		// determine the timezone to switch to
+		$timezone === true and $timezone = static::$display_timezone;
+		is_string($timezone) or $timezone = $this->timezone;
+
 		// Temporarily change timezone when different from default
-		if (\Fuel::$timezone != $this->timezone)
+		if (\Fuel::$timezone != $timezone)
 		{
-			date_default_timezone_set($this->timezone);
+			date_default_timezone_set($timezone);
 		}
 
 		// Create output
 		$output = strftime($pattern, $this->timestamp);
 
 		// Change timezone back to default if changed previously
-		if (\Fuel::$timezone != $this->timezone)
+		if (\Fuel::$timezone != $timezone)
 		{
 			date_default_timezone_set(\Fuel::$timezone);
 		}
@@ -328,6 +352,35 @@ class Date
 	public function get_timezone()
 	{
 		return $this->timezone;
+	}
+
+	/**
+	 * Returns the internal timezone or the display timezone abbreviation
+	 *
+	 * @return  string
+	 */
+	public function get_timezone_abbr($display_timezone = false)
+	{
+		// determine the timezone to switch to
+		$display_timezone and $timezone = static::$display_timezone;
+		empty($timezone) and $timezone = $this->timezone;
+
+		// Temporarily change timezone when different from default
+		if (\Fuel::$timezone != $timezone)
+		{
+			date_default_timezone_set($timezone);
+		}
+
+		// Create output
+		$output = date('T');
+
+		// Change timezone back to default if changed previously
+		if (\Fuel::$timezone != $timezone)
+		{
+			date_default_timezone_set(\Fuel::$timezone);
+		}
+
+		return $output;
 	}
 
 	/**
