@@ -456,7 +456,7 @@ class Asset_Instance
 		foreach ($assets as $key => $asset)
 		{
 			// Prevent duplicate files in a group.
-			if (Arr::get($this->_groups, "$group.$key.file") == $asset)
+			if (\Arr::get($this->_groups, "$group.$key.file") == $asset)
 			{
 				continue;
 			}
