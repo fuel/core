@@ -457,7 +457,9 @@ class Asset_Instance
 		{
 			// Prevent duplicate files in a group.
 			if (Arr::get($this->_groups, "$group.$key.file") == $asset)
+			{
 				continue;
+			}
 
 			$this->_groups[$group][] = array(
 				'type'	=>	$type,
