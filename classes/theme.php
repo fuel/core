@@ -156,7 +156,7 @@ class Theme
 	{
 		try
 		{
-			return $this->render();
+			return (string) $this->render();
 		}
 		catch (\Exception $e)
 		{
