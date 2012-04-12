@@ -18,7 +18,7 @@ abstract class Controller_Rest extends \Controller
 	/**
 	 * @var  integer  status code to return in case a not defined action is called
 	 */
-	protected $no_method_status = 404;
+	protected $no_method_status = 405;
 
 	/**
 	 * @var  integer  status code to return in case the called action doesn't return data
