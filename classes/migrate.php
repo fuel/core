@@ -373,12 +373,14 @@ class Migrate
 		// normalize start and end values
 		if ( ! is_null($start))
 		{
-			$start = ltrim(substr($start, 0, strpos($start, '_')), '0');
+			$start = ($pos = strpos($start, '_')) ? substr($start, 0, $pos) : $start;
+			$start = ltrim(substr($start, 0, strpos($start, '_') || strlen($start)), '0');
 			is_numeric($start) and $start = (int) $start;
 		}
 		if ( ! is_null($end))
 		{
-			$end = ltrim(substr($end, 0, strpos($end, '_')), '0');
+			$end = ($pos = strpos($end, '_')) ? substr($end, 0, $pos) : $end;
+			$end = ltrim($end, '0');
 			is_numeric($end) and $end = (int) $end;
 		}
 
