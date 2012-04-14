@@ -301,11 +301,15 @@ class DBUtil
 
 		foreach ($fields as $field => $attr)
 		{
-			$sql = "\n\t".$prefix;
 			$attr = array_change_key_case($attr, CASE_UPPER);
-
+			$_prefix = $prefix;
+			if(array_key_exists('NAME', $attr) and $field !== $attr['NAME'] and $_prefix === 'MODIFY ')
+			{
+				$_prefix = 'CHANGE ';
+			}
+			$sql = "\n\t".$_prefix;
 			$sql .= \DB::quote_identifier($field);
-			$sql .= array_key_exists('NAME', $attr) ? ' '.\DB::quote_identifier($attr['NAME'], $db ? $db : static::$connection).' ' : '';
+			$sql .= (array_key_exists('NAME', $attr) and $attr['NAME'] !== $field) ? ' '.\DB::quote_identifier($attr['NAME'], $db ? $db : static::$connection).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
 			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET'], $db ? $db : static::$connection) : '';
 			

@@ -257,7 +257,10 @@ class Finder
 		$found = array();
 		foreach ($paths as $path)
 		{
-			$found = array_merge(glob($path.$directory.'/'.$filter), $found);
+			if (($f = glob($path.$directory.DS.$filter)) !== false)
+			{
+				$found = array_merge($f, $found);
+			}
 		}
 
 		return $found;

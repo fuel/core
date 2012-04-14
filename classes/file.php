@@ -738,8 +738,9 @@ class File
 	 * @param  string|null  custom name for the file to be downloaded
 	 * @param  string|null  custom mime type or null for file mime type
 	 * @param  string|File_Area|null  file area name, object or null for base area
+	 * @param  bool        if false, return instead of exit
 	 */
-	public static function download($path, $name = null, $mime = null, $area = null)
+	public static function download($path, $name = null, $mime = null, $area = null, $exit = true)
 	{
 		$info = static::file_info($path, $area);
 
@@ -774,7 +775,11 @@ class File
 
 		static::close_file($file, $area);
 
-		exit;
+		if ($exit)
+		{
+			\Event::shutdown();
+			exit;
+		}
 	}
 
 }

@@ -338,11 +338,12 @@ class Inflector
 	 * Takes an underscored classname and uppercases all letters after the underscores.
 	 *
 	 * @param   string  classname
+	 * @param   string  separator
 	 * @return  string
 	 */
-	public static function words_to_upper($class)
+	public static function words_to_upper($class, $sep = '_')
 	{
-		return str_replace(' ', '_', ucwords(str_replace('_', ' ', $class)));
+		return str_replace(' ', $sep, ucwords(str_replace($sep, ' ', $class)));
 	}
 
 	/**

@@ -195,9 +195,6 @@ class Fuel
 
 		\Event::register('shutdown', 'Fuel::finish');
 
-		//Load in the packages
-		\Package::load(\Config::get('always_load.packages', array()));
-
 		// Always load classes, config & language set in always_load.php config
 		static::always_load();
 
@@ -373,6 +370,7 @@ class Fuel
 	 *
 	 * @param   array|string  the package name or array of packages
 	 * @return  void
+	 * @deprecated  Replaced by Package::load()
 	 */
 	public static function add_package($package)
 	{
@@ -385,6 +383,7 @@ class Fuel
 	 *
 	 * @param   string  the package name
 	 * @return  void
+	 * @deprecated  Replaced by Package::unload()
 	 */
 	public static function remove_package($name)
 	{
@@ -543,16 +542,11 @@ class Fuel
 		if (is_null($array))
 		{
 			$array = \Config::get('always_load', array());
-			// packages were loaded by Fuel's init already
-			$array['packages'] = array();
 		}
 
 		if (isset($array['packages']))
 		{
-			foreach ($array['packages'] as $packages)
-			{
-				static::add_packages($packages);
-			}
+			\Package::load($array['packages']);
 		}
 
 		if (isset($array['modules']))

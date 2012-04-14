@@ -147,6 +147,26 @@ class Theme
 	}
 
 	/**
+	 * Magic method, returns the output of [static::render].
+	 *
+	 * @return  string
+	 * @uses    Theme::render
+	 */
+	public function __toString()
+	{
+		try
+		{
+			return (string) $this->render();
+		}
+		catch (\Exception $e)
+		{
+			\Error::exception_handler($e);
+
+			return '';
+		}
+	}
+
+	/**
 	 * Sets the currently active theme.  Will return the currently active
 	 * theme.  It will throw a \ThemeException if it cannot locate the theme.
 	 *
@@ -612,25 +632,28 @@ class Theme
 	{
 		if ($type == 'active')
 		{
-			$info = $this->active['info'];
-			$path = $this->active['path'];
+			$theme = $this->active;
 		}
 		elseif ($type == 'fallback')
 		{
-			$info = $this->fallback['info'];
-			$path = $this->fallback['path'];
+			$theme = $this->fallback;
 		}
 		else
 		{
-			throw new \ThemeException(sprintf('Unknown theme type "%s".', $type));
+			throw new \ThemeException('No location found to save the info file to.');
 		}
 
-		if ( ! $path)
+		if ( ! $theme['path'])
 		{
-			throw new \ThemeException(sprintf('Could not find theme "%s".', $theme));
+			throw new \ThemeException(sprintf('Could not find theme "%s".', $theme['name']));
 		}
 
-		return \Config::save($file, $info);
+		if ( ! ($file = $this->find_file($this->config['info_file_name'], array($theme['name']))))
+		{
+			throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme['name'], $this->config['info_file_name']));
+		}
+
+		return \Config::save($file, $theme['info']);
 	}
 
 	/**

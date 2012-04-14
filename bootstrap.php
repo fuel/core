@@ -82,6 +82,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Controller'           => COREPATH.'classes/controller.php',
 		'Fuel\\Core\\Controller_Rest'      => COREPATH.'classes/controller/rest.php',
 		'Fuel\\Core\\Controller_Template'  => COREPATH.'classes/controller/template.php',
+		'Fuel\\Core\\Controller_Hybrid'    => COREPATH.'classes/controller/hybrid.php',
 
 		'Fuel\\Core\\Cookie'               => COREPATH.'classes/cookie.php',
 

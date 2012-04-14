@@ -272,54 +272,43 @@ class Upload
 			static::$config = array_merge(static::$config, $config);
 		}
 
-		// processed files array
-		static::$files = $files = array();
+		// processed files array's
+		static::$files = array();
+		$files = array();
+
+		// normalize the multidimensional fields in the $_FILES array
+		foreach($_FILES as $name => $value)
+		{
+			if (is_array($value['name']))
+			{
+				foreach($value as $field => $content)
+				{
+					foreach(\Arr::flatten($content) as $element => $data)
+					{
+						$_FILES[$name.':'.$element][$field] = $data;
+					}
+				}
+				unset($_FILES[$name]);
+			}
+		}
 
 		// normalize the $_FILES array
 		foreach($_FILES as $name => $value)
 		{
-			// if the variable is an array, flatten it
-			if (is_array($value['name']))
+			// store the file data
+			$file = array('field' => $name, 'file' => $value['tmp_name']);
+			if ($value['error'])
 			{
-				$keys = array_keys($value['name']);
-				foreach ($keys as $key)
-				{
-					// store the file data
-					$file = array('field' => $name, 'key' => $key);
-					$file['name'] = $value['name'][$key];
-					$file['type'] = $value['type'][$key];
-					$file['file'] = $value['tmp_name'][$key];
-					if ($value['error'][$key])
-					{
-						$file['error'] = true;
-						$file['errors'][] = array('error' => $value['error'][$key]);
-					}
-					else
-					{
-						$file['error'] = false;
-						$file['errors'] = array();
-					}
-					$file['size'] = $value['size'][$key];
-					$files[] = $file;
-				}
+				$file['error'] = true;
+				$file['errors'][] = array('error' => $value['error']);
 			}
 			else
 			{
-				// store the file data
-				$file = array('field' => $name, 'key' => false, 'file' => $value['tmp_name']);
-				if ($value['error'])
-				{
-					$file['error'] = true;
-					$file['errors'][] = array('error' => $value['error']);
-				}
-				else
-				{
-					$file['error'] = false;
-					$file['errors'] = array();
-				}
-				unset($value['tmp_name']);
-				$files[] = array_merge($value, $file);
+				$file['error'] = false;
+				$file['errors'] = array();
 			}
+			unset($value['tmp_name']);
+			$files[] = array_merge($value, $file);
 		}
 
 		// verify and augment the files data
@@ -433,7 +422,7 @@ class Upload
 			// and add the message texts
 			foreach (static::$files[$key]['errors'] as $e => $error)
 			{
-				static::$files[$key]['errors'][$e]['message'] = \Lang::get('upload.'.$error['error']);
+				static::$files[$key]['errors'][$e]['message'] = \Lang::get('upload.error_'.$error['error']);
 			}
 		}
 
@@ -724,7 +713,7 @@ class Upload
 			// and add the message texts
 			foreach (static::$files[$key]['errors'] as $e => $error)
 			{
-				empty(static::$files[$key]['errors'][$e]['message']) and static::$files[$key]['errors'][$e]['message'] = \Lang::get('upload.'.$error['error']);
+				empty(static::$files[$key]['errors'][$e]['message']) and static::$files[$key]['errors'][$e]['message'] = \Lang::get('upload.error_'.$error['error']);
 			}
 		}
 
