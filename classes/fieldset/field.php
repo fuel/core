@@ -119,7 +119,7 @@ class Fieldset_Field
 
 		foreach ($rules as $rule)
 		{
-			call_user_func_array(array($this, 'add_rule'), $rule);
+			call_user_func_array(array($this, 'add_rule'), (array) $rule);
 		}
 	}
 
