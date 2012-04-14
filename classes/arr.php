@@ -683,6 +683,27 @@ class Arr
 		$arr = (is_array($key) ? $key : array($key => $value)) + $arr;
 	}
 
+	public static function in_array_recursive($needle, $haystack, $strict = false)
+	{
+		foreach ($haystack as $value)
+		{
+			if ($strict and $needle === $value)
+			{
+				return true;
+			}
+			elseif (!$strict and $needle == $value)
+			{
+				return true;
+			}
+			elseif (is_array($value))
+			{
+				return static::in_array_recursive($needle, $value, $strict);
+			}
+		}
+		
+		return false;
+	}
+
 }
 
 
