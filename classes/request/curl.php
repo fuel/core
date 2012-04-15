@@ -12,12 +12,15 @@ class Request_Curl extends \Request_Driver
 	/**
 	 * Extends parent constructor to detect availability of cURL
 	 *
-	 * @param   string  $resource
-	 * @param   array   $options
+	 * @param   string  $resource  url to use
+	 * @param   array   $options   options array
+	 * @param   string  $method    request method
 	 * @throws  \RuntimeException
 	 */
-	public function __construct($resource, array $options)
+	public function __construct($resource, array $options, $method = null)
 	{
+		$method and $this->set_method($method);
+
 		// check if we have libcurl available
 		if ( ! function_exists('curl_init'))
 		{
