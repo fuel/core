@@ -683,6 +683,31 @@ class Arr
 		$arr = (is_array($key) ? $key : array($key => $value)) + $arr;
 	}
 
+	/**
+	 * Recursive in_array
+	 *
+	 * @param   mixed  $needle    what to search for
+	 * @param   array  $haystack  array to search in
+	 * @return  bool   wether the needle is found in the haystack.
+	 */
+	public static function in_array_recursive($needle, $haystack, $strict = false)
+	{
+		foreach ($haystack as $value)
+		{
+			if ( ! $strict and $needle == $value)
+			{
+				return true;
+			}
+			elseif ($needle === $value)
+			{
+				return true;
+			}
+			elseif (is_array($value) and static::in_array_recursive($needle, $value, $strict))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
-
-
