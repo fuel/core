@@ -323,10 +323,10 @@ abstract class Controller_Rest extends \Controller
 		if ( ! static::_check_login($username, $password))
 		{
 			static::_force_login();
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 	}
 
 	protected function _prepare_digest_auth()
@@ -353,7 +353,7 @@ abstract class Controller_Rest extends \Controller
 		if (empty($digest_string))
 		{
 			static::_force_login($uniqid);
-			return FALSE;
+			return false;
 		}
 
 		// We need to retrieve authentication informations from the $auth_data variable
@@ -363,7 +363,7 @@ abstract class Controller_Rest extends \Controller
 		if ( ! array_key_exists('username', $digest) or ! static::_check_login($digest['username']))
 		{
 			static::_force_login($uniqid);
-			return FALSE;
+			return false;
 		}
 
 		$valid_logins = \Config::get('rest.valid_logins');
@@ -376,10 +376,10 @@ abstract class Controller_Rest extends \Controller
 
 		if ($digest['response'] != $valid_response)
 		{
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
 	}
 
 	protected function _force_login($nonce = '')
