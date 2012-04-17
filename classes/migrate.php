@@ -373,12 +373,14 @@ class Migrate
 		// normalize start and end values
 		if ( ! is_null($start))
 		{
-			$start = ltrim(substr($start, 0, strpos($start, '_')), '0');
+			// if we have a prefix, use that
+			($pos = strpos($start, '_')) === false or $start = ltrim(substr($start, 0, $pos), '0');
 			is_numeric($start) and $start = (int) $start;
 		}
 		if ( ! is_null($end))
 		{
-			$end = ltrim(substr($end, 0, strpos($end, '_')), '0');
+			// if we have a prefix, use that
+			($pos = strpos($end, '_')) === false or $end = ltrim(substr($end, 0, $pos), '0');
 			is_numeric($end) and $end = (int) $end;
 		}
 
@@ -387,7 +389,7 @@ class Migrate
 		{
 			// get the version for this migration and normalize it
 			$migration = basename($file);
-			$migration = ltrim(substr($migration, 0, strpos($migration, '_')), '0');
+			($pos = strpos($migration, '_')) === false or $migration = ltrim(substr($migration, 0, $pos), '0');
 			is_numeric($migration) and $migration = (int) $migration;
 
 			// add the file to the migrations list if it's in between version bounds
