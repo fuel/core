@@ -206,6 +206,16 @@ class Fieldset
 	}
 
 	/**
+	 * Set the tag to be used for this fieldset
+	 *
+	 * @param  string  $tag
+	 */
+	public function set_fieldset_tag($tag)
+	{
+		$this->fieldset_tag = $tag;
+	}
+
+	/**
 	 * Set the parent Fieldset instance
 	 *
 	 * @param   Fieldset  parent fieldset to which this belongs
