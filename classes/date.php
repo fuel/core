@@ -170,8 +170,13 @@ class Date
 		{
 			throw new \UnexpectedValueException('Input was not recognized by pattern.');
 		}
+
 		$timestamp = mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],
 						$time['tm_mon'] + 1, $time['tm_mday'], $time['tm_year'] + 1900);
+		if ($timestamp === false)
+		{
+			throw new \OutOfBoundsException('Input was invalid.'.(PHP_INT_SIZE == 4?' A 32-bit system only supports dates between 1901 and 2038.':''));
+		}
 
 		return static::forge($timestamp);
 	}
