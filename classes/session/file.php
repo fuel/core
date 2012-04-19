@@ -79,10 +79,12 @@ class Session_File extends \Session_Driver
 		// get the session cookie
 		$cookie = $this->_get_cookie();
 
-		// if no session cookie was present, create it
+		// if no session cookie was present, initialize a new session
 		if ($cookie === false or $force)
 		{
-			$this->create();
+			$this->data = array();
+			$this->keys = array();
+			return $this;
 		}
 
 		// read the session file
@@ -96,8 +98,7 @@ class Session_File extends \Session_Driver
 			if ($payload === false)
 			{
 				// cookie present, but session record missing. force creation of a new session
-				$this->read(true);
-				return;
+				return $this->read(true);
 			}
 		}
 
@@ -111,8 +112,7 @@ class Session_File extends \Session_Driver
 			if ($payload === false)
 			{
 				// cookie present, but session record missing. force creation of a new session
-				$this->read(true);
-				return;
+				return $this->read(true);
 			}
 			else
 			{
@@ -128,7 +128,7 @@ class Session_File extends \Session_Driver
 		if (isset($payload[0])) $this->data = $payload[0];
 		if (isset($payload[1])) $this->flash = $payload[1];
 
-		parent::read();
+		return parent::read();
 	}
 
 	// --------------------------------------------------------------------
@@ -142,8 +142,11 @@ class Session_File extends \Session_Driver
 	public function write()
 	{
 		// do we have something to write?
-		if ( ! empty($this->keys))
+		if ( ! empty($this->keys) or ! empty($this->data))
 		{
+			// create the session if it doesn't exist
+			empty($this->keys) and $this->create();
+
 			parent::write();
 
 			// rotate the session id if needed

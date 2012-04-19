@@ -51,7 +51,7 @@ class Session_Db extends \Session_Driver
 	 * @access	public
 	 * @return	Fuel\Core\Session_Db
 	 */
-	public function create()
+	public function create($payload = '')
 	{
 		// create a new session
 		$this->keys['session_id']	= $this->_new_session_id();
@@ -60,7 +60,7 @@ class Session_Db extends \Session_Driver
 		$this->keys['user_agent']	= \Input::user_agent();
 		$this->keys['created'] 		= $this->time->get_timestamp();
 		$this->keys['updated'] 		= $this->keys['created'];
-		$this->keys['payload'] 		= '';
+		$this->keys['payload'] 		= $payload;
 
 		// create the session record
 		$result = \DB::insert($this->config['table'], array_keys($this->keys))->values($this->keys)->execute($this->config['database']);
@@ -85,10 +85,12 @@ class Session_Db extends \Session_Driver
 		// get the session cookie
 		$cookie = $this->_get_cookie();
 
-		// if no session cookie was present, create it
+		// if no session cookie was present, initialize a new session
 		if ($cookie === false or $force)
 		{
-			$this->create();
+			$this->data = array();
+			$this->keys = array();
+			return $this;
 		}
 
 		// read the session record
@@ -107,15 +109,14 @@ class Session_Db extends \Session_Driver
 			// record found?
 			if ($this->record->count())
 			{
-                                // previous id used, correctly set session id so it wont be overwritten with previous id.
-                                $this->keys['session_id'] = $this->record->get('session_id');
+				// previous id used, correctly set session id so it wont be overwritten with previous id.
+				$this->keys['session_id'] = $this->record->get('session_id');
 				$payload = $this->_unserialize($this->record->get('payload'));
 			}
 			else
 			{
 				// cookie present, but session record missing. force creation of a new session
-				$this->read(true);
-				return;
+				return $this->read(true);
 			}
 		}
 
@@ -136,29 +137,38 @@ class Session_Db extends \Session_Driver
 	public function write()
 	{
 		// do we have something to write?
-		if ( ! empty($this->keys) and ! empty($this->record))
+		if ( ! empty($this->keys) or ! empty($this->data))
 		{
 			parent::write();
 
-			// rotate the session id if needed
-			$this->rotate(false);
-
-			// create the session record, and add the session payload
-			$session = $this->keys;
-			$session['payload'] = $this->_serialize(array($this->data, $this->flash));
-
-			// update the database
-			$result = \DB::update($this->config['table'])->set($session)->where('session_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
-
-			// update went well?
-			if ($result !== false)
+			// do we need to create a new session?
+			if (is_null($this->record) or empty($this->keys))
 			{
-				// then update the cookie
-				$this->_set_cookie();
+				$payload = $this->_serialize(array($this->data, $this->flash));
+				$this->create($payload);
 			}
 			else
 			{
-				logger(\Fuel::L_ERROR, 'Session update failed, session record could not be found. Concurrency issue?');
+				// rotate the session id if needed
+				$this->rotate(false);
+
+				// create the session record, and add the session payload
+				$session = $this->keys;
+				$session['payload'] = $this->_serialize(array($this->data, $this->flash));
+
+				// update the database
+				$result = \DB::update($this->config['table'])->set($session)->where('session_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
+
+				// update went well?
+				if ($result !== false)
+				{
+					// then update the cookie
+					$this->_set_cookie();
+				}
+				else
+				{
+					logger(\Fuel::L_ERROR, 'Session update failed, session record could not be found. Concurrency issue?');
+				}
 			}
 
 			// do some garbage collection

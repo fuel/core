@@ -74,10 +74,12 @@ class Session_Cookie extends \Session_Driver
 		// get the session cookie
 		$payload = $this->_get_cookie();
 
-		// if no session cookie was present, create it
+		// if no session cookie was present, initialize a new session
 		if ($payload === false or $force)
 		{
-			$this->create();
+			$this->data = array();
+			$this->keys = array();
+			return $this;
 		}
 
 		if (isset($payload[0])) $this->data  = $payload[0];
@@ -99,8 +101,11 @@ class Session_Cookie extends \Session_Driver
 		parent::write();
 
 		// do we have something to write?
-		if ( ! empty($this->keys))
+		if ( ! empty($this->keys) or ! empty($this->data))
 		{
+			// create the session if it doesn't exist
+			empty($this->keys) and $this->create();
+
 			// rotate the session id if needed
 			$this->rotate(false);
 
