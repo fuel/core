@@ -357,6 +357,8 @@ class Input
 		{
 			static::hydrate();
 		}
+		
+		$index = str_replace(array('[', ']'), array('.', ''), $index);
 
 		return \Arr::get(static::$input, $index, $default);
 	}
