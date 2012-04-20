@@ -362,7 +362,7 @@ class Agent
 	 */
 	protected static function get_from_browscap()
 	{
-		$cache = \Cache::forge(static::$config['cache']['identifier'].'.browscap', static::$config['cache']);
+		$cache = \Cache::forge(static::$config['cache']['identifier'].'.browscap', static::$config['cache']['driver']);
 
 		// load the cached browscap data
 		try
@@ -533,7 +533,7 @@ class Agent
 		// save the result to the cache
 		if ( ! empty($result))
 		{
-			$cache = \Cache::forge(static::$config['cache']['identifier'].'.browscap', static::$config['cache']);
+			$cache = \Cache::forge(static::$config['cache']['identifier'].'.browscap', static::$config['cache']['driver']);
 			$cache->set($result, static::$config['cache']['expiry']);
 		}
 
