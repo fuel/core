@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Uri
  */
-class Tests_Uri extends TestCase
+class Test_Uri extends TestCase
 {
 
 	/**

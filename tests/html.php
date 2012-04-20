@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Html
  */
-class Tests_Html extends TestCase
+class Test_Html extends TestCase
 {
 
 	/**

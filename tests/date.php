@@ -18,7 +18,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Date
  */
-class Tests_Date extends TestCase
+class Test_Date extends TestCase
 {
 
 	/**

@@ -21,7 +21,7 @@ namespace Fuel\Core;
  * @group Core
  * @group Num
  */
-class Tests_Num extends TestCase
+class Test_Num extends TestCase
 {
 
 	/**
