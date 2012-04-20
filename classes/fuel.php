@@ -317,11 +317,10 @@ class Fuel
 		if (\Input::server('script_name'))
 		{
 			$base_url .= str_replace('\\', '/', dirname(\Input::server('script_name')));
-
-			// Add a slash if it is missing
-			$base_url = rtrim($base_url, '/').'/';
 		}
-		return $base_url;
+
+		// Add a slash if it is missing and return it
+		return rtrim($base_url, '/').'/';
 	}
 
 	/**
