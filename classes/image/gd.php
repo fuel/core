@@ -18,7 +18,7 @@ class Image_Gd extends \Image_Driver
 {
 
 	protected $image_data = null;
-	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
+	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg', 'bmp');
 	protected $gdresizefunc = "imagecopyresampled";
 
 	public function load($filename, $return_data = false)
@@ -34,11 +34,11 @@ class Image_Gd extends \Image_Driver
 		}
 
 		// Check if the function exists
-		if (function_exists('imagecreatefrom'.$image_extension))
+		if (function_exists(($function_name = 'imagecreatefrom'.$image_extension)) or is_callable(($function_name = array($this, 'imagecreatefrom'.$image_extension))))
 		{
 			// Create a new transparent image.
 			$sizes = $this->sizes($image_fullpath);
-			$tmpImage = call_user_func('imagecreatefrom'.$image_extension, $image_fullpath);
+			$tmpImage = call_user_func($function_name, $image_fullpath);
 			$image = $this->create_transparent_image($sizes->width, $sizes->height, $tmpImage);
 			if ( ! $return_data)
 			{
@@ -302,7 +302,10 @@ class Image_Gd extends \Image_Driver
 			$vars[] = floor(($this->config['quality'] / 100) * 9);
 		}
 
-		call_user_func_array('image'.$filetype, $vars);
+		is_callable(($function_name = array($this, 'image'.$filetype))) or $function_name = 'image'.$filetype;
+
+		call_user_func_array($function_name, $vars);
+
 		if ($this->config['persistence'] === false)
 		{
 			$this->reload();
@@ -504,5 +507,10 @@ class Image_Gd extends \Image_Driver
 		imagealphablending($image, false);
 		imagecopymerge($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height, $alpha);
 		imagealphablending($image, true);
+	}
+
+	public static function imagecreatefrombmp($src)
+	{
+		throw new \RuntimeException("The GD library does not support bmp filetype. Use imagemagick/imagick instead or send a pull request to support 8,16,24,32 bit bmp support.");
 	}
 }
