@@ -40,22 +40,24 @@ class Pagination
 	 * @var array The HTML for the display
 	 */
 	public static $template = array(
-		'wrapper_start'  	  => '<div class="pagination"> ',
-		'wrapper_end'    	  => ' </div>',
-		'page_start'     	  => '<span class="page-links"> ',
-		'page_end'       	  => ' </span>',
-		'previous_start' 	  => '<span class="previous"> ',
-		'previous_end'   	  => ' </span>',
-		'previous_inactive_start' => ' <span class="previous-inactive">',
-		'previous_inactive_end'   => ' </span>',
-		'previous_mark'  	  => '&laquo; ',
-		'next_start'     	  => '<span class="next"> ',
-		'next_end'       	  => ' </span>',
-		'next_inactive_start'     => ' <span class="next-inactive">',
-		'next_inactive_end'       => ' </span>',
-		'next_mark'      	  => ' &raquo;',
-		'active_start'   	  => '<span class="active"> ',
-		'active_end'     	  => ' </span>',
+		'wrapper_start'           => '<div class="pagination"><ul> ',
+		'wrapper_end'             => ' </ul></div>',
+		'page_start'     	      => '',
+		'page_end'       	      => '',
+		'previous_start'          => '<li class="prev"> ',
+		'previous_end'            => ' </li>',
+		'previous_inactive_start' => '<li class="prev disabled"><a href="#">',
+		'previous_inactive_end'   => '</a></li>',
+		'previous_mark'  	      => '&larr; ',
+		'next_start'     	      => '<li class="next"> ',
+		'next_end'       	      => ' </li>',
+		'next_inactive_start'     => ' <li class="next disabled"><a href="#">',
+		'next_inactive_end'       => ' </a></li>',
+		'next_mark'      	      => ' &rarr;',
+		'active_start'            => '<li class="active"><a href="#"> ',
+		'active_end'              => ' </a></li>',
+		'inactive_start'          => '<li> ',
+		'inactive_end'            => ' </li>',
 	);
 
 	/**
@@ -207,7 +209,7 @@ class Pagination
 			else
 			{
 				$url = ($i == 1) ? '' : '/'.$i;
-				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/').$url, $i);
+				$pagination .= static::$template['inactive_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$url, $i).static::$template['inactive_end'];
 			}
 		}
 
@@ -269,5 +271,3 @@ class Pagination
 		}
 	}
 }
-
-
