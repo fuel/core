@@ -149,7 +149,7 @@ class Input
 	 */
 	public static function extension()
 	{
-		is_null(static::$detected_ext) and static::uri();
+		static::$detected_ext === null and static::uri();
 
 		return static::$detected_ext;
 	}
@@ -161,15 +161,7 @@ class Input
 	 */
 	public static function ip($default = '0.0.0.0')
 	{
-		if (static::server('REMOTE_ADDR') !== null)
-		{
-			return static::server('REMOTE_ADDR');
-		}
-		else
-		{
-			// detection failed, return the default
-			return \Fuel::value($default);
-		}
+		return static::server('REMOTE_ADDR', $default);
 	}
 
 	/**
@@ -179,24 +171,24 @@ class Input
 	 */
 	public static function real_ip($default = '0.0.0.0')
 	{
-		if (static::server('HTTP_X_CLUSTER_CLIENT_IP') !== null)
+		if (($ip = static::server('HTTP_X_CLUSTER_CLIENT_IP')) !== null)
 		{
-			return static::server('HTTP_X_CLUSTER_CLIENT_IP');
+			return $ip;
 		}
 
-		if (static::server('HTTP_X_FORWARDED_FOR') !== null)
+		if (($ip = static::server('HTTP_X_FORWARDED_FOR')) !== null)
 		{
-			return static::server('HTTP_X_FORWARDED_FOR');
+			return $ip;
 		}
 
-		if (static::server('HTTP_CLIENT_IP') !== null)
+		if (($ip = static::server('HTTP_CLIENT_IP')) !== null)
 		{
-			return static::server('HTTP_CLIENT_IP');
+			return $ip;
 		}
 
-		if (static::server('REMOTE_ADDR') !== null)
+		if (($ip = static::server('REMOTE_ADDR')) !== null)
 		{
-			return static::server('REMOTE_ADDR');
+			return $ip;
 		}
 
 		// detection failed, return the default
@@ -266,7 +258,7 @@ class Input
 	 */
 	public static function all()
 	{
-		if (is_null(static::$input))
+		if (static::$input === null)
 		{
 			static::hydrate();
 		}
@@ -283,7 +275,7 @@ class Input
 	 */
 	public static function get($index = null, $default = null)
 	{
-		return (is_null($index) and func_num_args() === 0) ? $_GET : \Arr::get($_GET, $index, $default);
+		return (func_num_args() === 0) ? $_GET : \Arr::get($_GET, $index, $default);
 	}
 
 	/**
@@ -295,7 +287,7 @@ class Input
 	 */
 	public static function post($index = null, $default = null)
 	{
-		return (is_null($index) and func_num_args() === 0) ? $_POST : \Arr::get($_POST, $index, $default);
+		return (func_num_args() === 0) ? $_POST : \Arr::get($_POST, $index, $default);
 	}
 
 	/**
@@ -307,12 +299,12 @@ class Input
 	 */
 	public static function put($index = null, $default = null)
 	{
-		if (is_null(static::$put_delete))
+		if (static::$put_delete === null)
 		{
 			static::hydrate();
 		}
 
-		return (is_null($index) and func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
+		return (func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
 	}
 
 	/**
@@ -324,7 +316,7 @@ class Input
 	 */
 	public static function delete($index = null, $default = null)
 	{
-		if (is_null(static::$put_delete))
+		if (static::$put_delete === null)
 		{
 			static::hydrate();
 		}
@@ -341,7 +333,7 @@ class Input
 	 */
 	public static function file($index = null, $default = null)
 	{
-		return (is_null($index) and func_num_args() === 0) ? $_FILES : \Arr::get($_FILES, $index, $default);
+		return (func_num_args() === 0) ? $_FILES : \Arr::get($_FILES, $index, $default);
 	}
 
 	/**
@@ -353,7 +345,7 @@ class Input
 	 */
 	public static function param($index = null, $default = null)
 	{
-		if (is_null(static::$input))
+		if (static::$input === null)
 		{
 			static::hydrate();
 		}
@@ -383,7 +375,7 @@ class Input
 	 */
 	public static function cookie($index = null, $default = null)
 	{
-		return (is_null($index) and func_num_args() === 0) ? $_COOKIE : \Arr::get($_COOKIE, $index, $default);
+		return (func_num_args() === 0) ? $_COOKIE : \Arr::get($_COOKIE, $index, $default);
 	}
 
 	/**
@@ -395,7 +387,7 @@ class Input
 	 */
 	public static function server($index = null, $default = null)
 	{
-		return (is_null($index) and func_num_args() === 0) ? $_SERVER : \Arr::get($_SERVER, strtoupper($index), $default);
+		return (func_num_args() === 0) ? $_SERVER : \Arr::get($_SERVER, strtoupper($index), $default);
 	}
 
 	/**

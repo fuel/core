@@ -335,7 +335,7 @@ class Validation
 	 */
 	public function run($input = null, $allow_partial = false, $temp_callables = array())
 	{
-		if (is_null($input) && \Input::method() != 'POST')
+		if (is_null($input) and \Input::method() != 'POST')
 		{
 			return false;
 		}
