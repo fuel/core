@@ -271,7 +271,7 @@ class Input
 	 *
 	 * @param   string  $index    The index to get
 	 * @param   string  $default  The default value
-	 * @return  void
+	 * @return  string|array
 	 */
 	public static function get($index = null, $default = null)
 	{
