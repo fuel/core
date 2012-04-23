@@ -56,6 +56,8 @@ class Pagination
 		'next_mark'      	  => ' &raquo;',
 		'active_start'   	  => '<span class="active"> ',
 		'active_end'     	  => ' </span>',
+		'regular_start'           => '',
+		'regular_end'             => '',
 	);
 
 	/**
@@ -207,7 +209,7 @@ class Pagination
 			else
 			{
 				$url = ($i == 1) ? '' : '/'.$i;
-				$pagination .= \Html::anchor(rtrim(static::$pagination_url, '/').$url, $i);
+				$pagination .= static::$template['regular_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$url, $i).static::$template['regular_end'];
 			}
 		}
 
