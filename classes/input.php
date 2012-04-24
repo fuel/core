@@ -177,12 +177,12 @@ class Input
 
 		foreach ($server_keys as $key)
 		{
-			if (!isset($_SERVER[$key]))
+			if ( ! static::server($key))
 			{
 				continue;
 			}
 
-			$ips = explode(',', $_SERVER[$key]);
+			$ips = explode(',', static::server($key));
 			array_walk($ips, function (&$ip) {
 				$ip = trim($ip);
 			});
