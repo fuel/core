@@ -167,31 +167,39 @@ class Input
 	/**
 	 * Get the real ip address of the user.  Even if they are using a proxy.
 	 *
+	 * @param	string	the default to return on failure
+	 * @param	bool	exclude private and reserved IPs
 	 * @return  string  the real ip address of the user
 	 */
-	public static function real_ip($default = '0.0.0.0')
+	public static function real_ip($default = '0.0.0.0', $exclude_reserved = false)
 	{
-		if (($ip = static::server('HTTP_X_CLUSTER_CLIENT_IP')) !== null)
+		$server_keys = array('HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR');
+
+		foreach ($server_keys as $key)
 		{
-			return $ip;
+			if (!isset($_SERVER[$key]))
+			{
+				continue;
+			}
+
+			$ips = explode(',', $_SERVER[$key]);
+			array_walk($ips, function (&$ip) {
+				$ip = trim($ip);
+			});
+
+			if ($exclude_reserved)
+			{
+				$ips = array_filter($ips, function($ip) {
+					return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE);
+				});
+			}
+
+			if ($ips)
+			{
+				return reset($ips);
+			}
 		}
 
-		if (($ip = static::server('HTTP_X_FORWARDED_FOR')) !== null)
-		{
-			return $ip;
-		}
-
-		if (($ip = static::server('HTTP_CLIENT_IP')) !== null)
-		{
-			return $ip;
-		}
-
-		if (($ip = static::server('REMOTE_ADDR')) !== null)
-		{
-			return $ip;
-		}
-
-		// detection failed, return the default
 		return \Fuel::value($default);
 	}
 
