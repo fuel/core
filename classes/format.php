@@ -416,8 +416,12 @@ class Format
 				}
 			}
 
-			// The substr removes " from start and end
-			$data_fields = explode('","', trim($row, '"'));
+			// If present, remove the " from start and end
+			substr($row, 0, 1) === '"' and $row = substr($row,1);
+			substr($row, -1) === '"' and $row = substr($row,0,-1);
+
+			// Extract the fields from the row
+			$data_fields = explode('","', $row);
 
 			if (count($data_fields) == count($headings))
 			{
