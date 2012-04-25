@@ -18,7 +18,7 @@ class Image_Gd extends \Image_Driver
 {
 
 	protected $image_data = null;
-	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
+	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg', 'bmp');
 	protected $gdresizefunc = "imagecopyresampled";
 
 	public function load($filename, $return_data = false)
@@ -34,11 +34,11 @@ class Image_Gd extends \Image_Driver
 		}
 
 		// Check if the function exists
-		if (function_exists('imagecreatefrom'.$image_extension))
+		if (function_exists(($function_name = 'imagecreatefrom'.$image_extension)) or is_callable(($function_name = array($this, 'imagecreatefrom'.$image_extension))))
 		{
 			// Create a new transparent image.
 			$sizes = $this->sizes($image_fullpath);
-			$tmpImage = call_user_func('imagecreatefrom'.$image_extension, $image_fullpath);
+			$tmpImage = call_user_func($function_name, $image_fullpath);
 			$image = $this->create_transparent_image($sizes->width, $sizes->height, $tmpImage);
 			if ( ! $return_data)
 			{
@@ -302,7 +302,10 @@ class Image_Gd extends \Image_Driver
 			$vars[] = floor(($this->config['quality'] / 100) * 9);
 		}
 
-		call_user_func_array('image'.$filetype, $vars);
+		is_callable(($function_name = array($this, 'image'.$filetype))) or $function_name = 'image'.$filetype;
+
+		call_user_func_array($function_name, $vars);
+
 		if ($this->config['persistence'] === false)
 		{
 			$this->reload();
@@ -330,8 +333,10 @@ class Image_Gd extends \Image_Driver
 		{
 			$vars[] = floor(($this->config['quality'] / 100) * 9);
 		}
+		
+		is_callable(($function_name = array($this, 'image'.$filetype))) or $function_name = 'image'.$filetype;
 
-		call_user_func_array('image'.$filetype, $vars);
+		call_user_func_array($function_name, $vars);
 
 		if ($this->config['persistence'] === false)
 		{
@@ -504,5 +509,280 @@ class Image_Gd extends \Image_Driver
 		imagealphablending($image, false);
 		imagecopymerge($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height, $alpha);
 		imagealphablending($image, true);
+	}
+	
+	/**
+	 * Output BMP image to browser or file.
+	 * 
+	 * @copyright	Original code from Worf Data (2006) released under public domain and adapted for FuelPHP by Kriansa
+	 * @link		http://www.phpclasses.org/package/3391-PHP-Generate-a-file-in-BMP-format-from-a-GD-image.html
+	 * @param		resource	GD Image
+	 * @param		string		Filename to save the image, instead output to the browser
+	 */
+	public static function imagebmp($img, $filename = null)
+	{
+		
+		if( ! is_resource($img))
+		{
+			throw new \InvalidArgumentException("Input image is not a valid GD resource.");
+		}
+		
+		if($filename !== null and ! is_file($filename))
+		{
+			throw new \OutOfBoundsException("File $filename not found!");
+		}
+		
+		if($filename !== null and ! is_writable($filename))
+		{
+			throw new \OutOfBoundsException("You must have write permissions to file $filename.");
+		}
+		
+		// And here we go
+		
+		$original_width = imagesx($img);
+		// width = 16*x
+		$floor_width = ((floor($original_width / 16)) * 16);
+		$ceil_width = ((ceil($original_width / 16)) * 16);
+		$height = imagesy($img);
+  
+		$size = ($ceil_width * $height * 3) + 54; // 54 = Header size
+  
+		// Bitmap File Header
+		$result = 'BM'.						// header (2b)
+		static::int_to_dword($size).		// size of file (4b)
+		static::int_to_dword(0).			// reserved (4b)
+		static::int_to_dword(54).			// byte location in the file which is first byte of IMAGE (4b)
+		// Bitmap Info Header
+		static::int_to_dword(40).			// Size of BITMAPINFOHEADER (4b)
+		static::int_to_dword($ceil_width).	// width of bitmap (4b)
+		static::int_to_dword($height).		// height of bitmap (4b)
+		static::int_to_word(1).				// biPlanes = 1 (2b)
+		static::int_to_word(24).			// biBitCount = {1 (mono) or 4 (16 clr ) or 8 (256 clr) or 24 (16 Mil)} (2b)
+		static::int_to_dword(0).			// RLE COMPRESSION (4b)
+		static::int_to_dword(0).			// width x height (4b)
+		static::int_to_dword(0).			// biXPelsPerMeter (4b)
+		static::int_to_dword(0).			// biYPelsPerMeter (4b)
+		static::int_to_dword(0).			// Number of palettes used (4b)
+		static::int_to_dword(0);			// Number of important colour (4b)
+		
+		// Buffer for chr()
+		$chr = array();
+		for($i = 0; $i < 256; $i++){
+			$chr[$i] = chr($i);
+		}
+  
+		// creates image background (default: white)
+		$bgfillcolor = array(
+			"red"   => 255,
+			"green" => 255,
+			"blue"  => 255,
+		);
+
+		// Bottom to top - left to right - attention blue green red !!!
+		$y = $height - 1;
+		for ($y2 = 0; $y2 < $height; $y2++)
+		{
+			for ($x = 0; $x < $floor_width;  )
+			{
+				$rgb     = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+				$rgb     = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+				$rgb     = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+				$rgb     = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+				$rgb     = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+				$rgb     = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+				$rgb     = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+				$rgb     = imagecolorsforindex($img, imagecolorat($img, $x++, $y));
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+			}
+
+			for ($x = $floor_width; $x < $ceil_width; $x++)
+			{
+				$rgb     = ($x < $original_width) ? imagecolorsforindex($img, imagecolorat($img, $x, $y)) : $bgfillcolor;
+				$result .= $chr[$rgb["blue"]].$chr[$rgb["green"]].$chr[$rgb["red"]];
+			}
+
+			$y--;
+		}
+
+		if($filename === null)
+		{
+			echo $result;
+		}
+		else
+		{
+			file_put_contents($filename, $result);
+		}
+	}
+	
+	/**
+	 * Helper for imagebmp
+	 * 
+	 * @param		int			Integer
+	 * @return		string		DWORD integer format
+	 */
+	protected static function int_to_dword($n)
+	{
+		return chr($n & 255).chr(($n >> 8) & 255).chr(($n >> 16) & 255).chr(($n >> 24) & 255);
+	}
+
+	/**
+	 * Helper for imagebmp
+	 * 
+	 * @param		int			Integer
+	 * @return		string		WORD integer format
+	 */
+	protected static function int_to_word($n)
+	{
+		return chr($n & 255).chr(($n >> 8) & 255);
+	}
+
+	/**
+	 * Create a new image from file or URL
+	 * 
+	 * @copyright	Code taken from PHPRO and adapted for FuelPHP by Kriansa
+	 * @link		http://www.phpro.org/examples/Convert-BMP-to-JPG.html
+	 * @param		string		Filename
+	 * @return		resource	GD2 image
+	 */
+	public static function imagecreatefrombmp($src)
+	{
+		// Open source file for reading
+		if(!($srch = fopen($src, 'rb')))
+		{
+			throw new \OutOfBoundsException("Image file $src does not exist.");
+		}
+
+		// Get the headers
+		extract(unpack('vtype/Vsize/Vreserved/Voffset/Vsize/Vwidth/Vheight/vplanes/vbits/Vcompression/Vimagesize/Vxres/Vyres/Vcolor/Vimportant', fread($srch, 54)));
+
+		// Check for BMP signature
+		if($type != 0x4D42)
+		{
+			throw new \InvalidArgumentException('Source image is not a BMP.');
+		}
+
+		// Create the temp file to handle
+		$tmpfile = tempnam(APPPATH.'tmp'.DS, uniqid('bmp2gd'));
+		$fp = fopen($tmpfile, 'wb');
+
+		// Set the pallete
+		$palette_size = $offset - 54;
+		$ncolor = $palette_size / 4;
+
+		// True-color vs. palette
+		$gd_header = ($palette_size == 0) ? "\xFF\xFE" : "\xFF\xFF";
+		$gd_header .= pack('n2', $width, $height);
+		$gd_header .= ($palette_size == 0) ? "\x01" : "\x00";
+		if ($palette_size)
+		{
+			$gd_header .= pack('n', $ncolor);
+		}
+
+		// Do not allow transparency
+		$gd_header .= "\xFF\xFF\xFF\xFF";
+
+		// Write the destination headers
+		fwrite($fp, $gd_header);
+		unset($gd_header);
+
+		// if we have a palette
+		if ($palette_size) {
+			// read the palette
+			$palette = fread($srch, $palette_size);
+			// begin the gd palette
+			$gd_palette = '';
+			$j = 0;
+			// loop of the palette
+			while ($j < $palette_size)
+			{
+				$b = $palette{$j++};
+				$g = $palette{$j++};
+				$r = $palette{$j++};
+				$a = $palette{$j++};
+				// assemble the gd palette
+				$gd_palette .= $r.$g.$b.$a;
+			}
+			// finish the palette
+			$gd_palette .= str_repeat("\x00\x00\x00\x00", 256 - $ncolor);
+			// write the gd palette
+			fwrite($fp, $gd_palette);
+			unset($gd_palette);
+		}
+
+		// scan line size and alignment
+		$scan_line_size = (($bits * $width) + 7) >> 3;
+		$scan_line_align = ($scan_line_size & 0x03) ? 4 - ($scan_line_size & 0x03) : 0;
+
+		// main loop
+		for ($i = 0, $l = $height - 1; $i < $height; $i++, $l--)
+		{
+			// create scan lines starting from bottom
+			fseek($srch, $offset + (($scan_line_size + $scan_line_align) * $l));
+			$scan_line = fread($srch, $scan_line_size);
+			$gd_scan_line = '';
+			if($bits == 24)
+			{
+				$j = 0;
+				while($j < $scan_line_size)
+				{
+					$b = $scan_line{$j++};
+					$g = $scan_line{$j++};
+					$r = $scan_line{$j++};
+					$gd_scan_line .= "\x00".$r.$g.$b;
+				}
+			}
+			elseif($bits == 8)
+			{
+				$gd_scan_line = $scan_line;
+			}
+			elseif($bits == 4)
+			{
+				$j = 0;
+				while($j < $scan_line_size)
+				{
+					$byte = ord($scan_line{$j++});
+					$p1 = chr($byte >> 4);
+					$p2 = chr($byte & 0x0F);
+					$gd_scan_line .= $p1.$p2;
+				}
+				$gd_scan_line = substr($gd_scan_line, 0, $width);
+			}
+			elseif($bits == 1)
+			{
+				$j = 0;
+				while($j < $scan_line_size)
+				{
+					$byte = ord($scan_line{$j++});
+					$p1 = chr((int) (($byte & 0x80) != 0));
+					$p2 = chr((int) (($byte & 0x40) != 0));
+					$p3 = chr((int) (($byte & 0x20) != 0));
+					$p4 = chr((int) (($byte & 0x10) != 0));
+					$p5 = chr((int) (($byte & 0x08) != 0));
+					$p6 = chr((int) (($byte & 0x04) != 0));
+					$p7 = chr((int) (($byte & 0x02) != 0));
+					$p8 = chr((int) (($byte & 0x01) != 0));
+					$gd_scan_line .= $p1.$p2.$p3.$p4.$p5.$p6.$p7.$p8;
+				}
+				// put the gd scan lines together
+				$gd_scan_line = substr($gd_scan_line, 0, $width);
+			}
+			// write the gd scan lines
+			fwrite($fp, $gd_scan_line);
+			unset($gd_scan_line);
+		}
+		// close the source file
+		fclose($fp);
+
+		$gd = imagecreatefromgd($tmpfile);
+		unlink($tmpfile);
+
+		return $gd;
 	}
 }
