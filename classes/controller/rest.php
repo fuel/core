@@ -80,7 +80,6 @@ abstract class Controller_Rest extends \Controller
 	 */
 	public function router($resource, array $arguments)
 	{
-
 		\Config::load('rest', true);
 
 		// If no (or an invalid) format is given, auto detect the format
@@ -106,6 +105,12 @@ abstract class Controller_Rest extends \Controller
 			// If they call user, go to $this->post_user();
 			$controller_method = strtolower(\Input::method()) . '_' . $resource;
 
+			// Fall back to action_ if no rest method is provided
+			if ( ! method_exists($this, $controller_method))
+			{
+				$controller_method = 'action_'.$resource;
+			}
+
 			// If method is not available, set status code to 404
 			if (method_exists($this, $controller_method))
 			{
@@ -119,7 +124,7 @@ abstract class Controller_Rest extends \Controller
 		}
 		else
 		{
-			$this->response(array('status'=>0, 'error'=> 'Not Authorized'), 401);
+			$this->response(array('status'=> 0, 'error'=> 'Not Authorized'), 401);
 		}
 	}
 
