@@ -27,7 +27,6 @@ namespace Fuel\Core;
  */
 class Validation
 {
-
 	/**
 	 * @var  Validation  keeps a reference to an instance of Validation while it is being run
 	 */
@@ -139,6 +138,11 @@ class Validation
 	protected $callables = array();
 
 	/**
+	 * @var  bool  $global_input_fallback  wether to fall back to Input::param
+	 */
+	protected $global_input_fallback = true;
+
+	/**
 	 * @var  array  contains validation error messages, will overwrite those from lang files
 	 */
 	protected $error_messages = array();
@@ -156,6 +160,7 @@ class Validation
 		}
 
 		$this->callables = array($this);
+		$this->global_input_fallback = \Config::get('validation.global_input_fallback', true);
 	}
 
 	/**
@@ -492,7 +497,7 @@ class Validation
 
 		if ( ! array_key_exists($key, $this->input))
 		{
-			$this->input[$key] = \Input::param($key, $default);
+			$this->input[$key] =  $this->global_input_fallback ? \Input::param($key, $default) : $default;
 		}
 
 		return $this->input[$key];
