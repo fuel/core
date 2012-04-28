@@ -36,6 +36,11 @@ class Route
 	public $path = '';
 
 	/**
+	 * @var  boolean  route case match behaviour
+	 */
+	public $case_sensitive = false;
+
+	/**
 	 * @var  string  route module
 	 */
 	public $module = null;
@@ -70,11 +75,12 @@ class Route
 	 */
 	protected $search = null;
 
-	public function __construct($path, $translation = null)
+	public function __construct($path, $translation = null, $case_sensitive = null)
 	{
 		$this->path = $path;
 		$this->translation = ($translation === null) ? $path : $translation;
 		$this->search = ($translation == stripslashes($path)) ? $path : $this->compile();
+		$this->case_sensitive = ($case_sensitive === null) ? \Config::get('routing.case_sensitive', true) : $case_sensitive;
 	}
 
 	/**
@@ -163,7 +169,14 @@ class Route
 
 			if ($uri != '')
 			{
-				$path = preg_replace('#^'.$this->search.'$#uD', $this->translation, $uri);
+				if ($this->case_sensitive)
+				{
+					$path = preg_replace('#^'.$this->search.'$#uD', $this->translation, $uri);
+				}
+				else
+				{
+					$path = preg_replace('#^'.$this->search.'$#uiD', $this->translation, $uri);
+				}
 			}
 
 			$this->segments = explode('/', trim($path, '/'));
@@ -208,7 +221,16 @@ class Route
 			return false;
 		}
 
-		if (preg_match('#^'.$route->search.'$#uD', $uri, $params) != false)
+		if ($this->case_sensitive)
+		{
+			$result = preg_match('#^'.$route->search.'$#uD', $uri, $params);
+		}
+		else
+		{
+			$result = preg_match('#^'.$route->search.'$#uiD', $uri, $params);
+		}
+
+		if ($result === 1)
 		{
 			return $route->matched($uri, $params);
 		}
@@ -218,5 +240,3 @@ class Route
 		}
 	}
 }
-
-
