@@ -202,7 +202,7 @@ class Database_Query
 			$values = array_map(array($db, 'quote'), $this->_parameters);
 
 			// Replace the values in the SQL
-			$sql = strtr($sql, $values);
+			$sql = \Str::tr($sql, $values);
 		}
 
 		return trim($sql);
