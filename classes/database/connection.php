@@ -243,6 +243,22 @@ abstract class Database_Connection
 	}
 
 	/**
+	 * Per connection cache controlle setter/getter
+	 *
+	 * @param   bool   $bool  wether to enable it [optional]
+	 * @return  mixed  cache boolean when getting, current instance when setting.
+	 */
+	public function caching($bool = null)
+	{
+		if (is_bool($bool))
+		{
+			$this->_config['enable_cache'] = $bool;
+			return $this;
+		}
+		return \Arr::get($this->_config, 'enable_cache', true);
+	}
+
+	/**
 	 * Count the number of records in a table.
 	 *
 	 *     // Get the total number of records in the "users" table
