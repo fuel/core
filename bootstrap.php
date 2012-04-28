@@ -162,7 +162,14 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Input'      => COREPATH.'classes/input.php',
 
-		'Fuel\\Core\\Lang'       => COREPATH.'classes/lang.php',
+		'Fuel\\Core\\Lang'               => COREPATH.'classes/lang.php',
+		'Fuel\\Core\\LangException'      => COREPATH.'classes/lang.php',
+		'Fuel\\Core\\Lang_File'          => COREPATH.'classes/lang/file.php',
+		'Fuel\\Core\\Lang_Ini'           => COREPATH.'classes/lang/ini.php',
+		'Fuel\\Core\\Lang_Json'          => COREPATH.'classes/lang/json.php',
+		'Fuel\\Core\\Lang_Interface'     => COREPATH.'classes/lang/interface.php',
+		'Fuel\\Core\\Lang_Php'           => COREPATH.'classes/lang/php.php',
+		'Fuel\\Core\\Lang_Yml'           => COREPATH.'classes/lang/yml.php',
 
 		'Fuel\\Core\\Log'        => COREPATH.'classes/log.php',
 
