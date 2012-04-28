@@ -24,7 +24,7 @@ class Router
 	 * @param  string|array|Route  either the translation for $path, an array for verb routing or an instance of Route
 	 * @param  bool                whether to prepend the route(s) to the routes array
 	 */
-	public static function add($path, $options = null, $prepend = false)
+	public static function add($path, $options = null, $prepend = false, $case_sensitive = null)
 	{
 		if (is_array($path))
 		{
@@ -55,11 +55,11 @@ class Router
 
 		if ($prepend)
 		{
-			\Arr::prepend(static::$routes, $name, new \Route($path, $options));
+			\Arr::prepend(static::$routes, $name, new \Route($path, $options, $case_sensitive));
 			return;
 		}
 
-		static::$routes[$name] = new \Route($path, $options);
+		static::$routes[$name] = new \Route($path, $options, $case_sensitive);
 	}
 
 	/**
