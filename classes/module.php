@@ -126,7 +126,7 @@ class Module
 	{
 		if ($module === null)
 		{
-			return static::$module;
+			return static::$modules;
 		}
 
 		return array_key_exists($module, static::$modules);
