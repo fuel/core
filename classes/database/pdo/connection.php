@@ -123,7 +123,16 @@ class Database_PDO_Connection extends \Database_Connection
 
 		try
 		{
-			$result = $this->_connection->query($sql);
+			try
+			{
+				$result = $this->_connection->query($sql);
+			}
+			catch (\Exception $e)
+			{
+				// do a reconnect first and try again, before giving up
+				$this->connect();
+				$result = $this->_connection->query($sql);
+			}
 		}
 		catch (\Exception $e)
 		{

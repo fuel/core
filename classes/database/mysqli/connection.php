@@ -185,7 +185,18 @@ class Database_MySQLi_Connection extends \Database_Connection
 	public function query($type, $sql, $as_object)
 	{
 		// Make sure the database is connected
-		$this->_connection or $this->connect();
+		if ($this->_connection)
+		{
+			// Make sure the connection is still alive
+			if ( ! $this->_connection->ping())
+			{
+				throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno);
+			}
+		}
+		else
+		{
+			$this->connect();
+		}
 
 		if ( ! empty($this->_config['profiling']))
 		{
