@@ -180,6 +180,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
 		'Fuel\\Core\\Model_Crud' => COREPATH.'classes/model/crud.php',
 
+		'Fuel\\Core\\Module'     => COREPATH.'classes/module.php',
+
 		'Fuel\\Core\\Mongo_Db'           => COREPATH.'classes/mongo/db.php',
 		'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
 

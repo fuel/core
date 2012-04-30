@@ -308,7 +308,7 @@ class Request
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->uri.'"', __METHOD__);
 
 		// check if a module was requested
-		if (count($this->uri->segments) and $module_path = \Fuel::module_exists($this->uri->segments[0]))
+		if (count($this->uri->segments) and $module_path = \Module::exists($this->uri->segments[0]))
 		{
 			// check if the module has routes
 			if (is_file($module_path .= 'config/routes.php'))
@@ -353,7 +353,7 @@ class Request
 
 		if ($this->route->module !== null)
 		{
-			$this->add_path(\Fuel::module_exists($this->module));
+			$this->add_path(\Module::exists($this->module));
 		}
 	}
 

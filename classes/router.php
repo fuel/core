@@ -86,6 +86,43 @@ class Router
 	}
 
 	/**
+	 * Delete one or multiple routes
+	 *
+	 * @param  string
+	 */
+	public static function delete($path, $case_sensitive = null)
+	{
+		$case_sensitive ?: \Config::get('routing.case_sensitive', true);
+
+		// support the usual route path placeholders
+		$path = str_replace(array(
+			':any',
+			':alnum',
+			':num',
+			':alpha',
+			':segment',
+		), array(
+			'.+',
+			'[[:alnum:]]+',
+			'[[:digit:]]+',
+			'[[:alpha:]]+',
+			'[^/]*',
+		), $path);
+
+		foreach (static::$routes as $name => $route)
+		{
+			if ($case_sensitive)
+			{
+				preg_match('#^'.$path.'$#uD', $name) and unset(static::$routes[$name]);
+			}
+			else
+			{
+				preg_match('#^'.$path.'$#uiD', $name) and unset(static::$routes[$name]);
+			}
+		}
+	}
+
+	/**
 	 * Processes the given request using the defined routes
 	 *
 	 * @param	Request		the given Request object
@@ -135,10 +172,10 @@ class Router
 		$module = false;
 
 		// First port of call: request for a module?
-		if (\Fuel::module_exists($segments[0]))
+		if (\Module::exists($segments[0]))
 		{
 			// make the module known to the autoloader
-			\Fuel::add_module($segments[0]);
+			\Module::load($segments[0]);
 			$match->module = array_shift($segments);
 			$namespace .= ucfirst($match->module).'\\';
 			$module = $match->module;
