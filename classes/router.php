@@ -113,11 +113,17 @@ class Router
 		{
 			if ($case_sensitive)
 			{
-				preg_match('#^'.$path.'$#uD', $name) and unset(static::$routes[$name]);
+				if (preg_match('#^'.$path.'$#uD', $name))
+				{
+					unset(static::$routes[$name]);
+				}
 			}
 			else
 			{
-				preg_match('#^'.$path.'$#uiD', $name) and unset(static::$routes[$name]);
+				if (preg_match('#^'.$path.'$#uiD', $name))
+				{
+					unset(static::$routes[$name]);
+				}
 			}
 		}
 	}
