@@ -391,69 +391,23 @@ class Fuel
 	}
 
 	/**
-	 * Add module
-	 *
-	 * Registers a given module as a class prefix and returns the path to the
-	 * module. Won't register twice, will just return the path on a second call.
-	 *
-	 * @param   string  module name (lowercase prefix without underscore)
-	 * @return  string  the path that was loaded
+	 * @deprecated  Keep until v1.3
 	 */
-	public static function add_module($name)
+	public static function add_module($module)
 	{
-		if ( ! $path = \Autoloader::namespace_path('\\'.ucfirst($name)))
-		{
-			$paths = \Config::get('module_paths', array());
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Module::load() instead.', __METHOD__);
 
-			if ( ! empty($paths))
-			{
-				foreach ($paths as $modpath)
-				{
-					if (is_dir($mod_check_path = $modpath.strtolower($name).DS))
-					{
-						$path = $mod_check_path;
-						$ns = '\\'.ucfirst($name);
-						\Autoloader::add_namespaces(array(
-							$ns  => $path.'classes'.DS,
-						), true);
-						break;
-					}
-				}
-			}
-
-			// throw an exception if a non-existent module has been added
-			if ( ! isset($ns))
-			{
-				throw new \FuelException('Trying to add a non-existent module "'.$name.'"');
-			}
-		}
-		else
-		{
-			// strip the classes directory, we need the module root
-			$path = substr($path, 0, -8);
-		}
-
-		return $path;
+		return \Module::load($module);
 	}
 
 	/**
-	 * Checks to see if a module exists or not.
-	 *
-	 * @param   string  the module name
-	 * @return  bool    whether it exists or not
+	 * @deprecated  Keep until v1.3
 	 */
 	public static function module_exists($module)
 	{
-		$paths = \Config::get('module_paths', array());
+		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Module::exists() instead.', __METHOD__);
 
-		foreach ($paths as $path)
-		{
-			if (is_dir($path.$module))
-			{
-				return $path.$module.DS;
-			}
-		}
-		return false;
+		return \Module::exists($module);
 	}
 
 	/**
@@ -538,23 +492,11 @@ class Fuel
 	 */
 	public static function always_load($array = null)
 	{
-		if (is_null($array))
-		{
-			$array = \Config::get('always_load', array());
-		}
+		is_null($array) and	$array = \Config::get('always_load', array());
 
-		if (isset($array['packages']))
-		{
-			\Package::load($array['packages']);
-		}
+		isset($array['packages']) and \Package::load($array['packages']);
 
-		if (isset($array['modules']))
-		{
-			foreach ($array['modules'] as $module)
-			{
-				static::add_module($module, true);
-			}
-		}
+		isset($array['modules']) and \Module::load($array['modules']);
 
 		if (isset($array['classes']))
 		{
