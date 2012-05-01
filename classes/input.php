@@ -43,7 +43,25 @@ class Input
 	 * @var  $put_delete  All of the put or delete vars
 	 */
 	protected static $put_delete = null;
-
+	
+	/**
+	 * Sets the $_POST or $put_delete based on php://input on "applicaiton/json" requests
+	 */
+	public static function _init()
+	{
+		if (static::server('CONTENT_TYPE') === "application/json")
+		{
+			if (static::method() === 'POST')
+			{
+				$_POST = json_decode(file_get_contents("php://input"), true);
+			}
+			else
+			{
+				static::$put_delete = json_decode(file_get_contents("php://input"), true);
+			}
+		}
+	}
+	
 	/**
 	 * Detects and returns the current URI based on a number of different server
 	 * variables.
