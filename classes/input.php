@@ -45,6 +45,45 @@ class Input
 	protected static $put_delete = null;
 
 	/**
+	 * @var  $content  parsed request body (xml/json)
+	 */
+	protected static $content;
+
+	/**
+	 * Get the request body interpreted as JSON.
+	 *
+	 * @return  array  parsed request body content.
+	 */
+	public static function json()
+	{
+		if ( ! is_null(static::$content))
+		{
+			return static::$content;
+		}
+
+		static::$content = \Format::forge(file_get_contents('php://input'), 'json')->to_array();
+		is_array(static::$content) and static::$content = \Security::clean(static::$content);
+		return static::$content;
+	}
+
+	/**
+	 * Get the request body interpreted as XML.
+	 *
+	 * @return  array  parsed request body content.
+	 */
+	public static function xml()
+	{
+		if ( ! is_null(static::$content))
+		{
+			return static::$content;
+		}
+
+		static::$content = \Format::forge(file_get_contents('php://input'), 'xml')->to_array();
+		is_array(static::$content) and static::$content = \Security::clean(static::$content);
+		return static::$content;
+	}
+
+	/**
 	 * Detects and returns the current URI based on a number of different server
 	 * variables.
 	 *
