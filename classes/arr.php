@@ -385,7 +385,7 @@ class Arr
 		$return = array();
 		foreach ($keys as $key)
 		{
-			if (isset($array[$key]))
+			if (array_key_exists($key, $array))
 			{
 				$remove or $return[$key] = $array[$key];
 				if($remove)
