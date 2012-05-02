@@ -47,7 +47,7 @@ class Input
 	/**
 	 * @var  $content  parsed request body (xml/json)
 	 */
-	protected static $content;
+	protected static $content = null;
 
 	/**
 	 * Get the request body interpreted as JSON.
@@ -56,9 +56,9 @@ class Input
 	 */
 	public static function json($index = null, $default = null)
 	{
-		if (static::$content)
+		if (static::$content === null)
 		{
-			return static::hydrate_raw_input('json');
+			static::hydrate_raw_input('json');
 		}
 
 		return (func_num_args() === 0) ? static::$content : \Arr::get(static::$content, $index, $default);
@@ -71,9 +71,9 @@ class Input
 	 */
 	public static function xml($index = null, $default = null)
 	{
-		if (static::$content)
+		if (static::$content === null)
 		{
-			return static::hydrate_raw_input('xml');
+			static::hydrate_raw_input('xml');
 		}
 
 		return (func_num_args() === 0) ? static::$content : \Arr::get(static::$content, $index, $default);
