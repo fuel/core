@@ -29,6 +29,9 @@ define('MBSTRING', function_exists('mb_get_info'));
  */
 register_shutdown_function(function ()
 {
+	// Fire off the shutdown events
+	Event::shutdown();
+
 	load_error_classes();
 	return \Error::shutdown_handler();
 });
