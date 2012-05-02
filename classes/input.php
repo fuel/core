@@ -54,15 +54,20 @@ class Input
 	 *
 	 * @return  array  parsed request body content.
 	 */
-	public static function json()
+	public static function json($default = null)
 	{
-		if ( ! is_null(static::$content))
+		if (static::$content)
 		{
 			return static::$content;
 		}
 
-		static::$content = \Format::forge(file_get_contents('php://input'), 'json')->to_array();
-		is_array(static::$content) and static::$content = \Security::clean(static::$content);
+		$content = \Format::forge(file_get_contents('php://input'), 'json')->to_array();
+		if ( ! $content)
+		{
+			return \Fuel::value($default);
+		}
+
+		is_array(static::$content) and static::$content = \Security::clean($content);
 		return static::$content;
 	}
 
@@ -71,15 +76,20 @@ class Input
 	 *
 	 * @return  array  parsed request body content.
 	 */
-	public static function xml()
+	public static function xml($default = null)
 	{
-		if ( ! is_null(static::$content))
+		if (static::$content)
 		{
 			return static::$content;
 		}
 
-		static::$content = \Format::forge(file_get_contents('php://input'), 'xml')->to_array();
-		is_array(static::$content) and static::$content = \Security::clean(static::$content);
+		$content = \Format::forge(file_get_contents('php://input'), 'xml')->to_array();
+		if ( ! $content)
+		{
+			return \Fuel::value($default);
+		}
+
+		is_array(static::$content) and static::$content = \Security::clean($content);
 		return static::$content;
 	}
 
