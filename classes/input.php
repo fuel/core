@@ -54,21 +54,14 @@ class Input
 	 *
 	 * @return  array  parsed request body content.
 	 */
-	public static function json($default = null)
+	public static function json($index = null, $default = null)
 	{
 		if (static::$content)
 		{
-			return static::$content;
+			return static::hydrate_raw_input('json');
 		}
 
-		$content = \Format::forge(file_get_contents('php://input'), 'json')->to_array();
-		if ( ! $content)
-		{
-			return \Fuel::value($default);
-		}
-
-		is_array(static::$content) and static::$content = \Security::clean($content);
-		return static::$content;
+		return (func_num_args() === 0) ? static::$content : \Arr::get(static::$content, $index, $default);
 	}
 
 	/**
@@ -76,21 +69,25 @@ class Input
 	 *
 	 * @return  array  parsed request body content.
 	 */
-	public static function xml($default = null)
+	public static function xml($index = null, $default = null)
 	{
 		if (static::$content)
 		{
-			return static::$content;
+			return static::hydrate_raw_input('xml');
 		}
 
-		$content = \Format::forge(file_get_contents('php://input'), 'xml')->to_array();
-		if ( ! $content)
-		{
-			return \Fuel::value($default);
-		}
+		return (func_num_args() === 0) ? static::$content : \Arr::get(static::$content, $index, $default);
+	}
 
-		is_array(static::$content) and static::$content = \Security::clean($content);
-		return static::$content;
+	/**
+	 * Hydration from raw request (xml/json requests)
+	 *
+	 * @param  string  $type  input type
+	 */
+	protected static function hydrate_raw_input($type)
+	{
+		$content = \Format::forge(file_get_contents('php://input'), $type)->to_array();
+		is_array($content) and static::$content = \Security::clean($content);
 	}
 
 	/**
