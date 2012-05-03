@@ -186,7 +186,7 @@ class Session_Memcached extends \Session_Driver
 	public function write()
 	{
 		// do we have something to write?
-		if ( ! empty($this->keys) or ! empty($this->data))
+		if ( ! empty($this->keys) or ! empty($this->data) or ! empty($this->flash))
 		{
 			// create the session if it doesn't exist
 			empty($this->keys) and $this->create();

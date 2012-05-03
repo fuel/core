@@ -137,7 +137,7 @@ class Session_Db extends \Session_Driver
 	public function write()
 	{
 		// do we have something to write?
-		if ( ! empty($this->keys) or ! empty($this->data))
+		if ( ! empty($this->keys) or ! empty($this->data) or ! empty($this->flash))
 		{
 			parent::write();
 
