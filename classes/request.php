@@ -13,26 +13,6 @@
 namespace Fuel\Core;
 
 /**
- * @deprecated  Replaced by HttpNotFoundException
- */
-class Request404Exception extends \FuelException
-{
-
-	/**
-	 * When this type of exception isn't caught this method is called by
-	 * Error::exception_handler() to deal with the problem.
-	 */
-	public function handle()
-	{
-		$response = new \Response(\View::forge('404'), 404);
-		\Event::shutdown();
-		$response->send(true);
-		return;
-	}
-}
-
-
-/**
  * The Request class is used to create and manage new and existing requests.  There
  * is a main request which comes in from the browser or command line, then new
  * requests can be created for HMVC requests.

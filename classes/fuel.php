@@ -268,41 +268,6 @@ class Fuel
 	}
 
 	/**
-	 * Finds a file in the given directory.  It allows for a cascading filesystem.
-	 *
-	 * @param   string   The directory to look in.
-	 * @param   string   The name of the file
-	 * @param   string   The file extension
-	 * @param   boolean  if true return an array of all files found
-	 * @param   boolean  if false do not cache the result
-	 * @return  string   the path to the file
-	 * @deprecated  Replaced by Finder::search()
-	 */
-	public static function find_file($directory, $file, $ext = '.php', $multiple = false, $cache = true)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::search() instead.', __METHOD__);
-
-		return \Finder::search($directory, $file, $ext, $multiple, $cache);
-	}
-
-	/**
-	 * Gets a list of all the files in a given directory inside all of the
-	 * loaded search paths (e.g. the cascading file system).  This is useful
-	 * for things like finding all the config files in all the search paths.
-	 *
-	 * @param   string  The directory to look in
-	 * @param   string  The file filter
-	 * @return  array   the array of files
-	 * @deprecated  Replaced by Finder::instance()->list_files()
-	 */
-	public static function list_files($directory = null, $filter = '*.php')
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::instance()->list_files() instead.', __METHOD__);
-
-		return Finder::instance()->list_files($directory, $filter);
-	}
-
-	/**
 	 * Generates a base url.
 	 *
 	 * @return  string  the base url
@@ -324,31 +289,6 @@ class Fuel
 	}
 
 	/**
-	 * Add to paths which are used by Fuel::find_file()
-	 *
-	 * @param  string  the new path
-	 * @param  bool    whether to add just behind the APPPATH or to prefix
-	 */
-	public static function add_path($path, $prefix = false)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::instance()->add_path() instead.', __METHOD__);
-
-		return \Finder::instance()->add_path($path, ($prefix ? -1 : null));
-	}
-
-	/**
-	 * Returns the array of currently loaded search paths.
-	 *
-	 * @return  array  the array of paths
-	 */
-	public static function get_paths()
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Finder::instance()->paths() instead.', __METHOD__);
-
-		return \Finder::instance()->paths();
-	}
-
-	/**
 	 * Includes the given file and returns the results.
 	 *
 	 * @param   string  the path to the file
@@ -357,37 +297,6 @@ class Fuel
 	public static function load($file)
 	{
 		return include $file;
-	}
-
-	/**
-	 * Adds a package or multiple packages to the stack.
-	 *
-	 * Examples:
-	 *
-	 * static::add_package('foo');
-	 * static::add_package(array('foo' => PKGPATH.'bar/foo/'));
-	 *
-	 * @param   array|string  the package name or array of packages
-	 * @return  void
-	 * @deprecated  Replaced by Package::load()
-	 */
-	public static function add_package($package)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Package::load() instead.', __METHOD__);
-		\Package::load($package);
-	}
-
-	/**
-	 * Removes a package from the stack.
-	 *
-	 * @param   string  the package name
-	 * @return  void
-	 * @deprecated  Replaced by Package::unload()
-	 */
-	public static function remove_package($name)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Package::unload() instead.', __METHOD__);
-		\Package::unload($name);
 	}
 
 	/**

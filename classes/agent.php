@@ -282,19 +282,6 @@ class Agent
 	 * check if the current browser is mobile device
 	 *
 	 * @return	bool
-	 * @deprecated until 1.2
-	 */
-	public static function is_mobile()
-	{
-		return static::is_mobiledevice();
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * check if the current browser is mobile device
-	 *
-	 * @return	bool
 	 */
 	public static function is_mobiledevice()
 	{

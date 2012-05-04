@@ -398,34 +398,6 @@ class Arr
 	}
 
 	/**
-	 * Returns the element of the given array or a default if it is not set.
-	 *
-	 * @param   array  the array to fetch from
-	 * @param   mixed  the key to fetch from the array
-	 * @param   mixed  the value returned when not an array or invalid key
-	 * @return  mixed
-	 * @deprecated until 1.2
-	 */
-	public static function element($array, $key, $default = false)
-	{
-		return static::get($array, $key, $default);
-	}
-
-	/**
-	 * Returns the elements of the given array or a default if it is not set.
-	 *
-	 * @param   array  the array to fetch from
-	 * @param   array  the keys to fetch from the array
-	 * @param   mixed  the value returned when not an array or invalid key
-	 * @return  mixed
-	 * @deprecated until 1.2
-	 */
-	public static function elements($array, $keys, $default = false)
-	{
-		return static::get($array, $keys, $default);
-	}
-
-	/**
 	 * Insert value(s) into an array, mostly an array_splice alias
 	 * WARNING: original array is edited by reference, only boolean success is returned
 	 *
@@ -573,15 +545,6 @@ class Arr
 		}
 
 		return (array_sum($array) / $count);
-	}
-
-	/**
-	 * Alias for replace_key for backwards compatibility.
-	 */
-	public static function replace_keys($source, $replace, $new_key = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a replace_key() instead.', __METHOD__);
-		return static::replace_key($source, $replace, $new_key);
 	}
 
 	/**

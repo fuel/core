@@ -503,17 +503,10 @@ class Fieldset
 	/**
 	 * Set all fields to the input from get or post (depends on the form method attribute)
 	 *
-	 * @param   array|object  input for initial population of fields, this is deprecated - you should use populate() instea
 	 * @return  Fieldset      this, to allow chaining
 	 */
-	public function repopulate($deprecated = null)
+	public function repopulate()
 	{
-		// The following usage will be deprecated in Fuel 1.1
-		if ( ! is_null($deprecated))
-		{
-			return $this->populate($deprecated, true);
-		}
-
 		$fields = $this->field(null, true);
 		foreach ($fields as $f)
 		{
@@ -616,17 +609,6 @@ class Fieldset
 	public function validated($field = null)
 	{
 		return $this->validation()->validated($field);
-	}
-
-	/**
-	 * Alias of $this->error() for backwards compatibility
-	 *
-	 * @depricated  Remove in v1.2
-	 */
-	public function errors($field = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated. Please use Fieldset::error() instead.', __METHOD__);
-		return $this->error($field);
 	}
 
 	/**

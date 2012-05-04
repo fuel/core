@@ -53,14 +53,11 @@ class Security
 			static::check_token();
 		}
 
-		// set a default output filter if none is defined in the config
-		// this code is deprecated and will be removed in v1.2
+		// throw an exception if no the output filter setting is missing from the app config
 		if (\Config::get('security.output_filter', null) === null)
 		{
-			\Config::set('security.output_filter', '\\Security::htmlentities');
-			logger(\Fuel::L_WARNING, 'There is no security.output_filter defined in your application config file.', __METHOD__);
+			throw new \FuelException('There is no security.output_filter defined in your application config file');
 		}
-
 	}
 
 	/**

@@ -50,17 +50,6 @@ class File_Handler_Directory
 		}
 	}
 
-	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($path, array $config = array(), File_Area $area = null, $content = array())
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($path, $config, $area, $content);
-	}
-
 	public static function forge($path, array $config = array(), File_Area $area = null, $content = array())
 	{
 		return new static($path, $config, $area, $content);

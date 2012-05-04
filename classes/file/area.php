@@ -59,17 +59,6 @@ class File_Area
 	}
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory(array $config = array())
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($config);
-	}
-
-	/**
 	 * Factory for area objects
 	 *
 	 * @param	array

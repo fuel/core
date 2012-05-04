@@ -531,17 +531,6 @@ class Validation
 	}
 
 	/**
-	 * Alias of Validation::error() for backwards compatibility
-	 *
-	 * @depricated  Remove in v1.2
-	 */
-	public function errors($field = null, $default = false)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated. Please use Validation::error() instead.', __METHOD__);
-		return static::error($field, $default);
-	}
-
-	/**
 	 * Show errors
 	 *
 	 * Returns all errors in a list or with set markup from $options param

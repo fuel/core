@@ -198,7 +198,6 @@ function setup_autoloader()
 		'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
 
 		'Fuel\\Core\\Request'                 => COREPATH.'classes/request.php',
-		'Fuel\\Core\\Request404Exception'     => COREPATH.'classes/request.php',
 		'Fuel\\Core\\Request_Driver'          => COREPATH.'classes/request/driver.php',
 		'Fuel\\Core\\RequestException'        => COREPATH.'classes/request/driver.php',
 		'Fuel\\Core\\RequestStatusException'  => COREPATH.'classes/request/driver.php',
