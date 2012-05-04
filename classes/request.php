@@ -401,11 +401,11 @@ class Request
 						throw new \HttpNotFoundException();
 					}
 
-					$class->getMethod('before')->invoke($this->controller_instance);
+					$class->hasMethod('before') and $class->getMethod('before')->invoke($this->controller_instance);
 
 					$response = $action->invokeArgs($this->controller_instance, $this->method_params);
 
-					$response = $class->getMethod('after')->invoke($this->controller_instance, $response);
+					$class->hasMethod('after') and $response = $class->getMethod('after')->invoke($this->controller_instance, $response);
 				}
 				else
 				{
