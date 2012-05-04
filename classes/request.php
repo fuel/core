@@ -405,17 +405,7 @@ class Request
 
 					$response = $action->invokeArgs($this->controller_instance, $this->method_params);
 
-					$response_after = $class->getMethod('after')->invoke($this->controller_instance, $response);
-
-					// @TODO let the after method set the response directly
-					if (is_null($response_after))
-					{
-						logger(\Fuel::L_WARNING, 'The '.$class->getName().'::after() method should accept and return the Controller\'s response, empty return for the after() method is deprecated.', __METHOD__);
-					}
-					else
-					{
-						$response = $response_after;
-					}
+					$response = $class->getMethod('after')->invoke($this->controller_instance, $response);
 				}
 				else
 				{
@@ -433,9 +423,7 @@ class Request
 		// Get the controller's output
 		if (is_null($response))
 		{
-			// @TODO remove this in a future version as we will get rid of it.
-			logger(\Fuel::L_WARNING, 'The '.$class->getName().' controller should return a string or a Response object, support for the $controller->response object is deprecated.', __METHOD__);
-			$this->response = $this->controller_instance->response;
+			throw new \FuelException('The controller action called or it\'s after() method must return a Response object.');
 		}
 		elseif ($response instanceof \Response)
 		{

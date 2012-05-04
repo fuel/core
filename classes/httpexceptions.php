@@ -13,9 +13,6 @@
 namespace Fuel\Core;
 
 
-/**
- * @deprecated  This should extend HttpException, but kept as Request404Exception for backwards compat.
- */
 class HttpNotFoundException extends \HttpException
 {
 	public function response()
