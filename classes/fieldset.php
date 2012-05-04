@@ -37,17 +37,6 @@ class Fieldset
 	protected static $_instances = array();
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($name = 'default', array $config = array())
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($name, $config);
-	}
-
-	/**
 	 * Create Fieldset object
 	 *
 	 * @param   string    Identifier for this fieldset

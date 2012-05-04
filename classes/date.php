@@ -107,17 +107,6 @@ class Date
 	}
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($timestamp = null, $timezone = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($timestamp, $timezone);
-	}
-
-	/**
 	 * Create Date object from timestamp, timezone is optional
 	 *
 	 * @param   int     UNIX timestamp from current server

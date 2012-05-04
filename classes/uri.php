@@ -179,16 +179,14 @@ class Uri
 
 
 	/**
-	 * @deprecated  Make protected in 1.2
 	 * @var  string  The URI string
 	 */
-	public $uri = '';
+	protected $uri = '';
 
 	/**
-	 * @deprecated  Make protected in 1.2
 	 * @var  array  The URI segments
 	 */
-	public $segments = '';
+	protected $segments = '';
 
 	/**
 	 * Construct takes a URI or detects it if none is given and generates

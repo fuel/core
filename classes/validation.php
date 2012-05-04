@@ -38,17 +38,6 @@ class Validation
 	protected static $active_field;
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($fieldset = 'default')
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($fieldset);
-	}
-
-	/**
 	* Gets a new instance of the Validation class.
 	*
 	* @param   string      The name or instance of the Fieldset to link to

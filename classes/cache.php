@@ -34,20 +34,6 @@ class Cache
 	 * @param   mixed                 The identifier of the cache, can be anything but empty
 	 * @param   array|string          Either an array of settings or the storage driver to be used
 	 * @return  Cache_Storage_Driver  The new cache object
-	 * @deprecated until 1.2
-	 */
-	public static function factory($identifier, $config = array())
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($identifier, $config);
-	}
-
-	/**
-	 * Creates a new cache instance.
-	 *
-	 * @param   mixed                 The identifier of the cache, can be anything but empty
-	 * @param   array|string          Either an array of settings or the storage driver to be used
-	 * @return  Cache_Storage_Driver  The new cache object
 	 */
 	public static function forge($identifier, $config = array())
 	{

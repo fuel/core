@@ -73,17 +73,6 @@ class View
 	protected $active_request;
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($file = null, $data = null, $auto_filter = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($file, $data, $auto_filter);
-	}
-
-	/**
 	 * Returns a new View object. If you do not define the "file" parameter,
 	 * you must call [static::set_filename].
 	 *

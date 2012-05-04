@@ -23,18 +23,6 @@ namespace Fuel\Core;
  */
 abstract class ViewModel
 {
-
-	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($viewmodel, $method = 'view')
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($viewmodel, $method);
-	}
-
 	/**
 	 * Factory for fetching the ViewModel
 	 *
@@ -65,12 +53,6 @@ abstract class ViewModel
 
 	/**
 	 * @var  string|View  view name, after instantiation a View object
-	 * @deprecated until v1.2
-	 */
-	protected $_template;
-
-	/**
-	 * @var  string|View  view name, after instantiation a View object
 	 */
 	protected $_view;
 
@@ -89,9 +71,6 @@ abstract class ViewModel
 		$this->_auto_filter = $auto_filter;
 		class_exists('Request', false) and $this->_active_request = \Request::active();
 
-		// @TODO Remove in 1.2.  This is for backwards compat only.
-		empty($this->_view) and $this->_view = $this->_template;
-
 		if (empty($this->_view))
 		{
 			// Take the class name and guess the view name
@@ -101,28 +80,9 @@ abstract class ViewModel
 
 		$this->set_view();
 
-		// @TODO Remove in 1.2.  This is for backwards compat only.
-		if ( ! empty($this->_template))
-		{
-			logger(\Fuel::L_WARNING, '$this->_template is deprecated.  Please use a $this->_view instead.', __METHOD__);
-			$this->_view = $this->_template;
-		}
-
 		$this->_method = $method;
 
 		$this->before();
-	}
-
-	/**
-	 * Must return a View object or something compatible
-	 *
-	 * @return     Object  any object on which the template vars can be set and which has a toString method
-	 * @deprecated until 1.2
-	 */
-	protected function set_template()
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a $this->set_view() instead.', __METHOD__);
-		return $this->set_view();
 	}
 
 	/**

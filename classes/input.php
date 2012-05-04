@@ -408,19 +408,6 @@ class Input
 	}
 
 	/**
-	 * Fetch an item from either the GET array or the POST
-	 *
-	 * @param   string  The index key
-	 * @param   mixed   The default value
-	 * @return  string|array
-	 * @deprecated until 1.2
-	 */
-	public static function get_post($index = null, $default = null)
-	{
-		return static::param($index, $default);
-	}
-
-	/**
 	 * Fetch an item from the COOKIE array
 	 *
 	 * @param    string  The index key

@@ -41,17 +41,6 @@ class Image
 	}
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($config = array(), $filename = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($config, $filename);
-	}
-
-	/**
 	 * Creates a new instance of the image driver
 	 *
 	 * @param   array  $config

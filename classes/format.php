@@ -32,17 +32,6 @@ class Format
 	protected $_data = array();
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($data = null, $from_type = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($data, $from_type);
-	}
-
-	/**
 	 * Returns an instance of the Format object.
 	 *
 	 *     echo Format::forge(array('foo' => 'bar'))->to_xml();

@@ -164,20 +164,6 @@ class Lang
 	}
 
 	/**
-	 * Fetch a line from the language
-	 *
-	 * @param   string  key for the line
-	 * @param   array   array of params to str_replace
-	 * @return  bool|string  either the line or false when not found
-	 * @depricated  Remove in v1.2
-	 */
-	public static function line($line, array $params = array())
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated. Please use Lang::get() instead.', __METHOD__);
-		return static::get($line, $params);
-	}
-
-	/**
 	 * Returns a (dot notated) language string
 	 *
 	 * @param   string  key for the line

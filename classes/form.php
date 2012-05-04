@@ -39,17 +39,6 @@ class Form
 		static::$instance = static::forge('_default_', \Config::get('form'));
 	}
 
-	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($fieldset = 'default', array $config = array())
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($fieldset, $config);
-	}
-
 	public static function forge($fieldset = 'default', array $config = array())
 	{
 		if (is_string($fieldset))

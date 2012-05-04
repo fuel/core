@@ -18,11 +18,6 @@ namespace Fuel\Core;
 class Fuel_Exception extends \Exception {}
 
 /**
- * @deprecated  Keep until v1.2
- */
-class FuelException extends \Fuel_Exception {}
-
-/**
  * The core of the framework.
  *
  * @package		Fuel
