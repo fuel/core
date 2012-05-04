@@ -63,17 +63,6 @@ class Request
 	protected static $active = false;
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory($uri = null, $route = true, $method = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge($uri, $route);
-	}
-
-	/**
 	 * Generates a new request.  The request is then set to be the active
 	 * request.  If this is the first request, then save that as the main
 	 * request for the app.
@@ -159,19 +148,6 @@ class Request
 	public static function is_hmvc()
 	{
 		return static::active() !== static::main();
-	}
-
-	/**
-	 * Shows a 404.  Checks to see if a 404_override route is set, if not show
-	 * a default 404.
-	 *
-	 * @deprecated  Remove in v1.2
-	 * @throws  HttpNotFoundException
-	 */
-	public static function show_404()
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a HttpNotFoundException instead.', __METHOD__);
-		throw new \HttpNotFoundException();
 	}
 
 	/**
@@ -305,10 +281,10 @@ class Request
 		$this->uri = new \Uri($uri);
 		$this->method = $method;
 
-		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->uri.'"', __METHOD__);
+		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
 
 		// check if a module was requested
-		if (count($this->uri->segments) and $module_path = \Module::exists($this->uri->segments[0]))
+		if (count($this->uri->segments()) and $module_path = \Module::exists($this->uri->get_segment(0)))
 		{
 			// check if the module has routes
 			if (is_file($module_path .= 'config/routes.php'))

@@ -18,6 +18,16 @@ namespace Fuel\Core;
 class Fuel_Exception extends \Exception {}
 
 /**
+ * General Fuel Exception class, remove in 1.2
+ */
+class Fuel_Exception extends \Exception {}
+
+/**
+ * General Fuel Exception class
+ */
+class FuelException extends \Fuel_Exception {}
+
+/**
  * The core of the framework.
  *
  * @package		Fuel
