@@ -501,7 +501,7 @@ class Request
 	}
 
 	/**
-	 * Add to paths which are used by Fuel::find_file()
+	 * Add to paths which are used by Finder::search()
 	 *
 	 * @param   string  the new path
 	 * @param   bool    whether to add to the front or the back of the array
