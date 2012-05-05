@@ -13,12 +13,12 @@
 namespace Fuel\Core;
 
 /**
- * Fuel_Exception class tests
+ * FuelException class tests
  *
  * @group Core
  * @group Fuel
  */
-class Test_Fuel_Exception extends TestCase
+class Test_FuelException extends TestCase
 {
  	public function test_foo() {}
 }
