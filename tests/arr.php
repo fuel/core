@@ -113,112 +113,112 @@ class Test_Arr extends TestCase
 	}
 
 	/**
-	 * Tests Arr::element()
+	 * Tests Arr::get()
 	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
-	public function test_element_with_element_found($person)
+	public function test_get_with_element_found($person)
 	{
 		$expected = "Jack";
-		$output = Arr::element($person, "name", "Unknown Name");
+		$output = Arr::get($person, "name", "Unknown Name");
 		$this->assertEquals($expected, $output);
 	}
 
 	/**
-	 * Tests Arr::element()
+	 * Tests Arr::get()
 	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
-	public function test_element_with_element_not_found($person)
+	public function test_get_with_element_not_found($person)
 	{
 		$expected = "Unknown job";
-		$output = Arr::element($person, "job", "Unknown job");
+		$output = Arr::get($person, "job", "Unknown job");
 		$this->assertEquals($expected, $output);
 	}
 
 	/**
-	 * Tests Arr::element()
+	 * Tests Arr::get()
 	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
-	public function test_element_with_dot_separated_key($person)
+	public function test_get_with_dot_separated_key($person)
 	{
 		$expected = "Pittsburgh";
-		$output = Arr::element($person, "location.city", "Unknown City");
+		$output = Arr::get($person, "location.city", "Unknown City");
 		$this->assertEquals($expected, $output);
 
 	}
 
 	/**
-	 * Tests Arr::element()
+	 * Tests Arr::get()
 	 *
 	 * @test
 	 * @expectedException InvalidArgumentException
 	 */
-	public function test_element_throws_exception_when_array_is_not_an_array()
+	public function test_get_throws_exception_when_array_is_not_an_array()
 	{
-		$output = Arr::element('Jack', 'name', 'Unknown Name');
+		$output = Arr::get('Jack', 'name', 'Unknown Name');
 	}
 
 	/**
-	 * Tests Arr::element()
+	 * Tests Arr::get()
 	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
-	public function test_element_when_dot_notated_key_is_not_array($person)
+	public function test_get_when_dot_notated_key_is_not_array($person)
 	{
 		$expected = "Unknown Name";
-		$output = Arr::element($person, 'foo.first', 'Unknown Name');
+		$output = Arr::get($person, 'foo.first', 'Unknown Name');
 		$this->assertEquals($expected, $output);
 	}
 
 	/**
-	 * Tests Arr::elements()
+	 * Tests Arr::get()
 	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
-	public function test_elements_with_all_elements_found($person)
+	public function test_get_with_all_elements_found($person)
 	{
 		$expected = array(
 			'name' => 'Jack',
 			'weight' => 200,
 		);
-		$output = Arr::elements($person, array('name', 'weight'), 'Unknown');
+		$output = Arr::get($person, array('name', 'weight'), 'Unknown');
 		$this->assertEquals($expected, $output);
 	}
 
 
 	/**
-	 * Tests Arr::elements()
+	 * Tests Arr::get()
 	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
-	public function test_elements_with_all_elements_not_found($person)
+	public function test_get_with_all_elements_not_found($person)
 	{
 		$expected = array(
 			'name' => 'Jack',
 			'height' => 'Unknown',
 		);
-		$output = Arr::elements($person, array('name', 'height'), 'Unknown');
+		$output = Arr::get($person, array('name', 'height'), 'Unknown');
 		$this->assertEquals($expected, $output);
 	}
 
 	/**
-	 * Tests Arr::elements()
+	 * Tests Arr::get()
 	 *
 	 * @test
 	 * @dataProvider person_provider
 	 */
-	public function test_elements_when_keys_is_not_an_array($person)
+	public function test_get_when_keys_is_not_an_array($person)
 	{
 		$expected = 'Jack';
-		$output = Arr::elements($person, 'name', 'Unknown');
+		$output = Arr::get($person, 'name', 'Unknown');
 		$this->assertEquals($expected, $output);
 	}
 
@@ -377,7 +377,7 @@ class Test_Arr extends TestCase
 	}
 
 	/**
-	 * Tests Arr::element()
+	 * Tests Arr::filter_prefixed()
 	 *
 	 * @test
 	 */

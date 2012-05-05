@@ -97,7 +97,7 @@ class Num
 		$size = (float) $matches[1];
 
 		// Find the actual unit, assume B if no unit specified
-		$unit = \Arr::element($matches, 2, 'B');
+		$unit = \Arr::get($matches, 2, 'B');
 
 		// Convert the size into bytes
 		$bytes = $size * pow(2, static::$byte_units[$unit]);
