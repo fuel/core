@@ -173,13 +173,13 @@ class Test_Agent extends TestCase
 	}
 
 	/**
-	 * Tests Agent::is_mobile()
+	 * Tests Agent::is_mobiledevice()
 	 *
 	 * @test
 	 */
-	public function test_is_mobile()
+	public function test_is_mobiledevice()
  	{
-		$output = Agent::is_mobile();
+		$output = Agent::is_mobiledevice();
 		$this->assertFalse($output);
 	}
 
