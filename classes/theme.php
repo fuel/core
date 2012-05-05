@@ -721,8 +721,8 @@ class Theme
 		}
 
 		// add the asset paths to the asset instance
-		empty($this->active['asset_path']) or $this->asset->add_path($this->active['asset_path']);
 		empty($this->fallback['asset_path']) or $this->asset->add_path($this->fallback['asset_path']);
+		empty($this->active['asset_path']) or $this->asset->add_path($this->active['asset_path']);
 
 		return $this->{$type};
 	}
