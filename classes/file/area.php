@@ -139,7 +139,8 @@ class File_Area
 	 */
 	public function get_path($path)
 	{
-		$pathinfo = pathinfo($path);
+
+		$pathinfo = is_dir($path) ? array('dirname' => $path, 'extension' => null, 'basename' => '') : pathinfo($path);
 
 		// do we have a basedir, and is the path already prefixed by the basedir? then just deal with the double dots...
 		if ( ! empty($this->basedir) && substr($pathinfo['dirname'], 0, strlen($this->basedir)) == $this->basedir)
@@ -149,8 +150,8 @@ class File_Area
 		else
 		{
 			// attempt to get the realpath(), otherwise just use path with any double dots taken out when basedir is set (for security)
-			$pathinfo['dirname'] = ( ! empty($this->basedir) ? realpath($this->basedir.DS.$path) : realpath($path) )
-					?: ( ! empty($this->basedir) ? $this->basedir.DS.str_replace('..', '', $path) : $path);
+			$pathinfo['dirname'] = ( ! empty($this->basedir) ? realpath($this->basedir.DS.$pathinfo['dirname']) : realpath($pathinfo['dirname']) )
+					?: ( ! empty($this->basedir) ? $this->basedir.DS.str_replace('..', '', $pathinfo['dirname']) : $pathinfo['dirname']);
 		}
 
 		// basedir prefix is required when it is set (may cause unexpected errors when realpath doesn't work)
