@@ -139,32 +139,33 @@ class File_Area
 	 */
 	public function get_path($path)
 	{
+		$pathinfo = pathinfo($path);
+
 		// do we have a basedir, and is the path already prefixed by the basedir? then just deal with the double dots...
-		if ( ! empty($this->basedir) && substr($path, 0, strlen($this->basedir)) == $this->basedir)
+		if ( ! empty($this->basedir) && substr($pathinfo['dirname'], 0, strlen($this->basedir)) == $this->basedir)
 		{
-			$path = realpath($path);
+			$pathinfo['dirname'] = realpath($pathinfo['dirname']);
 		}
 		else
 		{
 			// attempt to get the realpath(), otherwise just use path with any double dots taken out when basedir is set (for security)
-			$path = ( ! empty($this->basedir) ? realpath($this->basedir.DS.$path) : realpath($path) )
+			$pathinfo['dirname'] = ( ! empty($this->basedir) ? realpath($this->basedir.DS.$path) : realpath($path) )
 					?: ( ! empty($this->basedir) ? $this->basedir.DS.str_replace('..', '', $path) : $path);
 		}
 
 		// basedir prefix is required when it is set (may cause unexpected errors when realpath doesn't work)
-		if ( ! empty($this->basedir) && substr($path, 0, strlen($this->basedir)) != $this->basedir)
+		if ( ! empty($this->basedir) && substr($pathinfo['dirname'], 0, strlen($this->basedir)) != $this->basedir)
 		{
 			throw new \OutsideAreaException('File operation not allowed: given path is outside the basedir for this area.');
 		}
 
 		// check file extension
-		$info = pathinfo($path);
-		if ( ! empty(static::$extensions) && array_key_exists($info['extension'], static::$extensions))
+		if ( ! empty(static::$extensions) && array_key_exists($pathinfo['extension'], static::$extensions))
 		{
 			throw new \FileAccessException('File operation not allowed: disallowed file extension.');
 		}
 
-		return $path;
+		return $pathinfo['dirname'].DS.$pathinfo['basename'];
 	}
 
 	/**
