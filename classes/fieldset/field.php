@@ -565,8 +565,8 @@ class Fieldset_Field
 		}
 
 		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n");
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description),
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{id}'),
+			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $this->get_attribute('id',null)),
 			$template);
 		return $template;
 	}
