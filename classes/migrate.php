@@ -342,7 +342,7 @@ class Migrate
 
 		// and save the update to the config file
 		\Config::set('migrations.version.'.$type.'.'.$name, static::$migrations[$type][$name]);
-		\Config::save('migrations', 'migrations');
+		\Config::save(\Fuel::$env.DS.'migrations', 'migrations');
 	}
 
 	/**
@@ -592,7 +592,7 @@ class Migrate
 
 				// write the updated migrations config back
 				\Config::set('migrations.version', $configs);
-				\Config::save('migrations', 'migrations');
+				\Config::save(\Fuel::$env.DS.'migrations', 'migrations');
 			}
 		}
 	}
