@@ -308,9 +308,9 @@ class Migrate
 		// make sure the migrations are in the correct order
 		sort(static::$migrations[$type][$name]);
 
-		// and save the update to the config file
+		// and save the update to the environment config file
 		\Config::set('migrations.version.'.$type.'.'.$name, static::$migrations[$type][$name]);
-		\Config::save('migrations', 'migrations');
+		\Config::save(\Fuel::$env.DS.'migrations', 'migrations');
 	}
 
 	/**
