@@ -303,13 +303,14 @@ class File
 		$basepath  = rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file  = static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) or ! is_writable($basepath))
-		{
-			throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
-		}
-
+		// Test the opening of the file first
 		if ( ! $file = static::open_file(@fopen($new_file, 'w'), true, $area) )
 		{
+			// Check why it failed afterwards
+			if ( ! is_dir($basepath) or ! is_writable($basepath))
+			{
+				throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
+			}
 			throw new \FileAccessException('No write access, cannot update a file.');
 		}
 		fwrite($file, $contents);
@@ -331,16 +332,16 @@ class File
 		$basepath  = rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file  = static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) or ! is_writable($basepath))
+		// Test the opening of the file first
+		if ( ! $file = static::open_file(@fopen($new_file, 'a'), true, $area))
 		{
-			throw new \InvalidPathException('Invalid basepath, cannot append to a file at this location.');
+			// Check why it failed afterwards
+			if ( ! file_exists($new_file))
+			{
+				throw new \FileAccessException('File does not exist, cannot be appended.');
+			}
+			throw new \FileAccessException('No write access, cannot append to a file.');
 		}
-		elseif ( ! file_exists($new_file))
-		{
-			throw new \FileAccessException('File does not exist, cannot be appended.');
-		}
-
-		$file = static::open_file(@fopen($new_file, 'a'), true, $area);
 		fwrite($file, $contents);
 		static::close_file($file, $area);
 
@@ -454,15 +455,22 @@ class File
 		$path      = static::instance($area)->get_path($path);
 		$new_path  = static::instance($area)->get_path($new_path);
 
-		if ( ! is_file($path))
-		{
-			throw new \InvalidPathException('Cannot copy file: given path is not a file.');
-		}
-		elseif (file_exists($new_path))
+		// PHP copy() function overwrites the destination file, so we need to perform this check before
+		if (file_exists($new_path))
 		{
 			throw new \FileAccessException('Cannot copy file: new path already exists.');
 		}
-		return copy($path, $new_path);
+
+		// Test the copy of the file first
+		if ( ! $copy = @copy($path, $new_path))
+		{
+			// Check why it failed afterwards
+			if ( ! is_file($path))
+			{
+				throw new \InvalidPathException('Cannot copy file: given path is not a file.');
+			}
+		}
+		return $copy;
 	}
 
 	/**
@@ -528,7 +536,7 @@ class File
 		{
 			throw new \InvalidPathException('Cannot symlink: given file does not exist.');
 		}
-		if ( ! $is_file and ! is_dir($path))
+		elseif ( ! $is_file and ! is_dir($path))
 		{
 			throw new \InvalidPathException('Cannot symlink: given directory does not exist.');
 		}
