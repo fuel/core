@@ -25,7 +25,8 @@ class Inflector
 
 	protected static $uncountable_words = array(
 		'equipment', 'information', 'rice', 'money',
-		'species', 'series', 'fish', 'meta'
+		'species', 'series', 'fish', 'meta', 'sheep',
+		'antelope',
 	);
 
 	protected static $plural_rules = array(
@@ -144,6 +145,28 @@ class Inflector
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Checks if given word requires pluralisation, and returns
+	 * plural version if true
+	 *
+	 * @param		string 		the word to pluralise
+	 * @param		numeric		number of items relating to word
+	 * @return	string		word
+	 */
+
+	public static function pluralize_if($word, $count)
+	{
+		$result = strval($word);
+		$count = intval($count);
+
+		if ($count === 1)
+		{
+			return $result;
+		}
+
+		return static::pluralize($word);
 	}
 
 	/**
@@ -387,4 +410,3 @@ class Inflector
 		return ! (\in_array(\Str::lower(\strval($word)), static::$uncountable_words));
 	}
 }
-

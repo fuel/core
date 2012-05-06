@@ -207,6 +207,40 @@ class Test_Inflector extends TestCase
 	}
 
 	/**
+	 * Test for Inflector::pluralize_if()
+	 *
+	 * @test
+	 */
+	public function test_pluralize_if_one()
+	{
+		$output = Inflector::pluralize('apple', 1);
+		$expected = "apple";
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Test for Inflector::pluralize_if()
+	 *
+	 * @test
+	 */
+	public function test_pluralize_if_not_one()
+	{
+		$output = Inflector::pluralize('apple', 2);
+		$expected = "apples";
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Test for Inflector::pluralize_if()
+	 *
+	 * @test
+	 */
+	public function test_pluralize_if_uncountable()
+	{
+		$this->assertEquals('rice', Inflector::pluralize_if('rice', 2));
+	}
+
+	/**
 	 * Test for Inflector::singularize()
 	 *
 	 * @test
@@ -283,4 +317,3 @@ class Test_Inflector extends TestCase
 		$this->assertEquals($expected, $output);
 	}
 }
-
