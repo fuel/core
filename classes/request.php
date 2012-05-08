@@ -261,7 +261,7 @@ class Request
 		$this->uri = new \Uri($uri);
 		$this->method = $method;
 
-		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$uri.'"', __METHOD__);
+		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->get().'"', __METHOD__);
 
 		// check if a module was requested
 		if (count($this->uri->segments()) and $module_path = \Module::exists($this->uri->get_segment(0)))
