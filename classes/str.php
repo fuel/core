@@ -317,7 +317,8 @@ class Str
 
 			foreach ($array as $from => $to)
 			{
-				$tr_arr[':'.$from] = $to;
+				substr($from, 0, 1) !== ':' and $from = ':'.$from;
+				$tr_arr[$from] = $to;
 			}
 			unset($array);
 
