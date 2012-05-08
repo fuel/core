@@ -91,10 +91,10 @@ class Test_Form extends TestCase
 						'key_""' => 'val_""',
 			)
 		);
-		$expected = '<select name="fieldname" id="form_fieldname">
-	<option value="key_H&amp;M" style="text-indent: 0px;">val_H&amp;M</option>
-	<option value="key_&quot;&quot;" style="text-indent: 0px;">val_&quot;&quot;</option>
-</select>';
+		$expected = '<select name="fieldname" id="form_fieldname">'.PHP_EOL
+					.'	<option value="key_H&amp;M" style="text-indent: 0px;">val_H&amp;M</option>'.PHP_EOL
+					.'	<option value="key_&quot;&quot;" style="text-indent: 0px;">val_&quot;&quot;</option>'.PHP_EOL
+					.'</select>';
 		$this->assertEquals($expected, $output);
 	}
 
@@ -128,10 +128,10 @@ class Test_Form extends TestCase
 						'dont_prep' => true,
 			)
 		);
-		$expected = '<select name="fieldname" id="form_fieldname">
-	<option value="key_H&amp;M" style="text-indent: 0px;">val_H&amp;M</option>
-	<option value="key_&quot;&#39;&quot;" style="text-indent: 0px;">val_&quot;&#39;&quot;</option>
-</select>';
+		$expected = '<select name="fieldname" id="form_fieldname">'.PHP_EOL
+					.'	<option value="key_H&amp;M" style="text-indent: 0px;">val_H&amp;M</option>'.PHP_EOL
+					.'	<option value="key_&quot;&#39;&quot;" style="text-indent: 0px;">val_&quot;&#39;&quot;</option>'.PHP_EOL
+					.'</select>';
 		$this->assertEquals($expected, $output);
 	}
 
