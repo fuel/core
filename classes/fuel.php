@@ -205,6 +205,7 @@ class Fuel
 		}
 
 		static::$initialized = true;
+		\Event::trigger('initialized');
 
 		if (static::$profiling)
 		{
