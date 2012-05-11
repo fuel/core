@@ -179,7 +179,17 @@ class Request_Curl extends \Request_Driver
 		elseif ($this->response->status >= 400)
 		{
 			$this->set_defaults();
-			throw new \RequestStatusException($body, $this->response->status);
+			
+			switch($this->response->status)
+			{
+				case 404:
+					throw new \RequestStatusException($body, $this->response->status);
+				break;
+				
+				default:
+					throw new \Exception($body, $this->response->status);
+				break;
+			}			
 		}
 		else
 		{
