@@ -423,7 +423,7 @@ class Request
 		// Get the controller's output
 		if (is_null($response))
 		{
-			throw new \FuelException('The controller action called or it\'s after() method must return a Response object.');
+			throw new \FuelException(get_class($this->controller_instance).'::'.$method.'() or the controller after() method must return a Response object.');
 		}
 		elseif ($response instanceof \Response)
 		{
