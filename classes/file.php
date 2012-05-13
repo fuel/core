@@ -231,8 +231,23 @@ class File
 				$continue = false;  // whether or not to continue
 				$matched  = false;  // whether any positive pattern matched
 				$positive = false;  // whether positive filters are present
-				foreach($filter as $f)
+				foreach($filter as $f => $type)
 				{
+					if (is_numeric($f))
+					{
+						// generic rule
+						$f = $type;
+					}
+					else
+					{
+						// type specific rule
+						$is_file = is_file($path.$file);
+						if (($type === 'file' and ! $is_file) or ($type !== 'file' and $is_file))
+						{
+							continue;
+						}
+					}
+
 					$not = substr($f, 0, 1) == '!';  // whether it's a negative condition
 					$f = $not ? substr($f, 1) : $f;
 					// on negative condition a match leads to a continue
