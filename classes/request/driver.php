@@ -96,7 +96,7 @@ abstract class Request_Driver
 	public function __construct($resource, array $options, $method = null)
 	{
 		$this->resource  = $resource;
-		$this->method    = $method;
+		$method and $this->set_method($method);
 
 		foreach ($options as $key => $value)
 		{
