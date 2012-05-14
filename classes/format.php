@@ -221,7 +221,7 @@ class Format
 			$data = array($data);
 		}
 
-		$output = implode(',', $headings) . "\n";
+		$output = implode('"' . $separator . '"', $headings) . "\"\n";
 		foreach ($data as &$row)
 		{
 			$output .= '"' . implode('"' . $separator . '"', (array) $row) . "\"\n";
