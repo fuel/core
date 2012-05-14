@@ -586,6 +586,27 @@ class Test_Arr extends TestCase
 		Arr::prepend($arr, array('one' => 1));
 		$this->assertEquals($expected, $arr);
 	}
+
+	/**
+	 * Tests Arr::is_multi()
+	 *
+	 * @test
+	 */
+	public function test_multidimensional_array()
+	{
+		// Single array
+		$arr_single = array('one' => 1, 'two' => 2);
+		$this->assertFalse(Arr::is_multi($arr_single));
+
+		// Multi-dimensional array
+		$arr_multi = array('one' => array('test' => 1), 'two' => array('test' => 2), 'three' => array('test' => 3));
+		$this->assertTrue(Arr::is_multi($arr_multi));
+
+		// Multi-dimensional array (not all elements are arrays)
+		$arr_multi_strange = array('one' => array('test' => 1), 'two' => array('test' => 2), 'three' => 3);
+		$this->assertTrue(Arr::is_multi($arr_multi_strange, false));
+		$this->assertFalse(Arr::is_multi($arr_multi_strange, true));
+	}
 }
 
 
