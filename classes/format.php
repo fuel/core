@@ -36,26 +36,27 @@ class Format
 	 *
 	 *     echo Format::forge(array('foo' => 'bar'))->to_xml();
 	 *
-	 * @param   mixed  general date to be converted
+	 * @param   mixed   general date to be converted
 	 * @param   string  data format the file was provided in
+	 * @param   array   parameters for processing the data by format
 	 * @return  Format
 	 */
-	public static function forge($data = null, $from_type = null)
+	public static function forge($data = null, $from_type = null, $from_params = array())
 	{
-		return new static($data, $from_type);
+		return new static($data, $from_type, $from_params);
 	}
 
 	/**
 	 * Do not use this directly, call forge()
 	 */
-	public function __construct($data = null, $from_type = null)
+	public function __construct($data = null, $from_type = null, $from_params = array())
 	{
 		// If the provided data is already formatted we should probably convert it to an array
 		if ($from_type !== null)
 		{
 			if (method_exists($this, '_from_' . $from_type))
 			{
-				$data = call_user_func(array($this, '_from_' . $from_type), $data);
+				$data = call_user_func(array($this, '_from_' . $from_type), $data, $from_params);
 			}
 
 			else
@@ -324,7 +325,7 @@ class Format
 	 * @param   string  $string
 	 * @return  array
 	 */
-	protected function _from_xml($string)
+	protected function _from_xml($string, $params)
 	{
 		$_arr = is_string($string) ? simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : $string;
 		$arr = array();
@@ -344,7 +345,7 @@ class Format
 	 * @param   string  $string
 	 * @return  array
 	 */
-	protected function _from_yaml($string)
+	protected function _from_yaml($string, $params)
 	{
 		if ( ! function_exists('spyc_load'))
 		{
@@ -360,9 +361,10 @@ class Format
 	 * @param   string  $string
 	 * @return  array
 	 */
-	protected function _from_csv($string)
+	protected function _from_csv($string, $params)
 	{
 		$data = array();
+		$separator = isset($params['separator']) ? $params['separator'] : ',';
 
 		// Splits
 		$rows = explode("\n", trim($string));
@@ -373,7 +375,7 @@ class Format
 			{
 				return trim($value, '"');
 			},
-			explode(',', array_shift($rows))
+			explode($separator, array_shift($rows))
 		);
 
 		$join_row = null;
@@ -418,7 +420,7 @@ class Format
 			substr($row, -1) === '"' and $row = substr($row,0,-1);
 
 			// Extract the fields from the row
-			$data_fields = explode('","', $row);
+			$data_fields = explode('"' . $separator . '"', $row);
 
 			if (count($data_fields) == count($headings))
 			{
@@ -436,7 +438,7 @@ class Format
 	 * @param   string  $string
 	 * @return  mixed
 	 */
-	private function _from_json($string)
+	private function _from_json($string, $params)
 	{
 		return json_decode(trim($string));
 	}
@@ -447,7 +449,7 @@ class Format
 	 * @param   string  $string
 	 * @return  mixed
 	 */
-	private function _from_serialize($string)
+	private function _from_serialize($string, $params)
 	{
 		return unserialize(trim($string));
 	}
