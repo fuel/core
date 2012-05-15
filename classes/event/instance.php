@@ -31,6 +31,22 @@ class Event_Instance
 	// --------------------------------------------------------------------
 
 	/**
+	 * Constructor, sets all initial events.
+	 *
+	 * @param  array  $events  events array
+	 */
+	public function __construct(array $events = array())
+	{
+		foreach($events as $event => $callback)
+		{
+			$this->register($event, $callback);
+		}
+	}
+
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Register
 	 *
 	 * Registers a Callback for a given event
