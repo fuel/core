@@ -264,12 +264,12 @@ class Request
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->get().'"', __METHOD__);
 
 		// check if a module was requested
-		if (count($this->uri->segments()) and $module_path = \Module::exists($this->uri->get_segment(0)))
+		if (count($this->uri->get_segments()) and $module_path = \Module::exists($this->uri->get_segment(1)))
 		{
 			// check if the module has routes
 			if (is_file($module_path .= 'config/routes.php'))
 			{
-				$module = $this->uri->segments[0];
+				$module = $this->uri->get_segment(1);
 
 				// load and add the module routes
 				$module_routes = \Fuel::load($module_path);
@@ -423,7 +423,7 @@ class Request
 		// Get the controller's output
 		if (is_null($response))
 		{
-			throw new \FuelException('The controller action called or it\'s after() method must return a Response object.');
+			throw new \FuelException(get_class($this->controller_instance).'::'.$method.'() or the controller after() method must return a Response object.');
 		}
 		elseif ($response instanceof \Response)
 		{

@@ -124,7 +124,8 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Crypt'   => COREPATH.'classes/crypt.php',
 
-		'Fuel\\Core\\Event'   => COREPATH.'classes/event.php',
+		'Fuel\\Core\\Event'            => COREPATH.'classes/event.php',
+		'Fuel\\Core\\Event_Instance'   => COREPATH.'classes/event/instance.php',
 
 		'Fuel\\Core\\Error'   => COREPATH.'classes/error.php',
 
