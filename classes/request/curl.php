@@ -181,7 +181,7 @@ class Request_Curl extends \Request_Driver
 			$this->set_defaults();
 						
 			// Only show specific 400 error message with \Exception if not in production mode
-			if(Fuel::$env != 'production')
+			if(Fuel::$env != Fuel::PRODUCTION)
 			{
 				switch($this->response->status)
 				{
