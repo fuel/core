@@ -36,26 +36,27 @@ class Format
 	 *
 	 *     echo Format::forge(array('foo' => 'bar'))->to_xml();
 	 *
-	 * @param   mixed  general date to be converted
-	 * @param   string  data format the file was provided in
+	 * @param   mixed   $data         general date to be converted
+	 * @param   string  $from_type    data format the file was provided in
+	 * @param   array   $from_params  params to process the input string
 	 * @return  Format
 	 */
-	public static function forge($data = null, $from_type = null)
+	public static function forge($data = null, $from_type = null, $from_params = array())
 	{
-		return new static($data, $from_type);
+		return new static($data, $from_type, $from_params);
 	}
 
 	/**
 	 * Do not use this directly, call forge()
 	 */
-	public function __construct($data = null, $from_type = null)
+	public function __construct($data = null, $from_type = null, $from_params = array())
 	{
 		// If the provided data is already formatted we should probably convert it to an array
 		if ($from_type !== null)
 		{
 			if (method_exists($this, '_from_' . $from_type))
 			{
-				$data = call_user_func(array($this, '_from_' . $from_type), $data);
+				$data = call_user_func(array($this, '_from_' . $from_type), $data, $from_params);
 			}
 
 			else
@@ -184,10 +185,11 @@ class Format
 	 * To CSV conversion
 	 *
 	 * @param   mixed   $data
-	 * @param   mixed   $separator
+	 * @param   string  $delimiter
+	 * @param   string  $enclosure
 	 * @return  string
 	 */
-	public function to_csv($data = null, $separator = ',')
+	public function to_csv($data = null, $delimiter = ',', $enclosure = '"')
 	{
 		if ($data === null)
 		{
@@ -221,10 +223,10 @@ class Format
 			$data = array($data);
 		}
 
-		$output = implode('"' . $separator . '"', $headings) . "\"\n";
+		$output = $enclosure . implode($enclosure . $delimiter . $enclosure, $headings) . $enclosure . "\n";
 		foreach ($data as &$row)
 		{
-			$output .= '"' . implode('"' . $separator . '"', (array) $row) . "\"\n";
+			$output .= $enclosure . implode($enclosure . $delimiter . $enclosure, $row) . $enclosure . "\n";
 		}
 
 		return rtrim($output, "\n");
@@ -324,7 +326,7 @@ class Format
 	 * @param   string  $string
 	 * @return  array
 	 */
-	protected function _from_xml($string)
+	protected function _from_xml($string, $params = array())
 	{
 		$_arr = is_string($string) ? simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : $string;
 		$arr = array();
@@ -344,7 +346,7 @@ class Format
 	 * @param   string  $string
 	 * @return  array
 	 */
-	protected function _from_yaml($string)
+	protected function _from_yaml($string, $params = array())
 	{
 		if ( ! function_exists('spyc_load'))
 		{
@@ -360,8 +362,11 @@ class Format
 	 * @param   string  $string
 	 * @return  array
 	 */
-	protected function _from_csv($string)
+	protected function _from_csv($string, $params = array())
 	{
+		$delimiter = isset($params['delimiter']) ? $params['delimiter'] : ',';
+		$enclosure = isset($params['enclosure']) ? $params['enclosure'] : '"';
+
 		$data = array();
 
 		// Splits
@@ -369,11 +374,11 @@ class Format
 
 		// TODO: This means any headers with , will be split, but this is less likley thay a value containing it
 		$headings = array_map(
-			function($value)
+			function($value) use ($enclosure)
 			{
-				return trim($value, '"');
+				return trim($value, $enclosure);
 			},
-			explode(',', array_shift($rows))
+			explode($delimiter, array_shift($rows))
 		);
 
 		$join_row = null;
@@ -381,7 +386,7 @@ class Format
 		foreach ($rows as $row)
 		{
 			// Check for odd numer of double quotes
-			while (substr_count($row, '"') % 2)
+			while (substr_count($row, $enclosure) % 2)
 			{
 				// They have a line start to join onto
 				if ($join_row !== null)
@@ -390,7 +395,7 @@ class Format
 					$row = $join_row."\n".$row;
 
 					// Did that fix it?
-					if (substr_count($row, '"') % 2)
+					if (substr_count($row, $enclosure) % 2)
 					{
 						// Nope, lets try adding the next line
 						continue 2;
@@ -414,17 +419,16 @@ class Format
 			}
 
 			// If present, remove the " from start and end
-			substr($row, 0, 1) === '"' and $row = substr($row,1);
-			substr($row, -1) === '"' and $row = substr($row,0,-1);
+			substr($row, 0, 1) === $enclosure and $row = substr($row,1);
+			substr($row, -1) === $enclosure and $row = substr($row,0,-1);
 
 			// Extract the fields from the row
-			$data_fields = explode('","', $row);
+			$data_fields = explode($enclosure . $delimiter . $enclosure, $row);
 
 			if (count($data_fields) == count($headings))
 			{
 				$data[] = array_combine($headings, $data_fields);
 			}
-
 		}
 
 		return $data;
@@ -436,7 +440,7 @@ class Format
 	 * @param   string  $string
 	 * @return  mixed
 	 */
-	private function _from_json($string)
+	private function _from_json($string, $params = array())
 	{
 		return json_decode(trim($string));
 	}
@@ -447,7 +451,7 @@ class Format
 	 * @param   string  $string
 	 * @return  mixed
 	 */
-	private function _from_serialize($string)
+	private function _from_serialize($string, $params = array())
 	{
 		return unserialize(trim($string));
 	}
