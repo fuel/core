@@ -85,7 +85,7 @@ class File_Handler_File
 		$new_name = str_replace(array('..', '/', '\\'), array('', '', ''), $new_name);
 		$extension = $new_extension === false
 			? $info['extension']
-			: ltrim(str_replace(array('/', '\\'), array('', '', ''), $new_name), '.');
+			: ltrim($new_extension, '.');
 		$extension = ! empty($extension) ? '.'.$extension : '';
 
 		$new_path = $info['dirname'].DS.$new_name.$extension;
@@ -105,8 +105,8 @@ class File_Handler_File
 	public function move($new_path)
 	{
 		$info = pathinfo($this->path);
-		$new_path = $this->area->get_path($new_path);
 
+		$new_path = $this->area->get_path($new_path);
 		$new_path = rtrim($new_path, '\\/').DS.$info['basename'];
 
 		$return = $this->area->rename($this->path, $new_path);
