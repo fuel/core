@@ -115,6 +115,6 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	 */
 	protected static function hybrid()
 	{
-		return \Input::is_ajax() or (static::$hmvc and (Request::main() !== Request::active()));
+		return \Input::is_ajax() or (static::$hmvc and (\Request::main() !== \Request::active()));
 	}
 }
