@@ -265,7 +265,7 @@ $printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 		}
 		elseif( ! is_array($value) AND ! is_object($value))
 		{
-			$output .= '<b>'.htmlentities($value).'</b>';
+			$output .= '<b>'.\Security::htmlentities($value).'</b>';
 		}
 		$output .= str_repeat('&rsaquo;&nbsp;', $depth).$item.'</td></tr>';
 		if($class == '') $class = 'alt'; else $class = '';
