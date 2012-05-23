@@ -386,7 +386,7 @@ class Fieldset
 		{
 			foreach ($this->fieldset_children as $fieldset)
 			{
-				if (($field = $fieldset->field($name) !== false))
+				if (($field = $fieldset->field($name)) !== false)
 				{
 					return $field;
 				}
