@@ -213,7 +213,6 @@ class Format
 				$headings = array_shift($data);
 			}
 		}
-
 		// Single array
 		else
 		{
@@ -221,7 +220,8 @@ class Format
 			$data = array($data);
 		}
 
-		$output = implode('"' . $separator . '"', $headings) . "\"\n";
+		$output = "\"".implode('"' . $separator . '"', $headings) . "\"\n";
+
 		foreach ($data as &$row)
 		{
 			$output .= '"' . implode('"' . $separator . '"', (array) $row) . "\"\n";
