@@ -471,7 +471,7 @@ class DBUtil
 			$sql = '';
 			! empty($definition['constraint']) and $sql .= " CONSTRAINT ".$definition['constraint'];
 			$sql .= " FOREIGN KEY (".$definition['key'].')';
-			$sql .= " REFERENCES ".$definition['reference']['table'].' (';
+			$sql .= " REFERENCES ".\DB::quote_identifier(\DB::table_prefix($definition['reference']['table'])).' (';
 			if (is_array($definition['reference']['column']))
 			{
 				$sql .= implode(', ', $definition['reference']['column']);
