@@ -25,16 +25,21 @@ abstract class Controller_Hybrid extends \Controller_Rest
 {
 
 	/**
-	* @var string page template
-	*/
+	 * @var string page template
+	 */
 	public $template = 'template';
+
+	/**
+	 * @var return HMVC requests as rest requests
+	 */
+	public static $hmvc = false;
 
 	/**
 	 * Load the template and create the $this->template object
 	 */
 	public function before()
 	{
-		if ( ! \Input::is_ajax())
+		if ( ! static::hybrid())
 		{
 			if ( ! empty($this->template) and is_string($this->template))
 			{
@@ -53,7 +58,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	 */
 	public function after($response)
 	{
-		if ( ! \Input::is_ajax())
+		if ( ! static::hybrid())
 		{
 			// If nothing was returned default to the template
 			if (empty($response))
@@ -88,7 +93,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	public function router($resource, array $arguments)
 	{
 		// if this is an ajax call
-		if (\Input::is_ajax())
+		if (static::hybrid())
 		{
 			// have the Controller_Rest router deal with it
 			return parent::router($resource, $arguments);
@@ -103,5 +108,13 @@ abstract class Controller_Hybrid extends \Controller_Rest
 
 		// if not, we got ourselfs a genuine 404!
 		throw new \HttpNotFoundException();
+	}
+
+	/**
+	 * Checks if the request is ajax, or HMVC if static::$hmvc is true
+	 */
+	protected static function hybrid()
+	{
+		return \Input::is_ajax() or (static::$hmvc and (\Request::main() !== \Request::active()));
 	}
 }
