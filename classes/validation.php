@@ -740,14 +740,14 @@ class Validation
 	 * @param   string
 	 * @return  bool
 	 */
-	public function _validation_valid_emails($val)
+	public function _validation_valid_emails($val, $separator = ',')
 	{
 		if ($this->_empty($val))
 		{
 			return true;
 		}
 
-		$emails = explode(',', $val);
+		$emails = explode($separator, $val);
 
 		foreach ($emails as $e)
 		{
