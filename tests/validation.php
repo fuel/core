@@ -34,6 +34,7 @@ class Test_Validation extends TestCase
                     'sky' => 'blue',
                     'one' => 'john@doe.com',
                     'two' => 'john@doe.com, jane@doe.com',
+                    'owt' => 'john@doe.com; jane@doe.com',
                     'six' => 6,
                     'ten' => 10,
                     'dns' => '127.0.0.1',
@@ -389,6 +390,24 @@ class Test_Validation extends TestCase
  	  $this->assertEquals($output, $expected);
  	}
 
+ 	/**
+     * Validation:  valid_emails (different separator)
+     * Expecting:   success
+ 	 * 
+ 	 * @dataProvider    form_provider
+ 	 */ 	
+ 	public function test_validation_valid_emails_separator_success($input)
+ 	{ 	  
+ 	  $val = Validation::forge(__FUNCTION__);
+ 	  $val->add_field('owt', 'Emails')
+ 	      ->add_rule('valid_emails', ';');
+ 	  $output = $val->run($input);
+ 	  
+ 	  $expected = true;
+ 	  
+ 	  $this->assertEquals($output, $expected);
+ 	}
+ 	
  	/**
      * Validation:  valid_emails
      * Expecting:   failure
