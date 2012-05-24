@@ -244,9 +244,15 @@ class Arr
 	 */
 	public static function is_assoc($arr)
 	{
+		if ( ! is_array($arr))
+		{
+			throw new \InvalidArgumentException('The parameter must be an array.');
+		}
+
+		$counter = 0;
 		foreach ($arr as $key => $unused)
 		{
-			if ( ! is_int($key))
+			if ( ! is_int($key) or $key !== $counter++)
 			{
 				return true;
 			}
