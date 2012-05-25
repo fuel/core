@@ -188,7 +188,7 @@ class Error
 		{
 			if (\Input::is_ajax())
 			{
-				exit($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line']);
+				echo $data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line'];
 			}
 			else
 			{
