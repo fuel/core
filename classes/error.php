@@ -169,7 +169,14 @@ class Error
 
 			try
 			{
-				exit(\View::forge('errors'.DS.'php_fatal_error', $data, false));
+				if (\Input::is_ajax())
+				{
+					exit($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line']);
+				}
+				else
+				{
+					exit(\View::forge('errors'.DS.'php_fatal_error', $data, false));
+				}
 			}
 			catch (\FuelException $view_exception)
 			{
@@ -179,7 +186,14 @@ class Error
 
 		try
 		{
-			echo \View::forge('errors'.DS.'php_error', $data, false);
+			if (\Input::is_ajax())
+			{
+				exit($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line']);
+			}
+			else
+			{
+				echo \View::forge('errors'.DS.'php_error', $data, false);
+			}
 		}
 		catch (\FuelException $e)
 		{
@@ -210,8 +224,15 @@ class Error
 		$data['filepath']	= \Fuel::clean_path($trace['file']);
 		$data['line']		= $trace['line'];
 		$data['function']	= $trace['function'];
-
-		echo \View::forge('errors'.DS.'php_short', $data, false);
+		
+		if (\Input::is_ajax())
+		{
+			echo 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line'];
+		}
+		else
+		{
+			echo \View::forge('errors'.DS.'php_short', $data, false);
+		}
 	}
 
 	/**
@@ -233,7 +254,15 @@ class Error
 			$protocol = \Input::server('SERVER_PROTOCOL') ? \Input::server('SERVER_PROTOCOL') : 'HTTP/1.1';
 			header($protocol.' 500 Internal Server Error');
 		}
-		exit(\View::forge('errors'.DS.'production'));
+
+		if (\Input::is_ajax())
+		{
+			exit('Oops - An unexpected error has occurred.');
+		}
+		else
+		{
+			exit(\View::forge('errors'.DS.'production'));
+		}
 	}
 
 	protected static function prepare_exception(\Exception $e, $fatal = true)
