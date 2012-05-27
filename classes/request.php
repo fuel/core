@@ -493,9 +493,6 @@ class Request
 	{
 		switch ($type)
 		{
-			case 'request':
-				$this->input_vars['request'] = $inherit_values ? $_REQUEST + $values : $values;
-			break;
 			case 'server':
 				$this->input_vars['server'] = $inherit_values ? $_SERVER + $values : $values;
 			break;
@@ -512,7 +509,7 @@ class Request
 				$this->input_vars['files'] = $inherit_values ? \Arr::merge($_FILES, $values) : $values;
 			break;
 			default:
-				// for json, xml
+				// for json, xml, put, delete
 				$this->input_vars[$type] = $values;
 			break;
 		}
