@@ -63,7 +63,7 @@ class Input
 
 		$json = ($request = \Request::current()) ? $request->get('json') : false;
 
-		$request === false and $json =& static::$content;
+		$json === false and $json =& static::$content;
 
 		return (func_num_args() === 0) ? $json : \Arr::get($json, $index, $default);
 	}
@@ -82,7 +82,7 @@ class Input
 
 		$xml = ($request = \Request::current()) ? $request->get('xml') : false;
 
-		$request === false and $xml =& static::$content;
+		$xml === false and $xml =& static::$content;
 
 		return (func_num_args() === 0) ? $xml : \Arr::get($xml, $index, $default);
 	}
