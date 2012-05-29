@@ -50,6 +50,11 @@ class Input
 	protected static $content = null;
 
 	/**
+	 * @var  $php_input  cache for the php://input stream
+	 */
+	protected static $php_input = null;
+
+	/**
 	 * Get the request body interpreted as JSON.
 	 *
 	 * @return  array  parsed request body content.
@@ -86,7 +91,12 @@ class Input
 	 */
 	protected static function hydrate_raw_input($type)
 	{
-		$content = \Format::forge(file_get_contents('php://input'), $type)->to_array();
+		if (static::$php_input === null)
+		{
+			static::$php_input = file_get_contents('php://input');
+		}
+
+		$content = \Format::forge(static::$php_input, $type)->to_array();
 		is_array($content) and static::$content = \Security::clean($content);
 	}
 
@@ -449,7 +459,12 @@ class Input
 
 		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
 		{
-			parse_str(file_get_contents('php://input'), static::$put_delete);
+			if (static::$php_input === null)
+			{
+				static::$php_input = file_get_contents('php://input');
+			}
+			
+			parse_str(static::$php_input, static::$put_delete);
 			static::$input = array_merge(static::$input, static::$put_delete);
 		}
 	}
