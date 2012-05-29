@@ -61,7 +61,7 @@ class Input
 			static::hydrate_raw_input('json');
 		}
 
-		$json = ($request = \Request::current()) ? $request->get('json') : false;
+		$json = ($request = \Request::active()) ? $request->get('json') : false;
 
 		$json === false and $json =& static::$content;
 
@@ -80,7 +80,7 @@ class Input
 			static::hydrate_raw_input('xml');
 		}
 
-		$xml = ($request = \Request::current()) ? $request->get('xml') : false;
+		$xml = ($request = \Request::active()) ? $request->get('xml') : false;
 
 		$xml === false and $xml =& static::$content;
 
