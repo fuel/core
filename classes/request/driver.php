@@ -152,7 +152,7 @@ abstract class Request_Driver
 	 */
 	public function set_options(array $options)
 	{
-		$this->options = $options;
+		$this->options += $options;
 		return $this;
 	}
 
