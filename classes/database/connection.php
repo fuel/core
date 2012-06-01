@@ -703,6 +703,8 @@ abstract class Database_Connection
 	 */
 	public function connection()
 	{
+		// Make sure the database is connected
+		$this->_connection or $this->connect();
 		return $this->_connection;
 	}
 }
