@@ -473,7 +473,7 @@ class Form_Instance
 			$attributes['value'] = (string) $value;
 		}
 
-		$value = empty($attributes['value']) ? '' : $attributes['value'];
+		$value = (0 == strlen($attributes['value']) && empty($attributes['value'])) ? '' : $attributes['value'];
 		unset($attributes['value']);
 
 		if ($this->get_config('prep_value', true) && empty($attributes['dont_prep']))
