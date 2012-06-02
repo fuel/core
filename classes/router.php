@@ -79,10 +79,22 @@ class Router
 	 */
 	public static function get($name, $named_params = array())
 	{
+		// check if we have this named route
 		if (array_key_exists($name, static::$routes))
 		{
+			// fetch the url this route defines
 			$url = static::$routes[$name]->path;
 
+			// get named parameters regex's out of the way first
+			foreach($named_params as $name => $value)
+			{
+				if (is_string($name) and ($pos = strpos($url, '(:'.$name.')')) !== false)
+				{
+					$url = substr_replace($url,$value,$pos,strlen($name)+3);
+				}
+			}
+
+			// deal with the remaining regex's
 			if (preg_match_all('#\(.*?\)#', $url, $matches) !== false)
 			{
 				if (count($matches) == 1)
@@ -98,8 +110,8 @@ class Router
 					{
 						$replace = array_key_exists($key, $named_params) ? $named_params[$key] : '';
 
-						$pos = strpos($url,$regex);
-						if ($pos !== false) {
+						if (($pos = strpos($url,$regex)) !== false)
+						{
 							$url = substr_replace($url,$replace,$pos,strlen($regex));
 						}
 					}
@@ -107,6 +119,7 @@ class Router
 				}
 			}
 
+			// return the created URI, replace any named parameters not in a regex
 			return \Uri::create($url, $named_params);
 		}
 	}
