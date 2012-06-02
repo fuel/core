@@ -66,8 +66,8 @@ class Router
 	 * Does reverse routing for a named route.  This will return the FULL url
 	 * (including the base url and index.php).
 	 *
-	 * WARNING: This is VERY limited at this point.  Does not work if there is
-	 * any regex in the route.
+	 * WARNING: Reverse routing with routes that contains a regex is still
+	 * experimental. The simple ones work, but complex ones might fail!
 	 *
 	 * Usage:
 	 *
@@ -81,7 +81,33 @@ class Router
 	{
 		if (array_key_exists($name, static::$routes))
 		{
-			return \Uri::create(static::$routes[$name]->path, $named_params);
+			$url = static::$routes[$name]->path;
+
+			if (preg_match_all('#\(.*?\)#', $url, $matches) !== false)
+			{
+				if (count($matches) == 1)
+				{
+					$search = array();
+					foreach($matches[0] as $match)
+					{
+						$search[] = $match;
+					}
+
+					$replace = array();
+					foreach($search as $key => $regex)
+					{
+						$replace = array_key_exists($key, $named_params) ? $named_params[$key] : '';
+
+						$pos = strpos($url,$regex);
+						if ($pos !== false) {
+							$url = substr_replace($url,$replace,$pos,strlen($regex));
+						}
+					}
+
+				}
+			}
+
+			return \Uri::create($url, $named_params);
 		}
 	}
 
