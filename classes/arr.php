@@ -113,6 +113,35 @@ class Arr
 	}
 
 	/**
+	 * Pluck an array of values from an array.
+	 *
+	 * @param  array   $array  collection of arrays to pluck from
+	 * @param  string  $key    key of the value to pluck
+	 * @param  string  $index  optional return array index key
+	 * @return array   array of plucked values
+	 */
+	public static function pluck($array, $key, $index = null)
+	{
+		$return = array();
+
+		if ($index)
+		{
+			foreach ($array as $a)
+			{
+				$i = is_object($a) ? $a->{$index} : $a[$index];
+				$return[$i] = is_object($a) ? $a->{$key} : $a[$key];
+			}
+
+			return $return;
+		}
+
+		return array_map(function($a) use ($key)
+		{
+			return is_object($a) ? $a->$key : $a[$key];
+		}, $array);
+	}
+
+	/**
 	 * Array_key_exists with a dot-notated key from an array.
 	 *
 	 * @param   array   $array    The search array
