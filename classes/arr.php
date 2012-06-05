@@ -571,6 +571,41 @@ class Arr
 	}
 
 	/**
+	 * Sorts an array on multitiple values, with deep sorting support.
+	 *
+	 * @param   array  $array        collection of arrays/objects to sort
+	 * @param   array  $conditions   sorting conditions
+	 * @param   bool   @ignore_case  wether to sort case insensitive
+	 */
+	public static function multisort($array, $conditions, $ignore_case = false)
+	{
+		$temp = array();
+		$counter = 0;
+		$keys = array_keys($conditions);
+
+		foreach($keys as $key)
+		{
+			$temp[$key] = static::pluck($array, $key, true);
+			is_array($conditions[$key]) or $conditions[$key] = array($conditions[$key]);
+		}
+
+		$args = array();
+		foreach ($keys as $key)
+		{
+			$args[] = $ignore_case ? array_map('strtolower', $temp[$key]) : $temp[$key];
+			foreach($conditions[$key] as $flag)
+			{
+				$args[] = $flag;
+			}
+		}
+
+		$args[] = &$array;
+
+		call_user_func_array('array_multisort', $args);
+		return $array;
+	}
+
+	/**
 	 * Find the average of an array
 	 *
 	 * @param   array    the array containing the values
