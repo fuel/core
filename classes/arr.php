@@ -117,28 +117,33 @@ class Arr
 	 *
 	 * @param  array   $array  collection of arrays to pluck from
 	 * @param  string  $key    key of the value to pluck
-	 * @param  string  $index  optional return array index key
+	 * @param  string  $index  optional return array index key, true for original index
 	 * @return array   array of plucked values
 	 */
 	public static function pluck($array, $key, $index = null)
 	{
 		$return = array();
+		$get_deep = strpos($key, '.') !== false;
 
-		if ($index)
+		if ( ! $index)
 		{
-			foreach ($array as $a)
+			foreach ($array as $i => $a)
 			{
-				$i = is_object($a) ? $a->{$index} : $a[$index];
-				$return[$i] = is_object($a) ? $a->{$key} : $a[$key];
+				$return[] = (is_object($a) and ! ($a instanceof \ArrayAccess)) ? $a->{$key} :
+					($get_deep ? static::get($a, $key) : $a[$key]);
 			}
-
-			return $return;
+		}
+		else
+		{
+			foreach ($array as $i => $a)
+			{
+				$index !== true and $i = (is_object($a) and ! ($a instanceof \ArrayAccess)) ? $a->{$index} : $a[$index];
+				$return[$i] = (is_object($a) and ! ($a instanceof \ArrayAccess)) ? $a->{$key} :
+					($get_deep ? static::get($a, $key) : $a[$key]);
+			}
 		}
 
-		return array_map(function($a) use ($key)
-		{
-			return is_object($a) ? $a->$key : $a[$key];
-		}, $array);
+		return $return;
 	}
 
 	/**
@@ -537,7 +542,7 @@ class Arr
 			return $array;
 		}
 
-		foreach ($array as $k=>$v)
+		foreach ($array as $k => $v)
 		{
 			$b[$k] = static::get($v, $key);
 		}
@@ -557,7 +562,7 @@ class Arr
 			break;
 		}
 
-		foreach ($b as $key=>$val)
+		foreach ($b as $key => $val)
 		{
 			$c[] = $array[$key];
 		}
