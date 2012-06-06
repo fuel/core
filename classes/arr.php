@@ -580,7 +580,6 @@ class Arr
 	public static function multisort($array, $conditions, $ignore_case = false)
 	{
 		$temp = array();
-		$counter = 0;
 		$keys = array_keys($conditions);
 
 		foreach($keys as $key)
