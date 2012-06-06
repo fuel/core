@@ -31,6 +31,11 @@ abstract class Controller_Rest extends \Controller
 	protected $format = null;
 
 	/**
+	 * @var  integer  response http status
+	 */
+	protected $http_status = null;
+
+	/**
 	 * @var  array  List all supported methods
 	 */
 	protected $_supported_formats = array(
@@ -41,7 +46,7 @@ abstract class Controller_Rest extends \Controller
 		'serialized' => 'application/vnd.php.serialized',
 		'php' => 'text/plain',
 		'html' => 'text/html',
-		'csv' => 'application/csv'
+		'csv' => 'application/csv',
 	);
 
 	public function before()
@@ -59,8 +64,15 @@ abstract class Controller_Rest extends \Controller
 
 	public function after($response)
 	{
-		// If the response is a Response object, we will use their instead of
-		// ours.
+		// If the response is an array
+		if (is_array($response))
+		{
+			// set the response
+			$response = $this->response($response);
+		}
+
+		// If the response is a Response object, we will use their
+		// instead of ours.
 		if ( ! $response instanceof \Response)
 		{
 			$response = $this->response;
@@ -114,7 +126,7 @@ abstract class Controller_Rest extends \Controller
 			// If method is not available, set status code to 404
 			if (method_exists($this, $controller_method))
 			{
-				call_user_func_array(array($this, $controller_method), $arguments);
+				return call_user_func_array(array($this, $controller_method), $arguments);
 			}
 			else
 			{
@@ -133,18 +145,19 @@ abstract class Controller_Rest extends \Controller
 	 *
 	 * Takes pure data and optionally a status code, then creates the response
 	 *
-	 * @param  mixed
-	 * @param  int
+	 * @param   mixed
+	 * @param   int
+	 * @return  object  Response instance
 	 */
-	protected function response($data = array(), $http_code = 200)
+	protected function response($data = array(), $http_status = null)
 	{
 		if ((is_array($data) and empty($data)) or ($data == ''))
 		{
 			$this->response->status = $this->no_data_status;
-			return;
+			return $this->response;
 		}
 
-		$this->response->status = $http_code;
+		$http_status or $http_status = $this->http_status;
 
 		// If the format method exists, call and return the output in that format
 		if (method_exists('Format', 'to_'.$this->format))
@@ -152,7 +165,11 @@ abstract class Controller_Rest extends \Controller
 			// Set the correct format header
 			$this->response->set_header('Content-Type', $this->_supported_formats[$this->format]);
 
+			// Set the formatted response
 			$this->response->body(\Format::forge($data)->{'to_'.$this->format}());
+
+			// Set the reponse http status
+			$http_status and $this->response->status = $http_status;
 		}
 
 		// Format not supported, output directly
@@ -160,6 +177,19 @@ abstract class Controller_Rest extends \Controller
 		{
 			$this->response->body((string) $data);
 		}
+
+		return $this->response;
+	}
+
+	/**
+	 * Set the Response http status.
+	 *
+	 * @param   integer  $status  response http status code
+	 * @return  void
+	 */
+	protected function http_status($status)
+	{
+		$this->http_status = $status;
 	}
 
 	/**
@@ -349,7 +379,7 @@ abstract class Controller_Rest extends \Controller
 		}
 		else
 		{
-			$digest_string = "";
+			$digest_string = '';
 		}
 
 		/* The $_SESSION['error_prompted'] variabile is used to ask
