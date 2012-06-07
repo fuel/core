@@ -121,7 +121,10 @@ class Database_PDO_Connection extends \Database_Connection
 			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql);
 		}
 
-		try
+		// run the query. if the connection is lost, try 3 times to reconnect
+		$attempts = 0;
+
+		do
 		{
 			try
 			{
@@ -129,22 +132,24 @@ class Database_PDO_Connection extends \Database_Connection
 			}
 			catch (\Exception $e)
 			{
-				// do a reconnect first and try again, before giving up
-				$this->connect();
-				$result = $this->_connection->query($sql);
-			}
-		}
-		catch (\Exception $e)
-		{
-			if (isset($benchmark))
-			{
-				// This benchmark is worthless
-				\Profiler::delete($benchmark);
-			}
+				if (strpos($e->getMessage(), '2006 MySQL') !== false)
+				{
+					$this->connect();
+				}
+				else
+				{
+					if (isset($benchmark))
+					{
+						// This benchmark is worthless
+						\Profiler::delete($benchmark);
+					}
 
-			// Convert the exception in a database exception
-			throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"');
+					// Convert the exception in a database exception
+					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"');
+				}
+			}
 		}
+		while ($attempts++ < 3);
 
 		if (isset($benchmark))
 		{
