@@ -60,16 +60,15 @@ class Session_Db extends \Session_Driver
 		$this->keys['user_agent']	= \Input::user_agent();
 		$this->keys['created'] 		= $this->time->get_timestamp();
 		$this->keys['updated'] 		= $this->keys['created'];
-		$this->keys['payload'] 		= $payload;
+
+		// set the session cookie
+		$this->_set_cookie();
+
+		// add the payload
+		$this->keys['payload'] = $payload;
 
 		// create the session record
 		$result = \DB::insert($this->config['table'], array_keys($this->keys))->values($this->keys)->execute($this->config['database']);
-
-		// no need to save the payload in the cookie
-		unset($this->keys['payload']);
-
-		// and set the session cookie
-		$this->_set_cookie();
 
 		return $this;
 	}
