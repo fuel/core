@@ -53,23 +53,23 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	 */
 	public function after($response)
 	{
-		if ( ! \Input::is_ajax())
-		{
-			// If nothing was returned default to the template
-			if (empty($response))
-			{
-				$response = $this->template;
-			}
 
-			// If the response isn't a Response object, embed in the available one for BC
-			// @deprecated  can be removed when $this->response is removed
-			if ( ! $response instanceof Response)
-			{
-				$this->response->body = $response;
-				$response = $this->response;
-			}
-		}
+        if ( ! \Input::is_ajax())
+        {
+            // If nothing was returned default to the template
+            if (empty($response))
+            {
+                $response = $this->template;
+            }
 
+            // If the response isn't a Response object, embed in the available one for BC
+            // @deprecated  can be removed when $this->response is removed
+            if ( ! $response instanceof Response)
+            {
+                $this->response->body = $response;
+                $response = $this->response;
+            }
+        }
 		return parent::after($response);
 	}
 
