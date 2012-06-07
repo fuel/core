@@ -61,7 +61,11 @@ class Input
 			static::hydrate_raw_input('json');
 		}
 
-		return (func_num_args() === 0) ? static::$content : \Arr::get(static::$content, $index, $default);
+		$json = ($request = \Request::active()) ? $request->get('json') : false;
+
+		$json === false and $json =& static::$content;
+
+		return (func_num_args() === 0) ? $json : \Arr::get($json, $index, $default);
 	}
 
 	/**
@@ -76,7 +80,11 @@ class Input
 			static::hydrate_raw_input('xml');
 		}
 
-		return (func_num_args() === 0) ? static::$content : \Arr::get(static::$content, $index, $default);
+		$xml = ($request = \Request::active()) ? $request->get('xml') : false;
+
+		$xml === false and $xml =& static::$content;
+
+		return (func_num_args() === 0) ? $xml : \Arr::get($xml, $index, $default);
 	}
 
 	/**
@@ -299,7 +307,7 @@ class Input
 		}
 
 		// if called before a request is active, fall back to the global server setting
-		return \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', $default));
+		return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', static::server('REQUEST_METHOD', $default));
 	}
 
 	/**
@@ -313,7 +321,7 @@ class Input
 	}
 
 	/**
-	 * Returns all of the GET, POST, PUT and DELETE variables.
+	 * Returns all of the GET, POST, PUT and DELETE variables from the main request
 	 *
 	 * @return  array
 	 */
@@ -336,7 +344,11 @@ class Input
 	 */
 	public static function get($index = null, $default = null)
 	{
-		return (func_num_args() === 0) ? $_GET : \Arr::get($_GET, $index, $default);
+		$get = ($request = \Request::active()) ? $request->get('get') : false;
+		
+		$get === false and $get =& $_GET;
+
+		return (func_num_args() === 0) ? $get : \Arr::get($get, $index, $default);
 	}
 
 	/**
@@ -348,7 +360,11 @@ class Input
 	 */
 	public static function post($index = null, $default = null)
 	{
-		return (func_num_args() === 0) ? $_POST : \Arr::get($_POST, $index, $default);
+		$post = ($request = \Request::active()) ? $request->get('post') : false;
+		
+		$post === false and $post =& $_POST;
+
+		return (func_num_args() === 0) ? $post : \Arr::get($post, $index, $default);
 	}
 
 	/**
@@ -365,7 +381,11 @@ class Input
 			static::hydrate();
 		}
 
-		return (func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
+		$put = ($request = \Request::active()) ? $request->get('put') : false;
+		
+		$put === false and $put =& static::$put_delete;
+
+		return (func_num_args() === 0) ? $put : \Arr::get($put, $index, $default);
 	}
 
 	/**
@@ -382,7 +402,11 @@ class Input
 			static::hydrate();
 		}
 
-		return (is_null($index) and func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
+		$delete = ($request = \Request::active()) ? $request->get('delete') : false;
+		
+		$delete === false and $delete =& static::$put_delete;
+
+		return (is_null($index) and func_num_args() === 0) ? $delete : \Arr::get($delete, $index, $default);
 	}
 
 	/**
@@ -394,11 +418,15 @@ class Input
 	 */
 	public static function file($index = null, $default = null)
 	{
-		return (func_num_args() === 0) ? $_FILES : \Arr::get($_FILES, $index, $default);
+		$files = ($request = \Request::active()) ? $request->get('files') : false;
+		
+		$files === false and $files =& $_FILES;
+
+		return (func_num_args() === 0) ? $files : \Arr::get($files, $index, $default);
 	}
 
 	/**
-	 * Fetch an item from either the GET, POST, PUT or DELETE array
+	 * Fetch an item from either the main request's GET, POST, PUT or DELETE array
 	 *
 	 * @param   string  The index key
 	 * @param   mixed   The default value
@@ -423,7 +451,11 @@ class Input
 	 */
 	public static function cookie($index = null, $default = null)
 	{
-		return (func_num_args() === 0) ? $_COOKIE : \Arr::get($_COOKIE, $index, $default);
+		$cookie = ($request = \Request::active()) ? $request->get('cookie') : false;
+		
+		$cookie === false and $cookie =& $_COOKIE;
+
+		return (func_num_args() === 0) ? $cookie : \Arr::get($cookie, $index, $default);
 	}
 
 	/**
@@ -435,7 +467,11 @@ class Input
 	 */
 	public static function server($index = null, $default = null)
 	{
-		return (func_num_args() === 0) ? $_SERVER : \Arr::get($_SERVER, strtoupper($index), $default);
+		$server = ($request = \Request::active()) ? $request->get('server') : false;
+		
+		$server === false and $server =& $_SERVER;
+
+		return (func_num_args() === 0) ? $server : \Arr::get($server, strtoupper($index), $default);
 	}
 
 	/**

@@ -169,11 +169,6 @@ class Request
 	public $route = null;
 
 	/**
-	 * @var  string  $method  request method
-	 */
-	protected $method = null;
-
-	/**
 	 * The current module
 	 *
 	 * @var  string
@@ -244,6 +239,18 @@ class Request
 	protected $children = array();
 
 	/**
+	 * @var  string  $method  request method
+	 */
+	protected $method = null;
+
+	/**
+	 * Request level overwrites for get, post, server, cookie, file, json
+	 *
+	 * @var array
+	 */
+	protected $input_vars = array();
+
+	/**
 	 * Creates the new Request object by getting a new URI object, then parsing
 	 * the uri with the Route class.
 	 *
@@ -259,12 +266,16 @@ class Request
 	public function __construct($uri, $route = true, $method = null)
 	{
 		$this->uri = new \Uri($uri);
-		$this->method = $method;
-
+		
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->get().'"', __METHOD__);
 
 		// set the request method
 		$this->method = \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', 'GET'));
+
+		if ($method)
+		{
+			$this->set_method($method);
+		}
 
 		// check if a module was requested
 		if (count($this->uri->get_segments()) and $module_path = \Module::exists($this->uri->get_segment(1)))
@@ -467,6 +478,58 @@ class Request
 	public function get_method()
 	{
 		return $this->method;
+	}
+
+
+	/**
+	 * Sets an overwrite for superglobal items at the request level
+	 * (get, post, cookie, server, files, json, xml)
+	 * @param  string  $type    item type to overwrite
+	 * @param  array   $values  values to set for the overwrite
+	 * @param  bool    $inherit_values  whether to merge with the main request superglobal
+	 * @return object  current instance
+	 */
+	public function set($type, $values = array(), $inherit_values = false)
+	{
+		switch ($type)
+		{
+			case 'server':
+				$this->input_vars['server'] = $inherit_values ? $_SERVER + $values : $values;
+			break;
+			case 'get':
+				$this->input_vars['get'] = $inherit_values ? \Arr::merge($_GET, $values) : $values;
+			break;
+			case 'post':
+				$this->input_vars['post'] = $inherit_values ? \Arr::merge($_POST, $values) : $values;
+			break;
+			case 'cookie':
+				$this->input_vars['cookie'] = $inherit_values ? \Arr::merge($_COOKIE, $values) : $values;
+			break;
+			case 'files':
+				$this->input_vars['files'] = $inherit_values ? \Arr::merge($_FILES, $values) : $values;
+			break;
+			default:
+				// for json, xml, put, delete
+				$this->input_vars[$type] = $values;
+			break;
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Returns the main input variable overwrites if they have been changed
+	 * @param  string  $type - type of item to get
+	 * @return mixed bool|array
+	 */
+	public function get($type)
+	{
+		if (isset($this->input_vars[$type]))
+		{
+			return $this->input_vars[$type];
+		}
+
+		return false;
 	}
 
 	/**
