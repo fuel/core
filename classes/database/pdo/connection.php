@@ -122,13 +122,14 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 
 		// run the query. if the connection is lost, try 3 times to reconnect
-		$attempts = 0;
+		$attempts = 3;
 
 		do
 		{
 			try
 			{
 				$result = $this->_connection->query($sql);
+				break;
 			}
 			catch (\Exception $e)
 			{
@@ -149,7 +150,7 @@ class Database_PDO_Connection extends \Database_Connection
 				}
 			}
 		}
-		while ($attempts++ < 3);
+		while ($attempts-- > 0);
 
 		if (isset($benchmark))
 		{
