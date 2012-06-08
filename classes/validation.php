@@ -565,6 +565,36 @@ class Validation
 	}
 
 	/**
+	 * Get errors
+	 *
+	 * Returns all errors in array
+	 *
+	 * @param   array  uses keys message_prefix
+	 * @return  array
+	 */
+	public function get_errors($options = array())
+	{
+		$default = array(
+			'message_prefix' => \Config::get('validation.message_prefix', '* '),
+		);
+		$options = array_merge($default, $options);
+
+		if (empty($this->errors))
+		{
+			return array();
+		}
+
+		$array = array();
+
+		foreach($this->errors as $e)
+		{
+			$array[] = $options['message_prefix'].$e->get_message();
+		}
+
+		return $array;
+	}
+
+	/**
 	 * Alias for $this->fieldset->add()
 	 *
 	 * @return  Fieldset_Field
