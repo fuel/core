@@ -41,7 +41,7 @@ class Test_Arr extends TestCase
 
 	public static function collection_provider()
 	{
-		$object = new stdClass;
+		$object = new \stdClass;
 		$object->id = 7;
 		$object->name = 'Bert';
 		$object->surname = 'Visser';
