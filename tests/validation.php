@@ -398,14 +398,13 @@ class Test_Validation extends TestCase
  	 */ 	
  	public function test_validation_valid_emails_separator_success($input)
  	{ 	  
- 	  $val = Validation::forge(__FUNCTION__);
- 	  $val->add_field('owt', 'Emails')
- 	      ->add_rule('valid_emails', ';');
- 	  $output = $val->run($input);
- 	  
- 	  $expected = true;
- 	  
- 	  $this->assertEquals($output, $expected);
+    $val = Validation::forge(__FUNCTION__);
+    $val->add_field('owt', 'Emails', 'valid_emails[;]');
+    $output = $val->run($input);
+    
+    $expected = true;
+    
+    $this->assertEquals($output, $expected);
  	}
  	
  	/**
