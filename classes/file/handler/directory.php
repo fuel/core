@@ -12,9 +12,7 @@
 
 namespace Fuel\Core;
 
-
-
-class File_Handler_Directory
+class File_Handler_Directory implements \Iterator, \ArrayAccess, \Countable
 {
 
 	/**
@@ -53,6 +51,16 @@ class File_Handler_Directory
 	public static function forge($path, array $config = array(), File_Area $area = null, $content = array())
 	{
 		return new static($path, $config, $area, $content);
+	}
+
+	/**
+	 * Returns filtered content of the directory
+	 *
+	 * @return array
+	 */
+	public function get_content()
+	{
+		return $this->content;
 	}
 
 	/**
@@ -183,6 +191,112 @@ class File_Handler_Directory
 	public function get_size()
 	{
 		throw new \BadMethodCallException('Get_size method is unavailable on directories.');
+	}
+
+	/**
+	 * Return the current element.
+	 *
+	 * @return mixed Can return any type
+	 */
+	public function current()
+	{
+		return current($this->content);
+	}
+
+	/**
+	 * Move forward to next element.
+	 *
+	 * @return void Any returned value is ignored
+	 */
+	public function next()
+	{
+		next($this->content);
+	}
+
+	/**
+	 * Return the key of the current element.
+	 *
+	 * @return scalar scalar on success, or null on failure
+	 */
+	public function key()
+	{
+		return key($this->content);
+	}
+
+	/**
+	 * Checks if current position is valid.
+	 *
+	 * @return boolean Returns true on success or false on failure
+	 */
+	public function valid()
+	{
+		$key = key($this->content);
+		return isset($key);
+	}
+
+	/**
+	 * Rewind the Iterator to the first element.
+	 *
+	 * @return void Any returned value is ignored
+	 */
+	public function rewind()
+	{
+		reset($this->content);
+	}
+
+	/**
+	 * Whether a offset exists.
+	 *
+	 * @param mixed $offset An offset to check for
+	 * @return boolean true on success or false on failure
+	 */
+	public function offsetExists($offset)
+	{
+		return isset($this->content[$offset]);
+	}
+
+	/**
+	 * Offset to retrieve.
+	 *
+	 * @param mixed $offset The offset to retrieve
+	 * @return mixed Can return all value types
+	 */
+	public function offsetGet($offset)
+	{
+		return $this->content[$offset];
+	}
+
+	/**
+	 * Offset to set.
+	 *
+	 * @param mixed $offset The offset to assign the value to
+	 * @param mixed $value The value to set
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		$this->content[$offset] = $value;
+	}
+
+	/**
+	 * Offset to unset.
+	 *
+	 * @param mixed $offset The offset to unset
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		unset($this->content[$offset]);
+	}
+
+	/**
+	 * Count elements.
+	 *
+	 * @return int
+	 */
+	public function count()
+	{
+		return count($this->content);
 	}
 }
 
