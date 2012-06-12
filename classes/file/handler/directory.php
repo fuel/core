@@ -39,6 +39,7 @@ class File_Handler_Directory implements \Iterator, \ArrayAccess, \Countable
 		{
 			if ( ! is_int($key))
 			{
+				$key = trim($key, '\\/');
 				$this->content[$key] = $value === false ? false : $area->get_handler($path.DS.$key, $config, $value);
 			}
 			else
