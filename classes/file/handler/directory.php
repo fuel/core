@@ -154,6 +154,26 @@ class File_Handler_Directory implements \Iterator, \ArrayAccess, \Countable
 	}
 
 	/**
+	 * Get the path.
+	 *
+	 * @return string
+	 */
+	public function get_path()
+	{
+		return $this->path;
+	}
+
+	/**
+	 * Get the pathinfo of the path.
+	 *
+	 * @return object
+	 */
+	public function get_pathinfo()
+	{
+		return (object) pathinfo($this->path);
+	}
+
+	/**
 	 * Get the url.
 	 *
 	 * @return	bool
@@ -253,7 +273,8 @@ class File_Handler_Directory implements \Iterator, \ArrayAccess, \Countable
 	 */
 	public function offsetExists($offset)
 	{
-		return isset($this->content[$offset]);
+		// in fact we can't have null as value, so...
+		return $this->offsetGet($offset) !== null;
 	}
 
 	/**
@@ -264,7 +285,22 @@ class File_Handler_Directory implements \Iterator, \ArrayAccess, \Countable
 	 */
 	public function offsetGet($offset)
 	{
-		return $this->content[$offset];
+		if (isset($this->content[$offset])) {
+			return $this->content[$offset];
+		}
+
+		// ok, but files are indexed as int, not as name, so try to find it
+		foreach ($this->content as $file) {
+			if ($file->get_pathinfo()->basename === $offset ||
+				$file->get_pathinfo()->filename === $offset
+			) {
+				return $file;
+			}
+		}
+
+		// hmm, I think it's better to return null than error
+		// additionaly, we can't have null as value in $content array
+		return null;
 	}
 
 	/**
@@ -276,7 +312,7 @@ class File_Handler_Directory implements \Iterator, \ArrayAccess, \Countable
 	 */
 	public function offsetSet($offset, $value)
 	{
-		$this->content[$offset] = $value;
+		throw new \BadMethodCallException('offsetSet method is unavailable on directories.');
 	}
 
 	/**
@@ -287,7 +323,7 @@ class File_Handler_Directory implements \Iterator, \ArrayAccess, \Countable
 	 */
 	public function offsetUnset($offset)
 	{
-		unset($this->content[$offset]);
+		throw new \BadMethodCallException('offsetUnset method is unavailable on directories.');
 	}
 
 	/**

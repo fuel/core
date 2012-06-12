@@ -155,6 +155,26 @@ class File_Handler_File
 	}
 
 	/**
+	 * Get the path.
+	 *
+	 * @return string
+	 */
+	public function get_path()
+	{
+		return $this->path;
+	}
+
+	/**
+	 * Get the pathinfo of the path.
+	 *
+	 * @return object
+	 */
+	public function get_pathinfo()
+	{
+		return (object) pathinfo($this->path);
+	}
+
+	/**
 	 * Get the url.
 	 *
 	 * @return	bool
