@@ -94,7 +94,7 @@ abstract class Database_Query_Builder extends \Database_Query
 					// Database operators are always uppercase
 					$op = strtoupper($op);
 
-					if ($op === 'BETWEEN' AND is_array($value))
+					if (($op === 'BETWEEN' OR $op === 'NOT BETWEEN') AND is_array($value))
 					{
 						// BETWEEN always has exactly two arguments
 						list($min, $max) = $value;
