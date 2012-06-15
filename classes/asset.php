@@ -60,6 +60,7 @@ class Asset
 		'indent_level' => 1,
 		'indent_with' => "\t",
 		'auto_render' => true,
+		'fail_silently' => false,
 	);
 
 	/**
