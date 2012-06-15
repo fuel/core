@@ -433,7 +433,7 @@ class Migrate
 				}
 
 				// and that it contains an "up" and "down" method
-				if ( ! is_callable(array($class, 'up')) || ! is_callable(array($class, 'down')))
+				if ( ! is_callable(array($class, 'up')) or ! is_callable(array($class, 'down')))
 				{
 					throw new FuelException(sprintf('Migration class "%s" must include public methods "up" and "down"', $name));
 				}
@@ -564,7 +564,7 @@ class Migrate
 				foreach ($current as $migration)
 				{
 					// find the migrations for this entry
-					$migrations = static::find_migrations($migration['name'], $migration['type'], 0, $migration['version']);
+					$migrations = static::find_migrations($migration['name'], $migration['type'], null, $migration['version']);
 
 					// array to keep track of the migrations already run
 					$config = array();
@@ -595,5 +595,8 @@ class Migrate
 				\Config::save(\Fuel::$env.DS.'migrations', 'migrations');
 			}
 		}
+
+		// delete any old migration config file that may exist
+		file_exists(APPPATH.'config'.DS.'migrations.php') and unlink(APPPATH.'config'.DS.'migrations.php');
 	}
 }
