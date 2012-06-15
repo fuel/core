@@ -184,18 +184,26 @@ class Format
 	 * To CSV conversion
 	 *
 	 * @param   mixed   $data
+	 * @param   mixed   $separator
 	 * @return  string
 	 */
-	public function to_csv($data = null)
+	public function to_csv($data = null, $separator = ',')
 	{
 		if ($data === null)
 		{
 			$data = $this->_data;
 		}
 
-		// Multi-dimentional array
-		if (is_array($data) and isset($data[0]))
+		if (is_object($data) and ! $data instanceof \Iterator)
 		{
+			$data = $this->to_array($data);
+		}
+
+		// Multi-dimensional array
+		if (is_array($data) and \Arr::is_multi($data))
+		{
+			$data = array_values($data);
+
 			if (\Arr::is_assoc($data[0]))
 			{
 				$headings = array_keys($data[0]);
@@ -205,7 +213,6 @@ class Format
 				$headings = array_shift($data);
 			}
 		}
-
 		// Single array
 		else
 		{
@@ -213,10 +220,11 @@ class Format
 			$data = array($data);
 		}
 
-		$output = implode(',', $headings) . "\n";
+		$output = "\"".implode('"' . $separator . '"', $headings) . "\"\n";
+
 		foreach ($data as &$row)
 		{
-			$output .= '"' . implode('","', (array) $row) . "\"\n";
+			$output .= '"' . implode('"' . $separator . '"', (array) $row) . "\"\n";
 		}
 
 		return rtrim($output, "\n");

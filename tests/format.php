@@ -29,7 +29,7 @@ class Test_Format extends TestCase
 					array('field1' => 'Value 1', 'field2' => 35, 'field3' => 123123),
 					array('field1' => 'Value 1', 'field2' => "Value\nline 2", 'field3' => 'Value 3'),
 				),
-				'field1,field2,field3
+				'"field1","field2","field3"
 "Value 1","35","123123"
 "Value 1","Value
 line 2","Value 3"',
