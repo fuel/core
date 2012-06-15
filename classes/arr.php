@@ -244,9 +244,15 @@ class Arr
 	 */
 	public static function is_assoc($arr)
 	{
+		if ( ! is_array($arr))
+		{
+			throw new \InvalidArgumentException('The parameter must be an array.');
+		}
+
+		$counter = 0;
 		foreach ($arr as $key => $unused)
 		{
-			if ( ! is_int($key))
+			if ( ! is_int($key) or $key !== $counter++)
 			{
 				return true;
 			}
@@ -672,5 +678,18 @@ class Arr
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks if the given array is a multidimensional array.
+	 *
+	 * @param   array  $arr       the array to check
+	 * @param   array  $all_keys  if true, check that all elements are arrays
+	 * @return  bool   true if its a multidimensional array, false if not
+	 */
+	public static function is_multi($arr, $all_keys = false)
+	{
+		$values = array_filter($arr, 'is_array');
+		return $all_keys ? count($arr) === count($values) : count($values) > 0;
 	}
 }

@@ -144,7 +144,7 @@ class PhpQuickProfiler {
 		{
 			$rs = false;
 			try {
-				$sql = str_replace('&#039;', '"', 'EXPLAIN '.$query['sql']);
+				$sql = 'EXPLAIN '.html_entity_decode($query['sql'], ENT_QUOTES);
 				$rs = \DB::query($sql, \DB::SELECT)->execute();
 			}
 			catch(Exception $e)

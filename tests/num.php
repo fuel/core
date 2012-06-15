@@ -56,8 +56,12 @@ class Test_Num extends TestCase
 
 		$this->assertEquals($expected, $output);
 
+		// Get current localized decimal separator
+		$locale_conv = localeconv();
+		$decimal_point = isset($locale_conv['decimal_point']) ? $locale_conv['decimal_point'] : '.';
+
 		$output = Num::quantity('7500', 1);
-		$expected = '7.5K';
+		$expected = '7'.$decimal_point.'5K';
 
 		$this->assertEquals($expected, $output);
 	}
