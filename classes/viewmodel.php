@@ -261,6 +261,50 @@ abstract class ViewModel
 			return '';
 		}
 	}
+
+
+	/**
+	 * Renders the view object to a string. Global and local data are merged
+	 * and extracted to create local variables within the view file.
+	 *
+	 *     $output = $view->render();
+	 *
+	 * [!!] Global variables with the same key name as local variables will be
+	 * overwritten by the local variable.
+	 *
+	 * @param    string  view filename
+	 * @return   string
+	 * @throws   FuelException
+	 * @uses     static::capture
+	 */
+	public function render($file = null)
+	{
+		if (class_exists('Request', false))
+		{
+			$current_request = \Request::active();
+			\Request::active($this->active_request);
+		}
+
+		if ($file !== null)
+		{
+			$this->set_filename($file);
+		}
+
+		if (empty($this->file_name))
+		{
+			throw new \FuelException('You must set the file to use within your view before rendering');
+		}
+
+		// Combine local and global data and capture the output
+		$return = $this->process_file();
+
+		if (class_exists('Request', false))
+		{
+			\Request::active($current_request);
+		}
+
+		return $return;
+	}
 }
 
 
