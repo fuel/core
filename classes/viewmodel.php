@@ -261,6 +261,41 @@ abstract class ViewModel
 			return '';
 		}
 	}
+
+
+	/**
+	 * Sets a global variable, similar to [static::set], except that the
+	 * variable will be accessible to all views.
+	 *
+	 *     ViewModel::set_global($name, $value);
+	 *
+	 * @param   string  variable name or an array of variables
+	 * @param   mixed   value
+	 * @param   bool    whether to filter the data or not
+	 * @return  void
+	 */
+	public static function set_global($key, $value = null, $filter = null)
+	{
+		if (is_array($key))
+		{
+			foreach ($key as $name => $value)
+			{
+				if ($filter !== null)
+				{
+					ViewModel::$global_filter[$name] = $filter;
+				}
+				ViewModel::$global_data[$name] = $value;
+			}
+		}
+		else
+		{
+			if ($filter !== null)
+			{
+				ViewModel::$global_filter[$key] = $filter;
+			}
+			ViewModel::$global_data[$key] = $value;
+		}
+	}
 }
 
 
