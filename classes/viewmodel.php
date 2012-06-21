@@ -30,8 +30,12 @@ abstract class ViewModel
 	 * @param   string  Method to execute
 	 * @return  ViewModel
 	 */
-	public static function forge($viewmodel, $method = 'view', $auto_filter = null)
+	public static function forge($view, $method = 'view', $auto_filter = null)
 	{
+		// strip any extensions from the view name to determine the viewmodel to load
+		$viewmodel = strpos($view, '.') === false ? $view : substr($view, 0, -strlen(strrchr($view, '.'))) ;
+
+		// determine the viewmodel namespace and classname
 		$namespace = \Request::active() ? ucfirst(\Request::active()->module) : '';
 		$class = $namespace.'\\View_'.ucfirst(str_replace(array('/', DS), '_', $viewmodel));
 
@@ -43,7 +47,7 @@ abstract class ViewModel
 			}
 		}
 
-		return new $class($method, $auto_filter);
+		return new $class($method, $auto_filter, $view);
 	}
 
 	/**
@@ -66,9 +70,10 @@ abstract class ViewModel
 	 */
 	protected $_active_request;
 
-	protected function __construct($method, $auto_filter = null)
+	protected function __construct($method, $auto_filter = null, $view = null)
 	{
 		$this->_auto_filter = $auto_filter;
+		$this->_view === null and $this->_view = $view;
 		class_exists('Request', false) and $this->_active_request = \Request::active();
 
 		if (empty($this->_view))
