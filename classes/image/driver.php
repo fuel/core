@@ -667,7 +667,8 @@ abstract class Image_Driver
 		{
 			if ( ! $this->config['debug'])
 			{
-				header('Content-Type: image/' . $filetype);
+				$mimetype = $filetype === 'jpg' ? 'jpeg' : $filetype;
+				header('Content-Type: image/' . $mimetype);
 			}
 			$this->new_extension = $filetype;
 		}
