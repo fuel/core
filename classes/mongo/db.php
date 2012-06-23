@@ -144,6 +144,11 @@ class Mongo_Db
 			$options['persist'] = 'fuel_mongo_persist';
 		}
 
+		if ( ! empty($config['replicaset']))
+		{
+			$options['replicaSet'] = $config['replicaset'];
+		}
+
 		$connection_string = "mongodb://";
 
 		if (empty($config['hostname']))
@@ -258,31 +263,31 @@ class Mongo_Db
 	 */
 	public function select($includes = array(), $excludes = array())
 	{
-	 	if ( ! is_array($includes))
-	 	{
-	 		$includes = array($includes);
-	 	}
+		if ( ! is_array($includes))
+		{
+			$includes = array($includes);
+		}
 
-	 	if ( ! is_array($excludes))
-	 	{
-	 		$excludes = array($excludes);
-	 	}
+		if ( ! is_array($excludes))
+		{
+			$excludes = array($excludes);
+		}
 
-	 	if ( ! empty($includes))
-	 	{
-	 		foreach ($includes as $col)
-	 		{
-	 			$this->selects[$col] = 1;
-	 		}
-	 	}
-	 	else
-	 	{
-	 		foreach ($excludes as $col)
-	 		{
-	 			$this->selects[$col] = 0;
-	 		}
-	 	}
-	 	return $this;
+		if ( ! empty($includes))
+		{
+			foreach ($includes as $col)
+			{
+				$this->selects[$col] = 1;
+			}
+		}
+		else
+		{
+			foreach ($excludes as $col)
+			{
+				$this->selects[$col] = 0;
+			}
+		}
+		return $this;
 	}
 
 	/**
