@@ -45,9 +45,19 @@ class Input
 	protected static $put_delete = null;
 
 	/**
-	 * @var  $content  parsed request body (xml/json)
+	 * @var  $php_input  Cache for the php://input stream
 	 */
-	protected static $content = null;
+	protected static $php_input = null;
+
+	/**
+	 * @var  $json  parsed request body as json
+	 */
+	protected static $json = null;
+
+	/**
+	 * @var  $xml  parsed request body as xml
+	 */
+	protected static $xml = null;
 
 	/**
 	 * Get the request body interpreted as JSON.
@@ -56,12 +66,8 @@ class Input
 	 */
 	public static function json($index = null, $default = null)
 	{
-		if (static::$content === null)
-		{
-			static::hydrate_raw_input('json');
-		}
-
-		return (func_num_args() === 0) ? static::$content : \Arr::get(static::$content, $index, $default);
+		static::$json === null and static::hydrate_raw_input('json');
+		return (func_num_args() === 0) ? static::$json : \Arr::get(static::$json, $index, $default);
 	}
 
 	/**
@@ -71,12 +77,8 @@ class Input
 	 */
 	public static function xml($index = null, $default = null)
 	{
-		if (static::$content === null)
-		{
-			static::hydrate_raw_input('xml');
-		}
-
-		return (func_num_args() === 0) ? static::$content : \Arr::get(static::$content, $index, $default);
+		static::$xml === null and static::hydrate_raw_input('xml');
+		return (func_num_args() === 0) ? static::$xml : \Arr::get(static::$xml, $index, $default);
 	}
 
 	/**
@@ -86,8 +88,8 @@ class Input
 	 */
 	protected static function hydrate_raw_input($type)
 	{
-		$content = \Format::forge(file_get_contents('php://input'), $type)->to_array();
-		is_array($content) and static::$content = \Security::clean($content);
+		static::$php_input === null and static::$php_input = file_get_contents('php://input');
+		static::$$type = \Security::clean(\Format::forge(static::$php_input, $type)->to_array());
 	}
 
 	/**
@@ -312,11 +314,7 @@ class Input
 	 */
 	public static function all()
 	{
-		if (static::$input === null)
-		{
-			static::hydrate();
-		}
-
+		static::$input === null and static::hydrate();
 		return static::$input;
 	}
 
@@ -353,11 +351,7 @@ class Input
 	 */
 	public static function put($index = null, $default = null)
 	{
-		if (static::$put_delete === null)
-		{
-			static::hydrate();
-		}
-
+		static::$put_delete === null and static::hydrate();
 		return (func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
 	}
 
@@ -370,11 +364,7 @@ class Input
 	 */
 	public static function delete($index = null, $default = null)
 	{
-		if (static::$put_delete === null)
-		{
-			static::hydrate();
-		}
-
+		static::$put_delete === null and static::hydrate();
 		return (is_null($index) and func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
 	}
 
@@ -399,11 +389,7 @@ class Input
 	 */
 	public static function param($index = null, $default = null)
 	{
-		if (static::$input === null)
-		{
-			static::hydrate();
-		}
-
+		static::$input === null and static::hydrate();
 		return \Arr::get(static::$input, $index, $default);
 	}
 
@@ -442,7 +428,8 @@ class Input
 
 		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
 		{
-			parse_str(file_get_contents('php://input'), static::$put_delete);
+			static::$php_input === null and static::$php_input = file_get_contents('php://input');
+			parse_str(static::$php_input, static::$put_delete);
 			static::$input = array_merge(static::$input, static::$put_delete);
 		}
 	}
