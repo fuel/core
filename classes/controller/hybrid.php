@@ -43,7 +43,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 			}
 		}
 
-		return parent::before();
+		parent::before();
 	}
 
 	/**
