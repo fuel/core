@@ -74,6 +74,9 @@ class Request
 			static::$active->children[] = $request;
 		}
 
+		// fire any request created events
+		\Event::instance()->has_events('request_created') and \Event::instance()->trigger('request_created', '', 'none');
+
 		return $request;
 	}
 
@@ -328,6 +331,9 @@ class Request
 	 */
 	public function execute($method_params = null)
 	{
+		// fire any request started events
+		\Event::instance()->has_events('request_started') and \Event::instance()->trigger('request_started', '', 'none');
+
 		if (\Fuel::$profiling)
 		{
 			\Profiler::mark(__METHOD__.' Start');
@@ -404,11 +410,17 @@ class Request
 						throw new \HttpNotFoundException();
 					}
 
+					// fire any controller started events
+					\Event::instance()->has_events('controller_started') and \Event::instance()->trigger('controller_started', '', 'none');
+
 					$class->hasMethod('before') and $class->getMethod('before')->invoke($this->controller_instance);
 
 					$response = $action->invokeArgs($this->controller_instance, $this->method_params);
 
 					$class->hasMethod('after') and $response = $class->getMethod('after')->invoke($this->controller_instance, $response);
+
+					// fire any controller finished events
+					\Event::instance()->has_events('controller_finished') and \Event::instance()->trigger('controller_finished', '', 'none');
 				}
 				else
 				{
@@ -443,6 +455,9 @@ class Request
 		{
 			\Profiler::mark(__METHOD__.' End');
 		}
+
+		// fire any request finished events
+		\Event::instance()->has_events('request_finished') and \Event::instance()->trigger('request_finished', '', 'none');
 
 		return $this;
 	}

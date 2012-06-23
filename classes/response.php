@@ -70,7 +70,12 @@ class Response
 
 	public static function forge($body = null, $status = 200, array $headers = array())
 	{
-		return new static($body, $status, $headers);
+		$response = new static($body, $status, $headers);
+
+		// fire any response created events
+		\Event::instance()->has_events('response_created') and \Event::instance()->trigger('response_created', '', 'none');
+
+		return $response;
 	}
 
 	/**

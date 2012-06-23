@@ -206,6 +206,9 @@ class Fuel
 
 		static::$initialized = true;
 
+		// fire any app created events
+		\Event::instance()->has_events('app_created') and \Event::instance()->trigger('app_created', '', 'none');
+
 		if (static::$profiling)
 		{
 			\Profiler::mark(__METHOD__.' End');
