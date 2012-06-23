@@ -322,7 +322,7 @@ class Migrate
 		else
 		{
 			// there is no 'down'...
-			\Cli::write('You are already on the first migration for '.$type.':'.$name.'.');
+			\Cli::write('There are no migrations installed to revert for '.$type.':'.$name.'.');
 		}
 	}
 

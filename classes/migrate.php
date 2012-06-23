@@ -188,24 +188,20 @@ class Migrate
 		// get the current version info from the config
 		$current = \Config::get('migrations.version.'.$type.'.'.$name);
 
-		// any migrations defined?
-		if ( ! empty($current))
+		// get the last migration installed
+		$current = empty($current) ? null : end($current);
+
+		// get the available migrations after the current one
+		$migrations = static::find_migrations($name, $type, $current, $version);
+
+		// found any?
+		if ( ! empty($migrations))
 		{
-			// get the last entry
-			$current = end($current);
+			// if no version was given, only install the next migration
+			is_null($version) and $migrations = array(reset($migrations));
 
-			// get the available migrations after the current one
-			$migrations = static::find_migrations($name, $type, $current, $version);
-
-			// found any?
-			if ( ! empty($migrations))
-			{
-				// if no version was given, only install the next migration
-				is_null($version) and $migrations = array(reset($migrations));
-
-				// install migrations found
-				return static::run($migrations, $name, $type, 'up');
-			}
+			// install migrations found
+			return static::run($migrations, $name, $type, 'up');
 		}
 
 		// nothing to migrate
