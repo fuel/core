@@ -14,8 +14,23 @@ namespace Fuel\Core;
 
 class Router
 {
-
+	/**
+	 *
+	 */
 	public static $routes = array();
+
+	/**
+	 * Defines the controller class prefix. This allows you to namespace controllers
+	 */
+	protected static $prefix = '';
+
+	/**
+	 * Fetch the controller prefix to be used, or set a default if not defined
+	 */
+	public static function _init()
+	{
+		static::$prefix = \Config::get('controller_prefix', 'Controller_');
+	}
 
 	/**
 	 * Add one or multiple routes
@@ -245,7 +260,7 @@ class Router
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
-			$class = $namespace.'Controller_'.\Inflector::words_to_upper(implode('_', $temp_segments));
+			$class = $namespace.static::$prefix.\Inflector::words_to_upper(implode('_', $temp_segments));
 			array_pop($temp_segments);
 			if (class_exists($class))
 			{
@@ -260,7 +275,7 @@ class Router
 		// Fall back for default module controllers
 		if ($module)
 		{
-			$class = $namespace.'Controller_'.ucfirst($module);
+			$class = $namespace.static::$prefix.ucfirst($module);
 			if (class_exists($class))
 			{
 				return array(
