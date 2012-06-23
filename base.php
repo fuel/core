@@ -172,6 +172,21 @@ if ( ! function_exists('__'))
 }
 
 /**
+ * A wrapper function for Debug::dump()
+ * 
+ * Inspired by Laravel’s dd(), but this one means Debug Dump, rather than Die Dump.
+ * 
+ * @return	string
+ */
+if ( ! function_exists('dd'))
+{
+	function dd()
+	{
+		return \Debug::dump(func_get_args());
+	}
+}
+
+/**
  * Encodes the given string.  This is just a wrapper function for Security::htmlentities()
  *
  * @param	mixed	The string to encode
