@@ -178,7 +178,27 @@ class Request_Curl extends \Request_Driver
 		elseif ($this->response->status >= 400)
 		{
 			$this->set_defaults();
-			throw new \RequestStatusException($body, $this->response->status);
+						
+			// Only show specific 400 error message with \Exception if not in production mode
+			if(Fuel::$env != Fuel::PRODUCTION)
+			{
+				switch($this->response->status)
+				{
+					case 404:
+						throw new \RequestStatusException($body, $this->response->status);
+					break;
+					
+					default:
+						throw new \Exception($body, $this->response->status);
+					break;
+				}	
+			}
+			
+			// Return as 404 if in production mode
+			else
+			{
+				throw new \RequestStatusException($body, $this->response->status);
+			}
 		}
 		else
 		{
