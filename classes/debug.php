@@ -19,11 +19,12 @@ namespace Fuel\Core;
  *
  * @package		Fuel
  * @category	Core
- * @author		Phil Sturgeon
  * @link		http://docs.fuelphp.com/classes/debug.html
  */
 class Debug
 {
+
+	public static $max_nesting_level = 5;
 
 	protected static $js_displayed = false;
 
@@ -56,6 +57,13 @@ class Debug
 
 		$callee['file'] = \Fuel::clean_path($callee['file']);
 
+		if ( ! static::$js_displayed)
+		{
+			echo <<<JS
+<script type="text/javascript">function fuel_debug_toggle(a){if(document.getElementById){if(document.getElementById(a).style.display=="none"){document.getElementById(a).style.display="block"}else{document.getElementById(a).style.display="none"}}else{if(document.layers){if(document.id.display=="none"){document.id.display="block"}else{document.id.display="none"}}else{if(document.all.id.style.display=="none"){document.all.id.style.display="block"}else{document.all.id.style.display="none"}}}};</script>
+JS;
+			static::$js_displayed = true;
+		}
 		echo '<div style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;">';
 		echo '<h1 style="border-bottom: 1px solid #CCC; padding: 0 0 5px 0; margin: 0 0 5px 0; font: bold 120% sans-serif;">'.$callee['file'].' @ line: '.$callee['line'].'</h1>';
 		echo '<pre style="overflow:auto;font-size:100%;">';
@@ -64,7 +72,7 @@ class Debug
 		for ($i = 1; $i <= $count; $i++)
 		{
 			echo '<strong>Variable #'.$i.':</strong>'.PHP_EOL;
-			var_dump($arguments[$i - 1]);
+			echo static::format('', $arguments[$i - 1]);
 			echo PHP_EOL.PHP_EOL;
 		}
 
@@ -131,79 +139,98 @@ JS;
 	 * @param	string	$indent_char	the indentation character
 	 * @return	string	the formatted string.
 	 */
-	public static function format($name, $var, $level = 0, $indent_char = '&nbsp;&nbsp;&nbsp;&nbsp;')
+	public static function format($name, $var, $level = 0, $indent_char = '&nbsp;&nbsp;&nbsp;&nbsp;', $scope = '')
 	{
 		$return = str_repeat($indent_char, $level);
 		if (is_array($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			if (count($var) > 0)
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong>";
+			$return .=  " (Array, ".count($var)." elements)";
+			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
-				$return .= "<a href=\"javascript:fuel_debug_toggle('$id');\"><strong>{$name}</strong></a>";
+				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to open\">&crarr;</a>\n";
 			}
 			else
 			{
-				$return .= "<strong>{$name}</strong>";
-			}
-			$return .=  " (Array, ".count($var)." elements)\n";
-
-			$sub_return = '';
-			foreach ($var as $key => $val)
-			{
-				$sub_return .= static::format($key, $val, $level + 1);
+				$return .= "\n";
 			}
 
-			if (count($var) > 0)
+			if (static::$max_nesting_level <= $level)
 			{
-				$return .= "<span id=\"$id\" style=\"display: none;\">$sub_return</span>";
+				$return .= str_repeat($indent_char, $level + 1)."...\n";
 			}
 			else
 			{
-				$return .= $sub_return;
+				$sub_return = '';
+				foreach ($var as $key => $val)
+				{
+					$sub_return .= static::format($key, $val, $level + 1);
+				}
+				if (count($var) > 0)
+				{
+					$return .= "<span id=\"$id\" style=\"display: none;\">$sub_return</span>";
+				}
+				else
+				{
+					$return .= $sub_return;
+				}
 			}
+
 		}
 		elseif (is_string($var))
 		{
-			$return .= "<strong>{$name}</strong> (String, ".strlen($var)." characters): \"{$var}\"\n";
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (String): <span style=\"color:#E00000;\">\"{$var}\"</span> (".strlen($var)." characters)\n";
 		}
 		elseif (is_float($var))
 		{
-			$return .= "<strong>{$name}</strong> (Float): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Float): {$var}\n";
 		}
 		elseif (is_long($var))
 		{
-			$return .= "<strong>{$name}</strong> (Integer): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Integer): {$var}\n";
 		}
 		elseif (is_null($var))
 		{
-			$return .= "<strong>{$name}</strong> (Null): null\n";
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> : null\n";
 		}
 		elseif (is_bool($var))
 		{
-			$return .= "<strong>{$name}</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
 		}
 		elseif (is_double($var))
 		{
-			$return .= "<strong>{$name}</strong> (Double): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Double): {$var}\n";
 		}
 		elseif (is_object($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			$vars = get_object_vars($var);
+			$rvar = new \ReflectionClass($var);
+			$vars = $rvar->getProperties();
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object): ".get_class($var);
 			if (count($vars) > 0)
 			{
-				$return .= "<a href=\"javascript:fuel_debug_toggle('$id');\"><strong>{$name}</strong></a>";
+				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to open\">&crarr;</a>";
 			}
-			else
-			{
-				$return .= "<strong>{$name}</strong>";
-			}
-			$return .= " (Object): ".get_class($var)."\n";
+			$return .= "\n";
 
 			$sub_return = '';
-			foreach ($vars as $key => $val)
+			foreach ($rvar->getProperties() as $prop)
 			{
-				$sub_return .= static::format($key, $val, $level + 1);
+				$prop->isPublic() or $prop->setAccessible(true);
+				if ($prop->isPrivate())
+				{
+					$scope = 'private';
+				}
+				elseif ($prop->isProtected())
+				{
+					$scope = 'protected';
+				}
+				else
+				{
+					$scope = 'public';
+				}
+				$sub_return .= static::format($prop->name, $prop->getValue($var), $level + 1, $indent_char, $scope);
 			}
 
 			if (count($vars) > 0)
@@ -217,7 +244,7 @@ JS;
 		}
 		else
 		{
-			$return .= "<strong>{$name}</strong>: {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong>: {$var}\n";
 		}
 		return $return;
 	}
@@ -348,7 +375,33 @@ JS;
 	 */
 	public static function headers()
 	{
-		return static::dump(getAllHeaders());
+		// deal with fcgi installs on PHP 5.3
+		if (version_compare(PHP_VERSION, '5.4.0') < 0 and  ! function_exists('apache_request_headers'))
+		{
+			$headers = array();
+			foreach (\Input::server() as $name => $value)
+			{
+				if (strpos($name, 'HTTP_') === 0)
+				{
+					$name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+					$headers[$name] = $value;
+				}
+				elseif ($name == 'CONTENT_TYPE')
+				{
+					$headers['Content-Type'] = $value;
+				}
+				elseif ($name == 'CONTENT_LENGTH')
+				{
+					$headers['Content-Length'] = $value;
+				}
+			}
+		}
+		else
+		{
+			$headers = getAllHeaders();
+		}
+
+		return static::dump($headers);
 	}
 
 	/**
