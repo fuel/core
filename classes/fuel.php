@@ -205,6 +205,7 @@ class Fuel
 		}
 
 		static::$initialized = true;
+		\Event::trigger('initialized');
 
 		// fire any app created events
 		\Event::instance()->has_events('app_created') and \Event::instance()->trigger('app_created', '', 'none');
