@@ -208,7 +208,7 @@ JS;
 			$rvar = new \ReflectionClass($var);
 			$vars = $rvar->getProperties();
 			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object): ".get_class($var);
-			if (count($vars) > 0)
+			if (count($vars) > 0 and static::$max_nesting_level > $level)
 			{
 				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to open\">&crarr;</a>";
 			}
@@ -230,7 +230,14 @@ JS;
 				{
 					$scope = 'public';
 				}
-				$sub_return .= static::format($prop->name, $prop->getValue($var), $level + 1, $indent_char, $scope);
+				if (static::$max_nesting_level <= $level)
+				{
+					$sub_return .= str_repeat($indent_char, $level + 1)."...\n";
+				}
+				else
+				{
+					$sub_return .= static::format($prop->name, $prop->getValue($var), $level + 1, $indent_char, $scope);
+				}
 			}
 
 			if (count($vars) > 0)
