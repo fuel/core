@@ -87,10 +87,13 @@ class Image_Imagemagick extends \Image_Driver
 
 	protected function _watermark($filename, $position, $padding = 5)
 	{
-		extract(parent::_watermark($filename, $x, $y));
+		$values = parent::_watermark($filename, $position, $padding);
+		if ($values == false)
+		{
+			throw new \InvalidArgumentException("Watermark image not found or invalid filetype.");
+		}
 
-		$image = '"'.$this->image_temp.'"';
-		$filename = '"'.$filename.'"';
+		extract($values);
 		$x >= 0 and $x = '+'.$x;
 		$y >= 0 and $y = '+'.$y;
 
@@ -98,7 +101,7 @@ class Image_Imagemagick extends \Image_Driver
 			'composite',
 			'-compose atop -geometry '.$x.$y.' '.
 			'-dissolve '.$this->config['watermark_alpha'].'% '.
-			$filename.' '.$image.' '.$image
+			'"'.$filename.'" "'.$this->image_temp.'" '.$image
 		);
 	}
 
@@ -192,11 +195,11 @@ class Image_Imagemagick extends \Image_Driver
 
 		$this->run_queue();
 		$this->add_background();
-		
+
 		$filetype = $this->image_extension;
 		$old = '"'.$this->image_temp.'"';
 		$new = '"'.$filename.'"';
-		
+
 		if(($filetype == 'jpeg' or $filetype == 'jpg') and $this->config['quality'] != 100)
 		{
 			$quality = '"'.$this->config['quality'].'%"';
@@ -221,9 +224,9 @@ class Image_Imagemagick extends \Image_Driver
 
 		$this->run_queue();
 		$this->add_background();
-		
+
 		$image = '"'.$this->image_temp.'"';
-		
+
 		if(($filetype == 'jpeg' or $filetype == 'jpg') and $this->config['quality'] != 100)
 		{
 			$quality = '"'.$this->config['quality'].'%"';
