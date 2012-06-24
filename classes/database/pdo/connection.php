@@ -83,13 +83,22 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 		catch (\PDOException $e)
 		{
-			throw new \Database_Exception($e->getMessage(), $e->getCode(), $e);
+			$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
+			throw new \Database_Exception($e->getMessage(), $error_code, $e);
 		}
 
 		if ( ! empty($this->_config['charset']))
 		{
-			// Set the character set
-			$this->set_charset($this->_config['charset']);
+			// Set Charset for SQL Server connection
+			if (strtolower($this->driver_name()) == 'sqlsrv')
+			{
+				$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_SYSTEM);
+			}
+			else
+			{
+				// Set the character set
+				$this->set_charset($this->_config['charset']);
+			}
 		}
 	}
 
@@ -99,6 +108,15 @@ class Database_PDO_Connection extends \Database_Connection
 		$this->_connection = null;
 
 		return true;
+	}
+
+	/**
+	 * Get the current PDO Driver name
+	 * @return string
+	 */
+	public function driver_name()
+	{
+		return $this->_connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
 	}
 
 	public function set_charset($charset)
