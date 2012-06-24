@@ -258,8 +258,7 @@ class Input
 	 */
 	public static function protocol()
 	{
-		if ((static::server('HTTPS') !== null and static::server('HTTPS') != 'off')
-			or (static::server('HTTPS') === null and static::server('SERVER_PORT') == 443))
+		if (static::server('HTTPS') == 'on' or static::server('HTTPS') == 1 or static::server('SERVER_PORT') == 443)
 		{
 			return 'https';
 		}
