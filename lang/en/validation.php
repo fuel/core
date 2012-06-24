@@ -14,5 +14,5 @@ return array(
 	'valid_ip'      => 'The field :label must contain a valid IP address.',
 	'numeric_min'   => 'The minimum numeric value of :label must be :param:1',
 	'numeric_max'   => 'The maximum numeric value of :label must be :param:1',
-	'valid_string'  => 'The valid string rule :rule failed for field :label',
+	'valid_string'  => 'The valid string rule :rule(:param:1) failed for field :label',
 );

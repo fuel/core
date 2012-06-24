@@ -128,10 +128,31 @@ class Validation_Error extends \Exception
 		// add the params to the find & replace arrays
 		foreach($this->params as $key => $val)
 		{
-			// Convert array to just a string "(array)", can't reliably implode as contents might be arrays/objects
+			// Convert array (as far as possible)
 			if (is_array($val))
 			{
-				$val = '(array)';
+				$result = '';
+				foreach ($val as $v)
+				{
+					if (is_array($v))
+					{
+						$v = '(array)';
+					}
+					elseif (is_object($v))
+					{
+						$v = '(object)';
+					}
+					elseif (is_bool($v))
+					{
+						$v = $v ? 'true' : 'false';
+					}
+					$result .= empty($result) ? $v : (', '.$v);
+				}
+				$val = $result;
+			}
+			elseif (is_bool($val))
+			{
+				$val = $val ? 'true' : 'false';
 			}
 			// Convert object with __toString or just the classname
 			elseif (is_object($val))
