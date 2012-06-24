@@ -307,15 +307,16 @@ class File
 		$basepath  = rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file  = static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) or ! is_writable($basepath))
-		{
-			throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
-		}
-
 		if ( ! $file = static::open_file(@fopen($new_file, 'w'), true, $area) )
 		{
+			if ( ! is_dir($basepath) or ! is_writable($basepath))
+			{
+				throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
+			}
+
 			throw new \FileAccessException('No write access, cannot update a file.');
 		}
+
 		fwrite($file, $contents);
 		static::close_file($file, $area);
 
@@ -335,16 +336,21 @@ class File
 		$basepath  = rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file  = static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) or ! is_writable($basepath))
-		{
-			throw new \InvalidPathException('Invalid basepath, cannot append to a file at this location.');
-		}
-		elseif ( ! file_exists($new_file))
+		if ( ! file_exists($new_file))
 		{
 			throw new \FileAccessException('File does not exist, cannot be appended.');
 		}
 
-		$file = static::open_file(@fopen($new_file, 'a'), true, $area);
+		if ( ! $file = static::open_file(@fopen($new_file, 'a'), true, $area))
+		{
+			if ( ! is_dir($basepath) or ! is_writable($basepath))
+			{
+				throw new \InvalidPathException('Invalid basepath, cannot append to a file at this location.');
+			}
+
+			throw new \FileAccessException('No write access, cannot append to the file.');
+		}
+
 		fwrite($file, $contents);
 		static::close_file($file, $area);
 
@@ -532,7 +538,7 @@ class File
 		{
 			throw new \InvalidPathException('Cannot symlink: given file does not exist.');
 		}
-		if ( ! $is_file and ! is_dir($path))
+		elseif ( ! $is_file and ! is_dir($path))
 		{
 			throw new \InvalidPathException('Cannot symlink: given directory does not exist.');
 		}
