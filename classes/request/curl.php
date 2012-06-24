@@ -34,9 +34,6 @@ class Request_Curl extends \Request_Driver
 			$this->http_login($options['user'], $options['pass'], $options['auth']);
 		}
 
-		// we want to handle failure ourselves
-		$this->set_option('failonerror', false);
-
 		parent::__construct($resource, $options, $method);
 	}
 
