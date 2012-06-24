@@ -29,7 +29,7 @@ class Fuel
 	/**
 	 * @var  string  The version of Fuel
 	 */
-	const VERSION = '1.2';
+	const VERSION = '1.2.1-dev';
 
 	/**
 	 * @var  string  constant used for when in testing mode
