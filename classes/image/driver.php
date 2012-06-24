@@ -332,7 +332,6 @@ abstract class Image_Driver
 		$sizes   = $this->sizes();
 		$width   = $this->convert_number($width, true);
 		$height  = $this->convert_number($height, false);
-		$x = $y = 0;
 
 		if (function_exists('bcdiv'))
 		{
@@ -358,8 +357,8 @@ abstract class Image_Driver
 		}
 
 		$sizes = $this->sizes();
-		$y = floor(($sizes->height - $height) / 2);
-		$x = floor(($sizes->width - $width) / 2);
+		$y = floor(max(0, $sizes->height - $height) / 2);
+		$x = floor(max(0, $sizes->width - $width) / 2);
 		$this->_crop($x, $y, $x + $width, $y + $height);
 	}
 
@@ -667,7 +666,8 @@ abstract class Image_Driver
 		{
 			if ( ! $this->config['debug'])
 			{
-				header('Content-Type: image/' . $filetype);
+				$mimetype = $filetype === 'jpg' ? 'jpeg' : $filetype;
+				header('Content-Type: image/' . $mimetype);
 			}
 			$this->new_extension = $filetype;
 		}
@@ -731,7 +731,7 @@ abstract class Image_Driver
 				$blue  = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
 			}
 		}
-		
+
 		return array(
 			'red' => $red,
 			'green' => $green,
