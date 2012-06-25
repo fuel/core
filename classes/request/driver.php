@@ -152,7 +152,11 @@ abstract class Request_Driver
 	 */
 	public function set_options(array $options)
 	{
-		$this->options = $options;
+		foreach ($options as $key => $val)
+		{
+			$this->options[$key] = $val;
+		}
+
 		return $this;
 	}
 
@@ -165,9 +169,7 @@ abstract class Request_Driver
 	 */
 	public function set_option($option, $value)
 	{
-		$this->options[$option] = $value;
-
-		return $this;
+		return $this->set_options(array($option => $value));
 	}
 
 	/**
