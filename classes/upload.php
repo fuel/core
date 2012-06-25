@@ -421,12 +421,11 @@ class Upload
 						}
 					}
 				}
-			}
-
-			// and add the message texts
-			foreach (static::$files[$key]['errors'] as $e => $error)
-			{
-				static::$files[$key]['errors'][$e]['message'] = \Lang::get('upload.error_'.$error['error']);
+                // and add the message texts
+                foreach (static::$files[$key]['errors'] as $e => $error)
+                {
+                    static::$files[$key]['errors'][$e]['message'] = \Lang::get('upload.error_'.$error['error']);
+                }
 			}
 		}
 
