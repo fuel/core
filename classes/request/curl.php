@@ -105,7 +105,7 @@ class Request_Curl extends \Request_Driver
 		}
 		if ( ! isset($this->options[CURLOPT_FAILONERROR]))
 		{
-			$this->options[CURLOPT_FAILONERROR] = true;
+			$this->options[CURLOPT_FAILONERROR] = false;
 		}
 
 		// Only set follow location if not running securely
