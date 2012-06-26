@@ -130,7 +130,7 @@ class Request
 	 */
 	public static function is_hmvc()
 	{
-		return static::active() !== static::main();
+		return ((\Fuel::$is_cli and static::main()) or static::active() !== static::main());
 	}
 
 	/**
