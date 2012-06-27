@@ -243,7 +243,11 @@ class Response
 			foreach ($this->headers as $name => $value)
 			{
 				// Parse non-replace headers
-				is_int($name) and is_array($value) and list($name, $value) = $value;
+				if (is_int($name) and is_array($value))
+				{
+					 isset($value[0]) and $name = $value[0];
+					 isset($value[1]) and $value = $value[1];
+				}
 
 				// Create the header
 				is_string($name) and $value = "{$name}: {$value}";
