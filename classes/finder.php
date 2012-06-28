@@ -300,7 +300,7 @@ class Finder
 		if ($pos = strripos($file, '::'))
 		{
 			// get the namespace path
-			if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($file, 0, $pos))))
+			if ($path = \Autoloader::namespace_path(ucfirst(substr($file, 0, $pos))))
 			{
 				$cache_id .= substr($file, 0, $pos);
 
