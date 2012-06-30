@@ -386,11 +386,11 @@ class Format
 		$escape = \Config::get('format.csv.escape', '\\');
 
 		// Get the headings
-		$headings = str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape);
+		$headings = str_replace($escape.$enclosure, $enclosure, str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape));
 
 		foreach ($rows as $row)
 		{
-			$data_fields = str_getcsv($row, $delimiter, $enclosure, $escape);
+			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($row, $delimiter, $enclosure, $escape));
 
 			if (count($data_fields) == count($headings))
 			{
