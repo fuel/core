@@ -28,7 +28,7 @@ class PhpErrorException extends \ErrorException
 			if (\Fuel::$env != \Fuel::PRODUCTION and ($this->code & error_reporting()) == $this->code)
 			{
 				static::$count++;
-				\Error::show_php_error(new \ErrorException($this->message, $this->severity, 0, $this->file, $this->line));
+				\Error::show_php_error(new \ErrorException($this->message, $this->code, 0, $this->file, $this->line));
 			}
 		}
 		elseif (\Fuel::$env != \Fuel::PRODUCTION
@@ -133,7 +133,17 @@ class Error
 	 */
 	public static function error_handler($severity, $message, $filepath, $line)
 	{
-		throw new \PhpErrorException($message, $severity, 0, $filepath, $line);
+		$fatal = (bool)( ! in_array($severity, \Config::get('errors.continue_on', array())));
+
+		if ($fatal)
+		{
+			throw new \PhpErrorException($message, $severity, 0, $filepath, $line);
+		}
+		else
+		{
+			$e = new \PhpErrorException($message, $severity, 0, $filepath, $line);
+			$e->handle();
+		}
 		return true;
 	}
 
