@@ -68,7 +68,8 @@ class Package
 		// if no path is given, try to locate the package
 		if ($path === null)
 		{
-			$paths = \Config::get('package_paths', array(PKGPATH));
+			$paths = \Config::get('package_paths', array());
+			empty($paths) and $paths = array(PKGPATH);
 
 			if ( ! empty($paths))
 			{
@@ -138,7 +139,8 @@ class Package
 		}
 		else
 		{
-			$paths = \Config::get('package_paths', array(PKGPATH));
+			$paths = \Config::get('package_paths', array());
+			empty($paths) and $paths = array(PKGPATH);
 
 			foreach ($paths as $path)
 			{
