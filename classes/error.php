@@ -12,7 +12,38 @@
 
 namespace Fuel\Core;
 
+/**
+ * Exception class for standard PHP errors, this will make them catchable
+ */
+class PhpErrorException extends \ErrorException
+{
+	public static $count = 0;
 
+	public function handle()
+	{
+		if (static::$count <= Config::get('errors.throttle', 10))
+		{
+			logger(\Fuel::L_ERROR, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
+
+			if (\Fuel::$env != \Fuel::PRODUCTION and ($this->code & error_reporting()) == $this->code)
+			{
+				static::$count++;
+				\Error::show_php_error(new \ErrorException($this->message, $this->severity, 0, $this->file, $this->line));
+			}
+		}
+		elseif (\Fuel::$env != \Fuel::PRODUCTION
+				and static::$count == (\Config::get('errors.throttle', 10) + 1)
+				and ($this->severity & error_reporting()) == $this->severity)
+		{
+			static::$count++;
+			static::notice('Error throttling threshold was reached, no more full error reports are shown.', true);
+		}
+	}
+}
+
+/**
+ *
+ */
 class Error
 {
 
@@ -33,8 +64,6 @@ class Error
 	);
 
 	public static $fatal_levels = array(E_PARSE, E_ERROR, E_USER_ERROR, E_COMPILE_ERROR);
-
-	public static $count = 0;
 
 	public static $non_fatal_cache = array();
 
@@ -104,24 +133,7 @@ class Error
 	 */
 	public static function error_handler($severity, $message, $filepath, $line)
 	{
-		if (static::$count <= Config::get('errors.throttle', 10))
-		{
-			logger(\Fuel::L_ERROR, $severity.' - '.$message.' in '.$filepath.' on line '.$line);
-
-			if (\Fuel::$env != \Fuel::PRODUCTION and ($severity & error_reporting()) == $severity)
-			{
-				static::$count++;
-				static::show_php_error(new \ErrorException($message, $severity, 0, $filepath, $line));
-			}
-		}
-		elseif (\Fuel::$env != \Fuel::PRODUCTION
-				and static::$count == (\Config::get('errors.throttle', 10) + 1)
-				and ($severity & error_reporting()) == $severity)
-		{
-			static::$count++;
-			static::notice('Error throttling threshold was reached, no more full error reports are shown.', true);
-		}
-
+		throw new \PhpErrorException($message, $severity, 0, $filepath, $line);
 		return true;
 	}
 
