@@ -413,6 +413,25 @@ class Arr
 	}
 
 	/**
+	 * Removes items from an array that match a key prefix.
+	 *
+	 * @param   array   the array to remove from
+	 * @param   string  prefix to filter on
+	 * @return  array
+	 */
+	public static function remove_prefixed($array, $prefix)
+	{
+		foreach ($array as $key => $val)
+		{
+			if (preg_match('/^'.$prefix.'/', $key))
+			{
+				unset($array[$key]);
+			}
+		}
+		return $array;
+	}
+
+	/**
 	 * Filters an array by an array of keys
 	 *
 	 * @param   array   the array to filter.
