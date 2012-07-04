@@ -395,7 +395,7 @@ class Arr
 	 * @param   bool    whether to remove the prefix.
 	 * @return  array
 	 */
-	public static function filter_prefixed($array, $prefix = 'prefix_', $remove_prefix = true)
+	public static function filter_prefixed($array, $prefix, $remove_prefix = true)
 	{
 		$return = array();
 		foreach ($array as $key => $val)

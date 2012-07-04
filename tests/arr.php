@@ -437,7 +437,7 @@ class Test_Arr extends TestCase
 	{
 		$arr = array('foo' => 'baz', 'prefix_bar' => 'yay');
 
-		$output = Arr::filter_prefixed($arr);
+		$output = Arr::filter_prefixed($arr, 'prefix_');
 		$this->assertEquals(array('bar' => 'yay'), $output);
 	}
 
