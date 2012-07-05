@@ -104,7 +104,7 @@ class Asset_Instance
 		}
 
 		$this->_add_mtime = $config['add_mtime'];
-		$this->_asset_url = $config['url'];
+		$this->_asset_url = rtrim($config['url'], '\\/').'/';
 		$this->_indent = str_repeat($config['indent_with'], $config['indent_level']);
 		$this->_auto_render = $config['auto_render'];
 		$this->_fail_silently = $config['fail_silently'];
@@ -398,9 +398,9 @@ class Asset_Instance
 		{
 			empty($folder) or $folder = trim($folder, DS).DS;
 
-			if (is_file($path.$folder.ltrim($file, DS)))
+			if (is_file($path.$folder.ltrim($file, '\\/')))
 			{
-				$file = $path.$folder.ltrim($file, DS);
+				$file = $path.$folder.ltrim($file, '\\/');
 				strpos($file, DOCROOT) === 0 and $file = substr($file, strlen(DOCROOT));
 
 				// return the file found, make sure it uses forward slashes on Windows
