@@ -574,6 +574,11 @@ class Form_Instance
 			$attributes['id'] = $this->get_config('auto_id_prefix', '').$attributes['name'];
 		}
 
+		if (isset($attributes['multiple']))
+		{
+			$attributes['name'] .= '[]';
+		}
+
 		return html_tag('select', $this->attr_to_string($attributes), $input);
 	}
 
