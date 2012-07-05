@@ -96,12 +96,14 @@ class Image
 	/**
 	 * Loads the image and checks if its compatable.
 	 *
-	 * @param   string  $filename  The file to load
+	 * @param   string  $filename							The file to load
+	 * @param   string  $return_data					Decides if it should return the images data, or just "$this".
+	 * @param   mixed		$force_extension			Whether or not to force the image extension
 	 * @return  Image_Driver
 	 */
-	public static function load($filename)
+	public static function load($filename, $return_data = false, $force_extension = false)
 	{
-		return static::instance()->load($filename);
+		return static::instance()->load($filename, $return_data, $force_extension);
 	}
 
 	/**
