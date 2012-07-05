@@ -24,6 +24,7 @@ return array(
 		'delimiter' => ',',
 		'enclosure' => '"',
 		'newline'   => "\n",
+		'regex_newline'   => '\n',
 		'escape'    => '\\',
 	),
 );

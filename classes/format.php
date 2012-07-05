@@ -377,8 +377,7 @@ class Format
 	{
 		$data = array();
 
-		// Splits
-		$rows = explode(\Config::get('format.csv.newline', "\n"), trim($string));
+		$rows = preg_split('/(?<='.preg_quote(\Config::get('format.csv.enclosure', '"')).')'.\Config::get('format.csv.regex_newline', '\n').'/', trim($string));
 
 		// csv config
 		$delimiter = \Config::get('format.csv.delimiter', ',');
