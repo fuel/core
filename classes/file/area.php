@@ -250,7 +250,7 @@ class File_Area
 
 	public function delete_dir($path, $recursive = true, $delete_top = true)
 	{
-		return \File::delete($path, $recursive, $delete_top, $this);
+		return \File::delete_dir($path, $recursive, $delete_top, $this);
 	}
 
 	public function update($basepath, $name, $new_content)
