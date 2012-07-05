@@ -21,9 +21,9 @@ class Image_Gd extends \Image_Driver
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
 	protected $gdresizefunc = "imagecopyresampled";
 
-	public function load($filename, $return_data = false)
+	public function load($filename, $return_data = false, $force_extension = false)
 	{
-		extract(parent::load($filename, $return_data));
+		extract(parent::load($filename, $return_data, $force_extension));
 		$return = false;
 		$image_extension == 'jpg' and $image_extension = 'jpeg';
 
