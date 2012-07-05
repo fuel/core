@@ -492,7 +492,7 @@ class Asset_Instance
 	{
 		$ds === null and $ds = DS;
 
-		return rtrim(str_replace('..'.$ds, '', str_replace('\\/', $ds, $path)), $ds).($trailing ? $ds : '');
+		return rtrim(str_replace('..'.$ds, '', str_replace(array('\\', '/'), $ds, $path)), $ds).($trailing ? $ds : '');
 	}
 
 }
