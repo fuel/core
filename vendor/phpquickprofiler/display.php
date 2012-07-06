@@ -265,7 +265,7 @@ $printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 		}
 		elseif( ! is_array($value) AND ! is_object($value))
 		{
-			$output .= '<b>'.\Security::htmlentities($value).'</b>';
+			$output .= '<b>'.e($value).'</b>';
 		}
 		$output .= str_repeat('&rsaquo;&nbsp;', $depth).$item.'</td></tr>';
 		if($class == '') $class = 'alt'; else $class = '';
@@ -359,7 +359,7 @@ else {
 				<td class="type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
 			if($log['type'] == 'log') {
-				$return_output .='<div><pre>'.$log['data'].'</pre></div>';
+				$return_output .='<div><pre>'.e($log['data']).'</pre></div>';
 			}
 			elseif($log['type'] == 'memory') {
 				$return_output .='<div><pre>'.$log['data'].'</pre> <em>'.$log['dataType'].'</em>: '.$log['name'].' </div>';
@@ -398,7 +398,7 @@ else {
 			if($log['type'] == 'speed') {
 				$return_output .='<tr class="log-'.$log['type'].'">
 				<td class="'.$class.'">';
-				$return_output .='<div><pre>'.$log['data'].'</pre> <em>'.$log['name'].'</em></div>';
+				$return_output .='<div><pre>'.e($log['data']).'</pre> <em>'.$log['name'].'</em></div>';
 				$return_output .='</td></tr>';
 				if($class == '') $class = 'alt';
 				else $class = '';

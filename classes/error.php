@@ -36,7 +36,7 @@ class PhpErrorException extends \ErrorException
 				and ($this->severity & error_reporting()) == $this->severity)
 		{
 			static::$count++;
-			static::notice('Error throttling threshold was reached, no more full error reports are shown.', true);
+			\Error::notice('Error throttling threshold was reached, no more full error reports are shown.', true);
 		}
 	}
 }
