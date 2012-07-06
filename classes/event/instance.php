@@ -98,7 +98,7 @@ class Event_Instance
 				$this->_events = array();
 				return true;
 			}
-			
+
 			foreach ($this->_events[$event] as $i => $arguments)
 			{
 				if($callback === $arguments[1])
@@ -138,6 +138,9 @@ class Event_Instance
 		// check if we have events registered
 		if ($this->has_events($event))
 		{
+			// reverse the order of shutdown events
+			$event == 'shutdown' and $this->_events[$event] = array_reverse($this->_events[$event],true);
+
 			// process them
 			foreach ($this->_events[$event] as $arguments)
 			{
