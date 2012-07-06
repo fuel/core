@@ -126,23 +126,23 @@ class Event_Instance
 	 * 'string'
 	 *
 	 * @access	public
-	 * @param	string	The name of the event
-	 * @param	mixed	Any data that is to be passed to the listener
-	 * @param	string	The return type
-	 * @return	mixed	The return of the listeners, in the return type
+	 * @param	string	 The name of the event
+	 * @param	mixed	 Any data that is to be passed to the listener
+	 * @param	string	 The return type
+	 * @param   boolean  Wether to fire events ordered LIFO instead of FIFO
+	 * @return	mixed	 The return of the listeners, in the return type
 	 */
-	public function trigger($event, $data = '', $return_type = 'string')
+	public function trigger($event, $data = '', $return_type = 'string', $reversed = false)
 	{
 		$calls = array();
 
 		// check if we have events registered
 		if ($this->has_events($event))
 		{
-			// reverse the order of shutdown events
-			$event == 'shutdown' and $this->_events[$event] = array_reverse($this->_events[$event],true);
+			$events = $reversed ? array_reverse($this->_events[$event], true) : $this->_events[$event];
 
 			// process them
-			foreach ($this->_events[$event] as $arguments)
+			foreach ($events as $arguments)
 			{
 				// get rid of the event name
 				array_shift($arguments);

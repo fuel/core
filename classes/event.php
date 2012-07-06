@@ -72,7 +72,7 @@ abstract class Event
 		if ($instance->has_events('shutdown'))
 		{
 			// trigger the shutdown events
-			$instance->trigger('shutdown', '', 'none');
+			$instance->trigger('shutdown', '', 'none', true);
 		}
 	}
 
