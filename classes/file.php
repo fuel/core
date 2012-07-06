@@ -767,8 +767,6 @@ class File
 			ob_end_clean();
 		}
 
-		\Event::unregister('shutdown');
-
 		ini_get('zlib.output_compression') and ini_set('zlib.output_compression', 0);
 		! ini_get('safe_mode') and set_time_limit(0);
 
