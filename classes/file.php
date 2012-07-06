@@ -752,40 +752,42 @@ class File
 	public static function download($path, $name = null, $mime = null, $area = null)
 	{
 		$info = static::file_info($path, $area);
+		$class = get_called_class();
+		empty($mime) or $info['mimetype'] = $mime;
+		empty($name) or $info['basename'] = $name;
 
-		empty($mime) and $mime = $info['mimetype'];
-		empty($name) and $name = $info['basename'];
+		\Event::register('shutdown', function () use($info, $area, $class) {
 
-		if ( ! $file = static::open_file(@fopen($info['realpath'], 'rb'), LOCK_SH, $area))
-		{
-			throw new \FileAccessException('Filename given could not be opened for download.');
-		}
+			if ( ! $file = call_user_func(array($class, 'open_file'), @fopen($info['realpath'], 'rb'), LOCK_SH, $area))
+			{
+				throw new \FileAccessException('Filename given could not be opened for download.');
+			}
 
-		while (ob_get_level() > 0)
-		{
-			ob_end_clean();
-		}
+			while (ob_get_level() > 0)
+			{
+				ob_end_clean();
+			}
 
-		ini_get('zlib.output_compression') and ini_set('zlib.output_compression', 0);
-		! ini_get('safe_mode') and set_time_limit(0);
+			ini_get('zlib.output_compression') and ini_set('zlib.output_compression', 0);
+			! ini_get('safe_mode') and set_time_limit(0);
 
-		header('Content-Type: '.$mime);
-		header('Content-Disposition: attachment; filename="'.$name.'"');
-		header('Content-Description: File Transfer');
-		header('Content-Length: '.$info['size']);
-		header('Content-Transfer-Encoding: binary');
-		header('Expires: 0');
-		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header('Content-Type: '.$info['mimetype']);
+			header('Content-Disposition: attachment; filename="'.$info['basename'].'"');
+			header('Content-Description: File Transfer');
+			header('Content-Length: '.$info['size']);
+			header('Content-Transfer-Encoding: binary');
+			header('Expires: 0');
+			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
-		while( ! feof($file))
-		{
-			echo fread($file, 2048);
-		}
+			while( ! feof($file))
+			{
+				echo fread($file, 2048);
+			}
 
-		static::close_file($file, $area);
+			call_user_func(array($class, 'close_file'), $file, $area);
+		});
+
 		exit;
 	}
 
 }
-
-
