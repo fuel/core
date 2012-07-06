@@ -89,21 +89,21 @@ class Event_Instance
 	 * @param   mixed    $callback  callback to remove [optional, null for all]
 	 * @return  boolean  wether one or all callbacks have been removed
 	 */
- 	public static function unregister($event, $callback = null)
+ 	public function unregister($event, $callback = null)
 	{
-		if (isset(static::$_events[$event]))
+		if (isset($this->_events[$event]))
 		{
 			if ($callback === true)
 			{
-				static::$_events = array();
+				$this->_events = array();
 				return true;
 			}
 			
-			foreach (static::$_events[$event] as $i => $arguments)
+			foreach ($this->_events[$event] as $i => $arguments)
 			{
 				if($callback === $arguments[1])
 				{
-					unset(static::$_events[$event][$i]);
+					unset($this->_events[$event][$i]);
 					return true;
 				}
 			}
