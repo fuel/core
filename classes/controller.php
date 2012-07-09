@@ -21,21 +21,13 @@ abstract class Controller
 	public $request;
 
 	/**
-	 * @var  Response  The current Response object
-	 * @deprecated  until v1.2
-	 */
-	public $response;
-
-	/**
 	 * Sets the controller request object.
 	 *
 	 * @param   Request   The current request object
-	 * @param   Response  The current response object
 	 */
-	public function __construct(\Request $request, \Response $response)
+	public function __construct(\Request $request)
 	{
 		$this->request = $request;
-		$this->response = $response;
 	}
 
 	/**
@@ -48,6 +40,12 @@ abstract class Controller
 	 */
 	public function after($response)
 	{
+		// Make sure the $response is a Response object
+		if ( ! $response instanceof \Response)
+		{
+			$response = \Response::forge($response);
+		}
+
 		return $response;
 	}
 

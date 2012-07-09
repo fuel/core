@@ -389,7 +389,7 @@ class Request
 				}
 
 				// Create a new instance of the controller
-				$this->controller_instance = $class->newInstance($this, new \Response);
+				$this->controller_instance = $class->newInstance($this);
 
 				$this->action = $this->action ?: ($class->hasProperty('default_action') ? $class->getProperty('default_action')->getValue($this->controller_instance) : 'index');
 				$method = $method_prefix.$this->action;
@@ -436,17 +436,13 @@ class Request
 
 
 		// Get the controller's output
-		if (is_null($response))
-		{
-			throw new \FuelException(get_class($this->controller_instance).'::'.$method.'() or the controller after() method must return a Response object.');
-		}
-		elseif ($response instanceof \Response)
+		if ($response instanceof \Response)
 		{
 			$this->response = $response;
 		}
 		else
 		{
-			$this->response = \Response::forge($response, 200);
+			throw new \FuelException(get_class($this->controller_instance).'::'.$method.'() or the controller after() method must return a Response object.');
 		}
 
 		static::reset_request();
