@@ -96,23 +96,45 @@ class Log
 	 */
 	public static function write($level, $msg, $method = null)
 	{
-		if ($level > \Config::get('log_threshold'))
-		{
-			return false;
-		}
-		$levels = array(
+		// defined default error labels
+		static $labels = array(
 			1  => 'Error',
 			2  => 'Warning',
 			3  => 'Debug',
 			4  => 'Info',
 		);
-		$level = isset($levels[$level]) ? $levels[$level] : $level;
 
+		// get the levels defined to be logged
+		$loglabels = \Config::get('log_threshold');
+
+		// bail out if we don't need logging at all
+		if ($loglabels == \Fuel::L_NONE)
+		{
+			return false;
+		}
+
+		// if it's not an array, assume it's an "up to" level
+		if ( ! is_array($loglabels))
+		{
+			$loglabels = array_keys(array_slice($labels, 0, $loglabels, true));
+		}
+
+		// do we need to log the message with this level?
+		if ( ! in_array($level, $loglabels))
+		{
+			return false;
+		}
+
+		// store the label for this level for future use
+		$level = $labels[$level];
+
+		// if profiling is active log the message to the profile
 		if (Config::get('profiling'))
 		{
 			\Console::log($method.' - '.$msg);
 		}
 
+		// and write it to the logfile
 		$filepath = \Config::get('log_path').date('Y/m').'/';
 
 		if ( ! is_dir($filepath))
