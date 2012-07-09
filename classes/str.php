@@ -88,6 +88,32 @@ class Str
 	}
 
 	/**
+	 * Checks wether a string has a precific beginning.
+	 *
+	 * @param   string   $str          string to check
+	 * @param   string   $start        beginning to check for
+	 * @param   boolean  $ignore_case  wether to ignore the case
+	 * @return  boolean  wether a string starts with a specified beginning
+	 */
+	public static function starts_with($str, $start, $ignore_case = false)
+	{
+		return (bool) preg_match('/^'.preg_quote($start, '/').'/m'.($ignore_case ? 'i' : ''), $str);
+	}
+
+	/**
+	 * Checks wether a string has a precific ending.
+	 *
+	 * @param   string   $str          string to check
+	 * @param   string   $end          ending to check for
+	 * @param   boolean  $ignore_case  wether to ignore the case
+	 * @return  boolean  wether a string ends with a specified ending
+	 */
+	public static function ends_with($str, $end, $ignore_case = false)
+	{
+		return (bool) preg_match('/'.preg_quote($end, '/').'$/m'.($ignore_case ? 'i' : ''), $str);
+	}
+
+	/**
 	 * substr
 	 *
 	 * @param   string    $str       required

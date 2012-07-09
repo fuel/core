@@ -38,34 +38,32 @@ namespace PHPSecLib;
  * ?>
  * </code>
  *
- * LICENSE: This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * LICENSE: Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  *
  * @category   Crypt
  * @package    Crypt_AES
  * @author     Jim Wigginton <terrafrost@php.net>
  * @copyright  MMVIII Jim Wigginton
- * @license    http://www.gnu.org/licenses/lgpl.txt
+ * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  * @version    $Id: AES.php,v 1.7 2010/02/09 06:10:25 terrafrost Exp $
  * @link       http://phpseclib.sourceforge.net
  */
-
-/**
- * Include Crypt_Rijndael
- */
-require_once 'Rijndael.php';
 
 /**#@+
  * @access public
@@ -92,6 +90,18 @@ define('CRYPT_AES_MODE_ECB', 1);
  * @link http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation#Cipher-block_chaining_.28CBC.29
  */
 define('CRYPT_AES_MODE_CBC', 2);
+/**
+ * Encrypt / decrypt using the Cipher Feedback mode.
+ *
+ * @link http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation#Cipher_feedback_.28CFB.29
+ */
+define('CRYPT_AES_MODE_CFB', 3);
+/**
+ * Encrypt / decrypt using the Cipher Feedback mode.
+ *
+ * @link http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation#Output_feedback_.28OFB.29
+ */
+define('CRYPT_AES_MODE_OFB', 4);
 /**#@-*/
 
 /**#@+
@@ -142,6 +152,16 @@ class Crypt_AES extends Crypt_Rijndael {
     var $demcrypt;
 
     /**
+     * mcrypt resource for CFB mode
+     *
+     * @see Crypt_AES::encrypt()
+     * @see Crypt_AES::decrypt()
+     * @var String
+     * @access private
+     */
+    var $ecb;
+
+    /**
      * Default Constructor.
      *
      * Determines whether or not the mcrypt extension should be used.  $mode should only, at present, be
@@ -170,6 +190,7 @@ class Crypt_AES extends Crypt_Rijndael {
             case CRYPT_AES_MODE_MCRYPT:
                 switch ($mode) {
                     case CRYPT_AES_MODE_ECB:
+                        $this->paddable = true;
                         $this->mode = MCRYPT_MODE_ECB;
                         break;
                     case CRYPT_AES_MODE_CTR:
@@ -179,22 +200,39 @@ class Crypt_AES extends Crypt_Rijndael {
                         $this->mode = 'ctr';
                         //$this->mode = in_array('ctr', mcrypt_list_modes()) ? 'ctr' : CRYPT_AES_MODE_CTR;
                         break;
+                    case CRYPT_AES_MODE_CFB:
+                        $this->mode = 'ncfb';
+                        break;
+                    case CRYPT_AES_MODE_OFB:
+                        $this->mode = MCRYPT_MODE_NOFB;
+                        break;
                     case CRYPT_AES_MODE_CBC:
                     default:
+                        $this->paddable = true;
                         $this->mode = MCRYPT_MODE_CBC;
                 }
+
+                $this->debuffer = $this->enbuffer = '';
 
                 break;
             default:
                 switch ($mode) {
                     case CRYPT_AES_MODE_ECB:
+                        $this->paddable = true;
                         $this->mode = CRYPT_RIJNDAEL_MODE_ECB;
                         break;
                     case CRYPT_AES_MODE_CTR:
                         $this->mode = CRYPT_RIJNDAEL_MODE_CTR;
                         break;
+                    case CRYPT_AES_MODE_CFB:
+                        $this->mode = CRYPT_RIJNDAEL_MODE_CFB;
+                        break;
+                    case CRYPT_AES_MODE_OFB:
+                        $this->mode = CRYPT_RIJNDAEL_MODE_OFB;
+                        break;
                     case CRYPT_AES_MODE_CBC:
                     default:
+                        $this->paddable = true;
                         $this->mode = CRYPT_RIJNDAEL_MODE_CBC;
                 }
         }
@@ -237,6 +275,7 @@ class Crypt_AES extends Crypt_Rijndael {
     function encrypt($plaintext)
     {
         if ( CRYPT_AES_MODE == CRYPT_AES_MODE_MCRYPT ) {
+            $changed = $this->changed;
             $this->_mcryptSetup();
             /*
             if ($this->mode == CRYPT_AES_MODE_CTR) {
@@ -249,8 +288,44 @@ class Crypt_AES extends Crypt_Rijndael {
                 return $ciphertext;
             }
             */
+            // re: http://phpseclib.sourceforge.net/cfb-demo.phps
+            // using mcrypt's default handing of CFB the above would output two different things.  using phpseclib's
+            // rewritten CFB implementation the above outputs the same thing twice.
+            if ($this->mode == 'ncfb') {
+                if ($changed) {
+                    $this->ecb = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
+                    mcrypt_generic_init($this->ecb, $this->key, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+                }
 
-            if ($this->mode != 'ctr') {
+                if (strlen($this->enbuffer)) {
+                    $ciphertext = $plaintext ^ substr($this->encryptIV, strlen($this->enbuffer));
+                    $this->enbuffer.= $ciphertext;
+                    if (strlen($this->enbuffer) == 16) {
+                        $this->encryptIV = $this->enbuffer;
+                        $this->enbuffer = '';
+                        mcrypt_generic_init($this->enmcrypt, $this->key, $this->encryptIV);
+                    }
+                    $plaintext = substr($plaintext, strlen($ciphertext));
+                } else {
+                    $ciphertext = '';
+                }
+
+                $last_pos = strlen($plaintext) & 0xFFFFFFF0;
+                $ciphertext.= $last_pos ? mcrypt_generic($this->enmcrypt, substr($plaintext, 0, $last_pos)) : '';
+
+                if (strlen($plaintext) & 0xF) {
+                    if (strlen($ciphertext)) {
+                        $this->encryptIV = substr($ciphertext, -16);
+                    }
+                    $this->encryptIV = mcrypt_generic($this->ecb, $this->encryptIV);
+                    $this->enbuffer = substr($plaintext, $last_pos) ^ $this->encryptIV;
+                    $ciphertext.= $this->enbuffer;
+                }
+
+                return $ciphertext;
+            }
+
+            if ($this->paddable) {
                 $plaintext = $this->_pad($plaintext);
             }
 
@@ -278,6 +353,7 @@ class Crypt_AES extends Crypt_Rijndael {
     function decrypt($ciphertext)
     {
         if ( CRYPT_AES_MODE == CRYPT_AES_MODE_MCRYPT ) {
+            $changed = $this->changed;
             $this->_mcryptSetup();
             /*
             if ($this->mode == CRYPT_AES_MODE_CTR) {
@@ -290,8 +366,42 @@ class Crypt_AES extends Crypt_Rijndael {
                 return $plaintext;
             }
             */
+            if ($this->mode == 'ncfb') {
+                if ($changed) {
+                    $this->ecb = mcrypt_module_open(MCRYPT_RIJNDAEL_128, '', MCRYPT_MODE_ECB, '');
+                    mcrypt_generic_init($this->ecb, $this->key, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+                }
 
-            if ($this->mode != 'ctr') {
+                if (strlen($this->debuffer)) {
+                    $plaintext = $ciphertext ^ substr($this->decryptIV, strlen($this->debuffer));
+
+                    $this->debuffer.= substr($ciphertext, 0, strlen($plaintext));
+                    if (strlen($this->debuffer) == 16) {
+                        $this->decryptIV = $this->debuffer;
+                        $this->debuffer = '';
+                        mcrypt_generic_init($this->demcrypt, $this->key, $this->decryptIV);
+                    }
+                    $ciphertext = substr($ciphertext, strlen($plaintext));
+                } else {
+                    $plaintext = '';
+                }
+
+                $last_pos = strlen($ciphertext) & 0xFFFFFFF0;
+                $plaintext.= $last_pos ? mdecrypt_generic($this->demcrypt, substr($ciphertext, 0, $last_pos)) : '';
+
+                if (strlen($ciphertext) & 0xF) {
+                    if (strlen($plaintext)) {
+                        $this->decryptIV = substr($ciphertext, $last_pos - 16, 16);
+                    }
+                    $this->decryptIV = mcrypt_generic($this->ecb, $this->decryptIV);
+                    $this->debuffer = substr($ciphertext, $last_pos);
+                    $plaintext.= $this->debuffer ^ $this->decryptIV;
+                }
+
+                return $plaintext;
+            }
+
+            if ($this->paddable) {
                 // we pad with chr(0) since that's what mcrypt_generic does.  to quote from http://php.net/function.mcrypt-generic :
                 // "The data is padded with "\0" to make sure the length of the data is n * blocksize."
                 $ciphertext = str_pad($ciphertext, (strlen($ciphertext) + 15) & 0xFFFFFFF0, chr(0));
@@ -303,7 +413,7 @@ class Crypt_AES extends Crypt_Rijndael {
                 mcrypt_generic_init($this->demcrypt, $this->key, $this->iv);
             }
 
-            return $this->mode != 'ctr' ? $this->_unpad($plaintext) : $plaintext;
+            return $this->paddable ? $this->_unpad($plaintext) : $plaintext;
         }
 
         return parent::decrypt($ciphertext);
@@ -347,7 +457,7 @@ class Crypt_AES extends Crypt_Rijndael {
                 $this->key_size = 32;
         }
 
-        $this->key = substr($this->key, 0, $this->key_size);
+        $this->key = str_pad(substr($this->key, 0, $this->key_size), $this->key_size, chr(0));
         $this->encryptIV = $this->decryptIV = $this->iv = str_pad(substr($this->iv, 0, 16), 16, chr(0));
 
         if (!isset($this->enmcrypt)) {

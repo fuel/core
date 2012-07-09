@@ -183,18 +183,17 @@ class Database_PDO_Connection extends \Database_Connection
 			// Convert the result into an array, as PDOStatement::rowCount is not reliable
 			if ($as_object === false)
 			{
-				$result->setFetchMode(\PDO::FETCH_ASSOC);
+				$result = $result->fetchAll(\PDO::FETCH_ASSOC);
 			}
 			elseif (is_string($as_object))
 			{
-				$result->setFetchMode(\PDO::FETCH_CLASS, $as_object);
+				$result = $result->fetchAll(\PDO::FETCH_CLASS, $as_object);
 			}
 			else
 			{
-				$result->setFetchMode(\PDO::FETCH_CLASS, 'stdClass');
+				$result = $result->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
 			}
 
-			$result = $result->fetchAll();
 
 			// Return an iterator of results
 			return new \Database_Result_Cached($result, $sql, $as_object);

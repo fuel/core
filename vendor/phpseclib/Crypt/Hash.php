@@ -31,26 +31,29 @@ namespace PHPSecLib;
  * ?>
  * </code>
  *
- * LICENSE: This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * LICENSE: Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
- * MA  02111-1307  USA
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  *
  * @category   Crypt
  * @package    Crypt_Hash
  * @author     Jim Wigginton <terrafrost@php.net>
  * @copyright  MMVII Jim Wigginton
- * @license    http://www.gnu.org/licenses/lgpl.txt
+ * @license    http://www.opensource.org/licenses/mit-license.html  MIT License
  * @version    $Id: Hash.php,v 1.6 2009/11/23 23:37:07 terrafrost Exp $
  * @link       http://phpseclib.sourceforge.net
  */
@@ -143,7 +146,7 @@ class Crypt_Hash {
      * @return Crypt_Hash
      * @access public
      */
-    public function __construct($hash = 'sha1')
+    function __construct($hash = 'sha1')
     {
         if ( !defined('CRYPT_HASH_MODE') ) {
             switch (true) {
@@ -169,7 +172,7 @@ class Crypt_Hash {
      * @access public
      * @param String $key
      */
-    public function setKey($key)
+    function setKey($key)
     {
         $this->key = $key;
     }
@@ -180,7 +183,7 @@ class Crypt_Hash {
      * @access public
      * @param String $hash
      */
-    public function setHash($hash)
+    function setHash($hash)
     {
         switch ($hash) {
             case 'md5-96':
@@ -206,7 +209,8 @@ class Crypt_Hash {
 
         switch ($hash) {
             case 'md2':
-                $mode = CRYPT_HASH_MODE_INTERNAL;
+                $mode = CRYPT_HASH_MODE == CRYPT_HASH_MODE_HASH && in_array('md2', hash_algos()) ?
+                    CRYPT_HASH_MODE_HASH : CRYPT_HASH_MODE_INTERNAL;
                 break;
             case 'sha384':
             case 'sha512':
@@ -238,6 +242,7 @@ class Crypt_Hash {
                     case 'md5-96':
                         $this->hash = 'md5';
                         return;
+                    case 'md2':
                     case 'sha256':
                     case 'sha384':
                     case 'sha512':
@@ -288,7 +293,7 @@ class Crypt_Hash {
      * @param String $text
      * @return String
      */
-    public function hash($text)
+    function hash($text)
     {
         $mode = is_array($this->hash) ? CRYPT_HASH_MODE_INTERNAL : CRYPT_HASH_MODE;
 
@@ -305,7 +310,7 @@ class Crypt_Hash {
                         resultant L byte string as the actual key to HMAC."
 
                         -- http://tools.ietf.org/html/rfc2104#section-2 */
-                    $key = strlen($this->key) > $this->b ? call_user_func($this->$hash, $this->key) : $this->key;
+                    $key = strlen($this->key) > $this->b ? call_user_func($this->hash, $this->key) : $this->key;
 
                     $key    = str_pad($key, $this->b, chr(0));      // step 1
                     $temp   = $this->ipad ^ $key;                   // step 2
@@ -334,10 +339,10 @@ class Crypt_Hash {
     /**
      * Returns the hash length (in bytes)
      *
-     * @access private
+     * @access public
      * @return Integer
      */
-    public function getLength()
+    function getLength()
     {
         return $this->l;
     }
@@ -383,7 +388,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    private function _md5($m)
+    function _md5($m)
     {
         return pack('H*', md5($m));
     }
@@ -394,7 +399,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    private function _sha1($m)
+    function _sha1($m)
     {
         return pack('H*', sha1($m));
     }
@@ -407,7 +412,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    private function _md2($m)
+    function _md2($m)
     {
         static $s = array(
              41,  46,  67, 201, 162, 216, 124,   1,  61,  54,  84, 161, 236, 240, 6,
@@ -441,7 +446,10 @@ class Crypt_Hash {
         $l = chr(0);
         for ($i = 0; $i < $length; $i+= 16) {
             for ($j = 0; $j < 16; $j++) {
-                $c[$j] = chr($s[ord($m[$i + $j] ^ $l)]);
+                // RFC1319 incorrectly states that C[j] should be set to S[c xor L]
+                //$c[$j] = chr($s[ord($m[$i + $j] ^ $l)]);
+                // per <http://www.rfc-editor.org/errata_search.php?rfc=1319>, however, C[j] should be set to S[c xor L] xor C[j]
+                $c[$j] = chr($s[ord($m[$i + $j] ^ $l)] ^ ord($c[$j]));
                 $l = $c[$j];
             }
         }
@@ -480,7 +488,7 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    private function _sha256($m)
+    function _sha256($m)
     {
         if (extension_loaded('suhosin')) {
             return pack('H*', sha256($m));
@@ -585,12 +593,8 @@ class Crypt_Hash {
      * @access private
      * @param String $text
      */
-    private function _sha512($m)
+    function _sha512($m)
     {
-        if (!class_exists('Math_BigInteger')) {
-            require_once('Math/BigInteger.php');
-        }
-
         static $init384, $init512, $k;
 
         if (!isset($k)) {
@@ -771,7 +775,7 @@ class Crypt_Hash {
      * @see _sha256()
      * @return Integer
      */
-    private function _rightRotate($int, $amt)
+    function _rightRotate($int, $amt)
     {
         $invamt = 32 - $amt;
         $mask = (1 << $invamt) - 1;
@@ -787,7 +791,7 @@ class Crypt_Hash {
      * @see _sha256()
      * @return Integer
      */
-    private function _rightShift($int, $amt)
+    function _rightShift($int, $amt)
     {
         $mask = (1 << (32 - $amt)) - 1;
         return ($int >> $amt) & $mask;
@@ -801,7 +805,7 @@ class Crypt_Hash {
      * @see _sha256()
      * @return Integer
      */
-    private function _not($int)
+    function _not($int)
     {
         return ~$int & 0xFFFFFFFF;
     }
@@ -818,7 +822,7 @@ class Crypt_Hash {
      * @see _sha256()
      * @access private
      */
-    private function _add()
+    function _add()
     {
         static $mod;
         if (!isset($mod)) {
@@ -844,7 +848,7 @@ class Crypt_Hash {
      * @return String
      * @access private
      */
-    private function _string_shift(&$string, $index = 1)
+    function _string_shift(&$string, $index = 1)
     {
         $substr = substr($string, 0, $index);
         $string = substr($string, $index);

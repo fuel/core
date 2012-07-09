@@ -112,7 +112,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		if ($result !== null)
 		{
-			return current($result);
+			return reset($result);
 		}
 
 		return null;
@@ -566,7 +566,19 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 	 */
 	public function validation()
 	{
-		$this->_validation or $this->_validation = \Validation::forge(\Str::random('alnum', 32));
+		if( ! $this->_validation)
+		{
+			$this->_validation = \Validation::forge(\Str::random('alnum', 32));
+
+			if (isset(static::$_rules) and count(static::$_rules))
+			{
+				foreach (static::$_rules as $field => $rules)
+				{
+					$label = (isset(static::$_labels) and array_key_exists($field, static::$_labels)) ? static::$_labels[$field] : $field;
+					$this->_validation->add_field($field, $label, $rules);
+				}
+			}
+		}
 
 		return $this->_validation;
 	}
@@ -698,12 +710,6 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		}
 
 		$this->_validation = $this->validation();
-
-		foreach (static::$_rules as $field => $rules)
-		{
-			$label = (isset(static::$_labels) and array_key_exists($field, static::$_labels)) ? static::$_labels[$field] : $field;
-			$this->_validation->add_field($field, $label, $rules);
-		}
 
 		return $this->_validation->run($vars);
 	}

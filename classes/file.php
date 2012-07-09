@@ -307,15 +307,16 @@ class File
 		$basepath  = rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file  = static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) or ! is_writable($basepath))
-		{
-			throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
-		}
-
 		if ( ! $file = static::open_file(@fopen($new_file, 'w'), true, $area) )
 		{
+			if ( ! is_dir($basepath) or ! is_writable($basepath))
+			{
+				throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
+			}
+
 			throw new \FileAccessException('No write access, cannot update a file.');
 		}
+
 		fwrite($file, $contents);
 		static::close_file($file, $area);
 
@@ -335,16 +336,21 @@ class File
 		$basepath  = rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_file  = static::instance($area)->get_path($basepath.$name);
 
-		if ( ! is_dir($basepath) or ! is_writable($basepath))
-		{
-			throw new \InvalidPathException('Invalid basepath, cannot append to a file at this location.');
-		}
-		elseif ( ! file_exists($new_file))
+		if ( ! file_exists($new_file))
 		{
 			throw new \FileAccessException('File does not exist, cannot be appended.');
 		}
 
-		$file = static::open_file(@fopen($new_file, 'a'), true, $area);
+		if ( ! $file = static::open_file(@fopen($new_file, 'a'), true, $area))
+		{
+			if ( ! is_dir($basepath) or ! is_writable($basepath))
+			{
+				throw new \InvalidPathException('Invalid basepath, cannot append to a file at this location.');
+			}
+
+			throw new \FileAccessException('No write access, cannot append to the file.');
+		}
+
 		fwrite($file, $contents);
 		static::close_file($file, $area);
 
@@ -532,7 +538,7 @@ class File
 		{
 			throw new \InvalidPathException('Cannot symlink: given file does not exist.');
 		}
-		if ( ! $is_file and ! is_dir($path))
+		elseif ( ! $is_file and ! is_dir($path))
 		{
 			throw new \InvalidPathException('Cannot symlink: given directory does not exist.');
 		}
@@ -742,50 +748,46 @@ class File
 	 * @param  string|null  custom name for the file to be downloaded
 	 * @param  string|null  custom mime type or null for file mime type
 	 * @param  string|File_Area|null  file area name, object or null for base area
-	 * @param  bool        if false, return instead of exit
 	 */
-	public static function download($path, $name = null, $mime = null, $area = null, $exit = true)
+	public static function download($path, $name = null, $mime = null, $area = null)
 	{
 		$info = static::file_info($path, $area);
+		$class = get_called_class();
+		empty($mime) or $info['mimetype'] = $mime;
+		empty($name) or $info['basename'] = $name;
 
-		empty($mime) and $mime = $info['mimetype'];
-		empty($name) and $name = $info['basename'];
+		\Event::register('shutdown', function () use($info, $area, $class) {
 
-		if ( ! $file = static::open_file(@fopen($info['realpath'], 'rb'), LOCK_SH, $area))
-		{
-			throw new \FileAccessException('Filename given could not be opened for download.');
-		}
+			if ( ! $file = call_user_func(array($class, 'open_file'), @fopen($info['realpath'], 'rb'), LOCK_SH, $area))
+			{
+				throw new \FileAccessException('Filename given could not be opened for download.');
+			}
 
-		while (ob_get_level() > 0)
-		{
-			ob_end_clean();
-		}
+			while (ob_get_level() > 0)
+			{
+				ob_end_clean();
+			}
 
-		ini_get('zlib.output_compression') and ini_set('zlib.output_compression', 0);
-		! ini_get('safe_mode') and set_time_limit(0);
+			ini_get('zlib.output_compression') and ini_set('zlib.output_compression', 0);
+			! ini_get('safe_mode') and set_time_limit(0);
 
-		header('Content-Type: '.$mime);
-		header('Content-Disposition: attachment; filename="'.$name.'"');
-		header('Content-Description: File Transfer');
-		header('Content-Length: '.$info['size']);
-		header('Content-Transfer-Encoding: binary');
-		header('Expires: 0');
-		header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header('Content-Type: '.$info['mimetype']);
+			header('Content-Disposition: attachment; filename="'.$info['basename'].'"');
+			header('Content-Description: File Transfer');
+			header('Content-Length: '.$info['size']);
+			header('Content-Transfer-Encoding: binary');
+			header('Expires: 0');
+			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
-		while( ! feof($file))
-		{
-			echo fread($file, 2048);
-		}
+			while( ! feof($file))
+			{
+				echo fread($file, 2048);
+			}
 
-		static::close_file($file, $area);
+			call_user_func(array($class, 'close_file'), $file, $area);
+		});
 
-		if ($exit)
-		{
-			\Event::shutdown();
-			exit;
-		}
+		exit;
 	}
 
 }
-
-

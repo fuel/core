@@ -14,8 +14,23 @@ namespace Fuel\Core;
 
 class Router
 {
-
+	/**
+	 *
+	 */
 	public static $routes = array();
+
+	/**
+	 * Defines the controller class prefix. This allows you to namespace controllers
+	 */
+	protected static $prefix = '';
+
+	/**
+	 * Fetch the controller prefix to be used, or set a default if not defined
+	 */
+	public static function _init()
+	{
+		static::$prefix = \Config::get('controller_prefix', 'Controller_');
+	}
 
 	/**
 	 * Add one or multiple routes
@@ -66,8 +81,8 @@ class Router
 	 * Does reverse routing for a named route.  This will return the FULL url
 	 * (including the base url and index.php).
 	 *
-	 * WARNING: This is VERY limited at this point.  Does not work if there is
-	 * any regex in the route.
+	 * WARNING: Reverse routing with routes that contains a regex is still
+	 * experimental. The simple ones work, but complex ones might fail!
 	 *
 	 * Usage:
 	 *
@@ -79,9 +94,48 @@ class Router
 	 */
 	public static function get($name, $named_params = array())
 	{
+		// check if we have this named route
 		if (array_key_exists($name, static::$routes))
 		{
-			return \Uri::create(static::$routes[$name]->path, $named_params);
+			// fetch the url this route defines
+			$url = static::$routes[$name]->path;
+
+			// get named parameters regex's out of the way first
+			foreach($named_params as $name => $value)
+			{
+				if (is_string($name) and ($pos = strpos($url, '(:'.$name.')')) !== false)
+				{
+					$url = substr_replace($url,$value,$pos,strlen($name)+3);
+				}
+			}
+
+			// deal with the remaining regex's
+			if (preg_match_all('#\(.*?\)#', $url, $matches) !== false)
+			{
+				if (count($matches) == 1)
+				{
+					$search = array();
+					foreach($matches[0] as $match)
+					{
+						$search[] = $match;
+					}
+
+					$replace = array();
+					foreach($search as $key => $regex)
+					{
+						$replace = array_key_exists($key, $named_params) ? $named_params[$key] : '';
+
+						if (($pos = strpos($url,$regex)) !== false)
+						{
+							$url = substr_replace($url,$replace,$pos,strlen($regex));
+						}
+					}
+
+				}
+			}
+
+			// return the created URI, replace any named parameters not in a regex
+			return \Uri::create($url, $named_params);
 		}
 	}
 
@@ -206,7 +260,7 @@ class Router
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
-			$class = $namespace.'Controller_'.\Inflector::words_to_upper(implode('_', $temp_segments));
+			$class = $namespace.static::$prefix.\Inflector::words_to_upper(implode('_', $temp_segments));
 			array_pop($temp_segments);
 			if (class_exists($class))
 			{
@@ -221,7 +275,7 @@ class Router
 		// Fall back for default module controllers
 		if ($module)
 		{
-			$class = $namespace.'Controller_'.ucfirst($module);
+			$class = $namespace.static::$prefix.ucfirst($module);
 			if (class_exists($class))
 			{
 				return array(

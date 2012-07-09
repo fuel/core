@@ -15,4 +15,5 @@ return array(
 	'numeric_min'   => 'The minimum numeric value of :label must be :param:1',
 	'numeric_max'   => 'The maximum numeric value of :label must be :param:1',
 	'valid_string'  => 'The valid string rule :rule(:param:1) failed for field :label',
+	'required_with' => 'The field :label must contain a value if :param:1 contains a value.',
 );

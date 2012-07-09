@@ -74,6 +74,9 @@ class Request
 			static::$active->children[] = $request;
 		}
 
+		// fire any request created events
+		\Event::instance()->has_events('request_created') and \Event::instance()->trigger('request_created', '', 'none');
+
 		return $request;
 	}
 
@@ -127,7 +130,7 @@ class Request
 	 */
 	public static function is_hmvc()
 	{
-		return static::active() !== static::main();
+		return ((\Fuel::$is_cli and static::main()) or static::active() !== static::main());
 	}
 
 	/**
@@ -263,6 +266,9 @@ class Request
 
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->get().'"', __METHOD__);
 
+		// set the request method
+		$this->method = \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', 'GET'));
+
 		// check if a module was requested
 		if (count($this->uri->get_segments()) and $module_path = \Module::exists($this->uri->get_segment(1)))
 		{
@@ -325,6 +331,9 @@ class Request
 	 */
 	public function execute($method_params = null)
 	{
+		// fire any request started events
+		\Event::instance()->has_events('request_started') and \Event::instance()->trigger('request_started', '', 'none');
+
 		if (\Fuel::$profiling)
 		{
 			\Profiler::mark(__METHOD__.' Start');
@@ -380,7 +389,7 @@ class Request
 				}
 
 				// Create a new instance of the controller
-				$this->controller_instance = $class->newInstance($this, new \Response);
+				$this->controller_instance = $class->newInstance($this);
 
 				$this->action = $this->action ?: ($class->hasProperty('default_action') ? $class->getProperty('default_action')->getValue($this->controller_instance) : 'index');
 				$method = $method_prefix.$this->action;
@@ -401,11 +410,17 @@ class Request
 						throw new \HttpNotFoundException();
 					}
 
+					// fire any controller started events
+					\Event::instance()->has_events('controller_started') and \Event::instance()->trigger('controller_started', '', 'none');
+
 					$class->hasMethod('before') and $class->getMethod('before')->invoke($this->controller_instance);
 
 					$response = $action->invokeArgs($this->controller_instance, $this->method_params);
 
 					$class->hasMethod('after') and $response = $class->getMethod('after')->invoke($this->controller_instance, $response);
+
+					// fire any controller finished events
+					\Event::instance()->has_events('controller_finished') and \Event::instance()->trigger('controller_finished', '', 'none');
 				}
 				else
 				{
@@ -421,17 +436,13 @@ class Request
 
 
 		// Get the controller's output
-		if (is_null($response))
-		{
-			throw new \FuelException(get_class($this->controller_instance).'::'.$method.'() or the controller after() method must return a Response object.');
-		}
-		elseif ($response instanceof \Response)
+		if ($response instanceof \Response)
 		{
 			$this->response = $response;
 		}
 		else
 		{
-			$this->response = \Response::forge($response, 200);
+			throw new \FuelException(get_class($this->controller_instance).'::'.$method.'() or the controller after() method must return a Response object.');
 		}
 
 		static::reset_request();
@@ -440,6 +451,9 @@ class Request
 		{
 			\Profiler::mark(__METHOD__.' End');
 		}
+
+		// fire any request finished events
+		\Event::instance()->has_events('request_finished') and \Event::instance()->trigger('request_finished', '', 'none');
 
 		return $this;
 	}
@@ -457,13 +471,13 @@ class Request
 	}
 
 	/**
-	 * Returns the request method. Defaults to \Input::method().
+	 * Returns the request method.
 	 *
 	 * @return  string  request method
 	 */
 	public function get_method()
 	{
-		return $this->method ?: \Input::method();
+		return $this->method;
 	}
 
 	/**

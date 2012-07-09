@@ -53,8 +53,8 @@ function displayPqp($output) {
 #pqp-metrics .red{border-right:none}
 #pqp-metrics h4{text-shadow:#000 1px 1px 1px}
 .pqp-side var{text-shadow:#444 1px 1px 1px}
-.pQp var{font-size:23px;font-weight:bold;font-style:normal;margin:0 0 3px 0;display:block}
-.pQp h4{font-size:12px;color:#fff;margin:0 0 4px 0}
+.pQp var{font-size:23px;font-weight:bold;font-style:normal;margin:0 0 3px 10px;display:block}
+.pQp h4{font-size:12px;color:#fff;margin:0 0 4px 10px}
 .pQp .main{width:80%;}
 .pQp .main table{width:100%;}
 *+html .pQp .main{width:78%}
@@ -68,8 +68,8 @@ function displayPqp($output) {
 .pQp .main td:hover{background:#2e2e2e}
 .pQp .pqp-side{float:left;width:20%;background:#000;color:#fff;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px;text-align:center}
 .pQp .pqp-side td{padding:10px 0 5px 0;background-color: #000}
-.pQp .pqp-side var{color:#fff;font-size:15px}
-.pQp .pqp-side h4{font-weight:normal;color:#f4fcca;font-size:11px}
+.pQp .pqp-side var{color:#fff;font-size:16px}
+.pQp .pqp-side h4{font-weight:normal;color:#f4fcca;font-size:16px}
 #pqp-console .pqp-side td{padding:12px 0}
 #pqp-console .pqp-side td.alt1{background:#588e13;width:51%}
 #pqp-console .pqp-side td.alt2{background-color:#b72f09}
@@ -265,7 +265,7 @@ $printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 		}
 		elseif( ! is_array($value) AND ! is_object($value))
 		{
-			$output .= '<b>'.\Security::htmlentities($value).'</b>';
+			$output .= '<b>'.e($value).'</b>';
 		}
 		$output .= str_repeat('&rsaquo;&nbsp;', $depth).$item.'</td></tr>';
 		if($class == '') $class = 'alt'; else $class = '';
@@ -359,7 +359,7 @@ else {
 				<td class="type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
 			if($log['type'] == 'log') {
-				$return_output .='<div><pre>'.$log['data'].'</pre></div>';
+				$return_output .='<div><pre>'.e($log['data']).'</pre></div>';
 			}
 			elseif($log['type'] == 'memory') {
 				$return_output .='<div><pre>'.$log['data'].'</pre> <em>'.$log['dataType'].'</em>: '.$log['name'].' </div>';
@@ -398,7 +398,7 @@ else {
 			if($log['type'] == 'speed') {
 				$return_output .='<tr class="log-'.$log['type'].'">
 				<td class="'.$class.'">';
-				$return_output .='<div><pre>'.$log['data'].'</pre> <em>'.$log['name'].'</em></div>';
+				$return_output .='<div><pre>'.e($log['data']).'</pre> <em>'.$log['name'].'</em></div>';
 				$return_output .='</td></tr>';
 				if($class == '') $class = 'alt';
 				else $class = '';

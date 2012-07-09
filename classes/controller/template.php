@@ -56,14 +56,6 @@ abstract class Controller_Template extends \Controller
 			$response = $this->template;
 		}
 
-		// If the response isn't a Response object, embed in the available one for BC
-		// @deprecated  can be removed when $this->response is removed
-		if ( ! $response instanceof Response)
-		{
-			$this->response->body = $response;
-			$response = $this->response;
-		}
-
 		return parent::after($response);
 	}
 

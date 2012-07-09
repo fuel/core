@@ -82,9 +82,9 @@ class Asset_Instance
 	public function __construct($config)
 	{
 		//global search path folders
-		$this->_path_folders['css'] = $config['css_dir'];
-		$this->_path_folders['js'] = $config['js_dir'];
-		$this->_path_folders['img'] = $config['img_dir'];
+		isset($config['css_dir']) and $this->_path_folders['css'] = $this->_unify_path($config['css_dir']);
+		isset($config['js_dir']) and $this->_path_folders['js'] = $this->_unify_path($config['js_dir']);
+		isset($config['img_dir']) and $this->_path_folders['img'] = $this->_unify_path($config['img_dir']);
 
 		// global search paths
 		foreach ($config['paths'] as $path)
@@ -127,12 +127,14 @@ class Asset_Instance
 			foreach ($type as $key => $folder)
 			{
 				is_numeric($key) and $key = $folder;
-				array_unshift($this->_asset_paths[$key], str_replace('..'.DS, '', rtrim($path, DS)).DS.rtrim($folder, DS).DS);
+				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder),DS);
+				array_unshift($this->_asset_paths[$key], $folder);
 			}
 		}
 		else
 		{
-			array_unshift($this->_asset_paths[$type], str_replace('..'.DS, '', rtrim($path, DS)).DS);
+			$path = $this->_unify_path($path);
+			array_unshift($this->_asset_paths[$type], $path);
 		}
 
 		return $this;
@@ -154,7 +156,8 @@ class Asset_Instance
 			foreach ($type as $key => $folder)
 			{
 				is_numeric($key) and $key = $folder;
-				if (($found = array_search(str_replace('..'.DS, '', rtrim($path,DS).DS.rtrim($folder, DS).DS), $this->_asset_paths[$key])) !== false)
+				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder),DS);
+				if (($found = array_search($folder, $this->_asset_paths[$key])) !== false)
 				{
 					unset($this->_asset_paths[$key][$found]);
 				}
@@ -162,7 +165,8 @@ class Asset_Instance
 		}
 		else
 		{
-			if (($key = array_search(str_replace('..'.DS, '', rtrim($path,DS)), $this->_asset_paths[$type])) !== false)
+			$path = $this->_unify_path($path);
+			if (($key = array_search($path, $this->_asset_paths[$type])) !== false)
 			{
 				unset($this->_asset_paths[$type][$key]);
 			}
@@ -396,11 +400,11 @@ class Asset_Instance
 	{
 		foreach ($this->_asset_paths[$type] as $path)
 		{
-			empty($folder) or $folder = trim($folder, DS).DS;
+			empty($folder) or $folder = $this->_unify_path($folder);
 
-			if (is_file($path.$folder.ltrim($file, DS)))
+			if (is_file($path.$folder.$this->_unify_path($file, null, false)))
 			{
-				$file = $path.$folder.ltrim($file, DS);
+				$file = $path.$folder.$this->_unify_path($file, null, false);
 				strpos($file, DOCROOT) === 0 and $file = substr($file, strlen(DOCROOT));
 
 				// return the file found, make sure it uses forward slashes on Windows
@@ -468,6 +472,27 @@ class Asset_Instance
 				'attr'	=>	(array) $attr
 			);
 		}
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Unify the path
+	 *
+	 * make sure the directory separator in the path is correct for the
+	 * platform used, is terminated with a directory separator, and all
+	 * relative path references are removed
+	 *
+	 * @access	private
+	 * @param	string	The path
+	 * @param	mixed	Optional directory separator
+	 * @return	string
+	 */
+	protected function _unify_path($path, $ds = null, $trailing = true)
+	{
+		$ds === null and $ds = DS;
+
+		return rtrim(str_replace(array('\\', '/'), $ds, $path), $ds).($trailing ? $ds : '');
 	}
 
 }

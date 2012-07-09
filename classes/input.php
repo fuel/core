@@ -293,7 +293,14 @@ class Input
 	 */
 	public static function method($default = 'GET')
 	{
-		return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', static::server('REQUEST_METHOD', $default));
+		// get the method from the current active request
+		if ($request = \Request::active())
+		{
+			return $request->get_method();
+		}
+
+		// if called before a request is active, fall back to the global server setting
+		return \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', $default));
 	}
 
 	/**

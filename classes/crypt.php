@@ -12,9 +12,6 @@
 
 namespace Fuel\Core;
 
-import('phpseclib/Crypt/AES', 'vendor');
-import('phpseclib/Crypt/Hash', 'vendor');
-
 use \PHPSecLib\Crypt_AES;
 use \PHPSecLib\Crypt_Hash;
 

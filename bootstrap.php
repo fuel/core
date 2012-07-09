@@ -52,6 +52,8 @@ function setup_autoloader()
 {
 	Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
+	Autoloader::add_namespace('PHPSecLib', COREPATH.'vendor'.DS.'phpseclib'.DS, true);
+
 	Autoloader::add_classes(array(
 		'Fuel\\Core\\Agent'           => COREPATH.'classes/agent.php',
 
@@ -124,9 +126,11 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Crypt'   => COREPATH.'classes/crypt.php',
 
-		'Fuel\\Core\\Event'   => COREPATH.'classes/event.php',
+		'Fuel\\Core\\Event'            => COREPATH.'classes/event.php',
+		'Fuel\\Core\\Event_Instance'   => COREPATH.'classes/event/instance.php',
 
-		'Fuel\\Core\\Error'   => COREPATH.'classes/error.php',
+		'Fuel\\Core\\Error'               => COREPATH.'classes/error.php',
+		'Fuel\\Core\\PhpErrorException'   => COREPATH.'classes/error.php',
 
 		'Fuel\\Core\\Format'  => COREPATH.'classes/format.php',
 
@@ -182,7 +186,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Model'      => COREPATH.'classes/model.php',
 		'Fuel\\Core\\Model_Crud' => COREPATH.'classes/model/crud.php',
 
-		'Fuel\\Core\\Module'     => COREPATH.'classes/module.php',
+		'Fuel\\Core\\Module'                    => COREPATH.'classes/module.php',
+		'Fuel\\Core\\ModuleNotFoundException'   => COREPATH.'classes/module.php',
 
 		'Fuel\\Core\\Mongo_Db'           => COREPATH.'classes/mongo/db.php',
 		'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
@@ -220,6 +225,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Session_File'       => COREPATH.'classes/session/file.php',
 		'Fuel\\Core\\Session_Memcached'  => COREPATH.'classes/session/memcached.php',
 		'Fuel\\Core\\Session_Redis'      => COREPATH.'classes/session/redis.php',
+		'Fuel\\Core\\Session_Exception'  => COREPATH.'classes/session/exception.php',
 
 		'Fuel\\Core\\Num'       => COREPATH.'classes/num.php',
 

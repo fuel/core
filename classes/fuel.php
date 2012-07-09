@@ -29,7 +29,7 @@ class Fuel
 	/**
 	 * @var  string  The version of Fuel
 	 */
-	const VERSION = '1.2.1-dev';
+	const VERSION = '1.3-dev';
 
 	/**
 	 * @var  string  constant used for when in testing mode
@@ -205,6 +205,9 @@ class Fuel
 		}
 
 		static::$initialized = true;
+
+		// fire any app created events
+		\Event::instance()->has_events('app_created') and \Event::instance()->trigger('app_created', '', 'none');
 
 		if (static::$profiling)
 		{

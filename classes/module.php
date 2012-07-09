@@ -140,15 +140,23 @@ class Module
 	 */
 	public static function exists($module)
 	{
-		$paths = \Config::get('module_paths', array());
-
-		foreach ($paths as $path)
+		if (array_key_exists($module, static::$modules))
 		{
-			if (is_dir($path.$module))
+			return static::$modules[$module];
+		}
+		else
+		{
+			$paths = \Config::get('module_paths', array());
+
+			foreach ($paths as $path)
 			{
-				return $path.$module.DS;
+				if (is_dir($path.$module))
+				{
+					return $path.$module.DS;
+				}
 			}
 		}
+
 		return false;
 	}
 }

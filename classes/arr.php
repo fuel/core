@@ -113,6 +113,40 @@ class Arr
 	}
 
 	/**
+	 * Pluck an array of values from an array.
+	 *
+	 * @param  array   $array  collection of arrays to pluck from
+	 * @param  string  $key    key of the value to pluck
+	 * @param  string  $index  optional return array index key, true for original index
+	 * @return array   array of plucked values
+	 */
+	public static function pluck($array, $key, $index = null)
+	{
+		$return = array();
+		$get_deep = strpos($key, '.') !== false;
+
+		if ( ! $index)
+		{
+			foreach ($array as $i => $a)
+			{
+				$return[] = (is_object($a) and ! ($a instanceof \ArrayAccess)) ? $a->{$key} :
+					($get_deep ? static::get($a, $key) : $a[$key]);
+			}
+		}
+		else
+		{
+			foreach ($array as $i => $a)
+			{
+				$index !== true and $i = (is_object($a) and ! ($a instanceof \ArrayAccess)) ? $a->{$index} : $a[$index];
+				$return[$i] = (is_object($a) and ! ($a instanceof \ArrayAccess)) ? $a->{$key} :
+					($get_deep ? static::get($a, $key) : $a[$key]);
+			}
+		}
+
+		return $return;
+	}
+
+	/**
 	 * Array_key_exists with a dot-notated key from an array.
 	 *
 	 * @param   array   $array    The search array
@@ -361,7 +395,7 @@ class Arr
 	 * @param   bool    whether to remove the prefix.
 	 * @return  array
 	 */
-	public static function filter_prefixed($array, $prefix = 'prefix_', $remove_prefix = true)
+	public static function filter_prefixed($array, $prefix, $remove_prefix = true)
 	{
 		$return = array();
 		foreach ($array as $key => $val)
@@ -376,6 +410,25 @@ class Arr
 			}
 		}
 		return $return;
+	}
+
+	/**
+	 * Removes items from an array that match a key prefix.
+	 *
+	 * @param   array   the array to remove from
+	 * @param   string  prefix to filter on
+	 * @return  array
+	 */
+	public static function remove_prefixed($array, $prefix)
+	{
+		foreach ($array as $key => $val)
+		{
+			if (preg_match('/^'.$prefix.'/', $key))
+			{
+				unset($array[$key]);
+			}
+		}
+		return $array;
 	}
 
 	/**
@@ -508,7 +561,7 @@ class Arr
 			return $array;
 		}
 
-		foreach ($array as $k=>$v)
+		foreach ($array as $k => $v)
 		{
 			$b[$k] = static::get($v, $key);
 		}
@@ -528,12 +581,46 @@ class Arr
 			break;
 		}
 
-		foreach ($b as $key=>$val)
+		foreach ($b as $key => $val)
 		{
 			$c[] = $array[$key];
 		}
 
 		return $c;
+	}
+
+	/**
+	 * Sorts an array on multitiple values, with deep sorting support.
+	 *
+	 * @param   array  $array        collection of arrays/objects to sort
+	 * @param   array  $conditions   sorting conditions
+	 * @param   bool   @ignore_case  wether to sort case insensitive
+	 */
+	public static function multisort($array, $conditions, $ignore_case = false)
+	{
+		$temp = array();
+		$keys = array_keys($conditions);
+
+		foreach($keys as $key)
+		{
+			$temp[$key] = static::pluck($array, $key, true);
+			is_array($conditions[$key]) or $conditions[$key] = array($conditions[$key]);
+		}
+
+		$args = array();
+		foreach ($keys as $key)
+		{
+			$args[] = $ignore_case ? array_map('strtolower', $temp[$key]) : $temp[$key];
+			foreach($conditions[$key] as $flag)
+			{
+				$args[] = $flag;
+			}
+		}
+
+		$args[] = &$array;
+
+		call_user_func_array('array_multisort', $args);
+		return $array;
 	}
 
 	/**

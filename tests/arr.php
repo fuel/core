@@ -39,6 +39,58 @@ class Test_Arr extends TestCase
 		);
 	}
 
+	public static function collection_provider()
+	{
+		$object = new \stdClass;
+		$object->id = 7;
+		$object->name = 'Bert';
+		$object->surname = 'Visser';
+
+		return array(
+			array(
+				array(
+					array(
+						'id' => 2,
+						'name' => 'Bill',
+						'surname' => 'Cosby',
+					),
+					array(
+						'id' => 5,
+						'name' => 'Chris',
+						'surname' => 'Rock',
+					),
+					$object,
+				),
+			),
+		);
+	}
+
+	/**
+	 * Test Arr::pluck()
+	 *
+	 * @test
+	 * @dataProvider collection_provider
+	 */
+	public function test_pluck($collection)
+	{
+		$output = \Arr::pluck($collection, 'id');
+		$expected = array(2, 5, 7);
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Test Arr::pluck()
+	 *
+	 * @test
+	 * @dataProvider collection_provider
+	 */
+	public function test_pluck_with_index($collection)
+	{
+		$output = \Arr::pluck($collection, 'name', 'id');
+		$expected = array(2 => 'Bill', 5 => 'Chris', 7 => 'Bert');
+		$this->assertEquals($expected, $output);
+	}
+
 	/**
 	 * Tests Arr::assoc_to_keyval()
 	 *
@@ -385,7 +437,7 @@ class Test_Arr extends TestCase
 	{
 		$arr = array('foo' => 'baz', 'prefix_bar' => 'yay');
 
-		$output = Arr::filter_prefixed($arr);
+		$output = Arr::filter_prefixed($arr, 'prefix_');
 		$this->assertEquals(array('bar' => 'yay'), $output);
 	}
 

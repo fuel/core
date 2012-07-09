@@ -21,22 +21,5 @@ namespace Fuel\Core;
 class Test_Cli extends TestCase
 {
 
-	public function test_exec_speed()
-	{
-		$start = time();
-		exec('sleep 2');
-		$stop = time();
-
-		$this->assertEquals($start + 2, $stop);
-
-	}
-
-	public function test_spawn_speed()
-	{
-		$start = time();
-		\Cli::spawn('sleep 2');
-		$stop = time();
-
-		$this->assertEquals($start, $stop);
-	}
+ 	public function test_foo() {}
 }
