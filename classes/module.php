@@ -96,6 +96,10 @@ class Module
 			$ns  => $path.'classes'.DS,
 		), true);
 
+		// try to execute $ns\Init::_init()
+		// this trick allows to initialize the module
+		\Autoloader::load($ns.'\\Init');
+
 		static::$modules[$module] = $path;
 
 		return true;
