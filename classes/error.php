@@ -21,6 +21,13 @@ class PhpErrorException extends \ErrorException
 
 	public function handle()
 	{
+		// don't do anything if error reporting is disabled
+		if (error_reporting() == 0)
+		{
+			return;
+		}
+
+		// handle the error based on the config and the environment we're in
 		if (static::$count <= Config::get('errors.throttle', 10))
 		{
 			logger(\Fuel::L_ERROR, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
