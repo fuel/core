@@ -21,12 +21,6 @@ class PhpErrorException extends \ErrorException
 
 	public function handle()
 	{
-		// don't do anything if error reporting is disabled
-		if (error_reporting() == 0)
-		{
-			return;
-		}
-
 		// handle the error based on the config and the environment we're in
 		if (static::$count <= Config::get('errors.throttle', 10))
 		{
@@ -140,17 +134,22 @@ class Error
 	 */
 	public static function error_handler($severity, $message, $filepath, $line)
 	{
-		$fatal = (bool)( ! in_array($severity, \Config::get('errors.continue_on', array())));
+		// don't do anything if error reporting is disabled
+		if (error_reporting() !== 0)
+		{
+			$fatal = (bool)( ! in_array($severity, \Config::get('errors.continue_on', array())));
 
-		if ($fatal)
-		{
-			throw new \PhpErrorException($message, $severity, 0, $filepath, $line);
+			if ($fatal)
+			{
+				throw new \PhpErrorException($message, $severity, 0, $filepath, $line);
+			}
+			else
+			{
+				$e = new \PhpErrorException($message, $severity, 0, $filepath, $line);
+				$e->handle();
+			}
 		}
-		else
-		{
-			$e = new \PhpErrorException($message, $severity, 0, $filepath, $line);
-			$e->handle();
-		}
+
 		return true;
 	}
 
