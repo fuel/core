@@ -57,7 +57,7 @@ return array(
 	'memcached'  => array(
 		'cache_id'  => 'fuel',  // unique id to distinquish fuel cache items from others stored on the same server(s)
 		'servers'   => array(   // array of servers and portnumbers that run the memcached service
-			array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100)
+			'default' => array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100)
 		),
 	),
 
