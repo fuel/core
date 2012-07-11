@@ -326,7 +326,7 @@ class Fieldset
 		// Remove from tail and reinsert at correct location
 		unset($this->fields[$field->name]);
 
-		if ( ! \Arr::insert_before_key($this->fields, array($name => $field), $fieldname))
+		if ( ! \Arr::insert_before_key($this->fields, array($name => $field), $fieldname, true))
 		{
 			throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
 		}
@@ -350,7 +350,7 @@ class Fieldset
 
 		// Remove from tail and reinsert at correct location
 		unset($this->fields[$field->name]);
-		if ( ! \Arr::insert_after_key($this->fields, array($name => $field), $fieldname))
+		if ( ! \Arr::insert_after_key($this->fields, array($name => $field), $fieldname, true))
 		{
 			throw new \RuntimeException('Field "'.$fieldname.'" does not exist in this Fieldset. Field "'.$name.'" can not be added.');
 		}
