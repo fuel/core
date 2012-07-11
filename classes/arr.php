@@ -474,6 +474,28 @@ class Arr
 		}
 
 		array_splice($original, $pos, 0, $value);
+
+		return true;
+	}
+
+	/**
+	 * Insert value(s) into an array, mostly an array_splice alias
+	 * WARNING: original array is edited by reference, only boolean success is returned
+	 *
+	 * @param   array        the original array (by reference)
+	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
+	 * @param   int          the numeric position at which to insert, negative to count from the end backwards
+	 * @return  bool         false when array shorter then $pos, otherwise true
+	 */
+	public static function insert_assoc(array &$original, array $values, $pos)
+	{
+		if (count($original) < abs($pos))
+		{
+			return false;
+		}
+
+		$original = array_slice($original, 0, $pos, true) + $values + array_slice($original, $pos, null, true);
+
 		return true;
 	}
 
@@ -484,18 +506,20 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the key before which to insert
+	 * @param   bool         wether the input is an associative array
 	 * @return  bool         false when key isn't found in the array, otherwise true
 	 */
-	public static function insert_before_key(array &$original, $value, $key)
+	public static function insert_before_key(array &$original, $value, $key, $is_assoc = false)
 	{
 		$pos = array_search($key, array_keys($original));
+
 		if ($pos === false)
 		{
 			\Error::notice('Unknown key before which to insert the new value into the array.');
 			return false;
 		}
 
-		return static::insert($original, $value, $pos);
+		return $is_assoc ? static::insert_assoc($original, $value, $pos) : static::insert($original, $value, $pos);
 	}
 
 	/**
@@ -505,18 +529,20 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the key after which to insert
+	 * @param   bool         wether the input is an associative array
 	 * @return  bool         false when key isn't found in the array, otherwise true
 	 */
-	public static function insert_after_key(array &$original, $value, $key)
+	public static function insert_after_key(array &$original, $value, $key, $is_assoc = false)
 	{
 		$pos = array_search($key, array_keys($original));
+
 		if ($pos === false)
 		{
 			\Error::notice('Unknown key after which to insert the new value into the array.');
 			return false;
 		}
 
-		return static::insert($original, $value, $pos + 1);
+		return $is_assoc ? static::insert_assoc($original, $value, $pos + 1) : static::insert($original, $value, $pos + 1);
 	}
 
 	/**
@@ -525,18 +551,42 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the value after which to insert
+	 * @param   bool         wether the input is an associative array
 	 * @return  bool         false when value isn't found in the array, otherwise true
 	 */
-	public static function insert_after_value(array &$original, $value, $search)
+	public static function insert_after_value(array &$original, $value, $search, $is_assoc = false)
 	{
 		$key = array_search($search, $original);
+
 		if ($key === false)
 		{
 			\Error::notice('Unknown value after which to insert the new value into the array.');
 			return false;
 		}
 
-		return static::insert_after_key($original, $value, $key);
+		return static::insert_after_key($original, $value, $key, $is_assoc);
+	}
+
+	/**
+	 * Insert value(s) into an array before a specific value (first found in array)
+	 *
+	 * @param   array        the original array (by reference)
+	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
+	 * @param   string|int   the value after which to insert
+	 * @param   bool         wether the input is an associative array
+	 * @return  bool         false when value isn't found in the array, otherwise true
+	 */
+	public static function insert_before_value(array &$original, $value, $search, $is_assoc = false)
+	{
+		$key = array_search($search, $original);
+
+		if ($key === false)
+		{
+			\Error::notice('Unknown value before which to insert the new value into the array.');
+			return false;
+		}
+
+		return static::insert_before_key($original, $value, $key, $is_assoc);
 	}
 
 	/**

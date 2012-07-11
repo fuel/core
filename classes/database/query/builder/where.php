@@ -197,7 +197,7 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder
 	 * @param   string  direction of sorting
 	 * @return  $this
 	 */
-	public function order_by($column, $direction = NULL)
+	public function order_by($column, $direction = null)
 	{
 		$this->_order_by[] = array($column, $direction);
 
