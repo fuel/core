@@ -114,8 +114,6 @@ class Response
 			return;
 		}
 
-		\Event::shutdown();
-
 		$response->send(true);
 		exit;
 	}
