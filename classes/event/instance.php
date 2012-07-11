@@ -68,7 +68,14 @@ class Event_Instance
 			isset($this->_events[$callback[0]]) or $this->_events[$callback[0]] = array();
 
 			// store the callback on the call stack
-			array_unshift($this->_events[$callback[0]], $callback);
+			if (empty($callback[2]))
+			{
+				array_unshift($this->_events[$callback[0]], $callback);
+			}
+			else
+			{
+				$this->_events[$callback[0]][] = $callback;
+			}
 
 			// and report success
 			return true;
