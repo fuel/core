@@ -157,7 +157,7 @@ JS;
 		{
 			$id = 'fuel_debug_'.mt_rand();
 			$return .= "<i>{$scope}</i> <strong>{$name}</strong>";
-			$return .=  " (Array, ".count($var)." elements)";
+			$return .=  " (Array, ".count($var)." element".(count($var)!=1?"s":"").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
 				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to open\">&crarr;</a>\n";
@@ -216,7 +216,7 @@ JS;
 		elseif (is_object($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			$rvar = new \ReflectionClass($var);
+			$rvar = new \ReflectionObject($var);
 			$vars = $rvar->getProperties();
 			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object): ".get_class($var);
 			if (count($vars) > 0 and static::$max_nesting_level > $level)
