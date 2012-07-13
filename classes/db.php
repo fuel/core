@@ -325,6 +325,19 @@ class DB
 	}
 
 	/**
+	 * Checking a transaction on instance
+	 *
+	 *     DB::in_transaction();
+	 *
+	 * @param   string  db connection
+	 * @return  bool
+	 */
+	public static function in_transaction($db = null)
+	{
+		return \Database_Connection::instance($db)->in_transaction();
+	}
+
+	/**
 	 * Begins a transaction on instance
 	 *
 	 *     DB::start_transaction();
