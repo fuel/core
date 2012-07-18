@@ -239,25 +239,31 @@ class Asset_Instance
 					$attr['type'] = 'text/css';
 					if ($raw)
 					{
-						return html_tag('style', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
+						$css .= html_tag('style', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
-					if ( ! isset($attr['rel']) or empty($attr['rel']))
+					else
 					{
-						$attr['rel'] = 'stylesheet';
-					}
-					$attr['href'] = $file;
+						if ( ! isset($attr['rel']) or empty($attr['rel']))
+						{
+							$attr['rel'] = 'stylesheet';
+						}
+						$attr['href'] = $file;
 
-					$css .= $this->_indent.html_tag('link', $attr).PHP_EOL;
+						$css .= $this->_indent.html_tag('link', $attr).PHP_EOL;
+					}
 				break;
 				case 'js':
 					$attr['type'] = 'text/javascript';
 					if ($raw)
 					{
-						return html_tag('script', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
+						$js .= html_tag('script', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
-					$attr['src'] = $file;
+					else
+					{
+						$attr['src'] = $file;
 
-					$js .= $this->_indent.html_tag('script', $attr, '').PHP_EOL;
+						$js .= $this->_indent.html_tag('script', $attr, '').PHP_EOL;
+					}
 				break;
 				case 'img':
 					$attr['src'] = $file;
