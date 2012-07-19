@@ -85,7 +85,7 @@ class Module
 		// make sure the path exists
 		if ( ! is_dir($path))
 		{
-			throw new \ModuleNotFoundException("Module '$module' could not be found at '".\Fuel::clean_path($path)."'");
+			throw new ModuleNotFoundException("Module '$module' could not be found at '".\Fuel::clean_path($path)."'");
 		}
 
 		// determine the module namespace
