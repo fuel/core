@@ -325,7 +325,7 @@ class DB
 	}
 
 	/**
-	 * Checks wether a connection is in transaction.
+	 * Checks whether a connection is in transaction.
 	 *
 	 *     DB::in_transaction();
 	 *
