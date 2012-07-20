@@ -59,7 +59,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -77,7 +77,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('cat', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -94,7 +94,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('foo', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -129,7 +129,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -147,7 +147,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('php', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -164,7 +164,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -182,7 +182,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('dog', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -200,7 +200,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -219,7 +219,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('boo', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -236,7 +236,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -254,7 +254,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('boo', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -271,7 +271,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -289,7 +289,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('boo', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -306,7 +306,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -324,7 +324,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('boo', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -341,7 +341,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -359,7 +359,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('boo', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -376,7 +376,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -393,7 +393,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -411,7 +411,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('boo', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -428,7 +428,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -446,7 +446,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('boo', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -463,7 +463,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -481,7 +481,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('snd', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -498,7 +498,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -516,7 +516,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('six', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -533,7 +533,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -551,7 +551,7 @@ class Test_Validation extends TestCase
 		$output = $val->error('ten', false) ? true : false;
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -569,7 +569,7 @@ class Test_Validation extends TestCase
 		$output = $val->run($input);
 		$expected = true;
 
-		$this->assertEquals($output, $expected);
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -587,7 +587,7 @@ class Test_Validation extends TestCase
 		$test = $val->run($post);
 		$expected = true;
 
-		$this->assertEquals($test, $expected);
+		$this->assertEquals($expected, $test);
 	}
 
 	/**
@@ -605,7 +605,7 @@ class Test_Validation extends TestCase
 		$test = $val->run($post);
 		$expected = false;
 
-		$this->assertEquals($test, $expected);
+		$this->assertEquals($expected, $test);
 	}
 
 	/**
@@ -624,7 +624,7 @@ class Test_Validation extends TestCase
 		$test = $val->error('f1')->get_message();
 		$expected = 'The valid string rule valid_string(alpha, numeric) failed for field F1';
 
-		$this->assertEquals($test, $expected);
+		$this->assertEquals($expected, $test);
 	}
 
 	/**
@@ -643,6 +643,6 @@ class Test_Validation extends TestCase
 		$test = $val->error('f1')->get_message();
 		$expected = 'The valid string rule valid_string(alpha, numeric) failed for field F1';
 
-		$this->assertEquals($test, $expected);
+		$this->assertEquals($expected, $test);
 	}
 }
