@@ -571,4 +571,78 @@ class Test_Validation extends TestCase
 
 		$this->assertEquals($output, $expected);
 	}
+
+	/**
+	 * Validation:  valid_string numeric
+	 * Expecting:   success
+	 */
+	public function test_validation_valid_string_numeric_success()
+	{
+		$post = array(
+			'f1' => '123456',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add('f1', 'F1')->add_rule('valid_string', 'numeric');
+		$test = $val->run($post);
+		$expected = true;
+
+		$this->assertEquals($test, $expected);
+	}
+
+	/**
+	* Validation:  valid_string numeric
+	* Expecting:   failure
+	*/
+	public function test_validation_valid_string_numeric_failure()
+	{
+		$post = array(
+			'f1' => 'a123456',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add('f1', 'F1')->add_rule('valid_string', 'numeric');
+		$test = $val->run($post);
+		$expected = false;
+
+		$this->assertEquals($test, $expected);
+	}
+
+	/**
+	 * Validation:  valid_string alpha,numeric
+	 * Expecting:   failure
+	 */
+	public function test_validation_valid_string_multiple_flags_error_message_add_rule() {
+		$post = array(
+			'f1' => '123 abc',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add('f1', 'F1')->add_rule('valid_string', array('alpha', 'numeric'));
+		$val->run($post);
+
+		$test = $val->error('f1')->get_message();
+		$expected = 'The valid string rule valid_string(alpha, numeric) failed for field F1';
+
+		$this->assertEquals($test, $expected);
+	}
+
+	/**
+	 * Validation:  valid_string alpha,numeric
+	 * Expecting:   failure
+	 */
+	public function test_validation_valid_string_multiple_flags_error_message_add_field() {
+		$post = array(
+			'f1' => '123 abc',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('f1', 'F1', 'valid_string[alpha,numeric]');
+		$val->run($post);
+
+		$test = $val->error('f1')->get_message();
+		$expected = 'The valid string rule valid_string(alpha, numeric) failed for field F1';
+
+		$this->assertEquals($test, $expected);
+	}
 }
