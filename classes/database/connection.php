@@ -668,6 +668,8 @@ abstract class Database_Connection
 	/**
 	 * Whether or not the connection is in transaction mode
 	 *
+	 *     $db->in_transaction();
+	 *
 	 * @return  bool
 	 */
 	abstract public function in_transaction();
