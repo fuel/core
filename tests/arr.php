@@ -517,7 +517,7 @@ class Test_Arr extends TestCase
 	 */
 	public function test_sort_asc($data, $expected)
 	{
-		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'asc'), $expected);
+		$this->assertEquals($expected, Arr::sort($data, 'info.pet.type', 'asc'));
 	}
 
 	/**
@@ -529,7 +529,7 @@ class Test_Arr extends TestCase
 	public function test_sort_desc($data, $expected)
 	{
 		$expected = array_reverse($expected);
-		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'desc'), $expected);
+		$this->assertEquals($expected, Arr::sort($data, 'info.pet.type', 'desc'));
 	}
 
 	/**
@@ -541,7 +541,7 @@ class Test_Arr extends TestCase
 	 */
 	public function test_sort_invalid_direction($data, $expected)
 	{
-		$this->assertEquals(Arr::sort($data, 'info.pet.type', 'downer'), $expected);
+		$this->assertEquals($expected, Arr::sort($data, 'info.pet.type', 'downer'));
 	}
 
 	public function test_sort_empty()
@@ -571,8 +571,8 @@ class Test_Arr extends TestCase
 			'weak' => 'sauce',
 		);
 		$keys = array('epic', 'foo');
-		$this->assertEquals(Arr::filter_keys($data, $keys), $expected);
-		$this->assertEquals(Arr::filter_keys($data, $keys, true), $expected_remove);
+		$this->assertEquals($expected, Arr::filter_keys($data, $keys));
+		$this->assertEquals($expected_remove, Arr::filter_keys($data, $keys, true));
 	}
 
 	/**
