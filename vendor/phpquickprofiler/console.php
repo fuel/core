@@ -41,7 +41,7 @@ class Console {
 	-----------------------------------------------------*/
 
 	public static function logMemory($object = false, $name = 'Memory Usage') {
-		$memory = $object ? strlen(serialize($object)) : memory_get_usage();
+		$memory = ($object and ! $object instanceOf \Controller) ? strlen(serialize($object)) : memory_get_usage();
 		$logItem = array(
 			"data" => $memory,
 			"type" => 'memory',
