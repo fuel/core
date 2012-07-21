@@ -202,6 +202,9 @@ class Uri
 			\Profiler::mark(__METHOD__.' Start');
 		}
 
+		// if the route is a closure, an object will be passed here
+		is_object($uri) and $uri = null;
+
 		$this->uri = trim($uri ?: \Input::uri(), '/');
 		$this->segments = $this->uri === '' ? array() : explode('/', $this->uri);
 
