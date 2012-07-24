@@ -26,6 +26,8 @@ class Debug
 
 	public static $max_nesting_level = 5;
 
+	public static $js_toggle_open = false;
+
 	protected static $js_displayed = false;
 
 	protected static $files = array();
@@ -160,7 +162,7 @@ JS;
 			$return .=  " (Array, ".count($var)." element".(count($var)!=1?"s":"").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
-				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to open\">&crarr;</a>\n";
+				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open?"close":"open")."\">&crarr;</a>\n";
 			}
 			else
 			{
@@ -180,7 +182,7 @@ JS;
 				}
 				if (count($var) > 0)
 				{
-					$return .= "<span id=\"$id\" style=\"display: none;\">$sub_return</span>";
+					$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open?"block":"none").";\">$sub_return</span>";
 				}
 				else
 				{
@@ -221,7 +223,7 @@ JS;
 			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object): ".get_class($var);
 			if (count($vars) > 0 and static::$max_nesting_level > $level)
 			{
-				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to open\">&crarr;</a>";
+				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open?"close":"open")."\">&crarr;</a>\n";
 			}
 			$return .= "\n";
 
@@ -253,7 +255,7 @@ JS;
 
 			if (count($vars) > 0)
 			{
-				$return .= "<span id=\"$id\" style=\"display: none;\">$sub_return</span>";
+				$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open?"block":"none").";\">$sub_return</span>";
 			}
 			else
 			{
