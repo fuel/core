@@ -969,7 +969,17 @@ class Mongo_Db
 		return ($this->db->{$collection}->getIndexInfo());
 	}
 
-
+	/**
+	 *	Returns a collection object so you can perform advanced queries, upserts, pushes and addtosets
+	 *
+	 *	@param	string	$collection		the collection name
+	 *	@usage	$collection_name = $mongodb->get_collection('collection_name');
+	 */
+	public function get_collection($collection)
+	{
+		return ($this->db->{$collection});
+	}
+	
 	/**
 	 *	Resets the class variables to default settings
 	 */
