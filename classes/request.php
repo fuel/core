@@ -445,15 +445,15 @@ class Request
 			throw new \FuelException(get_class($this->controller_instance).'::'.$method.'() or the controller after() method must return a Response object.');
 		}
 
-		static::reset_request();
+		// fire any request finished events
+		\Event::instance()->has_events('request_finished') and \Event::instance()->trigger('request_finished', '', 'none');
 
 		if (\Fuel::$profiling)
 		{
 			\Profiler::mark(__METHOD__.' End');
 		}
 
-		// fire any request finished events
-		\Event::instance()->has_events('request_finished') and \Event::instance()->trigger('request_finished', '', 'none');
+		static::reset_request();
 
 		return $this;
 	}
