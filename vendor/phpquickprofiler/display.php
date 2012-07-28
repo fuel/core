@@ -17,7 +17,7 @@
 
 function displayPqp($output) {
 
-	$css = str_replace("\n", "", <<<CSS
+	$css = str_replace(array("\r\n","\r","\n"), "", <<<CSS
 .pQp{width:100%;z-index:9999;text-align:center;position:fixed;bottom:0}
 * html .pQp{position:absolute}
 .pQp *{margin:0;padding:0;border:none}
