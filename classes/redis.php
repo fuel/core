@@ -102,8 +102,8 @@ class Redis
 	 * Returns the Redisent instance ready for pipelining.
 	 *
 	 * Redis commands can now be chained, and the array of the responses will be
-	 * returned when {@link uncork} is called.
-	 * @see uncork
+	 * returned when {@link execute} is called.
+	 * @see execute
 	 *
 	 */
 	public function pipeline()
@@ -117,7 +117,7 @@ class Redis
 	 * Flushes the commands in the pipeline queue to Redis and returns the responses.
 	 * @see pipeline
 	 */
-	public function uncork()
+	public function execute()
 	{
 		// open a Redis connection and execute the queued commands
 		foreach ($this->queue as $command)
@@ -173,7 +173,7 @@ class Redis
 		}
 		else
 		{
-			return $this->uncork();
+			return $this->execute();
 		}
 	}
 
