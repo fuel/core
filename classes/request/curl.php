@@ -151,7 +151,7 @@ class Request_Curl extends \Request_Driver
 		{
 			// Split the headers from the body
 			$raw_headers = explode("\n", str_replace("\r", "", substr($body, 0, $this->response_info['header_size'])));
-			$body = substr($body, $this->response_info['header_size']);
+			$body = $this->response_info['header_size'] >= strlen($body) ? '' : substr($body, $this->response_info['header_size']);
 
 			// Convert the header data
 			foreach ($raw_headers as $header)
