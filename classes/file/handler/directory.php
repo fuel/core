@@ -290,10 +290,10 @@ class File_Handler_Directory implements \Iterator, \ArrayAccess, \Countable
 		}
 
 		// ok, but files are indexed as int, not as name, so try to find it
-		foreach ($this->content as $file) {
-			if ($file->get_pathinfo()->basename === $offset ||
-				$file->get_pathinfo()->filename === $offset
-			) {
+		foreach ($this->content as $file)
+		{
+			if ($file->get_pathinfo()->basename === $offset or $file->get_pathinfo()->filename === $offset)
+			{
 				return $file;
 			}
 		}
