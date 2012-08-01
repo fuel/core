@@ -355,6 +355,30 @@ class Str
 			return $string;
 		}
 	}
+
+	/**
+	 * Check if a string is json encoded
+	 * 
+	 * @param  string $string string to check
+	 * @return bool
+	 */
+	public static function is_json($string)
+	{
+		json_decode($string);
+		return json_last_error() == JSON_ERROR_NONE;
+	}
+
+	/**
+	 * Check if a string is serialized
+	 * 
+	 * @param  string $string string to check
+	 * @return bool
+	 */
+	public static function is_serialized($string)
+	{
+		$array = @unserialize($string);
+		return ! ($array === false and $string !== 'b:0;');
+	}
 }
 
 
