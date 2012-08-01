@@ -213,4 +213,26 @@ class Test_Str extends TestCase
 		$output = Str::random('nozero', 22);
 		$this->assertFalse(strpos($output, '0'));
 	}
+
+	public function test_is_json()
+	{
+		$values = array('fuelphp','is' => array('awesome' => true));
+
+		$string = json_encode($values);
+		$this->assertTrue(Str::is_json($string));
+
+		$string = serialize($values);
+		$this->assertFalse(Str::is_json($string));
+	}
+
+	public function test_is_serialized()
+	{
+		$values = array('fuelphp','is' => array('awesome' => true));
+
+		$string = json_encode($values);
+		$this->assertFalse(Str::is_serialized($string));
+
+		$string = serialize($values);
+		$this->assertTrue(Str::is_serialized($string));
+	}
 }
