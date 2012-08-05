@@ -90,8 +90,9 @@ class Log
 	 * Generally this function will be called using the global log_message() function
 	 *
 	 * @access	public
-	 * @param	string	the error level
+	 * @param	int|string	the error level
 	 * @param	string	the error message
+	 * @param	string	information about the method
 	 * @return	bool
 	 */
 	public static function write($level, $msg, $method = null)
@@ -119,14 +120,18 @@ class Log
 			$loglabels = array_keys(array_slice($labels, 0, $loglabels, true));
 		}
 
-		// do we need to log the message with this level?
-		if ( ! in_array($level, $loglabels))
+		// if $level is string, it is custom level.
+		if (is_int($level))
 		{
-			return false;
+			// do we need to log the message with this level?
+			if ( ! in_array($level, $loglabels))
+			{
+				return false;
+			}
+	
+			// store the label for this level for future use
+			$level = $labels[$level];
 		}
-
-		// store the label for this level for future use
-		$level = $labels[$level];
 
 		// if profiling is active log the message to the profile
 		if (Config::get('profiling'))
