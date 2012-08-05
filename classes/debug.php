@@ -281,6 +281,12 @@ JS;
 	 */
 	public static function file_lines($filepath, $line_num, $highlight = true, $padding = 5)
 	{
+		// deal with eval'd code
+		if (strpos($filepath, 'eval()\'d code') !== false)
+		{
+			return '';
+		}
+
 		// We cache the entire file to reduce disk IO for multiple errors
 		if ( ! isset(static::$files[$filepath]))
 		{
