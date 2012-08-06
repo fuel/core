@@ -178,7 +178,7 @@ class Input
 
 		// Strip the defined url suffix from the uri if needed
 		$uri_info = pathinfo($uri);
-		if ( ! empty($uri_info['extension']))
+		if ( ! empty($uri_info['extension']) and \Config::get('url_suffix') == $uri_info['extension'])
 		{
 			static::$detected_ext = $uri_info['extension'];
 			$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
