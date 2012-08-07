@@ -41,7 +41,7 @@ return array(
 		 * Location from where the updated browscap file can be downloaded.
 		 */
 		'url' => 'http://browsers.garykeith.com/stream.asp?Lite_PHP_BrowsCapINI',	// only major browsers and search engines
-//		'url' => 'http://browsers.garykeith.com/stream.asp?BrowsCapINI',			// complete file, approx. 4 times the lite version
+//		'url' => 'http://browsers.garykeith.com/stream.asp?Full_PHP_BrowscapINI',	// complete file, approx. 3 times the lite version
 
 		/**
 		 * Method used to download the updated browscap file
