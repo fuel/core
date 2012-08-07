@@ -379,6 +379,17 @@ class Str
 		$array = @unserialize($string);
 		return ! ($array === false and $string !== 'b:0;');
 	}
+
+	/**
+	 * Check if a string is html
+	 * 
+	 * @param  string $string string to check
+	 * @return bool
+	 */
+	public static function is_html($string)
+	{
+		return strlen(strip_tags($string)) < strlen($string);
+	}
 }
 
 

@@ -235,4 +235,13 @@ class Test_Str extends TestCase
 		$string = serialize($values);
 		$this->assertTrue(Str::is_serialized($string));
 	}
+
+	public function test_is_html()
+	{
+		$html = '<div class="row"><div class="span12"><strong>FuelPHP</strong> is a simple, flexible, <i>community<i> driven PHP 5.3 web framework based on the best ideas of other frameworks with a fresh start.</p>';
+		$simple_string = strip_tags($html);
+
+		$this->assertTrue(Str::is_html($html));
+		$this->assertFalse(Str::is_html($simple_string));
+	}
 }
