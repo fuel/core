@@ -149,7 +149,7 @@ abstract class Lang_File implements Lang_Interface
 		// so we remove it and add it when defining the path (line 174)
 		if (strripos($identifier, '::'))
 		{
-			list($language,$a_identifier) = explode(DS, $identifier);
+			list($language,$identifier) = explode(DS, $identifier);
 		}
 		
 		// get the formatted output
