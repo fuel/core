@@ -111,11 +111,11 @@ class File
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{
-			throw new \InvalidPathException('Invalid basepath, cannot create file at this location.');
+			throw new \InvalidPathException('Invalid basepath: "'.$basepath.'", cannot create file at this location.');
 		}
 		elseif (file_exists($new_file))
 		{
-			throw new \FileAccessException('File exists already, cannot be created.');
+			throw new \FileAccessException('File: "'.$new_file.'" already exists, cannot be created.');
 		}
 
 		$file = static::open_file(@fopen($new_file, 'c'), true, $area);
@@ -142,11 +142,11 @@ class File
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))
 		{
-			throw new \InvalidPathException('Invalid basepath, cannot create directory at this location.');
+			throw new \InvalidPathException('Invalid basepath: "'.$basepath.'", cannot create directory at this location.');
 		}
 		elseif (file_exists($new_dir))
 		{
-			throw new \FileAccessException('Directory exists already, cannot be created.');
+			throw new \FileAccessException('Directory: "'.$new_dir.'" exists already, cannot be created.');
 		}
 
 		$recursive = (strpos($name, '/') !== false or strpos($name, '\\') !== false);
@@ -168,7 +168,7 @@ class File
 
 		if( ! file_exists($path) or ! is_file($path))
 		{
-			throw new \InvalidPathException('Cannot read file, file does not exists.');
+			throw new \InvalidPathException('Cannot read file: "'.$path.'", file does not exists.');
 		}
 
 		$file = static::open_file(@fopen($path, 'r'), LOCK_SH, $area);
@@ -193,12 +193,12 @@ class File
 
 		if ( ! is_dir($path))
 		{
-			throw new \InvalidPathException('Invalid path, directory cannot be read.');
+			throw new \InvalidPathException('Invalid path: "'.$path.'", directory cannot be read.');
 		}
 
 		if ( ! $fp = @opendir($path))
 		{
-			throw new \FileAccessException('Could not open directory for reading.');
+			throw new \FileAccessException('Could not open directory: "'.$path.'" for reading.');
 		}
 
 		// Use default when not set
@@ -311,10 +311,10 @@ class File
 		{
 			if ( ! is_dir($basepath) or ! is_writable($basepath))
 			{
-				throw new \InvalidPathException('Invalid basepath, cannot update a file at this location.');
+				throw new \InvalidPathException('Invalid basepath: "'.$basepath.'", cannot update a file at this location.');
 			}
 
-			throw new \FileAccessException('No write access, cannot update a file.');
+			throw new \FileAccessException('No write access to: "'.$basepath.'", cannot update a file.');
 		}
 
 		fwrite($file, $contents);
@@ -338,17 +338,17 @@ class File
 
 		if ( ! file_exists($new_file))
 		{
-			throw new \FileAccessException('File does not exist, cannot be appended.');
+			throw new \FileAccessException('File: "'.$new_file.'" does not exist, cannot be appended.');
 		}
 
 		if ( ! $file = static::open_file(@fopen($new_file, 'a'), true, $area))
 		{
 			if ( ! is_dir($basepath) or ! is_writable($basepath))
 			{
-				throw new \InvalidPathException('Invalid basepath, cannot append to a file at this location.');
+				throw new \InvalidPathException('Invalid basepath: "'.$basepath.'", cannot append to a file at this location.');
 			}
 
-			throw new \FileAccessException('No write access, cannot append to the file.');
+			throw new \FileAccessException('No write access, cannot append to the file: "'.$file.'".');
 		}
 
 		fwrite($file, $contents);
@@ -370,7 +370,7 @@ class File
 
 		if ( ! file_exists($path))
 		{
-			throw new \InvalidPathException('Path is not a directory or a file, cannot get permissions.');
+			throw new \InvalidPathException('Path: "'.$path.'" is not a directory or a file, cannot get permissions.');
 		}
 
 		return substr(sprintf('%o', fileperms($path)), -4);
@@ -391,14 +391,14 @@ class File
 
 		if ( ! file_exists($path))
 		{
-			throw new \InvalidPathException('Path is not a directory or a file, cannot get creation timestamp.');
+			throw new \InvalidPathException('Path: "'.$path.'" is not a directory or a file, cannot get creation timestamp.');
 		}
 
-		if($type === 'modified')
+		if ($type === 'modified')
 		{
 			return filemtime($path);
 		}
-		elseif($type === 'created')
+		elseif ($type === 'created')
 		{
 			return filectime($path);
 		}
@@ -421,7 +421,7 @@ class File
 
 		if ( ! file_exists($path))
 		{
-			throw new \InvalidPathException('Path is not a directory or a file, cannot get size.');
+			throw new \InvalidPathException('Path: "'.$path.'" is not a directory or a file, cannot get size.');
 		}
 
 		return filesize($path);
@@ -466,11 +466,11 @@ class File
 
 		if ( ! is_file($path))
 		{
-			throw new \InvalidPathException('Cannot copy file: given path is not a file.');
+			throw new \InvalidPathException('Cannot copy file: given path: "'.$path.'" is not a file.');
 		}
 		elseif (file_exists($new_path))
 		{
-			throw new \FileAccessException('Cannot copy file: new path already exists.');
+			throw new \FileAccessException('Cannot copy file: new path: "'.$new_path.'" already exists.');
 		}
 		return copy($path, $new_path);
 	}
@@ -491,7 +491,7 @@ class File
 
 		if ( ! is_dir($path))
 		{
-			throw new \InvalidPathException('Cannot copy directory: given path is not a directory: '.$path);
+			throw new \InvalidPathException('Cannot copy directory: given path: "'.$path.'" is not a directory: '.$path);
 		}
 		elseif ( ! file_exists($new_path))
 		{
@@ -536,15 +536,15 @@ class File
 
 		if ($is_file and ! is_file($path))
 		{
-			throw new \InvalidPathException('Cannot symlink: given file does not exist.');
+			throw new \InvalidPathException('Cannot symlink: given file: "'.$path.'" does not exist.');
 		}
 		elseif ( ! $is_file and ! is_dir($path))
 		{
-			throw new \InvalidPathException('Cannot symlink: given directory does not exist.');
+			throw new \InvalidPathException('Cannot symlink: given directory: "'.$path.'" does not exist.');
 		}
 		elseif (file_exists($link_path))
 		{
-			throw new \FileAccessException('Cannot symlink: link path already exists.');
+			throw new \FileAccessException('Cannot symlink: link: "'.$link_path.'" already exists.');
 		}
 
 		return symlink($path, $link_path);
@@ -583,7 +583,7 @@ class File
 		$path = rtrim(static::instance($area)->get_path($path), '\\/').DS;
 		if ( ! is_dir($path))
 		{
-			throw new \InvalidPathException('Cannot delete directory: given path is not a directory.');
+			throw new \InvalidPathException('Cannot delete directory: given path: "'.$path.'" is not a directory.');
 		}
 
 		$files = static::read_dir($path, -1, array(), $area);
