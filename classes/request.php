@@ -262,7 +262,7 @@ class Request
 	public function __construct($uri, $route = true, $method = null)
 	{
 		$this->uri = new \Uri($uri);
-		$this->method = $method;
+		$this->method = $method ?: \Input::method();
 
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->get().'"', __METHOD__);
 
@@ -365,7 +365,7 @@ class Request
 			}
 			else
 			{
-				$method_prefix = 'action_';
+				$method_prefix = $this->method.'_';
 				$class = $this->controller;
 
 				// Allow override of method params from execute
@@ -399,6 +399,11 @@ class Request
 				{
 					$method = 'router';
 					$this->method_params = array($this->action, $this->method_params);
+				}
+
+				if ( ! $this->hasMethod($method))
+				{
+					$method = 'action_'.$this->action;
 				}
 
 				if ($class->hasMethod($method))
