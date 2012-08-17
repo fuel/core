@@ -266,9 +266,6 @@ class Request
 
 		logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->get().'"', __METHOD__);
 
-		// set the request method
-		$this->method = \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', 'GET'));
-
 		// check if a module was requested
 		if (count($this->uri->get_segments()) and $module_path = \Module::exists($this->uri->get_segment(1)))
 		{
@@ -401,7 +398,7 @@ class Request
 					$this->method_params = array($this->action, $this->method_params);
 				}
 
-				if ( ! $this->hasMethod($method))
+				if ( ! $class->hasMethod($method))
 				{
 					$method = 'action_'.$this->action;
 				}

@@ -294,9 +294,9 @@ class Input
 	public static function method($default = 'GET')
 	{
 		// get the method from the current active request
-		if ($request = \Request::active())
+		if ($request = \Request::active() and $method = $request->get_method())
 		{
-			return $request->get_method();
+			return $method;
 		}
 
 		// if called before a request is active, fall back to the global server setting
