@@ -27,6 +27,11 @@ class Config
 	public static $items = array();
 
 	/**
+	 * @var    array    $itemcache       the dot-notated item cache
+	 */
+	protected static $itemcache = array();
+
+	/**
 	 * Loads a config file.
 	 *
 	 * @param    mixed    $file         string file | config array | Config_Interface instance
@@ -91,6 +96,7 @@ class Config
 		if ($group === null)
 		{
 			static::$items = $reload ? $config : ($overwrite ? array_merge(static::$items, $config) : \Arr::merge(static::$items, $config));
+			static::$itemcache = array();
 		}
 		else
 		{
@@ -100,6 +106,14 @@ class Config
 				static::$items[$group] = array();
 			}
 			static::$items[$group] = $overwrite ? array_merge(static::$items[$group],$config) : \Arr::merge(static::$items[$group],$config);
+			$group .= '.';
+			foreach (static::$itemcache as $key => $value)
+			{
+				if (strpos($key, $group) === 0)
+				{
+					unset(static::$itemcache[$key]);
+				}
+			}
 		}
 
 		return $config;
@@ -154,7 +168,12 @@ class Config
 		{
 			return static::$items[$item];
 		}
-		return \Fuel::value(\Arr::get(static::$items, $item, $default));
+		elseif ( ! isset(static::$itemcache[$item]))
+		{
+			static::$itemcache[$item] = \Fuel::value(\Arr::get(static::$items, $item, $default));
+		}
+
+		return static::$itemcache[$item];
 	}
 
 	/**
@@ -166,6 +185,7 @@ class Config
 	 */
 	public static function set($item, $value)
 	{
+		strpos($item, '.') === false or static::$itemcache[$item] = $value;
 		return \Arr::set(static::$items, $item, \Fuel::value($value));
 	}
 
@@ -177,6 +197,10 @@ class Config
 	 */
 	public static function delete($item)
 	{
+		if (isset(static::$itemcache[$item]))
+		{
+			unset(static::$itemcache[$item]);
+		}
 		return \Arr::delete(static::$items, $item);
 	}
 }
