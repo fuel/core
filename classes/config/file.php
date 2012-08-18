@@ -126,7 +126,14 @@ abstract class Config_File implements Config_Interface
 			return $paths;
 		}
 
+		// look for environment module configs in app/modules/mod/config/env/...
 		$paths = array_merge(\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true), $paths);
+
+		// look for environment module configs in app/config/env/modules/mod/...
+		if ($pos = strripos($this->file, '::'))
+		{
+			$paths = array_merge(\Finder::search('config/'.\Fuel::$env.'/modules/'.substr($this->file, 0,$pos), substr($this->file, $pos + 2), $this->ext, true), $paths);
+		}
 
 		if (count($paths) > 0)
 		{
