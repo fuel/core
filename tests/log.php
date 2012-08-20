@@ -98,4 +98,15 @@ class Test_Log extends TestCase
 		$output = Log::error('testing log error', 'Log::error');
 		$this->assertTrue($output);
 	}
+
+	/**
+	 * Test for Log::write()
+	 *
+	 * @test
+	 */
+	public function test_write_custom_level()
+	{
+		$output = Log::write('Custom', 'testing custom level log', 'Log::write');
+		$this->assertTrue($output);
+	}
 }
