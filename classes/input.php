@@ -424,6 +424,25 @@ class Input
 	}
 
 	/**
+	 * Fetch an item from either the GET, POST, PUT or DELETE array restricting to a specific set of values
+	 * 
+	 * @param  string $key           The index key
+	 * @param  array  $valid_values  The array of values that are permissible, if one is not selected, picks first
+	 * @return mixed  The value
+	 */
+	public static function param_valid($key, $valid_values)
+	{
+		settype($valid_values, 'array');
+		$valid_values = array_merge(array_unique($valid_values));
+		$value = static::param($key);
+		if (!in_array($value, $valid_values)) 
+		{
+			return $valid_values[0];
+		}
+		return $value;
+	}
+
+	/**
 	 * Hydrates the input array
 	 *
 	 * @return  void
