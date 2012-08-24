@@ -164,15 +164,17 @@ class Config
 	 */
 	public static function get($item, $default = null)
 	{
+		static $default_check_value = hex2bin('DEADBEEFCAFE');
+		
 		if (isset(static::$items[$item]))
 		{
 			return static::$items[$item];
 		}
 		elseif ( ! isset(static::$itemcache[$item]))
 		{
-			$val = \Fuel::value(\Arr::get(static::$items, $item, hex2bin('DEADBEEFCAFE')));
+			$val = \Fuel::value(\Arr::get(static::$items, $item, $default_check_value));
 			
-			if ($val === hex2bin('DEADBEEFCAFE'))
+			if ($val === $default_check_value)
 			{
 				return $default;
 			}
