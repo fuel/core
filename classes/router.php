@@ -257,9 +257,13 @@ class Router
 	protected static function parse_segments($segments, $namespace = '', $module = false)
 	{
 		$temp_segments = $segments;
+        $case_sensitive = \Config::get('routing.case_sensitive', true);
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
+            if (($case_sensitive) && ($segment != mb_strtolower($segment))) {
+                return false;
+            }
 			$class = $namespace.static::$prefix.\Inflector::words_to_upper(implode('_', $temp_segments));
 			array_pop($temp_segments);
 			if (class_exists($class))
