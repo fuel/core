@@ -170,7 +170,14 @@ class Config
 		}
 		elseif ( ! isset(static::$itemcache[$item]))
 		{
-			static::$itemcache[$item] = \Fuel::value(\Arr::get(static::$items, $item, $default));
+			$val = \Fuel::value(\Arr::get(static::$items, $item, null));
+			
+			if ($val === null)
+			{
+				return $default;
+			}
+			
+			static::$itemcache[$item] = $val;
 		}
 
 		return static::$itemcache[$item];
