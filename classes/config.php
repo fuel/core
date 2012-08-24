@@ -170,9 +170,9 @@ class Config
 		}
 		elseif ( ! isset(static::$itemcache[$item]))
 		{
-			$val = \Fuel::value(\Arr::get(static::$items, $item, null));
+			$val = \Fuel::value(\Arr::get(static::$items, $item, hex2bin('DEADBEEFCAFE')));
 			
-			if ($val === null)
+			if ($val === hex2bin('DEADBEEFCAFE'))
 			{
 				return $default;
 			}
