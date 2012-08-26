@@ -425,7 +425,7 @@ class Migrate
 				// make sure it exists in the migration file loaded
 				if ( ! class_exists($class, false))
 				{
-					throw new FuelException(sprintf('Migration "%s" does not contain expected class "%s"', $file, $class));
+					throw new FuelException(sprintf('Migration "%s" does not contain expected class "%s"', $migration['path'], $class));
 				}
 
 				// and that it contains an "up" and "down" method
@@ -438,7 +438,7 @@ class Migrate
 			}
 			else
 			{
-				throw new FuelException(sprintf('Invalid Migration filename "%s"', $file));
+				throw new FuelException(sprintf('Invalid Migration filename "%s"', $migration['path']));
 			}
 		}
 
