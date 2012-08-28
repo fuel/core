@@ -260,12 +260,12 @@ class View
 	{
 		$clean_it = function ($data, $rules, $auto_filter)
 		{
-			foreach ($data as $key => $value)
+			foreach ($data as $key => &$value)
 			{
 				$filter = array_key_exists($key, $rules) ? $rules[$key] : null;
 				$filter = is_null($filter) ? $auto_filter : $filter;
 
-				$data[$key] = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
+				$value = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
 
 			return $data;
