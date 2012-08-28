@@ -75,7 +75,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	}
 
 	/**
-	 * Adds or overwrites values. Multiple value sets can be added.
+	 * Adds values. Multiple value sets can be added.
 	 *
 	 * @param   array   values list
 	 * @param   ...
