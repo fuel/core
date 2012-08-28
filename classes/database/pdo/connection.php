@@ -164,7 +164,7 @@ class Database_PDO_Connection extends \Database_Connection
 					}
 
 					// Convert the exception in a database exception
-					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"');
+					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $e->getCode(), $e);
 				}
 			}
 		}
