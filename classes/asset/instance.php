@@ -111,6 +111,27 @@ class Asset_Instance
 	}
 
 	/**
+	 * Adds a new asset type to the list so we can load files of this type
+	 *
+	 * @param   string  new path type
+	 * @param   string  optional default path
+	 * @return  object  current instance
+	 */
+	public function add_type($type, $path = null)
+	{
+		isset($this->_asset_paths[$type]) or $this->_asset_paths[$type] = array();
+		isset($this->_path_folders[$type]) or $this->_path_folders[$type] = $type.'/';
+
+		if ( ! is_null($path))
+		{
+			$path = $this->_unify_path($path);
+			$this->_asset_paths[$type][] = $path;
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Adds the given path to the front of the asset paths array.  It adds paths
 	 * in a way so that asset paths are used First in Last Out.
 	 *
@@ -136,7 +157,6 @@ class Asset_Instance
 			$path = $this->_unify_path($path);
 			array_unshift($this->_asset_paths[$type], $path);
 		}
-
 		return $this;
 	}
 
