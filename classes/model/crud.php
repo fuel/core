@@ -442,12 +442,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		}
 
 		$vars = $this->prep_values($vars);
-		
+
 		if (isset(static::$_properties))
 		{
 			$vars = \Arr::filter_keys($vars, static::$_properties);
 		}
-		
+
 		if(isset(static::$_updated_at))
 		{
 			if(isset(static::$_mysql_timestamp) and static::$_mysql_timestamp === true)
@@ -488,7 +488,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 					$result[0] = $vars[static::primary_key()];
 				}
 				$this->set($vars);
-				$this->{static::primary_key()} = $result[0];
+				empty($result[0]) or $this->{static::primary_key()} = $result[0];
 				$this->is_new(false);
 			}
 
