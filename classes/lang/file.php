@@ -145,6 +145,13 @@ abstract class Lang_File implements Lang_Interface
 	 */
 	public function save($identifier, $contents)
 	{
+		// bugfix: when saving in module, Autoloader::namespace_path() can't handle the language prefix
+		// so we remove it and add it when defining the path (line 174)
+		if (strripos($identifier, '::'))
+		{
+			list($language,$identifier) = explode(DS, $identifier);
+		}
+		
 		// get the formatted output
 		$output = $this->export_format($contents);
 
@@ -164,7 +171,7 @@ abstract class Lang_File implements Lang_Interface
 					$identifier = substr($identifier, $pos+2);
 
 					// strip the classes directory as we need the module root
-					$path = substr($path,0, -8).'lang'.DS.$identifier;
+					$path = substr($path,0, -8).'lang'.DS.$language.DS.$identifier;
 				}
 				else
 				{
