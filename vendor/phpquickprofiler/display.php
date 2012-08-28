@@ -20,8 +20,8 @@ function displayPqp($output) {
 	$css = str_replace("\n", "", <<<CSS
 .pQp{width:100%;z-index:9999;text-align:center;position:fixed;bottom:0}
 * html .pQp{position:absolute}
-.pQp *{margin:0 ;padding:0;border:none}
-#pQp{margin:0 auto;width:85%;min-width:960px;background-color:#222;border:12px solid #000;border-bottom:none;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:15px;-webkit-border-top-right-radius:15px;-moz-border-radius-topleft:15px;-moz-border-radius-topright:15px}
+.pQp *{margin:0 ;padding:0;border:none;background:#222;}
+#pQp{margin:0 auto;width:85%;min-width:960px;background-color:#222;border:12px solid #000;border-bottom:none;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:15px;-webkit-border-top-right-radius:15px;-moz-border-radius-topleft:15px;-moz-border-radius-topright:15px;}
 #pQp .pqp-box h3{font-weight:normal;line-height:200px;padding:0 15px;color:#fff}
 .pQp,.pQp td{color:#444}
 #pqp-metrics{background:#000;width:100%}
@@ -52,7 +52,7 @@ function displayPqp($output) {
 #pqp-metrics .green{border-left:none}
 #pqp-metrics .red{border-right:none}
 #pqp-metrics h4{text-shadow:#000 1px 1px 1px}
-.pqp-side var{text-shadow:#444 1px 1px 1px}
+.pqp-side var{text-shadow:#444 1px 1px 1px;background-color:transparent;}
 .pQp var{font-size:23px;font-weight:bold;font-style:normal;margin:0 0 3px 0;display:block; margin-top: 16px !important;}
 .pQp h4{font-size:12px;color:#fff;margin:0 0 4px 0}
 .pQp .main{width:80%; float: left;}
@@ -60,7 +60,7 @@ function displayPqp($output) {
 *+html .pQp .main{width:78%}
 * html .pQp .main{width:77%}
 .pQp .main td{padding:7px 15px;text-align:left;background:#151515;border-left:1px solid #333;border-right:1px solid #333;border-bottom:1px dotted #323232;color:#FFF;}
-.pQp .main td,.pQp .main pre{font-family:Monaco,"Consolas","Lucida Console","Courier New",monospace;font-size:11px; background: transparent}
+.pQp .main td,.pQp .main pre{font-family:Monaco,"Consolas","Lucida Console","Courier New",monospace;font-size:11px; background: #222;}
 .pQp .main td.alt{background:#111}
 .pQp .main tr.alt td{background:#2e2e2e;border-top:1px dotted #4e4e4e}
 .pQp .main tr.alt td.alt{background:#333}
@@ -69,7 +69,7 @@ function displayPqp($output) {
 .pQp .pqp-side{float:left;width:20%;background:#000;color:#fff;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px;text-align:center}
 .pQp .pqp-side td{padding:10px 0 5px 0;background-color: #000; text-align: center !important}
 .pQp .pqp-side var{color:#fff;font-size:15px}
-.pQp .pqp-side h4{font-weight:normal;color:#f4fcca;font-size:11px}
+.pQp .pqp-side h4{font-weight:normal;color:#f4fcca;font-size:11px;background-color:transparent;}
 #pqp-console .pqp-side td{padding:12px 0; text-align: center !important}
 #pqp-console .pqp-side td.alt1{background:#588e13;width:51%}
 #pqp-console .pqp-side td.alt2{background-color:#b72f09}
@@ -91,8 +91,8 @@ function displayPqp($output) {
 #pqp-speed .pqp-side td.alt{background-color:#2b5481;border-bottom:1px solid #1e3c5c;border-left:1px solid #1e3c5c;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
 #pqp-queries .pqp-side{background-color:#953fa1;border-bottom:1px solid #662a6e;border-left:1px solid #662a6e}
 #pqp-queries .pqp-side td.alt{background-color:#7b3384;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
-#pqp-queries .main b{float:none}
-#pqp-queries .main em{display:block;padding:2px 0 0 0;font-style:normal;color:#aaa}
+#pqp-queries .main b{float:none;background-color:transparent;}
+#pqp-queries .main em{display:block;padding:2px 0 0 0;font-style:normal;color:#aaa;background-color:transparent;}
 #pqp-memory .pqp-side td{padding:12px 0}
 #pqp-memory .pqp-side{background-color:#c48200}
 #pqp-memory .pqp-side td.alt{background-color:#ac7200;border-bottom:1px solid #865900;border-left:1px solid #865900;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
@@ -241,61 +241,61 @@ CSS
 	    obj.addEventListener( type, fn, false );
 	  }
 	}
-	
+
 	function openProfiler()
 	{
 		document.getElementById("pqp-container").style.display = "block";
 		document.getElementById("openProfiler").style.display = "none";
 	}
-	
+
 	function closeProfiler()
 	{
 		document.getElementById("pqp-container").style.display = "none";
 		document.getElementById("openProfiler").style.display = "block";
 	}
-	
+
 	function preventDefault(e) {
 	  e = e || window.event;
 	  if (e.preventDefault)
 	    e.preventDefault();
-	  e.returnValue = false;  
+	  e.returnValue = false;
 	}
-	
+
 	window.onload = function(){
-		document.getElementById('pqp-console').onmousewheel = function(e){ 
-		  document.getElementById('pqp-console').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-console').onmousewheel = function(e){
+		  document.getElementById('pqp-console').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		document.getElementById('pqp-speed').onmousewheel = function(e){ 
-		  document.getElementById('pqp-speed').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-speed').onmousewheel = function(e){
+		  document.getElementById('pqp-speed').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		document.getElementById('pqp-queries').onmousewheel = function(e){ 
-		  document.getElementById('pqp-queries').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-queries').onmousewheel = function(e){
+		  document.getElementById('pqp-queries').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		document.getElementById('pqp-memory').onmousewheel = function(e){ 
-		  document.getElementById('pqp-memory').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-memory').onmousewheel = function(e){
+		  document.getElementById('pqp-memory').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		document.getElementById('pqp-files').onmousewheel = function(e){ 
-		  document.getElementById('pqp-files').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-files').onmousewheel = function(e){
+		  document.getElementById('pqp-files').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		document.getElementById('pqp-config').onmousewheel = function(e){ 
-		  document.getElementById('pqp-config').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-config').onmousewheel = function(e){
+		  document.getElementById('pqp-config').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		document.getElementById('pqp-session').onmousewheel = function(e){ 
-		  document.getElementById('pqp-session').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-session').onmousewheel = function(e){
+		  document.getElementById('pqp-session').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		document.getElementById('pqp-get').onmousewheel = function(e){ 
-		  document.getElementById('pqp-get').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-get').onmousewheel = function(e){
+		  document.getElementById('pqp-get').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		document.getElementById('pqp-post').onmousewheel = function(e){ 
-		  document.getElementById('pqp-post').scrollTop -= e.wheelDeltaY; 
+		document.getElementById('pqp-post').onmousewheel = function(e){
+		  document.getElementById('pqp-post').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
 		toggleBottom();
