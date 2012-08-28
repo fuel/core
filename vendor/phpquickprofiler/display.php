@@ -4,9 +4,9 @@
 
  Title : HTML Output for Php Quick Profiler
  Author : Created by Ryan Campbell
- URL : http://particletree.com
+ URL : https://github.com/particletree ( http://www.particletree.com no longer works  )
 
- Last Updated : April 22, 2009
+ Last Updated : August 19, 2012 by Peter Schmalfeldt <manifestinteractive@gmail.com>
 
  Description : This is a horribly ugly function used to output
  the PQP HTML. This is great because it will just work in your project,
@@ -20,7 +20,7 @@ function displayPqp($output) {
 	$css = str_replace("\n", "", <<<CSS
 .pQp{width:100%;z-index:9999;text-align:center;position:fixed;bottom:0}
 * html .pQp{position:absolute}
-.pQp *{margin:0;padding:0;border:none}
+.pQp *{margin:0 ;padding:0;border:none}
 #pQp{margin:0 auto;width:85%;min-width:960px;background-color:#222;border:12px solid #000;border-bottom:none;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:15px;-webkit-border-top-right-radius:15px;-moz-border-radius-topleft:15px;-moz-border-radius-topright:15px}
 #pQp .pqp-box h3{font-weight:normal;line-height:200px;padding:0 15px;color:#fff}
 .pQp,.pQp td{color:#444}
@@ -44,8 +44,8 @@ function displayPqp($output) {
 .hideDetails #pQp .pqp-box{display:none!important}
 .hideDetails #pqp-footer{border-top:1px dotted #444}
 .hideDetails #pQp #pqp-metrics td{height:50px;background:#000!important;border-bottom:none!important;cursor:default!important}
-.hideDetails #pQp var{font-size:18px;margin:0 0 2px 0}
-.hideDetails #pQp h4{font-size:10px}
+#pQp var{font-size:18px;margin:0 0 2px 0}
+#pQp h4{font-size:10px}
 .hideDetails .heightToggle{visibility:hidden}
 #pqp-metrics td{height:80px;width:11%;text-align:center;cursor:pointer;border:1px solid #000;border-bottom:6px solid #444;-webkit-border-top-left-radius:10px;-moz-border-radius-topleft:10px;-webkit-border-top-right-radius:10px;-moz-border-radius-topright:10px}
 #pqp-metrics td:hover{background:#222;border-bottom:6px solid #777}
@@ -53,9 +53,9 @@ function displayPqp($output) {
 #pqp-metrics .red{border-right:none}
 #pqp-metrics h4{text-shadow:#000 1px 1px 1px}
 .pqp-side var{text-shadow:#444 1px 1px 1px}
-.pQp var{font-size:23px;font-weight:bold;font-style:normal;margin:0 0 3px 10px;display:block}
-.pQp h4{font-size:12px;color:#fff;margin:0 0 4px 10px}
-.pQp .main{width:80%;}
+.pQp var{font-size:23px;font-weight:bold;font-style:normal;margin:0 0 3px 0;display:block; margin-top: 16px !important;}
+.pQp h4{font-size:12px;color:#fff;margin:0 0 4px 0}
+.pQp .main{width:80%; float: left;}
 .pQp .main table{width:100%;}
 *+html .pQp .main{width:78%}
 * html .pQp .main{width:77%}
@@ -67,10 +67,10 @@ function displayPqp($output) {
 .pQp .main td b{float:right;font-weight:normal;color:#e6f387}
 .pQp .main td:hover{background:#2e2e2e}
 .pQp .pqp-side{float:left;width:20%;background:#000;color:#fff;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px;text-align:center}
-.pQp .pqp-side td{padding:10px 0 5px 0;background-color: #000}
-.pQp .pqp-side var{color:#fff;font-size:16px}
-.pQp .pqp-side h4{font-weight:normal;color:#f4fcca;font-size:16px}
-#pqp-console .pqp-side td{padding:12px 0}
+.pQp .pqp-side td{padding:10px 0 5px 0;background-color: #000; text-align: center !important}
+.pQp .pqp-side var{color:#fff;font-size:15px}
+.pQp .pqp-side h4{font-weight:normal;color:#f4fcca;font-size:11px}
+#pqp-console .pqp-side td{padding:12px 0; text-align: center !important}
 #pqp-console .pqp-side td.alt1{background:#588e13;width:51%}
 #pqp-console .pqp-side td.alt2{background-color:#b72f09}
 #pqp-console .pqp-side td.alt3{background:#d28c00;border-bottom:1px solid #9c6800;border-left:1px solid #9c6800;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px}
@@ -111,10 +111,14 @@ function displayPqp($output) {
 #pqp-footer strong{color:#fff}
 #pqp-footer a{color:#999;padding:5px 10px;text-decoration:none}
 #pqp-footer .credit{width:20%;text-align:left}
+#pqp-footer .credit a{line-height: 30px}
 #pqp-footer .pqp-actions{width:80%;text-align:right}
 #pqp-footer .pqp-actions a{float:right;width:auto}
-#pqp-footer a:hover,#pqp-footer a:hover strong,#pqp-footer a:hover b{background:#fff;color:blue!important;text-decoration:underline}
+#pqp-footer a:hover,#pqp-footer a:hover strong,#pqp-footer a:hover b{background:#fff;color:black!important;text-decoration:none}
 #pqp-footer a:active,#pqp-footer a:active strong,#pqp-footer a:active b{background:#ecf488;color:green!important}
+#openProfiler { position: fixed; bottom: 0; right: 20px; }
+#openProfiler a { height:32px;text-align:center;width:100px;background-color:#222;border:2px solid #000;border-bottom:none;font-size:12px;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:4px;-webkit-border-top-right-radius:4px;-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;color:#999;line-height: 32px;display:block;}
+#openProfiler a:hover{color:white;text-decoration:none}
 CSS
 );
 
@@ -187,7 +191,6 @@ CSS
 		sheet.setAttribute("type", "text/css");
 		sheet.innerHTML = '$css';
 		document.getElementsByTagName("head")[0].appendChild(sheet);
-		setTimeout(function(){document.getElementById("pqp-container").style.display = "block"}, 10);
 	}
 
 
@@ -238,6 +241,65 @@ CSS
 	    obj.addEventListener( type, fn, false );
 	  }
 	}
+	
+	function openProfiler()
+	{
+		document.getElementById("pqp-container").style.display = "block";
+		document.getElementById("openProfiler").style.display = "none";
+	}
+	
+	function closeProfiler()
+	{
+		document.getElementById("pqp-container").style.display = "none";
+		document.getElementById("openProfiler").style.display = "block";
+	}
+	
+	function preventDefault(e) {
+	  e = e || window.event;
+	  if (e.preventDefault)
+	    e.preventDefault();
+	  e.returnValue = false;  
+	}
+	
+	window.onload = function(){
+		document.getElementById('pqp-console').onmousewheel = function(e){ 
+		  document.getElementById('pqp-console').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		document.getElementById('pqp-speed').onmousewheel = function(e){ 
+		  document.getElementById('pqp-speed').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		document.getElementById('pqp-queries').onmousewheel = function(e){ 
+		  document.getElementById('pqp-queries').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		document.getElementById('pqp-memory').onmousewheel = function(e){ 
+		  document.getElementById('pqp-memory').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		document.getElementById('pqp-files').onmousewheel = function(e){ 
+		  document.getElementById('pqp-files').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		document.getElementById('pqp-config').onmousewheel = function(e){ 
+		  document.getElementById('pqp-config').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		document.getElementById('pqp-session').onmousewheel = function(e){ 
+		  document.getElementById('pqp-session').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		document.getElementById('pqp-get').onmousewheel = function(e){ 
+		  document.getElementById('pqp-get').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		document.getElementById('pqp-post').onmousewheel = function(e){ 
+		  document.getElementById('pqp-post').scrollTop -= e.wheelDeltaY; 
+		  preventDefault(e);
+		}
+		toggleBottom();
+	}
 </script>
 JAVASCRIPT;
 
@@ -265,7 +327,7 @@ $printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 		}
 		elseif( ! is_array($value) AND ! is_object($value))
 		{
-			$output .= '<b>'.e($value).'</b>';
+			$output .= '<b>'.\Security::htmlentities($value).'</b>';
 		}
 		$output .= str_repeat('&rsaquo;&nbsp;', $depth).$item.'</td></tr>';
 		if($class == '') $class = 'alt'; else $class = '';
@@ -359,7 +421,7 @@ else {
 				<td class="type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
 			if($log['type'] == 'log') {
-				$return_output .='<div><pre>'.e($log['data']).'</pre></div>';
+				$return_output .='<div><pre>'.$log['data'].'</pre></div>';
 			}
 			elseif($log['type'] == 'memory') {
 				$return_output .='<div><pre>'.$log['data'].'</pre> <em>'.$log['dataType'].'</em>: '.$log['name'].' </div>';
@@ -398,7 +460,7 @@ else {
 			if($log['type'] == 'speed') {
 				$return_output .='<tr class="log-'.$log['type'].'">
 				<td class="'.$class.'">';
-				$return_output .='<div><pre>'.e($log['data']).'</pre> <em>'.$log['name'].'</em></div>';
+				$return_output .='<div><pre>'.$log['data'].'</pre> <em>'.$log['name'].'</em></div>';
 				$return_output .='</td></tr>';
 				if($class == '') $class = 'alt';
 				else $class = '';
@@ -583,21 +645,21 @@ $return_output .=<<<FOOTER
 	<table id="pqp-footer" cellspacing="0">
 		<tr>
 			<td class="credit">
-				<a href="http://particletree.com" target="_blank">
+				<a href="https://github.com/particletree" target="_blank">
 				Based on
 				<strong>PHP</strong>
 				<b class="green">Q</b><b class="blue">u</b><b class="purple">i</b><b class="orange">c</b><b class="red">k</b>
 				Profiler</a></td>
 			<td class="pqp-actions">
-				<a href="#" onclick="toggleDetails();return false">Details</a>
-				<a class="heightToggle" href="#" onclick="toggleHeight();return false">Height</a>
-				<a href="#" onclick="toggleBottom();return false">Bottom</a>
+				<a class="closeProfiler" href="#" onclick="closeProfiler();return false" title="Close Code Profiler">Close</a>
+				<a class="heightToggle" href="#" onclick="toggleHeight();return false" title="Toggle Height">Height</a>
+				<a class="bottomToggle" href="#" onclick="toggleBottom();return false" title="Toggle Bottom">Bottom</a>
 			</td>
 		</tr>
 	</table>
 FOOTER;
 
-	$return_output .='</div></div></div>';
+	$return_output .='</div></div></div><div id="openProfiler"><a href="#" onclick="openProfiler();return false" title="Open Code Profiler">Code Profiler</a></div>';
 
 	return $return_output;
 }
