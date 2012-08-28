@@ -117,23 +117,17 @@ abstract class Config_File implements Config_Interface
 	 */
 	protected function find_file()
 	{
-		$paths = \Finder::search('config', $this->file, $this->ext, true);
+		$paths = array_merge(
+			\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true),
+			\Finder::search('config', $this->file, $this->ext, true)
+		);
 
-		// absolute path requested?
-		if ($this->file[0] === '/' or (isset($this->file[1]) and $this->file[1] === ':'))
+		if (empty($paths))
 		{
-			// don't search further, load only the requested file
-			return $paths;
+			throw new \ConfigException(sprintf('File "%s" does not exist.', $this->file));
 		}
 
-		$paths = array_merge(\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true), $paths);
-
-		if (count($paths) > 0)
-		{
-			return array_reverse($paths);
-		}
-
-		throw new \ConfigException(sprintf('File "%s" does not exist.', $this->file));
+		return array_reverse($paths);
 	}
 
 	/**
