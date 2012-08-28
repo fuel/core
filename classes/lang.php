@@ -134,7 +134,14 @@ class Lang
 			$language = reset($languages);
 		}
 
-		is_null($language) or $file = $language.DS.$file;
+		// prefix the file with the language
+		if ( ! is_null($language))
+		{
+			$file = explode('::', $file);
+			end($file);
+			$file[key($file)] = $language.DS.end($file);
+			$file = implode('::', $file);
+		}
 
 		if ( ! is_array($lang))
 		{
