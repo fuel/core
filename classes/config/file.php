@@ -120,9 +120,9 @@ abstract class Config_File implements Config_Interface
 		$paths = \Finder::search('config', $this->file, $this->ext, true);
 
 		// absolute path requested?
-		if ($this->file[0] === '/' or (isset($this->file[1]) and $this->file[1] === ':'))
+		if (count($paths) > 0 && ($this->file[0] === '/' or (isset($this->file[1]) and $this->file[1] === ':')))
 		{
-			// don't search further, load only the requested file
+			// if the file exists, don't search further, load only the requested file
 			return $paths;
 		}
 
