@@ -125,18 +125,6 @@ class Asset
 	}
 
 	/**
-	 * Adds a new asset type to the list so we can load files of this type
-	 *
-	 * @param   string  new path type
-	 * @param   string  optional default path
-	 * @return  object  current instance
-	 */
-	public static function add_type($type, $path = null)
-	{
-		static::instance()->add_type($type, $path);
-	}
-
-	/**
 	 * Adds the given path to the front of the asset paths array.  It adds paths
 	 * in a way so that asset paths are used First in Last Out.
 	 *

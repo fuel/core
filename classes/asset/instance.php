@@ -154,6 +154,13 @@ class Asset_Instance
 		}
 		else
 		{
+			// create the asset type if it doesn't exist
+			if ( ! isset($this->_asset_paths[$type]))
+			{
+				$this->_asset_paths[$type] = array();
+				$this->_path_folders[$type] = $type.'/';
+			}
+
 			$path = $this->_unify_path($path);
 			array_unshift($this->_asset_paths[$type], $path);
 		}
