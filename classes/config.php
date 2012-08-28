@@ -27,6 +27,11 @@ class Config
 	public static $items = array();
 
 	/**
+	 * @var    string    $default_check_value          random value used as a not-found check in get()
+	 */
+	public static $default_check_value;
+
+	/**
 	 * @var    array    $itemcache       the dot-notated item cache
 	 */
 	protected static $itemcache = array();
@@ -164,21 +169,21 @@ class Config
 	 */
 	public static function get($item, $default = null)
 	{
-		static $default_check_value = hex2bin('DEADBEEFCAFE');
-		
+		is_null(static::$default_check_value) and static::$default_check_value = pack('H*', 'DEADBEEFCAFE');
+
 		if (isset(static::$items[$item]))
 		{
 			return static::$items[$item];
 		}
 		elseif ( ! isset(static::$itemcache[$item]))
 		{
-			$val = \Fuel::value(\Arr::get(static::$items, $item, $default_check_value));
-			
-			if ($val === $default_check_value)
+			$val = \Fuel::value(\Arr::get(static::$items, $item, static::$default_check_value));
+
+			if ($val === static::$default_check_value)
 			{
 				return $default;
 			}
-			
+
 			static::$itemcache[$item] = $val;
 		}
 
