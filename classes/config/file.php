@@ -117,6 +117,7 @@ abstract class Config_File implements Config_Interface
 	 */
 	protected function find_file()
 	{
+		// search for configs in packages,modules,and the main app
 		$paths = \Finder::search('config', $this->file, $this->ext, true);
 
 		// absolute path requested?
@@ -127,6 +128,12 @@ abstract class Config_File implements Config_Interface
 		}
 
 		$paths = array_merge(\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true), $paths);
+
+		// for modules, also look for environment configs in app/config/env/modules/mymodule/
+		if ($pos = strripos($this->file, '::'))
+		{
+			$paths = array_merge(\Finder::search('config/'.\Fuel::$env.'/modules/'.substr($this->file, 0,$pos), substr($this->file, $pos + 2), $this->ext, true), $paths);
+		}
 
 		if (count($paths) > 0)
 		{
