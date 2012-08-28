@@ -706,7 +706,7 @@ class Form_Instance
 			$output = array();
 			foreach ($key as $k)
 			{
-				$output[$k] = $this->fieldset->get_config($k, null) === null
+				$output[$k] = $this->fieldset->get_config($k, null) !== null
 					? $this->fieldset->get_config($k, $default)
 					: \Config::get('form.'.$k, $default);
 			}
