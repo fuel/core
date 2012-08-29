@@ -14,7 +14,7 @@ return array(
 	/**
 	 * Log Settings.
 	 */
-	'driver' => 'db',
+	'driver' => 'file',
 
 	// the index of custom levels MUST be up to 5
 	'levels' => array(
