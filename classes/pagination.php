@@ -48,16 +48,22 @@ class Pagination
 		'previous_end'            => ' </span>',
 		'previous_inactive_start' => ' <span class="previous-inactive">',
 		'previous_inactive_end'   => ' </span>',
+		'previous_inactive_attrs' => array(),
 		'previous_mark'           => '&laquo; ',
+		'previous_attrs'          => array(),
 		'next_start'              => '<span class="next"> ',
 		'next_end'                => ' </span>',
 		'next_inactive_start'     => ' <span class="next-inactive">',
 		'next_inactive_end'       => ' </span>',
+		'next_inactive_attrs'     => array(),
 		'next_mark'               => ' &raquo;',
+		'next_attrs'              => array(),
 		'active_start'            => '<span class="active"> ',
 		'active_end'              => ' </span>',
+		'active_attrs'            => array(),
 		'regular_start'           => '',
 		'regular_end'             => '',
+		'regular_attrs'           => array(),
 	);
 
 	/**
@@ -204,12 +210,12 @@ class Pagination
 		{
 			if (static::$current_page == $i)
 			{
-				$pagination .= static::$template['active_start'].$i.static::$template['active_end'];
+				$pagination .= static::$template['active_start'].\Html::anchor('#', $i, static::$template['active_attrs']).static::$template['active_end'];
 			}
 			else
 			{
 				$url = ($i == 1) ? '' : '/'.$i;
-				$pagination .= static::$template['regular_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$url, $i).static::$template['regular_end'];
+				$pagination .= static::$template['regular_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$url, $i, static::$template['regular_attrs']).static::$template['regular_end'];
 			}
 		}
 
@@ -234,12 +240,12 @@ class Pagination
 
 		if (static::$current_page == static::$total_pages)
 		{
-			return static::$template['next_inactive_start'].$value.static::$template['next_mark'].static::$template['next_inactive_end'];
+			return static::$template['next_inactive_start'].\Html::anchor('#', $value.static::$template['next_mark'], static::$template['next_inactive_attrs']).static::$template['next_inactive_end'];
 		}
 		else
 		{
 			$next_page = static::$current_page + 1;
-			return static::$template['next_start'].\Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark']).static::$template['next_end'];
+			return static::$template['next_start'].\Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark'], static::$template['next_attrs']).static::$template['next_end'];
 		}
 	}
 
@@ -261,13 +267,13 @@ class Pagination
 
 		if (static::$current_page == 1)
 		{
-			return static::$template['previous_inactive_start'].static::$template['previous_mark'].$value.static::$template['previous_inactive_end'];
+			return static::$template['previous_inactive_start'].\Html::anchor('#', static::$template['previous_mark'].$value, static::$template['previous_inactive_attrs']).static::$template['previous_inactive_end'];
 		}
 		else
 		{
 			$previous_page = static::$current_page - 1;
 			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return static::$template['previous_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value).static::$template['previous_end'];
+			return static::$template['previous_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value, static::$template['previous_attrs']).static::$template['previous_end'];
 		}
 	}
 }
