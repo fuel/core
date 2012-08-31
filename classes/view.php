@@ -418,7 +418,9 @@ class View
 		}
 		else
 		{
-			return \Fuel::value($default);
+			// assign it first, you can't return a return value by reference directly!
+			$default = \Fuel::value($default);
+			return $default;
 		}
 	}
 
