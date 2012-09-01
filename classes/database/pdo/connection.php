@@ -77,9 +77,9 @@ class Database_PDO_Connection extends \Database_Connection
 			$attrs[\PDO::ATTR_PERSISTENT] = true;
 		}
 
-		if ($compress)
+		if (in_array(strtolower($this->_db_type), array('mysql', 'mysqli')) and $compress)
 		{
-			// Use client compression (doesn't work with mysqlnd)
+			// Use client compression with mysql or mysqli (doesn't work with mysqlnd)
 			$attrs[\PDO::MYSQL_ATTR_COMPRESS] = true;
 		}
 
