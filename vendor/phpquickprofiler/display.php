@@ -22,6 +22,7 @@ function displayPqp($output) {
 * html .pQp{position:absolute;}
 .pQp *{margin:0 ;padding:0;border:none;background:#222;}
 #pQp{margin:0 auto;width:85%;min-width:960px;background-color:#222;border:12px solid #000;border-bottom:none;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:15px;-webkit-border-top-right-radius:15px;-moz-border-radius-topleft:15px;-moz-border-radius-topright:15px;border-top-left-radius:15px;border-top-right-radius:15px;}
+#pQp tbody {background:transparent;}
 #pQp .pqp-box h3{font-weight:normal;line-height:200px;padding:0 15px;color:#fff;}
 .pQp,.pQp td{color:#444}
 #pqp-metrics{background:#000;width:100%}
@@ -657,7 +658,7 @@ $return_output .=<<<FOOTER
 	</table>
 FOOTER;
 
-	$return_output .='</div></div></div><div id="openProfiler"><a href="#" onclick="openProfiler();return false" title="Open Code Profiler">Code Profiler</a></div>';
+	$return_output .='</div></div><div id="openProfiler"><a href="#" onclick="openProfiler();return false" title="Open Code Profiler">Code Profiler</a></div>';
 
 	return $return_output;
 }
