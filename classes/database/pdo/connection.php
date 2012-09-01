@@ -58,6 +58,7 @@ class Database_PDO_Connection extends \Database_Connection
 			'username'   => null,
 			'password'   => null,
 			'persistent' => false,
+			'compress'	 => true,
 		));
 
 		// Clear the connection parameters for security
@@ -74,6 +75,12 @@ class Database_PDO_Connection extends \Database_Connection
 		{
 			// Make the connection persistent
 			$attrs[\PDO::ATTR_PERSISTENT] = true;
+		}
+
+		if (in_array(strtolower($this->_db_type), array('mysql', 'mysqli')) and $compress)
+		{
+			// Use client compression with mysql or mysqli (doesn't work with mysqlnd)
+			$attrs[\PDO::MYSQL_ATTR_COMPRESS] = true;
 		}
 
 		try

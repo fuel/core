@@ -73,6 +73,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			'username'   => '',
 			'password'   => '',
 			'persistent' => false,
+			'compress'	 => true,
 		));
 
 		// Prevent this information from showing up in traces
@@ -96,12 +97,32 @@ class Database_MySQLi_Connection extends \Database_Connection
 			if ($persistent)
 			{
 				// Create a persistent connection
-				$this->_connection = new \MySQLi('p:'.$hostname, $username, $password, $database, $port, $socket);
+				if ($compress)
+				{
+					$mysqli = mysqli_init();
+					$mysqli->real_connect('p:'.$hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
+
+					$this->_connection = $mysqli;
+				}
+				else
+				{
+					$this->_connection = new \MySQLi('p:'.$hostname, $username, $password, $database, $port, $socket);
+				}
 			}
 			else
 			{
 				// Create a connection and force it to be a new link
-				$this->_connection = new \MySQLi($hostname, $username, $password, $database, $port, $socket);
+				if ($compress)
+				{
+					$mysqli = mysqli_init();
+					$mysqli->real_connect($hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
+
+					$this->_connection = $mysqli;
+				}
+				else
+				{
+					$this->_connection = new \MySQLi($hostname, $username, $password, $database, $port, $socket);
+				}
 			}
 			if ($this->_connection->error)
 			{
