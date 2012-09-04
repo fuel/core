@@ -40,4 +40,9 @@ return array(
 	 * The theme info file name
 	 */
 	'info_file_name' => 'themeinfo.php',
+	
+	/**
+	 * If the theme will be module aware
+	 */
+	'module_aware' => false,
 );

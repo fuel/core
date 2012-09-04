@@ -105,6 +105,7 @@ class Theme
 		'view_ext' => '.html',
 		'require_info_file' => false,
 		'info_file_name' => 'theme.info.php',
+		'module_aware' => false,
 	);
 
 	/**
@@ -200,16 +201,22 @@ class Theme
 	 * @param   string  $view         View name
 	 * @param   array   $data         View data
 	 * @param   bool    $auto_filter  Auto filter the view data
+	 * @param   bool    $module_aware If the view is module aware
 	 * @return  View    New View object
 	 */
-	public function view($view, $data = array(), $auto_filter = null)
+	public function view($view, $data = array(), $auto_filter = null, $module_aware = null)
 	{
 		if ($this->active['path'] === null)
 		{
 			throw new \ThemeException('You must set an active theme.');
 		}
 
-		return \View::forge($this->find_file($view), $data, $auto_filter);
+		if ($module_aware === null)
+		{
+			$module_aware = $this->config['module_aware'];
+		}
+
+		return \View::forge($this->find_file($view, null, $module_aware), $data, $auto_filter);
 	}
 
 	/**
@@ -250,14 +257,15 @@ class Theme
 	 * Sets a template for a theme
 	 *
 	 * @param   string  $template Name of the template view
+	 * @param   bool    $module_aware If the view is module aware
 	 * @return  View
 	 */
-	public function set_template($template)
+	public function set_template($template, $module_aware = false)
 	{
 		// make sure the template is a View
 		if (is_string($template))
 		{
-			$this->template = $this->view($template);
+			$this->template = $this->view($template, array(), null, $module_aware);
 		}
 		else
 		{
@@ -333,12 +341,13 @@ class Theme
 	/**
 	 * Sets a partial for the current template
 	 *
-	 * @param   string  				$section   Name of the partial section in the template
-	 * @param   string|View|ViewModel	$view      View, or name of the view
-	 * @param   bool					$overwrite If true overwrite any already defined partials for this section
+	 * @param   string  				$section      Name of the partial section in the template
+	 * @param   string|View|ViewModel	$view         View, or name of the view
+	 * @param   bool					$overwrite    If true overwrite any already defined partials for this section
+	 * @param   bool                    $module_aware If the view is module aware
 	 * @return  View
 	 */
-	public function set_partial($section, $view, $overwrite = false)
+	public function set_partial($section, $view, $overwrite = false, $module_aware = false)
 	{
 		// make sure the partial entry exists
 		array_key_exists($section, $this->partials) or $this->partials[$section] = array();
@@ -347,7 +356,7 @@ class Theme
 		if (is_string($view))
 		{
 			$name = $view;
-			$view = $this->view($view);
+			$view = $this->view($view, array(), null, $module_aware);
 		}
 		else
 		{
@@ -390,18 +399,19 @@ class Theme
 	/**
 	 * Sets a chrome for a partial
 	 *
-	 * @param   string  				$section	Name of the partial section in the template
-	 * @param   string|View|ViewModel	$view   	chrome View, or name of the view
-	 * @param   string  				$var		Name of the variable in the chome that will output the partial
+	 * @param   string  				$section	  Name of the partial section in the template
+	 * @param   string|View|ViewModel	$view   	  chrome View, or name of the view
+	 * @param   string  				$var		  Name of the variable in the chome that will output the partial
+	 * @param   bool                    $module_aware If the view is module aware
 	 *
 	 * @return  void
 	 */
-	public function set_chrome($section, $view, $var = 'content')
+	public function set_chrome($section, $view, $var = 'content', $module_aware = false)
 	{
 		// make sure the chrome is a view
 		if (is_string($view))
 		{
-			$view = $this->view($view);
+			$view = $this->view($view, array(), null, $module_aware);
 		}
 
 		$this->chrome[$section] = array('var' => $var, 'view' => $view);
@@ -661,28 +671,41 @@ class Theme
 	 * send an array of themes to search.  If you do not, it will search active
 	 * then fallback (in that order).
 	 *
-	 * @param   string  $view    name of the view to find
-	 * @param   array   $themes  optional array of themes to search
-	 * @return  string  absolute path to the view
+	 * @param   string  $view         name of the view to find
+	 * @param   array   $themes       optional array of themes to search
+	 * @param   bool    $module_aware If the view is module aware
+	 *
 	 * @throws  \ThemeException  when not found
 	 */
-	protected function find_file($view, $themes = null)
+	protected function find_file($view, $themes = null, $module_aware = false)
 	{
 		if ($themes === null)
 		{
 			$themes = array($this->active, $this->fallback);
 		}
 
+		$ext   = pathinfo($view, PATHINFO_EXTENSION) ?
+			'.'.pathinfo($view, PATHINFO_EXTENSION) : $this->config['view_ext'];
+		$file  = (pathinfo($view, PATHINFO_DIRNAME) ?
+				str_replace(array('/', DS), DS, pathinfo($view, PATHINFO_DIRNAME)).DS : '').
+			pathinfo($view, PATHINFO_FILENAME);
+
 		foreach ($themes as $theme)
 		{
-			$ext   = pathinfo($view, PATHINFO_EXTENSION) ?
-				'.'.pathinfo($view, PATHINFO_EXTENSION) : $this->config['view_ext'];
-			$file  = (pathinfo($view, PATHINFO_DIRNAME) ?
-					str_replace(array('/', DS), DS, pathinfo($view, PATHINFO_DIRNAME)).DS : '').
-				pathinfo($view, PATHINFO_FILENAME);
 			if (empty($theme['find_file']))
 			{
-				if (is_file($path = $theme['path'].$file.$ext))
+				// Theme Path
+				$_path = $theme['path'];
+
+				if ($module_aware === true)
+				{
+					if (class_exists('Request', false) and ($module = \Request::active()->module) !== null)
+					{
+						$_path .= $module.DS;
+					}
+				}
+
+				if (is_file($path = $_path.$file.$ext))
 				{
 					return $path;
 				}
@@ -697,7 +720,7 @@ class Theme
 		}
 
 		// not found, return the viewname to fall back to the standard View processing
-		return $view;
+		return $file.$ext;
 	}
 
 	/**
