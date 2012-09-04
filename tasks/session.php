@@ -102,7 +102,7 @@ class Session
         else
         {
             // return success message notifying that the driver is not db.
-            return \Cli::color('Success! Your session table has been created! Your current session driver type is set to '.\Config::get('session.driver').'. In order to use the table you just created to manage your sessions, you will need to set your drive type to "db" in your session config file.', 'green');
+            return \Cli::color('Success! Your session table has been created! Your current session driver type is set to '.\Config::get('session.driver').'. In order to use the table you just created to manage your sessions, you will need to set your driver type to "db" in your session config file.', 'green');
         }
     }
 
@@ -164,7 +164,7 @@ class Session
                 php oil refine session
 
             Description:
-                The session task will create the nessecary db tables.
+                The session task will create the necessary db tables.
 
             Examples:
                 php oil r session:create
