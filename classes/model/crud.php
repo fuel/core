@@ -420,6 +420,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 
 		$vars = $this->to_array();
 
+		// Set empty values to NULL
+		foreach ($vars as &$var) {
+			$var = !empty($var) ? $var : null;
+		}
+
 		// Set default if there are any
 		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
 
