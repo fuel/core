@@ -102,6 +102,7 @@ class Database_MySQL_Connection extends \Database_Connection
 			{
 				// Create a connection and force it to be a new link
 				if ($compress)
+				{
 					$this->_connection = mysql_connect($hostname, $username, $password, true, MYSQL_CLIENT_COMPRESS);
 				}
 				else
