@@ -336,9 +336,10 @@ class Fieldset_Field
 	 *
 	 * @param   string|array  one option value, or multiple value=>label pairs in an array
 	 * @param   string
+	 * @param   bool            Whether or not to replace the current options
 	 * @return  Fieldset_Field  this, to allow chaining
 	 */
-	public function set_options($value, $label = null)
+	public function set_options($value, $label = null, $replace_options = false)
 	{
 		if ( ! is_array($value))
 		{
@@ -361,7 +362,7 @@ class Fieldset_Field
 			}
 		};
 
-		empty($this->options) ? $this->options = $value : $merge($this->options, $value, $merge);
+		($replace_options or empty($this->options)) ? $this->options = $value : $merge($this->options, $value, $merge);
 
 		return $this;
 	}
