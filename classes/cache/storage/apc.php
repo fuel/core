@@ -125,7 +125,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 			$key = isset($index[$identifier][0]) ? $index[$identifier] : false;
 
 			// key found and newer?
-			if ($key !== false and $key[1] > $this->created)
+			if ($key === false or $key[1] > $this->created)
 			{
 				return false;
 			}
