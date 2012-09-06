@@ -372,6 +372,11 @@ class Validation
 			catch (Validation_Error $v)
 			{
 				$this->errors[$field->name] = $v;
+				
+				if($field->fieldset())
+				{
+					$field->fieldset()->Validation()->add_error($field->name, $v);
+				}
 			}
 		}
 
@@ -562,6 +567,25 @@ class Validation
 		$output .= $options['close_list'];
 
 		return $output;
+	}
+
+	/**
+	 * Add error
+	 *
+	 * Adds an error for a given field. 
+	 *
+	 * @param   string				field name for which to set the error
+	 * @param   Validation_Error  	error for the field
+	 * @return  Validation 			this, to allow chaining
+	 */
+	protected function add_error($name = null, $error = null)
+	{
+		if($name !== null and $error !== null)
+		{
+			$this->errors[$name] = $error;
+		}
+		
+		return $this;
 	}
 
 	/**
