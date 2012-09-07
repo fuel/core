@@ -65,6 +65,13 @@ class Redis
 		{
 			throw new \RedisException($errstr, $errno);
 		}
+		else 
+		{
+			// pass auth command if password is present in config
+			if ( isset($config['password']) ) {
+				$this->auth($config['password']);
+			}
+		}
 	}
 
 	public function  __destruct()
