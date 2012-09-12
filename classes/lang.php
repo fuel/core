@@ -47,8 +47,9 @@ class Lang
 	 */
 	public static function load($file, $group = null, $language = null, $overwrite = false)
 	{
+		$language or $language = \Config::get('language');
 		$languages = static::$fallback;
-		array_unshift($languages, $language ?: \Config::get('language'));
+		array_unshift($languages, $language);
 
 		if ( ! is_array($file) and
 		     ! is_object($file) and
@@ -103,16 +104,16 @@ class Lang
 
 		if ($group === null)
 		{
-			static::$lines = $overwrite ? array_merge(static::$lines, $lang) : \Arr::merge(static::$lines, $lang);
+			static::$lines[$language] = $overwrite ? array_merge(static::$lines[$language], $lang) : \Arr::merge(static::$lines[$language], $lang);
 		}
 		else
 		{
 			$group = ($group === true) ? $file : $group;
-			if ( ! isset(static::$lines[$group]))
+			if ( ! isset(static::$lines[$language][$group]))
 			{
-				static::$lines[$group] = array();
+				static::$lines[$language][$group] = array();
 			}
-			static::$lines[$group] = $overwrite ? array_merge(static::$lines[$group],$lang) : \Arr::merge(static::$lines[$group],$lang);
+			static::$lines[$language][$group] = $overwrite ? array_merge(static::$lines[$language][$group],$lang) : \Arr::merge(static::$lines[$language][$group],$lang);
 		}
 
 		return $lang;
@@ -122,7 +123,8 @@ class Lang
 	 * Save a language array to disk.
 	 *
 	 * @param   string          $file      desired file name
-	 * @param   string|array    $lang    master language array key or language array
+	 * @param   string|array    $lang      master language array key or language array
+	 * @param   string|null     $language  name of the language to load, null for the configurated language
 	 * @return  bool                       false when language is empty or invalid else \File::update result
 	 */
 	public static function save($file, $lang, $language = null)
@@ -145,11 +147,11 @@ class Lang
 
 		if ( ! is_array($lang))
 		{
-			if ( ! isset(static::$lines[$lang]))
+			if ( ! isset(static::$lines[$language][$lang]))
 			{
 				return false;
 			}
-			$lang = static::$lines[$lang];
+			$lang = static::$lines[$language][$lang];
 		}
 
 		$type = pathinfo($file, PATHINFO_EXTENSION);
@@ -173,42 +175,66 @@ class Lang
 	/**
 	 * Returns a (dot notated) language string
 	 *
-	 * @param   string  key for the line
-	 * @param   array   array of params to str_replace
-	 * @param   mixed   default value to return
-	 * @return  mixed   either the line or default when not found
+	 * @param   string       $line      key for the line
+	 * @param   array        $params    array of params to str_replace
+	 * @param   mixed        $default   default value to return
+	 * @param   string|null  $language  name of the language to get, null for the configurated language
+	 * @return  mixed                   either the line or default when not found
 	 */
-	public static function get($line, array $params = array(), $default = null)
+	public static function get($line, array $params = array(), $default = null, $language = null)
 	{
-		return \Str::tr(\Fuel::value(\Arr::get(static::$lines, $line, $default)), $params);
+		if ($language === null)
+		{
+			$languages = static::$fallback;
+			array_unshift($languages, $language ?: \Config::get('language'));
+			$language = reset($languages);
+		}
+
+		return \Str::tr(\Fuel::value(\Arr::get(static::$lines[$language], $line, $default)), $params);
 	}
 
 	/**
 	 * Sets a (dot notated) language string
 	 *
-	 * @param    string    a (dot notated) language key
-	 * @param    mixed     the language string
-	 * @param    string    group
-	 * @return   void      the \Arr::set result
+	 * @param    string       $line      a (dot notated) language key
+	 * @param    mixed        $value     the language string
+	 * @param    string       $group     group
+	 * @param    string|null  $language  name of the language to set, null for the configurated language
+	 * @return   void                    the \Arr::set result
 	 */
-	public static function set($line, $value, $group = null)
+	public static function set($line, $value, $group = null, $language = null)
 	{
 		$group === null or $line = $group.'.'.$line;
 
-		return \Arr::set(static::$lines, $line, \Fuel::value($value));
+		if ($language === null)
+		{
+			$languages = static::$fallback;
+			array_unshift($languages, $language ?: \Config::get('language'));
+			$language = reset($languages);
+		}
+
+		return \Arr::set(static::$lines[$language], $line, \Fuel::value($value));
 	}
 
 	/**
 	 * Deletes a (dot notated) language string
 	 *
-	 * @param    string       a (dot notated) language key
-	 * @param    string       group
-	 * @return   array|bool   the \Arr::delete result, success boolean or array of success booleans
+	 * @param    string       $item      a (dot notated) language key
+	 * @param    string       $group     group
+	 * @param    string|null  $language  name of the language to set, null for the configurated language
+	 * @return   array|bool              the \Arr::delete result, success boolean or array of success booleans
 	 */
-	public static function delete($item, $group = null)
+	public static function delete($item, $group = null, $language)
 	{
 		$group === null or $line = $group.'.'.$line;
 
-		return \Arr::delete(static::$lines, $item);
+		if ($language === null)
+		{
+			$languages = static::$fallback;
+			array_unshift($languages, $language ?: \Config::get('language'));
+			$language = reset($languages);
+		}
+
+		return \Arr::delete(static::$lines[$language], $item);
 	}
 }
