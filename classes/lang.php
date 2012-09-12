@@ -224,7 +224,7 @@ class Lang
 	 * @param    string|null  $language  name of the language to set, null for the configurated language
 	 * @return   array|bool              the \Arr::delete result, success boolean or array of success booleans
 	 */
-	public static function delete($item, $group = null, $language)
+	public static function delete($item, $group = null, $language = null)
 	{
 		$group === null or $line = $group.'.'.$line;
 
