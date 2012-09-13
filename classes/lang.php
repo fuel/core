@@ -104,6 +104,10 @@ class Lang
 
 		if ($group === null)
 		{
+			if ( ! isset(static::$lines[$language]))
+			{
+				static::$lines[$language] = array();
+			}
 			static::$lines[$language] = $overwrite ? array_merge(static::$lines[$language], $lang) : \Arr::merge(static::$lines[$language], $lang);
 		}
 		else
