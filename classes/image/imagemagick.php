@@ -22,9 +22,9 @@ class Image_Imagemagick extends \Image_Driver
 	protected $size_cache = null;
 	protected $im_path = null;
 
-	public function load($filename, $return_data = false)
+	public function load($filename, $return_data = false, $force_extension = false)
 	{
-		extract(parent::load($filename));
+		extract(parent::load($filename, $return_data, $force_extension));
 
 		$this->clear_sizes();
 		if (empty($this->image_temp))

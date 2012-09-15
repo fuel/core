@@ -20,9 +20,9 @@ class Image_Imagick extends \Image_Driver
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
 	private $imagick = null;
 
-	public function load($filename, $return_data = false)
+	public function load($filename, $return_data = false, $force_extension = false)
 	{
-		extract(parent::load($filename));
+		extract(parent::load($filename, $return_data, $force_extension));
 
 		if ($this->imagick == null)
 		{
@@ -185,17 +185,17 @@ class Image_Imagick extends \Image_Driver
 		{
 			$filetype = 'jpeg';
 		}
-		
+
 		if ($this->imagick->getImageFormat() != $filetype)
 		{
 			$this->imagick->setImageFormat($filetype);
 		}
-		
+
 		if($this->imagick->getImageFormat() == 'jpeg' and $this->config['quality'] != 100)
 		{
-			$this->imagick->setImageCompression(\Imagick::COMPRESSION_JPEG); 
-			$this->imagick->setImageCompressionQuality($this->config['quality']); 
-			$this->imagick->stripImage(); 
+			$this->imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
+			$this->imagick->setImageCompressionQuality($this->config['quality']);
+			$this->imagick->stripImage();
 		}
 
 		file_put_contents($filename, $this->imagick->getImageBlob());
@@ -214,7 +214,7 @@ class Image_Imagick extends \Image_Driver
 
 		$this->run_queue();
 		$this->add_background();
-		
+
 		if ($filetype == 'jpg' or $filetype == 'jpeg')
 		{
 			$filetype = 'jpeg';
@@ -224,12 +224,12 @@ class Image_Imagick extends \Image_Driver
 		{
 			$this->imagick->setImageFormat($filetype);
 		}
-		
+
 		if($this->imagick->getImageFormat() == 'jpeg' and $this->config['quality'] != 100)
 		{
-			$this->imagick->setImageCompression(\Imagick::COMPRESSION_JPEG); 
-			$this->imagick->setImageCompressionQuality($this->config['quality']); 
-			$this->imagick->stripImage(); 
+			$this->imagick->setImageCompression(\Imagick::COMPRESSION_JPEG);
+			$this->imagick->setImageCompressionQuality($this->config['quality']);
+			$this->imagick->stripImage();
 		}
 
 		if ( ! $this->config['debug'])
