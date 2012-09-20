@@ -596,7 +596,8 @@ class Upload
 
 
 			// check if the file already exists
-			if (file_exists($path.implode('', $save_as)))
+			$fp = @fopen($path.implode('', $save_as), 'x');
+			if ($fp === false)
 			{
 				if ( (bool) static::$config['auto_rename'])
 				{
@@ -604,8 +605,9 @@ class Upload
 					do
 					{
 						$save_as[3] = '_'.++$counter;
+						$fp = @fopen($path.implode('', $save_as), 'x');
 					}
-					while (file_exists($path.implode('', $save_as)));
+					while ($fp === false);
 				}
 				else
 				{
@@ -617,6 +619,7 @@ class Upload
 					}
 				}
 			}
+			fclose($fp);
 
 			// no need to store it as an array anymore
 			$save_as = implode('', $save_as);
