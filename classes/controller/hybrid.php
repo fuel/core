@@ -34,7 +34,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	 */
 	public function before()
 	{
-		if ( ! $this->shall_return_restful())
+		if ( ! $this->is_restful())
 		{
 			if ( ! empty($this->template) and is_string($this->template))
 			{
@@ -53,7 +53,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	 */
 	public function after($response)
 	{
-		if ( ! $this->shall_return_restful())
+		if ( ! $this->is_restful())
 		{
 			// If nothing was returned default to the template
 			if (empty($response))
@@ -88,7 +88,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	public function router($resource, array $arguments)
 	{
 		// if this is an ajax call
-		if ($this->shall_return_restful())
+		if ($this->is_restful())
 		{
 			// have the Controller_Rest router deal with it
 			return parent::router($resource, $arguments);
@@ -106,12 +106,12 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	}
 	
 	/**
-	 * Decide whether to return REST or templated response
+	 * Decide whether to return RESTful or templated response
 	 * Override in subclass to introduce custom switching logic.
 	 *
 	 * @param  boolean
 	 */
-	public function shall_return_restful()
+	public function is_restful()
 	{
 		return \Input::is_ajax();
 	}
