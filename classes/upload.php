@@ -605,9 +605,20 @@ class Upload
 					do
 					{
 						$save_as[3] = '_'.++$counter;
-						$fp = @fopen($path.implode('', $save_as), 'x');
 					}
-					while ($fp === false);
+					while (file_exists($path.implode('', $save_as)));
+
+					// create file to ensure that there is no file after checking above
+					$fp = @fopen($path.implode('', $save_as), 'x');
+					if ($fp === false)
+					{
+						do
+						{
+							$save_as[3] = '_'.++$counter;
+							$fp = @fopen($path.implode('', $save_as), 'x');
+						}
+						while ($fp === false);
+					}
 				}
 				else
 				{
