@@ -89,11 +89,12 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	 * Choose the columns to select from, using an array.
 	 *
 	 * @param   array  list of column names or aliases
+	 * @param	bool	if true, don't merge but overwrite
 	 * @return  $this
 	 */
-	public function select_array(array $columns)
+	public function select_array(array $columns, $reset = false)
 	{
-		$this->_select = array_merge($this->_select, $columns);
+		$this->_select = $reset ? $columns : array_merge($this->_select, $columns);
 
 		return $this;
 	}
@@ -324,7 +325,7 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 			// Get the database instance
 			$db = \Database_Connection::instance($db);
 		}
-		
+
 		// Callback to quote identifiers
 		$quote_ident = array($db, 'quote_identifier');
 
