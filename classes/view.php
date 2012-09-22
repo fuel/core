@@ -374,7 +374,13 @@ class View
 	{
 		// set find_file's one-time-only search paths
 		\Finder::instance()->flash($this->request_paths);
-
+		
+		// search / replace "." to "/" in view string
+		if (strpos($file, '.') !== false)
+		{
+			$file = str_replace('.', '/', $file);
+		}
+		
 		// locate the view file
 		if (($path = \Finder::search('views', $file, '.'.$this->extension, false, false)) === false)
 		{
