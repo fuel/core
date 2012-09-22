@@ -34,6 +34,17 @@ class Uri
 	{
 		if ($request = \Request::active())
 		{
+			switch ($segment)
+			{
+				case 'first':
+				$segment = 0;
+				break;
+				
+				case 'last':
+				$segment = count($request->uri->segments());
+				break;
+			}
+			
 			return $request->uri->get_segment($segment, $default);
 		}
 
