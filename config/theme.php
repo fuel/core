@@ -40,4 +40,9 @@ return array(
 	 * The theme info file name
 	 */
 	'info_file_name' => 'themeinfo.php',
+
+	/**
+	 * Use auto prefixing for modules
+	 */
+	'use_modules' => false,
 );
