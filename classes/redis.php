@@ -37,21 +37,34 @@ class Redis
 	protected static $instances = array();
 
 	/**
-	 * Get or create an instance of the Redis class
+	 * Get an instance of the Redis class
 	 */
 	public static function instance($name = 'default')
 	{
 		if ( ! array_key_exists($name, static::$instances))
 		{
-			empty(static::$instances) and \Config::load('db', true);
-
-			if ( ! ($config = \Config::get('db.redis.'.$name)))
-			{
-				throw new \RedisException('Invalid instance name given.');
-			}
-
-			static::$instances[$name] = new static($config);
+			// @deprecated since 1.4
+			// call forge() if a new instance needs to be created, this should throw an error
+			return static::forge($name);
 		}
+
+		return static::$instances[$name];
+	}
+
+	/**
+	 * create an instance of the Redis class
+	 */
+	public static function forge($name = 'default', $config = array())
+	{
+		empty(static::$instances) and \Config::load('db', true);
+
+		if ( ! ($conf = \Config::get('db.redis.'.$name)))
+		{
+			throw new \RedisException('Invalid instance name given.');
+		}
+		$config = \Arr::merge($conf, $config);
+
+		static::$instances[$name] = new static($config);
 
 		return static::$instances[$name];
 	}
@@ -87,6 +100,11 @@ class Redis
 		if ( ! $this->connection)
 		{
 			throw new \RedisException($errstr, $errno);
+		}
+		else
+		{
+			// execute the auth command if a password is present in config
+			empty($config['password']) or $this->auth($config['password']);
 		}
 	}
 
