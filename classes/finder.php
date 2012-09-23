@@ -148,9 +148,9 @@ class Finder
 	 */
 	public function remove_path($path)
 	{
-		for ($i = 0, $count = count($this->paths); $i < $count; $i++)
+		foreach ($this->paths as $i => $p)
 		{
-			if ($this->paths[$i] === $path)
+			if ($p === $path)
 			{
 				unset($this->paths[$i]);
 				break;
