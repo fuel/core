@@ -318,6 +318,11 @@ class Database_PDO_Connection extends \Database_Connection
 		return $this->_connection->quote($value);
 	}
 
+	public function error_info()
+	{
+		return $this->_connection->errorInfo();
+	}
+
 	public function in_transaction()
 	{
 		return $this->_in_transaction;

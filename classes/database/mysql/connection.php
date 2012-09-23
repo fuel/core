@@ -430,6 +430,12 @@ class Database_MySQL_Connection extends \Database_Connection
 		return "'$value'";
 	}
 
+	public function error_info()
+	{
+		$errno = mysql_errno($this->_connection);
+		return array($errno, empty($errno)? null : $errno, empty($errno) ? null : mysql_error($this->_connection));
+	}
+
 	public function in_transaction()
 	{
 		return $this->_in_transaction;

@@ -447,6 +447,12 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return "'$value'";
 	}
 
+	public function error_info()
+	{
+		$errno = $this->_connection->errno;
+		return array($errno, empty($errno)? null : $errno, empty($errno) ? null : $this->_connection->error);
+	}
+
 	public function in_transaction()
 	{
 		return $this->_in_transaction;
