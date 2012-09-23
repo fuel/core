@@ -71,7 +71,7 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			// Get the database instance
 			$db = \Database_Connection::instance($db);
 		}
-		
+
 		if ($this->_type)
 		{
 			$sql = strtoupper($this->_type).' JOIN';
@@ -82,7 +82,7 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 		}
 
 		// Quote the table name that is being joined
-		$sql .= ' '.$db->quote_table($this->_table).' ON ';
+		$sql .= ' '.$db->quote_table($this->_table);
 
 		$conditions = array();
 		foreach ($this->_on as $condition)
@@ -100,8 +100,8 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			$conditions[] = $db->quote_identifier($c1).$op.' '.$db->quote_identifier($c2);
 		}
 
-		// Concat the conditions "... AND ..."
-		$sql .= '('.implode(' AND ', $conditions).')';
+		// if there are conditions, concat the conditions "... AND ..." and glue them on...
+		empty($conditions) or $sql .= ' ON ('.implode(' AND ', $conditions).')';
 
 		return $sql;
 	}
