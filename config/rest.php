@@ -31,6 +31,14 @@ return array(
 	'default_format' => 'xml',
 
 	/*
+	| XML Basenode name
+	|
+	|	Default: xml
+	|
+	*/
+	'xml_basenode' => 'xml',
+
+	/*
 	| Name for the password protected REST API displayed on login dialogs
 	|
 	|	E.g: My Secret REST API
