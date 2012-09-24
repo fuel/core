@@ -273,10 +273,10 @@ class Format
 	 */
 	public function to_jsonp($data = null, $pretty = false, $callback = null)
 	{
-		 $callback = \Input::param('callback');
-		 is_null($callback) and $callback = 'response';
+		$callback or $callback = \Input::param('callback');
+		is_null($callback) and $callback = 'response';
 
-		 return $callback.'('.$this->to_json($data, $pretty).')';
+		return $callback.'('.$this->to_json($data, $pretty).')';
 	}
 
 	/**
