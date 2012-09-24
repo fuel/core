@@ -27,4 +27,7 @@ return array(
 		'regex_newline'   => '\n',
 		'escape'    => '\\',
 	),
+	'xml' => array(
+		'basenode' => 'xml',
+	),
 );

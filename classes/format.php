@@ -266,11 +266,12 @@ class Format
 	/**
 	 * To JSONP conversion
 	 *
-	 * @param   mixed  $data
-	 * @param   bool   wether to make the json pretty
-	 * @return  string
+	 * @param   mixed   $data
+	 * @param   bool    $pretty    wether to make the json pretty
+	 * @param   string  $callback  JSONP callback
+	 * @return  string  formatted JSONP
 	 */
-	public function to_jsonp($data = null, $pretty = false)
+	public function to_jsonp($data = null, $pretty = false, $callback = null)
 	{
 		 $callback = \Input::param('callback');
 		 is_null($callback) and $callback = 'response';
@@ -433,6 +434,7 @@ class Format
 	protected static function pretty_json($data)
 	{
 		$json = json_encode($data);
+
 		if ( ! $json)
 		{
 			return false;
