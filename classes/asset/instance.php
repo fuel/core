@@ -142,6 +142,7 @@ class Asset_Instance
 	public function add_path($path, $type = null)
 	{
 		is_null($type) and $type = $this->_path_folders;
+		empty($path) and $path = DOCROOT;
 
 		if( is_array($type))
 		{
@@ -435,13 +436,12 @@ class Asset_Instance
 		{
 			empty($folder) or $folder = $this->_unify_path($folder);
 
-			if (is_file($path.$folder.$this->_unify_path($file, null, false)))
+			if (is_file($newfile = $path.$folder.$this->_unify_path($file, null, false)))
 			{
-				$file = $path.$folder.$this->_unify_path($file, null, false);
-				strpos($file, DOCROOT) === 0 and $file = substr($file, strlen(DOCROOT));
+				strpos($newfile, DOCROOT) === 0 and $newfile = substr($newfile, strlen(DOCROOT));
 
 				// return the file found, make sure it uses forward slashes on Windows
-				return str_replace(DS, '/', $file);
+				return str_replace(DS, '/', $newfile);
 			}
 		}
 
