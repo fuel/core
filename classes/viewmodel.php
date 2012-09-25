@@ -141,7 +141,7 @@ abstract class ViewModel
 	 *
 	 * @param  string
 	 */
-	public function & get($key, $default = null)
+	public function & get($key = null, $default = null)
 	{
 		if (is_null($default) and func_num_args() === 1)
 		{
