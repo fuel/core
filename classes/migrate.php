@@ -503,6 +503,8 @@ class Migrate
 	 */
 	protected static function _find_package($name = null)
 	{
+		$files = array();
+
 		if ($name)
 		{
 			// find a package
@@ -518,7 +520,6 @@ class Migrate
 		else
 		{
 			// find all packages
-			$files = array();
 			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
 			{
 				$files = array_merge($files, glob($p.'*/'.\Config::get('migrations.folder').'*_*.php'));
