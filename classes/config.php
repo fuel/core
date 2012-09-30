@@ -51,11 +51,11 @@ class Config
 		     ! is_object($file) and
 		    array_key_exists($file, static::$loaded_files))
 		{
+			$group === true and $group = $file;
 			if ($group === null or $group === false or ! isset(static::$items[$group]))
 			{
 				return false;
 			}
-			$group === true and $group = $file;
 			return static::$items[$group];
 		}
 
