@@ -128,6 +128,11 @@ class Fieldset
 	protected $config = array();
 
 	/**
+	 * @var  array  disabled fields array
+	 */
+	protected $disabled = array();
+
+	/**
 	 * Object constructor
 	 *
 	 * @param  string
@@ -546,7 +551,7 @@ class Fieldset
 		$fields_output = '';
 		foreach ($this->field() as $f)
 		{
-			$fields_output .= $f->build().PHP_EOL;
+			in_array($f->name, $this->disabled) or $fields_output .= $f->build().PHP_EOL;
 		}
 
 		$close = ($this->fieldset_tag == 'form' or empty($this->fieldset_tag))
@@ -560,6 +565,45 @@ class Fieldset
 			$template);
 
 		return $template;
+	}
+
+	/**
+	 * Enable a disabled field from being build
+	 *
+	 * @return  Fieldset      this, to allow chaining
+	 */
+	public function enable($name = null)
+	{
+		// Check if it exists. if not, bail out
+		if ( ! $this->field($name))
+		{
+			throw new \RuntimeException('Field "'.$name.'" does not exist in this Fieldset.');
+		}
+
+		if (isset($this->disabled[$name]))
+		{
+			unset($this->disabled[$name]);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Disable a field from being build
+	 *
+	 * @return  Fieldset      this, to allow chaining
+	 */
+	public function disable($name = null)
+	{
+		// Check if it exists. if not, bail out
+		if ( ! $this->field($name))
+		{
+			throw new \RuntimeException('Field "'.$name.'" does not exist in this Fieldset.');
+		}
+
+		isset($this->disabled[$name]) or $this->disabled[$name] = $name;
+
+		return $this;
 	}
 
 	/**
