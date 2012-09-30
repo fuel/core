@@ -268,7 +268,13 @@ class Migrate
 		foreach ($migrations as $ver => $migration)
 		{
 			logger(Fuel::L_INFO, 'Migrating to version: '.$ver);
-			call_user_func(array(new $migration['class'], $method));
+			$result = call_user_func(array(new $migration['class'], $method));
+			if ($result === false)
+			{
+				logger(Fuel::L_INFO, 'Skipped migration to '.$ver.'.');
+				return $done;
+			}
+
 			$file = basename($migration['path'], '.php');
 			$method == 'up' ? static::write_install($name, $type, $file) : static::write_revert($name, $type, $file);
 			$done[] = $file;
