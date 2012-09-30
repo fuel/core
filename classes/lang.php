@@ -55,7 +55,12 @@ class Lang
 		     ! is_object($file) and
 		    array_key_exists($file, static::$loaded_files))
 		{
-			return false;
+			$group === true and $group = $file;
+			if ($group === null or $group === false or ! isset(static::$lines[$language][$group]))
+			{
+				return false;
+			}
+			return static::$lines[$language][$group];
 		}
 
 		$lang = array();
