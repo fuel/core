@@ -109,19 +109,13 @@ class Lang
 
 		if ($group === null)
 		{
-			if ( ! isset(static::$lines[$language]))
-			{
-				static::$lines[$language] = array();
-			}
+			isset(static::$lines[$language]) or static::$lines[$language] = array();
 			static::$lines[$language] = $overwrite ? array_merge(static::$lines[$language], $lang) : \Arr::merge(static::$lines[$language], $lang);
 		}
 		else
 		{
 			$group = ($group === true) ? $file : $group;
-			if ( ! isset(static::$lines[$language][$group]))
-			{
-				static::$lines[$language][$group] = array();
-			}
+			isset(static::$lines[$language][$group]) or static::$lines[$language][$group] = array();
 			static::$lines[$language][$group] = $overwrite ? array_merge(static::$lines[$language][$group], $lang) : \Arr::merge(static::$lines[$language][$group], $lang);
 		}
 
@@ -199,7 +193,7 @@ class Lang
 			$language = reset($languages);
 		}
 
-		return \Str::tr(\Fuel::value(\Arr::get(static::$lines[$language], $line, $default)), $params);
+		return isset(static::$lines[$language]) ? \Str::tr(\Fuel::value(\Arr::get(static::$lines[$language], $line, $default)), $params) : $default;
 	}
 
 	/**
@@ -221,6 +215,8 @@ class Lang
 			array_unshift($languages, $language ?: \Config::get('language'));
 			$language = reset($languages);
 		}
+
+		isset(static::$lines[$language]) or static::$lines[$language] = array();
 
 		return \Arr::set(static::$lines[$language], $line, \Fuel::value($value));
 	}
@@ -244,6 +240,6 @@ class Lang
 			$language = reset($languages);
 		}
 
-		return \Arr::delete(static::$lines[$language], $item);
+		return isset(static::$lines[$language]) ? \Arr::delete(static::$lines[$language], $item) : false;
 	}
 }
