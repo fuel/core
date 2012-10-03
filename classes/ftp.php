@@ -34,6 +34,7 @@ class Ftp
 	protected $_username  = '';
 	protected $_password  = '';
 	protected $_port      = 21;
+	protected $_timeout   = 90;
 	protected $_passive   = true;
 	protected $_debug     = false;
 	protected $_conn_id   = false;
@@ -86,10 +87,11 @@ class Ftp
 		$this->_hostname = preg_replace('|.+?://|', '', $config['hostname']);
 		$this->_username = $config['username'];
 		$this->_password = $config['password'];
-		$this->_port = ! empty($config['port']) ? (int) $config['port'] : 21;
-		$this->_passive = (bool) $config['passive'];
+		$this->_timeout  = ! empty($config['timeout']) ? (int) $config['timeout'] : 90;
+		$this->_port     = ! empty($config['port']) ? (int) $config['port'] : 21;
+		$this->_passive  = (bool) $config['passive'];
 		$this->_ssl_mode = (bool) $config['ssl_mode'];
-		$this->_debug = (bool) $config['debug'];
+		$this->_debug    = (bool) $config['debug'];
 
 		static::$initialized = true;
 	}
@@ -112,12 +114,12 @@ class Ftp
 				throw new \RuntimeException('ftp_ssl_connect() function is missing.');
 			}
 
-			$this->_conn_id = @ftp_ssl_connect($this->_hostname, $this->_port);
+			$this->_conn_id = @ftp_ssl_connect($this->_hostname, $this->_port, $this->_timeout);
 		}
 
 		else
 		{
-			$this->_conn_id = @ftp_connect($this->_hostname, $this->_port);
+			$this->_conn_id = @ftp_connect($this->_hostname, $this->_port, $this->_timeout);
 		}
 
 		if ($this->_conn_id === false)
