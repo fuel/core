@@ -423,7 +423,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		// Set default if there are any
 		isset(static::$_defaults) and $vars = $vars + static::$_defaults;
 
-		if ($validate and isset(static::$_rules) and count(static::$_rules) > 0)
+		if ($validate and isset(static::$_rules) and ! empty(static::$_rules))
 		{
 			$vars = $this->pre_validate($vars);
 			$validated = $this->post_validate($this->run_validation($vars));
@@ -433,6 +433,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 				$validated = array_filter($this->validation()->validated(), function($val){
 					return ($val !== null);
 				});
+
 				$vars = $validated + $vars;
 			}
 			else
