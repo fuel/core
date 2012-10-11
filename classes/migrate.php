@@ -83,19 +83,20 @@ class Migrate
 	}
 
 	/**
-	 * migrate to a specific version or range of versions
+	 * migrate to a specific version, range of versions, or all
 	 *
 	 * @param   mixed	version to migrate to (up or down!)
 	 * @param   string  name of the package, module or app
 	 * @param   string  type of migration (package, module or app)
+	 * @param	bool	if true, also run out-of-sequence migrations
 	 *
 	 * @throws	UnexpectedValueException
 	 * @return	array
 	 */
-	public static function version($version = null, $name = 'default', $type = 'app')
+	public static function version($version = null, $name = 'default', $type = 'app', $all = false)
 	{
 		// get the current version from the config
-		$current = \Config::get('migrations.version.'.$type.'.'.$name);
+		$all or $current = \Config::get('migrations.version.'.$type.'.'.$name);
 
 		// any migrations defined?
 		if ( ! empty($current))
@@ -137,13 +138,14 @@ class Migrate
 	 *
 	 * @param   string  name of the package, module or app
 	 * @param   string  type of migration (package, module or app)
+	 * @param	bool	if true, also run out-of-sequence migrations
 	 *
 	 * @return	array
 	 */
-	public static function latest($name = 'default', $type = 'app')
+	public static function latest($name = 'default', $type = 'app', $all = false)
 	{
-		// equivalent to from current version to latest
-		return static::version(null, $name, $type);
+		// equivalent to from current version (or all) to latest
+		return static::version(null, $name, $type, $all);
 	}
 
 	/**

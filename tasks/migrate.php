@@ -193,16 +193,16 @@ class Migrate
 			// if version has a value, make sure only 1 item was passed
 			if (static::$default + static::$module_count + static::$package_count > 1)
 			{
-				\Cli::write('Migration: version only excepts 1 item.');
+				\Cli::write('Migration: version only accepts 1 item.');
 				return;
 			}
-			$migrations = \Migrate::version($version, $name, $type);
+			$migrations = \Migrate::version($version, $name, $type, \Cli::option('catchup', false));
 		}
 
 		// migrate to the latest version
 		else
 		{
-			$migrations = \Migrate::latest($name, $type);
+			$migrations = \Migrate::latest($name, $type, \Cli::option('catchup', false));
 		}
 
 		// any migrations executed?
@@ -273,7 +273,7 @@ class Migrate
 		// if version has a value, make sure only 1 item was passed
 		if ($version and (static::$default + static::$module_count + static::$package_count > 1))
 		{
-			\Cli::write('Migration: version only excepts 1 item.');
+			\Cli::write('Migration: version only accepts 1 item.');
 			return;
 		}
 
@@ -308,7 +308,7 @@ class Migrate
 		// if version has a value, make sure only 1 item was passed
 		if ($version and (static::$default + static::$module_count + static::$package_count > 1))
 		{
-			\Cli::write('Migration: version only excepts 1 item.');
+			\Cli::write('Migration: version only accepts 1 item.');
 			return;
 		}
 
@@ -339,22 +339,23 @@ Usage:
     php oil refine migrate[:command] [--version=X]
 
 Fuel commands:
-    help    shows this text
-    current migrates to the version defined in the migration configuration file
-    up      migrate up to the next version
-    down    migrate down to the previous version
-    run     run all migrations (default)
+    help     shows this text
+    current  migrates to the version defined in the migration configuration file
+    up       migrate up to the next version
+    down     migrate down to the previous version
+    run      run all migrations (default)
 
 Fuel options:
     -v, [--version]  # Migrate to a specific version ( only 1 item at a time)
+    --catchup        # Use if you have out-of-sequence migrations that can be safely run
 
     # The following disable default migrations unless you add --default to the command
-    --default   # re-enables default migration
-    --modules -m   # Migrates all modules
-    --modules=item1,item2 -m=item1,item2   # Migrates specific modules
-    --packages -p   # Migrates all packages
+    --default                               # re-enables default migration
+    --modules -m                            # Migrates all modules
+    --modules=item1,item2 -m=item1,item2    # Migrates specific modules
+    --packages -p                           # Migrates all packages
     --packages=item1,item2 -p=item1,item2   # Migrates specific modules
-    --all   # shortcut for --modules --packages --default
+    --all                                   # shortcut for --modules --packages --default
 
 Description:
     The migrate task can run migrations. You can go up, down or by default go to the current migration marked in the config file.
