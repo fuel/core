@@ -180,8 +180,11 @@ class Input
 		$uri_info = pathinfo($uri);
 		if ( ! empty($uri_info['extension']))
 		{
-			static::$detected_ext = $uri_info['extension'];
-			$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
+			if (strpos($uri_info['extension'],'/') === false)
+			{
+				static::$detected_ext = $uri_info['extension'];
+				$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
+			}
 		}
 
 		// Do some final clean up of the uri
