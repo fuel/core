@@ -87,6 +87,16 @@ class Pagination
 	protected static $pagination_url;
 
 	/**
+	 * @var	string The http method
+	 */
+	public static $http_method = 'get';
+
+	/**
+	 * @var	string The form id (used when static::$http_method is 'post') 
+	 */
+	public static $form_id = 'form';
+
+	/**
 	 * Init
 	 *
 	 * Loads in the config and sets the variables
@@ -214,8 +224,7 @@ class Pagination
 			}
 			else
 			{
-				$url = ($i == 1) ? '' : '/'.$i;
-				$pagination .= static::$template['regular_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$url, $i, static::$template['regular_attrs']).static::$template['regular_end'];
+				$pagination .= static::$template['regular_start'].static::regular_link($i, $i, static::$template['regular_attrs']).static::$template['regular_end'];
 			}
 		}
 
@@ -245,7 +254,7 @@ class Pagination
 		else
 		{
 			$next_page = static::$current_page + 1;
-			return static::$template['next_start'].\Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark'], static::$template['next_attrs']).static::$template['next_end'];
+			return static::$template['next_start'].static::regular_link($next_page, $value.static::$template['next_mark'], static::$template['next_attrs']).static::$template['next_end'];
 		}
 	}
 
@@ -272,8 +281,36 @@ class Pagination
 		else
 		{
 			$previous_page = static::$current_page - 1;
-			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return static::$template['previous_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value, static::$template['previous_attrs']).static::$template['previous_end'];
+			return static::$template['previous_start'].static::regular_link($previous_page, static::$template['previous_mark'].$value, static::$template['previous_attrs']).static::$template['previous_end'];
+		}
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Return pagination regular link
+	 *
+	 * @access public
+	 * @param  integer $page  The page
+	 * @param  string  $value The text displayed in link
+	 * @param  array   $attrs The attributes for anchor
+	 * @return mixed   The regular link
+	 */
+	public static function regular_link($page, $value, $attrs)
+	{
+		$url = rtrim(static::$pagination_url, '/');
+		$url .= ($page == 1) ? '' : '/'.$page;
+
+		if (static::$http_method == 'post')
+		{
+			$onclick =
+				"var form = document.getElementById('" . static::$form_id . "'); "
+				. "form.action = '$url'; form.method = 'POST'; form.submit(); return false;";
+			$attrs['onclick'] = $onclick;
+			return \Html::anchor('javascript:void(0)', $value, $attrs);
+
+		} else {
+			return \Html::anchor($url, $value, $attrs);
 		}
 	}
 }
