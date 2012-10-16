@@ -620,7 +620,7 @@ class Theme
 			}
 		}
 
-		return \Config::load($file, false);
+		return \Config::load($file, false, true);
 	}
 
 	/**
