@@ -117,10 +117,17 @@ abstract class Config_File implements Config_Interface
 	 */
 	protected function find_file()
 	{
-		$paths = array_merge(
-			\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true),
-			\Finder::search('config', $this->file, $this->ext, true)
-		);
+		if (($this->file[0] === '/' or (isset($this->file[1]) and $this->file[1] === ':')) and is_file($this->file))
+		{
+			$paths = array($this->file);
+		}
+		else
+		{
+			$paths = array_merge(
+				\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true),
+				\Finder::search('config', $this->file, $this->ext, true)
+			);
+		}
 
 		if (empty($paths))
 		{
