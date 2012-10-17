@@ -193,6 +193,7 @@ class Lang
 			$language = reset($languages);
 		}
 
+		$default = ($default) ? $default : $line;
 		return isset(static::$lines[$language]) ? \Str::tr(\Fuel::value(\Arr::get(static::$lines[$language], $line, $default)), $params) : $default;
 	}
 
