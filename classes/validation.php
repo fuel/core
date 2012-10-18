@@ -501,7 +501,14 @@ class Validation
 
 		if ( ! array_key_exists($key, $this->input))
 		{
-			$this->input[$key] =  $this->global_input_fallback ? \Input::param($key, $default) : $default;
+			if (strpos($key,'[') !== false)
+			{
+				$this->input[$key] =  $this->global_input_fallback ? \Arr::get(\Input::param(), str_replace(array('[', ']'),array('.', ''),$key), $default) : $default;
+			}
+			else
+			{
+				$this->input[$key] =  $this->global_input_fallback ? \Input::param($key, $default) : $default;
+			}
 		}
 
 		return $this->input[$key];
