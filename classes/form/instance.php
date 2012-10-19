@@ -608,7 +608,7 @@ class Form_Instance
 		unset($attributes['label']);
 		unset($attributes['id']);
 
-		return html_tag('label', $attributes, \Lang::get($label) ?: $label);
+		return html_tag('label', $attributes, \Lang::get($label, array(), false) ?: $label);
 	}
 
 	/**
