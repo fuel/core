@@ -330,7 +330,7 @@ class Finder
 		$file = $this->prep_path($dir).$file.$ext;
 		$cache_id .= $file;
 
-		if ($cached_path = $this->from_cache($cache_id))
+		if ($cache and $cached_path = $this->from_cache($cache_id))
 		{
 			return $cached_path;
 		}

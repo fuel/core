@@ -94,7 +94,7 @@ class Config
 		{
 			try
 			{
-				$config = $file->load($overwrite);
+				$config = $file->load($overwrite, ! $reload);
 			}
 			catch (\ConfigException $e)
 			{
