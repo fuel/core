@@ -36,9 +36,9 @@ abstract class Config_File implements Config_Interface
 	 * @param   bool  $overwrite  Whether to overwrite existing values
 	 * @return  array  the config array
 	 */
-	public function load($overwrite = false)
+	public function load($overwrite = false, $cache = true)
 	{
-		$paths = $this->find_file();
+		$paths = $this->find_file($cache);
 		$config = array();
 
 		foreach ($paths as $path)
@@ -115,7 +115,7 @@ abstract class Config_File implements Config_Interface
 	 * @param   bool  $multiple  Whether to load multiple files or not
 	 * @return  array
 	 */
-	protected function find_file()
+	protected function find_file($cache = true)
 	{
 		if (($this->file[0] === '/' or (isset($this->file[1]) and $this->file[1] === ':')) and is_file($this->file))
 		{
@@ -124,8 +124,8 @@ abstract class Config_File implements Config_Interface
 		else
 		{
 			$paths = array_merge(
-				\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true),
-				\Finder::search('config', $this->file, $this->ext, true)
+				\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true, $cache),
+				\Finder::search('config', $this->file, $this->ext, true, $cache)
 			);
 		}
 
