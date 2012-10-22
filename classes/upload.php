@@ -277,155 +277,157 @@ class Upload
 		$files = array();
 
 		// any files uploaded?
-		if ( ! empty($_FILES))
+		if ( empty($_FILES))
 		{
-			// normalize the multidimensional fields in the $_FILES array
-			foreach($_FILES as $name => $value)
+			throw new \FuelException('No file upload was initiated. Did you specify "enctype" in your &lt;form&gt; tag?');
+		}
+
+		// normalize the multidimensional fields in the $_FILES array
+		foreach($_FILES as $name => $value)
+		{
+			if (is_array($value['name']))
 			{
-				if (is_array($value['name']))
+				foreach($value as $field => $content)
 				{
-					foreach($value as $field => $content)
+					foreach(\Arr::flatten($content) as $element => $data)
 					{
-						foreach(\Arr::flatten($content) as $element => $data)
-						{
-							$_FILES[$name.':'.$element][$field] = $data;
-						}
+						$_FILES[$name.':'.$element][$field] = $data;
 					}
-					unset($_FILES[$name]);
+				}
+				unset($_FILES[$name]);
+			}
+		}
+
+		// normalize the $_FILES array
+		foreach($_FILES as $name => $value)
+		{
+			// store the file data
+			$file = array('field' => $name, 'file' => $value['tmp_name']);
+			if ($value['error'])
+			{
+				$file['error'] = true;
+				$file['errors'][] = array('error' => $value['error']);
+			}
+			else
+			{
+				$file['error'] = false;
+				$file['errors'] = array();
+			}
+			unset($value['tmp_name']);
+			$files[] = array_merge($value, $file);
+		}
+
+		// verify and augment the files data
+		foreach($files as $key => $value)
+		{
+			// add some filename details (pathinfo can't be trusted with utf-8 filenames!)
+			$files[$key]['extension'] = ltrim(strrchr(ltrim($files[$key]['name'], '.'), '.'),'.');
+			if (empty($files[$key]['extension']))
+			{
+				$files[$key]['filename'] = $files[$key]['name'];
+			}
+			else
+			{
+				$files[$key]['filename'] = substr($files[$key]['name'], 0, strlen($files[$key]['name'])-(strlen($files[$key]['extension'])+1));
+			}
+
+			// does this upload exceed the maximum size?
+			if (! empty(static::$config['max_size']) and $files[$key]['size'] > static::$config['max_size'])
+			{
+				$files[$key]['error'] = true;
+				$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_MAX_SIZE);
+			}
+
+			// add mimetype information
+			if ( ! $files[$key]['error'])
+			{
+				$handle = finfo_open(FILEINFO_MIME_TYPE);
+				$files[$key]['mimetype'] = finfo_file($handle, $value['file']);
+				finfo_close($handle);
+				if ($files[$key]['mimetype'] == 'application/octet-stream' and $files[$key]['type'] != $files[$key]['mimetype'])
+				{
+					$files[$key]['mimetype'] = $files[$key]['type'];
+				}
+
+				// make sure it contains something valid
+				if (empty($files[$key]['mimetype']))
+				{
+					$files[$key]['mimetype'] = 'application/octet-stream';
 				}
 			}
 
-			// normalize the $_FILES array
-			foreach($_FILES as $name => $value)
+			// check the file extension black- and whitelists
+			if ( ! $files[$key]['error'])
 			{
-				// store the file data
-				$file = array('field' => $name, 'file' => $value['tmp_name']);
-				if ($value['error'])
-				{
-					$file['error'] = true;
-					$file['errors'][] = array('error' => $value['error']);
-				}
-				else
-				{
-					$file['error'] = false;
-					$file['errors'] = array();
-				}
-				unset($value['tmp_name']);
-				$files[] = array_merge($value, $file);
-			}
-
-			// verify and augment the files data
-			foreach($files as $key => $value)
-			{
-				// add some filename details (pathinfo can't be trusted with utf-8 filenames!)
-				$files[$key]['extension'] = ltrim(strrchr(ltrim($files[$key]['name'], '.'), '.'),'.');
-				if (empty($files[$key]['extension']))
-				{
-					$files[$key]['filename'] = $files[$key]['name'];
-				}
-				else
-				{
-					$files[$key]['filename'] = substr($files[$key]['name'], 0, strlen($files[$key]['name'])-(strlen($files[$key]['extension'])+1));
-				}
-
-				// does this upload exceed the maximum size?
-				if (! empty(static::$config['max_size']) and $files[$key]['size'] > static::$config['max_size'])
+				if (in_array(strtolower($files[$key]['extension']), (array) static::$config['ext_blacklist']))
 				{
 					$files[$key]['error'] = true;
-					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_MAX_SIZE);
+					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_EXT_BLACKLISTED);
 				}
-
-				// add mimetype information
-				if ( ! $files[$key]['error'])
+				elseif ( ! empty(static::$config['ext_whitelist']) and ! in_array(strtolower($files[$key]['extension']), (array) static::$config['ext_whitelist']))
 				{
-					$handle = finfo_open(FILEINFO_MIME_TYPE);
-					$files[$key]['mimetype'] = finfo_file($handle, $value['file']);
-					finfo_close($handle);
-					if ($files[$key]['mimetype'] == 'application/octet-stream' and $files[$key]['type'] != $files[$key]['mimetype'])
-					{
-						$files[$key]['mimetype'] = $files[$key]['type'];
-					}
-
-					// make sure it contains something valid
-					if (empty($files[$key]['mimetype']))
-					{
-						$files[$key]['mimetype'] = 'application/octet-stream';
-					}
+					$files[$key]['error'] = true;
+					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_EXT_NOT_WHITELISTED);
 				}
+			}
 
-				// check the file extension black- and whitelists
-				if ( ! $files[$key]['error'])
+			// check the file type black- and whitelists
+			if ( ! $files[$key]['error'])
+			{
+				// split the mimetype info so we can run some tests
+				preg_match('|^(.*)/(.*)|', $files[$key]['mimetype'], $mimeinfo);
+
+				if (in_array($mimeinfo[1], (array) static::$config['type_blacklist']))
 				{
-					if (in_array(strtolower($files[$key]['extension']), (array) static::$config['ext_blacklist']))
-					{
-						$files[$key]['error'] = true;
-						$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_EXT_BLACKLISTED);
-					}
-					elseif ( ! empty(static::$config['ext_whitelist']) and ! in_array(strtolower($files[$key]['extension']), (array) static::$config['ext_whitelist']))
-					{
-						$files[$key]['error'] = true;
-						$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_EXT_NOT_WHITELISTED);
-					}
+					$files[$key]['error'] = true;
+					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_TYPE_BLACKLISTED);
 				}
-
-				// check the file type black- and whitelists
-				if ( ! $files[$key]['error'])
+				if ( ! empty(static::$config['type_whitelist']) and ! in_array($mimeinfo[1], (array) static::$config['type_whitelist']))
 				{
-					// split the mimetype info so we can run some tests
-					preg_match('|^(.*)/(.*)|', $files[$key]['mimetype'], $mimeinfo);
-
-					if (in_array($mimeinfo[1], (array) static::$config['type_blacklist']))
-					{
-						$files[$key]['error'] = true;
-						$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_TYPE_BLACKLISTED);
-					}
-					if ( ! empty(static::$config['type_whitelist']) and ! in_array($mimeinfo[1], (array) static::$config['type_whitelist']))
-					{
-						$files[$key]['error'] = true;
-						$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_TYPE_NOT_WHITELISTED);
-					}
+					$files[$key]['error'] = true;
+					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_TYPE_NOT_WHITELISTED);
 				}
+			}
 
-				// check the file mimetype black- and whitelists
-				if ( ! $files[$key]['error'])
+			// check the file mimetype black- and whitelists
+			if ( ! $files[$key]['error'])
+			{
+				if (in_array($files[$key]['mimetype'], (array) static::$config['mime_blacklist']))
 				{
-					if (in_array($files[$key]['mimetype'], (array) static::$config['mime_blacklist']))
-					{
-						$files[$key]['error'] = true;
-						$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_MIME_BLACKLISTED);
-					}
-					elseif ( ! empty(static::$config['mime_whitelist']) and ! in_array($files[$key]['mimetype'], (array) static::$config['mime_whitelist']))
-					{
-						$files[$key]['error'] = true;
-						$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_MIME_NOT_WHITELISTED);
-					}
+					$files[$key]['error'] = true;
+					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_MIME_BLACKLISTED);
 				}
-
-				// store the normalized and validated result
-				static::$files[$key] = $files[$key];
-
-				// validation callback defined?
-				if (array_key_exists('validate', static::$callbacks) and ! is_null(static::$callbacks['validate']))
+				elseif ( ! empty(static::$config['mime_whitelist']) and ! in_array($files[$key]['mimetype'], (array) static::$config['mime_whitelist']))
 				{
-					// get the callback method
-					$callback = static::$callbacks['validate'][0];
+					$files[$key]['error'] = true;
+					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_MIME_NOT_WHITELISTED);
+				}
+			}
 
-					// call the callback
-					if (is_callable($callback))
+			// store the normalized and validated result
+			static::$files[$key] = $files[$key];
+
+			// validation callback defined?
+			if (array_key_exists('validate', static::$callbacks) and ! is_null(static::$callbacks['validate']))
+			{
+				// get the callback method
+				$callback = static::$callbacks['validate'][0];
+
+				// call the callback
+				if (is_callable($callback))
+				{
+					$result = call_user_func_array($callback, array(&static::$files[$key]));
+					if (is_numeric($result) and $result)
 					{
-						$result = call_user_func_array($callback, array(&static::$files[$key]));
-						if (is_numeric($result) and $result)
-						{
-							static::$files[$key]['error'] = true;
-							static::$files[$key]['errors'][] = array('error' => $result);
-						}
+						static::$files[$key]['error'] = true;
+						static::$files[$key]['errors'][] = array('error' => $result);
 					}
 				}
-				// and add the message texts
-				foreach (static::$files[$key]['errors'] as $e => $error)
-				{
-					empty(static::$files[$key]['errors'][$e]['message']) and static::$files[$key]['errors'][$e]['message'] = \Lang::get('upload.error_'.$error['error']);
-				}
+			}
+			// and add the message texts
+			foreach (static::$files[$key]['errors'] as $e => $error)
+			{
+				empty(static::$files[$key]['errors'][$e]['message']) and static::$files[$key]['errors'][$e]['message'] = \Lang::get('upload.error_'.$error['error']);
 			}
 		}
 
