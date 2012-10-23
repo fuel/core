@@ -439,7 +439,14 @@ class Fieldset
 		$config = is_array($config) ? $config : array($config => $value);
 		foreach ($config as $key => $value)
 		{
-			$this->config[$key] = $value;
+			if (strpos($key, '.') === false)
+			{
+				$this->config[$key] = $value;
+			}
+			else
+			{
+				\Arr::set($this->config, $key, $value);
+			}
 		}
 
 		return $this;
@@ -464,12 +471,19 @@ class Fieldset
 			$output = array();
 			foreach ($key as $k)
 			{
-				$output[$k] = array_key_exists($k, $this->config) ? $this->config[$k] : $default;
+				$output[$k] = $this->get_config($k, $default);
 			}
 			return $output;
 		}
 
-		return array_key_exists($key, $this->config) ? $this->config[$key] : $default;
+		if (strpos($key, '.') === false)
+		{
+			return array_key_exists($key, $this->config) ? $this->config[$key] : $default;
+		}
+		else
+		{
+			return \Arr::get($this->config, $key, $default);
+		}
 	}
 
 	/**
