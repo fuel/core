@@ -206,9 +206,23 @@ class Uri
 		is_object($uri) and $uri = null;
 
 		$this->uri = trim($uri ?: \Input::uri(), '/');
-		strpos($this->uri, $ext = \Input::extension()) === false or $this->uri = substr($this->uri, 0, -(strlen($ext)+1));
 
-		$this->segments = $this->uri === '' ? array() : explode('/', $this->uri);
+		if (empty($this->uri))
+		{
+			$this->segments = array();
+		}
+		else
+		{
+			if (strpos($this->uri, $ext = \Input::extension()) !== false)
+			{
+				$uri = substr($this->uri, 0, -(strlen($ext)+1));
+			}
+			else
+			{
+				$uri = $this->uri;
+			}
+			$this->segments = explode('/', $uri);
+		}
 
 		if (\Fuel::$profiling)
 		{
