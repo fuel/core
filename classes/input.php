@@ -176,6 +176,9 @@ class Input
 			}
 		}
 
+		// Deal with any trailing dots
+		$uri = rtrim($uri, '.');
+
 		// Strip the defined url suffix from the uri if needed
 		$uri_info = pathinfo($uri);
 

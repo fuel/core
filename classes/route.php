@@ -169,6 +169,12 @@ class Route
 
 			if ($uri != '')
 			{
+				// if it's a non-routed request, strip the extension from the uri
+				if ($path == $uri)
+				{
+					strpos($uri, $ext = \Input::extension()) === false or $uri = substr($uri, 0, -(strlen($ext)+1));
+				}
+
 				if ($this->case_sensitive)
 				{
 					$path = preg_replace('#^'.$this->search.'$#uD', $this->translation, $uri);
