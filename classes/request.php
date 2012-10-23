@@ -354,6 +354,9 @@ class Request
 			throw new \HttpNotFoundException();
 		}
 
+		// save the current language so we can restore it after the call
+		$current_language = \Config::get('language', 'en');
+
 		try
 		{
 			if ($this->route->callable !== null)
@@ -429,13 +432,19 @@ class Request
 					throw new \HttpNotFoundException();
 				}
 			}
+
+			// restore the language setting
+			\Config::set('language', $current_language);
 		}
 		catch (\Exception $e)
 		{
 			static::reset_request();
+
+			// restore the language setting
+			\Config::set('language', $current_language);
+
 			throw $e;
 		}
-
 
 		// Get the controller's output
 		if ($response instanceof \Response)
