@@ -363,8 +363,6 @@ if ( ! function_exists('load_error_classes'))
 	{
 		class_exists('Fuel\\Core\\Error') or import('error');
 		class_exists('Error') or class_alias('Fuel\\Core\\Error', 'Error');
-
-		class_exists('Fuel\\Core\\PhpErrorException') or import('phperrorexception');
 		class_exists('PhpErrorException') or class_alias('Fuel\\Core\\PhpErrorException', 'PhpErrorException');
 
 		class_exists('Fuel\\Core\\Debug') or import('debug');
