@@ -28,14 +28,14 @@ abstract class Image_Driver
 
 	public function __construct($config)
 	{
-		Config::load('image', 'image');
+		\Config::load('image', true);
 		if (is_array($config))
 		{
-			$this->config = array_merge(Config::get('image'), $config);
+			$this->config = array_merge(\Config::get('image'), $config);
 		}
 		else
 		{
-			$this->config = Config::get('image');
+			$this->config = \Config::get('image');
 		}
 		$this->debug("Image Class was initialized using the " . $this->config['driver'] . " driver.");
 	}
@@ -751,12 +751,12 @@ abstract class Image_Driver
 	protected function check_extension($filename, $writevar = true, $force_extension = false)
 	{
 		$return = false;
-		
+
 		if ($force_extension !== false and in_array($force_extension, $this->accepted_extensions))
 		{
-			return $force_extension;			
+			return $force_extension;
 		}
-		
+
 		foreach ($this->accepted_extensions as $ext)
 		{
 			if (strtolower(substr($filename, strlen($ext) * -1)) == strtolower($ext))
