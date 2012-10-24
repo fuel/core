@@ -188,7 +188,7 @@ class Input
 			{
 				static::$detected_ext = $uri_info['extension'];
 
-				if (\Config::get('routing.strip_extension', false))
+				if (\Config::get('routing.strip_extension', true))
 				{
 					$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
 				}
