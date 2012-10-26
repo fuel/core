@@ -477,6 +477,8 @@ class Migrate
 	 */
 	protected static function _find_module($name = null)
 	{
+		$files = array();
+
 		if ($name)
 		{
 			// find a module
@@ -492,7 +494,6 @@ class Migrate
 		else
 		{
 			// find all modules
-			$files = array();
 			foreach (\Config::get('module_paths') as $m)
 			{
 				$files = array_merge($files, glob($m.'*/'.\Config::get('migrations.folder').'*_*.php'));
