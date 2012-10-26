@@ -101,8 +101,8 @@ abstract class Controller_Hybrid extends \Controller_Rest
 			return call_user_func_array(array($this, 'action_'.$resource), $arguments);
 		}
 
-		// if not, we got ourselfs a genuine 404!
-		throw new \HttpNotFoundException();
+		// if the action_ method doesn't exists fall back to the rest controllers router method
+		return parent::router($resource, $arguments);
 	}
 	
 	/**
