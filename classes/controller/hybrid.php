@@ -94,17 +94,53 @@ abstract class Controller_Hybrid extends \Controller_Rest
 			return parent::router($resource, $arguments);
 		}
 
-		// check if the action method exists
-		if (method_exists($this, 'action_'.$resource))
+		// check if a input specific method exists
+		$controller_method = strtolower(\Input::method()) . '_' . $resource;
+
+		// fall back to action_ if no rest method is provided
+		if ( ! method_exists($this, $controller_method))
 		{
-			// if so, call the action
-			return call_user_func_array(array($this, 'action_'.$resource), $arguments);
+			$controller_method = 'action_'.$resource;
+		}
+
+		// check if the action method exists
+		if (method_exists($this, $controller_method))
+		{
+			return call_user_func_array(array($this, $controller_method), $arguments);
 		}
 
 		// if not, we got ourselfs a genuine 404!
 		throw new \HttpNotFoundException();
 	}
-	
+
+	/**
+	 * Response
+	 *
+	 * Takes pure data and optionally a status code, then creates the response
+	 *
+	 * @param   mixed
+	 * @param   int
+	 * @return  object  Response instance
+	 */
+	protected function response($data = array(), $http_status = null)
+	{
+		// if this is an ajax call
+		if ($this->is_restful())
+		{
+			// have the Controller_Rest deal with it
+			return parent::response($data, $http_status);
+		}
+
+		// not an ajax call, but it was an ajax method? convert the
+		// data array into something that can be displayed properly
+		ob_start();
+		var_dump($data);
+		$result = ob_get_clean();
+
+		// and return it
+		return html_entity_decode($result);
+	}
+
 	/**
 	 * Decide whether to return RESTful or templated response
 	 * Override in subclass to introduce custom switching logic.
