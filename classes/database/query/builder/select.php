@@ -147,13 +147,26 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	/**
 	 * Creates a "GROUP BY ..." filter.
 	 *
-	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   mixed   column name or array($column, $column) or object
 	 * @param   ...
 	 * @return  $this
 	 */
 	public function group_by($columns)
 	{
 		$columns = func_get_args();
+
+		foreach($columns as $idx => $column)
+		{
+			// if an array of columns is passed, flatten it
+			if (is_array($column))
+			{
+				foreach($column as $c)
+				{
+					$columns[] = $c;
+				}
+				unset($columns[$idx]);
+			}
+		}
 
 		$this->_group_by = array_merge($this->_group_by, $columns);
 
