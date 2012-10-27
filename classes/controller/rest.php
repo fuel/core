@@ -193,7 +193,7 @@ abstract class Controller_Rest extends \Controller
 		// Format not supported, output directly
 		else
 		{
-			$this->response->body((string) $data);
+			$this->response->body($data);
 		}
 
 		return $this->response;

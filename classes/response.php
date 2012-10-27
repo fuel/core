@@ -287,7 +287,7 @@ class Response
 
 		if ($this->body != null)
 		{
-			echo $this->body;
+			echo $this->__toString();
 		}
 	}
 
@@ -298,6 +298,15 @@ class Response
 	 */
 	public function __toString()
 	{
-		return (string) $this->body();
+		// special treatment for array's
+		if (is_array($this->body))
+		{
+			// this var_dump() is here intentionally !
+			ob_start();
+			var_dump($this->body);
+			$this->body = html_entity_decode(ob_get_clean());
+		}
+
+		return (string) $this->body;
 	}
 }
