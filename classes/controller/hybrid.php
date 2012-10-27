@@ -133,9 +133,13 @@ abstract class Controller_Hybrid extends \Controller_Rest
 
 		// not an ajax call, but it was an ajax method? convert the
 		// data array into something that can be displayed properly
-		ob_start();
-		var_dump($data);
-		$result = ob_get_clean();
+		if ( ! is_string($data))
+		{
+			// only dump the return value if it isn't already a string
+			ob_start();
+			var_dump($data);
+			$result = ob_get_clean();
+		}
 
 		// and return it
 		return html_entity_decode($result);
