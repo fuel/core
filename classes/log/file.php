@@ -82,6 +82,9 @@ class Log_File extends \Log_Driver
 			\Console::log($method.' - '.$msg);
 		}
 
+		// trigger an event every time we have a log call
+		\Event::trigger('log_called', array($level, $msg, $method), 'none');
+
 		// and write it to the logfile
 		$filepath = \Config::get('log.file.path').date('Y/m').'/';
 

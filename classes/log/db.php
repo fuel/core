@@ -78,6 +78,9 @@ class Log_Db extends \Log_Driver
 			\Console::log($method.' - '.$msg);
 		}
 
+		// trigger an event every time we have a log call
+		\Event::trigger('log_called', array($level, $msg, $method), 'none');
+
 		$message = (empty($call) ? '' : $call.' - ').$msg.PHP_EOL;
 
 		\DB::insert(\Config::get('log.db.table'))
