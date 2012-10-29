@@ -225,6 +225,32 @@ class Test_Str extends TestCase
 		$this->assertFalse(Str::is_json($string));
 	}
 
+	public function test_is_xml()
+	{
+		$valid_xml = '<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" stopOnFailure="false" bootstrap="bootstrap_phpunit.php">
+	<php>
+		<server name="doc_root" value="../../"/>
+		<server name="app_path" value="fuel/app"/>
+		<server name="core_path" value="fuel/core"/>
+		<server name="package_path" value="fuel/packages"/>
+	</php>
+</phpunit>';
+
+		$invalid_xml = '<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true" stopOnFailure="false" bootstrap="bootstrap_phpunit.php">
+	<php>
+		<server name="doc_root" value="../../"/>
+		<server name="app_path" value="fuel/app"/>
+		<server name="core_path" value="fuel/core"/>
+		<server name="package_path" value="fuel/packages"/>
+	</
+</phpunit>';
+
+		$this->assertTrue(Str::is_xml($valid_xml));
+		$this->assertFalse(Str::is_xml($invalid_xml));
+	}
+
 	public function test_is_serialized()
 	{
 		$values = array('fuelphp','is' => array('awesome' => true));

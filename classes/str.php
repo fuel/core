@@ -369,6 +369,18 @@ class Str
 	}
 
 	/**
+	 * Check if a string is a valid XML
+	 * 
+	 * @param  string $string string to check
+	 * @return bool
+	 */
+	public static function is_xml($string)
+	{
+		libxml_use_internal_errors(true);
+		return simplexml_load_string($string) !== false;
+	}
+
+	/**
 	 * Check if a string is serialized
 	 * 
 	 * @param  string $string string to check
