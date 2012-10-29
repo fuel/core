@@ -43,15 +43,17 @@ class Lang
 	 * @param    mixed       $group        null for no group, true for group is filename, false for not storing in the master lang
 	 * @param    string|null $language     name of the language to load, null for the configurated language
 	 * @param    bool        $overwrite    true for array_merge, false for \Arr::merge
+	 * @param    boo   l     $reload       true to force a reload even if the file is already loaded
 	 * @return   array                     the (loaded) language array
 	 */
-	public static function load($file, $group = null, $language = null, $overwrite = false)
+	public static function load($file, $group = null, $language = null, $overwrite = false, $reload = false)
 	{
 		$language or $language = \Config::get('language');
 		$languages = static::$fallback;
 		array_unshift($languages, $language);
 
-		if ( ! is_array($file) and
+		if ( ! $reload and
+		     ! is_array($file) and
 		     ! is_object($file) and
 		    array_key_exists($file, static::$loaded_files))
 		{

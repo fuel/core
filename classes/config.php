@@ -41,6 +41,7 @@ class Config
 	 *
 	 * @param    mixed    $file         string file | config array | Config_Interface instance
 	 * @param    mixed    $group        null for no group, true for group is filename, false for not storing in the master config
+	 * @param    bool     $reload       true to force a reload even if the file is already loaded
 	 * @param    bool     $overwrite    true for array_merge, false for \Arr::merge
 	 * @return   array                  the (loaded) config array
 	 */
