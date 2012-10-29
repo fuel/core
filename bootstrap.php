@@ -177,7 +177,11 @@ function setup_autoloader()
 		'Fuel\\Core\\Lang_Php'           => COREPATH.'classes/lang/php.php',
 		'Fuel\\Core\\Lang_Yml'           => COREPATH.'classes/lang/yml.php',
 
-		'Fuel\\Core\\Log'        => COREPATH.'classes/log.php',
+		'Fuel\\Core\\Log'           => COREPATH.'classes/log.php',
+		'Fuel\\Core\\Log_Driver'    => COREPATH.'classes/log/driver.php',
+		'Fuel\\Core\\Log_File'      => COREPATH.'classes/log/file.php',
+		'Fuel\\Core\\Log_Db'        => COREPATH.'classes/log/db.php',
+		'Fuel\\Core\\Log_Exception' => COREPATH.'classes/log/exception.php',
 
 		'Fuel\\Core\\Markdown'   => COREPATH.'classes/markdown.php',
 
