@@ -39,6 +39,27 @@ class Test_Date extends TestCase
 		$output = Date::days_in_month(2,2000);
 		$expected = 29;
 		$this->assertEquals($expected, $output);
+		
+		try
+		{
+			$output = Date::days_in_month(0);
+			$this->fail("Expect UnexpectedValueException");
+		}
+		catch(\UnexpectedValueException $e)
+		{
+			// OK
+		}
+		
+		try
+		{
+			$output = Date::days_in_month(13);
+			$this->fail("Expect UnexpectedValueException");
+		}
+		catch(\UnexpectedValueException $e)
+		{
+			// OK
+		}
+
 	}
 
 	/**

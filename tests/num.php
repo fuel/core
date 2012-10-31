@@ -56,6 +56,17 @@ class Test_Num extends TestCase
 
 		$this->assertEquals($expected, $output);
 
+		$output = Num::quantity('1500000');
+		$expected = '2M';
+
+		$this->assertEquals($expected, $output);
+		
+		
+		$output = Num::quantity('1000000000');
+		$expected = '1B';
+
+		$this->assertEquals($expected, $output);
+
 		// Get current localized decimal separator
 		$locale_conv = localeconv();
 		$decimal_point = isset($locale_conv['decimal_point']) ? $locale_conv['decimal_point'] : '.';
@@ -73,6 +84,14 @@ class Test_Num extends TestCase
 	{
 		$output = Num::format('1234567890', '(000) 000-0000');
 		$expected = '(123) 456-7890';
+
+		$this->assertEquals($expected, $output);
+		
+		$output = Num::format(null, '(000) 000-0000');
+		$this->assertNull($output);
+		
+		$output = Num::format('1234567890', null);
+		$expected = '1234567890';
 
 		$this->assertEquals($expected, $output);
 	}
