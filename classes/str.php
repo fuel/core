@@ -381,8 +381,12 @@ class Str
 			throw new \FuelException('libxml is required to use Str::is_xml()');
 		}
 
+		$internal_errors = libxml_use_internal_errors();
 		libxml_use_internal_errors(true);
-		return simplexml_load_string($string) !== false;
+		$result = simplexml_load_string($string) !== false;
+		libxml_use_internal_errors($internal_errors);
+
+		return $result;
 	}
 
 	/**
