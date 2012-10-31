@@ -214,6 +214,11 @@ class Test_Str extends TestCase
 		$this->assertFalse(strpos($output, '0'));
 	}
 
+	/**
+	 * Test for Str::is_json()
+	 *
+	 * @test
+	 */
 	public function test_is_json()
 	{
 		$values = array('fuelphp','is' => array('awesome' => true));
@@ -225,35 +230,43 @@ class Test_Str extends TestCase
 		$this->assertFalse(Str::is_json($string));
 	}
 
+	/**
+	 * Test for Str::is_xml()
+	 *
+	 * @test
+	 * @requires extension libxml
+	 */
 	public function test_is_xml()
 	{
-		if (defined('LIBXML_COMPACT'))
-		{
-			$valid_xml = '<?xml version="1.0" encoding="UTF-8"?>
-						<phpunit colors="true" stopOnFailure="false" bootstrap="bootstrap_phpunit.php">
-							<php>
-								<server name="doc_root" value="../../"/>
-								<server name="app_path" value="fuel/app"/>
-								<server name="core_path" value="fuel/core"/>
-								<server name="package_path" value="fuel/packages"/>
-							</php>
-						</phpunit>';
+		$valid_xml = '<?xml version="1.0" encoding="UTF-8"?>
+					<phpunit colors="true" stopOnFailure="false" bootstrap="bootstrap_phpunit.php">
+						<php>
+							<server name="doc_root" value="../../"/>
+							<server name="app_path" value="fuel/app"/>
+							<server name="core_path" value="fuel/core"/>
+							<server name="package_path" value="fuel/packages"/>
+						</php>
+					</phpunit>';
 
-			$invalid_xml = '<?xml version="1.0" encoding="UTF-8"?>
-						<phpunit colors="true" stopOnFailure="false" bootstrap="bootstrap_phpunit.php">
-							<php>
-								<server name="doc_root" value="../../"/>
-								<server name="app_path" value="fuel/app"/>
-								<server name="core_path" value="fuel/core"/>
-								<server name="package_path" value="fuel/packages"/>
-							</
-						</phpunit>';
+		$invalid_xml = '<?xml version="1.0" encoding="UTF-8"?>
+					<phpunit colors="true" stopOnFailure="false" bootstrap="bootstrap_phpunit.php">
+						<php>
+							<server name="doc_root" value="../../"/>
+							<server name="app_path" value="fuel/app"/>
+							<server name="core_path" value="fuel/core"/>
+							<server name="package_path" value="fuel/packages"/>
+						</
+					</phpunit>';
 
-			$this->assertTrue(Str::is_xml($valid_xml));
-			$this->assertFalse(Str::is_xml($invalid_xml));
-		}
+		$this->assertTrue(Str::is_xml($valid_xml));
+		$this->assertFalse(Str::is_xml($invalid_xml));
 	}
 
+	/**
+	 * Test for Str::is_serialized()
+	 *
+	 * @test
+	 */
 	public function test_is_serialized()
 	{
 		$values = array('fuelphp','is' => array('awesome' => true));
@@ -265,6 +278,11 @@ class Test_Str extends TestCase
 		$this->assertTrue(Str::is_serialized($string));
 	}
 
+	/**
+	 * Test for Str::is_html()
+	 *
+	 * @test
+	 */
 	public function test_is_html()
 	{
 		$html = '<div class="row"><div class="span12"><strong>FuelPHP</strong> is a simple, flexible, <i>community<i> driven PHP 5.3 web framework based on the best ideas of other frameworks with a fresh start.</p>';
