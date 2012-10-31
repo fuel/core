@@ -41,7 +41,7 @@ abstract class Controller
 	public function after($response)
 	{
 		// Make sure the $response is a Response object
-		if ( ! $response instanceof \Response)
+		if ( ! $response instanceof Response)
 		{
 			$response = \Response::forge($response);
 		}
