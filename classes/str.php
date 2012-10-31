@@ -376,6 +376,11 @@ class Str
 	 */
 	public static function is_xml($string)
 	{
+		if ( ! defined('LIBXML_COMPACT'))
+		{
+			throw new \FuelException('libxml is required to use Str::is_xml()');
+		}
+
 		libxml_use_internal_errors(true);
 		return simplexml_load_string($string) !== false;
 	}
