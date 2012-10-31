@@ -43,13 +43,22 @@ class Lang
 	 * @param    mixed       $group        null for no group, true for group is filename, false for not storing in the master lang
 	 * @param    string|null $language     name of the language to load, null for the configurated language
 	 * @param    bool        $overwrite    true for array_merge, false for \Arr::merge
-	 * @param    boo   l     $reload       true to force a reload even if the file is already loaded
+	 * @param    bool        $reload       true to force a reload even if the file is already loaded
 	 * @return   array                     the (loaded) language array
 	 */
 	public static function load($file, $group = null, $language = null, $overwrite = false, $reload = false)
 	{
+		// get the active language and all fallback languages
 		$language or $language = \Config::get('language');
 		$languages = static::$fallback;
+
+		// make sure we don't have the active language in the fallback array
+		if (in_array($language, $languages))
+		{
+			unset($languages[array_search($language, $languages)]);
+		}
+
+		// stick the active language to the front of the list
 		array_unshift($languages, $language);
 
 		if ( ! $reload and
