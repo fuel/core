@@ -369,6 +369,27 @@ class Str
 	}
 
 	/**
+	 * Check if a string is a valid XML
+	 * 
+	 * @param  string $string string to check
+	 * @return bool
+	 */
+	public static function is_xml($string)
+	{
+		if ( ! defined('LIBXML_COMPACT'))
+		{
+			throw new \FuelException('libxml is required to use Str::is_xml()');
+		}
+
+		$internal_errors = libxml_use_internal_errors();
+		libxml_use_internal_errors(true);
+		$result = simplexml_load_string($string) !== false;
+		libxml_use_internal_errors($internal_errors);
+
+		return $result;
+	}
+
+	/**
 	 * Check if a string is serialized
 	 * 
 	 * @param  string $string string to check
