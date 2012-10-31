@@ -42,6 +42,28 @@ class Test_Date extends TestCase
 	}
 
 	/**
+	 * Test for Date::days_in_month(0)
+	 * @expectedException UnexpectedValueException
+	 * @test
+	 */
+	public function test_days_in_month_0_exception()
+	{
+		$output = Date::days_in_month(0);
+	}
+
+	/**
+	 * Test for Date::days_in_month(13)
+	 * @expectedException UnexpectedValueException
+	 * @test
+	 */
+	public function test_days_in_month_13_exception()
+	{
+		$output = Date::days_in_month(13);
+	}
+
+	
+
+	/**
 	 * Test for Date::format()
 	 *
 	 * @test
