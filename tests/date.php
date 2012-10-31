@@ -49,7 +49,6 @@ class Test_Date extends TestCase
 	public function test_days_in_month_0_exception()
 	{
 		$output = Date::days_in_month(0);
-		$this->fail("Expect UnexpectedValueException");
 	}
 
 	/**
@@ -60,7 +59,6 @@ class Test_Date extends TestCase
 	public function test_days_in_month_13_exception()
 	{
 		$output = Date::days_in_month(13);
-		$this->fail("Expect UnexpectedValueException");
 	}
 
 	
