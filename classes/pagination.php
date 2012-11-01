@@ -50,7 +50,7 @@ class Pagination
 			'set' => '__set',
 			'set_config' => '__set',
 			'create_links' => 'render',
-			'page_links' => 'page_render',
+			'page_links' => 'pages_render',
 			'prev_link' => 'previous',
 			'next_link' => 'next',
 		);
@@ -245,7 +245,7 @@ class Pagination
 
 		$html = str_replace(
 			'{pagination}',
-			$this->previous().$this->page_render().$this->next(),
+			$this->previous().$this->pages_render().$this->next(),
 			$this->template['wrapper']
 		);
 
@@ -257,7 +257,7 @@ class Pagination
 	 *
 	 * @return	string	Markup for page number links
 	 */
-	public function page_render()
+	public function pages_render()
 	{
 		// no links if we only have one page
 		if ($this->config['total_pages'] == 1)
