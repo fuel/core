@@ -219,15 +219,15 @@ class Pagination
 			if (array_key_exists($name, $this->config))
 			{
 				$this->config[$name] = $value;
-
-				// update the page counters
-				$this->_recalculate();
 			}
 			elseif (array_key_exists($name, $this->template))
 			{
 				$this->template[$name] = $value;
 			}
 		}
+
+		// update the page counters
+		$this->_recalculate();
 	}
 
 	/**
