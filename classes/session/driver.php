@@ -250,10 +250,31 @@ abstract class Session_Driver
 				$default[$key] = $value;
 			}
 		}
-		elseif (isset($this->flash[$this->config['flash_id'].'::'.$name]))
+		else
 		{
-			$this->flash[$this->config['flash_id'].'::'.$name]['state'] = 'old';
-			$default = $this->flash[$this->config['flash_id'].'::'.$name]['value'];
+			// check if we need to run an Arr:get()
+			if (strpos($name, '.') !== false)
+			{
+				$keys = explode('.', $name, 2);
+				$name = array_shift($keys);
+			}
+			else
+			{
+				$keys = false;
+			}
+
+			if (isset($this->flash[$this->config['flash_id'].'::'.$name]))
+			{
+				$this->flash[$this->config['flash_id'].'::'.$name]['state'] = 'used';
+				if ($keys)
+				{
+					$default = \Arr::get($this->flash[$this->config['flash_id'].'::'.$name]['value'], $keys[0], $default);
+				}
+				else
+				{
+					$default = $this->flash[$this->config['flash_id'].'::'.$name]['value'];
+				}
+			}
 		}
 
 		return ($default instanceof \Closure) ? $default() : $default;
