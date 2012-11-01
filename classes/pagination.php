@@ -4,278 +4,396 @@
  *
  * @package		Fuel
  * @version		1.0
- * @author		Dan Horrigan <http://dhorrigan.com>
  * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
+ * @copyright	2010 - 2012 Fuel Development Team
  */
 
 namespace Fuel\Core;
 
 
-
 class Pagination
 {
+	/**
+	 * @var	array	Pagination instances
+	 */
+	protected static $_instances = array();
 
 	/**
-	 * @var	integer	The current page
+	 * @var	array	Pagination default instance
 	 */
-	public static $current_page = null;
-
-	/**
-	 * @var	integer	The offset that the current page starts at
-	 */
-	public static $offset = 0;
-
-	/**
-	 * @var	integer	The number of items per page
-	 */
-	public static $per_page = 10;
-
-	/**
-	 * @var	integer	The number of total pages
-	 */
-	public static $total_pages = 0;
-
-	/**
-	 * @var array The HTML for the display
-	 */
-	public static $template = array(
-		'wrapper_start'           => '<div class="pagination"> ',
-		'wrapper_end'             => ' </div>',
-		'page_start'              => '<span class="page-links"> ',
-		'page_end'                => ' </span>',
-		'previous_start'          => '<span class="previous"> ',
-		'previous_end'            => ' </span>',
-		'previous_inactive_start' => ' <span class="previous-inactive">',
-		'previous_inactive_end'   => ' </span>',
-		'previous_inactive_attrs' => array(),
-		'previous_mark'           => '&laquo; ',
-		'previous_attrs'          => array(),
-		'next_start'              => '<span class="next"> ',
-		'next_end'                => ' </span>',
-		'next_inactive_start'     => ' <span class="next-inactive">',
-		'next_inactive_end'       => ' </span>',
-		'next_inactive_attrs'     => array(),
-		'next_mark'               => ' &raquo;',
-		'next_attrs'              => array(),
-		'active_start'            => '<span class="active"> ',
-		'active_end'              => ' </span>',
-		'active_attrs'            => array(),
-		'regular_start'           => '',
-		'regular_end'             => '',
-		'regular_attrs'           => array(),
-	);
-
-	/**
-	 * @var	integer	The total number of items
-	 */
-	protected static $total_items = 0;
-
-	/**
-	 * @var	integer	The total number of links to show
-	 */
-	protected static $num_links = 5;
-
-	/**
-	 * @var	integer	The URI segment containg page number
-	 */
-	protected static $uri_segment = 3;
-
-	/**
-	 * @var	mixed	The pagination URL
-	 */
-	protected static $pagination_url;
+	protected static $_instance = null;
 
 	/**
 	 * Init
 	 *
 	 * Loads in the config and sets the variables
 	 *
-	 * @access	public
 	 * @return	void
 	 */
 	public static function _init()
 	{
 		\Config::load('pagination', true);
-		$config = \Config::get('pagination', array());
-
-		static::set_config($config);
+		\Lang::load('pagination', true);
 	}
 
-	// --------------------------------------------------------------------
+	/**
+	 * Static access to the default instance
+	 *
+	 * @return	mixed
+	 * @throws	BadMethodCallException if the request method does not exist
+	 */
+	public static function __callStatic($name, $arguments)
+	{
+		// old pre-1.4 mapping to new instance methods
+		static $mapping = array(
+			'get' => '__get',
+			'set' => '__set',
+			'set_config' => '__set',
+			'create_links' => 'render',
+			'page_links' => 'page_render',
+			'prev_link' => 'previous',
+			'next_link' => 'next',
+		);
+
+		array_key_exists($name, $mapping) and $name = $mapping[$name];
+
+		// call the method on the default instance
+		if ($instance = static::instance() and method_exists($instance, $name))
+		{
+			return call_user_func_array(array($instance, $name), $arguments);
+		}
+
+		throw new \BadMethodCallException('The pagination class doesn\'t have a method called "'.$name.'"');
+	}
 
 	/**
-	 * Set Config
+	 * forge a new pagination instance
 	 *
-	 * Sets the configuration for pagination
-	 *
-	 * @access public
-	 * @param array   $config The configuration array
-	 * @return void
+	 * @return	\Pagination	a new pagination instance
 	 */
-	public static function set_config(array $config)
+	public static function forge($name = 'default', $config = array())
 	{
-
-		foreach ($config as $key => $value)
+		if ($exists = static::instance($name))
 		{
-			if ($key == 'template')
+			\Error::notice('Pagination with this name exists already, cannot be overwritten.');
+			return $exists;
+		}
+
+		static::$_instances[$name] = new static($config);
+
+		if ($name == 'default')
+		{
+			static::$_instance = static::$_instances[$name];
+		}
+
+		return static::$_instances[$name];
+	}
+
+	/**
+	 * retrieve an existing pagination instance
+	 *
+	 * @return	\Pagination	a existing pagination instance
+	 */
+	public static function instance($name = null)
+	{
+		if ($name !== null)
+		{
+			if ( ! array_key_exists($name, static::$_instances))
 			{
-				static::$template = array_merge(static::$template, $config['template']);
-				continue;
+				return false;
 			}
 
-			static::${$key} = $value;
+			return static::$_instances[$name];
 		}
 
-		static::initialize();
+		if (static::$_instance === null)
+		{
+			static::$_instance = static::forge();
+		}
+
+		return static::$_instance;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Prepares vars for creating links
-	 *
-	 * @access public
-	 * @return array    The pagination variables
+	 * instance configuration values
 	 */
-	protected static function initialize()
-	{
-		static::$total_pages = ceil(static::$total_items / static::$per_page) ?: 1;
-
-		static::$current_page = (static::$total_items > 0 && static::$current_page > 1) ? static::$current_page : (int) \URI::segment(static::$uri_segment);
-
-		if (static::$current_page > static::$total_pages)
-		{
-			static::$current_page = static::$total_pages;
-		}
-		elseif (static::$current_page < 1)
-		{
-			static::$current_page = 1;
-		}
-
-		// The current page must be zero based so that the offset for page 1 is 0.
-		static::$offset = (static::$current_page - 1) * static::$per_page;
-	}
-
-	// --------------------------------------------------------------------
+	protected $config = array(
+		'current_page'            => null,
+		'offset'                  => 0,
+		'per_page'                => 10,
+		'total_pages'             => 0,
+		'total_items'             => 0,
+		'num_links'               => 5,
+		'uri_segment'             => 3,
+		'pagination_url'          => null,
+	);
 
 	/**
-	 * Creates the pagination links
-	 *
-	 * @access public
-	 * @return mixed    The pagination links
+	 * instance template values
 	 */
-	public static function create_links()
+	protected $template = array(
+		'wrapper'                 => "<div class=\"pagination\">\n\t{pagination}\n</div>\n",
+		'previous'                => "<span class=\"previous\">\n\t{link}\n</span>\n",
+		'previous-link'           => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'previous-inactive'       => "<span class=\"previous-inactive\">\n\t{link}\n</span>\n",
+		'previous-inactive-link'  => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'regular'                 => "<span>\n\t{link}\n</span>\n",
+		'regular-link'            => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'active'                  => "<span class=\"active\">\n\t{link}\n</span>\n",
+		'active-link'             => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'next'                    => "<span class=\"next\">\n\t{link}\n</span>\n",
+		'next-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'next-inactive'           => "<span class=\"next-inactive\">\n\t{link}\n</span>\n",
+		'next-inactive-link'      => "\t\t<a href=\"{uri}\">{page}</a>\n",
+	);
+
+	/**
+	 *
+	 */
+	public function __construct($config = array())
 	{
-		if (static::$total_pages == 1)
+		// process the configuration passed
+		if ( ! empty($config))
+		{
+			if (is_string($config))
+			{
+				$config = \Config::get('pagination.'.$config, array());
+			}
+			else
+			{
+				if (isset($config['name']))
+				{
+					$config = array_merge(\Config::get('pagination.'.$config['name'], array()), $config);
+					unset($config['name']);
+				}
+			}
+		}
+		else
+		{
+			$config = \Config::get('pagination.'.\Config::get('pagination.active', 'default'), array());
+		}
+
+		// update the instance default config with the data passed
+		foreach ($config as $key => $value)
+		{
+			$this->__set($key, $value);
+		}
+	}
+
+	/**
+	 * configuration value getter
+	 */
+	public function __get($name)
+	{
+		if (array_key_exists($name, $this->config))
+		{
+			return $this->config[$name];
+		}
+		elseif (array_key_exists($name, $this->template))
+		{
+			return $this->template[$name];
+		}
+		else
+		{
+			return null;
+		}
+	}
+
+
+	/**
+	 * configuration value setter
+	 */
+	public function __set($name, $value = null)
+	{
+		if (is_array($name))
+		{
+			foreach($name as $key => $value)
+			{
+				$this->__set($key, $value);
+			}
+		}
+		else
+		{
+			if (array_key_exists($name, $this->config))
+			{
+				$this->config[$name] = $value;
+
+				// update the page counters
+				$this->_recalculate();
+			}
+			elseif (array_key_exists($name, $this->template))
+			{
+				$this->template[$name] = $value;
+			}
+		}
+	}
+
+	/**
+	 * Creates the pagination markup
+	 *
+	 * @return	string	Markup for the pagination block
+	 */
+	public function render()
+	{
+		// no links if we only have one page
+		if ($this->config['total_pages'] == 1)
 		{
 			return '';
 		}
 
-		\Lang::load('pagination', true);
+		$html = str_replace(
+			'{pagination}',
+			$this->previous().$this->page_render().$this->next(),
+			$this->template['wrapper']
+		);
 
-		$pagination  = static::$template['wrapper_start'];
-		$pagination .= static::prev_link(\Lang::get('pagination.previous'));
-		$pagination .= static::page_links();
-		$pagination .= static::next_link(\Lang::get('pagination.next'));
-		$pagination .= static::$template['wrapper_end'];
-
-		return $pagination;
+		return $html;
 	}
 
-	// --------------------------------------------------------------------
-
 	/**
-	 * Pagination Page Number links
+	 * generate the HTML for the page links only
 	 *
-	 * @access public
-	 * @return mixed    Markup for page number links
+	 * @return	string	Markup for page number links
 	 */
-	public static function page_links()
+	public function page_render()
 	{
-		if (static::$total_pages == 1)
+		// no links if we only have one page
+		if ($this->config['total_pages'] == 1)
 		{
 			return '';
 		}
 
-		$pagination = '';
+		$html = '';
 
-		// Let's get the starting page number, this is determined using num_links
-		$start = ((static::$current_page - static::$num_links) > 0) ? static::$current_page - (static::$num_links - 1) : 1;
+		// let's get the starting page number, this is determined using num_links
+		$start = (($this->config['current_page'] - $this->config['num_links']) > 0) ? $this->config['current_page'] - ($this->config['num_links'] - 1) : 1;
 
-		// Let's get the ending page number
-		$end   = ((static::$current_page + static::$num_links) < static::$total_pages) ? static::$current_page + static::$num_links : static::$total_pages;
+		// let's get the ending page number
+		$end = (($this->config['current_page'] + $this->config['num_links']) < $this->config['total_pages']) ? $this->config['current_page'] + $this->config['num_links'] : $this->config['total_pages'];
 
 		for($i = $start; $i <= $end; $i++)
 		{
-			if (static::$current_page == $i)
+			if ($this->config['current_page'] == $i)
 			{
-				$pagination .= static::$template['active_start'].\Html::anchor('#', $i, static::$template['active_attrs']).static::$template['active_end'];
+				$html .= str_replace(
+				    '{link}',
+				    str_replace(array('{uri}', '{page}'), array('#', $i), $this->template['active-link']),
+				    $this->template['active']
+				);
 			}
 			else
 			{
 				$url = ($i == 1) ? '' : '/'.$i;
-				$pagination .= static::$template['regular_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$url, $i, static::$template['regular_attrs']).static::$template['regular_end'];
+
+				$html .= str_replace(
+				    '{link}',
+				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$url, $i), $this->template['regular-link']),
+				    $this->template['regular']
+				);
 			}
 		}
 
-		return static::$template['page_start'].$pagination.static::$template['page_end'];
+		return $html;
 	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Pagination "Next" link
-	 *
-	 * @access public
-	 * @param string $value The text displayed in link
-	 * @return mixed    The next link
-	 */
-	public static function next_link($value)
-	{
-		if (static::$total_pages == 1)
-		{
-			return '';
-		}
-
-		if (static::$current_page == static::$total_pages)
-		{
-			return static::$template['next_inactive_start'].\Html::anchor('#', $value.static::$template['next_mark'], static::$template['next_inactive_attrs']).static::$template['next_inactive_end'];
-		}
-		else
-		{
-			$next_page = static::$current_page + 1;
-			return static::$template['next_start'].\Html::anchor(rtrim(static::$pagination_url, '/').'/'.$next_page, $value.static::$template['next_mark'], static::$template['next_attrs']).static::$template['next_end'];
-		}
-	}
-
-	// --------------------------------------------------------------------
 
 	/**
 	 * Pagination "Previous" link
 	 *
-	 * @access public
-	 * @param string $value The text displayed in link
-	 * @return mixed    The previous link
+	 * @param	string $value optional text to display in the link
+	 *
+	 * @return	string	Markup for the 'previous' page number link
 	 */
-	public static function prev_link($value)
+	public function previous($marker = '&laquo;')
 	{
-		if (static::$total_pages == 1)
+		$html = '';
+
+		if ($this->config['total_pages'] > 1)
 		{
-			return '';
+			if ($this->config['current_page'] == 1)
+			{
+				$html = str_replace(
+				    '{link}',
+				    str_replace(array('{uri}', '{page}'), array('#', $marker), $this->template['previous-inactive-link']),
+				    $this->template['previous-inactive']
+				);
+			}
+			else
+			{
+				$previous_page = $this->config['current_page'] - 1;
+				$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
+
+				$html = str_replace(
+				    '{link}',
+				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$previous_page, $marker), $this->template['previous-link']),
+				    $this->template['previous']
+				);
+			}
 		}
 
-		if (static::$current_page == 1)
-		{
-			return static::$template['previous_inactive_start'].\Html::anchor('#', static::$template['previous_mark'].$value, static::$template['previous_inactive_attrs']).static::$template['previous_inactive_end'];
-		}
-		else
-		{
-			$previous_page = static::$current_page - 1;
-			$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-			return static::$template['previous_start'].\Html::anchor(rtrim(static::$pagination_url, '/').$previous_page, static::$template['previous_mark'].$value, static::$template['previous_attrs']).static::$template['previous_end'];
-		}
+		return $html;
 	}
+
+	/**
+	 * Pagination "Next" link
+	 *
+	 * @param	string $value optional text to display in the link
+	 *
+	 * @return	string	Markup for the 'next' page number link
+	 */
+	public function next($marker = '&raquo;')
+	{
+		$html = '';
+
+		if ($this->config['total_pages'] > 1)
+		{
+			if ($this->config['current_page'] == $this->config['total_pages'])
+			{
+				$html = str_replace(
+				    '{link}',
+				    str_replace(array('{uri}', '{page}'), array('#', $marker), $this->template['next-inactive-link']),
+				    $this->template['next-inactive']
+				);
+			}
+			else
+			{
+				$next_page = '/'.($this->config['current_page'] + 1);
+
+				$html = str_replace(
+				    '{link}',
+				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$next_page, $marker), $this->template['next-link']),
+				    $this->template['next']
+				);
+			}
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Prepares vars for creating links
+	 */
+	protected function _recalculate()
+	{
+		// calculate the number of pages
+		$this->config['total_pages'] = ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
+
+		// calculate the current page number
+		$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? $this->config['current_page'] : (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
+
+		// make sure the current page is within bounds
+		if ($this->config['current_page'] > $this->config['total_pages'])
+		{
+			$this->config['current_page'] = $this->config['total_pages'];
+		}
+		elseif ($this->config['current_page'] < 1)
+		{
+			$this->config['current_page'] = 1;
+		}
+
+		// the current page must be zero based so that the offset for page 1 is 0.
+		$this->config['offset'] = ($this->config['current_page'] - 1) * $this->config['per_page'];
+	}
+
 }
-
-

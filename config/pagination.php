@@ -2,30 +2,52 @@
 
 return array(
 
-	'template' => array(
-		'wrapper_start'           => '<div class="pagination"> ',
-		'wrapper_end'             => ' </div>',
-		'page_start'              => '<span class="page-links"> ',
-		'page_end'                => ' </span>',
-		'previous_start'          => '<span class="previous"> ',
-		'previous_end'            => ' </span>',
-		'previous_inactive_start' => ' <span class="previous-inactive">',
-		'previous_inactive_end'   => ' </span>',
-		'previous_inactive_attrs' => array(),
-		'previous_mark'           => '&laquo; ',
-		'previous_attrs'          => array(),
-		'next_start'              => '<span class="next"> ',
-		'next_end'                => ' </span>',
-		'next_inactive_start'     => ' <span class="next-inactive">',
-		'next_inactive_end'       => ' </span>',
-		'next_inactive_attrs'     => array(),
-		'next_mark'               => ' &raquo;',
-		'next_attrs'              => array(),
-		'active_start'            => '<span class="active"> ',
-		'active_end'              => ' </span>',
-		'active_attrs'            => array(),
-		'regular_start'           => '',
-		'regular_end'             => '',
-		'regular_attrs'           => array(),
+	// the active pagination template
+	'active'                      => 'default',
+
+	// default FuelPHP pagination template, compatible with pre-1.4 applications
+	'default'                     => array(
+		'wrapper'                 => "<div class=\"pagination\">\n\t{pagination}\n</div>\n",
+
+		'previous'                => "<span class=\"previous\">\n\t{link}\n</span>\n",
+		'previous-link'           => "\t\t<a href=\"{uri}\">{page}</a>\n",
+
+		'previous-inactive'       => "<span class=\"previous-inactive\">\n\t{link}\n</span>\n",
+		'previous-inactive-link'  => "\t\t<a href=\"{uri}\">{page}</a>\n",
+
+		'regular'                 => "<span>\n\t{link}\n</span>\n",
+		'regular-link'            => "\t\t<a href=\"{uri}\">{page}</a>\n",
+
+		'active'                  => "<span class=\"active\">\n\t{link}\n</span>\n",
+		'active-link'             => "\t\t<a href=\"{uri}\">{page}</a>\n",
+
+		'next'                    => "<span class=\"next\">\n\t{link}\n</span>\n",
+		'next-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
+
+		'next-inactive'           => "<span class=\"next-inactive\">\n\t{link}\n</span>\n",
+		'next-inactive-link'      => "\t\t<a href=\"{uri}\">{page}</a>\n",
+	),
+
+	// Twitter bootstrap 2.x template
+	'bootstrap'                   => array(
+		'wrapper'                 => "<div class=\"pagination\">\n\t<ul>{pagination}\n\t</ul>\n</div>\n",
+
+		'previous'                => "\n\t\t<li>{link}</li>",
+		'previous-link'           => "<a href=\"{uri}\">{page}</a>",
+
+		'previous-inactive'       => "\n\t\t<li class=\"disabled\">{link}</li>",
+		'previous-inactive-link'  => "<a href=\"{uri}\">{page}</a>",
+
+		'regular'                 => "\n\t\t<li>{link}</li>",
+		'regular-link'            => "<a href=\"{uri}\">{page}</a>",
+
+		'active'                  => "\n\t\t<li \"active\">{link}</li>",
+		'active-link'             => "<a href=\"{uri}\">{page}</a>",
+
+		'next'                    => "\n\t\t<li>{link}</li>",
+		'next-link'               => "<a href=\"{uri}\">{page}</a>",
+
+		'next-inactive'           => "\n\t\t<li class=\"disabled\">{link}</li>",
+		'next-inactive-link'      => "<a href=\"{uri}\">{page}</a>",
 	),
 );
