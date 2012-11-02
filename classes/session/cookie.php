@@ -54,9 +54,6 @@ class Session_Cookie extends \Session_Driver
 		$this->keys['updated'] 		= $this->keys['created'];
 		$this->keys['payload'] 		= '';
 
-		// and set the session cookie
-		$this->_set_cookie();
-
 		return $this;
 	}
 
@@ -79,11 +76,12 @@ class Session_Cookie extends \Session_Driver
 		{
 			$this->data = array();
 			$this->keys = array();
-			return $this;
 		}
-
-		if (isset($payload[0])) $this->data  = $payload[0];
-		if (isset($payload[1])) $this->flash = $payload[1];
+		else
+		{
+			if (isset($payload[0])) $this->data  = $payload[0];
+			if (isset($payload[1])) $this->flash = $payload[1];
+		}
 
 		return parent::read();
 	}

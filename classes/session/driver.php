@@ -76,6 +76,9 @@ abstract class Session_Driver
 	 */
 	public function read()
 	{
+		// do we need to create a new session?
+		empty($this->keys) and $this->create();
+
 		// mark the loaded flash data, auto-expire if configured
 		foreach($this->flash as $key => $value)
 		{
