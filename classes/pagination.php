@@ -154,26 +154,17 @@ class Pagination
 	 */
 	public function __construct($config = array())
 	{
-		// process the configuration passed
-		if ( ! empty($config))
-		{
-			if (is_string($config))
-			{
-				$config = \Config::get('pagination.'.$config, array());
-			}
-			else
-			{
-				if (isset($config['name']))
-				{
-					$config = array_merge(\Config::get('pagination.'.$config['name'], array()), $config);
-					unset($config['name']);
-				}
-			}
-		}
-		else
-		{
-			$config = \Config::get('pagination.'.\Config::get('pagination.active', 'default'), array());
-		}
+		// make sure config is an array
+		is_array($config) or $config = array('name' => $config);
+
+		// and we have a template name
+		array_key_exists('name', $config) or $config['name'] = \Config::get('pagination.active', 'default');
+
+		// merge the config passed with the defined configuration
+		$config = array_merge(\Config::get('pagination.'.$config['name'], array()), $config);
+
+		// don't need the template name anymore
+		unset($config['name']);
 
 		// update the instance default config with the data passed
 		foreach ($config as $key => $value)
