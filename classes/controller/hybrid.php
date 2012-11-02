@@ -69,7 +69,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 				}
 			}
 
-			if ( ! $response instanceof \Response)
+			if ( ! $response instanceof Response)
 			{
 				$response = \Response::forge($response);
 			}

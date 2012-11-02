@@ -78,7 +78,7 @@ abstract class Controller_Rest extends \Controller
 
 		// If the response is a Response object, we will use their
 		// instead of ours.
-		if ( ! $response instanceof \Response)
+		if ( ! $response instanceof Response)
 		{
 			$response = $this->response;
 		}
