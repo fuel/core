@@ -265,7 +265,7 @@ abstract class Session_Driver
 
 			if (isset($this->flash[$this->config['flash_id'].'::'.$name]))
 			{
-				$this->flash[$this->config['flash_id'].'::'.$name]['state'] = 'used';
+				$this->flash[$this->config['flash_id'].'::'.$name]['state'] = 'old';
 				if ($keys)
 				{
 					$default = \Arr::get($this->flash[$this->config['flash_id'].'::'.$name]['value'], $keys[0], $default);
