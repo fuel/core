@@ -12,7 +12,8 @@
 
 namespace Fuel\Core;
 
-class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
+class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializable
+{
 
 	/**
 	 * @var  string  $_table_name  The table name (must set this in your Model)
@@ -810,4 +811,33 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess {
 		return $values;
 	}
 
+	/**
+	 * Serializable implementation: serialize
+	 *
+	 * @return  array  model data
+	 */
+	public function serialize()
+	{
+		$data = $this->to_array();
+
+		$data['_is_new'] = $this->_is_new;
+		$data['_is_frozen'] = $this->_is_frozen;
+
+		return serialize($data);
+	}
+
+	/**
+	 * Serializable implementation: unserialize
+	 *
+	 * @return  array  model data
+	 */
+	public function unserialize($data)
+	{
+		$data = unserialize($data);
+
+		foreach ($data as $key => $value)
+		{
+			$this->__set($key, $value);
+		}
+	}
 }
