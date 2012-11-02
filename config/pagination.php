@@ -61,7 +61,7 @@ return array(
 		'regular'                 => "\n\t\t<li>{link}</li>",
 		'regular-link'            => "<a href=\"{uri}\">{page}</a>",
 
-		'active'                  => "\n\t\t<li \"active\">{link}</li>",
+		'active'                  => "\n\t\t<li class=\"active\">{link}</li>",
 		'active-link'             => "<a href=\"{uri}\">{page}</a>",
 
 		'next'                    => "\n\t\t<li>{link}</li>",
