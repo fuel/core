@@ -76,12 +76,16 @@ abstract class Session_Driver
 	 */
 	public function read()
 	{
-		// auto expire flash variables if needed
-		if ($this->config['flash_auto_expire'] === true)
+		// mark the loaded flash data, auto-expire if configured
+		foreach($this->flash as $key => $value)
 		{
-			foreach($this->flash as $key => $value)
+			if ($this->config['flash_auto_expire'] === true)
 			{
-				$this->flash[$key]['state'] = 'old';
+				$this->flash[$key]['state'] = 'expire';
+			}
+			else
+			{
+				$this->flash[$key]['state'] = 'loaded';
 			}
 		}
 
@@ -265,7 +269,12 @@ abstract class Session_Driver
 
 			if (isset($this->flash[$this->config['flash_id'].'::'.$name]))
 			{
-				$this->flash[$this->config['flash_id'].'::'.$name]['state'] = 'old';
+				// if it's not a var set in this request, mark it for expiration
+				if ($this->flash[$this->config['flash_id'].'::'.$name]['state'] !== 'new')
+				{
+					$this->flash[$this->config['flash_id'].'::'.$name]['state'] = 'expire';
+				}
+
 				if ($keys)
 				{
 					$default = \Arr::get($this->flash[$this->config['flash_id'].'::'.$name]['value'], $keys[0], $default);
@@ -401,7 +410,7 @@ abstract class Session_Driver
 	{
 		foreach($this->flash as $key => $value)
 		{
-			if ($value['state'] === 'old')
+			if ($value['state'] === 'expire')
 			{
 				unset($this->flash[$key]);
 			}
