@@ -111,6 +111,8 @@ class Response
 			$url = $url !== '' ? \Uri::create($url) : \Uri::base();
 		}
 
+		strpos($url, '*') !== false and $url = \Uri::segment_replace($url);
+
 		if ($method == 'location')
 		{
 			$response->set_header('Location', $url);
