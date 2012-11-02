@@ -447,7 +447,7 @@ class Request
 		}
 
 		// Get the controller's output
-		if ($response instanceof \Response)
+		if ($response instanceof Response)
 		{
 			$this->response = $response;
 		}
