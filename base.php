@@ -85,15 +85,10 @@ if ( ! function_exists('array_to_attr'))
 	{
 		$attr_str = '';
 
-		if ( ! is_array($attr))
+		foreach ((array) $attr as $property => $value)
 		{
-			$attr = (array) $attr;
-		}
-
-		foreach ($attr as $property => $value)
-		{
-			// Ignore null values
-			if (is_null($value))
+			// Ignore empty values (null/false/[empty string])
+			if (empty($value))
 			{
 				continue;
 			}
