@@ -84,7 +84,13 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 		// Quote the table name that is being joined
 		$sql .= ' '.$db->quote_table($this->_table);
 
+		if (empty($this->_on))
+		{
+			return $sql;
+		}
+
 		$conditions = array();
+
 		foreach ($this->_on as $condition)
 		{
 			// Split the condition
