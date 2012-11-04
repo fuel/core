@@ -21,7 +21,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	// protected static $_table_name = '';
 
 	/**
-	 * @var  string  $_primary_key  The primary key for the table
+	 * @var  mixed  $_primary_key  The primary key(s) for the table
 	 */
 	// protected static $_primary_key = 'id';
 
@@ -79,12 +79,18 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	/**
 	 * Finds a row with the given primary key value.
 	 *
-	 * @param   mixed  $value  The primary key value to find
-	 * @return  null|object  Either null or a new Model object
+	 * @param   mixed  $value 	The primary key(s) value(s) to find
+	 * @return  null|object  	Either null or a new Model object
 	 */
 	public static function find_by_pk($value)
 	{
-		return static::find_one_by(static::primary_key(), $value);
+		if ( !is_array($value) ) 
+		{
+			$pkeys = static::primary_key();
+			$value = array($pkeys[0] => $value);
+		}
+
+		return static::find_one_by($value);
 	}
 
 	/**
@@ -241,12 +247,13 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public static function count($column = null, $distinct = true, $where = array(), $group_by = null)
 	{
-		$select = $column ?: static::primary_key();
-
 		// Get the database group / connection
 		$connection = isset(static::$_connection) ? static::$_connection : null;
 
 		// Get the columns
+		$select   = $column ?: '*';
+		$distinct = $column ? $distinct : false;
+		
 		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
 			\Database_Connection::instance($connection)->quote_identifier($select).
 			') AS count_result');
@@ -312,13 +319,19 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	}
 
 	/**
-	 * Get the primary key for the current Model
+	 * Get the primary key or composite primary keys for the current Model
 	 *
-	 * @return  string
+	 * @return  array
 	 */
 	protected static function primary_key()
 	{
-		return isset(static::$_primary_key) ? static::$_primary_key : 'id';
+		// Convert primary key from string to array 
+		if (is_string(static::$_primary_key)) 
+		{
+			static::$_primary_key = array(static::$_primary_key);
+		}
+
+		return isset(static::$_primary_key) ? static::$_primary_key : array('id');
 	}
 
 	/**
@@ -364,9 +377,17 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function __construct(array $data = array())
 	{
-		if (isset($this->{static::primary_key()}))
+		foreach (static::primary_key() as $pk)
 		{
-			$this->is_new(false);
+			if (isset($this->{$pk})) 
+			{
+				$this->is_new(false);
+			} 
+			else
+			{
+				$this->is_new(true);
+				break;
+			}
 		}
 
 		if ( ! empty($data))
@@ -484,13 +505,15 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 
 			if ($result[1] > 0)
 			{
-				// workaround for PDO connections not returning the insert_id
-				if ($result[0] === false and isset($vars[static::primary_key()]))
-				{
-					$result[0] = $vars[static::primary_key()];
-				}
 				$this->set($vars);
-				empty($result[0]) or $this->{static::primary_key()} = $result[0];
+
+				// Retrieve autoincremented pkey (doesn't apply to composite pkeys or some pdo connections)
+				if ( $result[0] and count(static::primary_key() === 1) )
+				{
+					$pk = static::primary_key();
+					$this->{$pk[0]} = $result[0];
+				} 
+
 				$this->is_new(false);
 			}
 
@@ -498,8 +521,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		}
 
 		$query = \DB::update(static::$_table_name)
-		         ->set($vars)
-		         ->where(static::primary_key(), '=', $this->{static::primary_key()});
+		         ->set($vars);
+
+		foreach (static::primary_key() as $pk)
+		{
+			$query->where($pk, '=', $this->{$pk});
+		}
 
 		$this->pre_update($query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
@@ -516,8 +543,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	public function delete()
 	{
 		$this->frozen(true);
-		$query = \DB::delete(static::$_table_name)
-		            ->where(static::primary_key(), '=', $this->{static::primary_key()});
+		$query = \DB::delete(static::$_table_name);
+ 
+		foreach (static::primary_key() as $pk)
+		{
+			$query->where($pk, '=', $this->{$pk});
+		}
 
 		$this->pre_delete($query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
