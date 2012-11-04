@@ -432,6 +432,50 @@ class Arr
 	}
 
 	/**
+	 * Filters an array on suffixed associative keys.
+	 *
+	 * @param   array   the array to filter.
+	 * @param   string  suffix to filter on.
+	 * @param   bool    whether to remove the suffix.
+	 * @return  array
+	 */
+	public static function filter_suffixed($array, $suffix, $remove_suffix = true)
+	{
+		$return = array();
+		foreach ($array as $key => $val)
+		{
+			if (preg_match('/'.$suffix.'$/', $key))
+			{
+				if ($remove_suffix === true)
+				{
+					$key = preg_replace('/'.$suffix.'$/','',$key);
+				}
+				$return[$key] = $val;
+			}
+		}
+		return $return;
+	}
+
+	/**
+	 * Removes items from an array that match a key suffix.
+	 *
+	 * @param   array   the array to remove from
+	 * @param   string  suffix to filter on
+	 * @return  array
+	 */
+	public static function remove_suffixed($array, $suffix)
+	{
+		foreach ($array as $key => $val)
+		{
+			if (preg_match('/'.$suffix.'$/', $key))
+			{
+				unset($array[$key]);
+			}
+		}
+		return $array;
+	}
+
+	/**
 	 * Filters an array by an array of keys
 	 *
 	 * @param   array   the array to filter.
