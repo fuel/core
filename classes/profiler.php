@@ -37,7 +37,7 @@ class Profiler
 
 	public static function console($text)
 	{
-		static::$profiler or Console::log($text);
+		static::$profiler and Console::log($text);
 	}
 
 	public static function output()
