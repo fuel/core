@@ -508,7 +508,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 				$this->set($vars);
 
 				// Retrieve autoincremented pkey (doesn't apply to composite pkeys or some pdo connections)
-				if ( $result[0] and count(static::primary_key() === 1) )
+				if ( $result[0] and count(static::primary_key()) === 1 )
 				{
 					$pk = static::primary_key();
 					$this->{$pk[0]} = $result[0];
