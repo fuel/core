@@ -325,13 +325,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	protected static function primary_key()
 	{
-		// Convert primary key from string to array 
-		if (is_string(static::$_primary_key)) 
-		{
-			static::$_primary_key = array(static::$_primary_key);
-		}
-
-		return isset(static::$_primary_key) ? static::$_primary_key : array('id');
+		return isset(static::$_primary_key) ? (array) static::$_primary_key : array('id');
 	}
 
 	/**
