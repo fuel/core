@@ -298,26 +298,6 @@ class Fuel
 	}
 
 	/**
-	 * @deprecated  Keep until v1.3
-	 */
-	public static function add_module($module)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Module::load() instead.', __METHOD__);
-
-		return \Module::load($module);
-	}
-
-	/**
-	 * @deprecated  Keep until v1.3
-	 */
-	public static function module_exists($module)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a Module::exists() instead.', __METHOD__);
-
-		return \Module::exists($module);
-	}
-
-	/**
 	 * This method does basic filesystem caching.  It is used for things like path caching.
 	 *
 	 * This method is from KohanaPHP's Kohana class.

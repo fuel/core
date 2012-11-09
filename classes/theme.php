@@ -214,17 +214,6 @@ class Theme
 	}
 
 	/**
-	 * This method is deprecated...use asset_path() instead.
-	 *
-	 * @deprecated until 1.3
-	 */
-	public function asset($path)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a asset_path() instead.', __METHOD__);
-		return $this->asset_path($path);
-	}
-
-	/**
 	 * Loads an asset from the currently loaded theme.
 	 *
 	 * @param   string  $path  Relative path to the asset
@@ -491,17 +480,6 @@ class Theme
 	}
 
 	/**
-	 * This method is deprecated...use get_info() instead.
-	 *
-	 * @deprecated until 1.3
-	 */
-	public function info($var = null, $default = null, $theme = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a get_info() instead.', __METHOD__);
-		return $this->get_info($var, $default, $theme);
-	}
-
-	/**
 	 * Get a value from the info array
 	 *
 	 * @return  mixed
@@ -562,17 +540,6 @@ class Theme
 
 		// return for chaining
 		return $this;
-	}
-
-	/**
-	 * This method is deprecated...use load_info() instead.
-	 *
-	 * @deprecated until 1.3
-	 */
-	public function all_info($theme = null)
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a load_info() instead.', __METHOD__);
-		return $this->load_info($theme);
 	}
 
 	/**

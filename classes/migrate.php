@@ -543,7 +543,7 @@ class Migrate
 	 *
 	 * @return	void
 	 *
-	 * @deprecated	Remove upgrade check in 1.3
+	 * @deprecated	Remove upgrade check in 1.4
 	 */
 	protected static function table_version_check()
 	{
