@@ -84,7 +84,14 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public static function find_by_pk($value)
 	{
-		return static::find_one_by(static::primary_key(), $value);
+		if (is_array(static::primary_key())) 
+		{
+			return static::find_one_by($value);
+		} 
+		else
+		{
+			return static::find_one_by(static::primary_key(), $value);
+		}
 	}
 
 	/**
@@ -241,7 +248,22 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public static function count($column = null, $distinct = true, $where = array(), $group_by = null)
 	{
-		$select = $column ?: static::primary_key();
+		if ($column) 
+		{
+			$select = $column;
+		}
+		else 
+		{
+			if (is_array(static::primary_key()))
+			{
+				$primary_keys	=& static::primary_key();
+				$select			= $primary_keys[0];
+			}
+			else 
+			{
+				$select = static::primary_key();
+			}
+		}
 
 		// Get the database group / connection
 		$connection = isset(static::$_connection) ? static::$_connection : null;
@@ -364,9 +386,28 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function __construct(array $data = array())
 	{
-		if (isset($this->{static::primary_key()}))
+
+		if (is_array(static::primary_key()))
 		{
-			$this->is_new(false);
+			foreach (static::primary_key() as $pk)
+			{
+				if (isset($this->{$pk})) 
+				{
+					$this->is_new(false);
+				} 
+				else
+				{
+					$this->is_new(true);
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (isset($this->{static::primary_key()}))
+			{
+				$this->is_new(false);
+			}	
 		}
 
 		if ( ! empty($data))
@@ -485,12 +526,31 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 			if ($result[1] > 0)
 			{
 				// workaround for PDO connections not returning the insert_id
-				if ($result[0] === false and isset($vars[static::primary_key()]))
+				if ($result[0] === false)
 				{
-					$result[0] = $vars[static::primary_key()];
+					if (is_array(static::primary_key()))
+					{	
+						// TODO
+					}
+					else if (isset($vars[static::primary_key()]))
+					{
+						$result[0] = $vars[static::primary_key()];
+					}
 				}
+
 				$this->set($vars);
-				empty($result[0]) or $this->{static::primary_key()} = $result[0];
+
+				if (!empty($result[0]))
+				{
+					if (is_array(static::primary_key()))
+					{
+						// TODO: does mysql returns composite insert pk?
+					}
+					else
+					{
+						$this->{static::primary_key()} = $result[0];
+					}
+				}
 				$this->is_new(false);
 			}
 
@@ -498,8 +558,20 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		}
 
 		$query = \DB::update(static::$_table_name)
-		         ->set($vars)
-		         ->where(static::primary_key(), '=', $this->{static::primary_key()});
+		         ->set($vars);
+
+		// composite primary key   
+		if (is_array(static::primary_key()))
+		{
+			foreach (static::primary_key() as $pk)
+			{
+				$query->where($pk, '=', $this->{$pk});
+			}
+		}
+		else 
+		{				
+			$query->where(static::primary_key(), '=', $this->{static::primary_key()});
+		}
 
 		$this->pre_update($query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
@@ -516,8 +588,20 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	public function delete()
 	{
 		$this->frozen(true);
-		$query = \DB::delete(static::$_table_name)
-		            ->where(static::primary_key(), '=', $this->{static::primary_key()});
+		$query = \DB::delete(static::$_table_name);
+
+		// composite primary key   
+		if (is_array(static::primary_key()))
+		{
+			foreach (static::primary_key() as $pk)
+			{
+				$query->where($pk, '=', $this->{$pk});
+			}
+		}
+		else 
+		{				
+			$query->where(static::primary_key(), '=', $this->{static::primary_key()});
+		}
 
 		$this->pre_delete($query);
 		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
