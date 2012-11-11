@@ -216,9 +216,6 @@ class Pagination
 				$this->template[$name] = $value;
 			}
 		}
-
-		// update the page counters
-		$this->_recalculate();
 	}
 
 	/**
@@ -250,6 +247,8 @@ class Pagination
 	 */
 	public function pages_render()
 	{
+		$this->_recalculate();
+
 		// no links if we only have one page
 		if ($this->config['total_pages'] == 1)
 		{
@@ -276,7 +275,14 @@ class Pagination
 			}
 			else
 			{
-				$url = ($i == 1) ? '' : '/'.$i;
+				if (is_null($this->config['uri_segment']))
+				{
+					$url = $i;
+				}
+				else
+				{
+					$url = ($i == 1) ? '' : '/'.$i;
+				}
 
 				$html .= str_replace(
 				    '{link}',
@@ -300,6 +306,8 @@ class Pagination
 	{
 		$html = '';
 
+		$this->_recalculate();
+
 		if ($this->config['total_pages'] > 1)
 		{
 			if ($this->config['current_page'] == 1)
@@ -313,7 +321,10 @@ class Pagination
 			else
 			{
 				$previous_page = $this->config['current_page'] - 1;
-				$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
+				if ( ! is_null($this->config['uri_segment']))
+				{
+					$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
+				}
 
 				$html = str_replace(
 				    '{link}',
@@ -337,6 +348,8 @@ class Pagination
 	{
 		$html = '';
 
+		$this->_recalculate();
+
 		if ($this->config['total_pages'] > 1)
 		{
 			if ($this->config['current_page'] == $this->config['total_pages'])
@@ -349,7 +362,14 @@ class Pagination
 			}
 			else
 			{
-				$next_page = '/'.($this->config['current_page'] + 1);
+				if (is_null($this->config['uri_segment']))
+				{
+					$next_page = $this->config['current_page'] + 1;
+				}
+				else
+				{
+					$next_page = '/'.($this->config['current_page'] + 1);
+				}
 
 				$html = str_replace(
 				    '{link}',
@@ -371,7 +391,15 @@ class Pagination
 		$this->config['total_pages'] = ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
 
 		// calculate the current page number
-		$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? $this->config['current_page'] : (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
+		if (is_null($this->config['uri_segment']))
+		{
+			$page = $this->config['current_page'];
+		}
+		else
+		{
+			$page = (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
+		}
+		$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? (int) $this->config['current_page'] : $page;
 
 		// make sure the current page is within bounds
 		if ($this->config['current_page'] > $this->config['total_pages'])
