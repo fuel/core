@@ -248,15 +248,7 @@ class Uri
 		}
 		else
 		{
-			if (strpos($this->uri, $ext = \Input::extension()) !== false)
-			{
-				$uri = substr($this->uri, 0, -(strlen($ext)+1));
-			}
-			else
-			{
-				$uri = $this->uri;
-			}
-			$this->segments = explode('/', $uri);
+			$this->segments = explode('/', $this->uri);
 		}
 
 		if (\Fuel::$profiling)
