@@ -45,7 +45,8 @@ return array(
 
 	/**
 	 * Base MySQLi config
-	 */
+	 *
+
 	'default' => array(
 		'type'        => 'mysqli',
 		'connection'  => array(
@@ -61,6 +62,7 @@ return array(
 		'enable_cache' => true,
 		'profiling'    => false,
 	),
+	 */
 
 	/**
 	 * Base Redis config
