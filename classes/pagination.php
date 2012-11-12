@@ -178,6 +178,8 @@ class Pagination
 	 */
 	public function __get($name)
 	{
+		$this->_recalculate();
+
 		if (array_key_exists($name, $this->config))
 		{
 			return $this->config[$name];
@@ -210,6 +212,14 @@ class Pagination
 			if (array_key_exists($name, $this->config))
 			{
 				$this->config[$name] = $value;
+
+				if ($name === 'pagination_url')
+				{
+					if (strpos($this->config[$name], '{page}') === FALSE)
+					{
+						$this->config[$name] = rtrim($this->config['pagination_url'], '/').'/{page}';
+					}
+				}
 			}
 			elseif (array_key_exists($name, $this->template))
 			{
@@ -275,18 +285,10 @@ class Pagination
 			}
 			else
 			{
-				if (is_null($this->config['uri_segment']))
-				{
-					$url = $i;
-				}
-				else
-				{
-					$url = ($i == 1) ? '' : '/'.$i;
-				}
-
+				$url = str_replace('{page}', $i, $this->config['pagination_url']);
 				$html .= str_replace(
 				    '{link}',
-				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$url, $i), $this->template['regular-link']),
+				    str_replace(array('{uri}', '{page}'), array($url, $i), $this->template['regular-link']),
 				    $this->template['regular']
 				);
 			}
@@ -321,14 +323,11 @@ class Pagination
 			else
 			{
 				$previous_page = $this->config['current_page'] - 1;
-				if ( ! is_null($this->config['uri_segment']))
-				{
-					$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
-				}
 
+				$url = str_replace('{page}', $previous_page, $this->config['pagination_url']);
 				$html = str_replace(
 				    '{link}',
-				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$previous_page, $marker), $this->template['previous-link']),
+				    str_replace(array('{uri}', '{page}'), array($url, $marker), $this->template['previous-link']),
 				    $this->template['previous']
 				);
 			}
@@ -362,18 +361,12 @@ class Pagination
 			}
 			else
 			{
-				if (is_null($this->config['uri_segment']))
-				{
-					$next_page = $this->config['current_page'] + 1;
-				}
-				else
-				{
-					$next_page = '/'.($this->config['current_page'] + 1);
-				}
+				$next_page = $this->config['current_page'] + 1;
 
+				$url = str_replace('{page}', $next_page, $this->config['pagination_url']);
 				$html = str_replace(
 				    '{link}',
-				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$next_page, $marker), $this->template['next-link']),
+				    str_replace(array('{uri}', '{page}'), array($url, $marker), $this->template['next-link']),
 				    $this->template['next']
 				);
 			}
