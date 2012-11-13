@@ -88,7 +88,7 @@ if ( ! function_exists('array_to_attr'))
 		foreach ((array) $attr as $property => $value)
 		{
 			// Ignore empty values (null/false/[empty string])
-			if (empty($value))
+			if ($value !== 0 and empty($value))
 			{
 				continue;
 			}
