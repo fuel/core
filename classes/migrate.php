@@ -363,7 +363,7 @@ class Migrate
 	{
 		// Load all *_*.php files in the migrations path
 		$method = '_find_'.$type;
-		if ( ! $files = static::$method($name))
+		if ( ! $namespaces = static::$method($name))
 		{
 			return array();
 		}
@@ -371,8 +371,11 @@ class Migrate
 		// get the currently installed migrations from the DB
 		$current = \Arr::get(static::$migrations, $type.'.'.$name, array());
 
-		// storage for the result
+		// storage for the discovered migrations
 		$migrations = array();
+
+		// Returned migrations go in here
+		$ret_migrations = array();
 
 		// normalize start and end values
 		if ( ! is_null($start))
@@ -387,73 +390,84 @@ class Migrate
 			($pos = strpos($end, '_')) === false or $end = ltrim(substr($end, 0, $pos), '0');
 			is_numeric($end) and $end = (int) $end;
 		}
-
 		// filter the migrations out of bounds
-		foreach ($files as $file)
+		foreach ($namespaces as $namespace => $files)
 		{
-			// get the version for this migration and normalize it
-			$migration = basename($file);
-			($pos = strpos($migration, '_')) === false or $migration = ltrim(substr($migration, 0, $pos), '0');
-			is_numeric($migration) and $migration = (int) $migration;
-
-			// add the file to the migrations list if it's in between version bounds
-			if ((is_null($start) or $migration > $start) and (is_null($end) or $migration <= $end))
+			foreach ($files as $file)
 			{
-				// see if it is already installed
-				if ( in_array(basename($file, '.php'), $current))
+				// get the version for this migration and normalize it
+				$migration = basename($file);
+				($pos = strpos($migration, '_')) === false or $migration = ltrim(substr($migration, 0, $pos), '0');
+				is_numeric($migration) and $migration = (int) $migration;
+
+				// add the file to the migrations list if it's in between version bounds
+				if ((is_null($start) or $migration > $start) and (is_null($end) or $migration <= $end))
 				{
-					// already installed. store it only if we're going down
-					$direction == 'down' and $migrations[$migration] = array('path' => $file);
-				}
-				else
-				{
-					// not installed yet. store it only if we're going up
-					$direction == 'up' and $migrations[$migration] = array('path' => $file);
+					// see if it is already installed
+					if ( in_array(basename($file, '.php'), $current))
+					{
+						// already installed. store it only if we're going down
+						$direction == 'down' and $migrations[$namespace][$migration] = array('path' => $file);
+					}
+					else
+					{
+						// not installed yet. store it only if we're going up
+						$direction == 'up' and $migrations[$namespace][$migration] = array('path' => $file);
+					}
 				}
 			}
 		}
 
 		// We now prepare to actually DO the migrations
 		// But first let's make sure that everything is the way it should be
-		foreach ($migrations as $ver => $migration)
+		foreach ($migrations as $namespace => $files)
 		{
-			// get the migration filename from the path
-			$migration['file'] = basename($migration['path']);
-
-			// make sure the migration filename has a valid format
-			if (preg_match('/^.*?_(.*).php$/', $migration['file'], $match))
+			foreach ($files as $ver => $migration)
 			{
-				// determine the classname for this migration
-				$class_name = ucfirst(strtolower($match[1]));
+				$ret_migrations[$ver] = $migration;
 
-				// load the file and determiine the classname
-				include $migration['path'];
-				$class = static::$prefix.$class_name;
+				// get the migration filename from the path
+				$migration['file'] = basename($migration['path']);
 
-				// make sure it exists in the migration file loaded
-				if ( ! class_exists($class, false))
+				// make sure the migration filename has a valid format
+				if (preg_match('/^.*?_(.*).php$/', $migration['file'], $match))
 				{
-					throw new FuelException(sprintf('Migration "%s" does not contain expected class "%s"', $migration['path'], $class));
-				}
+					// determine the classname for this migration
+					$class_name = ucfirst(strtolower($match[1]));
 
-				// and that it contains an "up" and "down" method
-				if ( ! is_callable(array($class, 'up')) or ! is_callable(array($class, 'down')))
+					// load the file and determiine the classname
+					include $migration['path'];
+					$class = $namespace . '\\' .$class_name;
+
+					// make sure it exists in the migration file loaded
+					if ( ! class_exists($class, false))
+					{
+						$class = 'Fuel\Migrations\\' . $class_name;
+						if ( ! class_exists($class, false))
+						{
+							throw new FuelException(sprintf('Migration "%s" does not contain expected class "%s"', $migration['path'], $class));
+						}
+					}
+
+					// and that it contains an "up" and "down" method
+					if ( ! is_callable(array($class, 'up')) or ! is_callable(array($class, 'down')))
+					{
+						throw new FuelException(sprintf('Migration class "%s" must include public methods "up" and "down"', $name));
+					}
+
+					$ret_migrations[$ver]['class'] = $class;
+				}
+				else
 				{
-					throw new FuelException(sprintf('Migration class "%s" must include public methods "up" and "down"', $name));
+					throw new FuelException(sprintf('Invalid Migration filename "%s"', $migration['path']));
 				}
-
-				$migrations[$ver]['class'] = $class;
-			}
-			else
-			{
-				throw new FuelException(sprintf('Invalid Migration filename "%s"', $migration['path']));
 			}
 		}
 
 		// make sure the result is sorted properly with all version types
-		uksort($migrations, 'strnatcasecmp');
+		uksort($ret_migrations, 'strnatcasecmp');
 
-		return $migrations;
+		return $ret_migrations;
 	}
 
 	/**
@@ -461,11 +475,14 @@ class Migrate
 	 *
 	 * @param   string	name of the app (not used at the moment)
 	 *
-	 * @return  array
+	 * @return  array(namespace => array(files found))
 	 */
 	protected static function _find_app($name = null)
 	{
-		return glob(APPPATH.\Config::get('migrations.folder').'*_*.php');
+		$namespace = 'Fuel\Migrations';
+		$path = APPPATH.\Config::get('migrations.folder');
+
+		return array($namespace => glob($path . '*_*.php'));
 	}
 
 	/**
@@ -478,25 +495,55 @@ class Migrate
 	protected static function _find_module($name = null)
 	{
 		$files = array();
+		$paths = array();
 
 		if ($name)
 		{
-			// find a module
-			foreach (\Config::get('module_paths') as $m)
+			// Named a module: where is it?
+			foreach (\Config::get('module_paths') as $path)
 			{
-				$files = glob($m .$name.'/'.\Config::get('migrations.folder').'*_*.php');
-				if (count($files))
+				$dir = $path . $name;
+				if (substr($dir, -1, 1) != '/')
 				{
+					$dir .= '/';
+				}
+
+				if (file_exists($dir))
+				{
+					$paths[] = $dir;
 					break;
 				}
 			}
 		}
 		else
 		{
-			// find all modules
+			// Not named: find all the things
 			foreach (\Config::get('module_paths') as $m)
 			{
-				$files = array_merge($files, glob($m.'*/'.\Config::get('migrations.folder').'*_*.php'));
+				foreach (glob($m . '*') as $module_path)
+				{
+					if (substr($module_path, -1, 1) != '/')
+					{
+						$module_path .= '/';
+					}
+
+					$paths[] = $module_path;
+				}
+			}
+		}
+
+		$folder = \Config::get('migrations.folder');
+		foreach ($paths as $path)
+		{
+			if ($f = glob($path . $folder . '*_*.php'))
+			{
+				$module_name = explode('/', $path);
+				array_pop($module_name);
+				$module_name = array_pop($module_name);
+
+				$namespace = \Inflector::words_to_upper($module_name) . '\Migrations';
+
+				$files[$namespace] = $f;
 			}
 		}
 
@@ -513,25 +560,55 @@ class Migrate
 	protected static function _find_package($name = null)
 	{
 		$files = array();
+		$paths = array();
 
 		if ($name)
 		{
-			// find a package
-			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
+			foreach (\Config::get('package_paths', array(PKGPATH)) as $path)
 			{
-				$files = glob($p .$name.'/'.\Config::get('migrations.folder').'*_*.php');
-				if (count($files))
+				$dir = $path . $name;
+				if (substr($dir, -1, 1) != '/')
 				{
+					$dir .= '/';
+				}
+
+				if (file_exists($dir))
+				{
+					$paths[] = $dir;
 					break;
 				}
 			}
+			// Named package - find it
 		}
 		else
 		{
-			// find all packages
+			// Not named: find all the things
 			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
 			{
-				$files = array_merge($files, glob($p.'*/'.\Config::get('migrations.folder').'*_*.php'));
+				foreach (glob($p . '*') as $package_path)
+				{
+					if (substr($package_path, -1, 1) != '/')
+					{
+						$package_path .= '/';
+					}
+
+					$paths[] = $package_path;
+				}
+			}
+		}
+
+		$folder = \Config::get('migrations.folder');
+		foreach ($paths as $path)
+		{
+			if ($f = glob($path . $folder . '*_*.php'))
+			{
+				$package_name = explode('/', $path);
+				array_pop($package_name);
+				$package_name = array_pop($package_name);
+
+				$namespace = \Inflector::words_to_upper($package_name) . '\Migrations';
+
+				$files[$namespace] = $f;
 			}
 		}
 
