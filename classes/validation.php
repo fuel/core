@@ -909,6 +909,19 @@ class Validation
 	}
 
 	/**
+	 * Checks whether numeric input is between a minimum and a maximum value
+	 *
+	 * @param   string|float|int
+	 * @param   float|int
+	 * @param   float|int
+	 * @return  bool
+	 */
+	public function _validation_numeric_between($val, $min_val, $max_val)
+	{
+		return $this->_empty($val) or (floatval($val) >= floatval($min_val) and floatval($val) <= floatval($max_val));
+	}
+
+	/**
 	 * Conditionally requires completion of current field based on completion of another field
 	 *
 	 * @param mixed
@@ -917,13 +930,12 @@ class Validation
 	 */
 	public function _validation_required_with($val, $field)
 	{
-
-	  if ( ! $this->_empty($this->input($field)) and $this->_empty($val))
-	  {
+		if ( ! $this->_empty($this->input($field)) and $this->_empty($val))
+		{
 			$validating = $this->active_field();
 			throw new \Validation_Error($validating, $val, array('required_with' => array($this->field($field))), array($this->field($field)->label));
-	  }
+		}
 
-	  return true;
+		return true;
 	}
 }

@@ -555,6 +555,41 @@ class Test_Validation extends TestCase
 	}
 
 	/**
+	 * Validation:  numeric_between
+	 * Expecting:   success
+	 *
+	 * @dataProvider    form_provider
+	 */
+	public function test_validation_numeric_between_success($input)
+	{
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('ten', 'Number', 'numeric_between[9,11]');
+
+		$output = $val->run($input);
+		$expected = true;
+
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Validation:  numeric_between
+	 * Expecting:   failure
+	 *
+	 * @dataProvider    form_provider
+	 */
+	public function test_validation_numeric_between_failure($input)
+	{
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('ten', 'Number', 'numeric_between[7,8]');
+		$val->run($input);
+
+		$output = $val->error('ten', false) ? true : false;
+		$expected = true;
+
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
 	 * Validation:  required_with
 	 * Expecting:   success
 	 *
