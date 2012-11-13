@@ -36,6 +36,14 @@ class Image_Gd extends \Image_Driver
 		// Check if the function exists
 		if (function_exists('imagecreatefrom'.$image_extension))
 		{
+			// Check for the image channels before doing any processing
+			$data = getimagesize($image_fullpath);
+
+			if ( ! isset($data['channels']))
+			{
+				throw new \RuntimeException("Could not get the image channels for: ".$image_fullpath);
+			}
+			
 			// Create a new transparent image.
 			$sizes = $this->sizes($image_fullpath);
 			$tmpImage = call_user_func('imagecreatefrom'.$image_extension, $image_fullpath);
