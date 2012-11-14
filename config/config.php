@@ -131,7 +131,7 @@ return array(
 		 * WARNING: Using xss_clean will cause a performance hit.
 		 * How much is dependant on how much input data there is.
 		 */
-		'uri_filter'       => array('htmlentities'),
+		'uri_filter'       => array(),
 
 		/**
 		 * This input filter can be any normal PHP function as well as 'xss_clean'
@@ -147,7 +147,7 @@ return array(
 		 * WARNING: Using xss_clean will cause a performance hit.
 		 * How much is dependant on how much input data there is.
 		 */
-		'output_filter'  => array('Security::htmlentities'),
+		'output_filter'  => array(),
 
 		/**
 		 * Encoding mechanism to use on htmlentities()
@@ -168,12 +168,7 @@ return array(
 		 * With output encoding switched on all objects passed will be converted to strings or
 		 * throw exceptions unless they are instances of the classes in this array.
 		 */
-		'whitelisted_classes' => array(
-			'Fuel\\Core\\Response',
-			'Fuel\\Core\\View',
-			'Fuel\\Core\\ViewModel',
-			'Closure',
-		)
+		'whitelisted_classes' => array(),
 	),
 
 	/**
