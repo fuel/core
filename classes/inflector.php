@@ -250,7 +250,7 @@ class Inflector
 		if ($allow_non_ascii)
 		{
 			// Strip regular special chars.
-			$str = preg_replace("#[\.;:'\"\]\}\[\{\+\)\(\*&\^\$\#@\!±`%~']#i", '', $str);
+			$str = preg_replace("#[\.;:'\"\]\}\[\{\+\)\(\*&\^\$\#@\!±`%~']#iu", '', $str);
 		}
 		else
 		{
@@ -258,7 +258,7 @@ class Inflector
 			$str = preg_replace("#[^a-z0-9]#i", $sep, $str);
 		}
 
-		$str = preg_replace("#[/_|+ -]+#", $sep, $str);
+		$str = preg_replace("#[/_|+ -]+#u", $sep, $str);
 		$str = trim($str, $sep);
 
 		if ($lowercase === true)
