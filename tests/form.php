@@ -51,6 +51,38 @@ class Test_Form extends TestCase
 		$output = Form::input('name', '"H&M"');
 		$expected = '<input name="name" value="&quot;H&amp;M&quot;" type="text" id="form_name" />';
 		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', '');
+		$expected = '<input name="name" value="" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', "0");
+		$expected = '<input name="name" value="0" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', 0);
+		$expected = '<input name="name" value="0" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', 1);
+		$expected = '<input name="name" value="1" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', 10);
+		$expected = '<input name="name" value="10" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', true);
+		$expected = '<input name="name" value="1" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', false);
+		$expected = '<input name="name" value="" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', null);
+		$expected = '<input name="name" value="" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -64,6 +96,38 @@ class Test_Form extends TestCase
 	{
 		$output = Form::input('name', '&quot;&#39;H&amp;M&#39;&quot;', array('dont_prep' => true));
 		$expected = '<input name="name" value="&quot;&#39;H&amp;M&#39;&quot;" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', '', array('dont_prep' => true));
+		$expected = '<input name="name" value="" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', "0", array('dont_prep' => true));
+		$expected = '<input name="name" value="0" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', 0, array('dont_prep' => true));
+		$expected = '<input name="name" value="0" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', 1, array('dont_prep' => true));
+		$expected = '<input name="name" value="1" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', 10, array('dont_prep' => true));
+		$expected = '<input name="name" value="10" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', true, array('dont_prep' => true));
+		$expected = '<input name="name" value="1" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', false, array('dont_prep' => true));
+		$expected = '<input name="name" value="" type="text" id="form_name" />';
+		$this->assertEquals($expected, $output);
+
+		$output = Form::input('name', null, array('dont_prep' => true));
+		$expected = '<input name="name" value="" type="text" id="form_name" />';
 		$this->assertEquals($expected, $output);
 	}
 
