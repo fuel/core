@@ -157,7 +157,7 @@ class Asset
 	 * @param   bool    whether to return the raw file or not
 	 * @return  string  the group's output
 	 */
-	public static function render($group, $raw = false)
+	public static function render($group = null, $raw = false)
 	{
 		return static::instance()->render($group, $raw);
 	}
