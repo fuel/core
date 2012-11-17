@@ -198,7 +198,8 @@ class Session_Db extends \Session_Driver
 
 		// reset the stored session data
 		$this->record = null;
-		$this->keys = $this->flash = $this->data = array();
+
+		parent::destroy();
 
 		return $this;
 	}

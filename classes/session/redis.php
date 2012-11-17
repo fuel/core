@@ -205,8 +205,7 @@ class Session_Redis extends \Session_Driver
 			$this->redis->del($this->keys['session_id']);
 		}
 
-		// reset the stored session data
-		$this->keys = $this->flash = $this->data = array();
+		parent::destroy();
 
 		return $this;
 	}

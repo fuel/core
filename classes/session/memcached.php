@@ -228,8 +228,7 @@ class Session_Memcached extends \Session_Driver
 			}
 		}
 
-		// reset the stored session data
-		$this->keys = $this->flash = $this->data = array();
+		parent::destroy();
 
 		return $this;
 	}

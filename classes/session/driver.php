@@ -54,19 +54,27 @@ abstract class Session_Driver
 	 */
 	abstract function create();
 
+
+	// --------------------------------------------------------------------
+	// generic driver methods
 	// --------------------------------------------------------------------
 
 	/**
 	 * destroy the current session
 	 *
 	 * @access	public
-	 * @return	void
+	 * @return	Fuel\Core\Session_Driver
 	 */
-	abstract function destroy();
+	public function destroy()
+	{
+		// delete the session cookie
+		\Cookie::delete($this->config['cookie_name']);
 
-	// --------------------------------------------------------------------
-	// generic driver methods
-	// --------------------------------------------------------------------
+		// reset the stored session data
+		$this->keys = $this->flash = $this->data = array();
+
+		return $this;
+	}
 
 	/**
 	 * read the session

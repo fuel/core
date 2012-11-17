@@ -117,29 +117,6 @@ class Session_Cookie extends \Session_Driver
 	// --------------------------------------------------------------------
 
 	/**
-	 * destroy the current session
-	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Cookie
-	 */
-	public function destroy()
-	{
-		// do we have something to destroy?
-		if ( ! empty($this->keys))
-		{
-			// delete the session cookie
-			\Cookie::delete($this->config['cookie_name']);
-		}
-
-		// reset the stored session data
-		$this->keys = $this->flash = $this->data = array();
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * validate a driver config value
 	 *
 	 * @param	array	array with configuration values
