@@ -638,7 +638,7 @@ class Mongo_Db
 
 		$results = array();
 
-		if(!empty($this->profiling))
+		if ( ! empty($this->profiling))
 		{
 			$query = json_encode(array(
 			'type'			=> 'find',
@@ -655,7 +655,7 @@ class Mongo_Db
 
 		$documents = $this->db->{$collection}->find($this->wheres, $this->selects)->limit((int) $this->limit)->skip((int) $this->offset)->sort($this->sorts);
 
-		if(isset($benchmark))
+		if (isset($benchmark))
 		{
 			\Profiler::stop($benchmark);
 		}
@@ -688,7 +688,7 @@ class Mongo_Db
 			throw new \Mongo_DbException("In order to retrieve documents from MongoDB");
 		}
 
-		if(!empty($this->profiling))
+		if ( ! empty($this->profiling))
 		{
 			$query = json_encode(array(
 			'type'			=> 'findOne',
@@ -702,7 +702,7 @@ class Mongo_Db
 
 		$returns = $this->db->{$collection}->findOne($this->wheres, $this->selects);
 
-		if(isset($benchmark))
+		if (isset($benchmark))
 		{
 			\Profiler::stop($benchmark);
 		}
@@ -727,7 +727,7 @@ class Mongo_Db
 			throw new \Mongo_DbException("In order to retrieve a count of documents from MongoDB");
 		}
 
-		if(!empty($this->profiling))
+		if ( ! empty($this->profiling))
 		{
 			$query = json_encode(array(
 			'type'			=> 'count',
@@ -742,7 +742,7 @@ class Mongo_Db
 
 		$count = $this->db->{$collection}->find($this->wheres)->limit((int) $this->limit)->skip((int) $this->offset)->count($foundonly);
 
-		if(isset($benchmark))
+		if (isset($benchmark))
 		{
 			\Profiler::stop($benchmark);
 		}
@@ -776,7 +776,7 @@ class Mongo_Db
 
 		try
 		{
-			if(!empty($this->profiling))
+			if ( ! empty($this->profiling))
 			{
 				$query = json_encode(array(
 				'type'			=> 'insert',
@@ -789,7 +789,7 @@ class Mongo_Db
 
 			$this->db->{$collection}->insert($insert, array('fsync' => true));
 
-			if(isset($benchmark))
+			if (isset($benchmark))
 			{
 				\Profiler::stop($benchmark);
 			}
@@ -833,7 +833,7 @@ class Mongo_Db
 		{
 			$options = array_merge($options, array('fsync' => true, 'multiple' => false));
 
-			if(!empty($this->profiling))
+			if ( ! empty($this->profiling))
 			{
 				$query = json_encode(array(
 				'type'			=> 'update',
@@ -848,7 +848,7 @@ class Mongo_Db
 
 			$this->db->{$collection}->update($this->wheres, (($literal) ? $data : array('$set' => $data)), $options);
 
-			if(isset($benchmark))
+			if (isset($benchmark))
 			{
 				\Profiler::stop($benchmark);
 			}
@@ -883,7 +883,7 @@ class Mongo_Db
 
 		try
 		{
-			if(!empty($this->profiling))
+			if ( ! empty($this->profiling))
 			{
 				$query = json_encode(array(
 				'type'			=> 'updateAll',
@@ -898,7 +898,7 @@ class Mongo_Db
 
 			$this->db->{$collection}->update($this->wheres, (($literal) ? $data : array('$set' => $data)), array('fsync' => true, 'multiple' => true));
 
-			if(isset($benchmark))
+			if (isset($benchmark))
 			{
 				\Profiler::stop($benchmark);
 			}
@@ -927,7 +927,7 @@ class Mongo_Db
 
 		try
 		{
-			if(!empty($this->profiling))
+			if ( ! empty($this->profiling))
 			{
 				$query = json_encode(array(
 				'type'			=> 'delete',
@@ -940,7 +940,7 @@ class Mongo_Db
 
 			$this->db->{$collection}->remove($this->wheres, array('fsync' => true, 'justOne' => true));
 
-			if(isset($benchmark))
+			if (isset($benchmark))
 			{
 				\Profiler::stop($benchmark);
 			}
@@ -969,7 +969,7 @@ class Mongo_Db
 
 		try
 		{
-			if(!empty($this->profiling))
+			if ( ! empty($this->profiling))
 			{
 				$query = json_encode(array(
 				'type'			=> 'deleteAll',
@@ -982,7 +982,7 @@ class Mongo_Db
 
 			$this->db->{$collection}->remove($this->wheres, array('fsync' => true, 'justOne' => false));
 
-			if(isset($benchmark))
+			if (isset($benchmark))
 			{
 				\Profiler::stop($benchmark);
 			}
