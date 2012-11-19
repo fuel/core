@@ -638,7 +638,7 @@ class Mongo_Db
 
 		$results = array();
 
-		if ( ! empty($this->profiling))
+		if ($this->profiling)
 		{
 			$query = json_encode(array(
 			'type'			=> 'find',
@@ -688,7 +688,7 @@ class Mongo_Db
 			throw new \Mongo_DbException("In order to retrieve documents from MongoDB");
 		}
 
-		if ( ! empty($this->profiling))
+		if ($this->profiling)
 		{
 			$query = json_encode(array(
 			'type'			=> 'findOne',
@@ -727,7 +727,7 @@ class Mongo_Db
 			throw new \Mongo_DbException("In order to retrieve a count of documents from MongoDB");
 		}
 
-		if ( ! empty($this->profiling))
+		if ($this->profiling)
 		{
 			$query = json_encode(array(
 			'type'			=> 'count',
@@ -776,7 +776,7 @@ class Mongo_Db
 
 		try
 		{
-			if ( ! empty($this->profiling))
+			if ($this->profiling)
 			{
 				$query = json_encode(array(
 				'type'			=> 'insert',
@@ -833,7 +833,7 @@ class Mongo_Db
 		{
 			$options = array_merge($options, array('fsync' => true, 'multiple' => false));
 
-			if ( ! empty($this->profiling))
+			if ($this->profiling)
 			{
 				$query = json_encode(array(
 				'type'			=> 'update',
@@ -883,7 +883,7 @@ class Mongo_Db
 
 		try
 		{
-			if ( ! empty($this->profiling))
+			if ($this->profiling)
 			{
 				$query = json_encode(array(
 				'type'			=> 'updateAll',
@@ -927,7 +927,7 @@ class Mongo_Db
 
 		try
 		{
-			if ( ! empty($this->profiling))
+			if ($this->profiling)
 			{
 				$query = json_encode(array(
 				'type'			=> 'delete',
@@ -969,7 +969,7 @@ class Mongo_Db
 
 		try
 		{
-			if ( ! empty($this->profiling))
+			if ($this->profiling)
 			{
 				$query = json_encode(array(
 				'type'			=> 'deleteAll',
