@@ -182,7 +182,7 @@ class Mongo_Db
 			$connection_string .= "{$config['hostname']}";
 		}
 
-		if ( ! empty($config['profiling']))
+		if (isset($config['profiling']) and $config['profiling'] === true)
 		{
 			$this->profiling = true;
 		}
