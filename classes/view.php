@@ -55,7 +55,7 @@ class View
 	/**
 	 * @var  string  The view's filename
 	 */
-	protected $file_name;
+	protected $file_name = null;
 
 	/**
 	 * @var  array  The view's data
@@ -70,7 +70,12 @@ class View
 	/**
 	 * @var  Request  active request when the View was created
 	 */
-	protected $active_request;
+	protected $active_request = null;
+
+	/**
+	 * @var  string  active language at the time the object was created
+	 */
+	protected $active_language = null;
 
 	/**
 	 * Returns a new View object. If you do not define the "file" parameter,
@@ -127,6 +132,9 @@ class View
 			$this->request_paths = $active->get_paths();
 		}
 		isset($active) and $this->active_request = $active;
+
+		// store the active language, so we can render the view in the correct language later
+		$this->active_language = \Config::get('language', 'en');
 	}
 
 	/**
@@ -527,25 +535,39 @@ class View
 	 */
 	public function render($file = null)
 	{
+		// reactivate the correct request
 		if (class_exists('Request', false))
 		{
 			$current_request = \Request::active();
 			\Request::active($this->active_request);
 		}
 
+		// store the current language, and set the correct render language
+		if ($this->active_language)
+		{
+			$current_language = \Config::get('language', 'en');
+			\Config::set('language', $this->active_language);
+		}
+
+		// override the view filename if needed
 		if ($file !== null)
 		{
 			$this->set_filename($file);
 		}
 
+		// and make sure we have one
 		if (empty($this->file_name))
 		{
 			throw new \FuelException('You must set the file to use within your view before rendering');
 		}
 
-		// Combine local and global data and capture the output
+		// combine local and global data and capture the output
 		$return = $this->process_file();
 
+		// restore the current language setting
+		$this->active_language and \Config::set('language', $current_language);
+
+		// and the active request class
 		if (class_exists('Request', false))
 		{
 			\Request::active($current_request);
