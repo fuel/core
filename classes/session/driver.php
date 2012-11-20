@@ -113,6 +113,9 @@ abstract class Session_Driver
 	 */
 	public function write()
 	{
+		// create the session if it doesn't exist
+		empty($this->keys) and $this->create();
+
 		$this->_cleanup_flash();
 
 		return $this;
