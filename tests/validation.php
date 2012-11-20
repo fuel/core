@@ -619,6 +619,7 @@ class Test_Validation extends TestCase
 
 		$val = Validation::forge(__FUNCTION__);
 		$val->add('f1', 'F1')->add_rule('valid_string', array('alpha', 'numeric'));
+		$val->set_message('valid_string', 'The valid string rule :rule(:param:1) failed for field :label');
 		$val->run($post);
 
 		$test = $val->error('f1')->get_message();
@@ -638,6 +639,7 @@ class Test_Validation extends TestCase
 
 		$val = Validation::forge(__FUNCTION__);
 		$val->add_field('f1', 'F1', 'valid_string[alpha,numeric]');
+		$val->set_message('valid_string', 'The valid string rule :rule(:param:1) failed for field :label');
 		$val->run($post);
 
 		$test = $val->error('f1')->get_message();
