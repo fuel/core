@@ -38,13 +38,7 @@ class Image_Gd extends \Image_Driver
 		{
 			// Create a new transparent image.
 			$sizes = $this->sizes($image_fullpath);
-			$tmpImage = @call_user_func('imagecreatefrom'.$image_extension, $image_fullpath);
-			
-			if ($tmpImage === false)
-			{
-				throw new \RuntimeException("An error occurred in imagecreatefrom".$image_extension."() while loading: ".$image_fullpath);
-			}
-
+			$tmpImage = call_user_func('imagecreatefrom'.$image_extension, $image_fullpath);
 			$image = $this->create_transparent_image($sizes->width, $sizes->height, $tmpImage);
 			if ( ! $return_data)
 			{
