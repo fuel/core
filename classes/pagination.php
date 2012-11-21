@@ -171,6 +171,50 @@ class Pagination
 		{
 			$this->__set($key, $value);
 		}
+
+		// prep pagination_url and current_page
+		$this->_prep_pagination_url_and_current_page();
+	}
+
+	/**
+	 * Prep pagination_url and current_page
+	 */
+	protected function _prep_pagination_url_and_current_page()
+	{
+		$type = is_int($this->config['uri_segment']) ? 'uri_segment' : 'query_string';
+
+		switch ($type)
+		{
+			case 'uri_segment':
+				if (is_null($this->config['pagination_url']))
+				{
+					$url = Uri::base();
+					$segs = Uri::segments();
+					unset($segs[$this->config['uri_segment'] - 1]);
+					if (end($segs) !== Request::main()->action)
+					{
+						$segs[] = Request::main()->action;
+					}
+					$url .= implode('/', $segs);
+					$this->config['pagination_url'] = $url;
+				}
+
+				$this->config['pagination_url'] = rtrim($this->config['pagination_url'], '/').'/{page}';
+				$this->__set('current_page', (int) \Request::main()->uri->get_segment($this->config['uri_segment']));
+			break;
+			case 'query_string':
+				if (is_null($this->config['pagination_url']))
+				{
+					$this->config['pagination_url'] = \Uri::main();
+				}
+				$param = $this->config['uri_segment'];
+				$get = \Input::get();
+				$get[$param] = '{page}';
+				$this->config['pagination_url'] .= '?' . http_build_query($get);
+				$this->config['pagination_url'] = preg_replace('/%7Bpage%7D/', '{page}', $this->config['pagination_url']);
+				$this->__set('current_page', (int) \Input::get($param));
+			break;
+		}
 	}
 
 	/**
@@ -178,8 +222,6 @@ class Pagination
 	 */
 	public function __get($name)
 	{
-		$this->_recalculate();
-
 		if (array_key_exists($name, $this->config))
 		{
 			return $this->config[$name];
@@ -213,12 +255,10 @@ class Pagination
 			{
 				$this->config[$name] = $value;
 
-				if ($name === 'pagination_url')
+				if ($name === 'per_page' or $name === 'total_items' or $name === 'current_page')
 				{
-					if (strpos($this->config[$name], '{page}') === FALSE)
-					{
-						$this->config[$name] = rtrim($this->config['pagination_url'], '/').'/{page}';
-					}
+					// update the page counters
+					$this->_recalculate();
 				}
 			}
 			elseif (array_key_exists($name, $this->template))
@@ -257,8 +297,6 @@ class Pagination
 	 */
 	public function pages_render()
 	{
-		$this->_recalculate();
-
 		// no links if we only have one page
 		if ($this->config['total_pages'] == 1)
 		{
@@ -308,8 +346,6 @@ class Pagination
 	{
 		$html = '';
 
-		$this->_recalculate();
-
 		if ($this->config['total_pages'] > 1)
 		{
 			if ($this->config['current_page'] == 1)
@@ -347,8 +383,6 @@ class Pagination
 	{
 		$html = '';
 
-		$this->_recalculate();
-
 		if ($this->config['total_pages'] > 1)
 		{
 			if ($this->config['current_page'] == $this->config['total_pages'])
@@ -382,17 +416,6 @@ class Pagination
 	{
 		// calculate the number of pages
 		$this->config['total_pages'] = ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
-
-		// calculate the current page number
-		if (is_null($this->config['uri_segment']))
-		{
-			$page = $this->config['current_page'];
-		}
-		else
-		{
-			$page = (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
-		}
-		$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? (int) $this->config['current_page'] : $page;
 
 		// make sure the current page is within bounds
 		if ($this->config['current_page'] > $this->config['total_pages'])
