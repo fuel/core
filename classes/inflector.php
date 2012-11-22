@@ -123,11 +123,19 @@ class Inflector
 	 * Gets the plural version of the given word
 	 *
 	 * @param   string  the word to pluralize
+	 * @param   int     number of instances	
 	 * @return  string  the plural version of $word
 	 */
-	public static function pluralize($word)
+	public static function pluralize($word, $count = 0)
 	{
 		$result = strval($word);
+
+		// If a counter is provided, and that equals 1
+		// return as singular.
+		if ($count === 1)
+		{
+			return $result;
+		}
 
 		if ( ! static::is_countable($result))
 		{
