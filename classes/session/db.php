@@ -86,6 +86,7 @@ class Session_Db extends \Session_Driver
 		{
 			$this->data = array();
 			$this->keys = array();
+			$this->record = null;
 		}
 		else
 		{
