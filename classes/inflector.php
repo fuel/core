@@ -132,7 +132,7 @@ class Inflector
 
 		// If a counter is provided, and that equals 1
 		// return as singular.
-		if ($count == 1)
+		if ($count === 1)
 		{
 			return $result;
 		}
