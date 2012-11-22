@@ -123,7 +123,7 @@ class Inflector
 	 * Gets the plural version of the given word
 	 *
 	 * @param   string  the word to pluralize
-	 * @param	int		number of instances	
+	 * @param   int     number of instances	
 	 * @return  string  the plural version of $word
 	 */
 	public static function pluralize($word, $count = 0)
