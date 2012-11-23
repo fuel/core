@@ -217,10 +217,17 @@ JS;
 		}
 		elseif (is_object($var))
 		{
+			// dirty hack to get the object id
+			ob_start();
+			var_dump($var);
+			$contents = ob_get_contents();
+			strpos($contents, 'xdebug-var-dump') !== false ? preg_match('~(.*?)\)\[<i>(\d+)(.*)~', $contents, $matches) : preg_match('~object\((.*?)#(\d+)(.*)~', $contents, $matches);
+			ob_end_clean();
+
 			$id = 'fuel_debug_'.mt_rand();
 			$rvar = new \ReflectionObject($var);
 			$vars = $rvar->getProperties();
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object): ".get_class($var);
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
 			if (count($vars) > 0 and static::$max_nesting_level > $level)
 			{
 				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open?"close":"open")."\">&crarr;</a>\n";
