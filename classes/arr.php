@@ -413,6 +413,26 @@ class Arr
 	}
 
 	/**
+	 * Recursive version of PHP's array_filter()
+	 *
+	 * @param   array   the array to filter.
+	 * @param   callback   the callback that determines whether or not a value is filtered
+	 * @return  array
+	 */
+	public static function filter_recursive($array, $callback = null)
+	{
+		foreach ($array as &$value)
+		{
+			if (is_array($value))
+			{
+				$value = $callback === null ? static::filter_recursive($value) : static::filter_recursive($value, $callback);
+			}
+		}
+
+		return $callback === null ? array_filter($array) : array_filter($array, $callback);
+   	}
+
+	/**
 	 * Removes items from an array that match a key prefix.
 	 *
 	 * @param   array   the array to remove from
