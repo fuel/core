@@ -133,6 +133,16 @@ class Fieldset
 	protected $disabled = array();
 
 	/**
+	 * @var  string  name of class providing the tabular form
+	 */
+	protected $tabular_form_model = null;
+
+	/**
+	 * @var  string  name of the relation of the parent object this tabular form is modeled on
+	 */
+	protected $tabular_form_relation = null;
+
+	/**
 	 * Object constructor
 	 *
 	 * @param  string
@@ -203,10 +213,13 @@ class Fieldset
 	 * Set the tag to be used for this fieldset
 	 *
 	 * @param  string  $tag
+	 * @return  Fieldset       this, to allow chaining
 	 */
 	public function set_fieldset_tag($tag)
 	{
 		$this->fieldset_tag = $tag;
+
+		return $this;
 	}
 
 	/**
@@ -368,9 +381,10 @@ class Fieldset
 	 *
 	 * @param   string|null           field name or null to fetch an array of all
 	 * @param   bool                  whether to get the fields array or flattened array
+	 * @param   bool                  whether to include tabular form fields in the flattened array
 	 * @return  Fieldset_Field|false  returns false when field wasn't found
 	 */
-	public function field($name = null, $flatten = false)
+	public function field($name = null, $flatten = false, $tabular_form = true)
 	{
 		if ($name === null)
 		{
@@ -382,7 +396,10 @@ class Fieldset
 			$fields = $this->fields;
 			foreach ($this->fieldset_children as $fs_name => $fieldset)
 			{
-				\Arr::insert_after_key($fields, $fieldset->field(null, true), $fs_name);
+				if ($tabular_form or ! $fieldset->get_tabular_form())
+				{
+					\Arr::insert_after_key($fields, $fieldset->field(null, true), $fs_name);
+				}
 				unset($fields[$fs_name]);
 			}
 			return $fields;
@@ -495,19 +512,19 @@ class Fieldset
 	 */
 	public function populate($input, $repopulate = false)
 	{
-		$fields = $this->field(null, true);
+		$fields = $this->field(null, true, false);
 		foreach ($fields as $f)
 		{
 			if (is_array($input) or $input instanceof \ArrayAccess)
 			{
-				if (isset($input[$f->name]))
+				if (isset($input[$f->basename]))
 				{
-					$f->set_value($input[$f->name], true);
+					$f->set_value($input[$f->basename], true);
 				}
 			}
-			elseif (is_object($input) and property_exists($input, $f->name))
+			elseif (is_object($input) and property_exists($input, $f->basename))
 			{
-				$f->set_value($input->{$f->name}, true);
+				$f->set_value($input->{$f->basename}, true);
 			}
 		}
 
@@ -563,6 +580,30 @@ class Fieldset
 			: $this->form()->{$this->fieldset_tag.'_open'}($attributes);
 
 		$fields_output = '';
+
+		// construct the tabular form table header
+		if ($this->tabular_form_relation)
+		{
+			$properties = call_user_func($this->tabular_form_model.'::properties');
+			$primary_keys = call_user_func($this->tabular_form_model.'::primary_key');
+			$fields_output .= '<thead><tr>';
+			foreach ($properties as $field => $settings)
+			{
+				if ((isset($settings['skip']) and $settings['skip']) or in_array($field, $primary_keys))
+				{
+					continue;
+				}
+				if (isset($settings['form']['type']) and $settings['form']['type'] === false)
+				{
+					continue;
+				}
+				$fields_output .= '<th>'.$settings['label'].'</th>';
+			}
+			$fields_output .= '<th>'.\Config::get('form.tabular_delete_label', 'Delete?').'</th>';
+
+			$fields_output .= '</tr></thead>'.PHP_EOL;
+		}
+
 		foreach ($this->field() as $f)
 		{
 			in_array($f->name, $this->disabled) or $fields_output .= $f->build().PHP_EOL;
@@ -574,6 +615,7 @@ class Fieldset
 
 		$template = $this->form()->get_config((empty($this->fieldset_tag) ? 'form' : $this->fieldset_tag).'_template',
 			"\n\t\t{open}\n\t\t<table>\n{fields}\n\t\t</table>\n\t\t{close}\n");
+
 		$template = str_replace(array('{form_open}', '{open}', '{fields}', '{form_close}', '{close}'),
 			array($open, $open, $fields_output, $close, $close),
 			$template);
@@ -691,7 +733,7 @@ class Fieldset
 	}
 
 	/**
-	 * Get instance id
+	 * Get the fieldset name
 	 *
 	 * @return string
 	 */
@@ -699,6 +741,108 @@ class Fieldset
 	{
 		return $this->name;
 	}
+
+	/**
+	 * Enable or disable the tabular form feature of this fieldset
+	 *
+	 * @param  string  Model on which to define the tabular form
+	 * @param  string  Relation of the Model on the tabular form is modeled
+	 * @param  array  Collection of Model objects from a many relation
+	 *
+	 * @return  Fieldset  this, to allow chaining
+	 */
+	public function set_tabular_form($model, $relation, $parent)
+	{
+		// validate the model and relation
+		try
+		{
+			// fetch the relations of the parent model
+			$relations = call_user_func(array($parent, 'relations'));
+			if ( ! array_key_exists($relation, $relations))
+			{
+				throw new \RuntimeException('Relation passed to set_tabular_form() is not a valid relation of the ORM parent model object.');
+			}
+		}
+		catch (\Exception $e)
+		{
+			throw new \RuntimeException('Parent passed to set_tabular_form() is not an ORM model object.');
+		}
+
+		// check for compound primary keys
+		try
+		{
+			// fetch the relations of the parent model
+			$primary_key = call_user_func($model.'::primary_key');
+
+			// we don't support compound primary keys
+			if (count($primary_key) !== 1)
+			{
+			throw new \RuntimeException('set_tabular_form() does not supports models with compound primary keys.');
+			}
+
+			// store the primary key name, we need that later
+			$primary_key = reset($primary_key);
+		}
+		catch (\Exception $e)
+		{
+			throw new \RuntimeException('Unable to fetch the models primary key information.');
+		}
+
+		// store the tabular form class name
+		$this->tabular_form_model = $model;
+
+		// and the relation on which we model the rows
+		$this->tabular_form_relation = $relation;
+
+		// load the form config if not loaded yet
+		\Config::load('form', true);
+
+		// load the config for embedded forms
+		$this->set_config(array(
+			'form_template' => \Config::get('form.tabular_form_template', "<table>{fields}</table>\n"),
+			'field_template' => \Config::get('form.tabular_field_template', "{field}")
+		));
+
+		// add the rows to the tabular form fieldset
+		foreach ($parent->{$relation} as $row)
+		{
+			// add the row fieldset to the tabular form fieldset
+			$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_row_'.$row->{$primary_key}));
+
+			// and add the model fields to the row fielset
+			$fieldset->add_model($model, $row)->set_fieldset_tag(false);
+			$fieldset->set_config(array(
+				'form_template' => \Config::get('form.tabular_row_template', "<table>{fields}</table>\n"),
+				'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
+			));
+			$fieldset->add($this->tabular_form_relation.'['.$row->{$primary_key}.'][_delete]', '', array('type' => 'checkbox', 'value' => 1));
+		}
+
+		// and finish with a empty row so we can add new data
+		$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_row_0'));
+		$fieldset->add_model($model)->set_fieldset_tag(false);
+		$fieldset->set_config(array(
+			'form_template' => \Config::get('form.tabular_row_template', "<tr>{fields}</tr>"),
+			'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
+		));
+		$fieldset->add($this->tabular_form_relation.'[0][_delete]', '', array('type' => 'checkbox', 'value' => 0, 'disabled' => 'disabled'));
+
+		// no required rules on this row
+		foreach ($fieldset->field() as $f)
+		{
+			$f->delete_rule('required', false)->delete_rule('required_with', false);
+		}
+
+		return $this;
+	}
+
+	/**
+	 * return the tabular form relation of this fieldset
+	 *
+	 * @return  bool
+	 */
+	public function get_tabular_form()
+	{
+		return $this->tabular_form_relation;
+	}
 }
-
-

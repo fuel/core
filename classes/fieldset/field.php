@@ -35,6 +35,11 @@ class Fieldset_Field
 	protected $name = '';
 
 	/**
+	 * @var  string  Base name of this field
+	 */
+	protected $basename = '';
+
+	/**
 	 * @var  string  Field type for form generation, false to prevent it showing
 	 */
 	protected $type = 'text';
@@ -91,6 +96,10 @@ class Fieldset_Field
 	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), $fieldset = null)
 	{
 		$this->name = (string) $name;
+
+		// determine the field's base name (for fields with array indices)
+		$this->basename = ($pos = strpos($this->name, '[')) ? rtrim(substr(strrchr($this->name, '['), 1), ']') : $this->name;
+
 		$this->fieldset = $fieldset instanceof Fieldset ? $fieldset : null;
 
 		// Don't allow name in attributes
@@ -274,6 +283,32 @@ class Fieldset_Field
 		if ($callback === 'required')
 		{
 			$this->set_attribute('required', 'required');
+		}
+
+		return $this;
+	}
+
+	/**
+	 * Delete a validation rule
+	 *
+	 * @param   string|Callback	either a validation rule or full callback
+	 * @param   bool	whether to also reset related attributes
+	 * @return  Fieldset_Field  this, to allow chaining
+	 */
+	public function delete_rule($callback, $set_attr = true)
+	{
+		foreach($this->rules as $index => $rule)
+		{
+			if ($rule[0] === $callback)
+			{
+				unset($this->rules[$index]);
+			}
+			break;
+		}
+
+		if ($callback === 'required' and $set_attr)
+		{
+			unset($this->attributes[$callback]);
 		}
 
 		return $this;
