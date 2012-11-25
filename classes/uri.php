@@ -100,7 +100,7 @@ class Uri
 	public static function to_assoc($start = 1)
 	{
 		$segments = array_slice(static::segments(), ($start - 1));
-		count($segments) % 2 and $segments[] = '';
+		count($segments) % 2 and $segments[] = null;
 
 		return \Arr::to_assoc($segments);
 	}
