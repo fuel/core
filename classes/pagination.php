@@ -215,7 +215,7 @@ class Pagination
 			$param = $this->config['uri_segment'];
 			$get = \Input::get();
 			$get[$param] = '{page}';
-			$this->config['pagination_url'] .= '?' . http_build_query($get);
+			$this->config['pagination_url'] .= '?'.http_build_query($get);
 			$this->config['pagination_url'] = preg_replace('/%7Bpage%7D/', '{page}', $this->config['pagination_url']);
 			$this->__set('current_page', (int) \Input::get($param));
 		}
