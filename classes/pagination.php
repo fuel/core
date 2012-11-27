@@ -183,37 +183,41 @@ class Pagination
 	{
 		$type = is_int($this->config['uri_segment']) ? 'uri_segment' : 'query_string';
 
-		switch ($type)
+		// URI segment pagination
+		if (is_int($this->config['uri_segment']))
 		{
-			case 'uri_segment':
-				if (is_null($this->config['pagination_url']))
+			if (is_null($this->config['pagination_url']))
+			{
+				$url  = Uri::base();
+				$segs = Uri::segments();
+
+				if (count($segs) < $this->config['uri_segment'] - 1)
 				{
-					$url = Uri::base();
-					$segs = Uri::segments();
-					unset($segs[$this->config['uri_segment'] - 1]);
-					if (end($segs) !== Request::main()->action)
-					{
-						$segs[] = Request::main()->action;
-					}
-					$url .= implode('/', $segs);
-					$this->config['pagination_url'] = $url;
+					throw new \RuntimeException("Could not detect pagination_url.");
 				}
 
-				$this->config['pagination_url'] = rtrim($this->config['pagination_url'], '/').'/{page}';
-				$this->__set('current_page', (int) \Request::main()->uri->get_segment($this->config['uri_segment']));
-			break;
-			case 'query_string':
-				if (is_null($this->config['pagination_url']))
-				{
-					$this->config['pagination_url'] = \Uri::main();
-				}
-				$param = $this->config['uri_segment'];
-				$get = \Input::get();
-				$get[$param] = '{page}';
-				$this->config['pagination_url'] .= '?' . http_build_query($get);
-				$this->config['pagination_url'] = preg_replace('/%7Bpage%7D/', '{page}', $this->config['pagination_url']);
-				$this->__set('current_page', (int) \Input::get($param));
-			break;
+				unset($segs[$this->config['uri_segment'] - 1]);
+				$url .= implode('/', $segs);
+				$this->config['pagination_url'] = $url;
+			}
+
+			$this->config['pagination_url'] = rtrim($this->config['pagination_url'], '/').'/{page}';
+			$this->__set('current_page', (int) \Request::main()->uri->get_segment($this->config['uri_segment']));
+		}
+		// query string pagination
+		else
+		{
+			if (is_null($this->config['pagination_url']))
+			{
+				$this->config['pagination_url'] = \Uri::main();
+			}
+
+			$param = $this->config['uri_segment'];
+			$get = \Input::get();
+			$get[$param] = '{page}';
+			$this->config['pagination_url'] .= '?' . http_build_query($get);
+			$this->config['pagination_url'] = preg_replace('/%7Bpage%7D/', '{page}', $this->config['pagination_url']);
+			$this->__set('current_page', (int) \Input::get($param));
 		}
 	}
 
