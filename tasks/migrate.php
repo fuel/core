@@ -368,7 +368,7 @@ Examples:
     php oil r migrate --version=201203171206
     php oil r migrate --modules --packages --default
     php oil r migrate:up --modules=module1,module2 --packages=package1
-    php oil r migrate --module=module1 -v=3
+    php oil r migrate --modules=module1 -v=3
     php oil r migrate --all
 
 HELP;
