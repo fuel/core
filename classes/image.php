@@ -158,7 +158,19 @@ class Image
 	{
 		return static::instance()->rotate($degrees);
 	}
-
+	
+	/**
+	 * Creates a vertical / horizontal or both mirror image.
+	 * 
+	 * @access public
+	 * @param string $direction 'vertical', 'horizontal', 'both'
+	 * @return Image_Driver
+	 */
+	public static function flip($direction)
+	{
+		return static::instance()->flip($direction);
+	}
+	
 	/**
 	 * Adds a watermark to the image.
 	 *

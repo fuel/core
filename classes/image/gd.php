@@ -145,6 +145,51 @@ class Image_Gd extends \Image_Driver
 		}
 	}
 
+	protected function _flip($mode)
+	{
+		$sizes	= (array)$this->sizes();
+		$source = array_merge($sizes, array('x' => 0, 'y' => 0));
+		
+		switch ($mode)
+		{
+			case 'vertical':
+			$source['y'] = $sizes['height'] - 1;
+			$source['height'] = -$sizes['height'];
+			break;
+			
+			case 'horizontal':
+			$source['x'] = $sizes['width'] - 1;
+			$source['width']	= -$sizes['width'];
+			break;
+			
+			case 'both':
+			$source['y'] = $sizes['height'] - 1;
+			$source['x'] = $sizes['width'] - 1;
+			$source['height'] = -$sizes['height'];
+			$source['width']	= -$sizes['width'];
+			break;
+			
+			default: return false;
+		}
+		
+		$image = imagecreatetruecolor($sizes['width'], $sizes['height']);
+		
+		imagecopyresampled(
+			$image,
+			$this->image_data,
+			0,
+			0,
+			$source['x'],
+			$source['y'],
+			$sizes['width'],
+			$sizes['height'],
+			$source['width'],
+			$source['height']
+		);
+		
+		$this->image_data = $image;
+	}
+
 	protected function _border($size, $color = null)
 	{
 		extract(parent::_border($size, $color));
