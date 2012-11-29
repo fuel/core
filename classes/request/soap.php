@@ -5,14 +5,14 @@ namespace Fuel\Core;
 class Request_Soap extends \Request_Driver
 {
 	protected static $wsdl_settings = array('wsdl', 'classmap', 'cache_wsdl');
-	protected static $non_wsdl_settings = array('location', 'url', 'style', 'use');
+	protected static $non_wsdl_settings = array('location', 'uri', 'style', 'use');
 	protected static $generic_settings = array(
 		'soap_version', 'compression', 'encoding', 'trace', 'connection_timeout',
 		'typemap', 'user_agent', 'stream_context', 'features',
 	);
 
 	/**
-	 * @var  \SoapClient
+	 * @var  \SoapClient	holds the SoapClient object used for the connection
 	 */
 	protected $connection;
 
