@@ -276,11 +276,9 @@ class Pagination
 			}
 			else
 			{
-				$url = ($i == 1) ? '' : '/'.$i;
-
 				$html .= str_replace(
 				    '{link}',
-				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$url, $i), $this->template['regular-link']),
+				    str_replace(array('{uri}', '{page}'), array($this->_make_link($i), $i), $this->template['regular-link']),
 				    $this->template['regular']
 				);
 			}
@@ -313,11 +311,11 @@ class Pagination
 			else
 			{
 				$previous_page = $this->config['current_page'] - 1;
-				$previous_page = ($previous_page == 1) ? '' : '/'.$previous_page;
+				$previous_page = ($previous_page == 1) ? '' : $previous_page;
 
 				$html = str_replace(
 				    '{link}',
-				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$previous_page, $marker), $this->template['previous-link']),
+				    str_replace(array('{uri}', '{page}'), array($this->_make_link($previous_page), $marker), $this->template['previous-link']),
 				    $this->template['previous']
 				);
 			}
@@ -349,11 +347,11 @@ class Pagination
 			}
 			else
 			{
-				$next_page = '/'.($this->config['current_page'] + 1);
+				$next_page = $this->config['current_page'] + 1;
 
 				$html = str_replace(
 				    '{link}',
-				    str_replace(array('{uri}', '{page}'), array(rtrim($this->config['pagination_url'], '/').$next_page, $marker), $this->template['next-link']),
+				    str_replace(array('{uri}', '{page}'), array($this->_make_link($next_page), $marker), $this->template['next-link']),
 				    $this->template['next']
 				);
 			}
@@ -370,8 +368,15 @@ class Pagination
 		// calculate the number of pages
 		$this->config['total_pages'] = ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
 
-		// calculate the current page number
-		$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? $this->config['current_page'] : (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
+		// get the current page number from the URI or the query string
+		if (is_string($this->config['uri_segment']))
+		{
+			$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? $this->config['current_page'] : \Input::get($this->config['uri_segment'], 1);
+		}
+		else
+		{
+			$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? $this->config['current_page'] : (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
+		}
 
 		// make sure the current page is within bounds
 		if ($this->config['current_page'] > $this->config['total_pages'])
@@ -385,6 +390,80 @@ class Pagination
 
 		// the current page must be zero based so that the offset for page 1 is 0.
 		$this->config['offset'] = ($this->config['current_page'] - 1) * $this->config['per_page'];
+	}
+
+	/**
+	 * Generate a pagination link
+	 */
+	protected function _make_link($page)
+	{
+		// check if we use a URI segment or a Query String variable
+		if (is_string($this->config['uri_segment']))
+		{
+			// if no pagination URL is given, try to make one up
+			if (is_null($this->config['pagination_url']))
+			{
+				// start with the main uri
+				$this->config['pagination_url'] = \Uri::main();
+
+				// construct the query string, adding our placeholder
+				$get = \Input::get();
+				$get[$this->config['uri_segment']] = '{page}';
+				$this->config['pagination_url'] .= '?'.preg_replace('/%7Bpage%7D/', '{page}', http_build_query($get));
+			}
+			elseif (strpos($this->config['pagination_url'], '{page}') === false)
+			{
+				// convert the url into an array with it's components
+				$url = parse_url($this->config['pagination_url']);
+				if (isset($url['query']))
+				{
+					parse_str($url['query'], $url['query']);
+				}
+				else
+				{
+					$url['query'] = array();
+				}
+
+				// add our placeholder
+				$url['query'][$this->config['uri_segment']] = '{page}';
+
+				// reconstruct the URL
+				$query = preg_replace('/%7Bpage%7D/', '{page}', http_build_query($url['query']));
+				unset($url['query']);
+				empty($url['scheme']) or $url['scheme'] .= '://';
+				$this->config['pagination_url'] = implode($url).'?'.$query;
+			}
+
+		}
+		else
+		{
+			// if no pagination URL is given, try to make one up
+			if (is_null($this->config['pagination_url']))
+			{
+				// get the URL segments
+				$segs = Uri::segments();
+
+				// we can't fill in missing segments, so bail out if we detect this
+				if (count($segs) < $this->config['uri_segment'] - 1)
+				{
+					throw new \RuntimeException("Could not detect pagination_url.");
+				}
+
+				// replace the selected segment with the page placeholder
+				$segs[$this->config['uri_segment'] - 1] = '{page}';
+				$this->config['pagination_url'] = Uri::base().implode('/', $segs);
+			}
+			elseif (strpos($this->config['pagination_url'], '{page}') === false)
+			{
+				// if no placeholder is present, add one to the end of the URL
+				$this->config['pagination_url'] = rtrim($this->config['pagination_url'], '/').'/{page}';
+			}
+
+		}
+
+		// return the page link
+		empty($page) and $page = 1;
+		return str_replace('{page}', $page, $this->config['pagination_url']);
 	}
 
 }
