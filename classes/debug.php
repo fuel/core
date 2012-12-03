@@ -193,7 +193,7 @@ JS;
 		}
 		elseif (is_string($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (String): <span style=\"color:#E00000;\">\"{$var}\"</span> (".strlen($var)." characters)\n";
+			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (String): <span style=\"color:#E00000;\">\"".htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
 		}
 		elseif (is_float($var))
 		{
