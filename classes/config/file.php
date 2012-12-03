@@ -140,11 +140,10 @@ abstract class Config_File implements Config_Interface
 	/**
 	 * Formats the output and saved it to disc.
 	 *
-	 * @param   string     $identifier  filename
 	 * @param   $contents  $contents    config array to save
 	 * @return  bool       \File::update result
 	 */
-	public function save($identifier, $contents)
+	public function save($contents)
 	{
 		// get the formatted output
 		$output = $this->export_format($contents);
@@ -154,18 +153,18 @@ abstract class Config_File implements Config_Interface
 			return false;
 		}
 
-		if ( ! $path = \Finder::search('config', $identifier, null))
+		if ( ! $path = \Finder::search('config', $this->file, $this->ext))
 		{
-			if ($pos = strripos($identifier, '::'))
+			if ($pos = strripos($this->file, '::'))
 			{
 				// get the namespace path
-				if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($identifier, 0, $pos))))
+				if ($path = \Autoloader::namespace_path('\\'.ucfirst(substr($this->file, 0, $pos))))
 				{
 					// strip the namespace from the filename
-					$identifier = substr($identifier, $pos+2);
+					$this->file = substr($this->file, $pos+2);
 
 					// strip the classes directory as we need the module root
-					$path = substr($path,0, -8).'config'.DS.$identifier;
+					$path = substr($path,0, -8).'config'.DS.$this->file;
 				}
 				else
 				{
@@ -176,13 +175,13 @@ abstract class Config_File implements Config_Interface
 		}
 
 		// absolute path requested?
-		if ($identifier[0] === '/' or (isset($identifier[1]) and $identifier[1] === ':'))
+		if ($this->file[0] === '/' or (isset($this->file[1]) and $this->file[1] === ':'))
 		{
-			$path = $identifier;
+			$path = $this->file;
 		}
 
 		// make sure we have a fallback
-		$path or $path = APPPATH.'config'.DS.$identifier;
+		$path or $path = APPPATH.'config'.DS.$this->file;
 
 		$path = pathinfo($path);
 		if ( ! is_dir($path['dirname']))

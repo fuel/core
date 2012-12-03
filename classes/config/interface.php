@@ -6,5 +6,5 @@ interface Config_Interface
 {
 	public function load($overwrite = false);
 	public function group();
-	public function save($identifier, $contents);
+	public function save($contents);
 }

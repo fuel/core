@@ -148,22 +148,27 @@ class Config
 			$config = static::$items[$config];
 		}
 
-		$type = pathinfo($file, PATHINFO_EXTENSION);
-		if( ! $type)
+		$info = pathinfo($file);
+		$type = 'php';
+		if (isset($info['extension']))
 		{
-			$type = 'php';
-			$file .= '.'.$type;
+			$type = $info['extension'];
+			// Keep extension when it's an absolute path, because the finder won't add it
+			if ($file[0] !== '/' and $file[1] !== ':')
+			{
+				$file = substr($file, 0, -(strlen($type) + 1));
+			}
 		}
-
 		$class = '\\Config_'.ucfirst($type);
 
-		if( ! class_exists($class, true))
+		if ( ! class_exists($class))
 		{
-			throw new \ConfigException('Cannot save a config file of type: '.$type);
+			throw new \FuelException(sprintf('Invalid config type "%s".', $type));
 		}
 
-		$driver = new $class;
-		return $driver->save($file, $config);
+		$driver = new $class($file);
+
+		return $driver->save($config);
 	}
 
 	/**
