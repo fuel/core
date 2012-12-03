@@ -845,7 +845,7 @@ abstract class Image_Driver
 	public function reload()
 	{
 		$this->debug("Reloading was called!");
-		$this->load($this->image_fullpath, false, $this->image_extension);
+		$this->load($this->image_fullpath);
 		return $this;
 	}
 
