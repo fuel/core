@@ -154,7 +154,7 @@ abstract class Config_File implements Config_Interface
 			return false;
 		}
 
-		if ( ! $path = \Finder::search('config', $identifier))
+		if ( ! $path = \Finder::search('config', $identifier, null))
 		{
 			if ($pos = strripos($identifier, '::'))
 			{
