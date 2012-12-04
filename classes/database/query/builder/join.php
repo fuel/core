@@ -13,7 +13,6 @@ namespace Fuel\Core;
 
 class Database_Query_Builder_Join extends \Database_Query_Builder
 {
-
 	// Type of JOIN
 	protected $_type;
 
@@ -31,12 +30,12 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	 * @param   string  type of JOIN: INNER, RIGHT, LEFT, etc
 	 * @return  void
 	 */
-	public function __construct($table, $type = NULL)
+	public function __construct($table, $type = null)
 	{
 		// Set the table to JOIN on
 		$this->_table = $table;
 
-		if ($type !== NULL)
+		if ($type !== null)
 		{
 			// Set the JOIN type
 			$this->_type = (string) $type;
@@ -44,7 +43,22 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	}
 
 	/**
-	 * Adds a new condition for joining.
+	 * Adds a new OR condition for joining.
+	 *
+	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   string  logic operator
+	 * @param   mixed   column name or array($column, $alias) or object
+	 * @return  $this
+	 */
+	public function or_on($c1, $op, $c2)
+	{
+		$this->_on[] = array($c1, $op, $c2, 'OR');
+
+		return $this;
+	}
+
+	/**
+	 * Adds a new AND condition for joining.
 	 *
 	 * @param   mixed   column name or array($column, $alias) or object
 	 * @param   string  logic operator
@@ -53,9 +67,22 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	 */
 	public function on($c1, $op, $c2)
 	{
-		$this->_on[] = array($c1, $op, $c2);
+		$this->_on[] = array($c1, $op, $c2, 'AND');
 
 		return $this;
+	}
+
+	/**
+	 * Adds a new AND condition for joining.
+	 *
+	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   string  logic operator
+	 * @param   mixed   column name or array($column, $alias) or object
+	 * @return  $this
+	 */
+	public function and_on($c1, $op, $c2)
+	{
+		return $this->on($c1, $op, $c2);
 	}
 
 	/**
@@ -89,7 +116,10 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 		foreach ($this->_on as $condition)
 		{
 			// Split the condition
-			list($c1, $op, $c2) = $condition;
+			list($c1, $op, $c2, $chaining) = $condition;
+
+			// Add chain type
+			$conditions[] = ' '.$chaining.' ';
 
 			if ($op)
 			{
@@ -101,18 +131,24 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			$conditions[] = $db->quote_identifier($c1).$op.' '.$db->quote_identifier($c2);
 		}
 
+		// remove the first chain type
+		array_shift($conditions);
+
 		// if there are conditions, concat the conditions "... AND ..." and glue them on...
-		empty($conditions) or $sql .= ' ON ('.implode(' AND ', $conditions).')';
+		empty($conditions) or $sql .= ' ON ('.implode('', $conditions).')';
 
 		return $sql;
 	}
 
+	/**
+	 * Resets the join values.
+	 *
+	 * @return  object  $this
+	 */
 	public function reset()
 	{
 		$this->_type =
 		$this->_table = NULL;
-
 		$this->_on = array();
 	}
-
-} // End Database_Query_Builder_Join
+}
