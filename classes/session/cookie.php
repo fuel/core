@@ -68,19 +68,41 @@ class Session_Cookie extends \Session_Driver
 	 */
 	public function read($force = false)
 	{
+		// initialize the session
+		$this->data = array();
+		$this->keys = array();
+		$this->flash = array();
+
 		// get the session cookie
 		$payload = $this->_get_cookie();
 
-		// if no session cookie was present, initialize a new session
-		if ($payload === false or $force)
+		// validate it
+		if ($payload === false or $force )
 		{
-			$this->data = array();
-			$this->keys = array();
+			// not a valid cookie, or a forced session reset
+		}
+		elseif ( ! isset($payload[0]) or ! is_array($payload[0]))
+		{
+			// not a valid cookie payload
+		}
+		elseif ($payload[0]['updated'] + $this->config['expiration_time'] <= $this->time->get_timestamp())
+		{
+			// session has expired
+		}
+		elseif ($this->config['match_ip'] and $payload[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
+		{
+			// IP address doesn't match
+		}
+		elseif ($this->config['match_ua'] and $payload[0]['user_agent'] !== \Input::user_agent())
+		{
+			// user agent doesn't match
 		}
 		else
 		{
-			if (isset($payload[0])) $this->data  = $payload[0];
-			if (isset($payload[1])) $this->flash = $payload[1];
+			// session is valid, retrieve the payload
+			if (isset($payload[0]) and is_array($payload[0])) $this->data  = $payload[0];
+			if (isset($payload[1]) and is_array($payload[1])) $this->data  = $payload[1];
+			if (isset($payload[2]) and is_array($payload[2])) $this->flash = $payload[2];
 		}
 
 		return parent::read();
@@ -104,8 +126,11 @@ class Session_Cookie extends \Session_Driver
 			// rotate the session id if needed
 			$this->rotate(false);
 
+			// record the last update time of the session
+			$this->keys['updated'] = $this->time->get_timestamp();
+
 			// then update the cookie
-			$this->_set_cookie(array($this->data, $this->flash));
+			$this->_set_cookie(array($this->keys, $this->data, $this->flash));
 		}
 
 		return $this;

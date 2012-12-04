@@ -47,6 +47,9 @@ return array(
 	// cookie http_only flag  (optional, default = use the cookie class default)
 	'cookie_http_only'	=> null,
 
+	// whether or not to encrypt the session cookie (optional, default is true)
+	'encrypt_cookie'	=> true,
+
 	// if true, the session expires when the browser is closed (optional, default = false)
 	'expire_on_close'	=> false,
 

@@ -70,30 +70,24 @@ class Session_File extends \Session_Driver
 	 */
 	public function read($force = false)
 	{
+		// initialize the session
+		$this->data = array();
+		$this->keys = array();
+		$this->flash = array();
+
 		// get the session cookie
 		$cookie = $this->_get_cookie();
 
-		// if no session cookie was present, initialize a new session
-		if ($cookie === false or $force)
-		{
-			$this->data = array();
-			$this->keys = array();
-		}
-		else
+		// if a cookie was present, find the session record
+		if ($cookie and ! $force and isset($cookie[0]))
 		{
 			// read the session file
-			$payload = $this->_read_file($this->keys['session_id']);
+			$payload = $this->_read_file($cookie[0]);
 
 			if ($payload === false)
 			{
-				// try to find the previous one
-				$payload = $this->_read_file($this->keys['previous_id']);
-
-				if ($payload === false)
-				{
-					// cookie present, but session record missing. force creation of a new session
-					return $this->read(true);
-				}
+				// cookie present, but session record missing. force creation of a new session
+				return $this->read(true);
 			}
 
 			// unpack the payload
@@ -110,17 +104,34 @@ class Session_File extends \Session_Driver
 				}
 				else
 				{
-					// update the session
-					$this->keys['previous_id'] = $this->keys['session_id'];
-					$this->keys['session_id'] = $payload['rotated_session_id'];
-
 					// unpack the payload
 					$payload = $this->_unserialize($payload);
 				}
 			}
 
-			if (isset($payload[0])) $this->data = $payload[0];
-			if (isset($payload[1])) $this->flash = $payload[1];
+			if ( ! isset($payload[0]) or ! is_array($payload[0]))
+			{
+				// not a valid cookie payload
+			}
+			elseif ($payload[0]['updated'] + $this->config['expiration_time'] <= $this->time->get_timestamp())
+			{
+				// session has expired
+			}
+			elseif ($this->config['match_ip'] and $payload[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
+			{
+				// IP address doesn't match
+			}
+			elseif ($this->config['match_ua'] and $payload[0]['user_agent'] !== \Input::user_agent())
+			{
+				// user agent doesn't match
+			}
+			else
+			{
+				// session is valid, retrieve the payload
+				if (isset($payload[0]) and is_array($payload[0])) $this->data  = $payload[0];
+				if (isset($payload[1]) and is_array($payload[1])) $this->data  = $payload[1];
+				if (isset($payload[2]) and is_array($payload[2])) $this->flash = $payload[2];
+			}
 		}
 
 		return parent::read();
@@ -145,7 +156,7 @@ class Session_File extends \Session_Driver
 			$this->rotate(false);
 
 			// session payload
-			$payload = $this->_serialize(array($this->data, $this->flash));
+			$payload = $this->_serialize(array($this->keys, $this->data, $this->flash));
 
 			// create the session file
 			$this->_write_file($this->keys['session_id'], $payload);
@@ -158,7 +169,8 @@ class Session_File extends \Session_Driver
 				$this->_write_file($this->keys['previous_id'], $payload);
 			}
 
-			$this->_set_cookie();
+			// then update the cookie
+			$this->_set_cookie(array($this->keys['session_id']));
 
 			// do some garbage collection
 			if (mt_rand(0,100) < $this->config['gc_probability'])

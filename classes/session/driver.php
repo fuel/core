@@ -460,14 +460,10 @@ abstract class Session_Driver
 	 */
 	 protected function _set_cookie($payload = array())
 	 {
-		// record the last update time of the session
-		$this->keys['updated'] = $this->time->get_timestamp();
+		$payload = $this->_serialize($payload);
 
-		// add the session keys to the payload
-		array_unshift($payload, $this->keys);
-
-		// encrypt the payload
-		$payload = \Crypt::encode($this->_serialize($payload));
+		// encrypt the payload if needed
+		$this->config['encrypt_cookie'] and $payload = \Crypt::encode($payload);
 
 		// make sure it doesn't exceed the cookie size specification
 		if (strlen($payload) > 4000)
@@ -508,34 +504,11 @@ abstract class Session_Driver
 		if ($cookie !== false)
 		{
 			// fetch the payload
-			$cookie = $this->_unserialize(\Crypt::decode($cookie));
+			$this->config['encrypt_cookie'] and $cookie = \Crypt::decode($cookie);
+			$cookie = $this->_unserialize($cookie);
 
-			// validate the cookie
-			if ( ! isset($cookie[0]) )
-			{
-				// not a valid cookie payload
-			}
-			elseif ($cookie[0]['updated'] + $this->config['expiration_time'] <= $this->time->get_timestamp())
-			{
-				// session has expired
-			}
-			elseif ($this->config['match_ip'] and $cookie[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
-			{
-				// IP address doesn't match
-			}
-			elseif ($this->config['match_ua'] and $cookie[0]['user_agent'] !== \Input::user_agent())
-			{
-				// user agent doesn't match
-			}
-			else
-			{
-				// session is valid, retrieve the session keys
-				if (isset($cookie[0])) $this->keys = $cookie[0];
-
-				// and return the cookie payload
-				array_shift($cookie);
-				return $cookie;
-			}
+			// and return it
+			return $cookie;
 		}
 
 		// no payload
@@ -633,15 +606,16 @@ abstract class Session_Driver
 				break;
 
 				case 'match_ip':
-					// make sure it's a boolean
-					$item = (bool) $item;
-				break;
-
 				case 'match_ua':
+				case 'cookie_http_only':
+				case 'encrypt_cookie':
+				case 'expire_on_close':
+				case 'flash_auto_expire':
 					// make sure it's a boolean
 					$item = (bool) $item;
 				break;
 
+				case 'post_cookie_name':
 				case 'cookie_domain':
 					// make sure it's a string
 					$item = (string) $item;
@@ -650,59 +624,27 @@ abstract class Session_Driver
 				case 'cookie_path':
 					// make sure it's a string
 					$item = (string) $item;
-					if (empty($item))
-					{
-						$item = '/';
-					}
-				break;
-
-				case 'cookie_http_only':
-					// make sure it's a boolean
-					$item = (bool) $item;
-				break;
-
-				case 'expire_on_close':
-					// make sure it's a boolean
-					$item = (bool) $item;
+					empty($item) and $item = '/';
 				break;
 
 				case 'expiration_time':
 					// make sure it's an integer
 					$item = (int) $item;
-					if ($item <= 0)
-					{
-						// invalid? set it to two years from now
-						$item = 86400 * 365 * 2;
-					}
+					// invalid? set it to two years from now
+					$item <= 0 and $item = 86400 * 365 * 2;
 				break;
 
 				case 'rotation_time':
 					// make sure it's an integer
 					$item = (int) $item;
-					if ($item <= 0)
-					{
-						// invalid? set it to 5 minutes
-						$item = 300;
-					}
+					// invalid? set it to 5 minutes
+					$item <= 0 and $item = 300;
 				break;
 
 				case 'flash_id':
 					// make sure it's a string
 					$item = (string) $item;
-					if (empty($item))
-					{
-						$item = 'flash';
-					}
-				break;
-
-				case 'flash_auto_expire':
-					// make sure it's a boolean
-					$item = (bool) $item;
-				break;
-
-				case 'post_cookie_name':
-					// make sure it's a string
-					$item = (string) $item;
+					empty($item) and $item = 'flash';
 				break;
 
 				default:

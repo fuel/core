@@ -94,30 +94,24 @@ class Session_Redis extends \Session_Driver
 	 */
 	public function read($force = false)
 	{
+		// initialize the session
+		$this->data = array();
+		$this->keys = array();
+		$this->flash = array();
+
 		// get the session cookie
 		$cookie = $this->_get_cookie();
 
-		// if no session cookie was present, initialize a new session
-		if ($cookie === false or $force)
-		{
-			$this->data = array();
-			$this->keys = array();
-		}
-		else
+		// if a cookie was present, find the session record
+		if ($cookie and ! $force and isset($cookie[0]))
 		{
 			// read the session file
-			$payload = $this->_read_redis($this->keys['session_id']);
+			$payload = $this->_read_redis($cookie[0]);
 
 			if ($payload === false)
 			{
-				// try to find the previous one
-				$payload = $this->_read_redis($this->keys['previous_id']);
-
-				if ($payload === false)
-				{
-					// cookie present, but session record missing. force creation of a new session
-					return $this->read(true);
-				}
+				// cookie present, but session record missing. force creation of a new session
+				return $this->read(true);
 			}
 
 			// unpack the payload
@@ -143,8 +137,29 @@ class Session_Redis extends \Session_Driver
 				}
 			}
 
-			if (isset($payload[0])) $this->data = $payload[0];
-			if (isset($payload[1])) $this->flash = $payload[1];
+			if ( ! isset($payload[0]) or ! is_array($payload[0]))
+			{
+				// not a valid cookie payload
+			}
+			elseif ($payload[0]['updated'] + $this->config['expiration_time'] <= $this->time->get_timestamp())
+			{
+				// session has expired
+			}
+			elseif ($this->config['match_ip'] and $payload[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
+			{
+				// IP address doesn't match
+			}
+			elseif ($this->config['match_ua'] and $payload[0]['user_agent'] !== \Input::user_agent())
+			{
+				// user agent doesn't match
+			}
+			else
+			{
+				// session is valid, retrieve the rest of the payload
+				if (isset($payload[0]) and is_array($payload[0])) $this->data  = $payload[0];
+				if (isset($payload[1]) and is_array($payload[1])) $this->data  = $payload[1];
+				if (isset($payload[2]) and is_array($payload[2])) $this->flash = $payload[2];
+			}
 		}
 
 		return parent::read();
@@ -169,7 +184,7 @@ class Session_Redis extends \Session_Driver
 			$this->rotate(false);
 
 			// session payload
-			$payload = $this->_serialize(array($this->data, $this->flash));
+			$payload = $this->_serialize(array($this->keys, $this->data, $this->flash));
 
 			// create the session file
 			$this->_write_redis($this->keys['session_id'], $payload);
@@ -182,7 +197,7 @@ class Session_Redis extends \Session_Driver
 				$this->_write_redis($this->keys['previous_id'], $payload);
 			}
 
-			$this->_set_cookie();
+			$this->_set_cookie(array($this->keys['session_id']));
 		}
 
 		return $this;
@@ -220,12 +235,9 @@ class Session_Redis extends \Session_Driver
 	 */
 	protected function _write_redis($session_id, $payload)
 	{
-		// session payload
-		$payload = $this->_serialize(array($this->data, $this->flash));
-
 		// write it to the redis server
-		$this->redis->set($this->keys['session_id'], $payload);
-		$this->redis->expire($this->keys['session_id'], $this->config['expiration_time']);
+		$this->redis->set($session_id, $payload);
+		$this->redis->expire($session_id, $this->config['expiration_time']);
 	}
 
 	// --------------------------------------------------------------------
@@ -239,7 +251,7 @@ class Session_Redis extends \Session_Driver
 	protected function _read_redis($session_id)
 	{
 		// fetch the session data from the Memcached server
-		return $this->redis->get($this->keys['session_id']);
+		return $this->redis->get($session_id);
 	}
 
 	// --------------------------------------------------------------------

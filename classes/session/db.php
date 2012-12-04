@@ -78,20 +78,20 @@ class Session_Db extends \Session_Driver
 	 */
 	public function read($force = false)
 	{
+		// initialize the session
+		$this->data = array();
+		$this->keys = array();
+		$this->flash = array();
+		$this->record = null;
+
 		// get the session cookie
 		$cookie = $this->_get_cookie();
 
-		// if no session cookie was present, initialize a new session
-		if ($cookie === false or $force)
-		{
-			$this->data = array();
-			$this->keys = array();
-			$this->record = null;
-		}
-		else
+		// if a cookie was present, find the session record
+		if ($cookie and ! $force and isset($cookie[0]))
 		{
 			// read the session record
-			$this->record = \DB::select()->where('session_id', '=', $this->keys['session_id'])->from($this->config['table'])->execute($this->config['database']);
+			$this->record = \DB::select()->where('session_id', '=', $cookie[0])->from($this->config['table'])->execute($this->config['database']);
 
 			// record found?
 			if ($this->record->count())
@@ -101,13 +101,11 @@ class Session_Db extends \Session_Driver
 			else
 			{
 				// try to find the session on previous id
-				$this->record = \DB::select()->where('previous_id', '=', $this->keys['session_id'])->from($this->config['table'])->execute($this->config['database']);
+				$this->record = \DB::select()->where('previous_id', '=', $cookie[0])->from($this->config['table'])->execute($this->config['database']);
 
 				// record found?
 				if ($this->record->count())
 				{
-					// previous id used, correctly set session id so it wont be overwritten with previous id.
-					$this->keys['session_id'] = $this->record->get('session_id');
 					$payload = $this->_unserialize($this->record->get('payload'));
 				}
 				else
@@ -117,8 +115,29 @@ class Session_Db extends \Session_Driver
 				}
 			}
 
-			if (isset($payload[0])) $this->data = $payload[0];
-			if (isset($payload[1])) $this->flash = $payload[1];
+			if ( ! isset($payload[0]) or ! is_array($payload[0]))
+			{
+				// not a valid cookie payload
+			}
+			elseif ($payload[0]['updated'] + $this->config['expiration_time'] <= $this->time->get_timestamp())
+			{
+				// session has expired
+			}
+			elseif ($this->config['match_ip'] and $payload[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
+			{
+				// IP address doesn't match
+			}
+			elseif ($this->config['match_ua'] and $payload[0]['user_agent'] !== \Input::user_agent())
+			{
+				// user agent doesn't match
+			}
+			else
+			{
+				// session is valid, retrieve the payload
+				if (isset($payload[0]) and is_array($payload[0])) $this->data  = $payload[0];
+				if (isset($payload[1]) and is_array($payload[1])) $this->data  = $payload[1];
+				if (isset($payload[2]) and is_array($payload[2])) $this->flash = $payload[2];
+			}
 		}
 
 		return parent::read();
@@ -144,7 +163,7 @@ class Session_Db extends \Session_Driver
 
 			// create the session record, and add the session payload
 			$session = $this->keys;
-			$session['payload'] = $this->_serialize(array($this->data, $this->flash));
+			$session['payload'] = $this->_serialize(array($this->keys, $this->data, $this->flash));
 
 			// do we need to create a new session?
 			if (is_null($this->record))
@@ -162,7 +181,7 @@ class Session_Db extends \Session_Driver
 			if ($result !== false)
 			{
 				// then update the cookie
-				$this->_set_cookie();
+				$this->_set_cookie(array($this->keys['session_id']));
 			}
 			else
 			{
