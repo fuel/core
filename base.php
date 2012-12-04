@@ -36,35 +36,6 @@ if ( ! function_exists('logger'))
 {
 	function logger($level, $msg, $method = null)
 	{
-		// defined default error labels
-		static $labels = array(
-			1  => 'Error',
-			2  => 'Warning',
-			3  => 'Debug',
-			4  => 'Info',
-		);
-
-		// get the levels defined to be logged
-		$loglabels = \Config::get('log_threshold');
-
-		// bail out if we don't need logging at all
-		if ($loglabels == \Fuel::L_NONE)
-		{
-			return false;
-		}
-
-		// if it's not an array, assume it's an "up to" level
-		if ( ! is_array($loglabels))
-		{
-			$loglabels = array_keys(array_slice($labels, 0, $loglabels, true));
-		}
-
-		// do we need to log the message with this level?
-		if ( ! in_array($level, $loglabels))
-		{
-			return false;
-		}
-
 		! class_exists('Fuel\\Core\\Log') and import('log');
 		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
 

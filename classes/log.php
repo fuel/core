@@ -23,9 +23,39 @@ namespace Fuel\Core;
 class Log
 {
 
+	/**
+	 * default instance
+	 *
+	 * @var  array
+	 */
+	protected static $_instance = null;
+
+	/**
+	 * All the Asset instances
+	 *
+	 * @var  array
+	 */
+	protected static $_instances = array();
+
+	/**
+	 * Default configuration values
+	 *
+	 * @var  array
+	 */
+	protected static $default_config = array(
+		'driver' => 'file',
+		'levels' => array(
+			1  => 'Error',
+			2  => 'Warning',
+			3  => 'Debug',
+			4  => 'Info',
+		)
+	);
+
 	public static function _init()
 	{
 		\Config::load('file', true);
+		\Config::load('log', true);
 
 		// make sure the configured chmod values are octal
 		$chmod = \Config::get('file.chmod.folders', 0777);
@@ -33,6 +63,103 @@ class Log
 
 		$chmod = \Config::get('file.chmod.files', 0666);
 		is_string($chmod) and \Config::set('file.chmod.files', octdec($chmod));
+
+		$config = \Config::get('log', array());
+		\Config::set('log', array_merge(static::$default_config, $config));
+
+		// creates driver instance
+		static::instance();
+	}
+
+	/**
+	 * Factory
+	 *
+	 * Produces fully configured log driver instances
+	 *
+	 */
+	public static function forge()
+	{
+		$config = \Config::get('log', array());
+		$config = array_merge(static::$default_config, $config);
+
+		// validating custom levels
+		$levels = array_intersect_key($config['levels'], static::$default_config['levels']);
+		if ( ! empty($levels))
+		{
+			throw new \Log_Exception('You can not overwrite default log levels.');
+		}
+		else
+		{
+			$config['levels'] = static::$default_config['levels'] + $config['levels'];
+		}
+
+		if (empty($config['driver']))
+		{
+			throw new \Log_Exception('No log driver given or no default log driver set.');
+		}
+
+		// bail out if we don't need logging at all
+		$active = $config['threshold'] === 0 ? false : true;
+
+		// if it's not an array, assume it's an "up to" level
+		if ( ! is_array($config['threshold']))
+		{
+			$levels = array_slice($config['levels'], 0, $config['threshold'], true);
+		}
+		else
+		{
+			$levels = array_intersect_key($config['levels'], array_flip($config['threshold']));
+		}
+
+		// determine the driver to load
+		$class = '\\Log_'.ucfirst($config['driver']);
+
+		$driver = new $class($levels, $active);
+
+		// do we already have a driver instance?
+		if (isset(static::$_instances[$config['driver']]))
+		{
+			// if so, they must be using the same driver class!
+			$class_instance = 'Fuel\\Core\\'.$class;
+			if (static::$_instances[$config['driver']] instanceof $class_instance)
+			{
+				throw new \FuelException('You can not instantiate two different logs using the same driver "'.$config['driver'].'"');
+			}
+		}
+		else
+		{
+			// store this instance
+			static::$_instances[$config['driver']] =& $driver;
+		}
+
+		return static::$_instances[$config['driver']];
+	}
+
+	/**
+	 * create or return the driver instance
+	 *
+	 * @param	void
+	 * @access	public
+	 * @return	Log_Driver object
+	 */
+	public static function instance($instance = null)
+	{
+		if ($instance !== null)
+		{
+			if ( ! array_key_exists($instance, static::$_instances))
+			{
+				return false;
+			}
+
+			return static::$_instances[$instance];
+		}
+
+		if (static::$_instance === null)
+		{
+			static::$_instance = static::forge();
+		}
+
+		return static::$_instance;
 	}
 
 	/**
@@ -44,7 +171,7 @@ class Log
 	 */
 	public static function info($msg, $method = null)
 	{
-		return static::write(\Fuel::L_INFO, $msg, $method);
+		return static::instance()->write(\Fuel::L_INFO, $msg, $method);
 	}
 
 	/**
@@ -56,7 +183,7 @@ class Log
 	 */
 	public static function debug($msg, $method = null)
 	{
-		return static::write(\Fuel::L_DEBUG, $msg, $method);
+		return static::instance()->write(\Fuel::L_DEBUG, $msg, $method);
 	}
 
 	/**
@@ -68,7 +195,7 @@ class Log
 	 */
 	public static function warning($msg, $method = null)
 	{
-		return static::write(\Fuel::L_WARNING, $msg, $method);
+		return static::instance()->write(\Fuel::L_WARNING, $msg, $method);
 	}
 
 	/**
@@ -80,9 +207,8 @@ class Log
 	 */
 	public static function error($msg, $method = null)
 	{
-		return static::write(\Fuel::L_ERROR, $msg, $method);
+		return static::instance()->write(\Fuel::L_ERROR, $msg, $method);
 	}
-
 
 	/**
 	 * Write Log File
@@ -97,96 +223,6 @@ class Log
 	 */
 	public static function write($level, $msg, $method = null)
 	{
-		// defined default error labels
-		static $labels = array(
-			1  => 'Error',
-			2  => 'Warning',
-			3  => 'Debug',
-			4  => 'Info',
-		);
-
-		// get the levels defined to be logged
-		$loglabels = \Config::get('log_threshold');
-
-		// bail out if we don't need logging at all
-		if ($loglabels == \Fuel::L_NONE)
-		{
-			return false;
-		}
-
-		// if it's not an array, assume it's an "up to" level
-		if ( ! is_array($loglabels))
-		{
-			$loglabels = array_keys(array_slice($labels, 0, $loglabels, true));
-		}
-
-		// if $level is string, it is custom level.
-		if (is_int($level))
-		{
-			// do we need to log the message with this level?
-			if ( ! in_array($level, $loglabels))
-			{
-				return false;
-			}
-	
-			// store the label for this level for future use
-			$level = $labels[$level];
-		}
-
-		// if profiling is active log the message to the profile
-		if (Config::get('profiling'))
-		{
-			\Console::log($method.' - '.$msg);
-		}
-
-		// and write it to the logfile
-		$filepath = \Config::get('log_path').date('Y/m').'/';
-
-		if ( ! is_dir($filepath))
-		{
-			$old = umask(0);
-
-			mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
-			umask($old);
-		}
-
-		$filename = $filepath.date('d').'.php';
-
-		$message  = '';
-
-		if ( ! $exists = file_exists($filename))
-		{
-			$message .= "<"."?php defined('COREPATH') or exit('No direct script access allowed'); ?".">".PHP_EOL.PHP_EOL;
-		}
-
-		if ( ! $fp = @fopen($filename, 'a'))
-		{
-			return false;
-		}
-
-		$call = '';
-		if ( ! empty($method))
-		{
-			$call .= $method;
-		}
-
-		$message .= $level.' '.(($level == 'info') ? ' -' : '-').' ';
-		$message .= date(\Config::get('log_date_format'));
-		$message .= ' --> '.(empty($call) ? '' : $call.' - ').$msg.PHP_EOL;
-
-		flock($fp, LOCK_EX);
-		fwrite($fp, $message);
-		flock($fp, LOCK_UN);
-		fclose($fp);
-
-		if ( ! $exists)
-		{
-			$old = umask(0);
-			@chmod($filename, \Config::get('file.chmod.files', 0666));
-			umask($old);
-		}
-
-		return true;
+		return static::instance()->write($level, $msg, $method);
 	}
-
 }
