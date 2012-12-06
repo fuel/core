@@ -58,6 +58,16 @@ class DB
 		return \Database_Connection::instance($db)->last_query;
 	}
 
+	/*
+	 * Returns the DB drivers error info
+	 *
+	 * @return	mixed	the DB drivers error info
+	 */
+	public static function error_info($db = null)
+	{
+		return \Database_Connection::instance($db)->error_info();
+	}
+
 	/**
 	 * Create a new [Database_Query_Builder_Select]. Each argument will be
 	 * treated as a column. To generate a `foo AS bar` alias, use an array.
