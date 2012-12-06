@@ -20,13 +20,28 @@ namespace Fuel\Core;
  */
 class Test_Pagination extends TestCase
 {
-	public static function tearDownAfterClass()
+	protected function set_request($uri)
+	{
+		// set Request::$main
+		$this->request = \Request::forge($uri);
+		$rp = new \ReflectionProperty($this->request, 'main');
+		$rp->setAccessible(true);
+		$rp->setValue($this->request, $this->request);
+		
+		// set Request::$active
+		$rp = new \ReflectionProperty($this->request, 'active');
+		$rp->setAccessible(true);
+		$rp->setValue($this->request, $this->request);
+	}
+
+	public function tearDown()
 	{
 		// reset Request::$main
 		$request = \Request::forge();
 		$rp = new \ReflectionProperty($request, 'main');
 		$rp->setAccessible(true);
 		$rp->setValue($request, false);
+		
 		// reset Request::$active
 		$rp = new \ReflectionProperty($request, 'active');
 		$rp->setAccessible(true);
@@ -49,43 +64,51 @@ class Test_Pagination extends TestCase
 
 	public function test_uri_segment_auto_detect_pagination_url()
 	{
-		// set Request::$main
-		$request = \Request::forge('welcome/index/3');
-		$rp = new \ReflectionProperty($request, 'main');
-		$rp->setAccessible(true);
-		$rp->setValue($request, $request);
-		// set Request::$active
-		$rp = new \ReflectionProperty($request, 'active');
-		$rp->setAccessible(true);
-		$rp->setValue($request, $request);
 		// set base_url
-		Config::set('base_url', 'http://docs.fuelphp.com/welcome/index/');
-		$uri = new \Uri('/welcome/index/3');
+		Config::set('base_url', 'http://docs.fuelphp.com/');
+		// set Request::$main & $active
+		$this->set_request('welcome/index/5');
 
 		$this->set_uri_segment_config();
 		$this->config['pagination_url'] = null;
-
 		$pagination = Pagination::forge(__METHOD__, $this->config);
-		$test = $pagination->pagination_url;
-		$expected = 'http://docs.fuelphp.com/welcome/index/welcome/index/{page}';
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'http://docs.fuelphp.com/welcome/index/1';
 		$this->assertEquals($expected, $test);
 
 		// reset base_url
 		Config::set('base_url', null);
-		// reset Request::$active
-		$rp->setValue($request, false);
+	}
+
+	public function test_uri_segment_set_pagination_url_after_forging()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/3');
+
+		$this->set_uri_segment_config();
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+		$pagination->pagination_url = 'http://example.com/page/';
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'http://example.com/page/1';
+		$this->assertEquals($expected, $test);
 	}
 
 	public function test_uri_segment_get_total_pages()
 	{
-		// set Request::$main
-		$request = \Request::forge('welcome/index/');
-		$rp = new \ReflectionProperty($request, 'main');
-		$rp->setAccessible(true);
-		$rp->setValue($request, $request);
+		// set Request::$main & $active
+		$this->set_request('welcome/index/');
 
 		$this->set_uri_segment_config();
-
 		$pagination = Pagination::forge(__METHOD__, $this->config);
 		$test = $pagination->total_pages;
 		$expected = 10;
@@ -98,14 +121,10 @@ class Test_Pagination extends TestCase
 	 */
 	public function test_uri_segment_first_page()
 	{
-		// set Request::$main
-		$request = \Request::forge('welcome/index/');
-		$rp = new \ReflectionProperty($request, 'main');
-		$rp->setAccessible(true);
-		$rp->setValue($request, $request);
+		// set Request::$main & $active
+		$this->set_request('welcome/index/');
 
 		$this->set_uri_segment_config();
-
 		$pagination = Pagination::forge(__METHOD__, $this->config);
 
 		$output = $pagination->previous();
@@ -135,14 +154,10 @@ class Test_Pagination extends TestCase
 	 */
 	public function test_uri_segment_nextlink_inactive()
 	{
-		// set Request::$main
-		$request = \Request::forge('welcome/index/10');
-		$rp = new \ReflectionProperty($request, 'main');
-		$rp->setAccessible(true);
-		$rp->setValue($request, $request);
+		// set Request::$main & $active
+		$this->set_request('welcome/index/10');
 
 		$this->set_uri_segment_config();
-
 		$pagination = Pagination::forge(__METHOD__, $this->config);
 
 		$output = $pagination->next();
@@ -172,6 +187,9 @@ class Test_Pagination extends TestCase
 	 */
 	public function test_uri_segment_total_page_is_one()
 	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/10');
+
 		$this->set_uri_segment_config();
 		$this->config['per_page'] = 1000;
 
@@ -206,18 +224,19 @@ class Test_Pagination extends TestCase
 	{
 		// set base_url
 		Config::set('base_url', 'http://docs.fuelphp.com/');
-		// set Request::$main
-		$request = \Request::forge('/');
-		$rp = new \ReflectionProperty($request, 'main');
-		$rp->setAccessible(true);
-		$rp->setValue($request, $request);
+		// set Request::$main & $active
+		$this->set_request('/');
 
 		$this->set_query_string_config();
 		$this->config['pagination_url'] = null;
-
 		$pagination = Pagination::forge(__METHOD__, $this->config);
-		$test = $pagination->pagination_url;
-		$expected = 'http://docs.fuelphp.com/?p={page}';
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'http://docs.fuelphp.com/?p=1';
 		$this->assertEquals($expected, $test);
 
 		// reset base_url
@@ -226,8 +245,10 @@ class Test_Pagination extends TestCase
 
 	public function test_query_string_get_total_pages()
 	{
-		$this->set_query_string_config();
+		// set Request::$main & $active
+		$this->set_request('/');
 
+		$this->set_query_string_config();
 		$pagination = Pagination::forge(__METHOD__, $this->config);
 		$test = $pagination->total_pages;
 		$expected = 10;
@@ -240,8 +261,10 @@ class Test_Pagination extends TestCase
 	 */
 	public function test_query_string_first_page()
 	{
-		$this->set_query_string_config();
+		// set Request::$main & $active
+		$this->set_request('/');
 
+		$this->set_query_string_config();
 		$pagination = Pagination::forge(__METHOD__, $this->config);
 		$pagination->current_page = 1;
 
@@ -267,8 +290,10 @@ class Test_Pagination extends TestCase
 	 */
 	public function test_query_string_nextlink_inactive()
 	{
-		$this->set_query_string_config();
+		// set Request::$main & $active
+		$this->set_request('/');
 
+		$this->set_query_string_config();
 		$pagination = Pagination::forge(__METHOD__, $this->config);
 		$pagination->current_page = 10;
 
