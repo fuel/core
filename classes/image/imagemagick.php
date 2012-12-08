@@ -84,6 +84,28 @@ class Image_Imagemagick extends \Image_Driver
 
 		$this->clear_sizes();
 	}
+	
+	protected function _flip($direction)
+	{
+		switch ($direction)
+		{
+			case 'vertical':
+			$arg = '-flip';
+			break;
+
+			case 'horizontal':
+			$arg = '-flop';
+			break;
+			
+			case 'both':
+			$arg = '-flip -flop';
+			break;
+			
+			default: return false;
+		}
+		$image = '"'.$this->image_temp.'"';
+		$this->exec('convert', $image.' '.$arg.' '.$image);
+	}
 
 	protected function _watermark($filename, $position, $padding = 5)
 	{

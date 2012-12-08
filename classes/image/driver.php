@@ -214,6 +214,20 @@ abstract class Image_Driver
 		$this->queue('resize', $width, $height, $keepar, $pad);
 		return $this;
 	}
+	
+	
+	/**
+	 * Creates a vertical / horizontal or both mirror image.
+	 * 
+	 * @access public
+	 * @param mixed $direction 'vertical', 'horizontal', 'both'
+	 * @return Image_Driver
+	 */
+	public function flip($direction)
+	{
+		$this->queue('flip', $direction);
+		return $this;
+	}
 
 	/**
 	 * Executes the resize event when the queue is ran.
