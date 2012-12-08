@@ -599,10 +599,18 @@ class Fieldset_Field
 			$build_field = implode(' ', $build_field);
 		}
 
+		// determine the field_id, which allows us to identify the field for CSS purposes
+		$field_id = 'col_'.$this->name;
+		if ($parent = $this->fieldset()->parent())
+		{
+			$parent->get_tabular_form() and $field_id = $parent->get_tabular_form().'_col_'.$this->basename;
+		}
+
 		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n");
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description),
+		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}'),
+			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $field_id),
 			$template);
+
 		return $template;
 	}
 

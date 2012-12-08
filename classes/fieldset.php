@@ -586,7 +586,7 @@ class Fieldset
 		{
 			$properties = call_user_func($this->tabular_form_model.'::properties');
 			$primary_keys = call_user_func($this->tabular_form_model.'::primary_key');
-			$fields_output .= '<thead><tr>';
+			$fields_output .= '<thead><tr>'.PHP_EOL;
 			foreach ($properties as $field => $settings)
 			{
 				if ((isset($settings['skip']) and $settings['skip']) or in_array($field, $primary_keys))
@@ -597,9 +597,9 @@ class Fieldset
 				{
 					continue;
 				}
-				$fields_output .= '<th>'.$settings['label'].'</th>';
+				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.$settings['label'].'</th>'.PHP_EOL;
 			}
-			$fields_output .= '<th>'.\Config::get('form.tabular_delete_label', 'Delete?').'</th>';
+			$fields_output .= "\t".'<th>'.\Config::get('form.tabular_delete_label', 'Delete?').'</th>'.PHP_EOL;
 
 			$fields_output .= '</tr></thead>'.PHP_EOL;
 		}
