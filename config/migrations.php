@@ -54,9 +54,9 @@ return array(
 	/*
 	| Connecion name
 	|
-	|   Default: 'default'
+	|   Default: null
 	|
 	 */
-	'connection' => 'default',
+	'connection' => null
 );
 
