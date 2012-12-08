@@ -37,6 +37,11 @@ class Migrate
 	protected static $table = 'migration';
 
 	/**
+	 * @var string  database connection group
+	 */
+	protected static $connection = 'default';
+
+	/**
 	 * @var	array	migration table schema
 	 */
 	protected static $table_definition = array(
@@ -62,6 +67,9 @@ class Migrate
 		// set the name of the table containing the installed migrations
 		static::$table = \Config::get('migrations.table', static::$table);
 
+		// set the name of the connection group to use
+		static::$connection = \Config::get('migrations.connection', static::$connection);
+
 		// installs or upgrades the migration table to the current schema
 		static::table_version_check();
 
@@ -71,7 +79,7 @@ class Migrate
 			->order_by('type', 'ASC')
 			->order_by('name', 'ASC')
 			->order_by('migration', 'ASC')
-			->execute()
+			->execute(static::$connection)
 			->as_array();
 
 		// convert the db migrations to match the config file structure
@@ -304,7 +312,7 @@ class Migrate
 			'name' => $name,
 			'type' => $type,
 			'migration' => $file,
-		))->execute();
+		))->execute(static::$connection);
 
 		// add the file to the list of run migrations
 		static::$migrations[$type][$name][] = $file;
@@ -333,7 +341,7 @@ class Migrate
 			->where('name', $name)
 			->where('type', $type)
 			->where('migration', $file)
-		->execute();
+		->execute(static::$connection);
 
 		// remove the file from the list of run migrations
 		if (($key = array_search($file, static::$migrations[$type][$name])) !== false)
@@ -547,6 +555,9 @@ class Migrate
 	 */
 	protected static function table_version_check()
 	{
+		// set connection
+		\DBUtil::set_connection(static::$connection);
+
 		// if table does not exist
 		if ( ! \DBUtil::table_exists(static::$table))
 		{
@@ -558,7 +569,7 @@ class Migrate
 		elseif ( ! \DBUtil::field_exists(static::$table, array('migration')))
 		{
 			// get the current migration status
-			$current = \DB::select()->from(static::$table)->order_by('type', 'ASC')->order_by('name', 'ASC')->execute()->as_array();
+			$current = \DB::select()->from(static::$table)->order_by('type', 'ASC')->order_by('name', 'ASC')->execute(static::$connection)->as_array();
 
 			// drop the existing table, and recreate it in the new layout
 			\DBUtil::drop_table(static::$table);
@@ -596,7 +607,7 @@ class Migrate
 							'name' => $migration['name'],
 							'type' => $migration['type'],
 							'migration' => $file['filename'],
-						))->execute();
+						))->execute(static::$connection);
 
 						// and to the config
 						$config[] = $file['filename'];
@@ -615,5 +626,8 @@ class Migrate
 
 		// delete any old migration config file that may exist
 		file_exists(APPPATH.'config'.DS.'migrations.php') and unlink(APPPATH.'config'.DS.'migrations.php');
+
+		// set connection to default
+		\DBUtil::set_connection(null);
 	}
 }

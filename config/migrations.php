@@ -51,5 +51,12 @@ return array(
 	*/
 	'table' => 'migration',
 
+	/*
+	| Connecion name
+	|
+	|   Default: 'default'
+	|
+	 */
+	'connection' => 'default',
 );
 
