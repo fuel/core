@@ -134,7 +134,7 @@ class Session_Db extends \Session_Driver
 			else
 			{
 				// session is valid, retrieve the payload
-				if (isset($payload[0]) and is_array($payload[0])) $this->data  = $payload[0];
+				if (isset($payload[0]) and is_array($payload[0])) $this->keys  = $payload[0];
 				if (isset($payload[1]) and is_array($payload[1])) $this->data  = $payload[1];
 				if (isset($payload[2]) and is_array($payload[2])) $this->flash = $payload[2];
 			}
