@@ -274,7 +274,7 @@ class Migrate
 		// storage for installed migrations
 		$done = array();
 
-		self::$connection or \DBUtil::set_connection(static::$connection);
+		static::$connection or \DBUtil::set_connection(static::$connection);
 
 		// Loop through the runnable migrations and run them
 		foreach ($migrations as $ver => $migration)
@@ -292,7 +292,7 @@ class Migrate
 			$done[] = $file;
 		}
 
-		self::$connection === null or \DBUtil::set_connection(null);
+		static::$connection === null or \DBUtil::set_connection(null);
 
 		empty($done) or logger(Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
 
@@ -560,7 +560,7 @@ class Migrate
 	protected static function table_version_check()
 	{
 		// set connection
-		self::$connection === null or \DBUtil::set_connection(static::$connection);
+		static::$connection === null or \DBUtil::set_connection(static::$connection);
 
 		// if table does not exist
 		if ( ! \DBUtil::table_exists(static::$table))
@@ -632,6 +632,6 @@ class Migrate
 		file_exists(APPPATH.'config'.DS.'migrations.php') and unlink(APPPATH.'config'.DS.'migrations.php');
 
 		// set connection to default
-		self::$connection === null or \DBUtil::set_connection(null);
+		static::$connection === null or \DBUtil::set_connection(null);
 	}
 }
