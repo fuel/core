@@ -18,7 +18,7 @@ class Image_Imagick extends \Image_Driver
 {
 
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
-	private $imagick = null;
+	protected $imagick = null;
 
 	public function load($filename, $return_data = false, $force_extension = false)
 	{
@@ -77,7 +77,28 @@ class Image_Imagick extends \Image_Driver
 		$wmimage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $this->config['watermark_alpha'] / 100, \Imagick::CHANNEL_ALPHA);
 		$this->imagick->compositeImage($wmimage, \Imagick::COMPOSITE_DEFAULT, $x, $y);
 	}
-
+	
+	protected function _flip($direction)
+	{
+		switch ($direction)
+		{
+			case 'vertical':
+			$this->imagick->flipImage();
+			break;
+			
+			case 'horizontal':
+			$this->imagick->flopImage();
+			break;
+			
+			case 'both':
+			$this->imagick->flipImage();
+			$this->imagick->flopImage();
+			break;
+			
+			default: return false;
+		}
+	}
+	
 	protected function _border($size, $color = null)
 	{
 		extract(parent::_border($size, $color));
