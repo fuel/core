@@ -274,6 +274,8 @@ class Migrate
 		// storage for installed migrations
 		$done = array();
 
+		\DBUtil::set_connection(static::$connection);
+
 		// Loop through the runnable migrations and run them
 		foreach ($migrations as $ver => $migration)
 		{
@@ -289,6 +291,8 @@ class Migrate
 			$method == 'up' ? static::write_install($name, $type, $file) : static::write_revert($name, $type, $file);
 			$done[] = $file;
 		}
+
+		\DBUtil::set_connection(static::$connection);
 
 		empty($done) or logger(Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
 
