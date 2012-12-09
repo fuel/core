@@ -626,10 +626,10 @@ class Migrate
 				\Config::set('migrations.version', $configs);
 				\Config::save(\Fuel::$env.DS.'migrations', 'migrations');
 			}
-		}
 
-		// delete any old migration config file that may exist
-		file_exists(APPPATH.'config'.DS.'migrations.php') and unlink(APPPATH.'config'.DS.'migrations.php');
+			// delete any old migration config file that may exist
+			file_exists(APPPATH.'config'.DS.'migrations.php') and unlink(APPPATH.'config'.DS.'migrations.php');
+		}
 
 		// set connection to default
 		static::$connection === null or \DBUtil::set_connection(null);
