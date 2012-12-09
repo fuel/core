@@ -748,10 +748,11 @@ class Fieldset
 	 * @param  string  Model on which to define the tabular form
 	 * @param  string  Relation of the Model on the tabular form is modeled
 	 * @param  array  Collection of Model objects from a many relation
+	 * @param  int  Number of empty rows to generate
 	 *
 	 * @return  Fieldset  this, to allow chaining
 	 */
-	public function set_tabular_form($model, $relation, $parent)
+	public function set_tabular_form($model, $relation, $parent, $blanks = 1)
 	{
 		// validate the model and relation
 		try
@@ -818,14 +819,21 @@ class Fieldset
 			$fieldset->add($this->tabular_form_relation.'['.$row->{$primary_key}.'][_delete]', '', array('type' => 'checkbox', 'value' => 1));
 		}
 
-		// and finish with a empty row so we can add new data
-		$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_row_0'));
-		$fieldset->add_model($model)->set_fieldset_tag(false);
-		$fieldset->set_config(array(
-			'form_template' => \Config::get('form.tabular_row_template', "<tr>{fields}</tr>"),
-			'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
-		));
-		$fieldset->add($this->tabular_form_relation.'[0][_delete]', '', array('type' => 'checkbox', 'value' => 0, 'disabled' => 'disabled'));
+		// and finish with one or more empty rows so we can add new data
+		if ( ! is_numeric($blanks) or $blanks < 1)
+		{
+			$blanks = 1;
+		}
+		for ($i = 0; $i < $blanks; $i++)
+		{
+			$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_new_'.$i));
+			$fieldset->add_model($model)->set_fieldset_tag(false);
+			$fieldset->set_config(array(
+				'form_template' => \Config::get('form.tabular_row_template', "<tr>{fields}</tr>"),
+				'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
+			));
+			$fieldset->add($this->tabular_form_relation.'_new['.$i.'][_delete]', '', array('type' => 'checkbox', 'value' => 0, 'disabled' => 'disabled'));
+		}
 
 		// no required rules on this row
 		foreach ($fieldset->field() as $f)
