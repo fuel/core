@@ -255,9 +255,10 @@ abstract class Session_Driver
 	 * @access	public
 	 * @param	string	name of the variable to get
 	 * @param	mixed	default value to return if the variable does not exist
+	 * @param	bool	true if the flash variable needs to expire immediately
 	 * @return	mixed
 	 */
-	public function get_flash($name, $default = null)
+	public function get_flash($name, $default = null, $expire = false)
 	{
 		if (is_null($name))
 		{
@@ -284,7 +285,7 @@ abstract class Session_Driver
 			if (isset($this->flash[$this->config['flash_id'].'::'.$name]))
 			{
 				// if it's not a var set in this request, mark it for expiration
-				if ($this->flash[$this->config['flash_id'].'::'.$name]['state'] !== 'new')
+				if ($this->flash[$this->config['flash_id'].'::'.$name]['state'] !== 'new' or $expire)
 				{
 					$this->flash[$this->config['flash_id'].'::'.$name]['state'] = 'expire';
 				}

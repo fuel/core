@@ -248,11 +248,12 @@ class Session
 	 * @access	public
 	 * @param	string	name of the variable to get
 	 * @param	mixed	default value to return if the variable does not exist
+	 * @param	bool	true if the flash variable needs to expire immediately
 	 * @return	mixed
 	 */
-	public static function get_flash($name = null, $default = null)
+	public static function get_flash($name = null, $default = null, $expire = false)
 	{
-		return static::instance()->get_flash($name, $default);
+		return static::instance()->get_flash($name, $default, $expire);
 	}
 
 	// --------------------------------------------------------------------
