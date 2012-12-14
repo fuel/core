@@ -28,6 +28,8 @@ class Test_Validation extends TestCase
 					'foo' => 'bar',
 					'bar' => 'foo',
 					'boo' => 'bar',
+                    'multiline' => "foo\nbar",
+                    'multiline_crlf' => "foo\r\nbar",
 					'cat' => '',
 					'dog' => '245abc',
 					'php' => 1,
@@ -232,6 +234,8 @@ class Test_Validation extends TestCase
 	{
 		$val = Validation::forge(__FUNCTION__);
 		$val->add_field('boo', 'Boo', 'min_length[2]');
+		$val->add_field('multiline', 'Multiline', 'min_length[6]');
+		$val->add_field('multiline_crlf', 'Multiline_CRLF', 'min_length[6]');
 
 		$output = $val->run($input);
 		$expected = true;
@@ -249,6 +253,8 @@ class Test_Validation extends TestCase
 	{
 		$val = Validation::forge(__FUNCTION__);
 		$val->add_field('boo', 'Boo', 'min_length[4]');
+		$val->add_field('multiline', 'Multiline', 'min_length[8]');
+		$val->add_field('multiline_crlf', 'Multiline_CRLF', 'min_length[8]');
 		$val->run($input);
 
 		$output = $val->error('boo', false) ? true : false;
@@ -267,6 +273,8 @@ class Test_Validation extends TestCase
 	{
 		$val = Validation::forge(__FUNCTION__);
 		$val->add_field('boo', 'Boo', 'max_length[4]');
+		$val->add_field('multiline', 'Multiline', 'max_length[8]');
+		$val->add_field('multiline_crlf', 'Multiline_CRLF', 'max_length[8]');
 
 		$output = $val->run($input);
 		$expected = true;
@@ -284,6 +292,8 @@ class Test_Validation extends TestCase
 	{
 		$val = Validation::forge(__FUNCTION__);
 		$val->add_field('boo', 'Boo', 'max_length[2]');
+		$val->add_field('multiline', 'Multiline', 'max_length[6]');
+		$val->add_field('multiline_crlf', 'Multiline_CRLF', 'max_length[6]');
 		$val->run($input);
 
 		$output = $val->error('boo', false) ? true : false;
@@ -302,6 +312,8 @@ class Test_Validation extends TestCase
 	{
 		$val = Validation::forge(__FUNCTION__);
 		$val->add_field('boo', 'Boo', 'exact_length[3]');
+		$val->add_field('multiline', 'Multiline', 'max_length[7]');
+		$val->add_field('multiline_crlf', 'Multiline_CRLF', 'max_length[7]');
 
 		$output = $val->run($input);
 		$expected = true;
@@ -319,6 +331,8 @@ class Test_Validation extends TestCase
 	{
 		$val = Validation::forge(__FUNCTION__);
 		$val->add_field('boo', 'Boo', 'max_length[2]');
+		$val->add_field('multiline', 'Multiline', 'max_length[7]');
+		$val->add_field('multiline_crlf', 'Multiline_CRLF', 'max_length[7]');
 		$val->run($input);
 
 		$output = $val->error('boo', false) ? true : false;
