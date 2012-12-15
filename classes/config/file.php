@@ -181,7 +181,7 @@ abstract class Config_File implements Config_Interface
 		}
 
 		// make sure we have a fallback
-		$path or $path = APPPATH.'config'.DS.$this->file;
+		$path or $path = APPPATH.'config'.DS.$this->file.$this->ext;
 
 		$path = pathinfo($path);
 		if ( ! is_dir($path['dirname']))
