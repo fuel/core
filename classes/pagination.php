@@ -127,6 +127,8 @@ class Pagination
 		'total_items'             => 0,
 		'num_links'               => 5,
 		'uri_segment'             => 3,
+		'show_first'              => false,
+		'show_last'               => false,
 		'pagination_url'          => null,
 	);
 
@@ -135,6 +137,8 @@ class Pagination
 	 */
 	protected $template = array(
 		'wrapper'                 => "<div class=\"pagination\">\n\t{pagination}\n</div>\n",
+		'first'                   => "<span class=\"first\">\n\t{link}\n</span>\n",
+		'first-link'              => "\t\t<a href=\"{uri}\">{page}</a>\n",
 		'previous'                => "<span class=\"previous\">\n\t{link}\n</span>\n",
 		'previous-link'           => "\t\t<a href=\"{uri}\">{page}</a>\n",
 		'previous-inactive'       => "<span class=\"previous-inactive\">\n\t{link}\n</span>\n",
@@ -147,6 +151,8 @@ class Pagination
 		'next-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
 		'next-inactive'           => "<span class=\"next-inactive\">\n\t{link}\n</span>\n",
 		'next-inactive-link'      => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'last'                    => "<span class=\"next\">\n\t{link}\n</span>\n",
+		'last-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
 	);
 
 	/**
@@ -236,7 +242,7 @@ class Pagination
 
 		$html = str_replace(
 			'{pagination}',
-			$this->previous().$this->pages_render().$this->next(),
+			$this->first().$this->previous().$this->pages_render().$this->next().$this->last(),
 			$this->template['wrapper']
 		);
 
@@ -282,6 +288,29 @@ class Pagination
 				    $this->template['regular']
 				);
 			}
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Pagination "First" link
+	 *
+	 * @param	string $value optional text to display in the link
+	 *
+	 * @return	string	Markup for the 'first' page number link
+	 */
+	public function first($marker = '&laquo;&laquo;')
+	{
+		$html = '';
+
+		if ($this->config['show_first'] and $this->config['total_pages'] > 1 and $this->config['current_page'] > 1)
+		{
+			$html = str_replace(
+				'{link}',
+				str_replace(array('{uri}', '{page}'), array($this->_make_link(1), $marker), $this->template['first-link']),
+				$this->template['first']
+			);
 		}
 
 		return $html;
@@ -355,6 +384,29 @@ class Pagination
 				    $this->template['next']
 				);
 			}
+		}
+
+		return $html;
+	}
+
+	/**
+	 * Pagination "Last" link
+	 *
+	 * @param	string $value optional text to display in the link
+	 *
+	 * @return	string	Markup for the 'last' page number link
+	 */
+	public function last($marker = '&raquo;&raquo;')
+	{
+		$html = '';
+
+		if ($this->config['show_last'] and $this->config['total_pages'] > 1 and $this->config['current_page'] != $this->config['total_pages'])
+		{
+			$html = str_replace(
+				'{link}',
+				str_replace(array('{uri}', '{page}'), array($this->_make_link($this->config['total_pages']), $marker), $this->template['last-link']),
+				$this->template['last']
+			);
 		}
 
 		return $html;
