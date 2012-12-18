@@ -231,7 +231,7 @@ class Autoloader
 			static::$auto_initialize = $class;
 		}
 
-		if (array_key_exists($class, static::$classes))
+		if (isset(static::$classes[$class]))
 		{
 			include str_replace('/', DS, static::$classes[$class]);
 			static::init_class($class);
