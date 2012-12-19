@@ -597,7 +597,7 @@ class Fieldset
 				{
 					continue;
 				}
-				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.$settings['label'].'</th>'.PHP_EOL;
+				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.\Lang::get($settings['label']).'</th>'.PHP_EOL;
 			}
 			$fields_output .= "\t".'<th>'.\Config::get('form.tabular_delete_label', 'Delete?').'</th>'.PHP_EOL;
 
@@ -754,19 +754,18 @@ class Fieldset
 	 */
 	public function set_tabular_form($model, $relation, $parent, $blanks = 1)
 	{
-		// validate the model and relation
-		try
-		{
-			// fetch the relations of the parent model
-			$relations = call_user_func(array($parent, 'relations'));
-			if ( ! array_key_exists($relation, $relations))
-			{
-				throw new \RuntimeException('Relation passed to set_tabular_form() is not a valid relation of the ORM parent model object.');
-			}
-		}
-		catch (\Exception $e)
+		// make sure our parent is an ORM model instance
+		if ( ! $parent instanceOf \Orm\Model)
 		{
 			throw new \RuntimeException('Parent passed to set_tabular_form() is not an ORM model object.');
+		}
+
+		// validate the model and relation
+		// fetch the relations of the parent model
+		$relations = call_user_func(array($parent, 'relations'));
+		if ( ! array_key_exists($relation, $relations))
+		{
+			throw new \RuntimeException('Relation passed to set_tabular_form() is not a valid relation of the ORM parent model object.');
 		}
 
 		// check for compound primary keys
