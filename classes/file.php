@@ -438,16 +438,8 @@ class File
 	 */
 	public static function rename($path, $new_path, $source_area = null, $target_area = null)
 	{
-		$path_inst      = static::instance($source_area);
-		$new_path_inst  = static::instance($target_area ?: $source_area);
-
-		if ( ! $path_inst || ! $new_path_inst)
-		{
-			return false;
-		}
-
-		$path     = $path_inst->get_path($path);
-		$new_path = $new_path_inst->get_path($new_path);
+		$path = static::instance($source_area)->get_path($path);
+		$new_path = static::instance($target_area ?: $source_area)->get_path($new_path);
 
 		return rename($path, $new_path);
 	}
@@ -471,16 +463,8 @@ class File
 	 */
 	public static function copy($path, $new_path, $source_area = null, $target_area = null)
 	{
-		$path_inst      = static::instance($source_area);
-		$new_path_inst  = static::instance($target_area ?: $source_area);
-
-		if ( ! $path_inst || ! $new_path_inst)
-		{
-			return false;
-		}
-
-		$path     = $path_inst->get_path($path);
-		$new_path = $new_path_inst->get_path($new_path);
+		$path      = static::instance($source_area)->get_path($path);
+		$new_path  = static::instance($target_area ?: $source_area)->get_path($new_path);
 
 		if ( ! is_file($path))
 		{
@@ -507,16 +491,8 @@ class File
 	{
 		$target_area = $target_area ?: $source_area;
 
-		$path_inst      = static::instance($source_area);
-		$new_path_inst  = static::instance($target_area);
-
-		if ( ! $path_inst || ! $new_path_inst)
-		{
-			return false;
-		}
-
-		$path     = rtrim($path_inst->get_path($path), '\\/').DS;
-		$new_path = rtrim($new_path_inst->get_path($new_path), '\\/').DS;
+		$path      = rtrim(static::instance($source_area)->get_path($path), '\\/').DS;
+		$new_path  = rtrim(static::instance($target_area)->get_path($new_path), '\\/').DS;
 
 		if ( ! is_dir($path))
 		{
