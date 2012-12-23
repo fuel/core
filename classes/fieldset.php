@@ -832,12 +832,12 @@ class Fieldset
 				'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
 			));
 			$fieldset->add($this->tabular_form_relation.'_new['.$i.'][_delete]', '', array('type' => 'checkbox', 'value' => 0, 'disabled' => 'disabled'));
-		}
 
-		// no required rules on this row
-		foreach ($fieldset->field() as $f)
-		{
-			$f->delete_rule('required', false)->delete_rule('required_with', false);
+			// no required rules on this row
+			foreach ($fieldset->field() as $f)
+			{
+				$f->delete_rule('required', false)->delete_rule('required_with', false);
+			}
 		}
 
 		return $this;
