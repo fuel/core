@@ -593,7 +593,7 @@ class Fieldset
 				{
 					continue;
 				}
-				if (isset($settings['form']['type']) and $settings['form']['type'] === false)
+				if (isset($settings['form']['type']) and ($settings['form']['type'] === false or $settings['form']['type'] === 'hidden'))
 				{
 					continue;
 				}
