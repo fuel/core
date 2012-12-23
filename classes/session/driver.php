@@ -242,7 +242,25 @@ abstract class Session_Driver
 	 */
 	public function set_flash($name, $value)
 	{
-		$this->flash[$this->config['flash_id'].'::'.$name] = array('state' => 'new', 'value' => $value);
+		if (strpos($name, '.') !== false)
+		{
+			$keys = explode('.', $name, 2);
+			$name = array_shift($keys);
+		}
+		else
+		{
+			$keys = false;
+		}
+
+		if ($keys)
+		{
+			isset($this->flash[$this->config['flash_id'].'::'.$name]['value']) or $this->flash[$this->config['flash_id'].'::'.$name] = array('state' => 'new', 'value' => array());
+			\Arr::set($this->flash[$this->config['flash_id'].'::'.$name]['value'], $keys[0], $value);
+		}
+		else
+		{
+			$this->flash[$this->config['flash_id'].'::'.$name] = array('state' => 'new', 'value' => $value);
+		}
 
 		return $this;
 	}
