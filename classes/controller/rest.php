@@ -190,9 +190,6 @@ abstract class Controller_Rest extends \Controller
 				// Set the formatted response
 				$this->response->body(\Format::forge($data)->{'to_'.$this->format}());
 			}
-
-			// Set the reponse http status
-			$http_status and $this->response->status = $http_status;
 		}
 
 		// Format not supported, output directly
@@ -200,6 +197,9 @@ abstract class Controller_Rest extends \Controller
 		{
 			$this->response->body($data);
 		}
+
+		// Set the reponse http status
+		$http_status and $this->response->status = $http_status;
 
 		return $this->response;
 	}
