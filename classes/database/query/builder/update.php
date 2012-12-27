@@ -135,10 +135,13 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	{
 		$this->_table = NULL;
 
-		$this->_set   =
-		$this->_where = array();
+		$this->_join     =
+		$this->_set      =
+		$this->_where    =
+		$this->_order_by = array();
 
-		$this->_limit = NULL;
+		$this->_limit     =
+		$this->_last_join = NULL;
 
 		$this->_parameters = array();
 
