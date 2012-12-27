@@ -61,7 +61,7 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 			// Get the database instance
 			$db = \Database_Connection::instance($db);
 		}
-		
+
 		// Start a deletion query
 		$query = 'DELETE FROM '.$db->quote_table($this->_table);
 
@@ -88,8 +88,11 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 
 	public function reset()
 	{
-		$this->_table = NULL;
-		$this->_where = array();
+		$this->_table =
+		$this->_limit = NULL;
+
+		$this->_where    =
+		$this->_order_by = array();
 
 		$this->_parameters = array();
 
