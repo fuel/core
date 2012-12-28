@@ -175,6 +175,8 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 
 		$delete = function($path, $files) use(&$delete)
 		{
+			$path = rtrim($path, '\\/').DS;
+
 			foreach ($files as $dir => $file)
 			{
 				if (is_numeric($dir))
