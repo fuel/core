@@ -194,6 +194,8 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 					}
 				}
 			}
+			
+			basename($path) !== 'cache' and rmdir($path);
 
 			return true;
 		};
