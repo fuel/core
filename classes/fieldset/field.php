@@ -302,8 +302,8 @@ class Fieldset_Field
 			if ($rule[0] === $callback)
 			{
 				unset($this->rules[$index]);
+				break;
 			}
-			break;
 		}
 
 		if ($callback === 'required' and $set_attr)
