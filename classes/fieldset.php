@@ -818,8 +818,8 @@ class Fieldset
 			$fieldset->add($this->tabular_form_relation.'['.$row->{$primary_key}.'][_delete]', '', array('type' => 'checkbox', 'value' => 1));
 		}
 
-		// and finish with one or more empty rows so we can add new data
-		if ( ! is_numeric($blanks) or $blanks < 1)
+		// and finish with zero or more empty rows so we can add new data
+		if ( ! is_numeric($blanks) or $blanks < 0)
 		{
 			$blanks = 1;
 		}
