@@ -54,7 +54,7 @@ class Validation
 		{
 			if ($fieldset->validation(false) != null)
 			{
-				throw new \DomainException('Form instance already exists, cannot be recreated. Use instance() instead of factory() to retrieve the existing instance.');
+				throw new \DomainException('Form instance already exists, cannot be recreated. Use instance() instead of forge() to retrieve the existing instance.');
 			}
 		}
 

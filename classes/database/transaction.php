@@ -37,17 +37,6 @@ class Database_Transaction
 	}
 
 	/**
-	 * This method is deprecated...use forge() instead.
-	 *
-	 * @deprecated until 1.2
-	 */
-	public static function factory()
-	{
-		logger(\Fuel::L_WARNING, 'This method is deprecated.  Please use a forge() instead.', __METHOD__);
-		return static::forge();
-	}
-
-	/**
 	 * Creates a new instance
 	 *
 	 * @param  string  $instance

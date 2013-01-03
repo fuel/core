@@ -73,7 +73,7 @@ class Image
 	 * Sending the config options through the static reference initalizes the
 	 * instance. If you need to send a driver config through the static reference,
 	 * make sure its the first one sent! If errors arise, create a new instance using
-	 * factory().
+	 * forge().
 	 *
 	 * @param   array   $config   An array of configuration settings.
 	 * @return  Image_Driver
@@ -158,10 +158,10 @@ class Image
 	{
 		return static::instance()->rotate($degrees);
 	}
-	
+
 	/**
 	 * Creates a vertical / horizontal or both mirror image.
-	 * 
+	 *
 	 * @access public
 	 * @param string $direction 'vertical', 'horizontal', 'both'
 	 * @return Image_Driver
@@ -170,7 +170,7 @@ class Image
 	{
 		return static::instance()->flip($direction);
 	}
-	
+
 	/**
 	 * Adds a watermark to the image.
 	 *
