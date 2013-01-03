@@ -152,12 +152,7 @@ class Fuel
 		ob_start(\Config::get('ob_callback', null));
 
 		static::$profiling = \Config::get('profiling', false);
-
-		if (static::$profiling)
-		{
-			\Profiler::init();
-			\Profiler::mark(__METHOD__.' Start');
-		}
+		static::$profiling and \Profiler::init();
 
 		static::$cache_dir = \Config::get('cache_dir', APPPATH.'cache/');
 		static::$caching = \Config::get('caching', false);
