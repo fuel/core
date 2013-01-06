@@ -448,18 +448,18 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 
 	public function reset()
 	{
-		$this->_select   =
-		$this->_from     =
-		$this->_join     =
-		$this->_where    =
-		$this->_group_by =
-		$this->_having   =
+		$this->_select   = array();
+		$this->_from     = array();
+		$this->_join     = array();
+		$this->_where    = array();
+		$this->_group_by = array();
+		$this->_having   = array();
 		$this->_order_by = array();
 
 		$this->_distinct = FALSE;
 
-		$this->_limit     =
-		$this->_offset    =
+		$this->_limit     = NULL;
+		$this->_offset    = NULL;
 		$this->_last_join = NULL;
 
 		$this->_parameters = array();

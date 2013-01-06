@@ -184,7 +184,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	{
 		$this->_table = NULL;
 
-		$this->_columns =
+		$this->_columns = array();
 		$this->_values  = array();
 
 		$this->_parameters = array();

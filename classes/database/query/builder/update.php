@@ -23,6 +23,9 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	// JOIN ...
 	protected $_join = array();
 
+	// The last JOIN statement created
+	protected $_last_join;
+
 	/**
 	 * Set the table for a update.
 	 *
@@ -135,10 +138,13 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	{
 		$this->_table = NULL;
 
-		$this->_set   =
-		$this->_where = array();
+		$this->_join     = array();
+		$this->_set      = array();
+		$this->_where    = array();
+		$this->_order_by = array();
 
-		$this->_limit = NULL;
+		$this->_limit     = NULL;
+		$this->_last_join = NULL;
 
 		$this->_parameters = array();
 
