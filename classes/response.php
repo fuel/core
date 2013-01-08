@@ -285,11 +285,17 @@ class Response
 	 */
 	public function send($send_headers = false)
 	{
-		$send_headers and $this->send_headers();
+		$body = $this->__toString();
+
+		if($send_headers)
+		{
+			$this->set_header('Content-Length', strlen($body));
+			$this->send_headers();
+		}
 
 		if ($this->body != null)
 		{
-			echo $this->__toString();
+			echo $body;
 		}
 	}
 
