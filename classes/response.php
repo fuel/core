@@ -287,9 +287,9 @@ class Response
 	{
 		$body = $this->__toString();
 
-		if($send_headers)
+		if ($send_headers)
 		{
-			$this->set_header('Content-Length', mb_strlen($body));
+			$this->set_header('Content-Length', (function_exists('mb_strlen') ? mb_strlen($body) : strlen($body)));
 			$this->send_headers();
 		}
 
