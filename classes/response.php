@@ -289,7 +289,7 @@ class Response
 
 		if ($send_headers)
 		{
-			$this->set_header('Content-Length', (function_exists('mb_strlen') ? mb_strlen($body) : strlen($body)));
+			$this->set_header('Content-Length', (MBSTRING ? mb_strlen($body) : strlen($body)));
 			$this->send_headers();
 		}
 
