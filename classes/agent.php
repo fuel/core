@@ -443,7 +443,14 @@ class Agent
 
 			case 'wrapper':
 				ini_set('user_agent', 'Fuel PHP framework - Agent class (http://fuelphp.com)');
-				$data = file_get_contents(static::$config['browscap']['url']);
+				try
+				{
+					$data = file_get_contents(static::$config['browscap']['url']);
+				}
+				catch (\ErrorException $e)
+				{
+					$data = false;
+				}
 			default:
 
 			break;
