@@ -29,7 +29,7 @@ class Router
 	 */
 	public static function _init()
 	{
-		static::$prefix = \Config::get('controller_prefix', 'Controller_');
+		static::$prefix = ltrim(\Config::get('controller_prefix', 'Controller_'), '\\');
 	}
 
 	/**
