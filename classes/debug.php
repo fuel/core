@@ -76,7 +76,7 @@ class Debug
 JS;
 				static::$js_displayed = true;
 			}
-			echo '<div style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;">';
+			echo '<div class="fuelphp-dump" style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;">';
 			echo '<h1 style="border-bottom: 1px solid #CCC; padding: 0 0 5px 0; margin: 0 0 5px 0; font: bold 120% sans-serif;">'.$callee['file'].' @ line: '.$callee['line'].'</h1>';
 			echo '<pre style="overflow:auto;font-size:100%;">';
 
@@ -128,7 +128,7 @@ JS;
 JS;
 			static::$js_displayed = true;
 		}
-		echo '<div style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;">';
+		echo '<div class="fuelphp-inspect" style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;">';
 		echo '<h1 style="border-bottom: 1px solid #CCC; padding: 0 0 5px 0; margin: 0 0 5px 0; font: bold 120% sans-serif;">'.$callee['file'].' @ line: '.$callee['line'].'</h1>';
 		echo '<pre style="overflow:auto;font-size:100%;">';
 		$i = 0;
