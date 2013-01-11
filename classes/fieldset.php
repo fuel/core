@@ -597,7 +597,7 @@ class Fieldset
 				{
 					continue;
 				}
-				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.\Lang::get($settings['label']).'</th>'.PHP_EOL;
+				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label'])?\Lang::get($settings['label']):'').'</th>'.PHP_EOL;
 			}
 			$fields_output .= "\t".'<th>'.\Config::get('form.tabular_delete_label', 'Delete?').'</th>'.PHP_EOL;
 
