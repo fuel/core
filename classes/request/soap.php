@@ -119,7 +119,7 @@ class Request_Soap extends \Request_Driver
 		// Execute the request & and hide all output
 		try
 		{
-			$body = $this->connection()->__soapCall($this->function, array($this->params), array(), $this->get_headers(), $headers);
+			$body = $this->connection()->__soapCall($this->function, $this->params, array(), $this->get_headers(), $headers);
 			$this->response_info = $headers;
 			$mime = isset($this->headers['Accept']) ? $this->headers['Accept'] : null;
 			$this->set_response($body, $this->response_info('http_code', 200), $mime, $headers);
