@@ -624,20 +624,33 @@ class Mongo_Db
 	}
 
 	/**
+	 *	Get the document cursor from mongodb based upon the passed parameters
+	 *
+	 *	@param	string	$collection		the collection name
+	 *	@usage	$mongodb->get_cursor('foo', array('bar' => 'something'));
+	 */
+	public function get_cursor($collection = "")
+    {
+        if (empty($collection))
+        {
+            throw new \Mongo_DbException("In order to retrieve documents from MongoDB you must provide a collection name.");
+        }
+
+        $documents = $this->db->{$collection}->find($this->wheres, $this->selects)->limit((int) $this->limit)->skip((int) $this->offset)->sort($this->sorts);
+
+        $this->_clear();
+
+        return $documents;
+    }
+
+	/**
 	 *	Get the documents based upon the passed parameters
 	 *
 	 *	@param	string	$collection		the collection name
 	 *	@usage	$mongodb->get('foo', array('bar' => 'something'));
 	 */
-	 public function get($collection = "")
+	public function get($collection = "")
 	{
-		if (empty($collection))
-		{
-			throw new \Mongo_DbException("In order to retrieve documents from MongoDB");
-		}
-
-		$results = array();
-
 		if ($this->profiling)
 		{
 			$query = json_encode(array(
@@ -653,7 +666,7 @@ class Mongo_Db
 			$benchmark = \Profiler::start("Database {$this->db}", $query);
 		}
 
-		$documents = $this->db->{$collection}->find($this->wheres, $this->selects)->limit((int) $this->limit)->skip((int) $this->offset)->sort($this->sorts);
+		$documents = $this->get_cursor($collection);
 
 		if (isset($benchmark))
 		{
@@ -669,8 +682,6 @@ class Mongo_Db
 				$returns[] = $doc;
 			}
 		}
-
-		$this->_clear();
 
 		return $returns;
 	}
