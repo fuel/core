@@ -72,7 +72,12 @@ if ( ! function_exists('logger'))
 		// if it's not an array, assume it's an "up to" level
 		if ( ! is_array($loglabels))
 		{
-			$loglabels = array_keys(array_slice($labels, 0, $loglabels, true));
+			$a = array();
+			foreach ($labels as $l => $label)
+			{
+				$l >= $loglabels and $a[] = $l;
+			}
+			$loglabels = $a;
 		}
 
 		// do we need to log the message with this level?

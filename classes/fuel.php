@@ -57,6 +57,11 @@ class Fuel
 	const L_NONE = 0;
 
 	/**
+	 * @var  int  Log everything
+	 */
+	const L_ALL = 99;
+
+	/**
 	 * @var  int  Log debug massages and below
 	 */
 	const L_DEBUG = 100;
@@ -75,11 +80,6 @@ class Fuel
 	 * @var  int  Log errors only
 	 */
 	const L_ERROR = 400;
-
-	/**
-	 * @var  int  Log everything
-	 */
-	const L_ALL = 700;
 
 	/**
 	 * @var  bool  Whether Fuel has been initialized
