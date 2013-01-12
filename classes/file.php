@@ -70,7 +70,14 @@ class File
 			return $area;
 		}
 
-		return array_key_exists($area, static::$areas) ? static::$areas[$area] : false;
+		$instance = array_key_exists($area, static::$areas) ? static::$areas[$area] : false;
+
+		if ($instance === false)
+		{
+			throw new \InvalidArgumentException('There is no file instance named "'.$area.'".');
+		}
+
+		return $instance;
 	}
 
 	/**
