@@ -48,6 +48,12 @@ if ( ! function_exists('logger'))
 			700 => 'ALL',
 		);
 
+		// make sure $level has the correct value
+		if ((is_int($level) and ! isset($labels[$level])) or (is_string($level) and ! array_search(strtoupper($level), $labels)))
+		{
+			throw new \FuelException('Invalid level "'.$level.'" passed to logger()');
+		}
+
 		// get the levels defined to be logged
 		$loglabels = \Config::get('log_threshold');
 
@@ -55,6 +61,12 @@ if ( ! function_exists('logger'))
 		if ($loglabels == \Fuel::L_NONE)
 		{
 			return false;
+		}
+
+		// if profiling is active log the message to the profile
+		if (\Config::get('profiling'))
+		{
+			\Console::log($method.' - '.$msg);
 		}
 
 		// if it's not an array, assume it's an "up to" level
@@ -70,12 +82,6 @@ if ( ! function_exists('logger'))
 		}
 
 		! class_exists('Log') and \Package::load('log');
-
-		// if profiling is active log the message to the profile
-		if (\Config::get('profiling'))
-		{
-			\Console::log($method.' - '.$msg);
-		}
 
 		return \Log::instance()->log($level, (empty($method) ? '' : $method.' - ').$msg);
 	}
