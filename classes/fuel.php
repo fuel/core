@@ -102,20 +102,6 @@ class Fuel
 
 	public static $encoding = 'UTF-8';
 
-	public static $path_cache = array();
-
-	public static $caching = false;
-
-	/**
-	 * The amount of time to cache in seconds.
-	 * @var	int	$cache_lifetime
-	 */
-	public static $cache_lifetime = 3600;
-
-	protected static $cache_dir = '';
-
-	public static $paths_changed = false;
-
 	public static $is_cli = false;
 
 	public static $is_test = false;
@@ -151,17 +137,13 @@ class Fuel
 		// Start up output buffering
 		ob_start(\Config::get('ob_callback', null));
 
+		if (\Config::get('caching', false))
+		{
+			\Finder::instance()->read_cache('FuelFileFinder');
+		}
+
 		static::$profiling = \Config::get('profiling', false);
 		static::$profiling and \Profiler::init();
-
-		static::$cache_dir = \Config::get('cache_dir', APPPATH.'cache/');
-		static::$caching = \Config::get('caching', false);
-		static::$cache_lifetime = \Config::get('cache_lifetime', 3600);
-
-		if (static::$caching)
-		{
-			\Finder::instance()->read_cache('Fuel::paths');
-		}
 
 		// set a default timezone if one is defined
 		static::$timezone = \Config::get('default_timezone') ?: date_default_timezone_get();
@@ -219,9 +201,9 @@ class Fuel
 	 */
 	public static function finish()
 	{
-		if (static::$caching)
+		if (\Config::get('caching', false))
 		{
-			\Finder::instance()->write_cache('Fuel::paths');
+			\Finder::instance()->write_cache('FuelFileFinder');
 		}
 
 		if (static::$profiling)
@@ -290,81 +272,6 @@ class Fuel
 	public static function load($file)
 	{
 		return include $file;
-	}
-
-	/**
-	 * This method does basic filesystem caching.  It is used for things like path caching.
-	 *
-	 * This method is from KohanaPHP's Kohana class.
-	 *
-	 * @param  string  the cache name
-	 * @param  array   the data to cache (if non given it returns)
-	 * @param  int     the number of seconds for the cache too live
-	 */
-	public static function cache($name, $data = null, $lifetime = null)
-	{
-		// Cache file is a hash of the name
-		$file = sha1($name).'.txt';
-
-		// Cache directories are split by keys to prevent filesystem overload
-		$dir = rtrim(static::$cache_dir, DS).DS.$file[0].$file[1].DS;
-
-		if ($lifetime === NULL)
-		{
-			// Use the default lifetime
-			$lifetime = static::$cache_lifetime;
-		}
-
-		if ($data === null)
-		{
-			if (is_file($dir.$file))
-			{
-				if ((time() - filemtime($dir.$file)) < $lifetime)
-				{
-					// Return the cache
-					return unserialize(file_get_contents($dir.$file));
-				}
-				else
-				{
-					try
-					{
-						// Cache has expired
-						unlink($dir.$file);
-					}
-					catch (Exception $e)
-					{
-						// Cache has mostly likely already been deleted,
-						// let return happen normally.
-					}
-				}
-			}
-
-			// Cache not found
-			return NULL;
-		}
-
-		if ( ! is_dir($dir))
-		{
-			// Create the cache directory
-			mkdir($dir, octdec(\Config::get('file.chmod.folders', 0777)), true);
-
-			// Set permissions (must be manually set to fix umask issues)
-			chmod($dir, octdec(\Config::get('file.chmod.folders', 0777)));
-		}
-
-		// Force the data to be a string
-		$data = serialize($data);
-
-		try
-		{
-			// Write the cache
-			return (bool) file_put_contents($dir.$file, $data, LOCK_EX);
-		}
-		catch (Exception $e)
-		{
-			// Failed to write cache
-			return false;
-		}
 	}
 
 	/**
