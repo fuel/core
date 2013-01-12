@@ -69,8 +69,7 @@ if ( ! function_exists('logger'))
 			return false;
 		}
 
-		! class_exists('Fuel\\Core\\Log') and import('log');
-		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
+		! class_exists('Log') and \Package::load('log');
 
 		// if profiling is active log the message to the profile
 		if (\Config::get('profiling'))
