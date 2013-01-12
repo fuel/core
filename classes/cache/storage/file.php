@@ -173,7 +173,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 
 		$files = \File::read_dir($path.$section, -1, array('\.cache$' => 'file'));
 
-		$delete = function($path, $files) use(&$delete)
+		$delete = function($path, $files) use(&$delete, &$section)
 		{
 			$path = rtrim($path, '\\/').DS;
 
@@ -194,6 +194,8 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 					}
 				}
 			}
+			
+			$section !== '' and rmdir($path);
 
 			return true;
 		};
