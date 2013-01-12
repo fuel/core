@@ -858,9 +858,13 @@ class Validation
 			{
 				$flags = array('numeric', 'dots');
 			}
+			elseif ($flags == 'quotes')
+			{
+				$flags = array('singlequotes', 'doublequotes');
+			}
 			elseif ($flags == 'all')
 			{
-				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'dashes');
+				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes');
 			}
 			else
 			{
@@ -878,6 +882,8 @@ class Validation
 		$pattern .= in_array('commas', $flags) && ! in_array('punctuation', $flags) ? ',' : '';
 		$pattern .= in_array('punctuation', $flags) ? "\.,\!\?:;\&" : '';
 		$pattern .= in_array('dashes', $flags) ? '_\-' : '';
+		$pattern .= in_array('singlequotes', $flags) ? "'" : '';
+		$pattern .= in_array('doublequotes', $flags) ? "\"" : '';
 		$pattern = empty($pattern) ? '/^(.*)$/' : ('/^(['.$pattern.'])+$/');
 		$pattern .= in_array('utf8', $flags) ? 'u' : '';
 
