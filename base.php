@@ -36,12 +36,16 @@ if ( ! function_exists('logger'))
 {
 	function logger($level, $msg, $method = null)
 	{
-		// defined default error labels
 		static $labels = array(
-			1  => 'Error',
-			2  => 'Warning',
-			3  => 'Debug',
-			4  => 'Info',
+			100 => 'DEBUG',
+			200 => 'INFO',
+			250 => 'NOTICE',
+			300 => 'WARNING',
+			400 => 'ERROR',
+			500 => 'CRITICAL',
+			550 => 'ALERT',
+			600 => 'EMERGENCY',
+			700 => 'ALL',
 		);
 
 		// get the levels defined to be logged
@@ -68,7 +72,7 @@ if ( ! function_exists('logger'))
 		! class_exists('Fuel\\Core\\Log') and import('log');
 		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
 
-		return \Log::write($level, $msg, $method);
+		return \Log::instance()->log($level, (empty($method) ? '' : $method.' - ').$msg);
 	}
 }
 

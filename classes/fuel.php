@@ -57,29 +57,29 @@ class Fuel
 	const L_NONE = 0;
 
 	/**
-	 * @var  int  Log errors only
-	 */
-	const L_ERROR = 1;
-
-	/**
-	 * @var  int  Log warning massages and below
-	 */
-	const L_WARNING = 2;
-
-	/**
 	 * @var  int  Log debug massages and below
 	 */
-	const L_DEBUG = 3;
+	const L_DEBUG = 100;
 
 	/**
 	 * @var  int  Log info massages and below
 	 */
-	const L_INFO = 4;
+	const L_INFO = 200;
+
+	/**
+	 * @var  int  Log warning massages and below
+	 */
+	const L_WARNING = 300;
+
+	/**
+	 * @var  int  Log errors only
+	 */
+	const L_ERROR = 400;
 
 	/**
 	 * @var  int  Log everything
 	 */
-	const L_ALL = 5;
+	const L_ALL = 700;
 
 	/**
 	 * @var  bool  Whether Fuel has been initialized
