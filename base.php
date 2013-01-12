@@ -72,6 +72,12 @@ if ( ! function_exists('logger'))
 		! class_exists('Fuel\\Core\\Log') and import('log');
 		! class_exists('Log') and class_alias('Fuel\\Core\\Log', 'Log');
 
+		// if profiling is active log the message to the profile
+		if (\Config::get('profiling'))
+		{
+			\Console::log($method.' - '.$msg);
+		}
+
 		return \Log::instance()->log($level, (empty($method) ? '' : $method.' - ').$msg);
 	}
 }
