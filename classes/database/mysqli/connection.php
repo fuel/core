@@ -316,6 +316,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			'tinyint'                   => array('type' => 'int', 'min' => '-128', 'max' => '127'),
 			'tinyint unsigned'          => array('type' => 'int', 'min' => '0', 'max' => '255'),
 			'tinytext'                  => array('type' => 'string', 'character_maximum_length' => '255'),
+			'varchar'                   => array('type' => 'string', 'exact' => true),
 			'year'                      => array('type' => 'string'),
 		);
 
