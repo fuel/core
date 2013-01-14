@@ -130,6 +130,7 @@ class Pagination
 		'show_first'              => false,
 		'show_last'               => false,
 		'pagination_url'          => null,
+		'query'                   => array(),
 	);
 
 	/**
@@ -511,11 +512,17 @@ class Pagination
 				$this->config['pagination_url'] = rtrim($this->config['pagination_url'], '/').'/{page}';
 			}
 
+			if (strpos($this->config['pagination_url'], '{query_string}') === false and is_array($this->config['query']) and count($this->config['query']))
+			{
+				// if no query_string placeholder is present, add one to the end of the URL
+				$this->config['pagination_url'] .= '?{query_string}';
+			}
+
 		}
 
 		// return the page link
 		empty($page) and $page = 1;
-		return str_replace('{page}', $page, $this->config['pagination_url']);
+		return str_replace(array('{page}', '{query_string}'), array($page, http_build_query($this->config['query'])), $this->config['pagination_url']);
 	}
 
 }
