@@ -449,72 +449,56 @@ class Pagination
 	 */
 	protected function _make_link($page)
 	{
-		// check if we use a URI segment or a Query String variable
-		if (is_string($this->config['uri_segment']))
+		// make sure we have a valid page number
+		empty($page) and $page = 1;
+
+		// construct a pagination url if we don't have one
+		if (is_null($this->config['pagination_url']))
 		{
-			// if no pagination URL is given, try to make one up
-			if (is_null($this->config['pagination_url']))
-			{
-				// start with the main uri
-				$this->config['pagination_url'] = \Uri::main();
-
-				// construct the query string, adding our placeholder
-				$get = \Input::get();
-				$get[$this->config['uri_segment']] = '{page}';
-				$this->config['pagination_url'] .= '?'.preg_replace('/%7Bpage%7D/', '{page}', http_build_query($get));
-			}
-			elseif (strpos($this->config['pagination_url'], '{page}') === false)
-			{
-				// convert the url into an array with it's components
-				$url = parse_url($this->config['pagination_url']);
-				if (isset($url['query']))
-				{
-					parse_str($url['query'], $url['query']);
-				}
-				else
-				{
-					$url['query'] = array();
-				}
-
-				// add our placeholder
-				$url['query'][$this->config['uri_segment']] = '{page}';
-
-				// reconstruct the URL
-				$query = preg_replace('/%7Bpage%7D/', '{page}', http_build_query($url['query']));
-				unset($url['query']);
-				empty($url['scheme']) or $url['scheme'] .= '://';
-				$this->config['pagination_url'] = implode($url).'?'.$query;
-			}
-
+			// start with the main uri
+			$this->config['pagination_url'] = \Uri::main();
+			\Input::get() and $this->config['pagination_url'] .= '?'.http_build_query(\Input::get());
 		}
-		else
+
+		// was a placeholder defined in the url?
+		if (strpos($this->config['pagination_url'], '{page}') === false)
 		{
-			// if no pagination URL is given, try to make one up
-			if (is_null($this->config['pagination_url']))
+			// break the url in bits so we can insert it
+			$url = parse_url($this->config['pagination_url']);
+
+			// is the page number a URI segment?
+			if (is_numeric($this->config['uri_segment']))
 			{
 				// get the URL segments
-				$segs = Uri::segments();
+				$segs = isset($url['path']) ? explode('/', ltrim($url['path'], '/')) : array();
 
-				// we can't fill in missing segments, so bail out if we detect this
+				// do we have enough segments to insert? we can't fill in any blanks...
 				if (count($segs) < $this->config['uri_segment'] - 1)
 				{
-					throw new \RuntimeException("Could not detect pagination_url.");
+					throw new \RuntimeException("Not enough segments in the URI, impossible to insert the page number");
 				}
 
 				// replace the selected segment with the page placeholder
 				$segs[$this->config['uri_segment'] - 1] = '{page}';
-				$this->config['pagination_url'] = Uri::base().implode('/', $segs);
+				$url['path'] = '/'.implode('/', $segs);
 			}
-			elseif (strpos($this->config['pagination_url'], '{page}') === false)
+			else
 			{
-				// if no placeholder is present, add one to the end of the URL
-				$this->config['pagination_url'] = rtrim($this->config['pagination_url'], '/').'/{page}';
+				// parse the query string, we need to insert page number in there
+				$url['query'] = isset($url['query']) ? parse_str($url['query'], $url['query']) : array();
+
+				// add our placeholder
+				$url['query'][$this->config['uri_segment']] = '{page}';
 			}
 
+			// re-assemble the url
+			$query = empty($url['query']) ? '' : '?'.preg_replace('/%7Bpage%7D/', '{page}', http_build_query($url['query']));
+			unset($url['query']);
+			empty($url['scheme']) or $url['scheme'] .= '://';
+			$this->config['pagination_url'] = implode($url).$query;
 		}
 
 		// return the page link
-		empty($page) and $page = 1;
 		return str_replace('{page}', $page, $this->config['pagination_url']);
 	}
 
