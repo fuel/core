@@ -291,4 +291,73 @@ class Test_Str extends TestCase
 		$this->assertTrue(Str::is_html($html));
 		$this->assertFalse(Str::is_html($simple_string));
 	}
+
+	/**
+	 * Test for Str::starts_with()
+	 *
+	 * @test
+	 */
+	public function test_starts_with()
+	{
+		$string = 'HELLO WORLD';
+
+		$output = Str::starts_with($string, 'HELLO');
+		$this->assertTrue($output);
+
+		$output = Str::starts_with($string, 'hello');
+		$this->assertFalse($output);
+
+		$output = Str::starts_with($string, 'hello', true);
+		$this->assertTrue($output);
+	}
+
+	/**
+	 * Test for Str::ends_with()
+	 *
+	 * @test
+	 */
+	public function test_ends_with()
+	{
+		$string = 'HELLO WORLD';
+
+		$output = Str::ends_with($string, 'WORLD');
+		$this->assertTrue($output);
+
+		$output = Str::ends_with($string, 'world');
+		$this->assertFalse($output);
+
+		$output = Str::ends_with($string, 'world', true);
+		$this->assertTrue($output);
+	}
+
+	/**
+	 * Test for Str::alternator()
+	 *
+	 * @test
+	 */
+	public function test_alternator()
+	{
+		$alt = Str::alternator('one', 'two', 'three');
+
+		$output = $alt();
+		$expected = 'one';
+		$this->assertEquals($output, $expected);
+
+		$output = $alt(false);
+		$expected = 'two';
+		$this->assertEquals($output, $expected);
+
+		$output = $alt();
+		$expected = 'two';
+		$this->assertEquals($output, $expected);
+
+		$output = $alt();
+		$expected = 'three';
+		$this->assertEquals($output, $expected);
+
+		$output = $alt();
+		$expected = 'one';
+		$this->assertEquals($output, $expected);
+	}
+
 }
