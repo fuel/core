@@ -222,6 +222,10 @@ class Test_Inflector extends TestCase
 		$output = Inflector::pluralize('apple');
 		$expected = "apples";
 		$this->assertEquals($expected, $output);
+
+		$output = Inflector::pluralize('apple', 1);
+		$expected = "apple";
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
