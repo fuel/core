@@ -29,6 +29,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * @var string   $_connection   The database connection to use
 	 */
 	// protected static $_connection = null;
+	
+	/**
+	 * @var string   $_write_connection   The database connection to use for writes
+	 */
+	// protected static $_write_connection = null;
 
 	/**
 	 * @var  array  $_rules  The validation rules (must set this in your Model to use)
@@ -224,7 +229,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 
 		static::pre_find($query);
 
-		$result =  $query->execute(isset(static::$_connection) ? static::$_connection : null);
+		$result =  $query->execute(static::get_connection(false));
 		$result = ($result->count() === 0) ? null : $result->as_array($key);
 
 		return static::post_find($result);
@@ -244,7 +249,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		$select = $column ?: static::primary_key();
 
 		// Get the database group / connection
-		$connection = isset(static::$_connection) ? static::$_connection : null;
+		$connection = static::get_connection(false);
 
 		// Get the columns
 		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
@@ -309,6 +314,22 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 			return static::find_one_by(substr($name, 12), reset($args));
 		}
 		throw new \BadMethodCallException('Method "'.$name.'" does not exist.');
+	}
+
+	/**
+	 * Get the connection to use for reading or writing
+	 *
+	 * @param  boolean  $writeable Get a writeable connection
+	 * @return Database_Connection 
+	 */
+	protected static function get_connection($writeable)
+	{
+		if ($writeable and isset(static::$_write_connection)) 
+		{
+			return static::$_write_connection;
+		}
+
+		return isset(static::$_connection) ? static::$_connection : null;
 	}
 
 	/**
@@ -480,7 +501,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 			            ->set($vars);
 
 			$this->pre_save($query);
-			$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
+			$result = $query->execute(static::get_connection(true));
 
 			if ($result[1] > 0)
 			{
@@ -502,7 +523,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		         ->where(static::primary_key(), '=', $this->{static::primary_key()});
 
 		$this->pre_update($query);
-		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
+		$result = $query->execute(static::get_connection(true));
 		$result > 0 and $this->set($vars);
 
 		return $this->post_update($result);
@@ -520,7 +541,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		            ->where(static::primary_key(), '=', $this->{static::primary_key()});
 
 		$this->pre_delete($query);
-		$result = $query->execute(isset(static::$_connection) ? static::$_connection : null);
+		$result = $query->execute(static::get_connection(true));
 
 		return $this->post_delete($result);
 	}
