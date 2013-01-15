@@ -470,7 +470,7 @@ class Pagination
 			if (is_numeric($this->config['uri_segment']))
 			{
 				// get the URL segments
-				$segs = isset($url['path']) ? explode('/', ltrim($url['path'], '/')) : array();
+				$segs = isset($url['path']) ? explode('/', trim($url['path'], '/')) : array();
 
 				// do we have enough segments to insert? we can't fill in any blanks...
 				if (count($segs) < $this->config['uri_segment'] - 1)

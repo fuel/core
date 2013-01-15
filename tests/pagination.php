@@ -27,7 +27,7 @@ class Test_Pagination extends TestCase
 		$rp = new \ReflectionProperty($this->request, 'main');
 		$rp->setAccessible(true);
 		$rp->setValue($this->request, $this->request);
-		
+
 		// set Request::$active
 		$rp = new \ReflectionProperty($this->request, 'active');
 		$rp->setAccessible(true);
@@ -41,7 +41,7 @@ class Test_Pagination extends TestCase
 		$rp = new \ReflectionProperty($request, 'main');
 		$rp->setAccessible(true);
 		$rp->setValue($request, false);
-		
+
 		// reset Request::$active
 		$rp = new \ReflectionProperty($request, 'active');
 		$rp->setAccessible(true);
@@ -85,7 +85,7 @@ class Test_Pagination extends TestCase
 		Config::set('base_url', null);
 	}
 
-	public function test_uri_segment_set_pagination_url_after_forging()
+	public function test_uri_segment_set_pagination_url_after_forging_fail()
 	{
 		// set Request::$main & $active
 		$this->set_request('welcome/index/3');
@@ -98,8 +98,27 @@ class Test_Pagination extends TestCase
 		$_make_link = new \ReflectionMethod($pagination, '_make_link');
 		$_make_link->setAccessible(true);
 
+		// not enough segments in the URI to add the page number
+		$this->setExpectedException('RunTimeException');
+
 		$test = $_make_link->invoke($pagination, 1);
-		$expected = 'http://example.com/page/1';
+	}
+
+	public function test_uri_segment_set_pagination_url_after_forging_success()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/3');
+
+		$this->set_uri_segment_config();
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+		$pagination->pagination_url = 'http://example.com/this/page/';
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'http://example.com/this/page/1';
 		$this->assertEquals($expected, $test);
 	}
 
