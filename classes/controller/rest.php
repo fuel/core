@@ -231,8 +231,13 @@ abstract class Controller_Rest extends \Controller
 		}
 
 		// Otherwise, check the HTTP_ACCEPT (if it exists and we are allowed)
-		if (\Input::server('HTTP_ACCEPT') and \Config::get('rest.ignore_http_accept') !== true)
+		if ($acceptable = \Input::server('HTTP_ACCEPT') and \Config::get('rest.ignore_http_accept') !== true)
 		{
+			// If anything is accepted, and we have a default, return that
+			if ($acceptable == '*/*' and ! empty($this->rest_format))
+			{
+				return $this->rest_format;
+			}
 
 			// Split the Accept header and build an array of quality scores for each format
 			$fragments = new \CachingIterator(new \ArrayIterator(preg_split('/[,;]/', \Input::server('HTTP_ACCEPT'))));
