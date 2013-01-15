@@ -36,6 +36,15 @@ class Test_Num extends TestCase
 	}
 
 	/**
+	 * @see     Num::bytes
+	 * @expectedException Exception
+	 */
+	public function test_bytes_exception()
+	{
+		$output = Num::bytes('invalid');
+	}
+
+	/**
 	 * @see     Num::format_bytes
 	 */
 	public function test_format_bytes()
@@ -44,6 +53,9 @@ class Test_Num extends TestCase
 		$expected = '200 kB';
 
 		$this->assertEquals($expected, $output);
+
+		$output = Num::format_bytes('invalid');
+		$this->assertFalse($output);
 	}
 
 	/**
@@ -51,6 +63,12 @@ class Test_Num extends TestCase
 	 */
 	public function test_quantity()
 	{
+		// Return the same
+		$output = Num::quantity('100');
+		$expected = '100';
+
+		$this->assertEquals($expected, $output);
+
 		$output = Num::quantity('7500');
 		$expected = '8K';
 
@@ -105,6 +123,12 @@ class Test_Num extends TestCase
 		$expected = '**** - **** - **** - 5678';
 
 		$this->assertEquals($expected, $output);
+
+		// Return the same
+		$output = Num::mask_string('1234567812345678');
+		$expected = '1234567812345678';
+
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
@@ -125,6 +149,12 @@ class Test_Num extends TestCase
 	{
 		$output = Num::smart_format_phone('1234567');
 		$expected = '123-4567';
+
+		$this->assertEquals($expected, $output);
+
+		// Return the same
+		$output = Num::smart_format_phone('123456');
+		$expected = '123456';
 
 		$this->assertEquals($expected, $output);
 	}
