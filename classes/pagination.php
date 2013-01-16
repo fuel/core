@@ -466,6 +466,16 @@ class Pagination
 			// break the url in bits so we can insert it
 			$url = parse_url($this->config['pagination_url']);
 
+			// parse the query string
+			if (isset($url['query']))
+			{
+				parse_str($url['query'], $url['query']);
+			}
+			else
+			{
+				$url['query'] = array();
+			}
+
 			// is the page number a URI segment?
 			if (is_numeric($this->config['uri_segment']))
 			{
@@ -484,9 +494,6 @@ class Pagination
 			}
 			else
 			{
-				// parse the query string, we need to insert page number in there
-				$url['query'] = isset($url['query']) ? parse_str($url['query'], $url['query']) : array();
-
 				// add our placeholder
 				$url['query'][$this->config['uri_segment']] = '{page}';
 			}
@@ -495,6 +502,7 @@ class Pagination
 			$query = empty($url['query']) ? '' : '?'.preg_replace('/%7Bpage%7D/', '{page}', http_build_query($url['query']));
 			unset($url['query']);
 			empty($url['scheme']) or $url['scheme'] .= '://';
+			empty($url['port']) or $url['host'] .= ':';
 			$this->config['pagination_url'] = implode($url).$query;
 		}
 
