@@ -225,6 +225,98 @@ class Test_Pagination extends TestCase
 		$this->assertEquals($expected, $output);
 	}
 
+	public function test_uri_segment_make_link_with_no_query_string_ending_page_number()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/10');
+		$this->set_uri_segment_config();
+		$this->config['pagination_url'] = 'http://docs.fuelphp.com/welcome/index/55';
+
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'http://docs.fuelphp.com/welcome/index/1';
+		$this->assertEquals($expected, $test);
+
+		$test = $_make_link->invoke($pagination, 99);
+		$expected = 'http://docs.fuelphp.com/welcome/index/99';
+		$this->assertEquals($expected, $test);
+	}
+
+	public function test_uri_segment_make_link_with_no_query_string_ending_slash()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/');
+		$this->set_uri_segment_config();
+		$this->config['pagination_url'] = 'http://docs.fuelphp.com/welcome/index/';
+
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'http://docs.fuelphp.com/welcome/index/1';
+		$this->assertEquals($expected, $test);
+
+		$test = $_make_link->invoke($pagination, 99);
+		$expected = 'http://docs.fuelphp.com/welcome/index/99';
+		$this->assertEquals($expected, $test);
+	}
+
+	public function test_uri_segment_make_link_with_query_string_ending_page_number()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/55?foo=bar&fuel[]=php1&fuel[]=php2&');
+		$this->set_uri_segment_config();
+
+		// no define pagination_url
+		$this->config['pagination_url'] = null;
+
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = '/welcome/index/1?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
+		$this->assertEquals($expected, $test);
+
+		$test = $_make_link->invoke($pagination, 99);
+		$expected = '/welcome/index/99?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
+		$this->assertEquals($expected, $test);
+	}
+
+	public function test_uri_segment_make_link_with_query_string_ending_slash()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/?foo=bar&fuel[]=php1&fuel[]=php2&');
+		$this->set_uri_segment_config();
+
+		// no define pagination_url
+		$this->config['pagination_url'] = null;
+
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = '/welcome/index/1?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
+		$this->assertEquals($expected, $test);
+
+		$test = $_make_link->invoke($pagination, 99);
+		$expected = '/welcome/index/99?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
+		$this->assertEquals($expected, $test);
+	}
+
 /***********************************
  * Tests for Query String Pagination
  ***********************************/
@@ -330,5 +422,74 @@ class Test_Pagination extends TestCase
 		$output = str_replace(array("\n", "\t"), "", $output);
 		$expected = '<span class="previous"><a href="http://docs.fuelphp.com/?p=9">&laquo;</a></span>';
 		$this->assertEquals($expected, $output);
+	}
+
+	public function test_query_string_make_link_by_request()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/?foo=bar&fuel[]=php1&fuel[]=php2&p=40');
+
+		$this->set_query_string_config();
+		$this->config['pagination_url'] = null;
+
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'welcome/index/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=1';
+		$this->assertEquals($expected, $test);
+
+		$test = $_make_link->invoke($pagination, 99);
+		$expected = 'welcome/index/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=99';
+		$this->assertEquals($expected, $test);
+	}
+
+	public function test_query_string_make_link_by_pagination_url()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/?foo=bar&fuel[]=php1&fuel[]=php2&p=40');
+		
+		$this->set_query_string_config();
+		$this->config['pagination_url'] = 'http://docs.fuelphp.com/?foo=bar&fuel[]=php1&fuel[]=php2';
+
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'http://docs.fuelphp.com/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=1';
+		$this->assertEquals($expected, $test);
+
+		$test = $_make_link->invoke($pagination, 99);
+		$expected = 'http://docs.fuelphp.com/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=99';
+		$this->assertEquals($expected, $test);
+	}
+
+	public function test_query_string_make_link_by_pagination_url_include_page_number()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/?foo=bar&fuel[]=php1&fuel[]=php2&p=40');
+		
+		$this->set_query_string_config();
+		$this->config['pagination_url'] = 'http://docs.fuelphp.com/?foo=bar&p=123&fuel[]=php1&fuel[]=php2';
+
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+
+		// set _make_link() accessible
+		$_make_link = new \ReflectionMethod($pagination, '_make_link');
+		$_make_link->setAccessible(true);
+
+		$test = $_make_link->invoke($pagination, 1);
+		$expected = 'http://docs.fuelphp.com/?foo=bar&amp;p=1&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
+		$this->assertEquals($expected, $test);
+
+		$test = $_make_link->invoke($pagination, 99);
+		$expected = 'http://docs.fuelphp.com/?foo=bar&amp;p=99&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
+		$this->assertEquals($expected, $test);
 	}
 }
