@@ -114,6 +114,45 @@ abstract class Database_Query_Builder extends \Database_Query
 						// Quote the min and max value
 						$value = $db->quote($min).' AND '.$db->quote($max);
 					}
+					else if ($op === 'IN')
+					{
+						is_array($value) or $value = array($value);
+
+						if (preg_match('/^[0-9]+$/',implode('',$value))) {
+							$value = '('.implode(',',$value).')';
+						} else {
+							$args = array();
+							$vals = array();
+
+							foreach ($value as $v) {
+								switch (true) {
+								case is_int($v):
+									$args[] = '%d';
+									$vals[] = $v;
+									break;
+								case is_float($v):
+									$args[] = '%F';
+									$vals[] = $v;
+									break;
+								case is_null($v):
+									$args[] = '%s';
+									$vals[] = 'NULL';
+									break;
+								case is_bool($v):
+									$args[] = '%s';
+									$vals[] = $v ? 'TRUE' : 'FALSE';
+									break;
+								default:
+									$args[] = '%s';
+									$vals[] = $db->quote($v);
+								}
+							}
+
+							array_unshift($vals, implode(',',$args));
+							$inner = call_user_func_array('sprintf', $vals);
+							$value = '('.$inner.')';
+						}
+					}
 					else
 					{
 						if (is_string($value) AND array_key_exists($value, $this->_parameters))
