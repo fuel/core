@@ -109,9 +109,10 @@ class DBUtil
 	 * @param    string    $engine         storage engine overwrite
 	 * @param    string    $charset        default charset overwrite
 	 * @param    array     $foreign_keys   an array of foreign keys
+	 * @param    string    $comment        table comment
 	 * @return   int       number of affected rows.
 	 */
-	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array(), $db = null)
+	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array(), $db = null, $comment = null)
 	{
 		$sql = 'CREATE TABLE';
 
@@ -130,6 +131,7 @@ class DBUtil
 
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
+		$sql .= ($comment !== null) ? " COMMENT = '".str_replace("'", "''", $comment)."' " : '';
 		$sql .= static::process_charset($charset, true).";";
 
 		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
