@@ -273,11 +273,14 @@ abstract class Session_Driver
 	 * @access	public
 	 * @param	string	name of the variable to get
 	 * @param	mixed	default value to return if the variable does not exist
-	 * @param	bool	true if the flash variable needs to expire immediately
+	 * @param	bool	true if the flash variable needs to expire immediately, false to use "flash_auto_expire"
 	 * @return	mixed
 	 */
-	public function get_flash($name, $default = null, $expire = false)
+	public function get_flash($name, $default = null, $expire = null)
 	{
+		// if no expiration is given, use the config default
+		is_bool($expire) or $expire = $this->config['flash_expire_after_get'];
+
 		if (is_null($name))
 		{
 			$default = array();
@@ -629,6 +632,7 @@ abstract class Session_Driver
 				case 'cookie_http_only':
 				case 'encrypt_cookie':
 				case 'expire_on_close':
+				case 'flash_expire_after_get':
 				case 'flash_auto_expire':
 					// make sure it's a boolean
 					$item = (bool) $item;

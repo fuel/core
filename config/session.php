@@ -65,6 +65,9 @@ return array(
 	// if false, expire flash values only after it's used  (optional, default = true)
 	'flash_auto_expire'	=> true,
 
+	// if true, a get_flash() automatically expires the flash data
+	'flash_expire_after_get' => true,
+
 	// for requests that don't support cookies (i.e. flash), use this POST variable to pass the cookie to the session driver
 	'post_cookie_name'	=> '',
 
