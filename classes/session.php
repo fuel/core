@@ -252,7 +252,7 @@ class Session
 	 * @param	bool	true if the flash variable needs to expire immediately
 	 * @return	mixed
 	 */
-	public static function get_flash($name = null, $default = null, $expire = false)
+	public static function get_flash($name = null, $default = null, $expire = null)
 	{
 		return static::instance()->get_flash($name, $default, $expire);
 	}
