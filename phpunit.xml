@@ -6,6 +6,7 @@
 		<server name="app_path" value="fuel/app"/>
 		<server name="core_path" value="fuel/core"/>
 		<server name="package_path" value="fuel/packages"/>
+		<server name="FUEL_ENV" value="test"/>
 	</php>
 	<testsuites>
 		<testsuite name="core">
