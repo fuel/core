@@ -35,8 +35,7 @@ defined('FUEL_START_MEM') or define('FUEL_START_MEM', memory_get_usage());
 // Boot the app
 require_once APPPATH.'bootstrap.php';
 
-// Set the environment to TEST
-Fuel::$env = Fuel::TEST;
+// Set test mode
 Fuel::$is_test = true;
 
 // Import the TestCase class
