@@ -29,7 +29,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * @var string   $_connection   The database connection to use
 	 */
 	// protected static $_connection = null;
-	
+
 	/**
 	 * @var string   $_write_connection   The database connection to use for writes
 	 */
@@ -229,7 +229,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 
 		static::pre_find($query);
 
-		$result =  $query->execute(static::get_connection(false));
+		$result =  $query->execute(static::get_connection());
 		$result = ($result->count() === 0) ? null : $result->as_array($key);
 
 		return static::post_find($result);
@@ -249,7 +249,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		$select = $column ?: static::primary_key();
 
 		// Get the database group / connection
-		$connection = static::get_connection(false);
+		$connection = static::get_connection();
 
 		// Get the columns
 		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
@@ -320,11 +320,11 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * Get the connection to use for reading or writing
 	 *
 	 * @param  boolean  $writeable Get a writeable connection
-	 * @return Database_Connection 
+	 * @return Database_Connection
 	 */
-	protected static function get_connection($writeable)
+	protected static function get_connection($writeable = false)
 	{
-		if ($writeable and isset(static::$_write_connection)) 
+		if ($writeable and isset(static::$_write_connection))
 		{
 			return static::$_write_connection;
 		}
