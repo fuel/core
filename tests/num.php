@@ -1,11 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework. *
+ * Part of the Fuel framework.
+ *
  * @package    Fuel
- * @version    1.0
+ * @version    1.5
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2012 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -78,8 +79,8 @@ class Test_Num extends TestCase
 		$expected = '2M';
 
 		$this->assertEquals($expected, $output);
-		
-		
+
+
 		$output = Num::quantity('1000000000');
 		$expected = '1B';
 
@@ -104,10 +105,10 @@ class Test_Num extends TestCase
 		$expected = '(123) 456-7890';
 
 		$this->assertEquals($expected, $output);
-		
+
 		$output = Num::format(null, '(000) 000-0000');
 		$this->assertNull($output);
-		
+
 		$output = Num::format('1234567890', null);
 		$expected = '1234567890';
 

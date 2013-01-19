@@ -1,15 +1,13 @@
 <?php
-
 /**
  * Part of the Fuel framework.
  *
- * Image manipulation class.
- *
- * @package		Fuel
- * @version		1.0
- * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com
+ * @package    Fuel
+ * @version    1.5
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2013 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
@@ -141,31 +139,31 @@ class Image_Gd extends \Image_Driver
 	{
 		$sizes	= (array)$this->sizes();
 		$source = array_merge($sizes, array('x' => 0, 'y' => 0));
-		
+
 		switch ($mode)
 		{
 			case 'vertical':
 			$source['y'] = $sizes['height'] - 1;
 			$source['height'] = -$sizes['height'];
 			break;
-			
+
 			case 'horizontal':
 			$source['x'] = $sizes['width'] - 1;
 			$source['width']	= -$sizes['width'];
 			break;
-			
+
 			case 'both':
 			$source['y'] = $sizes['height'] - 1;
 			$source['x'] = $sizes['width'] - 1;
 			$source['height'] = -$sizes['height'];
 			$source['width']	= -$sizes['width'];
 			break;
-			
+
 			default: return false;
 		}
-		
+
 		$image = imagecreatetruecolor($sizes['width'], $sizes['height']);
-		
+
 		imagecopyresampled(
 			$image,
 			$this->image_data,
@@ -178,7 +176,7 @@ class Image_Gd extends \Image_Driver
 			$source['width'],
 			$source['height']
 		);
-		
+
 		$this->image_data = $image;
 	}
 
@@ -397,7 +395,7 @@ class Image_Gd extends \Image_Driver
 	protected function create_color(&$image, $hex, $alpha)
 	{
 		extract($this->create_hex_color($hex));
-		
+
 		// Handling alpha is different among drivers
 		if ($hex == null)
 		{
@@ -407,7 +405,7 @@ class Image_Gd extends \Image_Driver
 		{
 			$alpha = 127 - floor($alpha * 1.27);
 		}
-		
+
 		// Check if the transparency is allowed
 		return imagecolorallocatealpha($image, $red, $green, $blue, $alpha);
 	}

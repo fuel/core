@@ -1,9 +1,18 @@
 <?php
 /**
+ * Part of the Fuel framework.
+ *
+ * @package    Fuel
+ * @version    1.5
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2013 Fuel Development Team
+ * @link       http://fuelphp.com
+ */
+
+/**
  * Interact with Database Transactions
  *
- * @package    Fuel/Database
- * @category   Database
  * @author     five07
  * @copyright  (c) 2011 five07
  * @license    https://github.com/five07/Fuel-Addons/blob/master/LICENSE

@@ -3,12 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.1
+ * @version    1.5
  * @author     Fuel Development Team
- * @author     Cartalyst LLC
  * @license    MIT License
- * @copyright  2011 Cartalyst LLC
- * @copyright  2012 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 

@@ -1,15 +1,13 @@
 <?php
-
 /**
  * Part of the Fuel framework.
  *
- * Image manipulation class.
- *
- * @package		Fuel
- * @version		1.0
- * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com
+ * @package    Fuel
+ * @version    1.5
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2013 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
@@ -84,7 +82,7 @@ class Image_Imagemagick extends \Image_Driver
 
 		$this->clear_sizes();
 	}
-	
+
 	protected function _flip($direction)
 	{
 		switch ($direction)
@@ -96,11 +94,11 @@ class Image_Imagemagick extends \Image_Driver
 			case 'horizontal':
 			$arg = '-flop';
 			break;
-			
+
 			case 'both':
 			$arg = '-flip -flop';
 			break;
-			
+
 			default: return false;
 		}
 		$image = '"'.$this->image_temp.'"';

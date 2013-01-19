@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.0
+ * @version    1.5
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2012 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -451,7 +451,7 @@ class Test_Pagination extends TestCase
 	{
 		// set Request::$main & $active
 		$this->set_request('welcome/index/?foo=bar&fuel[]=php1&fuel[]=php2&p=40');
-		
+
 		$this->set_query_string_config();
 		$this->config['pagination_url'] = 'http://docs.fuelphp.com/?foo=bar&fuel[]=php1&fuel[]=php2';
 
@@ -474,7 +474,7 @@ class Test_Pagination extends TestCase
 	{
 		// set Request::$main & $active
 		$this->set_request('welcome/index/?foo=bar&fuel[]=php1&fuel[]=php2&p=40');
-		
+
 		$this->set_query_string_config();
 		$this->config['pagination_url'] = 'http://docs.fuelphp.com/?foo=bar&p=123&fuel[]=php1&fuel[]=php2';
 

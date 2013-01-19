@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.0
+ * @version    1.5
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2012 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -81,7 +81,7 @@ abstract class Event
 	 *
 	 * @param   string  $func  method name
 	 * @param   array   $args  passed arguments
-	 * @return  
+	 * @return
 	 */
 	public static function __callStatic($func, $args)
 	{
@@ -91,7 +91,7 @@ abstract class Event
 		{
 			return call_user_func_array(array($instance, $func), $args);
 		}
-		
+
 		throw new \BadMethodCallException('Call to undefined method: '.get_called_class().'::'.$func);
 	}
 

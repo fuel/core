@@ -1,15 +1,13 @@
 <?php
-
 /**
  * Part of the Fuel framework.
  *
- * Image manipulation class.
- *
- * @package		Fuel
- * @version		1.0
- * @license		MIT License
- * @copyright	2010 - 2011 Fuel Development Team
- * @link		http://fuelphp.com
+ * @package    Fuel
+ * @version    1.5
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2013 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
@@ -77,7 +75,7 @@ class Image_Imagick extends \Image_Driver
 		$wmimage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $this->config['watermark_alpha'] / 100, \Imagick::CHANNEL_ALPHA);
 		$this->imagick->compositeImage($wmimage, \Imagick::COMPOSITE_DEFAULT, $x, $y);
 	}
-	
+
 	protected function _flip($direction)
 	{
 		switch ($direction)
@@ -85,20 +83,20 @@ class Image_Imagick extends \Image_Driver
 			case 'vertical':
 			$this->imagick->flipImage();
 			break;
-			
+
 			case 'horizontal':
 			$this->imagick->flopImage();
 			break;
-			
+
 			case 'both':
 			$this->imagick->flipImage();
 			$this->imagick->flopImage();
 			break;
-			
+
 			default: return false;
 		}
 	}
-	
+
 	protected function _border($size, $color = null)
 	{
 		extract(parent::_border($size, $color));

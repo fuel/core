@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.0
+ * @version    1.5
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2012 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -61,7 +61,7 @@ class Test_Date extends TestCase
 		$output = Date::days_in_month(13);
 	}
 
-	
+
 
 	/**
 	 * Test for Date::format()

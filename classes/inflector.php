@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.0
+ * @version    1.5
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2012 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -123,7 +123,7 @@ class Inflector
 	 * Gets the plural version of the given word
 	 *
 	 * @param   string  the word to pluralize
-	 * @param   int     number of instances	
+	 * @param   int     number of instances
 	 * @return  string  the plural version of $word
 	 */
 	public static function pluralize($word, $count = 0)

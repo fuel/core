@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.0
+ * @version    1.5
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2012 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -358,7 +358,7 @@ class Str
 
 	/**
 	 * Check if a string is json encoded
-	 * 
+	 *
 	 * @param  string $string string to check
 	 * @return bool
 	 */
@@ -370,7 +370,7 @@ class Str
 
 	/**
 	 * Check if a string is a valid XML
-	 * 
+	 *
 	 * @param  string $string string to check
 	 * @return bool
 	 */
@@ -391,7 +391,7 @@ class Str
 
 	/**
 	 * Check if a string is serialized
-	 * 
+	 *
 	 * @param  string $string string to check
 	 * @return bool
 	 */
@@ -403,7 +403,7 @@ class Str
 
 	/**
 	 * Check if a string is html
-	 * 
+	 *
 	 * @param  string $string string to check
 	 * @return bool
 	 */

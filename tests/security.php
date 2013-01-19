@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.0
+ * @version    1.5
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2012 Fuel Development Team
+ * @copyright  2010 - 2013 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -31,7 +31,7 @@ class Test_Security extends TestCase
 		$expected = '&quot;H&amp;M&quot;';
 		$this->assertEquals($expected, $output);
 	}
-	
+
 	/**
 	* Tests Security::htmlentities()
 	*
@@ -43,7 +43,7 @@ class Test_Security extends TestCase
 		$expected = '&#039;';
 		$this->assertEquals($expected, $output);
 	}
-	
+
 	/**
 	* Tests Security::htmlentities()
 	*
@@ -55,7 +55,7 @@ class Test_Security extends TestCase
 		$expected = 'You must write &amp; as &amp;';
 		$this->assertEquals($expected, $output);
 	}
-	
+
 	/**
 	* Tests Security::htmlentities()
 	*
@@ -65,14 +65,14 @@ class Test_Security extends TestCase
 	{
 		$config = \Config::get('security.htmlentities_double_encode');
 		\Config::set('security.htmlentities_double_encode', true);
-		
+
 		$output = Security::htmlentities('You must write & as &amp;');
 		$expected = 'You must write &amp; as &amp;amp;';
 		$this->assertEquals($expected, $output);
-		
+
 		\Config::set('security.htmlentities_double_encode', $config);
 	}
-	
+
 	/**
 	* Tests Security::htmlentities()
 	*
