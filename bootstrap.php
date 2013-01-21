@@ -25,6 +25,15 @@ require COREPATH.'base.php';
 define('MBSTRING', function_exists('mb_get_info'));
 
 /**
+ * Load the Composer autoloader if present
+ */
+if ( ! file_exists(COREPATH.'../vendor/autoload.php'))
+{
+	die('Composer is not installed. Please run "php composer.phar update" in the root to install Composer');
+}
+require COREPATH.'../vendor/autoload.php';
+
+/**
  * Register all the error/shutdown handlers
  */
 register_shutdown_function(function ()
