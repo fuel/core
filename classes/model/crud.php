@@ -385,17 +385,17 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function __construct(array $data = array())
 	{
-		if (isset($this->{static::primary_key()}))
-		{
-			$this->is_new(false);
-		}
-
 		if ( ! empty($data))
 		{
 			foreach ($data as $key => $value)
 			{
 				$this->{$key} = $value;
 			}
+		}
+
+		if (isset($this->{static::primary_key()}))
+		{
+			$this->is_new(false);
 		}
 	}
 
