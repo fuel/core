@@ -58,6 +58,10 @@ class Lang
 				}
 			}
 		}
+		if (empty($language))
+		{
+			$language = self::$fallback[0];
+		}
 		return $language;
 	}
 
@@ -76,10 +80,6 @@ class Lang
 		// get the active language and all fallback languages
 		$language or $language = self::lang();
 		$languages = static::$fallback;
-		if (empty($language))
-		{
-			$language = $languages[0];
-		}
 
 		// make sure we don't have the active language in the fallback array
 		if (in_array($language, $languages))
@@ -175,10 +175,6 @@ class Lang
 		if ($language === null)
 		{
 			$language = self::lang();
-			if (empty($language))
-			{
-				$language = self::$fallback[0];
-			}
 		}
 
 		// prefix the file with the language
@@ -231,10 +227,6 @@ class Lang
 		if ($language === null)
 		{
 			$language = self::lang();
-			if (empty($language))
-			{
-				$language = self::$fallback[0];
-			}
 		}
 
 		return isset(static::$lines[$language]) ? \Str::tr(\Fuel::value(\Arr::get(static::$lines[$language], $line, $default)), $params) : $default;
@@ -256,10 +248,6 @@ class Lang
 		if ($language === null)
 		{
 			$language = self::lang();
-			if (empty($language))
-			{
-				$language = self::$fallback[0];
-			}
 		}
 
 		isset(static::$lines[$language]) or static::$lines[$language] = array();
@@ -282,10 +270,6 @@ class Lang
 		if ($language === null)
 		{
 			$language = self::lang();
-			if (empty($language))
-			{
-				$language = self::$fallback[0];
-			}
 		}
 
 		return isset(static::$lines[$language]) ? \Arr::delete(static::$lines[$language], $item) : false;
@@ -301,10 +285,6 @@ class Lang
 	public static function localized($uri, $language = null) {
 		if (empty($language)) {
 			$language = self::lang();
-			if (empty($language))
-			{
-				$language = self::$fallback[0];
-			}
 		}
 		if (!empty($language) and $language != self::$default_language) {
 			$uri = '/' . $language . $uri;
