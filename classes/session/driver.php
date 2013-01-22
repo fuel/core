@@ -529,12 +529,15 @@ abstract class Session_Driver
 			$this->config['encrypt_cookie'] and $cookie = \Crypt::decode($cookie);
 			$cookie = $this->_unserialize($cookie);
 
-			// and return it
-			return $cookie;
+			// validate the cookie format
+			if ( ! is_array($cookie) or empty($cookie[0]) or ! is_string($cookie[0]))
+			{
+				$cookie = false;
+			}
 		}
 
-		// no payload
-		return false;
+		// and the result
+		return $cookie;
 	 }
 
 	// --------------------------------------------------------------------
