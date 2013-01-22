@@ -27,11 +27,12 @@ define('MBSTRING', function_exists('mb_get_info'));
 /**
  * Load the Composer autoloader if present
  */
-if ( ! file_exists(COREPATH.'../vendor/autoload.php'))
+defined('VENDORPATH') or define('VENDORPATH', COREPATH.'..'.DS.'vendor'.DS);
+if ( ! file_exists(VENDORPATH.'autoload.php'))
 {
 	die('Composer is not installed. Please run "php composer.phar update" in the root to install Composer');
 }
-require COREPATH.'../vendor/autoload.php';
+require VENDORPATH.'autoload.php';
 
 /**
  * Register all the error/shutdown handlers
