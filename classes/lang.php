@@ -27,13 +27,38 @@ class Lang
 	public static $lines = array();
 
 	/**
+	 * @var  string default language when language is not specified in URI
+	 */
+	public static $default_language;
+
+	/**
 	 * @var  array  language(s) to fall back on when loading a file from the current lang fails
 	 */
 	public static $fallback;
 
 	public static function _init()
 	{
+		static::$default_language = \Config::get('language');
 		static::$fallback = (array) \Config::get('language_fallback', 'en');
+	}
+
+	/**
+	 * Returns currently active language.
+	 *
+	 * @return   string    currently active language
+	 */
+	public static function lang() {
+		$language = \Config::get('language');
+		if ($language == self::$default_language) {
+			$lang_segment = \Uri::segment(1);
+			if (!empty($lang_segment) and $lang_segment != false) {
+				$languages = \Config::get('languages');
+				if (!empty($languages) and array_search($lang_segment, $languages) !== false) {
+					$language = $lang_segment;
+				}
+			}
+		}
+		return $language;
 	}
 
 	/**
@@ -49,7 +74,7 @@ class Lang
 	public static function load($file, $group = null, $language = null, $overwrite = false, $reload = false)
 	{
 		// get the active language and all fallback languages
-		$language or $language = \Config::get('language');
+		$language or $language = self::lang();
 		$languages = static::$fallback;
 
 		// make sure we don't have the active language in the fallback array
@@ -145,9 +170,7 @@ class Lang
 	{
 		if ($language === null)
 		{
-			$languages = static::$fallback;
-			array_unshift($languages, $language ?: \Config::get('language'));
-			$language = reset($languages);
+			$language = self::lang();
 		}
 
 		// prefix the file with the language
@@ -199,9 +222,7 @@ class Lang
 	{
 		if ($language === null)
 		{
-			$languages = static::$fallback;
-			array_unshift($languages, $language ?: \Config::get('language'));
-			$language = reset($languages);
+			$language = self::lang();
 		}
 
 		return isset(static::$lines[$language]) ? \Str::tr(\Fuel::value(\Arr::get(static::$lines[$language], $line, $default)), $params) : $default;
@@ -222,9 +243,7 @@ class Lang
 
 		if ($language === null)
 		{
-			$languages = static::$fallback;
-			array_unshift($languages, $language ?: \Config::get('language'));
-			$language = reset($languages);
+			$language = self::lang();
 		}
 
 		isset(static::$lines[$language]) or static::$lines[$language] = array();
@@ -246,11 +265,26 @@ class Lang
 
 		if ($language === null)
 		{
-			$languages = static::$fallback;
-			array_unshift($languages, $language ?: \Config::get('language'));
-			$language = reset($languages);
+			$language = self::lang();
 		}
 
 		return isset(static::$lines[$language]) ? \Arr::delete(static::$lines[$language], $item) : false;
+	}
+
+	/**
+	 * Create localized URI
+	 *
+	 * @param    string       $uri       URI to localize
+	 * @param    string|null  $language  name of the language with which create URI, null for active language
+	 * @return   string                  localized URI
+	 */
+	public static function localized($uri, $language = null) {
+		if (empty($language)) {
+			$language = self::lang();
+		}
+		if (!empty($language) and $language != self::$default_language) {
+			$uri = '/' . $language . $uri;
+		}
+		return $uri;
 	}
 }
