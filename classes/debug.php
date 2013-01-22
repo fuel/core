@@ -221,8 +221,24 @@ JS;
 			ob_start();
 			var_dump($var);
 			$contents = ob_get_contents();
-			strpos($contents, 'xdebug-var-dump') !== false ? preg_match('~(.*?)\)\[<i>(\d+)(.*)~', $contents, $matches) : preg_match('~object\((.*?)#(\d+)(.*)~', $contents, $matches);
 			ob_end_clean();
+
+			// process it based on the xdebug presence and configuration
+			if (extension_loaded('xdebug') and ini_get('xdebug.overload_var_dump') === '1')
+			{
+				if (ini_get('html_errors'))
+				{
+					preg_match('~(.*?)\)\[<i>(\d+)(.*)~', $contents, $matches);
+				}
+				else
+				{
+					preg_match('~class (.*?)#(\d+)(.*)~', $contents, $matches);
+				}
+			}
+			else
+			{
+				preg_match('~object\((.*?)#(\d+)(.*)~', $contents, $matches);
+			}
 
 			$id = 'fuel_debug_'.mt_rand();
 			$rvar = new \ReflectionObject($var);
