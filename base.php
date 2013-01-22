@@ -86,8 +86,6 @@ if ( ! function_exists('logger'))
 			return false;
 		}
 
-		! class_exists('Log') and \Package::load('log');
-
 		return \Log::instance()->log($level, (empty($method) ? '' : $method.' - ').$msg);
 	}
 }
