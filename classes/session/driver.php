@@ -530,8 +530,10 @@ abstract class Session_Driver
 			$cookie = $this->_unserialize($cookie);
 
 			// validate the cookie format
-			if ( ! is_array($cookie) or empty($cookie[0]) or ! is_string($cookie[0]))
+			if ( ! is_array($cookie) or empty($cookie[0]))
 			{
+				if (($this->config['driver'] === 'cookie' and ! is_array($cookie[0])) or
+					($this->config['driver'] !== 'cookie' and ! is_string($cookie[0])))
 				$cookie = false;
 			}
 		}
