@@ -662,5 +662,3 @@ FOOTER;
 
 	return $return_output;
 }
-
-?>
