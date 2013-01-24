@@ -53,16 +53,19 @@ class Log
 		if ( ! is_dir($filepath))
 		{
 			$old = umask(0);
-			mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
+			@mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
 			umask($old);
 		}
 
 		$filename = $filepath.date('d').'.php';
 
-		if ( ! file_exists($filename))
+		if ( ! $handle = @fopen($filename, 'a'))
 		{
-			file_put_contents($filename, "<"."?php defined('COREPATH') or exit('No direct script access allowed'); ?".">".PHP_EOL.PHP_EOL);
+			die('Fatal error: could not create or access the log file ('.$filename.')<br />check your file system permissions!');
 		}
+
+		filesize($filename) or fwrite($handle, "<?php defined('COREPATH') or exit('No direct script access allowed'); ?>".PHP_EOL.PHP_EOL);
+		fclose($handle);
 
 		// create the monolog instance
 		static::$monolog = new \Monolog\Logger('fuelphp');
