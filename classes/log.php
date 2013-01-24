@@ -52,9 +52,7 @@ class Log
 
 		if ( ! is_dir($filepath))
 		{
-			$old = umask(0);
 			@mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
-			umask($old);
 		}
 
 		$filename = $filepath.date('d').'.php';
@@ -64,7 +62,11 @@ class Log
 			die('Fatal error: could not create or access the log file ('.$filename.')<br />check your file system permissions!');
 		}
 
-		filesize($filename) or fwrite($handle, "<?php defined('COREPATH') or exit('No direct script access allowed'); ?>".PHP_EOL.PHP_EOL);
+		if ( ! filesize($filename))
+		{
+			fwrite($handle, "<?php defined('COREPATH') or exit('No direct script access allowed'); ?>".PHP_EOL.PHP_EOL);
+			chmod($filename, \Config::get('file.chmod.files', 0666));
+		}
 		fclose($handle);
 
 		// create the monolog instance
