@@ -202,9 +202,9 @@ if ( ! function_exists('render'))
  */
 if ( ! function_exists('__'))
 {
-	function __($string, $params = array(), $default = null)
+	function __($string, $params = array(), $default = null, $language = null)
 	{
-		return \Lang::get($string, $params, $default);
+		return \Lang::get($string, $params, $default, $language);
 	}
 }
 
