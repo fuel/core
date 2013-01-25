@@ -43,10 +43,7 @@ class Lang
 	 */
 	public static function get_lang() {
 		$language = \Config::get('language');
-		if (empty($language))
-		{
-			$language = self::$fallback[0];
-		}
+		empty($language) and $language = static::$fallback[0];
 		return $language;
 	}
 
@@ -63,7 +60,7 @@ class Lang
 	public static function load($file, $group = null, $language = null, $overwrite = false, $reload = false)
 	{
 		// get the active language and all fallback languages
-		$language or $language = self::get_lang();
+		$language or $language = static::get_lang();
 		$languages = static::$fallback;
 
 		// make sure we don't have the active language in the fallback array
@@ -157,10 +154,7 @@ class Lang
 	 */
 	public static function save($file, $lang, $language = null)
 	{
-		if ($language === null)
-		{
-			$language = self::get_lang();
-		}
+		($language === null) and $language = static::get_lang();
 
 		// prefix the file with the language
 		if ( ! is_null($language))
@@ -209,10 +203,7 @@ class Lang
 	 */
 	public static function get($line, array $params = array(), $default = null, $language = null)
 	{
-		if ($language === null)
-		{
-			$language = self::get_lang();
-		}
+		($language === null) and $language = static::get_lang();
 
 		return isset(static::$lines[$language]) ? \Str::tr(\Fuel::value(\Arr::get(static::$lines[$language], $line, $default)), $params) : $default;
 	}
@@ -230,10 +221,7 @@ class Lang
 	{
 		$group === null or $line = $group.'.'.$line;
 
-		if ($language === null)
-		{
-			$language = self::get_lang();
-		}
+		($language === null) and $language = static::get_lang();
 
 		isset(static::$lines[$language]) or static::$lines[$language] = array();
 
@@ -252,10 +240,7 @@ class Lang
 	{
 		$group === null or $line = $group.'.'.$line;
 
-		if ($language === null)
-		{
-			$language = self::get_lang();
-		}
+		($language === null) and $language = static::get_lang();
 
 		return isset(static::$lines[$language]) ? \Arr::delete(static::$lines[$language], $item) : false;
 	}
