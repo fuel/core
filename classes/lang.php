@@ -41,7 +41,8 @@ class Lang
 	 *
 	 * @return   string    currently active language
 	 */
-	public static function get_lang() {
+	public static function get_lang()
+	{
 		$language = \Config::get('language');
 		empty($language) and $language = static::$fallback[0];
 		return $language;
