@@ -84,6 +84,10 @@ class Log
 	 */
 	public static function instance()
 	{
+		// make sure we have an instance, create one if needed
+		static::$monolog or static::_init();
+
+		// return the created instance
 		return static::$monolog;
 	}
 
