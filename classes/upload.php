@@ -377,15 +377,19 @@ class Upload
 				// split the mimetype info so we can run some tests
 				preg_match('|^(.*)/(.*)|', $files[$key]['mimetype'], $mimeinfo);
 
-				if (in_array($mimeinfo[1], (array) static::$config['type_blacklist']))
+				// make sure we have a valid mimetype before checking it
+				if (isset($mimeinfo[1]))
 				{
-					$files[$key]['error'] = true;
-					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_TYPE_BLACKLISTED);
-				}
-				if ( ! empty(static::$config['type_whitelist']) and ! in_array($mimeinfo[1], (array) static::$config['type_whitelist']))
-				{
-					$files[$key]['error'] = true;
-					$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_TYPE_NOT_WHITELISTED);
+					if (in_array($mimeinfo[1], (array) static::$config['type_blacklist']))
+					{
+						$files[$key]['error'] = true;
+						$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_TYPE_BLACKLISTED);
+					}
+					if ( ! empty(static::$config['type_whitelist']) and ! in_array($mimeinfo[1], (array) static::$config['type_whitelist']))
+					{
+						$files[$key]['error'] = true;
+						$files[$key]['errors'][] = array('error' => static::UPLOAD_ERR_TYPE_NOT_WHITELISTED);
+					}
 				}
 			}
 
