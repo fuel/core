@@ -300,9 +300,12 @@ class Form_Instance
 			if ( ! is_array($checked))
 			{
 				// If it's true, then go for it
-				if (is_bool($checked) and $checked === true)
+				if (is_bool($checked))
 				{
-					$attributes['checked'] = 'checked';
+					if($checked === true)
+					{
+						$attributes['checked'] = 'checked';	
+					}
 				}
 
 				// Otherwise, if the string/number/whatever matches then do it
@@ -342,9 +345,12 @@ class Form_Instance
 			if ( ! is_array($checked))
 			{
 				// If it's true, then go for it
-				if (is_bool($checked) and $checked === true)
+				if (is_bool($checked))
 				{
-					$attributes['checked'] = 'checked';
+					if($checked === true)
+					{
+						$attributes['checked'] = 'checked';	
+					}
 				}
 
 				// Otherwise, if the string/number/whatever matches then do it
