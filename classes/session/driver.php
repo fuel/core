@@ -529,11 +529,20 @@ abstract class Session_Driver
 			$this->config['encrypt_cookie'] and $cookie = \Crypt::decode($cookie);
 			$cookie = $this->_unserialize($cookie);
 
-			// validate the cookie format
-			if ( ! is_array($cookie) or empty($cookie[0]))
+			// validate the cookie format: must be an array
+			if (is_array($cookie))
 			{
+				// cookies use nested arrays, other drivers have a string value
 				if (($this->config['driver'] === 'cookie' and ! is_array($cookie[0])) or
 					($this->config['driver'] !== 'cookie' and ! is_string($cookie[0])))
+				{
+					// invalid specific format
+					$cookie = false;
+				}
+			}
+			else
+			{
+				// invalid general format
 				$cookie = false;
 			}
 		}
