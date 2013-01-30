@@ -89,7 +89,7 @@ class Upload
 
 		// add the callbacks
 		$config['langCallback'] = '\\Upload::langCallback';
-		$config['moveCallback'] = '\\Upload::moveCallback';
+		$config['moveCallback'] = null;
 
 		// get an upload instance
 		static::$upload = new \FuelPHP\Upload\Upload($config);
@@ -168,15 +168,26 @@ class Upload
 		foreach ($files as $file)
 		{
 			$data = array();
+
 			foreach ($file as $item => $value)
 			{
 				$item == 'element' and $item = 'field';
 				$item == 'tmp_name' and $item = 'file';
 				$data[$item] = $value;
 			}
+			
+			if (isset($data['path'])) {
+				$data['saved_to'] = $data['path'];
+			}
+			
+			if (isset($data['filename'])) {
+				$data['saved_as'] = $data['filename'];
+			}
+
 			$data['field'] = str_replace('.', ':', $data['field']);
 			$data['error'] = ! $file->isValid();
 			$data['errors'] = array();
+
 			$result[] = $data;
 		}
 
