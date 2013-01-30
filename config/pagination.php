@@ -33,10 +33,10 @@ return array(
 		'first-link'              => "\t\t<a href=\"{uri}\">{page}</a>\n",
 
 		'previous'                => "<span class=\"previous\">\n\t{link}\n</span>\n",
-		'previous-link'           => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'previous-link'           => "\t\t<a href=\"{uri}\" rel=\"prev\">{page}</a>\n",
 
 		'previous-inactive'       => "<span class=\"previous-inactive\">\n\t{link}\n</span>\n",
-		'previous-inactive-link'  => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'previous-inactive-link'  => "\t\t<a href=\"{uri}\" rel=\"prev\">{page}</a>\n",
 
 		'regular'                 => "<span>\n\t{link}\n</span>\n",
 		'regular-link'            => "\t\t<a href=\"{uri}\">{page}</a>\n",
@@ -45,10 +45,10 @@ return array(
 		'active-link'             => "\t\t<a href=\"{uri}\">{page}</a>\n",
 
 		'next'                    => "<span class=\"next\">\n\t{link}\n</span>\n",
-		'next-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'next-link'               => "\t\t<a href=\"{uri}\" rel=\"next\">{page}</a>\n",
 
 		'next-inactive'           => "<span class=\"next-inactive\">\n\t{link}\n</span>\n",
-		'next-inactive-link'      => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'next-inactive-link'      => "\t\t<a href=\"{uri}\" rel=\"next\">{page}</a>\n",
 
 		'last'                    => "<span class=\"last\">\n\t{link}\n</span>\n",
 		'last-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
@@ -62,10 +62,10 @@ return array(
 		'first-link'              => "<a href=\"{uri}\">{page}</a>",
 
 		'previous'                => "\n\t\t<li>{link}</li>",
-		'previous-link'           => "<a href=\"{uri}\">{page}</a>",
+		'previous-link'           => "<a href=\"{uri}\" rel=\"prev\">{page}</a>",
 
 		'previous-inactive'       => "\n\t\t<li class=\"disabled\">{link}</li>",
-		'previous-inactive-link'  => "<a href=\"{uri}\">{page}</a>",
+		'previous-inactive-link'  => "<a href=\"{uri}\" rel=\"prev\">{page}</a>",
 
 		'regular'                 => "\n\t\t<li>{link}</li>",
 		'regular-link'            => "<a href=\"{uri}\">{page}</a>",
@@ -74,10 +74,10 @@ return array(
 		'active-link'             => "<a href=\"{uri}\">{page}</a>",
 
 		'next'                    => "\n\t\t<li>{link}</li>",
-		'next-link'               => "<a href=\"{uri}\">{page}</a>",
+		'next-link'               => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
 
 		'next-inactive'           => "\n\t\t<li class=\"disabled\">{link}</li>",
-		'next-inactive-link'      => "<a href=\"{uri}\">{page}</a>",
+		'next-inactive-link'      => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
 
 		'last'                    => "\n\t\t<li>{link}</li>",
 		'last-link'               => "<a href=\"{uri}\">{page}</a>",
