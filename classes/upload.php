@@ -56,7 +56,7 @@ class Upload
 	/**
 	 * @var object FuelPHP\Upload\Upload object
 	 */
-	protected static $upload = false;
+	protected static $upload = null;
 
 	/**
 	 * @var object Ftp object
@@ -83,22 +83,11 @@ class Upload
 		// fetch the config
 		$config = \Config::get('upload', array());
 
-		// get the auto_process status
-		$auto_process = isset($config['auto_process']) ? $config['auto_process'] : false;
-		unset($config['auto_process']);
-
-		// add the callbacks
-		$config['langCallback'] = '\\Upload::langCallback';
-		$config['moveCallback'] = '\\Upload::moveCallback';
+		// add the language callback to link into Fuel's Lang class
+		$config['langCallback'] = '\\Upload::lang_callback';
 
 		// get an upload instance
 		static::$upload = new \FuelPHP\Upload\Upload($config);
-
-		// auto validate the files if required
-		if ($auto_process)
-		{
-			static::$upload->validate();
-		}
 	}
 
 	// ---------------------------------------------------------------------------
@@ -110,7 +99,7 @@ class Upload
 	 *
 	 * @return  string  Language string retrieved
 	 */
-	public static function langCallback($error)
+	public static function lang_callback($error)
 	{
 		return \Lang::get('upload.error_'.$error, array(), '');
 	}
@@ -126,7 +115,7 @@ class Upload
 	 *
 	 * @return  bool  Result of the move operation
 	 */
-	public static function moveCallback($from, $to)
+	public static function move_callback($from, $to)
 	{
 		if (static::$with_ftp)
 		{
@@ -205,8 +194,11 @@ class Upload
 			$data = array();
 			foreach ($file as $item => $value)
 			{
+				// swap item names for BC
 				$item == 'element' and $item = 'field';
 				$item == 'tmp_name' and $item = 'file';
+				$item == 'filename' and $item = 'save_as';
+				$item == 'path' and $item = 'save_to';
 				$data[$item] = $value;
 			}
 			$data['field'] = str_replace('.', ':', $data['field']);
@@ -245,13 +237,13 @@ class Upload
 	// ---------------------------------------------------------------------------
 
 	/**
-	 * Normalize the $_FILES array and store the result in $files
+	 * Process the uploaded files, and run the validation
 	 *
 	 * @return	void
 	 */
 	public static function process($config = array())
 	{
-		foreach (static::$upload->getValidFiles() as $file)
+		foreach (static::$upload->getAllFiles() as $file)
 		{
 			$file->setConfig($config);
 			$file->validate();
@@ -268,7 +260,16 @@ class Upload
 	 */
 	public static function with_ftp($config = 'default', $connect = true)
 	{
-		static::$with_ftp = \Ftp::forge($config, $connect);
+		if (static::$with_ftp = \Ftp::forge($config, $connect))
+		{
+			// if we have an ftp object, activate the move callback
+			static::$upload->setConfig('moveCallback', '\\Upload\\move_callback');
+		}
+		else
+		{
+			// creating the ftp object failed, disable the callback
+			static::$upload->setConfig('moveCallback', null);
+		}
 	}
 
 	// ---------------------------------------------------------------------------
