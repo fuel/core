@@ -1,0 +1,7 @@
+{
+	"name": "lukearmstrong/core",
+	"type": "fuelphp-core",
+	"require": {
+		"lukearmstrong/installers": "*"
+	}
+}
