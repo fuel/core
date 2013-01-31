@@ -253,6 +253,10 @@ class Session_File extends \Session_Driver
 			// close the file
 			fclose($handle);
 		}
+		else
+		{
+			throw new \FuelException('Could not open the session file in "'.$this->config['path']." for write access");
+		}
 
 		return $exists;
 	}
