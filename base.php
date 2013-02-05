@@ -364,26 +364,3 @@ if (!function_exists('http_build_url'))
 		;
 	}
 }
-
-/**
- * Loads in the classes used for the error handlers.  The class_exists() calls
- * will trigger the autoloader if it is loaded, if not, then it will import
- * the classes and do the work itself.
- *
- * @return  void
- */
-if ( ! function_exists('load_error_classes'))
-{
-	function load_error_classes()
-	{
-		class_exists('Fuel\\Core\\Error') or import('error');
-		class_exists('Error') or class_alias('Fuel\\Core\\Error', 'Error');
-		class_exists('PhpErrorException') or class_alias('Fuel\\Core\\PhpErrorException', 'PhpErrorException');
-
-		class_exists('Fuel\\Core\\Debug') or import('debug');
-		class_exists('Debug') or class_alias('Fuel\\Core\\Debug', 'Debug');
-
-		class_exists('Fuel\\Core\\View') or import('view');
-		class_exists('View') or class_alias('Fuel\\Core\\View', 'View');
-	}
-}
