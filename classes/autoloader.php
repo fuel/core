@@ -296,6 +296,18 @@ class Autoloader
 	}
 
 	/**
+	 * Reset the auto initialize state after an autoloader exception.
+	 * This method is called by the exception handler, and is considered an
+	 * internal method!
+	 *
+	 * @access protected
+	 */
+	public static function _reset()
+	{
+		static::$auto_initialize = null;
+	}
+
+	/**
 	 * Takes a class name and turns it into a path.  It follows the PSR-0
 	 * standard, except for makes the entire path lower case, unless you
 	 * tell it otherwise.
