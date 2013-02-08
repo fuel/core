@@ -29,22 +29,28 @@ define('MBSTRING', function_exists('mb_get_info'));
  */
 register_shutdown_function(function ()
 {
+	// reset the autoloader
+	\Autoloader::_reset();
+
 	// Fire off the shutdown events
 	Event::shutdown();
 
-	load_error_classes();
 	return \Error::shutdown_handler();
 });
 
 set_exception_handler(function (\Exception $e)
 {
-	load_error_classes();
+	// reset the autoloader
+	\Autoloader::_reset();
+
 	return \Error::exception_handler($e);
 });
 
 set_error_handler(function ($severity, $message, $filepath, $line)
 {
-	load_error_classes();
+	// reset the autoloader
+	\Autoloader::_reset();
+
 	return \Error::error_handler($severity, $message, $filepath, $line);
 });
 
