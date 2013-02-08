@@ -53,15 +53,21 @@ class Debug
 		{
 			$backtrace = debug_backtrace();
 
-			// If being called from within, show the file above in the backtrack
-			if (strpos($backtrace[0]['file'], 'core/classes/debug.php') !== FALSE)
+			$position = 0;
+			while ( ! isset($backtrace[$position]['file']))
 			{
-				$callee = $backtrace[1];
-				$label = \Inflector::humanize($backtrace[1]['function']);
+				$position++;
+			}
+
+			// If being called from within, show the file above in the backtrack
+			if (strpos($backtrace[$position]['file'], 'core/classes/debug.php') !== FALSE)
+			{
+				$callee = $backtrace[$position + 1];
+				$label = \Inflector::humanize($backtrace[$position + 1]['function']);
 			}
 			else
 			{
-				$callee = $backtrace[0];
+				$callee = $backtrace[$position];
 				$label = 'Debug';
 			}
 
