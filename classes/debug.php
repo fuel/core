@@ -54,7 +54,7 @@ class Debug
 			$backtrace = debug_backtrace();
 
 			$position = 0;
-			while ( ! isset($backtrace[$position]['file']))
+			while ( ! isset($backtrace[$position]['file']) and isset($backtrace[$position]))
 			{
 				$position++;
 			}
