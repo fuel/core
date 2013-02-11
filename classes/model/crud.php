@@ -89,7 +89,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public static function find_by_pk($value)
 	{
-		return static::find_one_by(static::primary_key(), $value);
+		return static::find_one_by(static::primary_key(true), $value);
 	}
 
 	/**
@@ -337,9 +337,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 *
 	 * @return  string
 	 */
-	protected static function primary_key()
+	protected static function primary_key($qualified = false)
 	{
-		return isset(static::$_primary_key) ? static::$_primary_key : 'id';
+		return ($qualified ? static::$_table_name.'.' : '').(isset(static::$_primary_key) ? static::$_primary_key : 'id');
 	}
 
 	/**
@@ -520,7 +520,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 
 		$query = \DB::update(static::$_table_name)
 		         ->set($vars)
-		         ->where(static::primary_key(), '=', $this->{static::primary_key()});
+		         ->where(static::primary_key(true), '=', $this->{static::primary_key()});
 
 		$this->pre_update($query);
 		$result = $query->execute(static::get_connection(true));
@@ -538,7 +538,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	{
 		$this->frozen(true);
 		$query = \DB::delete(static::$_table_name)
-		            ->where(static::primary_key(), '=', $this->{static::primary_key()});
+		            ->where(static::primary_key(true), '=', $this->{static::primary_key()});
 
 		$this->pre_delete($query);
 		$result = $query->execute(static::get_connection(true));
