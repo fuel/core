@@ -161,6 +161,8 @@ class Upload
 			{
 				$item == 'element' and $item = 'field';
 				$item == 'tmp_name' and $item = 'file';
+				$item == 'filename' and $item = 'save_as';
+				$item == 'path' and $item = 'save_to';
 				$data[$item] = $value;
 			}
 			$data['field'] = str_replace('.', ':', $data['field']);
