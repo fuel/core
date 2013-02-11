@@ -53,21 +53,30 @@ class Debug
 		{
 			$backtrace = debug_backtrace();
 
-			// If being called from within, show the file above in the backtrack
-			if (strpos($backtrace[0]['file'], 'core/classes/debug.php') !== FALSE)
+			// locate the first file entry that isn't this class itself
+			foreach ($backtrace as $stack => $trace)
 			{
-				$callee = $backtrace[1];
-				$label = \Inflector::humanize($backtrace[1]['function']);
-			}
-			else
-			{
-				$callee = $backtrace[0];
-				$label = 'Debug';
+				if (isset($trace['file']))
+				{
+					// If being called from within, show the file above in the backtrack
+					if (strpos($trace['file'], 'core/classes/debug.php') !== FALSE)
+					{
+						$callee = $backtrace[$stack+1];
+						$label = \Inflector::humanize($backtrace[$stack+1]['function']);
+					}
+					else
+					{
+						$callee = $trace;
+						$label = 'Debug';
+					}
+
+					$callee['file'] = \Fuel::clean_path($callee['file']);
+
+					break;
+				}
 			}
 
 			$arguments = func_get_args();
-
-			$callee['file'] = \Fuel::clean_path($callee['file']);
 
 			if ( ! static::$js_displayed)
 			{
