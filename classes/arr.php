@@ -907,7 +907,7 @@ class Arr
 	 * @param   string  $delimiter The delimiter, when $recursive is true
 	 * @return  mixed
 	 */
-	public static function search($array, $value, $default = null, $recursive = false, $delimiter = '.')
+	public static function search($array, $value, $default = null, $recursive = true, $delimiter = '.')
 	{
 		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
 		{
