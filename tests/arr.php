@@ -694,13 +694,13 @@ class Test_Arr extends TestCase
 		// Multi-dimensional array
 		$arr_multi = array('one' => array('test' => 1), 'two' => array('test' => 2), 'three' => array('test' => array('a' => 'a', 'b' => 'b')));
 		$expected = 'one';
-		$this->assertEquals($expected, Arr::search($arr_multi, array('test' => 1)));
+		$this->assertEquals($expected, Arr::search($arr_multi, array('test' => 1), null, false));
 		$expected = null;
-		$this->assertEquals($expected, Arr::search($arr_multi, 1));
+		$this->assertEquals($expected, Arr::search($arr_multi, 1, null, false));
 
 		// Multi-dimensional array (recursive)
 		$expected = 'one.test';
-		$this->assertEquals($expected, Arr::search($arr_multi, 1, null, true));
+		$this->assertEquals($expected, Arr::search($arr_multi, 1));
 
 		$expected = 'three.test.b';
 		$this->assertEquals($expected, Arr::search($arr_multi, 'b', null, true));
