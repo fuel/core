@@ -893,4 +893,57 @@ class Arr
 		$values = array_filter($arr, 'is_array');
 		return $all_keys ? count($arr) === count($values) : count($values) > 0;
 	}
+
+	/**
+	 * Searches the array for a given value and returns the
+	 * corresponding key or default value.
+	 * If $recursive is set to true, then the Arr::search()
+	 * function will return a delimiter-notated key using $delimiter.
+	 *
+	 * @param   array   $array     The search array
+	 * @param   mixed   $value     The searched value
+	 * @param   string  $default   The default value
+	 * @param   bool    $recursive Whether to get keys recursive
+	 * @param   string  $delimiter The delimiter, when $recursive is true
+	 * @return  mixed
+	 */
+	public static function search($array, $value, $default = null, $recursive = false, $delimiter = '.')
+	{
+		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
+		{
+			throw new \InvalidArgumentException('First parameter must be an array or ArrayAccess object.');
+		}
+
+		if ( ! is_null($default) and ! is_int($default) and ! is_string($default))
+		{
+			throw new \InvalidArgumentException('Expects parameter 3 to be an string or integer or null.');
+		}
+
+		if ( ! is_string($delimiter))
+		{
+			throw new \InvalidArgumentException('Expects parameter 5 must be an string.');
+		}
+
+		$key = array_search($value, $array);
+
+		if ($recursive and $key === false)
+		{
+			$keys = array();
+			foreach ($array as $k => $v)
+			{
+				if (is_array($v))
+				{
+					$rk = static::search($v, $value, $default, true, $delimiter);
+					if ($rk !== $default)
+					{
+						$keys = array($k, $rk);
+						break;
+					}
+				}
+			}
+			$key = count($keys) ? implode($delimiter, $keys) : false;
+		}
+
+		return $key === false ? $default : $key;
+	}
 }
