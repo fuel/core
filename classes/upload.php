@@ -171,7 +171,15 @@ class Upload
 			$result[] = $data;
 		}
 
-		return $result;
+		// compatibility with < 1.5, return the single entry if only one was found
+		if (func_num_args() and count($result) == 1)
+		{
+			return reset($result);
+		}
+		else
+		{
+			return $result;
+		}
 	}
 
 	// ---------------------------------------------------------------------------
@@ -213,7 +221,15 @@ class Upload
 			$result[] = $data;
 		}
 
-		return $result;
+		// compatibility with < 1.5, return the single entry if only one was found
+		if (func_num_args() and count($result) == 1)
+		{
+			return reset($result);
+		}
+		else
+		{
+			return $result;
+		}
 	}
 
 	// --------------------------------------------------------------------
