@@ -22,6 +22,10 @@ class Test_Pagination extends TestCase
 {
 	protected function set_request($uri)
 	{
+		// fake the uri for this request
+		isset($_SERVER['PATH_INFO']) and $this->pathinfo = $_SERVER['PATH_INFO'];
+		$_SERVER['PATH_INFO'] = '/'.$uri;
+
 		// set Request::$main
 		$this->request = \Request::forge($uri);
 		$rp = new \ReflectionProperty($this->request, 'main');
@@ -36,6 +40,16 @@ class Test_Pagination extends TestCase
 
 	public function tearDown()
 	{
+		// remove the fake uri
+		if (property_exists($this, 'pathinfo'))
+		{
+			$_SERVER['PATH_INFO'] = $this->pathinfo;
+		}
+		else
+		{
+			unset($_SERVER['PATH_INFO']);
+		}
+
 		// reset Request::$main
 		$request = \Request::forge();
 		$rp = new \ReflectionProperty($request, 'main');

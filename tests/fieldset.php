@@ -20,8 +20,12 @@ namespace Fuel\Core;
  */
 class Test_Fieldset extends TestCase
 {
-	public static function setUpBeforeClass()
+	public function setUp()
 	{
+		// fake the uri for this request
+		isset($_SERVER['PATH_INFO']) and $this->pathinfo = $_SERVER['PATH_INFO'];
+		$_SERVER['PATH_INFO'] = '/welcome/index';
+
 		// set Request::$main
 		$request = \Request::forge('welcome/index');
 		$rp = new \ReflectionProperty($request, 'main');
@@ -29,8 +33,18 @@ class Test_Fieldset extends TestCase
 		$rp->setValue($request, $request);
 	}
 
-	public static function tearDownAfterClass()
+	public function tearDown()
 	{
+		// remove the fake uri
+		if (property_exists($this, 'pathinfo'))
+		{
+			$_SERVER['PATH_INFO'] = $this->pathinfo;
+		}
+		else
+		{
+			unset($_SERVER['PATH_INFO']);
+		}
+
 		// reset Request::$main
 		$request = \Request::forge();
 		$rp = new \ReflectionProperty($request, 'main');
