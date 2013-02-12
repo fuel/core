@@ -478,6 +478,10 @@ class Pagination
 				$url['query'] = array();
 			}
 
+			// do we have a segment offset due to the base_url containing segments?
+			$seg_offset = parse_url(\Uri::base());
+			$seg_offset = empty($seg_offset['path']) ? 0 : count(explode('/', trim($seg_offset['path'], '/')));
+
 			// is the page number a URI segment?
 			if (is_numeric($this->config['uri_segment']))
 			{
@@ -491,7 +495,7 @@ class Pagination
 				}
 
 				// replace the selected segment with the page placeholder
-				$segs[$this->config['uri_segment'] - 1] = '{page}';
+				$segs[$this->config['uri_segment'] - 1 + $seg_offset] = '{page}';
 				$url['path'] = '/'.implode('/', $segs);
 			}
 			else
