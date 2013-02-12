@@ -933,7 +933,7 @@ class Arr
 			{
 				if (is_array($v))
 				{
-					$rk = self::search($v, $value, $default, true, $delimiter);
+					$rk = static::search($v, $value, $default, true, $delimiter);
 					if ($rk !== $default)
 					{
 						$keys = array($k, $rk);
@@ -941,7 +941,7 @@ class Arr
 					}
 				}
 			}
-			$key = count($keys) ? join($delimiter, $keys) : false;
+			$key = count($keys) ? implode($delimiter, $keys) : false;
 		}
 
 		return $key === false ? $default : $key;
