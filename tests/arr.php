@@ -659,6 +659,52 @@ class Test_Arr extends TestCase
 		$this->assertTrue(Arr::is_multi($arr_multi_strange, false));
 		$this->assertFalse(Arr::is_multi($arr_multi_strange, true));
 	}
+
+	/**
+	 * Tests Arr::search()
+	 *
+	 * @test
+	 */
+	public function test_search_single_array()
+	{
+		// Single array
+		$arr_single = array('one' => 1, 'two' => 2);
+		$expected = 'one';
+		$this->assertEquals($expected, Arr::search($arr_single, 1));
+
+		// Default
+		$expected = null;
+		$this->assertEquals($expected, Arr::search($arr_single, 3));
+		$expected = 'three';
+		$this->assertEquals($expected, Arr::search($arr_single, 3, 'three'));
+
+		// Single array (int key)
+		$arr_single = array(0 => 'zero', 'one' => 1, 'two' => 2);
+		$expected = 0;
+		$this->assertEquals($expected, Arr::search($arr_single, 0));
+	}
+
+	/**
+	 * Tests Arr::search()
+	 *
+	 * @test
+	 */
+	public function test_search_multi_array()
+	{
+		// Multi-dimensional array
+		$arr_multi = array('one' => array('test' => 1), 'two' => array('test' => 2), 'three' => array('test' => array('a' => 'a', 'b' => 'b')));
+		$expected = 'one';
+		$this->assertEquals($expected, Arr::search($arr_multi, array('test' => 1)));
+		$expected = null;
+		$this->assertEquals($expected, Arr::search($arr_multi, 1));
+
+		// Multi-dimensional array (recursive)
+		$expected = 'one.test';
+		$this->assertEquals($expected, Arr::search($arr_multi, 1, null, true));
+
+		$expected = 'three.test.b';
+		$this->assertEquals($expected, Arr::search($arr_multi, 'b', null, true));
+	}
 }
 
 
