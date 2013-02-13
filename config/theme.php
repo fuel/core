@@ -61,7 +61,11 @@ return array(
 	'info_file_name' => 'themeinfo.php',
 
 	/**
-	 * Use auto prefixing for modules
+	 * Auto prefixing for modules
+	 *
+	 * If true, the view to be loaded will be prefixed by the name of the current module (if any)
+	 * If a string, it will be prefixed too, allowing you to store all modules in a subfolder
+	 * if false, module prefixing is not used
 	 */
 	'use_modules' => false,
 );
