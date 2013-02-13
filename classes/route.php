@@ -177,7 +177,7 @@ class Route
 			{
 				if ($this->strip_extension)
 				{
-					strpos($uri, $ext = \Input::extension()) === false or $uri = substr($uri, 0, -(strlen($ext)+1));
+					strpos($uri, $ext = '.'.\Input::extension()) === strlen($uri)-strlen($ext) and $uri = substr($uri, 0, -strlen($ext));
 				}
 
 				if ($this->case_sensitive)
