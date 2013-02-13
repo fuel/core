@@ -175,9 +175,10 @@ class Route
 
 			if ($uri != '')
 			{
-				if ($this->strip_extension)
+				// strip the extension if needed and there is something to strip
+				if ($this->strip_extension and strrchr($uri, '.') == $ext = '.'.\Input::extension())
 				{
-					strpos($uri, $ext = \Input::extension()) === false or $uri = substr($uri, 0, -(strlen($ext)+1));
+					$uri = substr($uri, 0, -(strlen($ext)));
 				}
 
 				if ($this->case_sensitive)
