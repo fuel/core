@@ -58,9 +58,11 @@ return array(
 	'bootstrap'                   => array(
 		'wrapper'                 => "<div class=\"pagination\">\n\t<ul>{pagination}\n\t</ul>\n</div>\n",
 
+		'first-marker'            => "««",
 		'first'                   => "\n\t\t<li>{link}</li>",
 		'first-link'              => "<a href=\"{uri}\">{page}</a>",
 
+		'previous-marker'         => "«",
 		'previous'                => "\n\t\t<li>{link}</li>",
 		'previous-link'           => "<a href=\"{uri}\" rel=\"prev\">{page}</a>",
 
@@ -73,12 +75,14 @@ return array(
 		'active'                  => "\n\t\t<li class=\"active\">{link}</li>",
 		'active-link'             => "<a href=\"{uri}\">{page}</a>",
 
+		'next-marker'             => "»",
 		'next'                    => "\n\t\t<li>{link}</li>",
 		'next-link'               => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
 
 		'next-inactive'           => "\n\t\t<li class=\"disabled\">{link}</li>",
 		'next-inactive-link'      => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
 
+		'last-marker'             => "»»",
 		'last'                    => "\n\t\t<li>{link}</li>",
 		'last-link'               => "<a href=\"{uri}\">{page}</a>",
 	),
