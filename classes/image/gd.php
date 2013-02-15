@@ -23,7 +23,7 @@ class Image_Gd extends \Image_Driver
 	{
 		extract(parent::load($filename, $return_data, $force_extension));
 		$return = false;
-		$image_extension == 'jpg' and $image_extension = 'jpeg';
+		$image_extension = pathinfo($filename, PATHINFO_EXTENSION) ? : 'jpg';
 
 		if ( ! $return_data)
 		{
