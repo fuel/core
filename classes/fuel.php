@@ -291,9 +291,9 @@ class Fuel
 		{
 			foreach ($array['classes'] as $class)
 			{
-				if ( ! class_exists($class = ucfirst($class)))
+				if ( ! class_exists($class = \Str::ucwords($class)))
 				{
-					throw new \FuelException('Always load class does not exist. Unable to load: '.$class);
+					throw new \FuelException('Class '.$class.' defined in your "always_load" config could not be loaded.');
 				}
 			}
 		}
