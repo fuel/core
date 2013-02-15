@@ -330,9 +330,14 @@ class Validation
 	public function run($input = null, $allow_partial = false, $temp_callables = array())
 	{
 		if (is_null($input) and \Input::method() != 'POST')
-		{
-			return false;
-		}
+        {
+            if(\Input::method() != 'POST'){
+                return false;
+            }
+            else{
+                $input = $_POST;
+            }
+        }
 
 		// Backup current state of callables so they can be restored after adding temp callables
 		$callable_backup = $this->callables;
