@@ -216,7 +216,7 @@ class Upload
 			$data['errors'] = array();
 			foreach ($file->getErrors() as $error)
 			{
-				$data['errors'][] = array($error->getError(), $error->getMessage());
+				$data['errors'][] = array('error' => $error->getError(), 'message' => $error->getMessage());
 			}
 			$result[] = $data;
 		}
@@ -301,8 +301,14 @@ class Upload
 	 */
 	public static function save()
 	{
+		$args = func_get_args();
+
 		foreach (static::$upload->getValidFiles() as $file)
 		{
+			if(isset($args[1])) {
+				$file->setConfig('path', $args[1]);
+			}
+
 			$file->save();
 		}
 	}
