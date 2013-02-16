@@ -12,6 +12,8 @@
 
 namespace Fuel\Core;
 
+class SecurityException extends \DomainException {}
+
 /**
  * Security Class
  *
@@ -42,15 +44,19 @@ class Security
 	 * Class init
 	 *
 	 * Fetches CSRF settings and current token
+	 *
+	 * @throws SecurityException it the CSRF token validation failed
+	 * @throws FuelException if no security output filter is defined
 	 */
 	public static function _init()
 	{
 		static::$csrf_token_key = \Config::get('security.csrf_token_key', 'fuel_csrf_token');
 		static::$csrf_old_token = \Input::cookie(static::$csrf_token_key, false);
 
-		if (\Config::get('security.csrf_autoload', true))
+		// if csrf automatic checking is enabled, and it fails validation, bail out!
+		if (\Config::get('security.csrf_autoload', true) and ! static::check_token())
 		{
-			static::check_token();
+			throw new \SecurityException('CSRF validation failed, Possible hacking attempt detected!');
 		}
 
 		// throw an exception if no the output filter setting is missing from the app config
