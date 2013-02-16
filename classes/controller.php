@@ -44,7 +44,7 @@ abstract class Controller
 	 * @param  string
 	 * @param  array
 	 */
-	public function router($resource, array $arguments)
+	public function router($resource, $arguments)
 	{
 		// If they call user, go to $this->post_user();
 		$controller_method = strtolower(\Input::method()) . '_' . $resource;
