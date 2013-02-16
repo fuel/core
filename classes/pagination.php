@@ -186,6 +186,12 @@ class Pagination
 	 */
 	public function __get($name)
 	{
+		// use the calculated page if no current_page is passed
+		if ($name === 'current_page' and $this->config[$name] === null)
+		{
+			$name = 'calculated_page';
+		}
+
 		if (array_key_exists($name, $this->config))
 		{
 			return $this->config[$name];
@@ -267,14 +273,14 @@ class Pagination
 		$html = '';
 
 		// let's get the starting page number, this is determined using num_links
-		$start = (($this->config['current_page'] - $this->config['num_links']) > 0) ? $this->config['current_page'] - ($this->config['num_links'] - 1) : 1;
+		$start = (($this->config['calculated_page'] - $this->config['num_links']) > 0) ? $this->config['calculated_page'] - ($this->config['num_links'] - 1) : 1;
 
 		// let's get the ending page number
-		$end = (($this->config['current_page'] + $this->config['num_links']) < $this->config['total_pages']) ? $this->config['current_page'] + $this->config['num_links'] : $this->config['total_pages'];
+		$end = (($this->config['calculated_page'] + $this->config['num_links']) < $this->config['total_pages']) ? $this->config['calculated_page'] + $this->config['num_links'] : $this->config['total_pages'];
 
 		for($i = $start; $i <= $end; $i++)
 		{
-			if ($this->config['current_page'] == $i)
+			if ($this->config['calculated_page'] == $i)
 			{
 				$html .= str_replace(
 				    '{link}',
@@ -306,7 +312,7 @@ class Pagination
 	{
 		$html = '';
 
-		if ($this->config['show_first'] and $this->config['total_pages'] > 1 and $this->config['current_page'] > 1)
+		if ($this->config['show_first'] and $this->config['total_pages'] > 1 and $this->config['calculated_page'] > 1)
 		{
 			$html = str_replace(
 				'{link}',
@@ -331,7 +337,7 @@ class Pagination
 
 		if ($this->config['total_pages'] > 1)
 		{
-			if ($this->config['current_page'] == 1)
+			if ($this->config['calculated_page'] == 1)
 			{
 				$html = str_replace(
 				    '{link}',
@@ -341,7 +347,7 @@ class Pagination
 			}
 			else
 			{
-				$previous_page = $this->config['current_page'] - 1;
+				$previous_page = $this->config['calculated_page'] - 1;
 				$previous_page = ($previous_page == 1) ? '' : $previous_page;
 
 				$html = str_replace(
@@ -368,7 +374,7 @@ class Pagination
 
 		if ($this->config['total_pages'] > 1)
 		{
-			if ($this->config['current_page'] == $this->config['total_pages'])
+			if ($this->config['calculated_page'] == $this->config['total_pages'])
 			{
 				$html = str_replace(
 				    '{link}',
@@ -378,7 +384,7 @@ class Pagination
 			}
 			else
 			{
-				$next_page = $this->config['current_page'] + 1;
+				$next_page = $this->config['calculated_page'] + 1;
 
 				$html = str_replace(
 				    '{link}',
@@ -402,7 +408,7 @@ class Pagination
 	{
 		$html = '';
 
-		if ($this->config['show_last'] and $this->config['total_pages'] > 1 and $this->config['current_page'] != $this->config['total_pages'])
+		if ($this->config['show_last'] and $this->config['total_pages'] > 1 and $this->config['calculated_page'] != $this->config['total_pages'])
 		{
 			$html = str_replace(
 				'{link}',
@@ -422,28 +428,35 @@ class Pagination
 		// calculate the number of pages
 		$this->config['total_pages'] = ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
 
-		// get the current page number from the URI or the query string
-		if (is_string($this->config['uri_segment']))
+		// get the current page number, either from the one set, or from the URI or the query string
+		if ($this->config['current_page'])
 		{
-			$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? $this->config['current_page'] : \Input::get($this->config['uri_segment'], 1);
+				$this->config['calculated_page'] = $this->config['current_page'];
 		}
 		else
 		{
-			$this->config['current_page'] = ($this->config['total_items'] > 0 and $this->config['current_page'] > 1) ? $this->config['current_page'] : (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
+			if (is_string($this->config['uri_segment']))
+			{
+				$this->config['calculated_page'] = \Input::get($this->config['uri_segment'], 1);
+			}
+			else
+			{
+				$this->config['calculated_page'] = (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
+			}
 		}
 
 		// make sure the current page is within bounds
-		if ($this->config['current_page'] > $this->config['total_pages'])
+		if ($this->config['calculated_page'] > $this->config['total_pages'])
 		{
-			$this->config['current_page'] = $this->config['total_pages'];
+			$this->config['calculated_page'] = $this->config['total_pages'];
 		}
-		elseif ($this->config['current_page'] < 1)
+		elseif ($this->config['calculated_page'] < 1)
 		{
-			$this->config['current_page'] = 1;
+			$this->config['calculated_page'] = 1;
 		}
 
 		// the current page must be zero based so that the offset for page 1 is 0.
-		$this->config['offset'] = ($this->config['current_page'] - 1) * $this->config['per_page'];
+		$this->config['offset'] = ($this->config['calculated_page'] - 1) * $this->config['per_page'];
 	}
 
 	/**
