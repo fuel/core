@@ -148,6 +148,41 @@ class Test_Pagination extends TestCase
 		$this->assertEquals($expected, $test);
 	}
 
+	public function test_current_page_calculation_from_link()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/4');
+
+		$this->set_uri_segment_config();
+
+		$config = array(
+			'total_items'    => 12,
+			'per_page'       => 3,
+			'uri_segment'    => 3,
+		);
+
+		$pagination = Pagination::forge(__METHOD__.'-1', $config);
+		$test = $pagination->current_page;
+		$expected = 4;
+		$this->assertEquals($expected, $test);
+	}
+
+	public function test_current_page_calculation_from_config()
+	{
+		$this->set_request('welcome/index');
+
+		$config = array(
+			'per_page'       => 3,
+			'total_items'    => 12,
+			'uri_segment'    => 3,
+			'current_page'   => 4,
+		);
+
+		$pagination = Pagination::forge(__METHOD__.'-2', $config);
+		$test = $pagination->current_page;
+		$expected = 4;
+		$this->assertEquals($expected, $test);
+	}
 	/**
 	 * first page
 	 *
