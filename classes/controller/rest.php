@@ -95,7 +95,7 @@ abstract class Controller_Rest extends \Controller
 	 * @param  string
 	 * @param  array
 	 */
-	public function router($resource, array $arguments)
+	public function router($resource, $arguments)
 	{
 		\Config::load('rest', true);
 
