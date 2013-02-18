@@ -30,9 +30,11 @@ return array(
 		'wrapper'                 => "<div class=\"pagination\">\n\t{pagination}\n</div>\n",
 
 		'first'                   => "<span class=\"first\">\n\t{link}\n</span>\n",
+		'first-marker'            => "&laquo;&laquo;",
 		'first-link'              => "\t\t<a href=\"{uri}\">{page}</a>\n",
 
 		'previous'                => "<span class=\"previous\">\n\t{link}\n</span>\n",
+		'previous-marker'         => "&laquo;",
 		'previous-link'           => "\t\t<a href=\"{uri}\" rel=\"prev\">{page}</a>\n",
 
 		'previous-inactive'       => "<span class=\"previous-inactive\">\n\t{link}\n</span>\n",
@@ -45,12 +47,14 @@ return array(
 		'active-link'             => "\t\t<a href=\"{uri}\">{page}</a>\n",
 
 		'next'                    => "<span class=\"next\">\n\t{link}\n</span>\n",
+		'next-marker'            => "&raquo;",
 		'next-link'               => "\t\t<a href=\"{uri}\" rel=\"next\">{page}</a>\n",
 
 		'next-inactive'           => "<span class=\"next-inactive\">\n\t{link}\n</span>\n",
 		'next-inactive-link'      => "\t\t<a href=\"{uri}\" rel=\"next\">{page}</a>\n",
 
 		'last'                    => "<span class=\"last\">\n\t{link}\n</span>\n",
+		'last-marker'             => "&raquo;&raquo;",
 		'last-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
 	),
 
@@ -59,9 +63,11 @@ return array(
 		'wrapper'                 => "<div class=\"pagination\">\n\t<ul>{pagination}\n\t</ul>\n</div>\n",
 
 		'first'                   => "\n\t\t<li>{link}</li>",
+		'first-marker'            => "&laquo;&laquo;",
 		'first-link'              => "<a href=\"{uri}\">{page}</a>",
 
 		'previous'                => "\n\t\t<li>{link}</li>",
+		'previous-marker'         => "&laquo;",
 		'previous-link'           => "<a href=\"{uri}\" rel=\"prev\">{page}</a>",
 
 		'previous-inactive'       => "\n\t\t<li class=\"disabled\">{link}</li>",
@@ -74,12 +80,14 @@ return array(
 		'active-link'             => "<a href=\"{uri}\">{page}</a>",
 
 		'next'                    => "\n\t\t<li>{link}</li>",
+		'next-marker'             => "&raquo;",
 		'next-link'               => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
 
 		'next-inactive'           => "\n\t\t<li class=\"disabled\">{link}</li>",
 		'next-inactive-link'      => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
 
 		'last'                    => "\n\t\t<li>{link}</li>",
+		'last-marker'             => "&raquo;&raquo;",
 		'last-link'               => "<a href=\"{uri}\">{page}</a>",
 	),
 
