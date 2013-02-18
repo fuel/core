@@ -382,7 +382,7 @@ class Theme
 	 * @param   string|View|ViewModel	$view   	chrome View, or name of the view
 	 * @param   string  				$var		Name of the variable in the chome that will output the partial
 	 *
-	 * @return  void
+	 * @return  View|ViewModel, the view partial
 	 */
 	public function set_chrome($section, $view, $var = 'content')
 	{
@@ -393,6 +393,8 @@ class Theme
 		}
 
 		$this->chrome[$section] = array('var' => $var, 'view' => $view);
+
+		return $view;
 	}
 
 	/**
