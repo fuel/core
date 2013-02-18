@@ -169,7 +169,7 @@ class Test_Pagination extends TestCase
 
 	public function test_current_page_calculation_from_config()
 	{
-		$this->set_request('welcome/index');
+		$this->set_request('welcome/index/6');
 
 		$config = array(
 			'per_page'       => 3,
