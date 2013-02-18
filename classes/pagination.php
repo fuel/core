@@ -48,13 +48,13 @@ class Pagination
 	{
 		// old pre-1.4 mapping to new instance methods
 		static $mapping = array(
-			'get' => '__get',
-			'set' => '__set',
-			'set_config' => '__set',
+			'get'          => '__get',
+			'set'          => '__set',
+			'set_config'   => '__set',
 			'create_links' => 'render',
-			'page_links' => 'pages_render',
-			'prev_link' => 'previous',
-			'next_link' => 'next',
+			'page_links'   => 'pages_render',
+			'prev_link'    => 'previous',
+			'next_link'    => 'next',
 		);
 
 		array_key_exists($name, $mapping) and $name = $mapping[$name];
@@ -140,8 +140,10 @@ class Pagination
 	protected $template = array(
 		'wrapper'                 => "<div class=\"pagination\">\n\t{pagination}\n</div>\n",
 		'first'                   => "<span class=\"first\">\n\t{link}\n</span>\n",
+		'first-marker'            => "&laquo;&laquo;",
 		'first-link'              => "\t\t<a href=\"{uri}\">{page}</a>\n",
 		'previous'                => "<span class=\"previous\">\n\t{link}\n</span>\n",
+		'previous-marker'         => "&laquo;",
 		'previous-link'           => "\t\t<a href=\"{uri}\">{page}</a>\n",
 		'previous-inactive'       => "<span class=\"previous-inactive\">\n\t{link}\n</span>\n",
 		'previous-inactive-link'  => "\t\t<a href=\"{uri}\">{page}</a>\n",
@@ -150,10 +152,12 @@ class Pagination
 		'active'                  => "<span class=\"active\">\n\t{link}\n</span>\n",
 		'active-link'             => "\t\t<a href=\"{uri}\">{page}</a>\n",
 		'next'                    => "<span class=\"next\">\n\t{link}\n</span>\n",
+		'next-marker'             => "&raquo;",
 		'next-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
 		'next-inactive'           => "<span class=\"next-inactive\">\n\t{link}\n</span>\n",
 		'next-inactive-link'      => "\t\t<a href=\"{uri}\">{page}</a>\n",
 		'last'                    => "<span class=\"next\">\n\t{link}\n</span>\n",
+		'last-marker'             => "&raquo;&raquo;",
 		'last-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
 	);
 
@@ -250,7 +254,8 @@ class Pagination
 
 		$html = str_replace(
 			'{pagination}',
-			$this->first().$this->previous().$this->pages_render().$this->next().$this->last(),
+			$this->first($this->template['first-marker']).$this->previous($this->template['previous-marker'])
+				.$this->pages_render().$this->next($this->template['next-marker']).$this->last($this->template['last-marker']),
 			$this->template['wrapper']
 		);
 
