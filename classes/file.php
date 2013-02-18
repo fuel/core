@@ -151,14 +151,34 @@ class File
 		{
 			throw new \InvalidPathException('Invalid basepath: "'.$basepath.'", cannot create directory at this location.');
 		}
-		elseif (file_exists($new_dir))
+		elseif (is_dir($new_dir))
 		{
 			throw new \FileAccessException('Directory: "'.$new_dir.'" exists already, cannot be created.');
 		}
 
-		$recursive = (strpos($name, '/') !== false or strpos($name, '\\') !== false);
+		// unify the path separators
+		$new_dir = str_replace(array('\\', '/'), DS, $new_dir);
 
-		return mkdir($new_dir, $chmod, $recursive);
+		// recursively create the directory. we can't use mkdir permissions or recursive
+		// due to the fact that mkdir is restricted by the current users umask
+		$path = '';
+		foreach (explode(DS, $new_dir) as $dir)
+		{
+			if ($dir)
+			{
+				$path .= (empty($dir)?'':DS).$dir;
+				if ( ! is_dir($path))
+				{
+					if ( ! mkdir($path))
+					{
+						return false;
+					}
+					chmod($path, $chmod);
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**

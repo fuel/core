@@ -141,8 +141,10 @@ class File_Area
 	 */
 	public function get_path($path)
 	{
-
 		$pathinfo = is_dir($path) ? array('dirname' => $path, 'extension' => null, 'basename' => '') : pathinfo($path);
+
+		// make sure we have a dirname to work with
+		isset($pathinfo['dirname']) or $pathinfo['dirname'] = '';
 
 		// do we have a basedir, and is the path already prefixed by the basedir? then just deal with the double dots...
 		if ( ! empty($this->basedir) && substr($pathinfo['dirname'], 0, strlen($this->basedir)) == $this->basedir)
