@@ -54,7 +54,8 @@ class Security
 		static::$csrf_old_token = \Input::cookie(static::$csrf_token_key, false);
 
 		// if csrf automatic checking is enabled, and it fails validation, bail out!
-		if (\Config::get('security.csrf_autoload', true) and ! static::check_token())
+		$is_check_token_request = in_array(strtolower(\Input::method()), array('post', 'put', 'delete'));
+		if (\Config::get('security.csrf_autoload', true) and $is_check_token_request and ! static::check_token())
 		{
 			throw new \SecurityException('CSRF validation failed, Possible hacking attempt detected!');
 		}
