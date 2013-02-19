@@ -54,10 +54,13 @@ class Security
 		static::$csrf_old_token = \Input::cookie(static::$csrf_token_key, false);
 
 		// if csrf automatic checking is enabled, and it fails validation, bail out!
-		$is_check_token_request = in_array(strtolower(\Input::method()), array('post', 'put', 'delete'));
-		if (\Config::get('security.csrf_autoload', true) and $is_check_token_request and ! static::check_token())
+		if (\Config::get('security.csrf_autoload', true))
 		{
-			throw new \SecurityException('CSRF validation failed, Possible hacking attempt detected!');
+			$check_token_methods = \Config::get('security.csrf_autoload_methods', array('post', 'put', 'delete'));
+			if (in_array(strtolower(\Input::method()), $check_token_methods) and ! static::check_token())
+			{
+				throw new \SecurityException('CSRF validation failed, Possible hacking attempt detected!');
+			}
 		}
 
 		// throw an exception if no the output filter setting is missing from the app config
