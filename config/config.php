@@ -124,6 +124,7 @@ return array(
 		'csrf_autoload'    => false,
 		'csrf_token_key'   => 'fuel_csrf_token',
 		'csrf_expiration'  => 0,
+		'csrf_autoload_methods' => array('post', 'put', 'delete'),
 
 		/**
 		 * This input filter can be any normal PHP function as well as 'xss_clean'
