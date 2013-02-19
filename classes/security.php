@@ -292,7 +292,12 @@ class Security
 		// set new token for next session when necessary
 		else
 		{
-			static::$csrf_token = md5(uniqid().time());
+			static::$csrf_token = md5(
+				uniqid()
+				.time()
+				.\Config::get('security.csrf_token_salt', '')
+				.mt_rand(1,1000000)
+			);
 
 			$expiration = \Config::get('security.csrf_expiration', 0);
 			\Cookie::set(static::$csrf_token_key, static::$csrf_token, $expiration);
