@@ -17,12 +17,6 @@ namespace Fuel\Core;
 
 abstract class Database_Connection
 {
-
-	/**
-	 * @var  string  default instance name
-	 */
-	public static $default = 'default';
-
 	/**
 	 * @var  array  Database instances
 	 */
