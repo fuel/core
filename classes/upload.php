@@ -161,8 +161,8 @@ class Upload
 			{
 				$item == 'element' and $item = 'field';
 				$item == 'tmp_name' and $item = 'file';
-				$item == 'filename' and $item = 'save_as';
-				$item == 'path' and $item = 'save_to';
+				$item == 'filename' and $item = 'saved_as';
+				$item == 'path' and $item = 'saved_to';
 				$data[$item] = $value;
 			}
 			$data['field'] = str_replace('.', ':', $data['field']);
@@ -207,8 +207,8 @@ class Upload
 				// swap item names for BC
 				$item == 'element' and $item = 'field';
 				$item == 'tmp_name' and $item = 'file';
-				$item == 'filename' and $item = 'save_as';
-				$item == 'path' and $item = 'save_to';
+				$item == 'filename' and $item = 'saved_as';
+				$item == 'path' and $item = 'saved_to';
 				$data[$item] = $value;
 			}
 			$data['field'] = str_replace('.', ':', $data['field']);
