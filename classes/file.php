@@ -662,42 +662,45 @@ class File
 	 * @param  string|File_Area|null  file area name, object or null for base area
 	 */
 	public static function open_file($path, $lock = true, $area = null)
-	{
+	{	
 		if (is_string($path))
 		{
 			$path = static::instance($area)->get_path($path);
 			$resource = fopen($path, 'r+');
-		}
+		}		
 		else
 		{
 			$resource = $path;
 		}
-
 		// Make sure the parameter is a valid resource
 		if ( ! is_resource($resource))
-		{
+		{		
 			return false;
 		}
-
 		// If locks aren't used, don't lock
 		if ( ! static::instance($area)->use_locks())
 		{
 			return $resource;
 		}
-
 		// Accept valid lock constant or set to LOCK_EX
-		$lock = in_array($lock, array(LOCK_SH, LOCK_EX, LOCK_NB)) ? $lock : LOCK_EX;
+		if($lock === true){
+			$lock = LOCK_EX;
+		} else if ($lock === false) {
+			$lock = LOCK_UN;
+		}
+		$lock = in_array($lock, array(LOCK_SH, LOCK_EX, LOCK_UN)) ? $lock : LOCK_EX;
+		static::$lock_type = $lock; //for test
 
 		// Try to get a lock, timeout after 5 seconds
 		$lock_mtime = microtime(true);
-		while ( ! flock($resource, $lock))
+		while ( ! flock($resource, $lock|LOCK_NB))
 		{
 			if (microtime(true) - $lock_mtime > 5)
 			{
 				throw new \FileAccessException('Could not secure file lock, timed out after 5 seconds.');
 			}
+				usleep(1);
 		}
-
 		return $resource;
 	}
 
@@ -709,15 +712,15 @@ class File
 	 */
 	public static function close_file($resource, $area = null)
 	{
-		fclose($resource);
-
 		// If locks aren't used, don't unlock
 		if ( ! static::instance($area)->use_locks())
 		{
+			fclose($resource);
 			return;
 		}
-
-		flock($resource, LOCK_UN);
+			flock($resource, LOCK_UN);
+			fclose($resource);
+		}	
 	}
 
 	/**
