@@ -32,6 +32,8 @@ return array(
 		'first'                   => "<span class=\"first\">\n\t{link}\n</span>\n",
 		'first-marker'            => "&laquo;&laquo;",
 		'first-link'              => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'first-inactive'          => "",
+		'first-inactive-link'     => "",
 
 		'previous'                => "<span class=\"previous\">\n\t{link}\n</span>\n",
 		'previous-marker'         => "&laquo;",
@@ -56,6 +58,8 @@ return array(
 		'last'                    => "<span class=\"last\">\n\t{link}\n</span>\n",
 		'last-marker'             => "&raquo;&raquo;",
 		'last-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		'last-inactive'           => "",
+		'last-inactive-link'      => "",
 	),
 
 	// Twitter bootstrap 2.x template
