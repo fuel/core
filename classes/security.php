@@ -54,9 +54,13 @@ class Security
 		static::$csrf_old_token = \Input::cookie(static::$csrf_token_key, false);
 
 		// if csrf automatic checking is enabled, and it fails validation, bail out!
-		if (\Config::get('security.csrf_autoload', true) and ! static::check_token())
+		if (\Config::get('security.csrf_autoload', true))
 		{
-			throw new \SecurityException('CSRF validation failed, Possible hacking attempt detected!');
+			$check_token_methods = \Config::get('security.csrf_autoload_methods', array('post', 'put', 'delete'));
+			if (in_array(strtolower(\Input::method()), $check_token_methods) and ! static::check_token())
+			{
+				throw new \SecurityException('CSRF validation failed, Possible hacking attempt detected!');
+			}
 		}
 
 		// throw an exception if no the output filter setting is missing from the app config
@@ -284,13 +288,13 @@ class Security
 
 
 	/**
-	 * Generate new token
+	 * Generate new token. Based on an example from OWASP
 	 *
 	 * @return string
 	 */
 	protected static function generate_token()
 	{
-		$token_base = time() . uniqid() . \Config::get('security.csrf_token_salt', '') . mt_rand(0, mt_getrandmax());
+		$token_base = time() . uniqid() . \Config::get('security.token_salt', '') . mt_rand(0, mt_getrandmax());
 		if (function_exists('hash_algos') and in_array('sha512', hash_algos()))
 		{
 			$token = hash('sha512', $token_base);

@@ -121,10 +121,29 @@ return array(
 	 * Security settings
 	 */
 	'security' => array(
-		'csrf_autoload'    => false,
-		'csrf_token_key'   => 'fuel_csrf_token',
-		'csrf_expiration'  => 0,
-		'csrf_token_salt'  => 'put your salt value here to make the token more secure',
+		/**
+		 * If true, every HTTP request of the type speficied in autoload_methods
+		 * will be checked for a CSRF token. If not present or not valid, a
+		 * security exception will be thrown.
+		 */
+		'csrf_autoload'         => false,
+		'csrf_autoload_methods' => array('post', 'put', 'delete'),
+
+		/**
+		 * Name of the form field that holds the CSRF token.
+		 */
+		'csrf_token_key'        => 'fuel_csrf_token',
+
+		/**
+		 * Expiry of the token in seconds. If zero, the token remains the same
+		 * for the entire user session.
+		 */
+		'csrf_expiration'       => 0,
+
+		/**
+		 * A salt to make sure the generated security tokens are not predictable
+		 */
+		'token_salt'       => 'put your salt value here to make the token more secure',
 
 		/**
 		 * This input filter can be any normal PHP function as well as 'xss_clean'
