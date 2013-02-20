@@ -282,6 +282,27 @@ class Security
 		return static::$csrf_token;
 	}
 
+
+	/**
+	 * Generate new token
+	 *
+	 * @return string
+	 */
+	protected static function generate_token()
+	{
+		$token_base = time() . uniqid() . \Config::get('security.csrf_token_salt', '') . mt_rand(0, mt_getrandmax());
+		if (function_exists('hash_algos') and in_array('sha512', hash_algos()))
+		{
+			$token = hash('sha512', $token_base);
+		}
+		else
+		{
+			$token = md5($token_base);
+		}
+
+		return $token;
+	}
+
 	protected static function set_token($reset = false)
 	{
 		// re-use old token when found (= not expired) and expiration is used (otherwise always reset)
@@ -292,12 +313,7 @@ class Security
 		// set new token for next session when necessary
 		else
 		{
-			static::$csrf_token = md5(
-				uniqid()
-				.time()
-				.\Config::get('security.csrf_token_salt', '')
-				.mt_rand(1,1000000)
-			);
+			static::$csrf_token = static::generate_token();
 
 			$expiration = \Config::get('security.csrf_expiration', 0);
 			\Cookie::set(static::$csrf_token_key, static::$csrf_token, $expiration);
