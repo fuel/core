@@ -286,13 +286,12 @@ class Security
 		return static::$csrf_token;
 	}
 
-
 	/**
 	 * Generate new token. Based on an example from OWASP
 	 *
 	 * @return string
 	 */
-	protected static function generate_token()
+	public static function generate_token()
 	{
 		$token_base = time() . uniqid() . \Config::get('security.token_salt', '') . mt_rand(0, mt_getrandmax());
 		if (function_exists('hash_algos') and in_array('sha512', hash_algos()))
