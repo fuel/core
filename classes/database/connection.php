@@ -49,7 +49,7 @@ abstract class Database_Connection
 		if ($name === null)
 		{
 			// Use the default instance name
-			$name = \Config::get('db.active');
+			$name = static::default;
 		}
 
 		if ( ! isset(static::$instances[$name]))

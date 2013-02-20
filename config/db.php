@@ -20,13 +20,6 @@
  */
 
 return array(
-
-	/*
-	 * If you don't specify a DB configuration name when you create a connection
-	 * the configuration to be used will be determined by the 'active' value
-	 */
-	'active' => 'default',
-
 	/**
 	 * Base PDO config
 	 */
