@@ -287,7 +287,7 @@ class Pagination
 		// let's get the ending page number
 		$end = (($this->config['calculated_page'] + $this->config['num_links']) < $this->config['total_pages']) ? $this->config['calculated_page'] + $this->config['num_links'] : $this->config['total_pages'];
 
-		for($i = $start; $i <= $end; $i++)
+		for($i = $start; $i < $end; $i++)
 		{
 			if ($this->config['calculated_page'] == $i)
 			{
