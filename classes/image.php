@@ -51,7 +51,7 @@ class Image
 		\Config::load('image', 'image');
 		$config = array_merge(\Config::get('image', array()), $config);
 
-		$protocol = ucfirst( ! empty($config['driver']) ? $config['driver'] : 'gd');
+		$protocol = \Str::ucwords( ! empty($config['driver']) ? $config['driver'] : 'gd');
 		$class = 'Image_'.$protocol;
 		if ($protocol == 'Driver' || ! class_exists($class))
 		{

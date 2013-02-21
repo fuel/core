@@ -94,7 +94,7 @@ class Session
 		}
 
 		// determine the driver to load
-		$class = '\\Session_'.ucfirst($config['driver']);
+		$class = '\\Session_'.\Str::ucwords($config['driver']);
 
 		$driver = new $class($config);
 
