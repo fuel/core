@@ -78,6 +78,11 @@ class Session
                 return \Cli::color('Database sessions table was not created.', 'red');
             }
         }
+        
+        if (\DBUtil::table_exists(\Config::get('session.db.table')))
+        {
+            return \Cli::write('Session table already exists.');
+        }
 
         // create the session table using the table name from the config file
         \DBUtil::create_table(\Config::get('session.db.table'), array(
@@ -104,8 +109,6 @@ class Session
             return \Cli::color('Success! Your session table has been created! Your current session driver type is set to '.\Config::get('session.driver').'. In order to use the table you just created to manage your sessions, you will need to set your driver type to "db" in your session config file.', 'green');
         }
     }
-
-
 
     /**
      * remove the sessions table
