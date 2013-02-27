@@ -953,7 +953,7 @@ class Validation
 	 * @param   bool    Whether validation checks strict
 	 * @return  bool
 	 */
-	public function _validation_date($val, $format = null, $strict = true)
+	public function _validation_valid_date($val, $format = null, $strict = true)
 	{
 		if ($this->_empty($val))
 		{
