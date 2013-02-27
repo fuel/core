@@ -684,10 +684,10 @@ class Test_Validation extends TestCase
 	}
 
 	/**
-	 * Validation:  date
+	 * Validation:  valid_date
 	 * Expecting:   success
 	 */
-	public function test_validation_date_none_arguments() {
+	public function test_validation_valid_date_none_arguments() {
 		$post = array(
 			'f1' => '2013/02/26',
 			'f2' => '2013-02-26',
@@ -699,11 +699,11 @@ class Test_Validation extends TestCase
 
 		$val = Validation::forge(__FUNCTION__);
 		$val->add_field('f1', 'F1', 'valid_date');
-		$val->add_field('f2', 'F2', 'date');
-		$val->add_field('f3', 'F3', 'date');
-		$val->add_field('f4', 'F4', 'date');
-		$val->add_field('f5', 'F5', 'date');
-		$val->add_field('f6', 'F6', 'date');
+		$val->add_field('f2', 'F2', 'valid_date');
+		$val->add_field('f3', 'F3', 'valid_date');
+		$val->add_field('f4', 'F4', 'valid_date');
+		$val->add_field('f5', 'F5', 'valid_date');
+		$val->add_field('f6', 'F6', 'valid_date');
 		$test = $val->run($post);
 		$expected = true;
 
