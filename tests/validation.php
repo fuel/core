@@ -682,4 +682,129 @@ class Test_Validation extends TestCase
 
 		$this->assertEquals($expected, $test);
 	}
+
+	/**
+	 * Validation:  valid_date
+	 * Expecting:   success
+	 */
+	public function test_validation_valid_date_none_arguments() {
+		$post = array(
+			'f1' => '2013/02/26',
+			'f2' => '2013-02-26',
+			'f3' => '2013/2/26 12:0:33',
+			'f4' => '19 Jan 2038 03:14:07',
+			'f5' => 'Sat Mar 10 17:16:18 MST 2001',
+			'f6' => '',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('f1', 'F1', 'valid_date');
+		$val->add_field('f2', 'F2', 'valid_date');
+		$val->add_field('f3', 'F3', 'valid_date');
+		$val->add_field('f4', 'F4', 'valid_date');
+		$val->add_field('f5', 'F5', 'valid_date');
+		$val->add_field('f6', 'F6', 'valid_date');
+		$test = $val->run($post);
+		$expected = true;
+
+		$this->assertEquals($expected, $test);
+	}
+
+	/**
+	 * Validation:  valid_date
+	 * Expecting:   failure
+	 */
+	public function test_validation_valid_date_none_arguments_error() {
+		$post = array(
+			'f1' => 'test',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('f1', 'F1', 'valid_date');
+		$test = $val->run($post);
+		$expected = false;
+
+		$this->assertEquals($expected, $test);
+	}
+
+	/**
+	 * Validation:  valid_date
+	 * Expecting:   failure
+	 */
+	public function test_validation_valid_date_none_arguments_strict_error() {
+		$post = array(
+			'f1' => '2013/02/29',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('f1', 'F1', 'valid_date');
+		$test = $val->run($post);
+		$expected = false;
+
+		$this->assertEquals($expected, $test);
+	}
+
+	/**
+	 * Validation:  valid_date
+	 * Expecting:   success
+	 */
+	public function test_validation_valid_date_format() {
+		$post = array(
+			'f1' => '2013/02/26',
+			'f2' => '2013-02-26',
+			'f3' => '2013/2/26 12:0:33',
+			'f4' => '19 Jan 2038 03:14:07',
+			'f5' => 'Sat Mar 10 17:16:18 MST 2001',
+			'f6' => '',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('f1', 'F1', 'valid_date[Y/m/d]');
+		$val->add_field('f2', 'F2', 'valid_date[Y-m-d]');
+		$val->add_field('f3', 'F3', 'valid_date[Y/m/d H:i:s]');
+		$val->add_field('f4', 'F4', 'valid_date[d M Y H:i:s]');
+		$val->add_field('f5', 'F5', 'valid_date[D M d H:i:s T Y]');
+		$val->add_field('f6', 'F6', 'valid_date[Y/m/d]');
+
+		$test = $val->run($post);
+		$expected = true;
+
+		$this->assertEquals($expected, $test);
+	}
+
+	/**
+	 * Validation:  valid_date
+	 * Expecting:   failure
+	 */
+	public function test_validation_valid_date_format_error() {
+		$post = array(
+			'f1' => '2013/02/26',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('f1', 'F1', 'valid_date[Y/m/d H:i:s]');
+
+		$test = $val->run($post);
+		$expected = false;
+
+		$this->assertEquals($expected, $test);
+	}
+
+	/**
+	 * Validation:  valid_date
+	 * Expecting:   success
+	 */
+	public function test_validation_valid_date_not_strict() {
+		$post = array(
+			'f1' => '2013/02/29',
+		);
+
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('f1', 'F1', 'valid_date[Y/m/d,0]');
+
+		$test = $val->run($post);
+		$expected = true;
+
+		$this->assertEquals($expected, $test);
+	}
 }
