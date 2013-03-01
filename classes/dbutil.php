@@ -30,13 +30,13 @@ class DBUtil
 	/**
 	 * Sets the database connection to use for following DBUtil calls.
 	 *
-	 * @param  string|object  string connection name or \Database_Connection object, null for default
+	 * @param  string  $connection  connection name, null for default
 	 */
-	public static function set_connection($connection, $db = null)
+	public static function set_connection($connection)
 	{
-		if ( ! is_string($connection) and ($connection instanceof Database_Connection))
+		if ( ! is_string($connection))
 		{
-			throw new \FuelException('A connection must be supplied as a string or a Database_Connection object.');
+			throw new \FuelException('A connection must be supplied as a string.');
 		}
 
 		static::$connection = $connection;
