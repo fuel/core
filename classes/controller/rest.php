@@ -26,6 +26,11 @@ abstract class Controller_Rest extends \Controller
 	protected $no_data_status = 204;
 
 	/**
+	 * @var  string  authentication to be used for this controller
+	 */
+	protected $auth = null;
+
+	/**
 	 * @var  string  the detected response format
 	 */
 	protected $format = null;
@@ -106,18 +111,21 @@ abstract class Controller_Rest extends \Controller
 			$this->format = array_key_exists(\Input::extension(), $this->_supported_formats) ? \Input::extension() : $this->_detect_format();
 		}
 
+		// Get the configured auth method if none is defined
+		$this->auth === null or $this->auth = \Config::get('rest.auth');
+
 		//Check method is authorized if required
-		if (\Config::get('rest.auth') == 'basic')
+		if ($this->auth == 'basic')
 		{
 			$valid_login = $this->_prepare_basic_auth();
 		}
-		elseif (\Config::get('rest.auth') == 'digest')
+		elseif ($this->auth == 'digest')
 		{
 			$valid_login = $this->_prepare_digest_auth();
 		}
 
 		//If the request passes auth then execute as normal
-		if(\Config::get('rest.auth') == '' or $valid_login)
+		if(empty($this->auth) or $valid_login)
 		{
 			// If they call user, go to $this->post_user();
 			$controller_method = strtolower(\Input::method()) . '_' . $resource;
@@ -447,11 +455,14 @@ abstract class Controller_Rest extends \Controller
 
 	protected function _force_login($nonce = '')
 	{
-		if (\Config::get('rest.auth') == 'basic')
+		// Get the configured auth method if none is defined
+		$this->auth === null or $this->auth = \Config::get('rest.auth');
+
+		if ($this->auth == 'basic')
 		{
 			$this->response->set_header('WWW-Authenticate', 'Basic realm="'. \Config::get('rest.realm') . '"');
 		}
-		elseif (\Config::get('rest.auth') == 'digest')
+		elseif ($this->auth == 'digest')
 		{
 			$this->response->set_header('WWW-Authenticate', 'Digest realm="' . \Config::get('rest.realm') . '", qop="auth", nonce="' . $nonce . '", opaque="' . md5(\Config::get('rest.realm')) . '"');
 		}
