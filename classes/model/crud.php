@@ -46,6 +46,16 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	// protected static $_properties = array();
 
 	/**
+	 * @var  array  $_mass_whitelist  The table column names which will be set while using mass assignment like ->set($data)
+	 */
+	// protected static $_mass_whitelist = array();
+
+	/**
+	 * @var  array  $_mass_blacklist  The table column names which will not be set while using mass assignment like ->set($data)
+	 */
+	// protected static $_mass_blacklist = array();
+
+	/**
 	 * @var array  $_labels  Field labels (must set this in your Model to use)
 	 */
 	// protected static $_labels = array();
@@ -421,7 +431,19 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	{
 		foreach ($data as $key => $value)
 		{
-			$this->{$key} = $value;
+			if (isset(static::$_mass_whitelist))
+			{
+				in_array($key, static::$_mass_whitelist) and $this->{$key} = $value;
+			}
+			elseif (isset(static::$_mass_blacklist))
+			{
+				( ! in_array($key, static::$_mass_blacklist)) and $this->{$key} = $value;
+			}
+			else
+			{
+				// no static::$_mass_whitelist or static::$_mass_blacklist set, proceed with default behavior
+				$this->{$key} = $value;
+			}
 		}
 		return $this;
 	}
