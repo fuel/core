@@ -441,7 +441,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 			}
 			else
 			{
-				// no static::$_mass_whitelist or static::$_mass_whitelist set, proceed with default behavior
+				// no static::$_mass_whitelist or static::$_mass_blacklist set, proceed with default behavior
 				$this->{$key} = $value;
 			}
 		}
