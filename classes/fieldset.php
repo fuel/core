@@ -520,7 +520,7 @@ class Fieldset
 				// convert form field array's to Fuel dotted notation
 				$name = str_replace(array('[',']'), array('.', ''), $f->name);
 
-				if ($value = \Arr::get($input, $name) or $value = \Arr::get($input, $f->basename))
+				if (null !==($value = \Arr::get($input, $name) or $value = \Arr::get($input, $f->basename)))
 				{
 					$f->set_value($value, true);
 				}
