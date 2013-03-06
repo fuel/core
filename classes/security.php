@@ -63,10 +63,17 @@ class Security
 			}
 		}
 
-		// throw an exception if no the output filter setting is missing from the app config
+		// throw an exception if the output filter setting is missing from the app config
 		if (\Config::get('security.output_filter', null) === null)
 		{
 			throw new \FuelException('There is no security.output_filter defined in your application config file');
+		}
+
+		// deal with duplicate filters, no need to slow the framework down
+		foreach (array('output_filter', 'uri_filter', 'input_filter') as $setting)
+		{
+			$config = \Config::get('security.'.$setting, array());
+			is_array($config) and \Config::set('security.'.$setting, array_keys(array_flip($config)));
 		}
 	}
 
