@@ -107,17 +107,17 @@ class Config
 		// Serialize no assoc arrays.
 		$serialize = function (&$array) use (&$serialize)
 		{
-			foreach ($array as $k => $v)
+			foreach ($array as $k => &$v)
 			{
 				if (is_array($v))
 				{
 					if (\Arr::is_assoc($v))
 					{
-						$serialize($array[$k]);
+						$serialize($v);
 					}
 					else
 					{
-						$array[$k] = array(md5('_serialized_'.$k) => true, 'content' => serialize($v));
+						$v = array(md5('_serialized_'.$k) => true, 'content' => serialize($v));
 					}
 				}
 			}
@@ -126,17 +126,17 @@ class Config
 		// Unserialize no assoc arrays.
 		$unserialize = function (&$array) use (&$unserialize)
 		{
-			foreach ($array as $k => $v)
+			foreach ($array as $k => &$v)
 			{
 				if (is_array($v))
 				{
 					if (\Arr::get($v, md5('_serialized_'.$k)))
 					{
-						$array[$k] = unserialize(\Arr::get($v, 'content'));
+						$v = unserialize(\Arr::get($v, 'content'));
 					}
 					else
 					{
-						$unserialize($array[$k]);
+						$unserialize($v);
 					}
 				}
 			}
