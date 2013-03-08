@@ -48,15 +48,23 @@ class Security
 		static::$csrf_token_key = \Config::get('security.csrf_token_key', 'fuel_csrf_token');
 		static::$csrf_old_token = \Input::cookie(static::$csrf_token_key, false);
 
+		// if csrf automatic checking is enabled, and it fails validation, bail out!
 		if (\Config::get('security.csrf_autoload', true))
 		{
 			static::check_token();
 		}
 
-		// throw an exception if no the output filter setting is missing from the app config
+		// throw an exception if the output filter setting is missing from the app config
 		if (\Config::get('security.output_filter', null) === null)
 		{
 			throw new \FuelException('There is no security.output_filter defined in your application config file');
+		}
+
+		// deal with duplicate filters, no need to slow the framework down
+		foreach (array('output_filter', 'uri_filter', 'input_filter') as $setting)
+		{
+			$config = \Config::get('security.'.$setting, array());
+			is_array($config) and \Config::set('security.'.$setting, array_keys(array_flip($config)));
 		}
 	}
 
