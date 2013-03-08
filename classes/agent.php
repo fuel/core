@@ -412,6 +412,8 @@ class Agent
 	 */
 	protected static function parse_browscap()
 	{
+		$cache = \Cache::forge(static::$config['cache']['identifier'].'.browscap_file', static::$config['cache']['driver']);
+
 		// get the browscap.ini file
 		switch (static::$config['browscap']['method'])
 		{
@@ -459,7 +461,23 @@ class Agent
 
 		if ($data === false)
 		{
-			logger(\Fuel::L_ERROR, 'Failed to download browscap.ini file.', 'Agent::parse_browscap');
+			// if no data could be download, try retrieving a cached version
+			try
+			{
+				$data = $cache->get(false);
+
+				// if the cached version is used, only cache the parsed result for a day
+				static::$config['cache']['expiry'] = 86400;
+			}
+			catch (\Exception $e)
+			{
+				logger(\Fuel::L_ERROR, 'Failed to download browscap.ini file.', 'Agent::parse_browscap');
+			}
+		}
+		else
+		{
+			// store the downloaded data in the cache as a backup for future use
+			$cache->set($data, null);
 		}
 
 		// parse the downloaded data
