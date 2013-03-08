@@ -104,10 +104,54 @@ class Config
 			$group = $group === true ? $file->group() : $group;
 		}
 
+		// Serialize no assoc arrays.
+		$serialize = function (&$array) use (&$serialize)
+		{
+			foreach ($array as $k => &$v)
+			{
+				if (is_array($v))
+				{
+					if (\Arr::is_assoc($v))
+					{
+						$serialize($v);
+					}
+					else
+					{
+						$v = array(md5('_serialized_'.$k) => true, 'content' => serialize($v));
+					}
+				}
+			}
+		};
+
+		// Unserialize no assoc arrays.
+		$unserialize = function (&$array) use (&$unserialize)
+		{
+			foreach ($array as $k => &$v)
+			{
+				if (is_array($v))
+				{
+					if (\Arr::get($v, md5('_serialized_'.$k)))
+					{
+						$v = unserialize(\Arr::get($v, 'content'));
+					}
+					else
+					{
+						$unserialize($v);
+					}
+				}
+			}
+		};
+		
 		if ($group === null)
 		{
+			// Before merging, serialize no assoc arrays.
+			$serialize(static::$items);
+			$serialize($config);
+
 			static::$items = $reload ? $config : ($overwrite ? array_merge(static::$items, $config) : \Arr::merge(static::$items, $config));
 			static::$itemcache = array();
+
+			$unserialize(static::$items);
 		}
 		else
 		{
@@ -116,7 +160,15 @@ class Config
 			{
 				static::$items[$group] = array();
 			}
-			static::$items[$group] = $overwrite ? array_merge(static::$items[$group],$config) : \Arr::merge(static::$items[$group],$config);
+
+			// Before merging, serialize no assoc arrays.
+			$serialize(static::$items[$group]);
+			$serialize($config);
+
+			static::$items[$group] = $overwrite ? array_merge(static::$items[$group], $config) : \Arr::merge(static::$items[$group], $config);
+
+			$unserialize(static::$items[$group]);
+
 			$group .= '.';
 			foreach (static::$itemcache as $key => $value)
 			{
