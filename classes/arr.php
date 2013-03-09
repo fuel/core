@@ -677,7 +677,15 @@ class Arr
 
 		foreach ($array as $k => $v)
 		{
-			$b[$k] = static::get($v, $key);
+			try
+			{
+				$b[$k] = static::get($v, $key, false);
+			}
+			catch (\InvalidArgumentException $e)
+			{
+				$b[$k] = false;
+			}
+			$b[$k] === false and $b[$k] = static::get(\Format::forge($v)->to_array(), $key);
 		}
 
 		switch ($order)

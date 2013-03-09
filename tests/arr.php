@@ -509,6 +509,64 @@ class Test_Arr extends TestCase
 		);
 	}
 
+	public function sort_provider_contained_objects()
+	{
+		$object1 = new \stdClass();
+		$object1->pet = array('type' => 'dog');
+
+		$object2 = new \stdClass();
+		$object2->type = 'fish';
+
+		$object3 = new \stdClass();
+		$object3->info = new \stdClass();
+		$object3->info->pet = new \stdClass();
+		$object3->info->pet->type = 'bird';
+
+		return array(
+			array(
+				// Unsorted Array
+				array(
+					array(
+						'info' => $object1,
+					),
+					array(
+						'info' => array(
+							'pet' => $object2
+						),
+					),
+					array(
+						'info' => array(
+							'pet' => array(
+								'type' => 'cat'
+							)
+						),
+					),
+					$object3,
+				),
+
+				// Sorted Array
+				array(
+					$object3,
+					array(
+						'info' => array(
+							'pet' => array(
+								'type' => 'cat'
+							)
+						),
+					),
+					array(
+						'info' => $object1,
+					),
+					array(
+						'info' => array(
+							'pet' => $object2
+						),
+					),
+				)
+			)
+		);
+	}
+
 	/**
 	 * Tests Arr::sort()
 	 *
@@ -527,6 +585,29 @@ class Test_Arr extends TestCase
 	 * @dataProvider sort_provider
 	 */
 	public function test_sort_desc($data, $expected)
+	{
+		$expected = array_reverse($expected);
+		$this->assertEquals($expected, Arr::sort($data, 'info.pet.type', 'desc'));
+	}
+
+	/**
+	 * Tests Arr::sort()
+	 *
+	 * @test
+	 * @dataProvider sort_provider_contained_objects
+	 */
+	public function test_sort_asc_contained_objects($data, $expected)
+	{
+		$this->assertEquals($expected, Arr::sort($data, 'info.pet.type', 'asc'));
+	}
+
+	/**
+	 * Tests Arr::sort()
+	 *
+	 * @test
+	 * @dataProvider sort_provider_contained_objects
+	 */
+	public function test_sort_desc_contained_objects($data, $expected)
 	{
 		$expected = array_reverse($expected);
 		$this->assertEquals($expected, Arr::sort($data, 'info.pet.type', 'desc'));
