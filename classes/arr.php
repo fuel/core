@@ -946,4 +946,26 @@ class Arr
 
 		return $key === false ? $default : $key;
 	}
+
+	/**
+	 * Calculate the sum of an array
+	 *
+	 * @param   array    $array  the array containing the values
+	 * @param   string   $key    key of the value to pluck
+	 * @return  numeric  the sum value
+	 */
+	public static function sum($array, $key = null)
+	{
+		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
+		{
+			throw new \InvalidArgumentException('First parameter must be an array or ArrayAccess object.');
+		}
+
+		if ( ! is_null($key))
+		{
+			return static::sum(\Arr::pluck($array, $key));
+		}
+
+		return array_sum($array);
+	}
 }
