@@ -142,8 +142,33 @@ class Database_PDO_Connection extends \Database_Connection
 
 		if ( ! empty($this->_config['profiling']))
 		{
+			// Getting starting point of mysql query
+			$backtrace = debug_backtrace();
+			
+			// Getting the working directory 
+			$here = str_replace('/public','',getcwd());
+
+			// Creating a string to dispaly in profiler
+			$stacktrace = '';
+			
+			
+			foreach ($backtrace as $page)
+			{
+				// Skip if empty file 
+				if (empty($page['file']) === true)
+				{
+					continue;
+				}
+				
+				// Making each backtrace look nice in the profiler
+				if (strpos($page['file'], "fuel/app"))
+				{
+					$stacktrace .= '..'.str_replace($here,'',$page['file']).':'.$page['line'].'<br>';
+				}
+			}
+			
 			// Benchmark this query for the current instance
-			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql);
+			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql, $stacktrace);
 		}
 
 		// run the query. if the connection is lost, try 3 times to reconnect
