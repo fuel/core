@@ -705,6 +705,79 @@ class Test_Arr extends TestCase
 		$expected = 'three.test.b';
 		$this->assertEquals($expected, Arr::search($arr_multi, 'b', null, true));
 	}
+
+	/**
+	 * Tests Arr::sum()
+	 *
+	 * @test
+	 */
+	public function test_sum_simple_array()
+	{
+		$arr_sigle = array(1, 2, '3', 4, 5);
+		$expected = 15;
+		$test = \Arr::sum($arr_sigle);
+		$this->assertEquals($expected, $test);
+	}
+
+	/**
+	 * Tests Arr::sum()
+	 *
+	 * @test
+	 */
+	public function test_sum_array_contained_special_values()
+	{
+		$array = array(1, 2, '3', 4, 5, array(), false, true, new \stdClass());
+		// true = 1.
+		$expected = 16;
+		$test = \Arr::sum($array);
+		$this->assertEquals($expected, $test);
+	}
+
+	/**
+	 * Tests Arr::sum()
+	 *
+	 * @test
+	 */
+	public function test_sum_multi_array()
+	{
+		$arr_multi = array(
+			array(
+				'name' => 'foo',
+				'scores' => array(
+					'sports' => 5,
+					'math' => 20,
+				),
+			),
+			array(
+				'name' => 'bar',
+				'scores' => array(
+					'sports' => 7,
+					'math' => 15,
+				),
+			),
+			array(
+				'name' => 'fuel',
+				'scores' => array(
+					'sports' => 8,
+					'math' => 5,
+				),
+			),
+			array(
+				'name' => 'php',
+				'scores' => array(
+					'math' => 10,
+				),
+			),
+		);
+
+		$expected = 50;
+		$test = \Arr::sum($arr_multi, 'scores.math');
+		$this->assertEquals($expected, $test);
+
+		$expected = 20;
+		$test = \Arr::sum($arr_multi, 'scores.sports');
+		$this->assertEquals($expected, $test);
+	}
 }
 
 
