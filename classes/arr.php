@@ -963,7 +963,7 @@ class Arr
 
 		if ( ! is_null($key))
 		{
-			return static::sum(\Arr::pluck($array, $key));
+			return static::sum(static::pluck($array, $key));
 		}
 
 		return array_sum($array);
