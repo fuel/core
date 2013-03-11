@@ -47,13 +47,14 @@ class Profiler
 		return static::$profiler ? static::$profiler->display(static::$profiler) : '';
 	}
 
-	public static function start($dbname, $sql)
+	public static function start($dbname, $sql,$stacktrace)
 	{
 		if (static::$profiler)
 		{
 			static::$query = array(
 				'sql' => \Security::htmlentities($sql),
 				'time' => static::$profiler->getMicroTime(),
+				'stacktrace' => $stacktrace,
 			);
 			return true;
 		}
