@@ -946,4 +946,34 @@ class Arr
 
 		return $key === false ? $default : $key;
 	}
+
+	/**
+	 * Returns only unique values in an array. It does not sort. First value is used.
+	 *
+	 * @param   array  $arr       the array to dedup
+	 * @return  array   array with only de-duped values
+	 */
+	public static function unique($arr)
+	{
+		// filter out all duplicate values
+		return array_filter($arr, function($item)
+		{
+			// contrary to popular belief, this is not as static as you think...
+			static $vars = array();
+
+			if (in_array($item, $vars, true))
+			{
+				// duplicate
+				return false;
+			}
+			else
+			{
+				// record we've had this value
+				$vars[] = $item;
+
+				// unique
+				return true;
+			}
+		});
+	}
 }
