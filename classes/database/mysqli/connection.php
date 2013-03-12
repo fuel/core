@@ -224,30 +224,31 @@ class Database_MySQLi_Connection extends \Database_Connection
 			// Getting starting point of mysql query
 			$backtrace = debug_backtrace();
 			
-			// Getting the working directory 
-			$here = str_replace('/public','',getcwd());
-
 			// Creating a string to dispaly in profiler
 			$stacktrace = '';
 			
-			
 			foreach ($backtrace as $page)
 			{
-				// Skip if empty file 
-				if (empty($page['file']) === true)
-				{
-					continue;
-				}
+				// Get the paths defined in config
+				$paths = \Config::get('profiling_paths');
 				
-				// Making each backtrace look nice in the profiler
-				if (strpos($page['file'], "fuel/app"))
+				// Skip if empty file
+				if (empty($page['file']) === false)
 				{
-					$stacktrace .= '..'.str_replace($here,'',$page['file']).':'.$page['line'].'<br>';
+					// Checks to see what paths you want backtrace
+					foreach($paths as $index => $path)
+					{
+						if (strpos($page['file'], $path) !== false)
+						{
+							// Making each backtrace look nice in the profiler
+							$stacktrace .= '..'.Fuel::clean_path($page['file']).':'.$page['line'].'<br>';
+							break;
+						}
+						
+					}
+					
 				}
 			}
-			
-			// Benchmark this query for the current instance
-			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql, $stacktrace);
 		}
 
 		if ( ! empty($this->_config['connection']['persistent']) and $this->_config['connection']['database'] !== static::$_current_databases[$this->_connection_id])
