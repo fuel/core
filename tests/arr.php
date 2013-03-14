@@ -711,33 +711,6 @@ class Test_Arr extends TestCase
 	 *
 	 * @test
 	 */
-	public function test_sum_simple_array()
-	{
-		$arr_sigle = array(1, 2, '3', 4, 5);
-		$expected = 15;
-		$test = \Arr::sum($arr_sigle);
-		$this->assertEquals($expected, $test);
-	}
-
-	/**
-	 * Tests Arr::sum()
-	 *
-	 * @test
-	 */
-	public function test_sum_array_contained_special_values()
-	{
-		$array = array(1, 2, '3', 4, 5, array(), false, true, new \stdClass());
-		// true = 1.
-		$expected = 16;
-		$test = \Arr::sum($array);
-		$this->assertEquals($expected, $test);
-	}
-
-	/**
-	 * Tests Arr::sum()
-	 *
-	 * @test
-	 */
 	public function test_sum_multi_array()
 	{
 		$arr_multi = array(

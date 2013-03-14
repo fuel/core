@@ -954,18 +954,13 @@ class Arr
 	 * @param   string   $key    key of the value to pluck
 	 * @return  numeric  the sum value
 	 */
-	public static function sum($array, $key = null)
+	public static function sum($array, $key)
 	{
 		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
 		{
 			throw new \InvalidArgumentException('First parameter must be an array or ArrayAccess object.');
 		}
 
-		if ( ! is_null($key))
-		{
-			return static::sum(static::pluck($array, $key));
-		}
-
-		return array_sum($array);
+		return array_sum(static::pluck($array, $key));
 	}
 }
