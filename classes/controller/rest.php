@@ -114,7 +114,7 @@ abstract class Controller_Rest extends \Controller
 		// Get the configured auth method if none is defined
 		$this->auth === null or $this->auth = \Config::get('rest.auth');
 
-		//Check method is authorized if required
+		//Check method is authorized if required, and if we're authorized
 		if ($this->auth == 'basic')
 		{
 			$valid_login = $this->_prepare_basic_auth();
@@ -122,6 +122,14 @@ abstract class Controller_Rest extends \Controller
 		elseif ($this->auth == 'digest')
 		{
 			$valid_login = $this->_prepare_digest_auth();
+		}
+		elseif (method_exists($this, $this->auth))
+		{
+			$valid_login = $this->{$this->auth}();
+		}
+		else
+		{
+			$valid_login = false;
 		}
 
 		//If the request passes auth then execute as normal
