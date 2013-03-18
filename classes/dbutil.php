@@ -350,6 +350,11 @@ class DBUtil
 				$sql .= ' AUTO_INCREMENT';
 			}
 
+			if (array_key_exists('PRIMARY_KEY', $attr) and $attr['PRIMARY_KEY'] === true)
+			{
+				$sql .= ' PRIMARY KEY';
+			}
+
 			if (array_key_exists('FIRST', $attr) and $attr['FIRST'] === true)
 			{
 				$sql .= ' FIRST';
