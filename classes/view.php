@@ -38,6 +38,11 @@ class View
 	protected static $global_filter = array();
 
 	/**
+	 * @var  array  Keep the data used at the latest rendering
+	 */
+	protected static $last_data = array();
+
+	/**
 	 * @var  array  Current active search paths
 	 */
 	protected $request_paths = array();
@@ -108,9 +113,9 @@ class View
 		{
 			$data = get_object_vars($data);
 		}
-		elseif ($data and ! is_array($data))
+		elseif ($data !== true and $data and ! is_array($data))
 		{
-			throw new \InvalidArgumentException('The data parameter only accepts objects and arrays.');
+			throw new \InvalidArgumentException('The data parameter only accepts objects and arrays and true.');
 		}
 
 		$this->auto_filter = is_null($filter) ? \Config::get('security.auto_filter_output', true) : $filter;
@@ -122,6 +127,9 @@ class View
 
 		if ($data !== null)
 		{
+			// If the second parameter is true, restore the last data.
+			$data === true and $data = static::$last_data ?: array();
+
 			// Add the values to the current data
 			$this->data = $data;
 		}
@@ -560,6 +568,9 @@ class View
 		{
 			throw new \FuelException('You must set the file to use within your view before rendering');
 		}
+
+		// Store the last data
+		static::$last_data = $this->data;
 
 		// combine local and global data and capture the output
 		$return = $this->process_file();
