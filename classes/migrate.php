@@ -439,7 +439,7 @@ class Migrate
 				$class_name = ucfirst(strtolower($match[1]));
 
 				// load the file and determiine the classname
-				include $migration['path'];
+				include_once $migration['path'];
 				$class = static::$prefix.$class_name;
 
 				// make sure it exists in the migration file loaded
