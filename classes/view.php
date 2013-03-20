@@ -38,6 +38,11 @@ class View
 	protected static $global_filter = array();
 
 	/**
+	 * @var  View   Holds the global active view instance
+	 */
+	protected static $active = false;
+
+	/**
 	 * @var  array  Current active search paths
 	 */
 	protected $request_paths = array();
@@ -90,6 +95,20 @@ class View
 	public static function forge($file = null, $data = null, $auto_filter = null)
 	{
 		return new static($file, $data, $auto_filter);
+	}
+
+	/**
+	 * Returns the active view currently being used.
+	 *
+	 * Usage:
+	 *
+	 *     View::active();
+	 *
+	 * @return  View
+	 */
+	public static function active()
+	{
+		return static::$active;
 	}
 
 	/**
@@ -535,6 +554,13 @@ class View
 	 */
 	public function render($file = null)
 	{
+
+		// hold the active view instance
+		$current_view = static::$active;
+
+		// store the current view instance as active
+		static::$active = $this;
+
 		// reactivate the correct request
 		if (class_exists('Request', false))
 		{
@@ -572,6 +598,9 @@ class View
 		{
 			\Request::active($current_request);
 		}
+
+		// reset the active view instance
+		static::$active = $current_view;
 
 		return $return;
 	}
