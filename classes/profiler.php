@@ -47,7 +47,7 @@ class Profiler
 		return static::$profiler ? static::$profiler->display(static::$profiler) : '';
 	}
 
-	public static function start($dbname, $sql,$stacktrace)
+	public static function start($dbname, $sql, $stacktrace)
 	{
 		if (static::$profiler)
 		{
