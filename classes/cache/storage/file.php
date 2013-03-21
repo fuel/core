@@ -169,7 +169,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	public function delete_all($section)
 	{
 		$path = rtrim(static::$path, '\\/').DS;
-		$section = static::identifier_to_path($section);
+		$section = static::identifier_to_path($section).DS;
 
 		$files = \File::read_dir($path.$section, -1, array('\.cache$' => 'file'));
 
