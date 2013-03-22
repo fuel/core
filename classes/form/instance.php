@@ -304,7 +304,7 @@ class Form_Instance
 				{
 					if($checked === true)
 					{
-						$attributes['checked'] = 'checked';	
+						$attributes['checked'] = 'checked';
 					}
 				}
 
@@ -349,7 +349,7 @@ class Form_Instance
 				{
 					if($checked === true)
 					{
-						$attributes['checked'] = 'checked';	
+						$attributes['checked'] = 'checked';
 					}
 				}
 
@@ -478,8 +478,7 @@ class Form_Instance
 			$attributes['name'] = (string) $field;
 			$attributes['value'] = (string) $value;
 		}
-
-		$value = empty($attributes['value']) ? '' : $attributes['value'];
+		$value = is_scalar($attributes['value']) ? $attributes['value'] : '';
 		unset($attributes['value']);
 
 		if ($this->get_config('prep_value', true) && empty($attributes['dont_prep']))
