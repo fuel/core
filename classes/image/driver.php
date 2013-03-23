@@ -29,11 +29,11 @@ abstract class Image_Driver
 		\Config::load('image', true);
 		if (is_array($config))
 		{
-			$this->config = array_merge(\Config::get('image'), $config);
+			$this->config = array_merge(\Config::get('image', array()), $config);
 		}
 		else
 		{
-			$this->config = \Config::get('image');
+			$this->config = \Config::get('image', array());
 		}
 		$this->debug("Image Class was initialized using the " . $this->config['driver'] . " driver.");
 	}
