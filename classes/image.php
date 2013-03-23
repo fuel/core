@@ -23,6 +23,16 @@ class Image
 	 * @var  array   Config options to be passed when the instance is created.
 	 */
 	protected static $_config = array();
+	
+	/**
+	 * Initialize by loading config
+	 * 
+	 * @return void
+	 */
+	public static function _init()
+	{
+		\Config::load('image', 'image');
+	}
 
 	/**
 	 * Creates a new instance for static use of the class.
@@ -48,7 +58,6 @@ class Image
 	{
 		!is_array($config) and $config = array();
 
-		\Config::load('image', 'image');
 		$config = array_merge(\Config::get('image', array()), $config);
 
 		$protocol = ucfirst( ! empty($config['driver']) ? $config['driver'] : 'gd');
