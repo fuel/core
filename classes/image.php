@@ -31,7 +31,7 @@ class Image
 	 */
 	public static function _init()
 	{
-		\Config::load('image', 'image');
+		\Config::load('image', true);
 	}
 
 	/**
