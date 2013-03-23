@@ -23,10 +23,19 @@ abstract class Image_Driver
 	protected $config          = array();
 	protected $queued_actions  = array();
 	protected $accepted_extensions;
+	
+	/**
+	 * Initialize by loading config
+	 * 
+	 * @return void
+	 */
+	public static function _init()
+	{
+		\Config::load('image', true);
+	}
 
 	public function __construct($config)
 	{
-		\Config::load('image', true);
 		if (is_array($config))
 		{
 			$this->config = array_merge(\Config::get('image'), $config);
