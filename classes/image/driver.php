@@ -623,8 +623,13 @@ abstract class Image_Driver
 	 * @param   string  $permissions  Allows unix style permissions
 	 * @return  array
 	 */
-	public function save($filename, $permissions = null)
+	public function save($filename = null, $permissions = null)
 	{
+		if (empty($filename))
+		{
+			$filename = $this->image_filename;
+		}
+		
 		$directory = dirname($filename);
 		if ( ! is_dir($directory))
 		{
