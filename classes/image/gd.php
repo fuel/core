@@ -326,7 +326,7 @@ class Image_Gd extends \Image_Driver
 		return (object) array('width' => $width, 'height' => $height);
 	}
 
-	public function save($filename, $permissions = null)
+	public function save($filename = null, $permissions = null)
 	{
 		extract(parent::save($filename, $permissions));
 
