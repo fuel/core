@@ -235,7 +235,7 @@ class Image
 	 * @param   string  $permissions  Allows unix style permissions
 	 * @return  Image_Driver
 	 */
-	public static function save($filename, $permissions = null)
+	public static function save($filename = null, $permissions = null)
 	{
 		return static::instance()->save($filename, $permissions);
 	}
