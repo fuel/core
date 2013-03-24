@@ -209,7 +209,7 @@ class Image_Imagemagick extends \Image_Driver
 		return $return;
 	}
 
-	public function save($filename, $permissions = null)
+	public function save($filename = null, $permissions = null)
 	{
 		extract(parent::save($filename, $permissions));
 

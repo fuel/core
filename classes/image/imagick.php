@@ -191,7 +191,7 @@ class Image_Imagick extends \Image_Driver
 		);
 	}
 
-	public function save($filename, $permissions = null)
+	public function save($filename = null, $permissions = null)
 	{
 		extract(parent::save($filename, $permissions));
 
