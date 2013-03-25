@@ -97,7 +97,11 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 *     // Associative array of rows, "id" => "name"
 	 *     $rows = $result->as_array('id', 'name');
 	 *
+	 *     // Multi-dimensional associative array "group" => "id" => "name"
+	 *     $rows = $result->as_array('group', 'id', 'name');
+	 *
 	 * @param   string  column for associative keys
+	 * @param	string...	further columns for multidimensional array
 	 * @param   string  column for values
 	 * @return  array
 	 */
