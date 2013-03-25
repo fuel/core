@@ -97,13 +97,23 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 *     // Associative array of rows, "id" => "name"
 	 *     $rows = $result->as_array('id', 'name');
 	 *
+	 *     // Multi-dimensional associative array "group" => "id" => "name"
+	 *     $rows = $result->as_array('group', 'id', 'name');
+	 *
 	 * @param   string  column for associative keys
+	 * @param	string...	further columns for multidimensional array
 	 * @param   string  column for values
 	 * @return  array
 	 */
 	public function as_array($key = null, $value = null)
 	{
 		$results = array();
+		if (func_num_args() >= 2)
+		{
+			// 2 args can work like 3+ args - concatenate values and use \Arr
+			$key = func_get_args();
+			$value = array_pop($key);
+		}
 
 		if ($key === null and $value === null)
 		{
@@ -156,18 +166,16 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 		{
 			// Associative columns
 
-			if ($this->_as_object)
+			foreach ($this as $row)
 			{
-				foreach ($this as $row)
+				$deep = implode('.', $this->values($key, $row));
+				if ($this->_as_object)
 				{
-					$results[$row->$key] = $row->$value;
+					\Arr::set($results, $deep, $row->$value);
 				}
-			}
-			else
-			{
-				foreach ($this as $row)
+				else
 				{
-					$results[$row[$key]] = $row[$value];
+					\Arr::set($results, $deep, $row[$value]);
 				}
 			}
 		}
@@ -207,6 +215,30 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 		}
 
 		return \Fuel::value($default);
+	}
+
+	/**
+	 * Given an array of field names, return an array of the associated values.
+	 *
+	 * @param	array	Array of fields from the query
+	 * @param	mixed	Current row
+	 * @return	array	Values
+	 */
+	public function values($keys, $row)
+	{
+		$deep = array();
+		foreach ($keys as $field)
+		{
+			if ($this->_as_object)
+			{
+				$deep[] = $row->$field;
+			}
+			else
+			{
+				$deep[] = $row[$field];
+			}
+		}
+		return $deep;
 	}
 
 	/**
@@ -341,5 +373,4 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	{
 		return $this->offsetExists($this->_current_row);
 	}
-
 }
