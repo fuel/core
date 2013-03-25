@@ -112,7 +112,7 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 		{
 			// 2 args can work like 3+ args - concatenate values and use \Arr
 			$key = func_get_args();
-			$value = array_shift($key);
+			$value = array_pop($key);
 		}
 
 		if ($key === null and $value === null)
