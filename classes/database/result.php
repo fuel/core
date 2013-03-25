@@ -88,6 +88,9 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	/**
 	 * Return all of the rows in the result as an array.
 	 *
+	 * Pass null for any argument in order to produce an ordinal array at that point.
+	 * Pass null for the value column to retrieve an associative array of all columns.
+	 *
 	 *     // Indexed array of all rows
 	 *     $rows = $result->as_array();
 	 *
@@ -97,83 +100,47 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 *     // Associative array of rows, "id" => "name"
 	 *     $rows = $result->as_array('id', 'name');
 	 *
+	 *     // Multi-dimensional associative array "group" => "id" => "name"
+	 *     $rows = $result->as_array('group', 'id', 'name');
+	 *
+	 *     // Multi-dimensional array of all permission IDs in each role
+	 *     $rows = $result->as_array('role_name', null, 'permission_id');
+	 *
 	 * @param   string  column for associative keys
 	 * @param   string  column for values
 	 * @return  array
 	 */
-	public function as_array($key = null, $value = null)
+	public function as_array()
 	{
 		$results = array();
+		$keys = array_pad(func_get_args(), 2, null);
+		$value = array_pop($keys);
 
-		if ($key === null and $value === null)
+		foreach ($this as $row)
 		{
-			// Indexed rows
+			$current_level = &$results;
 
-			foreach ($this as $row)
+			// Find or create the keys deeply in $results
+			foreach ($keys as $key)
 			{
-				$results[] = $row;
-			}
-		}
-		elseif ($key === null)
-		{
-			// Indexed columns
+				if (is_null($key))
+				{
+					$current_level[] = array();
+					$key = count($current_level) - 1;
+				}
+				else
+				{
+					$key = $this->get($key);
+					isset($current_level[$key]) or $current_level[$key] = array();
+				}
 
-			if ($this->_as_object)
-			{
-				foreach ($this as $row)
-				{
-					$results[] = $row->$value;
-				}
+				$current_level = &$current_level[$key];
 			}
-			else
-			{
-				foreach ($this as $row)
-				{
-					$results[] = $row[$value];
-				}
-			}
-		}
-		elseif ($value === null)
-		{
-			// Associative rows
 
-			if ($this->_as_object)
-			{
-				foreach ($this as $row)
-				{
-					$results[$row->$key] = $row;
-				}
-			}
-			else
-			{
-				foreach ($this as $row)
-				{
-					$results[$row[$key]] = $row;
-				}
-			}
-		}
-		else
-		{
-			// Associative columns
-
-			if ($this->_as_object)
-			{
-				foreach ($this as $row)
-				{
-					$results[$row->$key] = $row->$value;
-				}
-			}
-			else
-			{
-				foreach ($this as $row)
-				{
-					$results[$row[$key]] = $row[$value];
-				}
-			}
+			$current_level = is_null($value) ? $row : $this->get($value);
 		}
 
 		$this->rewind();
-
 		return $results;
 	}
 
