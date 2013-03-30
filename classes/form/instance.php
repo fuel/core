@@ -552,11 +552,12 @@ class Form_Instance
 				{
 					$optgroup = $listoptions($val, $selected, $level + 1);
 					$optgroup .= str_repeat("\t", $level);
-					$input .= str_repeat("\t", $level).html_tag('optgroup', array('label' => $key , 'style' => 'text-indent: '.(10*($level-1)).'px;'), $optgroup).PHP_EOL;
+					$input .= str_repeat("\t", $level).html_tag('optgroup', array('label' => $key , 'style' => 'text-indent: '.(20+10*($level-1)).'px;'), $optgroup).PHP_EOL;
 				}
 				else
 				{
-					$opt_attr = array('value' => $key, 'style' => 'text-indent: '.(10*($level-1)).'px;');
+					$opt_attr = array('value' => $key);
+					$level > 1 and $opt_attr['style'] = 'text-indent: '.(10*($level-1)).'px;';
 					(in_array((string)$key, $selected, true)) && $opt_attr[] = 'selected';
 					$input .= str_repeat("\t", $level);
 					$opt_attr['value'] = ($current_obj->get_config('prep_value', true) && empty($attributes['dont_prep'])) ?
