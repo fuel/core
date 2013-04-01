@@ -54,6 +54,8 @@ if ( ! function_exists('logger'))
 			throw new \FuelException('Invalid level "'.$level.'" passed to logger()');
 		}
 
+		if(is_string($level))	$level = array_search(strtoupper($level), $labels);
+
 		// get the levels defined to be logged
 		$loglabels = \Config::get('log_threshold');
 
