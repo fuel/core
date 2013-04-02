@@ -326,10 +326,10 @@ class Finder
 			$paths = $this->paths;
 
 			// get extra information of the active request
-			if (class_exists('Request', false) and ($uri = \Uri::string()) !== null)
+			if (class_exists('Request', false) and ($request = \Request::active()))
 			{
-				$cache_id .= $uri;
-				$paths = array_merge(\Request::active()->get_paths(), $paths);
+				$request->module and $cache_id .= $request->module;
+				$paths = array_merge($request->get_paths(), $paths);
 			}
 		}
 
