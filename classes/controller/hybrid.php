@@ -58,11 +58,11 @@ abstract class Controller_Hybrid extends \Controller_Rest
 		if ( ! $this->is_restful())
 		{
 			// do we have a response passed?
-			if(empty($response))
+			if ($response === null)
 			{
 				// maybe one in the rest body?
 				$response = $this->response->body;
-				if (empty($response))
+				if ($response === null)
 				{
 					// fall back to the defined template
 					$response = $this->template;
