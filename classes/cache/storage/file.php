@@ -32,6 +32,17 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	 */
 	protected $config = array();
 
+	public static function _init()
+	{
+		\Config::load('file', true);
+
+		// make sure the configured chmod values are octal
+		$chmod = \Config::get('file.chmod.folders', 0777);
+		is_string($chmod) and \Config::set('file.chmod.folders', octdec($chmod));
+		$chmod = \Config::get('file.chmod.files', 0666);
+		is_string($chmod) and \Config::set('file.chmod.files', octdec($chmod));
+	}
+
 	public function __construct($identifier, $config)
 	{
 		parent::__construct($identifier, $config);
@@ -224,7 +235,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 			if ( ! @is_dir($test_path))
 			{
 				// create non existing dir
-				if ( ! @mkdir($test_path, 0755, true))
+				if ( ! @mkdir($test_path, \Config::get('file.chmod.folders', 0775), true))
 				{
 					return false;
 				}
@@ -254,6 +265,9 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 
 		// close the file
 		fclose($handle);
+
+		// set the correct rights on the file
+		chmod($file, \Config::get('file.chmod.files', 0666));
 
 		return true;
 	}

@@ -26,6 +26,16 @@ class Finder
 	 */
 	protected static $instance = null;
 
+	public static function _init()
+	{
+		\Config::load('file', true);
+
+		// make sure the configured chmod values are octal
+		$chmod = \Config::get('file.chmod.folders', 0777);
+		is_string($chmod) and \Config::set('file.chmod.folders', octdec($chmod));
+		$chmod = \Config::get('file.chmod.files', 0666);
+		is_string($chmod) and \Config::set('file.chmod.files', octdec($chmod));
+	}
 	/**
 	 * An alias for Finder::instance()->locate();
 	 *
@@ -482,10 +492,10 @@ class Finder
 		if ( ! is_dir($dir))
 		{
 			// Create the cache directory
-			mkdir($dir, octdec(\Config::get('file.chmod.folders', 0777)), true);
+			mkdir($dir, \Config::get('file.chmod.folders', 0777), true);
 
 			// Set permissions (must be manually set to fix umask issues)
-			chmod($dir, octdec(\Config::get('file.chmod.folders', 0777)));
+			chmod($dir, \Config::get('file.chmod.folders', 0777));
 		}
 
 		// Force the data to be a string
@@ -493,8 +503,12 @@ class Finder
 
 		try
 		{
-			// Write the cache
-			return (bool) file_put_contents($dir.$file, $data, LOCK_EX);
+			// Write the cache, and set permissions
+			if ($result = (bool) file_put_contents($dir.$file, $data, LOCK_EX))
+			{
+				chmod($dir.$file, \Config::get('file.chmod.files', 0666));
+			}
+			return $result;
 		}
 		catch (Exception $e)
 		{
