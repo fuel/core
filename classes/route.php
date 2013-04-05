@@ -218,7 +218,9 @@ class Route
 			{
 				$verb = $r[0];
 
-				if ($method == strtoupper($verb))
+				$protocol = isset($r[2]) ? ($r[2] ? 'https' : 'http') : false;
+
+				if (($protocol === false or $protocol == \Input::protocol()) and $method == strtoupper($verb))
 				{
 					$r[1]->search = $route->search;
 					$result = $route->_parse_search($uri, $r[1], $method);
