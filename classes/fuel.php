@@ -146,8 +146,16 @@ class Fuel
 		static::$profiling and \Profiler::init();
 
 		// set a default timezone if one is defined
-		static::$timezone = \Config::get('default_timezone') ?: date_default_timezone_get();
-		date_default_timezone_set(static::$timezone);
+		try
+		{
+			static::$timezone = \Config::get('default_timezone') ?: date_default_timezone_get();
+			date_default_timezone_set(static::$timezone);
+		}
+		catch (\Exception $e)
+		{
+			date_default_timezone_set('UTC');
+			throw new \PHPErrorException($e->getMessage());
+		}
 
 		static::$encoding = \Config::get('encoding', static::$encoding);
 		MBSTRING and mb_internal_encoding(static::$encoding);
