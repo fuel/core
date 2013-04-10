@@ -75,7 +75,7 @@ class Uri
 			if (strpos($segment, '*') !== false)
 			{
 				$wildcards++;
-				if (($new = static::segment($index)) === null)
+				if (($new = static::segment($index+1)) === null)
 				{
 					throw new \OutofBoundsException('Segment replace on "'.$url.'" failed. No segment exists for wildcard '.$wildcards.'.');
 				}
@@ -84,9 +84,21 @@ class Uri
 		}
 
 		// re-assemble the path
-		$parts['path'] = implode('/', $segments);
-		$url = implode('/', $parts);
+		$parts['path'] = '/'.implode('/', $segments);
 
+		// and rebuild the url with the new path
+		if (empty($parts['host']))
+		{
+			// if a relative url was given, fake a host so we can remove it after building
+			$url = substr(http_build_url('http://__removethis__/', $parts), 22);
+		}
+		else
+		{
+			// a hostname was present, just rebuild it
+			$url = http_build_url('', $parts);
+		}
+
+		// return the newly constructed url
 		return $url;
 	}
 
