@@ -52,7 +52,9 @@ class Log
 
 		if ( ! is_dir($filepath))
 		{
+			$old = umask(0);
 			@mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
+			umask($old);
 		}
 
 		$filename = $filepath.date('d').'.php';
