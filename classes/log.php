@@ -52,9 +52,19 @@ class Log
 
 		if ( ! is_dir($filepath))
 		{
-			$old = umask(0);
-			@mkdir($filepath, \Config::get('file.chmod.folders', 0777), true);
-			umask($old);
+			$filepath_year = \Config::get('log_path').date('Y/');
+			$permission = \Config::get('file.chmod.folders', 0777);
+			
+			if (is_dir($filepath_year))
+			{
+				@mkdir($filepath, $permission, true);
+				chmod($filepath, $permission);
+			}
+			else {
+				@mkdir($filepath, $permission, true);
+				chmod($filepath, $permission);
+				chmod($filepath_year, $permission);
+			}
 		}
 
 		$filename = $filepath.date('d').'.php';
