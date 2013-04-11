@@ -491,8 +491,10 @@ class Fieldset_Field
 		{
 			case 'hidden':
 				$build_field = $form->hidden($this->name, $this->value, $this->attributes);
-				break;
-			case 'radio': case 'checkbox':
+			break;
+
+			case 'radio':
+			case 'checkbox':
 				if ($this->options)
 				{
 					$build_field = array();
@@ -532,28 +534,33 @@ class Fieldset_Field
 						? $form->radio($this->name, $this->value, $this->attributes)
 						: $form->checkbox($this->name, $this->value, $this->attributes);
 				}
-				break;
+			break;
+
 			case 'select':
 				$attributes = $this->attributes;
 				$name = $this->name;
 				unset($attributes['type']);
 				array_key_exists('multiple', $attributes) and $name .= '[]';
 				$build_field = $form->select($name, $this->value, $this->options, $attributes);
-				break;
+			break;
+
 			case 'textarea':
 				$attributes = $this->attributes;
 				unset($attributes['type']);
 				$build_field = $form->textarea($this->name, $this->value, $attributes);
-				break;
+			break;
+
 			case 'button':
 				$build_field = $form->button($this->name, $this->value, $this->attributes);
-				break;
+			break;
+
 			case false:
 				$build_field = '';
-				break;
+			break;
+
 			default:
 				$build_field = $form->input($this->name, $this->value, $this->attributes);
-				break;
+			break;
 		}
 
 		if (empty($build_field) or $this->type == 'hidden')
@@ -576,7 +583,7 @@ class Fieldset_Field
 
 		if (is_array($build_field))
 		{
-			$label = $this->label ? $form->label($this->label) : '';
+			$label =  str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>'));
 			$template = $this->template ?: $form->get_config('multi_field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n");
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
