@@ -144,7 +144,7 @@ class File
 	public static function create_dir($basepath, $name, $chmod = null, $area = null)
 	{
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
-		$new_dir	= static::instance($area)->get_path($basepath.$name);
+		$new_dir	= static::instance($area)->get_path($basepath.trim($name,'\\/'));
 		is_null($chmod) and $chmod = \Config::get('file.chmod.folders', 0777);
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))
@@ -156,24 +156,28 @@ class File
 			throw new \FileAccessException('Directory: "'.$new_dir.'" exists already, cannot be created.');
 		}
 
-		// unify the path separators
-		$new_dir = str_replace(array('\\', '/'), DS, $new_dir);
+		// unify the path separators, and get the part we need to add to the basepath
+		$new_dir = substr(str_replace(array('\\', '/'), DS, $new_dir), strlen($basepath));
 
 		// recursively create the directory. we can't use mkdir permissions or recursive
 		// due to the fact that mkdir is restricted by the current users umask
-		$path = '';
+		$basepath = rtrim($basepath, DS);
 		foreach (explode(DS, $new_dir) as $dir)
 		{
-			if ($dir)
+			$basepath .= DS.$dir;
+			if ( ! is_dir($basepath))
 			{
-				$path .= (empty($dir)?'':DS).$dir;
-				if ( ! is_dir($path))
+				try
 				{
-					if ( ! mkdir($path))
+					if ( ! mkdir($basepath))
 					{
 						return false;
 					}
-					chmod($path, $chmod);
+					chmod($basepath, $chmod);
+				}
+				catch (\PHPErrorException $e)
+				{
+					return false;
 				}
 			}
 		}
