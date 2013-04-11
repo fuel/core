@@ -976,4 +976,21 @@ class Arr
 			}
 		});
 	}
+
+	/**
+	 * Calculate the sum of an array
+	 *
+	 * @param   array    $array  the array containing the values
+	 * @param   string   $key    key of the value to pluck
+	 * @return  numeric  the sum value
+	 */
+	public static function sum($array, $key)
+	{
+		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
+		{
+			throw new \InvalidArgumentException('First parameter must be an array or ArrayAccess object.');
+		}
+
+		return array_sum(static::pluck($array, $key));
+	}
 }
