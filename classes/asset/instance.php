@@ -253,7 +253,7 @@ class Asset_Instance
 				}
 				else
 				{
-					$raw or $file = $this->_asset_url.$filename;
+					$raw or $file = $this->_asset_url.$this->_path_folders[$type].$filename;
 				}
 			}
 			else
