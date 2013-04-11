@@ -20,6 +20,12 @@ namespace Fuel\Core;
  */
 class Test_Date extends TestCase
 {
+	protected function setUp()
+	{
+		// make sure the locale and language are is set correctly for the tests
+		setlocale(LC_ALL, 'en_US') === false and setlocale(LC_ALL, 'en_US.UTF8');
+		\Config::set('language', 'en');
+	}
 
 	/**
 	 * Test for Date::days_in_month()
