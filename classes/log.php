@@ -60,7 +60,8 @@ class Log
 				@mkdir($filepath, $permission, true);
 				chmod($filepath, $permission);
 			}
-			else {
+			else
+			{
 				@mkdir($filepath, $permission, true);
 				chmod($filepath, $permission);
 				chmod($filepath_year, $permission);
