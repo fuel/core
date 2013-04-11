@@ -321,10 +321,10 @@ class Fieldset_Field
 	 * @param   mixed   new value or null to unset
 	 * @return  Fieldset_Field  this, to allow chaining
 	 */
-	public function set_attribute($config, $value = null)
+	public function set_attribute($attr, $value = null)
 	{
-		$config = is_array($config) ? $config : array($config => $value);
-		foreach ($config as $key => $value)
+		$attr = is_array($attr) ? $attr : array($attr => $value);
+		foreach ($attr as $key => $value)
 		{
 			if ($value === null)
 			{
