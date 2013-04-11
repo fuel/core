@@ -497,7 +497,7 @@ else {
 			}
 			$return_output .='Speed: <b>'.$query['time'].'</b>';
 			$query['duplicate'] and $return_output .=' &middot; <b>DUPLICATE</b>';
-			$return_output .='</em></td></tr>';
+			$return_output .='</em>'.$query['stacktrace'].'</td></tr>';
 			if($class == '') $class = 'alt';
 			else $class = '';
 		}

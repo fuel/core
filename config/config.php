@@ -55,6 +55,18 @@ return array(
 
 	'profiling'  => false,
 
+        /**
+	 * profiling_paths - The paths to show in profiler.
+	 *
+	 * If you do not wish to see path set to 'NULL'
+	 * You can also add other paths that you wish not to see
+	 */ 
+	'profiling_paths' => array(
+	    'APPPATH' => APPPATH,
+	    'COREPATH' => COREPATH,
+	    'PKGPATH' => PKGPATH,
+	),
+        
 	/**
 	 * Default location for the file cache
 	 */
