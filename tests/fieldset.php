@@ -68,6 +68,7 @@ class Test_Fieldset extends TestCase
 			'field_template'             => "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} <span>{description}</span> {error_msg}</td>\n\t\t</tr>\n",
 			'multi_field_template'       => "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}<span>{description}</span>\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n",
 			'error_template'             => '<span>{error_msg}</span>',
+			'group_label'	             => '<span>{label}</span>',
 			'required_mark'              => '*',
 			'inline_errors'              => false,
 			'error_class'                => 'validation_error',

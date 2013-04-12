@@ -583,7 +583,7 @@ class Fieldset_Field
 
 		if (is_array($build_field))
 		{
-			$label =  str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>'));
+			$label = str_replace('{label}', $this->label, $form->get_config('group_label', '<span>{label}</span>'));
 			$template = $this->template ?: $form->get_config('multi_field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{group_label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{fields}\n\t\t\t\t{field} {label}<br />\n{fields}\t\t\t{error_msg}\n\t\t\t</td>\n\t\t</tr>\n");
 			if ($template && preg_match('#\{fields\}(.*)\{fields\}#Dus', $template, $match) > 0)
 			{
