@@ -183,17 +183,20 @@ class Input
 		if ($uri and substr($uri, -1) !== '/')
 		{
 			// Strip the defined url suffix from the uri if needed
-			$uri_info = pathinfo($uri);
+			$ext = strrchr($uri, '.');
+			$path = $ext === false ? $uri : substr($uri, 0, -strlen($ext));
 
-			if ( ! empty($uri_info['extension']))
+			// Did we detect something that looks like an extension?
+			if ( ! empty($ext))
 			{
-				if (strpos($uri_info['extension'],'/') === false)
+				// if it has a slash in it, it's a URI segment with a dot in it
+				if (strpos($ext,'/') === false)
 				{
-					static::$detected_ext = $uri_info['extension'];
+					static::$detected_ext = ltrim($ext, '.');
 
 					if (\Config::get('routing.strip_extension', true))
 					{
-						$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
+						$uri = $path;
 					}
 				}
 			}
