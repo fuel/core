@@ -60,13 +60,13 @@ return array(
 	 *
 	 * If you do not wish to see path set to 'NULL'
 	 * You can also add other paths that you wish not to see
-	 */ 
+	 */
 	'profiling_paths' => array(
 	    'APPPATH' => APPPATH,
 	    'COREPATH' => COREPATH,
 	    'PKGPATH' => PKGPATH,
 	),
-        
+
 	/**
 	 * Default location for the file cache
 	 */
@@ -92,6 +92,8 @@ return array(
 		'throttle'     => 10,
 		// Should notices from Error::notice() be shown?
 		'notices'      => true,
+		// Render previous contents or show it as HTML?
+		'render_prior' => false,
 	),
 
 	/**
