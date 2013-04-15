@@ -159,6 +159,21 @@ class DB
 	}
 
 	/**
+	 * Create a new [Database_Expression] containing a quoted identifier. An expression
+	 * is the only way to use SQL functions within query builders.
+	 *
+	 *     $expression = DB::identifier('users.id');	// returns `users`.`id` for MySQL
+	 *
+	 * @param	string	$string	the string to quote
+	 * @param	string	$db		the database connection to use
+	 * @return	Database_Expression
+	 */
+	public static function identifier($string, $db = null)
+	{
+		return new \Database_Expression(static::quote_identifier($string, $db));
+	}
+
+	/**
 	 * Quote a value for an SQL query.
 	 *
 	 * @param	string	$string	the string to quote
