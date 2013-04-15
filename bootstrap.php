@@ -42,6 +42,10 @@ register_shutdown_function(function ()
 	// reset the autoloader
 	\Autoloader::_reset();
 
+	// make sure we're having an output filter so we can display errors
+	// occuring before the main config file is loaded
+	\Config::get('security.output_filter', null) or \Config::set('security.output_filter', 'Security::htmlentities');
+
 	// Fire off the shutdown events
 	Event::shutdown();
 
