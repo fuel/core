@@ -568,7 +568,7 @@ class View
 		$this->active_language and \Config::set('language', $current_language);
 
 		// and the active request class
-		if (class_exists('Request', false))
+		if (isset($current_request))
 		{
 			\Request::active($current_request);
 		}
