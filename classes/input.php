@@ -193,7 +193,7 @@ class Input
 
 					if (\Config::get('routing.strip_extension', true))
 					{
-						$uri = $uri_info['dirname'].'/'.$uri_info['filename'];
+						$uri = ($uri_info['dirname'] === '\\' ? '' : $uri_info['dirname']).'/'.$uri_info['filename'];
 					}
 				}
 			}
