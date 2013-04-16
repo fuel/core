@@ -239,7 +239,7 @@ class Lang
 	 */
 	public static function delete($item, $group = null, $language = null)
 	{
-		$group === null or $line = $group.'.'.$line;
+		$group === null or $item = $group.'.'.$item;
 
 		($language === null) and $language = static::get_lang();
 
