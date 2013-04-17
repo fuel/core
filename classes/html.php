@@ -46,9 +46,12 @@ class Html
 			$urlparts = explode('?', $href, 2);
 			$href = \Uri::create($urlparts[0], array(), isset($urlparts[1])?$urlparts[1]:array(), $secure);
 		}
-		elseif ( ! preg_match('#^(javascript:|\#)# i', $href) and  is_bool($secure))
+		elseif ( ! preg_match('#^(javascript:|\#)# i', $href) and is_bool($secure))
 		{
 			$href = http_build_url($href, array('scheme' => $secure ? 'https' : 'http'));
+
+			// Trim the trailing slash
+			$href = rtrim($href, '/');
 		}
 
 		// Create and display a URL hyperlink
