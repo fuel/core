@@ -969,4 +969,18 @@ class Validation
 		}
 		return \Arr::get($parsed, 'error_count', 1) + ($strict ? \Arr::get($parsed, 'warning_count', 1) : 0) === 0;
 	}
+
+	/**
+	 * Checks if input can be formated as a US phone number.
+	 * 
+	 * @param	string|int
+	 * @param	int 	The number of expected numeric digits.
+	 * @return	bool
+	 */
+	public function _validation_us_phone_number($val, $length=10)
+	{
+		//Remove all non numeric characters
+		$number = preg_replace("[\D]",'', (string) $val);
+		return (int) strlen($number) === (int) $length;
+	}
 }
