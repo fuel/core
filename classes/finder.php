@@ -506,8 +506,16 @@ class Finder
 			// Write the cache, and set permissions
 			if ($result = (bool) file_put_contents($dir.$file, $data, LOCK_EX))
 			{
-				chmod($dir.$file, \Config::get('file.chmod.files', 0666));
+				try
+				{
+					chmod($dir.$file, \Config::get('file.chmod.files', 0666));
+				}
+				catch (\Exception $e)
+				{
+					// we probably don't have permission, lets hope rights are ok
+				}
 			}
+
 			return $result;
 		}
 		catch (Exception $e)
