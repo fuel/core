@@ -47,8 +47,19 @@ register_shutdown_function(function ()
 	\Config::get('security.output_filter', null) or \Config::set('security.output_filter', 'Security::htmlentities');
 
 	// Fire off the shutdown events
-	Event::shutdown();
-
+	try
+	{
+		Event::shutdown();
+	}
+	catch (\Exception $e)
+	{
+		if (\Fuel::$is_cli)
+		{
+			\Cli::error("Error: ".$e->getMessage()." in ".$e->getFile()." on ".$e->getLine());
+			\Cli::beep();
+			exit(1);
+		}
+	}
 	return \Error::shutdown_handler();
 });
 
