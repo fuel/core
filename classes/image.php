@@ -3,7 +3,7 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.5
+ * @version    1.6
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2013 Fuel Development Team
@@ -23,10 +23,10 @@ class Image
 	 * @var  array   Config options to be passed when the instance is created.
 	 */
 	protected static $_config = array();
-	
+
 	/**
 	 * Initialize by loading config
-	 * 
+	 *
 	 * @return void
 	 */
 	public static function _init()

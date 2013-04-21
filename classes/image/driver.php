@@ -3,7 +3,7 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.5
+ * @version    1.6
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2013 Fuel Development Team
@@ -23,10 +23,10 @@ abstract class Image_Driver
 	protected $config          = array();
 	protected $queued_actions  = array();
 	protected $accepted_extensions;
-	
+
 	/**
 	 * Initialize by loading config
-	 * 
+	 *
 	 * @return void
 	 */
 	public static function _init()
@@ -629,7 +629,7 @@ abstract class Image_Driver
 		{
 			$filename = $this->image_filename;
 		}
-		
+
 		$directory = dirname($filename);
 		if ( ! is_dir($directory))
 		{

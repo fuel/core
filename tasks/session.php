@@ -3,7 +3,7 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.5
+ * @version    1.6
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2013 Fuel Development Team
@@ -78,7 +78,7 @@ class Session
                 return \Cli::color('Database sessions table was not created.', 'red');
             }
         }
-        
+
         if (\DBUtil::table_exists(\Config::get('session.db.table')))
         {
             return \Cli::write('Session table already exists.');
