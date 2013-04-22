@@ -40,6 +40,6 @@ return array(
 	'tabular_form_template'      => "<table>{fields}</table>\n",
 	'tabular_field_template'     => "{field}",
 	'tabular_row_template'       => "<tr>{fields}</tr>\n",
-	'tabular_row_field_template' => "\t\t\t<td>{label}{required}&nbsp;{field} {icon} {error_msg}</td>\n",
+	'tabular_row_field_template' => "\t\t\t<td>{label}{required}&nbsp;{field} {error_msg}</td>\n",
 	'tabular_delete_label'       => "Delete?",
 );
