@@ -1,0 +1,7 @@
+{
+	"name": "fuel/core",
+	"type": "fuel-core",
+	"require": {
+		"composer/installers": "dev-fuelphp-support"
+	}
+}
