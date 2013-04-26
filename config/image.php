@@ -92,7 +92,7 @@ return array(
 		 * Note that config values here override the current configuration.
 		 *
 		 * Driver cannot be changed in here.
-		 */
+		 
 		'example' => array(
 			'quality' => 100,
 			'bgcolor' => null,
@@ -103,6 +103,7 @@ return array(
 				array('output', 'png')
 			)
 		)
+		*/
 	)
 );
 
