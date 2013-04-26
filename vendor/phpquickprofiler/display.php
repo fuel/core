@@ -115,7 +115,7 @@ function displayPqp($output) {
 #pqp-footer .pqp-actions a{float:right;width:auto}
 #pqp-footer a:hover,#pqp-footer a:hover strong,#pqp-footer a:hover b{background:#fff;color:black!important;text-decoration:none}
 #pqp-footer a:active,#pqp-footer a:active strong,#pqp-footer a:active b{background:#ecf488;color:green!important}
-#openProfiler { position: fixed; bottom: 0; right: 20px; }
+#openProfiler { position: fixed; bottom: 0; right: 20px; z-index:999999; }
 #openProfiler a { height:32px;text-align:center;width:100px;background-color:#222;border:2px solid #000;border-bottom:none;font-size:12px;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:4px;-webkit-border-top-right-radius:4px;-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;;border-top-right-radius:4px;color:#999;line-height: 32px;display:block;}
 #openProfiler a:hover{color:white;text-decoration:none}
 CSS
