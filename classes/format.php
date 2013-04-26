@@ -145,15 +145,15 @@ class Format
 
 		foreach ($data as $key => $value)
 		{
-			// no numeric keys in our xml please!
-			if (is_numeric($key))
+			// replace anything not alpha numeric
+			$key = preg_replace('/[^a-z_\-0-9]/i', '', $key);
+
+			// no invalid keys in our xml please!
+			if ( ! static::_valid_xml_key($key))
 			{
 				// make string key...
 				$key = (\Inflector::singularize($basenode) != $basenode) ? \Inflector::singularize($basenode) : 'item';
 			}
-
-			// replace anything not alpha numeric
-			$key = preg_replace('/[^a-z_\-0-9]/i', '', $key);
 
 			// if there is another array found recrusively call this function
 			if (is_array($value) or is_object($value))
@@ -516,5 +516,21 @@ class Format
 	public static function _init()
 	{
 		\Config::load('format', true);
+	}
+	
+	/*
+	 * Valid XML Key
+	 *
+	 * Is the key a valid XML node name?
+	 * @return bool true|false
+	 */
+	protected static function _valid_xml_key($key)
+	{
+	    try {
+	        new \DOMElement($key);
+	        return true;
+	    } catch (\DOMException $e) {
+	        return false;
+	    }
 	}
 }
