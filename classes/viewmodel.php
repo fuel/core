@@ -111,9 +111,14 @@ abstract class ViewModel
 	}
 
 	/**
-	 * Executed before the view method
+	 * Executed before the view method on forge
 	 */
 	public function before() {}
+
+	/**
+	 * Execute before the view method
+	 */
+	public function before_view() {}
 
 	/**
 	 * The default view method
@@ -237,6 +242,7 @@ abstract class ViewModel
 			Request::active($this->_active_request);
 		}
 
+		$this->before_view();
 		$this->{$this->_method}();
 		$this->after();
 
