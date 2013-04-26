@@ -188,7 +188,7 @@ class Image_Imagemagick extends \Image_Driver
 				$filename = $this->image_temp;
 			}
 
-			$output = $this->exec('identify', '-format "%[fx:w] %[fx:h]" "'.$filename.'"[0]');
+			$output = $this->exec('identify', '-format "%w %h" "'.$filename.'"[0]');
 			list($width, $height) = explode(" ", $output[0]);
 			$return = (object) array(
 				'width' => $width,
