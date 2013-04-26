@@ -229,21 +229,39 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 		if (count($subdirs) > 1)
 		{
 			array_pop($subdirs);
-			$test_path = static::$path.implode(DS, $subdirs);
 
 			// check if specified subdir exists
-			if ( ! @is_dir($test_path))
+			if ( ! @is_dir(static::$path.implode(DS, $subdirs)))
 			{
-				// create non existing dir
-				if ( ! @mkdir($test_path, \Config::get('file.chmod.folders', 0775), true))
+				// recursively create the directory. we can't use mkdir permissions or recursive
+				// due to the fact that mkdir is restricted by the current users umask
+				$basepath = rtrim(static::$path,DS);
+				$chmod = \Config::get('file.chmod.folders', 0775);
+				foreach ($subdirs as $dir)
 				{
-					return false;
+					$basepath .= DS.$dir;
+					if ( ! is_dir($basepath))
+					{
+						try
+						{
+							if ( ! mkdir($basepath))
+							{
+								return false;
+							}
+							chmod($basepath, $chmod);
+						}
+						catch (\PHPErrorException $e)
+						{
+							return false;
+						}
+					}
 				}
 			}
 		}
 
 		// write the cache
 		$file = static::$path.$id_path.'.cache';
+
 		$handle = fopen($file, 'c');
 
 		if ( ! $handle)
