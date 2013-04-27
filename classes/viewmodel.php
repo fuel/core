@@ -86,8 +86,6 @@ abstract class ViewModel
 		$this->set_view();
 
 		$this->_method = $method;
-
-		$this->before();
 	}
 
 	/**
@@ -237,6 +235,7 @@ abstract class ViewModel
 			Request::active($this->_active_request);
 		}
 
+		$this->before();
 		$this->{$this->_method}();
 		$this->after();
 
