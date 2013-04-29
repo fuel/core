@@ -27,6 +27,8 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 	 */
 	protected $config = array();
 
+	// ---------------------------------------------------------------------
+
 	public function __construct($identifier, $config)
 	{
 		parent::__construct($identifier, $config);
@@ -48,51 +50,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 		}
 	}
 
-	/**
-	 * Prepend the cache properties
-	 *
-	 * @return  string
-	 */
-	protected function prep_contents()
-	{
-		$properties = array(
-			'created'          => $this->created,
-			'expiration'       => $this->expiration,
-			'dependencies'     => $this->dependencies,
-			'content_handler'  => $this->content_handler
-		);
-		$properties = '{{'.static::PROPS_TAG.'}}'.json_encode($properties).'{{/'.static::PROPS_TAG.'}}';
-
-		return $properties.$this->contents;
-	}
-
-	/**
-	 * Remove the prepended cache properties and save them in class properties
-	 *
-	 * @param   string
-	 * @throws  UnexpectedValueException
-	 */
-	protected function unprep_contents($payload)
-	{
-		$properties_end = strpos($payload, '{{/'.static::PROPS_TAG.'}}');
-		if ($properties_end === FALSE)
-		{
-			throw new \UnexpectedValueException('Cache has bad formatting');
-		}
-
-		$this->contents = substr($payload, $properties_end + strlen('{{/'.static::PROPS_TAG.'}}'));
-		$props = substr(substr($payload, 0, $properties_end), strlen('{{'.static::PROPS_TAG.'}}'));
-		$props = json_decode($props, true);
-		if ($props === NULL)
-		{
-			throw new \UnexpectedValueException('Cache properties retrieval failed');
-		}
-
-		$this->created          = $props['created'];
-		$this->expiration       = is_null($props['expiration']) ? null : (int) ($props['expiration'] - time());
-		$this->dependencies     = $props['dependencies'];
-		$this->content_handler  = $props['content_handler'];
-	}
+	// ---------------------------------------------------------------------
 
 	/**
 	 * Check if other caches or files have been changed since cache creation
@@ -190,6 +148,54 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 		}
 	}
 
+	// ---------------------------------------------------------------------
+
+	/**
+	 * Prepend the cache properties
+	 *
+	 * @return  string
+	 */
+	protected function prep_contents()
+	{
+		$properties = array(
+			'created'          => $this->created,
+			'expiration'       => $this->expiration,
+			'dependencies'     => $this->dependencies,
+			'content_handler'  => $this->content_handler
+		);
+		$properties = '{{'.static::PROPS_TAG.'}}'.json_encode($properties).'{{/'.static::PROPS_TAG.'}}';
+
+		return $properties.$this->contents;
+	}
+
+	/**
+	 * Remove the prepended cache properties and save them in class properties
+	 *
+	 * @param   string
+	 * @throws  UnexpectedValueException
+	 */
+	protected function unprep_contents($payload)
+	{
+		$properties_end = strpos($payload, '{{/'.static::PROPS_TAG.'}}');
+		if ($properties_end === FALSE)
+		{
+			throw new \UnexpectedValueException('Cache has bad formatting');
+		}
+
+		$this->contents = substr($payload, $properties_end + strlen('{{/'.static::PROPS_TAG.'}}'));
+		$props = substr(substr($payload, 0, $properties_end), strlen('{{'.static::PROPS_TAG.'}}'));
+		$props = json_decode($props, true);
+		if ($props === NULL)
+		{
+			throw new \UnexpectedValueException('Cache properties retrieval failed');
+		}
+
+		$this->created          = $props['created'];
+		$this->expiration       = is_null($props['expiration']) ? null : (int) ($props['expiration'] - time());
+		$this->dependencies     = $props['dependencies'];
+		$this->content_handler  = $props['content_handler'];
+	}
+
 	/**
 	 * Save a cache, this does the generic pre-processing
 	 *
@@ -210,6 +216,9 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 		{
 			throw new \RuntimeException('APC returned failed to write. Check your configuration.');
 		}
+
+		// update the index
+		$this->_update_index($key);
 
 		return true;
 	}
@@ -272,29 +281,15 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 	}
 
 	/**
-	 * Get's the apc key belonging to the cache identifier
+	 * get's the apc key belonging to the cache identifier
 	 *
 	 * @param   bool  if true, remove the key retrieved from the index
 	 * @return  string
 	 */
-	private function _get_key($remove = false)
+	protected function _get_key($remove = false)
 	{
-		// get the section name and identifier
-		$sections = explode('.', $this->identifier);
-		if (count($sections) > 1)
-		{
-			$identifier = array_pop($sections);
-			$sections = '.'.implode('.', $sections);
-
-		}
-		else
-		{
-			$identifier = $this->identifier;
-			$sections = '';
-		}
-
-		// get the cache index
-		$index = apc_fetch($this->config['cache_id'].$sections);
+		// get the current index information
+		list($identifier, $sections, $index) = $this->_get_index();
 
 		// get the key from the index
 		$key = isset($index[$identifier][0]) ? $index[$identifier][0] : false;
@@ -309,43 +304,19 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 		}
 		else
 		{
-			if ( $key === false )
-			{
-				// create a new key
-				$key = $this->_new_key();
-
-				// create a new index and store the key
-				is_array($index) || $index = array();
-				apc_store($this->config['cache_id'].$sections, array_merge($index, array($identifier => array($key,$this->created))), 0);
-
-				// get the directory index
-				$index = apc_fetch($this->config['cache_id'].'__DIR__');
-
-				if (is_array($index))
-				{
-					if (!in_array($this->config['cache_id'].$sections, $index))
-					{
-						$index[] = $this->config['cache_id'].$sections;
-					}
-				}
-				else
-				{
-					$index = array($this->config['cache_id'].$sections);
-				}
-
-				// update the directory index
-				apc_store($this->config['cache_id'].'__DIR__', $index, 0);
-			}
+			// create a new key if needed
+			$key === false and $key = $this->_new_key();
 		}
+
 		return $key;
 	}
 
 	/**
-	 * Generate a new unique key for the current identifier
+	 * generate a new unique key for the current identifier
 	 *
 	 * @return  string
 	 */
-	private function _new_key()
+	protected function _new_key()
 	{
 		$key = '';
 		while (strlen($key) < 32)
@@ -353,5 +324,62 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 			$key .= mt_rand(0, mt_getrandmax());
 		}
 		return md5($this->config['cache_id'].'_'.uniqid($key, TRUE));
+	}
+
+	/**
+	 * Get the section index
+	 *
+	 * @return  array  containing the identifier, the sections, and the section index
+	 */
+	protected function _get_index()
+	{
+		// get the section name and identifier
+		$sections = explode('.', $this->identifier);
+		if (count($sections) > 1)
+		{
+			$identifier = array_pop($sections);
+			$sections = '.'.implode('.', $sections);
+		}
+		else
+		{
+			$identifier = $this->identifier;
+			$sections = '';
+		}
+
+		// get the cache index and return it
+		return array($identifier, $sections, apc_fetch($this->config['cache_id'].$sections));
+	}
+
+	/**
+	 * Update the section index
+	 *
+	 * @param  string  cache key
+	 */
+	protected function _update_index($key)
+	{
+		// get the current index information
+		list($identifier, $sections, $index) = $this->_get_index();
+
+		// store the key in the index and write the index back
+		$index[$identifier] = array($key, $this->created);
+		apc_store($this->config['cache_id'].$sections, array_merge($index, array($identifier => array($key,$this->created))), 0);
+
+		// get the directory index
+		$index = apc_fetch($this->config['cache_id'].'__DIR__');
+
+		if (is_array($index))
+		{
+			if (!in_array($this->config['cache_id'].$sections, $index))
+			{
+				$index[] = $this->config['cache_id'].$sections;
+			}
+		}
+		else
+		{
+			$index = array($this->config['cache_id'].$sections);
+		}
+
+		// update the directory index
+		apc_store($this->config['cache_id'].'__DIR__', $index, 0);
 	}
 }
