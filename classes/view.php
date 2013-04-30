@@ -55,7 +55,7 @@ class View
 	/**
 	 * @var  string  The view's filename
 	 */
-	protected $file_name = null;
+	public $file_name = null;
 
 	/**
 	 * @var  array  The view's data
