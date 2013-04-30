@@ -263,7 +263,7 @@ class View
 	 * @param   string  $scope  local/glocal/all
 	 * @return  array   view data
 	 */
-	protected function get_data($scope = 'all')
+	public function get_data($scope = 'all')
 	{
 		$clean_it = function ($data, $rules, $auto_filter)
 		{
