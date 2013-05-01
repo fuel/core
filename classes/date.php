@@ -286,7 +286,7 @@ class Date
 
 	public function __construct($timestamp = null, $timezone = null)
 	{
-		! $timestamp and $timestamp = time() + static::$server_gmt_offset;
+		is_null( $timestamp ) and $timestamp = time() + static::$server_gmt_offset;
 		! $timezone and $timezone   = \Fuel::$timezone;
 
 		$this->timestamp = $timestamp;
