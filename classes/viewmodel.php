@@ -33,21 +33,41 @@ abstract class ViewModel
 	public static function forge($view, $method = 'view', $auto_filter = null)
 	{
 		// strip any extensions from the view name to determine the viewmodel to load
-		$viewmodel = strpos($view, '.') === false ? $view : substr($view, 0, -strlen(strrchr($view, '.'))) ;
+		$viewmodel = \Inflector::words_to_upper(str_replace(
+			array('/', DS),
+			'_',
+			strpos($view, '.') === false ? $view : substr($view, 0, -strlen(strrchr($view, '.')))
+		));
 
-		// determine the viewmodel namespace and classname
+		// determine the viewmodel namespace from the current request context
 		$namespace = \Request::active() ? ucfirst(\Request::active()->module) : '';
-		$class = $namespace.'\\View_'.ucfirst(str_replace(array('/', DS), '_', $viewmodel));
 
-		if ( ! class_exists($class))
+		// list of possible viewmodel classnames, start with the namespaced one
+		$classes = array($namespace.'\\View_'.$viewmodel);
+
+		// add the global version if needed
+		empty($namespace) or $classes[] = 'View_'.$viewmodel;
+
+		/**
+		 * Add non View_ prefixed classnames to the list, for BC reasons
+		 *
+		 * @deprecated 1.6
+		 */
+		$classes[] = $namespace.'\\'.$viewmodel;
+
+		// and add the global version of that if needed
+		empty($namespace) or $classes[] = $viewmodel;
+
+		// check if we can find one
+		foreach ($classes as $class)
 		{
-			if ( ! class_exists($class = $viewmodel))
+			if (class_exists($class))
 			{
-				throw new \OutOfBoundsException('ViewModel "View_'.ucfirst(str_replace(array('/', DS), '_', $viewmodel)).'" could not be found.');
+				return new $class($method, $auto_filter, $view);
 			}
 		}
 
-		return new $class($method, $auto_filter, $view);
+		throw new \OutOfBoundsException('ViewModel "'.reset($classes).'" could not be found.');
 	}
 
 	/**
