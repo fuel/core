@@ -183,24 +183,36 @@ class Database_PDO_Connection extends \Database_Connection
 		{
 			try
 			{
+				// try to run the query
 				$result = $this->_connection->query($sql);
 				break;
 			}
 			catch (\Exception $e)
 			{
-				if (strpos($e->getMessage(), '2006 MySQL') !== false)
+				// if failed and we have attempts left
+				if ($attempts > 0)
 				{
-					$this->connect();
+					// try reconnecting if it was a MySQL disconnected error
+					if (strpos($e->getMessage(), '2006 MySQL') !== false)
+					{
+						$this->disconnect();
+						$this->connect();
+					}
+					else
+					{
+						// other database error, cleanup the profiler
+						isset($benchmark) and  \Profiler::delete($benchmark);
+
+						// and convert the exception in a database exception
+						$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
+						throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $error_code, $e);
+					}
 				}
+
+				// no more attempts left, bail out
 				else
 				{
-					if (isset($benchmark))
-					{
-						// This benchmark is worthless
-						\Profiler::delete($benchmark);
-					}
-
-					// Convert the exception in a database exception
+					// and convert the exception in a database exception
 					$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
 					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $error_code, $e);
 				}
