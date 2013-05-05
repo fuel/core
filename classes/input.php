@@ -439,11 +439,11 @@ class Input
 	}
 
 	/**
-	 * Fetch an requests HTTP headers
+	 * Fetch a item from the HTTP request headers
 	 *
 	 * @return  array
 	 */
-	public static function headers()
+	public static function headers($index = null, $default = null)
 	{
 		// deal with fcgi installs on PHP 5.3
 		if (version_compare(PHP_VERSION, '5.4.0') < 0 and  ! function_exists('apache_request_headers'))
@@ -471,7 +471,7 @@ class Input
 			$headers = getAllHeaders();
 		}
 
-		return $headers;
+		return (func_num_args() === 0) ? $headers : \Arr::get($headers, $index, $default);
 	}
 
 	/**
