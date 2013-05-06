@@ -249,6 +249,9 @@ class Inflector
 		// Decode all entities to their simpler forms
 		$str = html_entity_decode($str, ENT_QUOTES, 'UTF-8');
 
+		// Replace apostrophes.
+		$str = preg_replace("#[\’]#", '-', $str);
+
 		// Remove all quotes.
 		$str = preg_replace("#[\"\']#", '', $str);
 
