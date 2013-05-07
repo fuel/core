@@ -235,7 +235,7 @@ class Uri
 	 * @param   array    ...
 	 * @return  string
 	 */
-	public static function build_query_string()
+	public static function build_query_string(array $params)
 	{
 		$params = array();
 
