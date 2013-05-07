@@ -228,6 +228,26 @@ class Uri
 		return $url;
 	}
 
+	/**
+	 * Builds a query string based on a number of merged arrays
+	 *
+	 * @param   array    Array to merge
+	 * @param   array    ...
+	 * @return  string
+	 */
+	public static function build_query_string()
+	{
+		$params = array();
+
+		foreach (func_get_args() as $arg)
+		{
+			$arg = (array)$arg;
+
+			$params = \Arr::merge($params, $arg);
+		}
+
+		return http_build_query($params);
+	}
 
 	/**
 	 * @var  string  The URI string
