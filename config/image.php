@@ -3,7 +3,7 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.6
+ * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2013 Fuel Development Team
@@ -92,7 +92,7 @@ return array(
 		 * Note that config values here override the current configuration.
 		 *
 		 * Driver cannot be changed in here.
-		 
+
 		'example' => array(
 			'quality' => 100,
 			'bgcolor' => null,
