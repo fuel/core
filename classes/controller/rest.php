@@ -112,7 +112,7 @@ abstract class Controller_Rest extends \Controller
 		}
 
 		// Get the configured auth method if none is defined
-		$this->auth === null or $this->auth = \Config::get('rest.auth');
+		$this->auth === null and $this->auth = \Config::get('rest.auth');
 
 		//Check method is authorized if required, and if we're authorized
 		if ($this->auth == 'basic')
@@ -464,7 +464,7 @@ abstract class Controller_Rest extends \Controller
 	protected function _force_login($nonce = '')
 	{
 		// Get the configured auth method if none is defined
-		$this->auth === null or $this->auth = \Config::get('rest.auth');
+		$this->auth === null and $this->auth = \Config::get('rest.auth');
 
 		if ($this->auth == 'basic')
 		{
