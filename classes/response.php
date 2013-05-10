@@ -146,8 +146,8 @@ class Response
 		// do we have a referrer?
 		if ($referrer = \Input::referrer())
 		{
-			// is it within our website?
-			if (strpos($referrer, \Uri::base()) === 0)
+			// is it within our website? And not equal to the current url?
+			if (strpos($referrer, \Uri::base()) === 0 and $referrer != \Uri::current())
 			{
 				// redirect back to where we came from
 				static::redirect($referrer, $method, $code);
