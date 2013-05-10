@@ -131,6 +131,34 @@ class Response
 	}
 
 	/**
+	 * Redirects back to the previous page, if that page is within the current
+	 * application. If not, it will redirect to the given url, and if none is
+	 * given, back to the application root
+	 *
+	 * @param   string  $url     The url
+	 * @param   string  $method  The redirect method
+	 * @param   int     $code    The redirect status code
+	 *
+	 * @return  void
+	 */
+	public static function redirect_back($url = '', $method = 'location', $code = 302)
+	{
+		// do we have a referrer?
+		if ($referrer = \Input::referrer())
+		{
+			// is it within our website?
+			if (strpos($referrer, \Uri::base()) === 0)
+			{
+				// redirect back to where we came from
+				static::redirect($referrer, $method, $code);
+			}
+		}
+
+		// no referrer or an external link, do a normal redirect
+		static::redirect($url, $method, $code);
+	}
+
+	/**
 	 * @var  int  The HTTP status code
 	 */
 	public $status = 200;
