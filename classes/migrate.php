@@ -409,7 +409,7 @@ class Migrate
 			is_numeric($migration) and $migration = (int) $migration;
 
 			// add the file to the migrations list if it's in between version bounds
-			if ((is_null($start) or $migration > $start) and (is_null($end) or $migration <= $end))
+			if ((is_null($start) or \Config::get('migrate.find_old_numbers', false) or $migration > $start) and (is_null($end) or $migration <= $end))
 			{
 				// add suffix to $migrations key number if exists key yet
 				if(array_key_exists($migration, $migrations)){
