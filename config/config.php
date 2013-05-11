@@ -339,4 +339,16 @@ return array(
 		'language'  => array(),
 	),
 
+	/**
+	 * Configs to migration
+	 */
+	'migrate' => array(
+
+		/**
+		 * Migration find files only after current migrated number default.
+		 * If you set true, check include before current migrated number.
+		 */
+		'find_old_numbers' => false,
+	),
+
 );
