@@ -489,20 +489,28 @@ else {
 			$return_output .='<tr>
 				<td class="'.$class.'">'.$query['sql'];
 			$return_output .='<em>';
-			if(isset($query['explain'])) {
-					isset($query['explain']['possible_keys']) and $return_output .='Possible keys: <b>'.$query['explain']['possible_keys'].'</b> &middot; ';
-					isset($query['explain']['key']) and $return_output .='Key Used: <b>'.$query['explain']['key'].'</b> &middot; ';
-					isset($query['explain']['type']) and $return_output .='Type: <b>'.$query['explain']['type'].'</b> &middot; ';
-					isset($query['explain']['type']) and $return_output .='Rows: <b>'.$query['explain']['rows'].'</b> &middot; ';
-			}
 			$return_output .='Speed: <b>'.$query['time'].'</b>';
 			$query['duplicate'] and $return_output .=' &middot; <b>DUPLICATE</b>';
+			if(isset($query['explain'])) {
+				$return_output .= '<br />Query analysis:<br />';
+				foreach($query['explain'] as $qe)
+				{
+					isset($qe['select_type']) and $return_output .=' &middot; Query: <b>'.$qe['select_type'].'</b>';
+					empty($qe['table']) or $return_output .=' on <b>'.htmlentities($qe['table']).'</b>';
+					isset($qe['possible_keys']) and $return_output .=' &middot; Possible keys: <b>'.$qe['possible_keys'].'</b>';
+					isset($qe['key']) and $return_output .=' &middot; Key Used: <b>'.$qe['key'].'</b>';
+					isset($qe['type']) and $return_output .=' &middot; Type: <b>'.$qe['type'].'</b>';
+					isset($qe['rows']) and $return_output .=' &middot; Rows: <b>'.$qe['rows'].'</b>';
+					empty($qe['Extra']) or $return_output .=' ('.$qe['Extra'].')';
+					$return_output .='<br />';
+				}
+			}
 			if ( ! empty($query['stacktrace']))
 			{
-				$return_output .=' &middot;  Call trace for this query:</em>';
+				$return_output .='Call trace for this query:</em>';
 				foreach ($query['stacktrace'] as $st)
 				{
-					$return_output .='<em>File: <b>'.$st['file'].'</b> on line <b>'.$st['line'].'</b></em>';
+					$return_output .='<em>File: <b>'.$st['file'].'</b>, line <b>'.$st['line'].'</b></em>';
 				}
 			}
 			else
