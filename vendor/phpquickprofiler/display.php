@@ -36,6 +36,7 @@ function displayPqp($output) {
 .pQp .cyan{color:#3EC4D3!important}
 .pQp .pink{color:#FF7CAD!important}
 .pQp .flesh{color:#FFA46E!important}
+.pQp strong{color:#fff}
 #pQp,#pqp-console,#pqp-speed,#pqp-queries,#pqp-memory,#pqp-files,#pqp-config,#pqp-session,#pqp-get,#pqp-post{display:none}
 .pQp .console,.pQp .speed,.pQp .queries,.pQp .memory,.pQp .files,.pQp .config,.pQp .session,.pQp .get,.pQp .post{display:block!important}
 .pQp .console #pqp-console,.pQp .speed #pqp-speed,.pQp .queries #pqp-queries,.pQp .memory #pqp-memory,.pQp .files #pqp-files,.pQp .config #pqp-config,.pQp .session #pqp-session,.pQp .get #pqp-get,.pQp .post #pqp-post{display:block}
