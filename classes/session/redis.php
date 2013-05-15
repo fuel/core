@@ -3,7 +3,7 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.7
+ * @version    1.6
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2013 Fuel Development Team
@@ -116,7 +116,7 @@ class Session_Redis extends \Session_Driver
 
 			// unpack the payload
 			$payload = $this->_unserialize($payload);
-
+			
 			// session referral?
 			if (isset($payload['rotated_session_id']))
 			{
@@ -128,10 +128,6 @@ class Session_Redis extends \Session_Driver
 				}
 				else
 				{
-					// update the session
-					$this->keys['previous_id'] = $this->keys['session_id'];
-					$this->keys['session_id']  = $payload['rotated_session_id'];
-
 					// unpack the payload
 					$payload = $this->_unserialize($payload);
 				}
