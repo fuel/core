@@ -75,9 +75,9 @@ class Migrate
 				foreach (\Config::get('module_paths') as $path)
 				{
 					// get all modules that have files in the migration folder
-					foreach (glob($path . '*/') as $m)
+					foreach (glob($path.'*'.DS) as $m)
 					{
-						if (count(glob($m.\Config::get('migrations.folder').'/*.php')))
+						if (count(glob($m.\Config::get('migrations.folder').DS.'*.php')))
 						{
 							static::$modules[] = basename($m);
 						}
@@ -100,9 +100,9 @@ class Migrate
 				// get all packages that have files in the migration folder
 				foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
 				{
-					foreach (glob($p . '*/') as $pp)
+					foreach (glob($p.'*'.DS) as $pp)
 					{
-						if (count(glob($pp.\Config::get('migrations.folder').'/*.php')))
+						if (count(glob($pp.\Config::get('migrations.folder').DS.'*.php')))
 						{
 							static::$packages[] = basename($pp);
 						}
