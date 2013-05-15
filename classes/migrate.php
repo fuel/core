@@ -496,7 +496,7 @@ class Migrate
 			// find a module
 			foreach (\Config::get('module_paths') as $m)
 			{
-				$files = glob($m .$name.'/'.\Config::get('migrations.folder').'*_*.php');
+				$files = glob($m.$name.DS.\Config::get('migrations.folder').'*_*.php');
 				if (count($files))
 				{
 					break;
@@ -508,7 +508,7 @@ class Migrate
 			// find all modules
 			foreach (\Config::get('module_paths') as $m)
 			{
-				$files = array_merge($files, glob($m.'*/'.\Config::get('migrations.folder').'*_*.php'));
+				$files = array_merge($files, glob($m.'*'.DS.\Config::get('migrations.folder').'*_*.php'));
 			}
 		}
 
@@ -531,7 +531,7 @@ class Migrate
 			// find a package
 			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
 			{
-				$files = glob($p .$name.'/'.\Config::get('migrations.folder').'*_*.php');
+				$files = glob($p.$name.DS.\Config::get('migrations.folder').'*_*.php');
 				if (count($files))
 				{
 					break;
@@ -543,7 +543,7 @@ class Migrate
 			// find all packages
 			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
 			{
-				$files = array_merge($files, glob($p.'*/'.\Config::get('migrations.folder').'*_*.php'));
+				$files = array_merge($files, glob($p.'*'.DS.\Config::get('migrations.folder').'*_*.php'));
 			}
 		}
 
