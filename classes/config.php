@@ -150,6 +150,7 @@ class Config
 
 		$info = pathinfo($file);
 		$type = 'php';
+
 		if (isset($info['extension']))
 		{
 			$type = $info['extension'];
@@ -158,7 +159,12 @@ class Config
 			{
 				$file = substr($file, 0, -(strlen($type) + 1));
 			}
+		} 
+		else 
+		{
+			$file .= '.' . $type;
 		}
+
 		$class = '\\Config_'.ucfirst($type);
 
 		if ( ! class_exists($class))
