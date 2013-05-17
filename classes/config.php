@@ -159,10 +159,6 @@ class Config
 			{
 				$file = substr($file, 0, -(strlen($type) + 1));
 			}
-		} 
-		else 
-		{
-			$file .= '.' . $type;
 		}
 
 		$class = '\\Config_'.ucfirst($type);
