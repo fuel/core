@@ -468,7 +468,14 @@ class Finder
 				if ((time() - filemtime($dir.$file)) < $lifetime)
 				{
 					// Return the cache
-					return unserialize(file_get_contents($dir.$file));
+					try
+					{
+						return unserialize(file_get_contents($dir.$file));
+					}
+					catch (\Exception $e)
+					{
+						// Cache exists but could not be read, ignore it
+					}
 				}
 				else
 				{
@@ -486,7 +493,7 @@ class Finder
 			}
 
 			// Cache not found
-			return NULL;
+			return null;
 		}
 
 		if ( ! is_dir($dir))
@@ -518,7 +525,7 @@ class Finder
 
 			return $result;
 		}
-		catch (Exception $e)
+		catch (\Exception $e)
 		{
 			// Failed to write cache
 			return false;
