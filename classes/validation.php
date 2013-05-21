@@ -499,14 +499,31 @@ class Validation
 			return $this->input;
 		}
 
+		// key transformation from form array to dot notation
+		if (strpos($key,'[') !== false)
+		{
+			$key = str_replace(array('[', ']'),array('.', ''),$key);
+		}
+
+		// if we don't have this key
 		if ( ! array_key_exists($key, $this->input))
 		{
-			if (strpos($key,'[') !== false)
+			// it might be in dot-notation
+			if (strpos($key,'.') !== false)
 			{
-				$this->input[$key] =  $this->global_input_fallback ? \Arr::get(\Input::param(), str_replace(array('[', ']'),array('.', ''),$key), $default) : $default;
+				// check the input first
+				if (($result = \Arr::get($this->input, $key, null)) !== null)
+				{
+					$this->input[$key] = $result;
+				}
+				else
+				{
+					$this->input[$key] =  $this->global_input_fallback ? \Arr::get(\Input::param(), $key, $default) : $default;
+				}
 			}
 			else
 			{
+				// do a fallback to global input if needed, or use the provided default
 				$this->input[$key] =  $this->global_input_fallback ? \Input::param($key, $default) : $default;
 			}
 		}
