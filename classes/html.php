@@ -28,7 +28,7 @@ namespace Fuel\Core;
 class Html
 {
 	public static $doctypes = null;
-	public static $html5 = false;
+	public static $html5 = true;
 
 	/**
 	 * Creates an html link
