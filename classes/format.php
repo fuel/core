@@ -252,7 +252,7 @@ class Format
 	 */
 	public function to_json($data = null, $pretty = false)
 	{
-		if ($data == null)
+		if ($data === null)
 		{
 			$data = $this->_data;
 		}
@@ -287,7 +287,7 @@ class Format
 	 */
 	public function to_serialized($data = null)
 	{
-		if ($data == null)
+		if ($data === null)
 		{
 			$data = $this->_data;
 		}
@@ -303,7 +303,7 @@ class Format
 	 */
 	public function to_php($data = null)
 	{
-		if ($data == null)
+		if ($data === null)
 		{
 			$data = $this->_data;
 		}
