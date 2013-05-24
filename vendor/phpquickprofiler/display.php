@@ -493,7 +493,7 @@ else {
 			$return_output .='Speed: <b>'.$query['time'].'</b>';
 			$query['duplicate'] and $return_output .=' &middot; <b>DUPLICATE</b>';
 			if(isset($query['explain'])) {
-				$return_output .= '<br />Query analysis:<br />';
+				$return_output .= '<br />Query analysis:';
 				foreach($query['explain'] as $qe)
 				{
 					isset($qe['select_type']) and $return_output .=' &middot; Query: <b>'.$qe['select_type'].'</b>';
@@ -503,12 +503,12 @@ else {
 					isset($qe['type']) and $return_output .=' &middot; Type: <b>'.$qe['type'].'</b>';
 					isset($qe['rows']) and $return_output .=' &middot; Rows: <b>'.$qe['rows'].'</b>';
 					empty($qe['Extra']) or $return_output .=' ('.$qe['Extra'].')';
-					$return_output .='<br />';
+//					$return_output .='<br />';
 				}
 			}
 			if ( ! empty($query['stacktrace']))
 			{
-				$return_output .='Call trace for this query:</em>';
+				$return_output .='<br />Call trace for this query:</em>';
 				foreach ($query['stacktrace'] as $st)
 				{
 					$return_output .='<em>File: <b>'.$st['file'].'</b>, line <b>'.$st['line'].'</b></em>';
