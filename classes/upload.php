@@ -342,7 +342,7 @@ class Upload
 		}
 
 		// now process the files
-		$counter = 1;
+		$counter = 0;
 		foreach (static::$upload->getValidFiles() as $file)
 		{
 			// do we want to process this file?
