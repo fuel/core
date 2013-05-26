@@ -130,31 +130,35 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 		$files = \File::read_dir($path.$section, -1, array('\.cache$' => 'file'));
 
 		// closure to recusively delete the files
-		$delete = function($path, $files) use(&$delete)
+		$delete = function($folder, $files) use(&$delete, $path)
 		{
-			$path = rtrim($path, '\\/').DS;
+			$folder = rtrim($folder, '\\/').DS;
 
 			foreach ($files as $dir => $file)
 			{
 				if (is_numeric($dir))
 				{
-					if ( ! $result = \File::delete($path.$file))
+					if ( ! $result = \File::delete($folder.$file))
 					{
 						return $result;
 					}
 				}
 				else
 				{
-					if ( ! $result = ($delete($path.$dir, $file)))
+					if ( ! $result = ($delete($folder.$dir, $file)))
 					{
 						return $result;
 					}
 				}
 			}
 
-			// and remove the folder if no more files are left
-			$files = \File::read_dir($path);
-			empty ($files) and rmdir($path);
+			// if we're processing a sub directory
+			if ($folder != $path)
+			{
+				// remove the folder if no more files are left
+				$files = \File::read_dir($folder);
+				empty ($files) and rmdir($folder);
+			}
 
 			return true;
 		};
