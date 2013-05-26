@@ -122,12 +122,15 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	 */
 	public function delete_all($section)
 	{
+		// get the cache root path and prep the requested section
 		$path = rtrim(static::$path, '\\/').DS;
-		$section = static::identifier_to_path($section).DS;
+		$section = $section === null ? '' : static::identifier_to_path($section).DS;
 
+		// get all files in this section
 		$files = \File::read_dir($path.$section, -1, array('\.cache$' => 'file'));
 
-		$delete = function($path, $files) use(&$delete, &$section)
+		// closure to recusively delete the files
+		$delete = function($path, $files) use(&$delete)
 		{
 			$path = rtrim($path, '\\/').DS;
 
@@ -142,14 +145,16 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 				}
 				else
 				{
-					if ( ! $result = ($delete($path.$dir, $file) and rmdir($path.$dir)))
+					if ( ! $result = ($delete($path.$dir, $file)))
 					{
 						return $result;
 					}
 				}
 			}
 
-			$section !== '' and rmdir($path);
+			// and remove the folder if no more files are left
+			$files = \File::read_dir($path);
+			empty ($files) and rmdir($path);
 
 			return true;
 		};
