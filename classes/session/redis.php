@@ -244,7 +244,7 @@ class Session_Redis extends \Session_Driver
 	 */
 	protected function _read_redis($session_id)
 	{
-		// fetch the session data from the Memcached server
+		// fetch the session data from the redis server
 		return $this->redis->get($session_id);
 	}
 
