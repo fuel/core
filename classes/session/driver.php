@@ -523,6 +523,12 @@ abstract class Session_Driver
 			$cookie = \Cookie::get($this->config['cookie_name'], false);
 		}
 
+		// if not found, was a session-id present in the HTTP header?
+		if ($cookie === false)
+		{
+			$cookie = \Input::headers('Session-Id', false);
+		}
+
 		if ($cookie !== false)
 		{
 			// fetch the payload
@@ -598,9 +604,9 @@ abstract class Session_Driver
 	 * @param	array
 	 * @return	string
 	 */
-	protected function _unserialize($data)
+	protected function _unserialize($input)
 	{
-		$data = @unserialize($data);
+		$data = @unserialize($input);
 
 		if (is_array($data))
 		{
@@ -613,6 +619,11 @@ abstract class Session_Driver
 			}
 
 			return $data;
+		}
+
+		elseif ($data === false)
+		{
+			is_string($input) and $data = array($input);
 		}
 
 		return (is_string($data)) ? str_replace('{{slash}}', '\\', $data) : $data;
