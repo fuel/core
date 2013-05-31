@@ -486,6 +486,10 @@ class Input
 		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
 		{
 			static::$php_input === null and static::$php_input = file_get_contents('php://input');
+			if (strpos(static::headers('CONTENT_TYPE'), 'www-form-urlencoded') > 0)
+			{
+				static::$php_input = urldecode(static::$php_input);
+			}
 			parse_str(static::$php_input, static::$put_delete);
 			static::$input = array_merge(static::$input, static::$put_delete);
 		}
