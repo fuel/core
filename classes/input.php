@@ -445,30 +445,36 @@ class Input
 	 */
 	public static function headers($index = null, $default = null)
 	{
-		// deal with fcgi installs on PHP 5.3
-		if (version_compare(PHP_VERSION, '5.4.0') < 0 and  ! function_exists('apache_request_headers'))
+		static $headers = null;
+
+		// do we need to fetch the headers?
+		if ($headers === null)
 		{
-			$headers = array();
-			foreach (static::server() as $name => $value)
+			// deal with fcgi installs on PHP 5.3
+			if (version_compare(PHP_VERSION, '5.4.0') < 0 and  ! function_exists('apache_request_headers'))
 			{
-				if (strpos($name, 'HTTP_') === 0)
+				$headers = array();
+				foreach (static::server() as $name => $value)
 				{
-					$name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
-					$headers[$name] = $value;
-				}
-				elseif ($name == 'CONTENT_TYPE')
-				{
-					$headers['Content-Type'] = $value;
-				}
-				elseif ($name == 'CONTENT_LENGTH')
-				{
-					$headers['Content-Length'] = $value;
+					if (strpos($name, 'HTTP_') === 0)
+					{
+						$name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+						$headers[$name] = $value;
+					}
+					elseif ($name == 'CONTENT_TYPE')
+					{
+						$headers['Content-Type'] = $value;
+					}
+					elseif ($name == 'CONTENT_LENGTH')
+					{
+						$headers['Content-Length'] = $value;
+					}
 				}
 			}
-		}
-		else
-		{
-			$headers = getAllHeaders();
+			else
+			{
+				$headers = getAllHeaders();
+			}
 		}
 
 		return (func_num_args() === 0) ? $headers : \Arr::get($headers, $index, $default);
