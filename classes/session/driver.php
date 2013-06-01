@@ -514,13 +514,19 @@ abstract class Session_Driver
 	 */
 	 protected function _get_cookie()
 	 {
-		// was the cookie posted?
+		// was the cookie value posted?
 		$cookie = \Input::post($this->config['post_cookie_name'], false);
 
 		// if not found, fetch the regular cookie
 		if ($cookie === false)
 		{
 			$cookie = \Cookie::get($this->config['cookie_name'], false);
+		}
+
+		// if not found, check the URL for a cookie
+		if ($cookie === false)
+		{
+			$cookie = \Input::get($this->config['cookie_name'], false);
 		}
 
 		// if not found, was a session-id present in the HTTP header?
