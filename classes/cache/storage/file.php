@@ -126,6 +126,12 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 		$path = rtrim(static::$path, '\\/').DS;
 		$section = $section === null ? '' : static::identifier_to_path($section).DS;
 
+		// if the path does not exist, bail out immediately
+		if ( ! is_dir($path.$section))
+		{
+			return true;
+		}
+
 		// get all files in this section
 		$files = \File::read_dir($path.$section, -1, array('\.cache$' => 'file'));
 
