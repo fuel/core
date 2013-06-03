@@ -471,7 +471,7 @@ class Input
 			}
 		}
 
-		return (func_num_args() === 0) ? $headers : \Arr::get($headers, $index, $default);
+		return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : \Arr::get($headers, $index, $default));
 	}
 
 	/**
@@ -486,7 +486,7 @@ class Input
 		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
 		{
 			static::$php_input === null and static::$php_input = file_get_contents('php://input');
-			if (strpos(static::headers('CONTENT_TYPE'), 'www-form-urlencoded') > 0)
+			if (strpos(static::headers('Content-Type'), 'www-form-urlencoded') > 0)
 			{
 				static::$php_input = urldecode(static::$php_input);
 			}
