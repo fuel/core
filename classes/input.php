@@ -450,30 +450,24 @@ class Input
 		// do we need to fetch the headers?
 		if ($headers === null)
 		{
-			// deal with fcgi installs on PHP 5.3
-			if (version_compare(PHP_VERSION, '5.4.0') < 0 and  ! function_exists('apache_request_headers'))
+			// deal with fcgi or nginx installs
+			if ( ! function_exists('getallheaders'))
 			{
-				$headers = array();
-				foreach (static::server() as $name => $value)
+				$server = \Arr::filter_prefixed(static::server(), 'HTTP_', true);
+
+				foreach ($server as $key => $value)
 				{
-					if (strpos($name, 'HTTP_') === 0)
-					{
-						$name = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
-						$headers[$name] = $value;
-					}
-					elseif ($name == 'CONTENT_TYPE')
-					{
-						$headers['Content-Type'] = $value;
-					}
-					elseif ($name == 'CONTENT_LENGTH')
-					{
-						$headers['Content-Length'] = $value;
-					}
+					$key = join('-', array_map('ucfirst', explode('_', strtolower($key))));
+
+					$headers[$key] = $value;
 				}
+
+				$value = static::server('Content-Type') and $headers['Content-Type'] = $value;
+				$value = static::server('Content-Length') and $headers['Content-Length'] = $value;
 			}
 			else
 			{
-				$headers = getAllHeaders();
+				$headers = getallheaders();
 			}
 		}
 

@@ -31,30 +31,6 @@ if ( ! function_exists('import'))
 	}
 }
 
-if ( ! function_exists('getallheaders'))
-{
-	/**
-	 * Retrieves all headers in a apache format on a NGINX setup
-	 *
-	 * @return  array  headers
-	 */
-	function getallheaders()
-	{
-		$result = array();
-		$server = Input::server();
-		$headers = Arr::filter_prefixed($server, 'HTTP_', true);
-
-		foreach ($headers as $key => $value)
-		{
-			$key = join('-', array_map('ucfirst', explode('_', strtolower($key))));
-
-			$result[$key] = $value;
-		}
-
-		return $result;
-	}
-}
-
 if ( ! function_exists('logger'))
 {
 	function logger($level, $msg, $method = null)
