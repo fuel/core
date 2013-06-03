@@ -75,11 +75,11 @@ class Migrate
 				foreach (\Config::get('module_paths') as $path)
 				{
 					// get all modules that have files in the migration folder
-					foreach (glob($path.'*'.DS) as $m)
+					foreach(new \GlobIterator(realpath($path).DS.'*') as $m)
 					{
-						if (count(glob($m.\Config::get('migrations.folder').DS.'*.php')))
+						if (count(new \GlobIterator($m->getPathname().rtrim(DS.\Config::get('migrations.folder'),'\\/').DS.'*.php')))
 						{
-							static::$modules[] = basename($m);
+							static::$modules[] = $m->getBasename();
 						}
 					}
 				}
@@ -98,13 +98,14 @@ class Migrate
 			if ($packages === true)
 			{
 				// get all packages that have files in the migration folder
-				foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
+				foreach (\Config::get('package_paths', array(PKGPATH)) as $path)
 				{
-					foreach (glob($p.'*'.DS) as $pp)
+					// get all modules that have files in the migration folder
+					foreach(new \GlobIterator(realpath($path).DS.'*') as $p)
 					{
-						if (count(glob($pp.\Config::get('migrations.folder').DS.'*.php')))
+						if (count(new \GlobIterator($p->getPathname().rtrim(DS.\Config::get('migrations.folder'),'\\/').DS.'*.php')))
 						{
-							static::$packages[] = basename($pp);
+							static::$packages[] = $p->getBasename();
 						}
 					}
 				}

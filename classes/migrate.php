@@ -477,7 +477,15 @@ class Migrate
 	 */
 	protected static function _find_app($name = null)
 	{
-		return glob(APPPATH.\Config::get('migrations.folder').'*_*.php');
+		$found = array();
+
+		$files = new \GlobIterator(APPPATH.\Config::get('migrations.folder').'*_*.php');
+		foreach($files as $file)
+		{
+			$found[] = $file->getPathname();
+		}
+
+		return $found;
 	}
 
 	/**
@@ -496,9 +504,13 @@ class Migrate
 			// find a module
 			foreach (\Config::get('module_paths') as $m)
 			{
-				$files = glob($m.$name.DS.\Config::get('migrations.folder').'*_*.php');
-				if (count($files))
+				$found = new \GlobIterator($m.$name.DS.\Config::get('migrations.folder').'*_*.php');
+				if (count($found))
 				{
+					foreach($found as $file)
+					{
+						$files[] = $file->getPathname();
+					}
 					break;
 				}
 			}
@@ -508,7 +520,11 @@ class Migrate
 			// find all modules
 			foreach (\Config::get('module_paths') as $m)
 			{
-				$files = array_merge($files, glob($m.'*'.DS.\Config::get('migrations.folder').'*_*.php'));
+				$found = new \GlobIterator($m.'*'.DS.\Config::get('migrations.folder').'*_*.php');
+				foreach($found as $file)
+				{
+					$files[] = $file->getPathname();
+				}
 			}
 		}
 
@@ -531,9 +547,13 @@ class Migrate
 			// find a package
 			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
 			{
-				$files = glob($p.$name.DS.\Config::get('migrations.folder').'*_*.php');
-				if (count($files))
+				$found = new \GlobIterator($p.$name.DS.\Config::get('migrations.folder').'*_*.php');
+				if (count($found))
 				{
+					foreach($found as $file)
+					{
+						$files[] = $file->getPathname();
+					}
 					break;
 				}
 			}
@@ -543,7 +563,11 @@ class Migrate
 			// find all packages
 			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
 			{
-				$files = array_merge($files, glob($p.'*'.DS.\Config::get('migrations.folder').'*_*.php'));
+				$found = new \GlobIterator($p.'*'.DS.\Config::get('migrations.folder').'*_*.php');
+				foreach($found as $file)
+				{
+					$files[] = $file->getPathname();
+				}
 			}
 		}
 

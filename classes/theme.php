@@ -469,9 +469,10 @@ class Theme
 		$themes = array();
 		foreach ($this->paths as $path)
 		{
-			foreach(glob($path.'*', GLOB_ONLYDIR) as $theme)
+			$iterator = new \GlobIterator($path.'*');
+			foreach($iterator as $theme)
 			{
-				$themes[] = basename($theme);
+				$themes[] = $theme->getFilename();
 			}
 		}
 		sort($themes);
