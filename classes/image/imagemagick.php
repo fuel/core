@@ -117,6 +117,7 @@ class Image_Imagemagick extends \Image_Driver
 		$x >= 0 and $x = '+'.$x;
 		$y >= 0 and $y = '+'.$y;
 
+		$image = '"'.$this->image_temp.'"';
 		$this->exec(
 			'composite',
 			'-compose atop -geometry '.$x.$y.' '.
@@ -160,12 +161,12 @@ class Image_Imagemagick extends \Image_Driver
 
 		$image = '"'.$this->image_temp.'"';
 		$r = $radius;
-		$command = $image." ( +clone -alpha extract ".
+		$command = $image." \\( +clone -alpha extract ".
 			( ! $tr ? '' : "-draw \"fill black polygon 0,0 0,$r $r,0 fill white circle $r,$r $r,0\" ")."-flip ".
 			( ! $br ? '' : "-draw \"fill black polygon 0,0 0,$r $r,0 fill white circle $r,$r $r,0\" ")."-flop ".
 			( ! $bl ? '' : "-draw \"fill black polygon 0,0 0,$r $r,0 fill white circle $r,$r $r,0\" ")."-flip ".
 			( ! $tl ? '' : "-draw \"fill black polygon 0,0 0,$r $r,0 fill white circle $r,$r $r,0\" ").
-			') -alpha off -compose CopyOpacity -composite '.$image;
+			'\\) -alpha off -compose CopyOpacity -composite '.$image;
 		$this->exec('convert', $command);
 	}
 
