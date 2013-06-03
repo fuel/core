@@ -239,7 +239,16 @@ class Input
 	 */
 	public static function real_ip($default = '0.0.0.0', $exclude_reserved = false)
 	{
-		$server_keys = array('HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_CLIENT_IP', 'REMOTE_ADDR');
+		static $server_keys = null;
+
+		if (empty($server_keys))
+		{
+			$server_keys = array('HTTP_CLIENT_IP', 'REMOTE_ADDR');
+			if (\Config::get('security.allow_x_headers', false))
+			{
+				$server_keys = array_merge(array('HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_X_FORWARDED_FOR'), $server_keys);
+			}
+		}
 
 		foreach ($server_keys as $key)
 		{
@@ -273,7 +282,11 @@ class Input
 	 */
 	public static function protocol()
 	{
-		if (static::server('HTTP_X_FORWARDED_PROTO') == 'https' or static::server('HTTPS') == 'on' or static::server('HTTPS') == 1 or static::server('SERVER_PORT') == 443)
+		if (static::server('HTTPS') == 'on' or
+			static::server('HTTPS') == 1 or
+			static::server('SERVER_PORT') == 443 or
+			(\Config::get('security.allow_x_headers', false) and static::server('HTTP_X_FORWARDED_PROTO') == 'https') or
+			(\Config::get('security.allow_x_headers', false) and static::server('HTTP_X_FORWARDED_PORT') == 443))
 		{
 			return 'https';
 		}
@@ -315,7 +328,14 @@ class Input
 		}
 
 		// if called before a request is active, fall back to the global server setting
-		return \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', $default));
+		if (\Config::get('security.allow_x_headers', false))
+		{
+			return \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', $default));
+		}
+		else
+		{
+			return \Input::server('REQUEST_METHOD', $default);
+		}
 	}
 
 	/**
