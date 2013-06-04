@@ -552,9 +552,16 @@ abstract class Session_Driver
 					$cookie = false;
 				}
 			}
+
+			// or a string containing the session id
+			elseif (is_string($cookie) and strlen($cookie) == 32)
+			{
+				$cookie = array($cookie);
+			}
+
+			// invalid general format
 			else
 			{
-				// invalid general format
 				$cookie = false;
 			}
 		}
