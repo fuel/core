@@ -125,7 +125,10 @@ abstract class Controller_Rest extends \Controller
 		}
 		elseif (method_exists($this, $this->auth))
 		{
-			$valid_login = $this->{$this->auth}();
+			if ($valid_login = $this->{$this->auth}() instanceOf \Response)
+			{
+				return $valid_login;
+			}
 		}
 		else
 		{
