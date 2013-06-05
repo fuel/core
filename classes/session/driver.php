@@ -482,25 +482,28 @@ abstract class Session_Driver
 	 */
 	 protected function _set_cookie($payload = array())
 	 {
-		$payload = $this->_serialize($payload);
-
-		// encrypt the payload if needed
-		$this->config['encrypt_cookie'] and $payload = \Crypt::encode($payload);
-
-		// make sure it doesn't exceed the cookie size specification
-		if (strlen($payload) > 4000)
+		if ($this->config['enable_cookie'])
 		{
-			throw new \FuelException('The session data stored by the application in the cookie exceeds 4Kb. Select a different session storage driver.');
-		}
+			$payload = $this->_serialize($payload);
 
-		// write the session cookie
-		if ($this->config['expire_on_close'])
-		{
-			return \Cookie::set($this->config['cookie_name'], $payload, 0, $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
-		}
-		else
-		{
-			return \Cookie::set($this->config['cookie_name'], $payload, $this->config['expiration_time'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+			// encrypt the payload if needed
+			$this->config['encrypt_cookie'] and $payload = \Crypt::encode($payload);
+
+			// make sure it doesn't exceed the cookie size specification
+			if (strlen($payload) > 4000)
+			{
+				throw new \FuelException('The session data stored by the application in the cookie exceeds 4Kb. Select a different session storage driver.');
+			}
+
+			// write the session cookie
+			if ($this->config['expire_on_close'])
+			{
+				return \Cookie::set($this->config['cookie_name'], $payload, 0, $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+			}
+			else
+			{
+				return \Cookie::set($this->config['cookie_name'], $payload, $this->config['expiration_time'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+			}
 		}
 	}
 
@@ -532,7 +535,7 @@ abstract class Session_Driver
 		// if not found, was a session-id present in the HTTP header?
 		if ($cookie === false)
 		{
-			$cookie = \Input::headers('Session-Id', false);
+			$cookie = \Input::headers($this->config['header_header_name'], false);
 		}
 
 		if ($cookie !== false)
@@ -667,6 +670,7 @@ abstract class Session_Driver
 
 				case 'match_ip':
 				case 'match_ua':
+				case 'enable_cookie':
 				case 'cookie_http_only':
 				case 'encrypt_cookie':
 				case 'expire_on_close':
@@ -677,6 +681,7 @@ abstract class Session_Driver
 				break;
 
 				case 'post_cookie_name':
+				case 'http_header_name':
 				case 'cookie_domain':
 					// make sure it's a string
 					$item = (string) $item;
