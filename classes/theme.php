@@ -102,7 +102,7 @@ class Theme
 		'assets_folder' => 'themes',
 		'view_ext' => '.html',
 		'require_info_file' => false,
-		'info_file_name' => 'theme.info.php',
+		'info_file_name' => 'themeinfo.php',
 		'use_modules' => false,
 	);
 
