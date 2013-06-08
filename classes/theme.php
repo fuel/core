@@ -658,8 +658,9 @@ class Theme
 			$themes = array($this->active, $this->fallback);
 		}
 
-		// determine the path prefix
+		// determine the path prefix and optionally the module path
 		$path_prefix = '';
+		$module_path = null;
 		if ($this->config['use_modules'] and $module = \Request::active()->module)
 		{
 			// we're using module name prefixing
@@ -667,6 +668,9 @@ class Theme
 
 			// and modules are in a separate path
 			is_string($this->config['use_modules']) and $path_prefix = trim($this->config['use_modules'], '\\/').DS.$path_prefix;
+
+			// do we need to check the module too?
+			$this->config['use_modules'] === true and $module_path = \Module::exists($module).'themes'.DS;
 		}
 
 		foreach ($themes as $theme)
@@ -678,7 +682,11 @@ class Theme
 				pathinfo($view, PATHINFO_FILENAME);
 			if (empty($theme['find_file']))
 			{
-				if (is_file($path = $theme['path'].$path_prefix.$file.$ext))
+				if ($module_path and ! empty($theme['name']) and is_file($path = $module_path.$theme['name'].DS.$file.$ext))
+				{
+					return $path;
+				}
+				elseif (is_file($path = $theme['path'].$path_prefix.$file.$ext))
 				{
 					return $path;
 				}
