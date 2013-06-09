@@ -21,6 +21,11 @@ abstract class Controller
 	public $request;
 
 	/**
+	 * @var  Integer  The default response status
+	 */
+	public $response_status = 200;
+
+	/**
 	 * Sets the controller request object.
 	 *
 	 * @param   Request   The current request object
@@ -74,7 +79,7 @@ abstract class Controller
 		// Make sure the $response is a Response object
 		if ( ! $response instanceof Response)
 		{
-			$response = \Response::forge($response);
+			$response = \Response::forge($response, $this->response_status);
 		}
 
 		return $response;
