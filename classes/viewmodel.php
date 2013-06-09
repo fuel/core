@@ -109,9 +109,17 @@ abstract class ViewModel
 	}
 
 	/**
-	 * Must return a View object or something compatible
+	 * Returns the View object associated with this Viewmodel
 	 *
-	 * @return  Object  any object on which the template vars can be set and which has a toString method
+	 * @return  View
+	 */
+	public function get_view()
+	{
+		return $this->_view;
+	}
+
+	/**
+	 * Construct the View object
 	 */
 	protected function set_view()
 	{

@@ -122,34 +122,49 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	 */
 	public function delete_all($section)
 	{
+		// get the cache root path and prep the requested section
 		$path = rtrim(static::$path, '\\/').DS;
-		$section = static::identifier_to_path($section).DS;
+		$section = $section === null ? '' : static::identifier_to_path($section).DS;
 
+		// if the path does not exist, bail out immediately
+		if ( ! is_dir($path.$section))
+		{
+			return true;
+		}
+
+		// get all files in this section
 		$files = \File::read_dir($path.$section, -1, array('\.cache$' => 'file'));
 
-		$delete = function($path, $files) use(&$delete, &$section)
+		// closure to recusively delete the files
+		$delete = function($folder, $files) use(&$delete, $path)
 		{
-			$path = rtrim($path, '\\/').DS;
+			$folder = rtrim($folder, '\\/').DS;
 
 			foreach ($files as $dir => $file)
 			{
 				if (is_numeric($dir))
 				{
-					if ( ! $result = \File::delete($path.$file))
+					if ( ! $result = \File::delete($folder.$file))
 					{
 						return $result;
 					}
 				}
 				else
 				{
-					if ( ! $result = ($delete($path.$dir, $file) and rmdir($path.$dir)))
+					if ( ! $result = ($delete($folder.$dir, $file)))
 					{
 						return $result;
 					}
 				}
 			}
 
-			$section !== '' and rmdir($path);
+			// if we're processing a sub directory
+			if ($folder != $path)
+			{
+				// remove the folder if no more files are left
+				$files = \File::read_dir($folder);
+				empty ($files) and rmdir($folder);
+			}
 
 			return true;
 		};

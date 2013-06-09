@@ -145,13 +145,13 @@ class PhpQuickProfiler {
 			$rs = false;
 			try {
 				$sql = 'EXPLAIN '.html_entity_decode($query['sql'], ENT_QUOTES);
-				$rs = \DB::query($sql, \DB::SELECT)->execute();
+				$rs = \DB::query($sql, \DB::SELECT)->execute()->as_array();
 			}
 			catch(Exception $e)
 			{}
 
 			if($rs) {
-				$query['explain'] = $rs[0];
+				$query['explain'] = $rs;
 			}
 		}
 		return $query;

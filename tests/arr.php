@@ -752,4 +752,148 @@ class Test_Arr extends TestCase
 		$test = \Arr::sum($arr_multi, 'scores.sports');
 		$this->assertEquals($expected, $test);
 	}
+
+	/**
+	 * Tests Arr::previous_by_key()
+	 *
+	 * @test
+	 */
+	public function test_previous_by_key()
+	{
+		// our test array
+		$arr = array(2 => 'A', 4 => 'B', 6 => 'C');
+
+		// test: key not found in array
+		$expected = false;
+		$test = \Arr::previous_by_key($arr, 1);
+		$this->assertTrue($expected === $test);
+
+		// test: no previous key
+		$expected = null;
+		$test = \Arr::previous_by_key($arr, 2);
+		$this->assertTrue($expected === $test);
+
+		// test: strict key comparison
+		$expected = false;
+		$test = \Arr::previous_by_key($arr, '2', false, true);
+		$this->assertTrue($expected === $test);
+
+		// test: get previous key
+		$expected = 2;
+		$test = \Arr::previous_by_key($arr, 4);
+		$this->assertTrue($expected === $test);
+
+		// test: get previous value
+		$expected = 'A';
+		$test = \Arr::previous_by_key($arr, 4, true);
+		$this->assertTrue($expected === $test);
+	}
+
+	/**
+	 * Tests Arr::next_by_key()
+	 *
+	 * @test
+	 */
+	public function test_next_by_key()
+	{
+		// our test array
+		$arr = array(2 => 'A', 4 => 'B', 6 => 'C');
+
+		// test: key not found in array
+		$expected = false;
+		$test = \Arr::next_by_key($arr, 1);
+		$this->assertTrue($expected === $test);
+
+		// test: no next key
+		$expected = null;
+		$test = \Arr::next_by_key($arr, 6);
+		$this->assertTrue($expected === $test);
+
+		// test: strict key comparison
+		$expected = false;
+		$test = \Arr::next_by_key($arr, '6', false, true);
+		$this->assertTrue($expected === $test);
+
+		// test: get next key
+		$expected = 6;
+		$test = \Arr::next_by_key($arr, 4);
+		$this->assertTrue($expected === $test);
+
+		// test: get next value
+		$expected = 'C';
+		$test = \Arr::next_by_key($arr, 4, true);
+		$this->assertTrue($expected === $test);
+	}
+
+	/**
+	 * Tests Arr::previous_by_value()
+	 *
+	 * @test
+	 */
+	public function test_previous_by_value()
+	{
+		// our test array
+		$arr = array(2 => 'A', 4 => '2', 6 => 'C');
+
+		// test: value not found in array
+		$expected = false;
+		$test = \Arr::previous_by_value($arr, 'Z');
+		$this->assertTrue($expected === $test);
+
+		// test: no previous value
+		$expected = null;
+		$test = \Arr::previous_by_value($arr, 'A');
+		$this->assertTrue($expected === $test);
+
+		// test: strict value comparison
+		$expected = false;
+		$test = \Arr::previous_by_value($arr, 2, true, true);
+		$this->assertTrue($expected === $test);
+
+		// test: get previous value
+		$expected = 'A';
+		$test = \Arr::previous_by_value($arr, '2');
+		$this->assertTrue($expected === $test);
+
+		// test: get previous key
+		$expected = 4;
+		$test = \Arr::previous_by_value($arr, 'C', false);
+		$this->assertTrue($expected === $test);
+	}
+
+	/**
+	 * Tests Arr::next_by_value()
+	 *
+	 * @test
+	 */
+	public function test_next_by_value()
+	{
+		// our test array
+		$arr = array(2 => 'A', 4 => '2', 6 => 'C');
+
+		// test: value not found in array
+		$expected = false;
+		$test = \Arr::next_by_value($arr, 'Z');
+		$this->assertTrue($expected === $test);
+
+		// test: no next value
+		$expected = null;
+		$test = \Arr::next_by_value($arr, 'C');
+		$this->assertTrue($expected === $test);
+
+		// test: strict value comparison
+		$expected = false;
+		$test = \Arr::next_by_value($arr, 2, true, true);
+		$this->assertTrue($expected === $test);
+
+		// test: get next value
+		$expected = 'C';
+		$test = \Arr::next_by_value($arr, '2');
+		$this->assertTrue($expected === $test);
+
+		// test: get next key
+		$expected = 4;
+		$test = \Arr::next_by_value($arr, 'A', false);
+		$this->assertTrue($expected === $test);
+	}
 }

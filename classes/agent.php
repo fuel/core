@@ -189,17 +189,21 @@ class Agent
 			}
 		}
 
-		// try the build in get_browser() method
-		if (ini_get('browscap') == '' or false === $browser = get_browser(null, true))
+		// do we have a user agent?
+		if (static::$user_agent)
 		{
-			// if it fails, emulate get_browser()
-			$browser = static::get_from_browscap();
-		}
+			// try the build in get_browser() method
+			if (ini_get('browscap') == '' or false === $browser = get_browser(null, true))
+			{
+				// if it fails, emulate get_browser()
+				$browser = static::get_from_browscap();
+			}
 
-		if ($browser)
-		{
-			// save it for future reference
-			static::$properties = array_change_key_case($browser);
+			if ($browser)
+			{
+				// save it for future reference
+				static::$properties = array_change_key_case($browser);
+			}
 		}
 	}
 

@@ -112,7 +112,7 @@ abstract class Controller_Rest extends \Controller
 		}
 
 		// Get the configured auth method if none is defined
-		$this->auth === null or $this->auth = \Config::get('rest.auth');
+		$this->auth === null and $this->auth = \Config::get('rest.auth');
 
 		//Check method is authorized if required, and if we're authorized
 		if ($this->auth == 'basic')
@@ -125,7 +125,10 @@ abstract class Controller_Rest extends \Controller
 		}
 		elseif (method_exists($this, $this->auth))
 		{
-			$valid_login = $this->{$this->auth}();
+			if ($valid_login = $this->{$this->auth}() instanceOf \Response)
+			{
+				return $valid_login;
+			}
 		}
 		else
 		{
@@ -241,7 +244,7 @@ abstract class Controller_Rest extends \Controller
 	protected function _detect_format()
 	{
 		// A format has been passed as an argument in the URL and it is supported
-		if (\Input::param('format') and $this->_supported_formats[\Input::param('format')])
+		if (\Input::param('format') and array_key_exists(\Input::param('format'), $this->_supported_formats))
 		{
 			return \Input::param('format');
 		}
@@ -464,7 +467,7 @@ abstract class Controller_Rest extends \Controller
 	protected function _force_login($nonce = '')
 	{
 		// Get the configured auth method if none is defined
-		$this->auth === null or $this->auth = \Config::get('rest.auth');
+		$this->auth === null and $this->auth = \Config::get('rest.auth');
 
 		if ($this->auth == 'basic')
 		{

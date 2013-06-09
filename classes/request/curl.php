@@ -220,6 +220,21 @@ class Request_Curl extends \Request_Driver
 	}
 
 	/**
+	 * HEAD request
+	 *
+	 * @param   array  $params
+	 * @return  void
+	 */
+	protected function method_head()
+	{
+		$this->method_get();
+
+		$this->set_option(CURLOPT_NOBODY, true);
+		$this->set_option(CURLOPT_HEADER, true);
+
+	}
+
+	/**
 	 * POST request
 	 *
 	 * @param   array  $params

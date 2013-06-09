@@ -316,7 +316,12 @@ class DBUtil
 			{
 				if(is_array($attr['CONSTRAINT']))
 				{
-					$sql .= "('".implode("', '",$attr['CONSTRAINT'])."')";
+					$sql .= "(";
+					foreach($attr['CONSTRAINT'] as $constraint)
+					{
+						$sql .= (is_string($constraint) ? "'".$constraint."'" : $constraint).", ";
+					}
+					$sql = rtrim($sql,', '). ")";
 				}
 				else
 				{
