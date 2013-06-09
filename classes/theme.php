@@ -376,6 +376,29 @@ class Theme
 	}
 
 	/**
+	 * Returns wether or not a section has partials defined
+	 *
+	 * @param   string  				$section   Name of the partial section in the template
+	 * @return  bool
+	 */
+	public function has_partials($section)
+	{
+		return $this->partial_count($section) > 0;
+	}
+
+	/**
+	 * Returns the number of partials defined for a section
+	 *
+	 * @param   string  				$section   Name of the partial section in the template
+	 * @return  int
+	 */
+	public function partial_count($section)
+	{
+		// return the defined partial count
+		return array_key_exists($section, $this->partials) ? count($this->partials[$section]) : 0;
+	}
+
+	/**
 	 * Sets a chrome for a partial
 	 *
 	 * @param   string  				$section	Name of the partial section in the template
@@ -718,20 +741,21 @@ class Theme
 	 */
 	protected function set_theme($theme = null, $type = 'active')
 	{
-		// remove the defined theme asset paths from the asset instance
-		empty($this->active['asset_path']) or $this->asset->remove_path($this->active['asset_path']);
-		empty($this->fallback['asset_path']) or $this->asset->remove_path($this->fallback['asset_path']);
-
-		// set the fallback theme
+		// set the theme if given
 		if ($theme !== null)
 		{
+			// remove the defined theme asset paths from the asset instance
+			empty($this->active['asset_path']) or $this->asset->remove_path($this->active['asset_path']);
+			empty($this->fallback['asset_path']) or $this->asset->remove_path($this->fallback['asset_path']);
+
 			$this->{$type} = $this->create_theme_array($theme);
+
+			// add the asset paths to the asset instance
+			empty($this->fallback['asset_path']) or $this->asset->add_path($this->fallback['asset_path']);
+			empty($this->active['asset_path']) or $this->asset->add_path($this->active['asset_path']);
 		}
 
-		// add the asset paths to the asset instance
-		empty($this->fallback['asset_path']) or $this->asset->add_path($this->fallback['asset_path']);
-		empty($this->active['asset_path']) or $this->asset->add_path($this->active['asset_path']);
-
+		// and return the theme config
 		return $this->{$type};
 	}
 
