@@ -20,7 +20,7 @@ function displayPqp($output) {
 	$css = preg_replace('/[\n\r]/', '', <<<CSS
 .pQp {width:100%;z-index:9999;text-align:center;position:fixed;bottom:0;}
 * html .pQp {position:absolute;}
-.pQp * {margin:0 ;padding:0;border:none;background:#222;}
+.pQp * {margin:0 ;padding:0;border:none;background:transparent;}
 #pQp {margin:0 auto;width:85%;min-width:960px;background-color:#222;border:12px solid #000;border-bottom:none;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:15px;-webkit-border-top-right-radius:15px;-moz-border-radius-topleft:15px;-moz-border-radius-topright:15px;border-top-left-radius:15px;border-top-right-radius:15px;}
 #pQp tbody {background:transparent;}
 #pQp .pqp-box h3 {font-weight:normal;line-height:200px;padding:0 15px;color:#fff;}
@@ -49,7 +49,7 @@ function displayPqp($output) {
 #pQp var {font-size:18px;margin:0 0 2px 0}
 #pQp h4 {font-size:10px}
 .pqp-hideDetails .heightToggle {visibility:hidden}
-#pqp-metrics td {height:80px;width:11%;text-align:center;cursor:pointer;border:1px solid #000;border-bottom:6px solid #444;-webkit-border-top-left-radius:15px;-moz-border-radius-topleft:15px;-webkit-border-top-right-radius:15px;-moz-border-radius-topright:15px;border-top-left-radius:15px;border-top-right-radius:15px;}
+#pqp-metrics td {height:80px;width:11%;text-align:center;cursor:pointer;border:4px solid #000;border-bottom:6px solid #444;-webkit-border-top-left-radius:15px;-moz-border-radius-topleft:15px;-webkit-border-top-right-radius:15px;-moz-border-radius-topright:15px;border-top-left-radius:15px;border-top-right-radius:15px;background-color:#222;}
 #pqp-metrics td:hover {background:#222;border-bottom:6px solid #777}
 #pqp-metrics .pqp-green {border-left:none}
 #pqp-metrics .pqp-red {border-right:none}
@@ -86,7 +86,7 @@ function displayPqp($output) {
 .pQp .pqp-log-speed td.pqp-type {background:#2b5481!important}
 .pQp .pqp-log-log prepqp-{color:#999;background-color:transparent;}
 .pQp .pqp-log-log td:hover pre {color:#fff}
-.pQp .pqp-log-memory em,.pQp .pqp-log-speed em {float:left;font-style:normal;display:block;color:#fff;background-color:transparent;}
+.pQp .pqp-log-log em,.pqp-log-memory em,.pQp .pqp-log-speed em {float:left;font-style:normal;display:block;color:#fff;background-color:transparent;}
 .pQp .pqp-log-memory pre,.pQp .pqp-log-speed pre {float:right;white-space:normal;display:block;color:#fffd70;background-color:transparent;}
 #pqp-speed .pqp-side td {padding:12px 0;border-left:1px solid #1e3c5c;border-bottom:1px solid #1e3c5c;border-right:1px solid #1e3c5c;}
 #pqp-speed .pqp-side td.pqp-alt {background-color:#2b5481;border-bottom:none;border-left:none;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px;border-bottom-left-radius:30px}
@@ -421,7 +421,7 @@ else {
 				<td class="pqp-type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
 			if($log['type'] == 'log') {
-				$return_output .='<div><pre>'.$log['data'].'</pre></div>';
+				$return_output .='<div><pre></pre><em>'.$log['data'].'</em></div>';
 			}
 			elseif($log['type'] == 'memory') {
 				$return_output .='<div><pre>'.$log['data'].'</pre> <em>'.$log['dataType'].'</em>: '.$log['name'].' </div>';
