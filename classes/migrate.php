@@ -284,7 +284,7 @@ class Migrate
 			if ($result === false)
 			{
 				logger(Fuel::L_INFO, 'Skipped migration to '.$ver.'.');
-				return $done;
+				return false;
 			}
 
 			$file = basename($migration['path'], '.php');

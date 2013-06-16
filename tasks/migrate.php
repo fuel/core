@@ -218,7 +218,11 @@ class Migrate
 		}
 		else
 		{
-			if ($version !== '')
+			if ($migrations === false)
+			{
+				\Cli::write('Some migrations where skipped for '.$type.':'.$name.'. Please re-run the migrations.', 'cyan');
+			}
+			elseif ($version !== '')
 			{
 				\Cli::write('No migrations were found for '.$type.':'.$name.'.');
 			}
