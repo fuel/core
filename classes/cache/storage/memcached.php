@@ -237,13 +237,19 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 		$key = $this->_get_key();
 
 		$payload = $this->prep_contents();
-
+		
+		// Calculate relative expiration time (eg. 60s)
+		$expiration = !is_null($this->expiration) ? $this->expiration - time() : 0;
+		
+		// if expiration value is less than 30 days, use relative value, otherwise use unix timestamp:
+		$expiration = $expiration <= 2592000 ? (int) $expiration : (int) $this->expiration;
+		
 		// write it to the memcached server
-		if ($this->memcached->set($key, $payload, ! is_null($this->expiration) ? (int) $this->expiration : 0) === false)
+		if ($this->memcached->set($key, $payload, $expiration) === false)
 		{
 			throw new \FuelException('Memcached returned error code "'.$this->memcached->getResultCode().'" on write. Check your configuration.');
 		}
-
+		
 		// update the index
 		$this->_update_index($key);
 
