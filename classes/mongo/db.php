@@ -193,7 +193,7 @@ class Mongo_Db
 		// Let's give this a go
 		try
 		{
-			$this->connection = new \Mongo(trim($connection_string), $options);
+			$this->connection = new \MongoClient(trim($connection_string), $options);
 			$this->db = $this->connection->{$config['database']};
 			return $this;
 		}
