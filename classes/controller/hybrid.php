@@ -48,6 +48,43 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	}
 
 	/**
+	 * router
+	 *
+	 * this router will call action methods for normal requests,
+	 * and REST methods for RESTful calls
+	 *
+	 * @param  string
+	 * @param  array
+	 */
+	public function router($resource, array $arguments)
+	{
+		// if this is an ajax call
+		if ($this->is_restful())
+		{
+			// have the Controller_Rest router deal with it
+			return parent::router($resource, $arguments);
+		}
+
+		// check if a input specific method exists
+		$controller_method = strtolower(\Input::method()) . '_' . $resource;
+
+		// fall back to action_ if no rest method is provided
+		if ( ! method_exists($this, $controller_method))
+		{
+			$controller_method = 'action_'.$resource;
+		}
+
+		// check if the action method exists
+		if (method_exists($this, $controller_method))
+		{
+			return call_user_func_array(array($this, $controller_method), $arguments);
+		}
+
+		// if not, we got ourselfs a genuine 404!
+		throw new \HttpNotFoundException();
+	}
+
+	/**
 	 * After controller method has run output the template
 	 *
 	 * @param  Response  $response
