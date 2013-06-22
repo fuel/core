@@ -30,7 +30,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 	/*
 	 * @var  Redis  storage for the redis object
 	 */
-	protected $redis = false;
+	protected static $redis = false;
 
 	// ---------------------------------------------------------------------
 
@@ -52,12 +52,12 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		$this->config['database'] = $this->_validate_config('database', isset($this->config['database'])
 			? $this->config['database'] : 'default');
 
-		if ($this->redis === false)
+		if (static::$redis === false)
 		{
 			// get the redis database instance
 			try
 			{
-				$this->redis = \Redis::instance($this->config['database']);
+				static::$redis = \Redis::instance($this->config['database']);
 			}
 			catch (\Exception $e)
 			{
@@ -65,7 +65,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 			}
 
 			// get the redis version
-			preg_match('/redis_version:(.*?)\n/', $this->redis->info(), $info);
+			preg_match('/redis_version:(.*?)\n/', static::$redis->info(), $info);
 			if (version_compare(trim($info[1]), '1.2') < 0)
 			{
 				throw new \FuelException('Version 1.2 or higher of the Redis NoSQL engine is required to use the redis cache driver.');
@@ -100,7 +100,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 			}
 
 			// get the cache index
-			$index = $this->redis->get($this->config['cache_id'].':index:'.$sections);
+			$index = static::$redis->get($this->config['cache_id'].':index:'.$sections);
 			is_null($index) or $index = $this->_unserialize($index);
 
 			// get the key from the index
@@ -124,7 +124,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		$key = $this->_get_key(true);
 
 		// delete the key from the redis server
-		if ($key and $this->redis->del($key) === false)
+		if ($key and static::$redis->del($key) === false)
 		{
 			// do something here?
 		}
@@ -144,7 +144,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		$section = empty($section) ? '' : '.'.$section;
 
 		// get the directory index
-		$index = $this->redis->get($this->config['cache_id'].':dir:');
+		$index = static::$redis->get($this->config['cache_id'].':dir:');
 		is_null($index) or $index = $this->_unserialize($index);
 
 		if (is_array($index))
@@ -171,7 +171,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 			foreach ($dirs as $dir)
 			{
 				// get the stored cache entries for this index
-				$list = $this->redis->get($this->config['cache_id'].':index:'.$dir);
+				$list = static::$redis->get($this->config['cache_id'].':index:'.$dir);
 				if (is_null($list))
 				{
 					$list = array();
@@ -184,15 +184,15 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 				// delete all stored keys
 				foreach($list as $item)
 				{
-					$this->redis->del($item[0]);
+					static::$redis->del($item[0]);
 				}
 
 				// and delete the index itself
-				$this->redis->del($this->config['cache_id'].':index:'.$dir);
+				static::$redis->del($this->config['cache_id'].':index:'.$dir);
 			}
 
 			// update the directory index
-			$this->redis->set($this->config['cache_id'].':dir:', $this->_serialize(array_diff($index, $dirs)));
+			static::$redis->set($this->config['cache_id'].':dir:', $this->_serialize(array_diff($index, $dirs)));
 		}
 	}
 
@@ -266,10 +266,10 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		$key = $this->_get_key();
 
 		// write the cache
-		$this->redis->set($key, $this->prep_contents());
+		static::$redis->set($key, $this->prep_contents());
 		if ( ! empty($this->expiration))
 		{
-			$this->redis->expireat($key, $this->expiration);
+			static::$redis->expireat($key, $this->expiration);
 		}
 
 		// update the index
@@ -289,7 +289,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		$key = $this->_get_key();
 
 		// fetch the session data from the redis server
-		$payload = $this->redis->get($key);
+		$payload = static::$redis->get($key);
 		try
 		{
 			$this->unprep_contents($payload);
@@ -362,7 +362,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 			if ( $key !== false )
 			{
 				unset($index[$identifier]);
-				$this->redis->set($this->config['cache_id'].':index:'.$sections, $this->_serialize($index));
+				static::$redis->set($this->config['cache_id'].':index:'.$sections, $this->_serialize($index));
 			}
 		}
 		else
@@ -410,7 +410,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		}
 
 		// get the cache index and return it
-		return array($identifier, $sections, $this->redis->get($this->config['cache_id'].':index:'.$sections));
+		return array($identifier, $sections, static::$redis->get($this->config['cache_id'].':index:'.$sections));
 	}
 
 	/**
@@ -427,10 +427,10 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		// store the key in the index and write the index back
 		$index[$identifier] = array($key, $this->created);
 
-		$this->redis->set($this->config['cache_id'].':index:'.$sections, $this->_serialize($index));
+		static::$redis->set($this->config['cache_id'].':index:'.$sections, $this->_serialize($index));
 
 		// get the directory index
-		$index = $this->redis->get($this->config['cache_id'].':dir:');
+		$index = static::$redis->get($this->config['cache_id'].':dir:');
 		$index = $index === null ? array() : $index = $this->_unserialize($index);
 
 		if (is_array($index))
@@ -446,7 +446,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		}
 
 		// update the directory index
-		$this->redis->set($this->config['cache_id'].':dir:', $this->_serialize($index));
+		static::$redis->set($this->config['cache_id'].':dir:', $this->_serialize($index));
 	}
 
 	/**
