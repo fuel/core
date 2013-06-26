@@ -212,6 +212,20 @@ class Theme
 	}
 
 	/**
+	 * Loads a viewmodel, and have it use the view from the currently active theme,
+	 * the fallback theme, or the standard FuelPHP cascading file system
+	 *
+	 * @param   string  ViewModel classname without View_ prefix or full classname
+	 * @param   string  Method to execute
+	 * @param   bool    $auto_filter  Auto filter the view data
+	 * @return  View    New View object
+	 */
+	public function viewmodel($view, $method = 'view', $auto_filter = null)
+	{
+		return \ViewModel::forge($view, $method, $auto_filter, $this->find_file($view));
+	}
+
+	/**
 	 * Loads an asset from the currently loaded theme.
 	 *
 	 * @param   string  $path  Relative path to the asset
