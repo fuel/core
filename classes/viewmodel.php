@@ -30,13 +30,16 @@ abstract class ViewModel
 	 * @param   string  Method to execute
 	 * @return  ViewModel
 	 */
-	public static function forge($view, $method = 'view', $auto_filter = null)
+	public static function forge($viewmodel, $method = 'view', $auto_filter = null, $view = null)
 	{
+		// if no custom view is given, make it equal to the viewmodel name
+		is_null($view) and $view = $viewmodel;
+
 		// strip any extensions from the view name to determine the viewmodel to load
 		$viewmodel = \Inflector::words_to_upper(str_replace(
 			array('/', DS),
 			'_',
-			strpos($view, '.') === false ? $view : substr($view, 0, -strlen(strrchr($view, '.')))
+			strpos($viewmodel, '.') === false ? $viewmodel : substr($viewmodel, 0, -strlen(strrchr($viewmodel, '.')))
 		));
 
 		// determine the viewmodel namespace from the current request context
@@ -123,7 +126,7 @@ abstract class ViewModel
 	 */
 	protected function set_view()
 	{
-		$this->_view = \View::forge($this->_view);
+		$this->_view instanceOf View or $this->_view = \View::forge($this->_view);
 	}
 
 	/**
@@ -194,7 +197,7 @@ abstract class ViewModel
 	 * @param  mixed
 	 * @param  bool|null
 	 */
-	public function set($key, $value, $filter = null)
+	public function set($key, $value = null, $filter = null)
 	{
 		is_null($filter) and $filter = $this->_auto_filter;
 		$this->_view->set($key, $value, $filter);
