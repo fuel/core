@@ -408,7 +408,14 @@ class Request
 
 				if ( ! $class->hasMethod($method))
 				{
-					$method = 'action_'.$this->action;
+					// If they call user, go to $this->post_user();
+					$method = strtolower(\Input::method()) . '_' . $this->action;
+
+					// Fall back to action_ if no HTTP request method based method exists
+					if ( ! $class->hasMethod($method))
+					{
+						$method = 'action_'.$this->action;
+					}
 				}
 
 				if ($class->hasMethod($method))
@@ -416,6 +423,11 @@ class Request
 					$action = $class->getMethod($method);
 
 					if ( ! $action->isPublic())
+					{
+						throw new \HttpNotFoundException();
+					}
+
+					if (count($this->method_params) < $action->getNumberOfRequiredParameters())
 					{
 						throw new \HttpNotFoundException();
 					}
