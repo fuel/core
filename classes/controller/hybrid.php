@@ -56,7 +56,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	 * @param  string
 	 * @param  array
 	 */
-	public function router($resource, array $arguments)
+	public function router($resource, $arguments)
 	{
 		// if this is an ajax call
 		if ($this->is_restful())
