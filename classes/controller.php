@@ -41,37 +41,6 @@ abstract class Controller
 	public function before() {}
 
 	/**
-	 * Router
-	 *
-	 * Requests are not made to methods directly The request will be for an "object".
-	 * this simply maps the object and method to the correct Controller method.
-	 *
-	 * @param  string
-	 * @param  array
-	 */
-	public function router($resource, $arguments)
-	{
-		// If they call user, go to $this->post_user();
-		$controller_method = strtolower(\Input::method()) . '_' . $resource;
-
-		// Fall back to action_ if no HTTP request method based method exists
-		if ( ! method_exists($this, $controller_method))
-		{
-			$controller_method = 'action_'.$resource;
-		}
-
-		// If method is not available, throw an HttpNotFound Exception
-		if (method_exists($this, $controller_method))
-		{
-			return call_user_func_array(array($this, $controller_method), $arguments);
-		}
-		else
-		{
-			throw new \HttpNotFoundException();
-		}
-	}
-
-	/**
 	 * This method gets called after the action is called
 	 */
 	public function after($response)
