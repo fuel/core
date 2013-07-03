@@ -56,20 +56,31 @@ class Date
 		static::$display_timezone = \Config::get('default_timezone') ?: date_default_timezone_get();
 
 		// Ugly temporary windows fix because windows doesn't support strptime()
-		// Better fix will accept custom pattern parsing but only parse numeric input on windows servers
+		// It attempts conversion between glibc style formats and PHP's internal style format (no 100% match!)
 		if ( ! function_exists('strptime') && ! function_exists('Fuel\Core\strptime'))
 		{
 			function strptime($input, $format)
 			{
-				if ($ts = strtotime($input))
+				// convert the format string from glibc to date format (where possible)
+				$new_format = str_replace(
+					array('%a', '%A', '%d', '%e', '%j', '%u', '%w', '%U'  , '%V', '%W'  , '%b', '%B', '%h', '%m', '%C'  , '%g', '%G', '%y', '%Y', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r'     , '%R' , '%S', '%T'   , '%X'  , '%z', '%Z', '%c'  , '%D'   , '%F'   , '%s', '%x'  , '%n', '%t', '%%'),
+					array('D' , 'l' , 'd' , 'j' , 'N' , 'z' , 'w' , '[^^]', 'W' , '[^^]', 'M' , 'F' , 'M' , 'm' , '[^^]', 'Y' , 'o' , 'y' , 'Y' , 'H' , 'G' , 'h' , 'g' , 'i' , 'A' , 'a' , 'H:i:s A', 'H:i', 's' , 'H:i:s', '[^^]', 'O' , 'T ', '[^^]', 'm/d/Y', 'Y-m-d', 'U' , '[^^]', "\n", "\t", '%'),
+					$format
+				);
+
+				// parse the input
+				$parsed = date_parse_from_format($new_format, $input);
+
+				// parse succesful?
+				if (is_array($parsed) and empty($parsed['errors']))
 				{
 					return array(
-						'tm_year' => date('Y', $ts) - 1900,
-						'tm_mon'  => date('n', $ts) - 1,
-						'tm_mday' => date('j', $ts),
-						'tm_hour' => date('H', $ts),
-						'tm_min'  => date('i', $ts),
-						'tm_sec'  => date('s', $ts),
+						'tm_year' => $parsed['year'] - 1900,
+						'tm_mon'  => $parsed['month'] - 1,
+						'tm_mday' => $parsed['day'],
+						'tm_hour' => $parsed['hour'] ?: 0,
+						'tm_min'  => $parsed['minute'] ?: 0,
+						'tm_sec'  => $parsed['second'] ?: 0,
 					);
 				}
 				else
