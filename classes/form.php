@@ -137,6 +137,16 @@ class Form
 	{
 		return static::$instance->hidden($field, $value, $attributes);
 	}
+	
+	/**
+	 * Create a CSRF hidden field
+	 *
+	 * @return string
+	 */
+	public static function csrf()
+	{
+		return static::hidden(\Config::get('security.csrf_token_key', 'fuel_csrf_token'), \Security::fetch_token());
+	}
 
 	/**
 	 * Create a password input field
