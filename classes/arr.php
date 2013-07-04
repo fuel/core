@@ -552,18 +552,11 @@ class Arr
 	 */
 	public static function insert_random(array &$original, $values)
 	{
-		if (is_array($values))
-		{
-			foreach ($values as $value)
-			{
-				$offset = array_rand($original);
-				array_splice($original, $offset, 0, $value);
-			}
-		}
-		else
+		! is_array($values) and $values = array($values);
+		foreach ($values as $value)
 		{
 			$offset = array_rand($original);
-			array_splice($original, $offset, 0, array($values));
+			array_splice($original, $offset, 0, array($value));
 		}
 		return true;
 	}
