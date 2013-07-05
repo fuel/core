@@ -543,6 +543,25 @@ class Arr
 	}
 
 	/**
+	 * Insert value(s) into a random iteration array
+	 * WARNING: original array is edited by reference, only boolean success is returned
+	 *
+	 * @param   array        the original array (by reference)
+	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
+	 * @return  bool         false when array shorter then $pos, otherwise true
+	 */
+	public static function insert_random(array &$original, $values)
+	{
+		! is_array($values) and $values = array($values);
+		foreach ($values as $value)
+		{
+			$offset = array_rand($original);
+			array_splice($original, $offset, 0, array($value));
+		}
+		return true;
+	}
+
+	/**
 	 * Insert value(s) into an array, mostly an array_splice alias
 	 * WARNING: original array is edited by reference, only boolean success is returned
 	 *
