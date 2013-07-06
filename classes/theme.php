@@ -698,7 +698,7 @@ class Theme
 		// determine the path prefix and optionally the module path
 		$path_prefix = '';
 		$module_path = null;
-		if ($this->config['use_modules'] and $module = \Request::active()->module)
+		if ($this->config['use_modules'] and class_exists('Request', false) and $request = \Request::active() and $module = $request->module)
 		{
 			// we're using module name prefixing
 			$path_prefix = $module.DS;
