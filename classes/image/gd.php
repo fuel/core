@@ -385,6 +385,17 @@ class Image_Gd extends \Image_Driver
 	}
 
 	/**
+	 * @return [resource]            [image resource]
+	 */
+	public function create_resource($width, $height, $bgcolor, $alpha = 100)
+	{
+		$bgimg = $this->create_transparent_image($width, $height);
+		$color = $this->create_color($bgimg, $bgcolor, $alpha);
+		imagefill($bgimg, 0, 0, $color);
+		return $bgimg;
+	}
+
+	/**
 	 * Creates a new color usable by GD.
 	 *
 	 * @param   resource  $image  The image to create the color from
