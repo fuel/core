@@ -306,6 +306,15 @@ class Str
 			case 'sha1' :
 				return sha1(uniqid(mt_rand(), true));
 				break;
+
+			case 'uid':
+			    return sprintf('%s-%s-%s-%s-%s',
+			        static::random('hexdec', 8),
+                    static::random('hexdec', 4),
+                    static::random('hexdec', 4),
+                    static::random('hexdec', 4),
+                    static::random('hexdec', 12));
+                break;
 		}
 	}
 
