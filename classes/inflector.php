@@ -190,7 +190,14 @@ class Inflector
 	 */
 	public static function camelize($underscored_word)
 	{
-		return preg_replace('/(^|_)(.)/e', "strtoupper('\\2')", strval($underscored_word));
+		return preg_replace_callback(
+			'/(^|_)(.)/',
+			function ($parm)
+			{
+				return strtoupper($parm[2]);
+			},
+			strval($underscored_word)
+		);
 	}
 
 	/**
