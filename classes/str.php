@@ -314,7 +314,7 @@ class Str
 					static::random('hexdec', 4),
 					static::random('hexdec', 4),
 					static::random('hexdec', 12));
-			    break;
+				break;
 		}
 	}
 
