@@ -265,8 +265,8 @@ class Security
 	 */
 	public static function check_token($value = null)
 	{
-		$value = $value ?: \Input::post(static::$csrf_token_key, \Input::json(static::$csrf_token_key, 'fail'));
-
+		$value = $value ?: \Input::param(static::$csrf_token_key, \Input::json(static::$csrf_token_key, 'fail'));
+		
 		// always reset token once it's been checked and still the same
 		if (static::fetch_token() == static::$csrf_old_token and ! empty($value))
 		{
