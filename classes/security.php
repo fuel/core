@@ -265,17 +265,7 @@ class Security
 	 */
 	public static function check_token($value = null)
 	{
-		$value = $value ?: \Input::post(static::$csrf_token_key, \Input::json(static::$csrf_token_key, 'fail'));
-		
-		// If the request method is PUT or DELETE we should try and get data from those...
-		if(\Input::method() === 'PUT' && $value == 'fail')
-		{
-			$value = \Input::put(static::$csrf_token_key, 'fail');
-		} 
-		if(\Input::method() === 'DELETE' && $value == 'fail')
-		{
-			$value = \Input::delete(static::$csrf_token_key, 'fail');
-		}
+		$value = $value ?: \Input::param(static::$csrf_token_key, \Input::json(static::$csrf_token_key, 'fail'));
 		
 		// always reset token once it's been checked and still the same
 		if (static::fetch_token() == static::$csrf_old_token and ! empty($value))
