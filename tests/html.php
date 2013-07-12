@@ -135,7 +135,8 @@ class Test_Html extends TestCase
 
 		// External uri
 		$output = Html::img('http://google.com/image.png');
-		$expected = '<img src="http://google.com/image.png" />';
+		$expected = '<img src="http://google.com/image.png" alt="" />';
+		$this->assertEquals($expected, $output);
 	}
 
 	/**
