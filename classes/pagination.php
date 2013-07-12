@@ -457,7 +457,7 @@ class Pagination
 	protected function _recalculate()
 	{
 		// calculate the number of pages
-		$this->config['total_pages'] = ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
+		$this->config['total_pages'] = (int) ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
 
 		// get the current page number, either from the one set, or from the URI or the query string
 		if ($this->config['current_page'])
