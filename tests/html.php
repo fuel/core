@@ -126,7 +126,7 @@ class Test_Html extends TestCase
 
 		// Internal uri
 		$output = Html::img('image.png');
-		$expected = '<img src="'. $image_path . '" alt="image" />';
+		$expected = '<img src="'. $image_path . '" alt="" />';
 		$this->assertEquals($expected, $output);
 
 		$output = Html::img('image.png', array('alt' => 'Image'));
