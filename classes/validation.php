@@ -963,7 +963,8 @@ class Validation
 	}
 
 	/**
-	 * Checks whether string input is valid date format
+	 * Checks whether string input is valid date format. When a format is passed
+	 * it will make sure the date will be in that specific format if validated
 	 *
 	 * @param   string
 	 * @param   string  The format used at the time of a validation
@@ -976,6 +977,7 @@ class Validation
 		{
 			return true;
 		}
+
 		if ($format)
 		{
 			$parsed = date_parse_from_format($format, $val);
@@ -984,6 +986,21 @@ class Validation
 		{
 			$parsed = date_parse($val);
 		}
-		return \Arr::get($parsed, 'error_count', 1) + ($strict ? \Arr::get($parsed, 'warning_count', 1) : 0) === 0;
+
+		if (\Arr::get($parsed, 'error_count', 1) + ($strict ? \Arr::get($parsed, 'warning_count', 1) : 0) === 0)
+		{
+			if ($format)
+			{
+				return date($format, mktime($parsed['hour'], $parsed['minute'], $parsed['second'], $parsed['month'], $parsed['day'], $parsed['year']));
+			}
+			else
+			{
+				return true;
+			}
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
