@@ -134,7 +134,7 @@ class Input
 			// Fall back to parsing the REQUEST URI
 			if (isset($_SERVER['REQUEST_URI']))
 			{
-				$uri = $_SERVER['REQUEST_URI'];
+				$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
 			}
 			else
 			{

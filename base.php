@@ -363,3 +363,27 @@ if (!function_exists('http_build_url'))
 		;
 	}
 }
+
+if ( ! function_exists('get_common_path'))
+{
+	function get_common_path($paths)
+	{
+		$lastOffset = 1;
+		$common = '/';
+		while (($index = strpos($paths[0], '/', $lastOffset)) !== false)
+		{
+			$dirLen = $index - $lastOffset + 1;	// include /
+			$dir = substr($paths[0], $lastOffset, $dirLen);
+			foreach ($paths as $path)
+			{
+				if (substr($path, $lastOffset, $dirLen) != $dir)
+				{
+					return $common;
+				}
+			}
+			$common .= $dir;
+			$lastOffset = $index + 1;
+		}
+		return $common;
+	}
+}

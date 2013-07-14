@@ -264,7 +264,8 @@ class Fuel
 		}
 		if (\Input::server('script_name'))
 		{
-			$base_url .= str_replace('\\', '/', dirname(\Input::server('script_name')));
+			$common = get_common_path(array(\Input::server('request_uri'), \Input::server('script_name')));
+			$base_url .= $common;
 		}
 
 		// Add a slash if it is missing and return it
