@@ -15,9 +15,9 @@ class Database_Result_Cached extends \Database_Result
 {
 
 	/**
-	 * @param array  $result
-	 * @param string $sql
-	 * @param mixed  $as_object
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
 	 */
 	public function __construct(array $result, $sql, $as_object = null)
 	{

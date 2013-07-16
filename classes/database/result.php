@@ -21,31 +21,31 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	protected $_query;
 
 	/**
-	 * @var  resource  Raw result resource
+	 * @var  resource  $_result raw result resource
 	 */
 	protected $_result;
 
 	/**
-	 * @var  int  Total number of rows
+	 * @var  int  $_total_rows total number of rows
 	 */
 	protected $_total_rows  = 0;
 
 	/**
-	 * @var  int  Current row number
+	 * @var  int  $_current_row  current row number
 	 */
 	protected $_current_row = 0;
 
 	/**
-	 * @var  bool  Return rows as an object or associative array
+	 * @var  bool  $_as_object  return rows as an object or associative array
 	 */
 	protected $_as_object;
 
 	/**
 	 * Sets the total number of rows and stores the result locally.
 	 *
-	 * @param mixed  $result    query result
-	 * @param string $sql       SQL query
-	 * @param mixed  $as_object object
+	 * @param  mixed   $result     query result
+	 * @param  string  $sql        SQL query
+	 * @param  mixed   $as_object  object
 	 */
 	public function __construct($result, $sql, $as_object)
 	{
