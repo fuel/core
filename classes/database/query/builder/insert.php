@@ -13,22 +13,18 @@ namespace Fuel\Core;
 
 class Database_Query_Builder_Insert extends \Database_Query_Builder
 {
-
-	// INSERT INTO ...
 	/**
-	 * @var string
+	 * @var string  $_table  table
 	 */
 	protected $_table;
 
-	// (...)
 	/**
-	 * @var array
+	 * @var array $_columns  columns
 	 */
 	protected $_columns = array();
 
-	// VALUES (...)
 	/**
-	 * @var array
+	 * @var array  $_values  values
 	 */
 	protected $_values = array();
 
@@ -38,7 +34,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	 * @param   mixed $table   table name or array($table, $alias) or object
 	 * @param   array $columns column names
 	 */
-	public function __construct ($table = NULL, array $columns = NULL)
+	public function __construct($table = null, array $columns = null)
 	{
 		if ($table)
 		{
@@ -60,7 +56,6 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	 * Sets the table to insert into.
 	 *
 	 * @param   mixed $table table name or array($table, $alias) or object
-	 *
 	 * @return  $this
 	 */
 	public function table($table)
@@ -74,7 +69,6 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	 * Set the columns that will be inserted.
 	 *
 	 * @param   array $columns column names
-	 *
 	 * @return  $this
 	 */
 	public function columns(array $columns)
@@ -88,10 +82,9 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	 * Adds values. Multiple value sets can be added.
 	 *
 	 * @return  $this
-	 *
 	 * @throws \FuelException
 	 */
-	public function values()
+	public function values(array $values)
 	{
 		if ( ! is_array($this->_values))
 		{
@@ -124,7 +117,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	/**
 	 * Use a sub-query to for the inserted values.
 	 *
-	 * @param   Database_Query $query Database_Query of SELECT type
+	 * @param   Database_Query  $query  Database_Query of SELECT type
 	 *
 	 * @return  $this
 	 *
@@ -145,7 +138,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	/**
 	 * Compile the SQL query and return it.
 	 *
-	 * @param   mixed $db Database instance or instance name
+	 * @param   mixed  $db  Database instance or instance name
 	 *
 	 * @return  string
 	 */
@@ -196,18 +189,17 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	}
 
 	/**
+	 * Reset the query parameters
+	 *
 	 * @return $this
 	 */
 	public function reset()
 	{
-		$this->_table = NULL;
-
+		$this->_table = null;
 		$this->_columns = array();
 		$this->_values  = array();
-
 		$this->_parameters = array();
 
 		return $this;
 	}
-
-} // End Database_Query_Builder_Insert
+}

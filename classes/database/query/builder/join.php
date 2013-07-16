@@ -13,21 +13,18 @@ namespace Fuel\Core;
 
 class Database_Query_Builder_Join extends \Database_Query_Builder
 {
-	// Type of JOIN
 	/**
-	 * @var string
+	 * @var string  $_type  join type
 	 */
 	protected $_type;
 
-	// JOIN ...
 	/**
-	 * @var string
+	 * @var string  $_table  join table
 	 */
 	protected $_table;
 
-	// ON ...
 	/**
-	 * @var array
+	 * @var array  $_on  ON clauses
 	 */
 	protected $_on = array();
 
@@ -53,9 +50,9 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Adds a new OR condition for joining.
 	 *
-	 * @param   mixed  $c1 column name or array($column, $alias) or object
-	 * @param   string $op logic operator
-	 * @param   mixed  $c2 column name or array($column, $alias) or object
+	 * @param   mixed   $c1  column name or array($column, $alias) or object
+	 * @param   string  $op  logic operator
+	 * @param   mixed   $c2  column name or array($column, $alias) or object
 	 *
 	 * @return  $this
 	 */
@@ -69,9 +66,9 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Adds a new AND condition for joining.
 	 *
-	 * @param   mixed  $c1 column name or array($column, $alias) or object
-	 * @param   string $op logic operator
-	 * @param   mixed  $c2 column name or array($column, $alias) or object
+	 * @param   mixed   $c1  column name or array($column, $alias) or object
+	 * @param   string  $op  logic operator
+	 * @param   mixed   $c2  column name or array($column, $alias) or object
 	 *
 	 * @return  $this
 	 */
@@ -85,9 +82,9 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Adds a new AND condition for joining.
 	 *
-	 * @param   mixed  $c1 column name or array($column, $alias) or object
-	 * @param   string $op logic operator
-	 * @param   mixed  $c2 column name or array($column, $alias) or object
+	 * @param   mixed   $c1  column name or array($column, $alias) or object
+	 * @param   string  $op  logic operator
+	 * @param   mixed   $c2  column name or array($column, $alias) or object
 	 *
 	 * @return  $this
 	 */
@@ -99,7 +96,7 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Compile the SQL partial for a JOIN statement and return it.
 	 *
-	 * @param   mixed $db Database instance or instance name
+	 * @param   mixed  $db  Database_Connection instance or instance name
 	 *
 	 * @return  string
 	 */

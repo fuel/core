@@ -13,24 +13,20 @@ namespace Fuel\Core;
 
 abstract class Database_Query_Builder_Where extends \Database_Query_Builder
 {
-
-	// WHERE ...
 	/**
-	 * @var array
+	 * @var array  $_where  where statements
 	 */
 	protected $_where = array();
 
-	// ORDER BY ...
 	/**
-	 * @var array
+	 * @var array  $_order_by  order by clause
 	 */
 	protected $_order_by = array();
 
-	// LIMIT ...
 	/**
-	 * @var null
+	 * @var  integer  $_limit
 	 */
-	protected $_limit = NULL;
+	protected $_limit = null;
 
 	/**
 	 * Alias of and_where()
@@ -45,9 +41,9 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder
 	/**
 	 * Creates a new "AND WHERE" condition for the query.
 	 *
-	 * @param   mixed  $column column name or array($column, $alias) or object
-	 * @param   string $op     logic operator
-	 * @param   mixed  $value  column value
+	 * @param   mixed   $column  column name or array($column, $alias) or object
+	 * @param   string  $op      logic operator
+	 * @param   mixed   $value   column value
 	 *
 	 * @return  $this
 	 */
@@ -91,9 +87,9 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder
 	/**
 	 * Creates a new "OR WHERE" condition for the query.
 	 *
-	 * @param   mixed  $column column name or array($column, $alias) or object
-	 * @param   string $op     logic operator
-	 * @param   mixed  $value  column value
+	 * @param   mixed   $column  column name or array($column, $alias) or object
+	 * @param   string  $op      logic operator
+	 * @param   mixed   $value   column value
 	 *
 	 * @return  $this
 	 */
@@ -204,8 +200,8 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder
 	/**
 	 * Applies sorting with "ORDER BY ..."
 	 *
-	 * @param   mixed  $column    column name or array($column, $alias) or object
-	 * @param   string $direction direction of sorting
+	 * @param   mixed   $column     column name or array($column, $alias) or object
+	 * @param   string  $direction  direction of sorting
 	 *
 	 * @return  $this
 	 */
@@ -219,7 +215,7 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder
 	/**
 	 * Return up to "LIMIT ..." results
 	 *
-	 * @param   integer $number maximum results to return
+	 * @param   integer  $number  maximum results to return
 	 *
 	 * @return  $this
 	 */
@@ -229,5 +225,4 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder
 
 		return $this;
 	}
-
-} // End Database_Query_Builder_Where
+}

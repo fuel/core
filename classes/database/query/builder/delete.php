@@ -22,7 +22,7 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 	 *
 	 * @param mixed $table table name or array($table, $alias) or object
 	 */
-	public function __construct($table = NULL)
+	public function __construct($table = null)
 	{
 		if ($table)
 		{
@@ -37,7 +37,7 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 	/**
 	 * Sets the table to delete from.
 	 *
-	 * @param   mixed $table table name or array($table, $alias) or object
+	 * @param   mixed  $table  table name or array($table, $alias) or object
 	 *
 	 * @return  $this
 	 */
@@ -51,7 +51,7 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 	/**
 	 * Compile the SQL query and return it.
 	 *
-	 * @param   mixed $db Database instance or instance name
+	 * @param   mixed  $db  Database_Connection instance or instance name
 	 *
 	 * @return  string
 	 */
@@ -88,6 +88,8 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 	}
 
 	/**
+	 * Reset the query parameters
+	 *
 	 * @return $this
 	 */
 	public function reset()
@@ -103,5 +105,4 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 
 		return $this;
 	}
-
-} // End Database_Query_Builder_Delete
+}

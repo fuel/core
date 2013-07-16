@@ -15,22 +15,22 @@ namespace Fuel\Core;
 class Database_PDO_Connection extends \Database_Connection
 {
 	/**
-	 * @var  \PDO  Raw server connection
+	 * @var  \PDO  $_connection  raw server connection
 	 */
 	protected $_connection;
 
 	/**
-	 * @var  string  PDO uses no quoting by default for identifiers
+	 * @var  string  $_identifier  PDO uses no quoting by default for identifiers
 	 */
 	protected $_identifier = '';
 
 	/**
-	 * @var  bool  Allows transactions
+	 * @var  bool  $_in_transation  allows transactions
 	 */
 	protected $_in_transaction = false;
 
 	/**
-	 * @var  string  Which kind of DB is used
+	 * @var  string  $_db_type  which kind of DB is used
 	 */
 	public $_db_type = '';
 
@@ -50,6 +50,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Connects to the database
+	 *
 	 * @throws \Database_Exception
 	 */
 	public function connect()
@@ -138,6 +140,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Set the charset
+	 *
 	 * @param string $charset
 	 */
 	public function set_charset($charset)
@@ -150,6 +154,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Query the database
+	 *
 	 * @param integer $type
 	 * @param string  $sql
 	 * @param mixed   $as_object
@@ -287,6 +293,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * List tables
+	 *
 	 * @param string $like
 	 *
 	 * @throws \FuelException
@@ -297,6 +305,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * List table columns
+	 *
 	 * @param string $table
 	 * @param string $like
 	 *
@@ -378,6 +388,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Resolve a datatype
+	 *
 	 * @param integer $type
 	 *
 	 * @return array
@@ -392,6 +404,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Escape a value
+	 *
 	 * @param mixed $value
 	 *
 	 * @return string
@@ -411,6 +425,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Retrieve error info
+	 *
 	 * @return array
 	 */
 	public function error_info()
@@ -419,6 +435,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Returns wether the connection is in transaction
+	 *
 	 * @return bool
 	 */
 	public function in_transaction()
@@ -427,6 +445,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Start a transaction
+	 *
 	 * @return bool
 	 */
 	public function start_transaction()
@@ -437,6 +457,8 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Commit a transaction
+	 *
 	 * @return bool
 	 */
 	public function commit_transaction()
@@ -446,6 +468,7 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Rollback a transaction
 	 * @return bool
 	 */
 	public function rollback_transaction()
@@ -453,5 +476,4 @@ class Database_PDO_Connection extends \Database_Connection
 		$this->_in_transaction = false;
 		return $this->_connection->rollBack();
 	}
-
 }

@@ -173,14 +173,15 @@ abstract class Database_Query_Builder extends \Database_Query
 	/**
 	 * Compiles an array of ORDER BY statements into an SQL partial.
 	 *
-	 * @param   object $db      Database instance
-	 * @param   array  $columns sorting columns
+	 * @param   object  $db       Database instance
+	 * @param   array   $columns  sorting columns
 	 *
 	 * @return  string
 	 */
-	protected function _compile_order_by(\Database_Connection$db, array $columns)
+	protected function _compile_order_by(\Database_Connection $db, array $columns)
 	{
 		$sort = array();
+
 		foreach ($columns as $group)
 		{
 			list ($column, $direction) = $group;
@@ -203,5 +204,4 @@ abstract class Database_Query_Builder extends \Database_Query
 	 * @return  $this
 	 */
 	abstract public function reset();
-
-} // End Database_Query_Builder
+}

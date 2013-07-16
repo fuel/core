@@ -13,35 +13,30 @@ namespace Fuel\Core;
 
 class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 {
-
-	// UPDATE ...
 	/**
-	 * @var string
+	 * @var string  $_table  table name
 	 */
 	protected $_table;
 
-	// SET ...
 	/**
-	 * @var array
+	 * @var array  $_set  update values
 	 */
 	protected $_set = array();
 
-	// JOIN ...
 	/**
-	 * @var array
+	 * @var array  $_join  join statements
 	 */
 	protected $_join = array();
 
-	// The last JOIN statement created
 	/**
-	 * @var
+	 * @var Database_Query_Builder_Join  $_last_join  last join statement
 	 */
 	protected $_last_join;
 
 	/**
 	 * Set the table for a update.
 	 *
-	 * @param  $table mixed  table name or array($table, $alias) or object
+	 * @param  mixed  $table  table name or array($table, $alias) or object
 	 *
 	 * @return  void
 	 */
@@ -60,7 +55,7 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	/**
 	 * Sets the table to update.
 	 *
-	 * @param  $table mixed  table name or array($table, $alias) or object
+	 * @param  mixed  $table  table name or array($table, $alias)
 	 *
 	 * @return  $this
 	 */
@@ -74,7 +69,7 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	/**
 	 * Set the values to update with an associative array.
 	 *
-	 * @param  $pairs array   associative (column => value) list
+	 * @param  array  $pairs   associative (column => value) list
 	 *
 	 * @return  $this
 	 */
@@ -91,8 +86,8 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	/**
 	 * Set the value of a single column.
 	 *
-	 * @param   mixed $column table name or array($table, $alias) or object
-	 * @param   mixed $value  column value
+	 * @param   mixed  $column  table name or array($table, $alias) or object
+	 * @param   mixed  $value   column value
 	 *
 	 * @return  $this
 	 */
@@ -106,7 +101,7 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	/**
 	 * Compile the SQL query and return it.
 	 *
-	 * @param   mixed $db Database instance or instance name
+	 * @param   mixed  $db  Database instance or instance name
 	 *
 	 * @return  string
 	 */
@@ -152,20 +147,19 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	}
 
 	/**
+	 * Reset the query parameters
+	 *
 	 * @return $this
 	 */
 	public function reset()
 	{
-		$this->_table = NULL;
-
-		$this->_join     = array();
-		$this->_set      = array();
-		$this->_where    = array();
-		$this->_order_by = array();
-
-		$this->_limit     = NULL;
-		$this->_last_join = NULL;
-
+		$this->_table      = null;
+		$this->_join       = array();
+		$this->_set        = array();
+		$this->_where      = array();
+		$this->_order_by   = array();
+		$this->_limit      = null;
+		$this->_last_join  = null;
 		$this->_parameters = array();
 
 		return $this;
@@ -174,12 +168,12 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	/**
 	 * Adds addition tables to "JOIN ...".
 	 *
-	 * @param   mixed   $table column name or array($column, $alias) or object
-	 * @param   string  $type  join type (LEFT, RIGHT, INNER, etc)
+	 * @param   mixed   $table  column name or array($column, $alias) or object
+	 * @param   string  $type   join type (LEFT, RIGHT, INNER, etc)
 	 *
 	 * @return  $this
 	 */
-	public function join($table, $type = NULL)
+	public function join($table, $type = null)
 	{
 		$this->_join[] = $this->_last_join = new \Database_Query_Builder_Join($table, $type);
 
@@ -201,5 +195,4 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 
 		return $this;
 	}
-
-} // End Database_Query_Builder_Update
+}
