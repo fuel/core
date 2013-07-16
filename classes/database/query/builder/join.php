@@ -14,21 +14,29 @@ namespace Fuel\Core;
 class Database_Query_Builder_Join extends \Database_Query_Builder
 {
 	// Type of JOIN
+	/**
+	 * @var string
+	 */
 	protected $_type;
 
 	// JOIN ...
+	/**
+	 * @var string
+	 */
 	protected $_table;
 
 	// ON ...
+	/**
+	 * @var array
+	 */
 	protected $_on = array();
 
 	/**
 	 * Creates a new JOIN statement for a table. Optionally, the type of JOIN
 	 * can be specified as the second parameter.
 	 *
-	 * @param   mixed   column name or array($column, $alias) or object
-	 * @param   string  type of JOIN: INNER, RIGHT, LEFT, etc
-	 * @return  void
+	 * @param   mixed  $table column name or array($column, $alias) or object
+	 * @param   string $type  type of JOIN: INNER, RIGHT, LEFT, etc
 	 */
 	public function __construct($table, $type = null)
 	{
@@ -45,9 +53,10 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Adds a new OR condition for joining.
 	 *
-	 * @param   mixed   column name or array($column, $alias) or object
-	 * @param   string  logic operator
-	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   mixed  $c1 column name or array($column, $alias) or object
+	 * @param   string $op logic operator
+	 * @param   mixed  $c2 column name or array($column, $alias) or object
+	 *
 	 * @return  $this
 	 */
 	public function or_on($c1, $op, $c2)
@@ -60,9 +69,10 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Adds a new AND condition for joining.
 	 *
-	 * @param   mixed   column name or array($column, $alias) or object
-	 * @param   string  logic operator
-	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   mixed  $c1 column name or array($column, $alias) or object
+	 * @param   string $op logic operator
+	 * @param   mixed  $c2 column name or array($column, $alias) or object
+	 *
 	 * @return  $this
 	 */
 	public function on($c1, $op, $c2)
@@ -75,9 +85,10 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Adds a new AND condition for joining.
 	 *
-	 * @param   mixed   column name or array($column, $alias) or object
-	 * @param   string  logic operator
-	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   mixed  $c1 column name or array($column, $alias) or object
+	 * @param   string $op logic operator
+	 * @param   mixed  $c2 column name or array($column, $alias) or object
+	 *
 	 * @return  $this
 	 */
 	public function and_on($c1, $op, $c2)
@@ -88,7 +99,8 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Compile the SQL partial for a JOIN statement and return it.
 	 *
-	 * @param   mixed  Database instance or instance name
+	 * @param   mixed $db Database instance or instance name
+	 *
 	 * @return  string
 	 */
 	public function compile($db = null)
@@ -143,7 +155,7 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * Resets the join values.
 	 *
-	 * @return  object  $this
+	 * @return  $this
 	 */
 	public function reset()
 	{

@@ -30,7 +30,7 @@ class Database_Expression
 	 *
 	 *     $expression = new Database_Expression('COUNT(users.id)');
 	 *
-	 * @return  void
+	 * @param string $value  expression string
 	 */
 	public function __construct($value)
 	{
