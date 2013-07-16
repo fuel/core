@@ -183,7 +183,7 @@ abstract class Request_Driver
 	{
 		if ( ! is_array($param))
 		{
-			$param = array($param, $value);
+			$param = array($param => $value);
 		}
 
 		foreach ($param as $key => $val)
