@@ -34,6 +34,10 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	public $_db_type = '';
 
+	/**
+	 * @param string $name
+	 * @param array  $config
+	 */
 	protected function __construct($name, array $config)
 	{
 		parent::__construct($name, $config);
@@ -45,6 +49,9 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 	}
 
+	/**
+	 * @throws \Database_Exception
+	 */
 	public function connect()
 	{
 		if ($this->_connection)
@@ -109,6 +116,9 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function disconnect()
 	{
 		// Destroy the PDO object
@@ -119,6 +129,7 @@ class Database_PDO_Connection extends \Database_Connection
 
 	/**
 	 * Get the current PDO Driver name
+	 *
 	 * @return string
 	 */
 	public function driver_name()
@@ -126,6 +137,9 @@ class Database_PDO_Connection extends \Database_Connection
 		return $this->_connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
 	}
 
+	/**
+	 * @param string $charset
+	 */
 	public function set_charset($charset)
 	{
 		// Make sure the database is connected
@@ -135,6 +149,15 @@ class Database_PDO_Connection extends \Database_Connection
 		$this->_connection->exec('SET NAMES '.$this->quote($charset));
 	}
 
+	/**
+	 * @param integer $type
+	 * @param string  $sql
+	 * @param mixed   $as_object
+	 *
+	 * @return mixed
+	 *
+	 * @throws \Database_Exception
+	 */
 	public function query($type, $sql, $as_object)
 	{
 		// Make sure the database is connected
@@ -263,11 +286,22 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 	}
 
+	/**
+	 * @param string $like
+	 *
+	 * @throws \FuelException
+	 */
 	public function list_tables($like = null)
 	{
 		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
 	}
 
+	/**
+	 * @param string $table
+	 * @param string $like
+	 *
+	 * @return array
+	 */
 	public function list_columns($table, $like = null)
 	{
 		$this->_connection or $this->connect();
@@ -343,6 +377,11 @@ class Database_PDO_Connection extends \Database_Connection
 		return $columns;
 	}
 
+	/**
+	 * @param integer $type
+	 *
+	 * @return array
+	 */
 	public function datatype($type)
 	{
 		// try to determine the datatype
@@ -352,6 +391,11 @@ class Database_PDO_Connection extends \Database_Connection
 		return empty($datatype) ? array('type' => 'string') : $datatype;
 	}
 
+	/**
+	 * @param mixed $value
+	 *
+	 * @return string
+	 */
 	public function escape($value)
 	{
 		// Make sure the database is connected
@@ -366,16 +410,25 @@ class Database_PDO_Connection extends \Database_Connection
 		return $result;
 	}
 
+	/**
+	 * @return array
+	 */
 	public function error_info()
 	{
 		return $this->_connection->errorInfo();
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function in_transaction()
 	{
 		return $this->_in_transaction;
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function start_transaction()
 	{
 		$this->_connection or $this->connect();
@@ -383,12 +436,18 @@ class Database_PDO_Connection extends \Database_Connection
 		return $this->_connection->beginTransaction();
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function commit_transaction()
 	{
 		$this->_in_transaction = false;
 		return $this->_connection->commit();
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function rollback_transaction()
 	{
 		$this->_in_transaction = false;
