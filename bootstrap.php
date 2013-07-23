@@ -68,6 +68,14 @@ set_exception_handler(function (\Exception $e)
 	// reset the autoloader
 	\Autoloader::_reset();
 
+	// deal with PHP bugs #42098/#54054
+	if (!class_exists('Error'))
+	{
+		include COREPATH.'classes/error.php';
+		class_alias('\Fuel\Core\Error', 'Error');
+		class_alias('\Fuel\Core\PhpErrorException', 'PhpErrorException');
+	}
+
 	return \Error::exception_handler($e);
 });
 
@@ -75,6 +83,14 @@ set_error_handler(function ($severity, $message, $filepath, $line)
 {
 	// reset the autoloader
 	\Autoloader::_reset();
+
+	// deal with PHP bugs #42098/#54054
+	if (!class_exists('Error'))
+	{
+		include COREPATH.'classes/error.php';
+		class_alias('\Fuel\Core\Error', 'Error');
+		class_alias('\Fuel\Core\PhpErrorException', 'PhpErrorException');
+	}
 
 	return \Error::error_handler($severity, $message, $filepath, $line);
 });
