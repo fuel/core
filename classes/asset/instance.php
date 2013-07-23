@@ -232,29 +232,51 @@ class Asset_Instance
 			$type = $item['type'];
 			$filename = $item['file'];
 			$attr = $item['attr'];
-			$is_raw = $item['raw'];
+			$inline = $item['raw'];
 
 			// only do a file search if the asset is not a URI
-			if ( ! $is_raw and ! preg_match('|^(\w+:)?//|', $filename))
+			if ( ! preg_match('|^(\w+:)?//|', $filename))
 			{
 				// and only if the asset is local to the applications base_url
 				if ( ! preg_match('|^(\w+:)?//|', $this->_asset_url) or strpos($this->_asset_url, \Config::get('base_url')) === 0)
 				{
 					if ( ! ($file = $this->find_file($filename, $type)))
 					{
-						if ($this->_fail_silently)
+						if ($raw or $inline)
 						{
-							continue;
+							$file = $filename;
 						}
+						else
+						{
+							if ($this->_fail_silently)
+							{
+								continue;
+							}
 
-						throw new \FuelException('Could not find asset: '.$filename);
+							throw new \FuelException('Could not find asset: '.$filename);
+						}
 					}
-
-					$raw or $file = $this->_asset_url.$file.($this->_add_mtime ? '?'.filemtime($file) : '');
+					else
+					{
+						if ($raw or $inline)
+						{
+							$file = file_get_contents($file);
+							$inline = true;
+						}
+						else
+						{
+							$file = $this->_asset_url.$file.($this->_add_mtime ? '?'.filemtime($file) : '');
+						}
+					}
 				}
 				else
 				{
-					$raw or $file = $this->_asset_url.$this->_path_folders[$type].$filename;
+					$file = $this->_asset_url.$this->_path_folders[$type].$filename;
+					if ($raw or $inline)
+					{
+						$file = file_get_contents($file);
+						$inline = true;
+					}
 				}
 			}
 			else
@@ -266,13 +288,9 @@ class Asset_Instance
 			{
 				case 'css':
 					$attr['type'] = 'text/css';
-					if ($is_raw)
+					if ($inline)
 					{
 						$css .= html_tag('style', $attr, PHP_EOL.$file.PHP_EOL).PHP_EOL;
-					}
-					elseif ($raw)
-					{
-						$css .= html_tag('style', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
 					else
 					{
@@ -287,13 +305,9 @@ class Asset_Instance
 				break;
 				case 'js':
 					$attr['type'] = 'text/javascript';
-					if ($is_raw)
+					if ($inline)
 					{
 						$js .= html_tag('script', $attr, PHP_EOL.$file.PHP_EOL).PHP_EOL;
-					}
-					elseif ($raw)
-					{
-						$js .= html_tag('script', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
 					else
 					{
