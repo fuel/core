@@ -232,9 +232,10 @@ class Asset_Instance
 			$type = $item['type'];
 			$filename = $item['file'];
 			$attr = $item['attr'];
+			$is_raw = $item['raw'];
 
 			// only do a file search if the asset is not a URI
-			if ( ! preg_match('|^(\w+:)?//|', $filename))
+			if ( ! $is_raw and ! preg_match('|^(\w+:)?//|', $filename))
 			{
 				// and only if the asset is local to the applications base_url
 				if ( ! preg_match('|^(\w+:)?//|', $this->_asset_url) or strpos($this->_asset_url, \Config::get('base_url')) === 0)
@@ -265,7 +266,11 @@ class Asset_Instance
 			{
 				case 'css':
 					$attr['type'] = 'text/css';
-					if ($raw)
+					if ($is_raw)
+					{
+						$css .= html_tag('style', $attr, PHP_EOL.$file.PHP_EOL).PHP_EOL;
+					}
+					elseif ($raw)
 					{
 						$css .= html_tag('style', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
@@ -282,7 +287,11 @@ class Asset_Instance
 				break;
 				case 'js':
 					$attr['type'] = 'text/javascript';
-					if ($raw)
+					if ($is_raw)
+					{
+						$js .= html_tag('script', $attr, PHP_EOL.$file.PHP_EOL).PHP_EOL;
+					}
+					elseif ($raw)
 					{
 						$js .= html_tag('script', $attr, PHP_EOL.file_get_contents($file).PHP_EOL).PHP_EOL;
 					}
@@ -334,7 +343,7 @@ class Asset_Instance
 			$render = false;
 		}
 
-		$this->_parse_assets('css', $stylesheets, $attr, $group);
+		$this->_parse_assets('css', $stylesheets, $attr, $group, $raw);
 
 		if ($render)
 		{
@@ -371,7 +380,7 @@ class Asset_Instance
 			$render = false;
 		}
 
-		$this->_parse_assets('js', $scripts, $attr, $group);
+		$this->_parse_assets('js', $scripts, $attr, $group, $raw);
 
 		if ($render)
 		{
@@ -484,7 +493,7 @@ class Asset_Instance
 	 * @param	string	The asset group name
 	 * @return	string
 	 */
-	protected function _parse_assets($type, $assets, $attr, $group)
+	protected function _parse_assets($type, $assets, $attr, $group, $raw = false)
 	{
 		if ( ! is_array($assets))
 		{
@@ -502,6 +511,7 @@ class Asset_Instance
 			$this->_groups[$group][] = array(
 				'type'	=>	$type,
 				'file'	=>	$asset,
+				'raw'	=>	$raw,
 				'attr'	=>	(array) $attr
 			);
 		}
