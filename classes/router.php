@@ -109,28 +109,27 @@ class Router
 				}
 			}
 
-			// deal with the remaining regex's
-			if (preg_match_all('#\(.*?\)#', $url, $matches) !== false)
+			// deal with regex's groups
+			if (preg_match_all('#\((?:\?P<(\w+?)>)?.*?\)#', $url, $matches) !== false)
 			{
-				if (count($matches) == 1)
+				if (count($matches) == 2)
 				{
-					$search = array();
-					foreach($matches[0] as $match)
+					$indexed_group_count = 0;
+					foreach($matches[0] as $index => $target)
 					{
-						$search[] = $match;
-					}
-
-					$replace = array();
-					foreach($search as $key => $regex)
-					{
-						$replace = array_key_exists($key, $named_params) ? $named_params[$key] : '';
-
-						if (($pos = strpos($url,$regex)) !== false)
+						$replace = '';
+						if (array_key_exists($key = $matches[1][$index], $named_params) ||
+						    array_key_exists($key = '$'.($index + 1), $named_params) ||
+						    array_key_exists($key = $indexed_group_count++, $named_params))
 						{
-							$url = substr_replace($url,$replace,$pos,strlen($regex));
+							$replace = $named_params[$key];
+						}
+						
+						if (($pos = strpos($url, $target)) !== false)
+						{
+							$url = substr_replace($url, $replace, $pos, strlen($target));
 						}
 					}
-
 				}
 			}
 
