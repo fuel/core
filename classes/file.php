@@ -713,15 +713,13 @@ class File
 	 */
 	public static function close_file($resource, $area = null)
 	{
-		fclose($resource);
-
 		// If locks aren't used, don't unlock
-		if ( ! static::instance($area)->use_locks())
+		if ( static::instance($area)->use_locks())
 		{
-			return;
+			flock($resource, LOCK_UN);
 		}
 
-		flock($resource, LOCK_UN);
+		fclose($resource);
 	}
 
 	/**
