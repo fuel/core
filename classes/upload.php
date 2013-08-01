@@ -87,7 +87,21 @@ class Upload
 		$config['langCallback'] = '\\Upload::lang_callback';
 
 		// get an upload instance
-		static::$upload = new \FuelPHP\Upload\Upload($config);
+		if (class_exists('Fuel\Upload\Upload'))
+		{
+			static::$upload = new \Fuel\Upload\Upload($config);
+		}
+
+		// 1.6.1 fallback
+		elseif (class_exists('FuelPHP\Upload\Upload'))
+		{
+			static::$upload = new \FuelPHP\Upload\Upload($config);
+		}
+
+		else
+		{
+			throw new \FuelException('Can not load \Fuel\Upload\Upload. Did you run composer to install it?');
+		}
 
 		// and load the uploaded files
 		static::$upload->processFiles();
