@@ -34,7 +34,7 @@
 	<div id="wrapper">
 		<h1><?php echo $severity; ?>!</h1>
 
-		<p class="intro"><?php echo $type; ?> [ <?php echo $severity; ?> ]: <?php echo $message; ?></p>
+		<p class="intro"><?php echo $type; ?> [ <?php echo $severity; ?> ]:<br /><?php echo $message; ?></p>
 
 		<h2 class="first"><?php echo $filepath; ?> @ line <?php echo $error_line; ?></h2>
 
