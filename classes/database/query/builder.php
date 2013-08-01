@@ -79,57 +79,65 @@ abstract class Database_Query_Builder extends \Database_Query
 					// Split the condition
 					list($column, $op, $value) = $condition;
 
-					if ($value === NULL)
+					// Support DB::expr() as where clause
+					if ($column instanceOf Database_Expression and $op === null and $value === null)
 					{
-						if ($op === '=')
-						{
-							// Convert "val = NULL" to "val IS NULL"
-							$op = 'IS';
-						}
-						elseif ($op === '!=')
-						{
-							// Convert "val != NULL" to "valu IS NOT NULL"
-							$op = 'IS NOT';
-						}
-					}
-
-					// Database operators are always uppercase
-					$op = strtoupper($op);
-
-					if (($op === 'BETWEEN' OR $op === 'NOT BETWEEN') AND is_array($value))
-					{
-						// BETWEEN always has exactly two arguments
-						list($min, $max) = $value;
-
-						if (is_string($min) AND array_key_exists($min, $this->_parameters))
-						{
-							// Set the parameter as the minimum
-							$min = $this->_parameters[$min];
-						}
-
-						if (is_string($max) AND array_key_exists($max, $this->_parameters))
-						{
-							// Set the parameter as the maximum
-							$max = $this->_parameters[$max];
-						}
-
-						// Quote the min and max value
-						$value = $db->quote($min).' AND '.$db->quote($max);
+						$sql .= (string) $column;
 					}
 					else
 					{
-						if (is_string($value) AND array_key_exists($value, $this->_parameters))
+						if ($value === NULL)
 						{
-							// Set the parameter as the value
-							$value = $this->_parameters[$value];
+							if ($op === '=')
+							{
+								// Convert "val = NULL" to "val IS NULL"
+								$op = 'IS';
+							}
+							elseif ($op === '!=')
+							{
+								// Convert "val != NULL" to "valu IS NOT NULL"
+								$op = 'IS NOT';
+							}
 						}
 
-						// Quote the entire value normally
-						$value = $db->quote($value);
-					}
+						// Database operators are always uppercase
+						$op = strtoupper($op);
 
-					// Append the statement to the query
-					$sql .= $db->quote_identifier($column).' '.$op.' '.$value;
+						if (($op === 'BETWEEN' OR $op === 'NOT BETWEEN') AND is_array($value))
+						{
+							// BETWEEN always has exactly two arguments
+							list($min, $max) = $value;
+
+							if (is_string($min) AND array_key_exists($min, $this->_parameters))
+							{
+								// Set the parameter as the minimum
+								$min = $this->_parameters[$min];
+							}
+
+							if (is_string($max) AND array_key_exists($max, $this->_parameters))
+							{
+								// Set the parameter as the maximum
+								$max = $this->_parameters[$max];
+							}
+
+							// Quote the min and max value
+							$value = $db->quote($min).' AND '.$db->quote($max);
+						}
+						else
+						{
+							if (is_string($value) AND array_key_exists($value, $this->_parameters))
+							{
+								// Set the parameter as the value
+								$value = $this->_parameters[$value];
+							}
+
+							// Quote the entire value normally
+							$value = $db->quote($value);
+						}
+
+						// Append the statement to the query
+						$sql .= $db->quote_identifier($column).' '.$op.' '.$value;
+					}
 				}
 
 				$last_condition = $condition;
