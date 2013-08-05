@@ -76,10 +76,13 @@ class Test_Date extends TestCase
 	 */
 	public function test_format()
 	{
+		$default_timezone = date_default_timezone_get();
 		date_default_timezone_set('UTC');
 
 		$output = Date::forge( 1294176140 )->format("%m/%d/%Y");
 		$expected = "01/04/2011";
+
+		date_default_timezone_set($default_timezone);
 
 		$this->assertEquals($expected, $output);
 	}
