@@ -308,11 +308,13 @@ class Str
 				break;
 
 			case 'uid':
-				return sprintf('%s-%s-%s-%s-%s',
+			    $pool = array('8', '9', 'a', 'b');
+				return sprintf('%s-%s-4%s-%s%s-%s',
 					static::random('hexdec', 8),
 					static::random('hexdec', 4),
-					static::random('hexdec', 4),
-					static::random('hexdec', 4),
+					static::random('hexdec', 3),
+					$pool[array_rand($pool)],
+					static::random('hexdec', 3),
 					static::random('hexdec', 12));
 				break;
 		}
