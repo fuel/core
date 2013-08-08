@@ -635,8 +635,10 @@ abstract class Database_Connection
 
 		if (strpos($value, '"') !== false)
 		{
+			// required for PHP 5.5- (no access to $this in closure)
+			$that = $this;
 			// Quote the column in FUNC("ident") identifiers
-			return preg_replace('/"(.+?)"/e', '$this->quote_identifier("$1")', $value);
+			return preg_replace_callback('/"(.+?)"/', function ($matches) use($that) { return $that->quote_identifier($matches[1]); }, $value);
 		}
 		elseif (preg_match("/^'(.*)?'$/", $value))
 		{
