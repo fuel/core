@@ -18,10 +18,14 @@ class Response
 
 	/**
 	 * @var  array  An array of status codes and messages
+	 *
+	 * See http://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
+	 * for the complete and approved list, and links to the RFC's that define them
 	 */
 	public static $statuses = array(
 		100 => 'Continue',
 		101 => 'Switching Protocols',
+		101 => 'Processing',
 		200 => 'OK',
 		201 => 'Created',
 		202 => 'Accepted',
@@ -30,6 +34,8 @@ class Response
 		205 => 'Reset Content',
 		206 => 'Partial Content',
 		207 => 'Multi-Status',
+		208 => 'Already Reported',
+		226 => 'IM Used',
 		300 => 'Multiple Choices',
 		301 => 'Moved Permanently',
 		302 => 'Found',
@@ -37,6 +43,7 @@ class Response
 		304 => 'Not Modified',
 		305 => 'Use Proxy',
 		307 => 'Temporary Redirect',
+		308 => 'Permanent Redirect',
 		400 => 'Bad Request',
 		401 => 'Unauthorized',
 		402 => 'Payment Required',
@@ -55,17 +62,26 @@ class Response
 		415 => 'Unsupported Media Type',
 		416 => 'Requested Range Not Satisfiable',
 		417 => 'Expectation Failed',
+		418 => 'I\'m a Teapot',
 		422 => 'Unprocessable Entity',
 		423 => 'Locked',
 		424 => 'Failed Dependency',
+		426 => 'Upgrade Required',
+		428 => 'Precondition Required',
+		428 => 'Too Many Requests',
+		431 => 'Request Header Fields Too Large',
 		500 => 'Internal Server Error',
 		501 => 'Not Implemented',
 		502 => 'Bad Gateway',
 		503 => 'Service Unavailable',
 		504 => 'Gateway Timeout',
 		505 => 'HTTP Version Not Supported',
+		506 => 'Variant Also Negotiates',
 		507 => 'Insufficient Storage',
-		509 => 'Bandwidth Limit Exceeded'
+		508 => 'Loop Detected',
+		509 => 'Bandwidth Limit Exceeded',
+		510 => 'Not Extended',
+		511 => 'Network Authentication Required',
 	);
 
 	/**
