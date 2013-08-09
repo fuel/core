@@ -35,14 +35,14 @@ class Input
 	protected static $detected_ext = null;
 
 	/**
-	 * @var  $input  All of the input (GET, POST, PUT, DELETE)
+	 * @var  $input  All of the input (GET, POST, PUT, DELETE, PATCH)
 	 */
 	protected static $input = null;
 
 	/**
-	 * @var  $put_delete  All of the put or delete vars
+	 * @var  $put_patch_delete  All of the put or delete vars
 	 */
-	protected static $put_delete = null;
+	protected static $put_patch_delete = null;
 
 	/**
 	 * @var  $php_input  Cache for the php://input stream
@@ -392,8 +392,21 @@ class Input
 	 */
 	public static function put($index = null, $default = null)
 	{
-		static::$put_delete === null and static::hydrate();
-		return (func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
+		static::$put_patch_delete === null and static::hydrate();
+		return (func_num_args() === 0) ? static::$put_patch_delete : \Arr::get(static::$put_patch_delete, $index, $default);
+	}
+
+	/**
+	 * Fetch an item from the php://input for patch arguments
+	 *
+	 * @param   string  The index key
+	 * @param   mixed   The default value
+	 * @return  string|array
+	 */
+	public static function patch($index = null, $default = null)
+	{
+		static::$put_patch_delete === null and static::hydrate();
+		return (func_num_args() === 0) ? static::$put_patch_delete : \Arr::get(static::$put_patch_delete, $index, $default);
 	}
 
 	/**
@@ -405,8 +418,8 @@ class Input
 	 */
 	public static function delete($index = null, $default = null)
 	{
-		static::$put_delete === null and static::hydrate();
-		return (is_null($index) and func_num_args() === 0) ? static::$put_delete : \Arr::get(static::$put_delete, $index, $default);
+		static::$put_patch_delete === null and static::hydrate();
+		return (is_null($index) and func_num_args() === 0) ? static::$put_patch_delete : \Arr::get(static::$put_patch_delete, $index, $default);
 	}
 
 	/**
@@ -422,7 +435,7 @@ class Input
 	}
 
 	/**
-	 * Fetch an item from either the GET, POST, PUT or DELETE array
+	 * Fetch an item from either the GET, POST, PUT, PATCH or DELETE array
 	 *
 	 * @param   string  The index key
 	 * @param   mixed   The default value
@@ -503,15 +516,15 @@ class Input
 	{
 		static::$input = array_merge($_GET, $_POST);
 
-		if (\Input::method() == 'PUT' or \Input::method() == 'DELETE')
+		if (\Input::method() == 'PUT' or \Input::method() == 'PATCH' or\Input::method() == 'DELETE')
 		{
 			static::$php_input === null and static::$php_input = file_get_contents('php://input');
 			if (strpos(static::headers('Content-Type'), 'www-form-urlencoded') > 0)
 			{
 				static::$php_input = urldecode(static::$php_input);
 			}
-			parse_str(static::$php_input, static::$put_delete);
-			static::$input = array_merge(static::$input, static::$put_delete);
+			parse_str(static::$php_input, static::$put_patch_delete);
+			static::$input = array_merge(static::$input, static::$put_patch_delete);
 		}
 	}
 }
