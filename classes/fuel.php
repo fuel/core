@@ -135,7 +135,7 @@ class Fuel
 		\Config::load($config);
 
 		// Start up output buffering
-		ob_start(\Config::get('ob_callback', null));
+		static::$is_cli or ob_start(\Config::get('ob_callback', null));
 
 		if (\Config::get('caching', false))
 		{
@@ -214,7 +214,7 @@ class Fuel
 			\Finder::instance()->write_cache('FuelFileFinder');
 		}
 
-		if (static::$profiling)
+		if (static::$profiling and ! static::$is_cli)
 		{
 			// Grab the output buffer and flush it, we will rebuffer later
 			$output = ob_get_clean();
