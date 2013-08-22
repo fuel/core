@@ -306,7 +306,7 @@ class Image_Imagemagick extends \Image_Driver
 	 * @param   boolean  $passthru  Returns the output if false or pass it to browser.
 	 * @return  mixed    Either returns the output or returns nothing.
 	 */
-	private function exec($program, $params, $passthru = false)
+	protected function exec($program, $params, $passthru = false)
 	{
 		//  Determine the path
 		$this->im_path = realpath($this->config['imagemagick_dir'].$program);
