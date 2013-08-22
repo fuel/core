@@ -155,6 +155,9 @@ class Session_File extends \Session_Driver
 			// rotate the session id if needed
 			$this->rotate(false);
 
+			// record the last update time of the session
+			$this->keys['updated'] = $this->time->get_timestamp();
+
 			// session payload
 			$payload = $this->_serialize(array($this->keys, $this->data, $this->flash));
 
