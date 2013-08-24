@@ -163,7 +163,7 @@ class Security
 				import('htmlawed/htmlawed', 'vendor');
 			}
 
-			return htmLawed($value, array('safe' => 1, 'balanced' => 0));
+			return htmLawed($value, array('safe' => 1, 'balanced' => 0, 'clean_ms_char' => 1));
 		}
 
 		foreach ($value as $k => $v)
