@@ -57,7 +57,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 			// get the redis database instance
 			try
 			{
-				static::$redis = \Redis::instance($this->config['database']);
+				static::$redis = Redis::instance($this->config['database']);
 			}
 			catch (\Exception $e)
 			{
