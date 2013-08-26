@@ -51,7 +51,7 @@ class Test_Num extends TestCase
 	public function test_format_bytes()
 	{
 		$output = Num::format_bytes('204800');
-		$expected = '200 kB';
+		$expected = '200 KB';
 
 		$this->assertEquals($expected, $output);
 
