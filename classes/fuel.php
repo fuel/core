@@ -127,6 +127,10 @@ class Fuel
 			throw new \FuelException("You can't initialize Fuel more than once.");
 		}
 
+		// BC FIX FOR APPLICATIONS <= 1.6.1, makes Redis_Db available as Redis,
+		// like it was in versions before 1.7
+		class_exists('Redis', false) or class_alias('Redis_Db', 'Redis');
+
 		static::$_paths = array(APPPATH, COREPATH);
 
 		// Is Fuel running on the command line?

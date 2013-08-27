@@ -29,7 +29,7 @@ class RedisException extends \FuelException {}
 /**
  * Redisent, a Redis interface for the modest among us
  */
-class Redis
+class Redis_Db
 {
 	/**
 	 * Multiton pattern, keep track of all created instances

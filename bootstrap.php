@@ -236,8 +236,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Module'                    => COREPATH.'classes/module.php',
 		'Fuel\\Core\\ModuleNotFoundException'   => COREPATH.'classes/module.php',
 
-		'Fuel\\Core\\Mongo_Db'           => COREPATH.'classes/mongo/db.php',
-		'Fuel\\Core\\Mongo_DbException'  => COREPATH.'classes/mongo/db.php',
+		'Fuel\\Core\\Mongo_Db'                => COREPATH.'classes/mongo/db.php',
+		'Fuel\\Core\\Mongo_DbException'       => COREPATH.'classes/mongo/db.php',
 
 		'Fuel\\Core\\Output'               => COREPATH.'classes/output.php',
 
@@ -255,8 +255,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Request_Curl'            => COREPATH.'classes/request/curl.php',
 		'Fuel\\Core\\Request_Soap'            => COREPATH.'classes/request/soap.php',
 
-		'Fuel\\Core\\Redis'                   => COREPATH.'classes/redis.php',
-		'Fuel\\Core\\RedisException'          => COREPATH.'classes/redis.php',
+		'Fuel\\Core\\Redis_Db'                => COREPATH.'classes/redis/db.php',
+		'Fuel\\Core\\RedisException'          => COREPATH.'classes/redis/db.php',
 
 		'Fuel\\Core\\Response'  => COREPATH.'classes/response.php',
 

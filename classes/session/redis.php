@@ -58,7 +58,7 @@ class Session_Redis extends \Session_Driver
 		if ($this->redis === false)
 		{
 			// get the redis database instance
-			$this->redis = \Redis::instance($this->config['database']);
+			$this->redis = \Redis_Db::instance($this->config['database']);
 		}
 	}
 
