@@ -876,6 +876,16 @@ abstract class Image_Driver
 	}
 
 	/**
+	 * Get the file extension (type) worked out on construct
+	 *
+	 * @return  string  File extension
+	 */
+	public function extension()
+	{
+		return $this->image_extension;
+	}
+
+	/**
 	 * Used for debugging image output.
 	 *
 	 * @param  string  $message
