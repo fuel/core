@@ -109,6 +109,17 @@ class Test_Uri extends TestCase
 		$this->assertEquals($expected, $output);
 	}
 
+	/**
+	 * Tests Uri::build_query_string()
+	 *
+	 * @test
+	 */
+	public function test_build_query_string()
+	{
+		$output = Uri::build_query_string(array('varA' => 'varA'), 'varB', array('varC' => 'varC'));
+		$expected = "varA=varA&varB=1&varC=varC";
+		$this->assertEquals($expected, $output);
+	}
 }
 
 
