@@ -78,7 +78,7 @@ class Html
 			$src = \Uri::base(false).$src;
 		}
 		$attr['src'] = $src;
-		$attr['alt'] = (isset($attr['alt'])) ? $attr['alt'] : pathinfo($src, PATHINFO_FILENAME);
+		$attr['alt'] = (isset($attr['alt'])) ? $attr['alt'] : '';
 		return html_tag('img', $attr);
 	}
 
