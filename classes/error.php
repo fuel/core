@@ -53,7 +53,7 @@ class Error
 
 	public static $levels = array(
 		0                   => 'Error',
-		E_ERROR             => 'Error',
+		E_ERROR             => 'Fatal Error',
 		E_WARNING           => 'Warning',
 		E_PARSE             => 'Parsing Error',
 		E_NOTICE            => 'Notice',
