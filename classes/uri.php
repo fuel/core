@@ -228,6 +228,29 @@ class Uri
 		return $url;
 	}
 
+	/**
+	 * Builds a query string by merging all array and string values passed. If
+	 * a string is passed, it will be assumed to be a switch, and converted
+	 * to "string=1".
+	 *
+	 * @param array|string Array or string to merge
+	 * @param array|string ...
+	 *
+	 * @return string
+	 */
+	public static function build_query_string()
+	{
+		$params = array();
+
+		foreach (func_get_args() as $arg)
+		{
+			$arg = is_array($arg) ? $arg : array($arg => '1');
+
+			$params = array_merge($params, $arg);
+		}
+
+		return http_build_query($params);
+	}
 
 	/**
 	 * @var  string  The URI string
