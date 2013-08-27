@@ -307,7 +307,7 @@ class Str
 				return sha1(uniqid(mt_rand(), true));
 				break;
 
-			case 'uid':
+			case 'uuid':
 			    $pool = array('8', '9', 'a', 'b');
 				return sprintf('%s-%s-4%s-%s%s-%s',
 					static::random('hexdec', 8),
