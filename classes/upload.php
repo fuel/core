@@ -103,8 +103,11 @@ class Upload
 			throw new \FuelException('Can not load \Fuel\Upload\Upload. Did you run composer to install it?');
 		}
 
-		// and load the uploaded files
-		static::$upload->processFiles();
+		// if auto-process is not enabled, load the uploaded files
+		if ( ! $config['auto_process'])
+		{
+			static::$upload->processFiles();
+		}
 	}
 
 	// ---------------------------------------------------------------------------
