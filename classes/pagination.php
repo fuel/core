@@ -244,6 +244,14 @@ class Pagination
 	}
 
 	/**
+	 * Render the pagination when the object is cast to string
+	 */
+	public function __toString()
+	{
+		return $this->render();
+	}
+
+	/**
 	 * Creates the pagination markup
 	 *
 	 * @return	string	Markup for the pagination block
@@ -258,8 +266,7 @@ class Pagination
 
 		$html = str_replace(
 			'{pagination}',
-			$this->first($this->template['first-marker']).$this->previous($this->template['previous-marker'])
-				.$this->pages_render().$this->next($this->template['next-marker']).$this->last($this->template['last-marker']),
+			$this->first().$this->previous().$this->pages_render().$this->next().$this->last(),
 			$this->template['wrapper']
 		);
 
@@ -317,9 +324,11 @@ class Pagination
 	 *
 	 * @return	string	Markup for the 'first' page number link
 	 */
-	public function first($marker = '&laquo;&laquo;')
+	public function first($marker = null)
 	{
 		$html = '';
+
+		$marker === null and $marker = $this->template['first-marker'];
 
 		if ($this->config['show_first'])
 		{
@@ -351,9 +360,11 @@ class Pagination
 	 *
 	 * @return	string	Markup for the 'previous' page number link
 	 */
-	public function previous($marker = '&laquo;')
+	public function previous($marker = null)
 	{
 		$html = '';
+
+		$marker === null and $marker = $this->template['previous-marker'];
 
 		if ($this->config['total_pages'] > 1)
 		{
@@ -388,9 +399,11 @@ class Pagination
 	 *
 	 * @return	string	Markup for the 'next' page number link
 	 */
-	public function next($marker = '&raquo;')
+	public function next($marker = null)
 	{
 		$html = '';
+
+		$marker === null and $marker = $this->template['next-marker'];
 
 		if ($this->config['total_pages'] > 1)
 		{
@@ -424,9 +437,11 @@ class Pagination
 	 *
 	 * @return	string	Markup for the 'last' page number link
 	 */
-	public function last($marker = '&raquo;&raquo;')
+	public function last($marker = null)
 	{
 		$html = '';
+
+		$marker === null and $marker = $this->template['last-marker'];
 
 		if ($this->config['show_last'])
 		{
