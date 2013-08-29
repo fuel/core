@@ -218,7 +218,7 @@ class Fuel
 			\Finder::instance()->write_cache('FuelFileFinder');
 		}
 
-		if (static::$profiling and ! static::$is_cli)
+		if (static::$profiling and ! static::$is_cli and ! \Input::is_ajax())
 		{
 			// Grab the output buffer and flush it, we will rebuffer later
 			$output = ob_get_clean();
