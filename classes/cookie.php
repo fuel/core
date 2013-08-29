@@ -80,6 +80,12 @@ class Cookie
 	 */
 	public static function set($name, $value, $expiration = null, $path = null, $domain = null, $secure = null, $http_only = null)
 	{
+		// you can't set cookies in CLi mode
+		if (\Fuel::$is_cli)
+		{
+			return false;
+		}
+
 		$value = \Fuel::value($value);
 
 		// use the class defaults for the other parameters if not provided
