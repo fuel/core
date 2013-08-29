@@ -172,6 +172,46 @@ class Redis_Db
 	}
 
 	/**
+	 * Alias for the redis PSUBSCRIBE command. It allows you to listen, and
+	 * have the callback called for every response.
+	 *
+	 * @params  string    pattern to subscribe to
+	 * @params  callable  callback, to process the responses
+	 *
+	 * @throws  RedisException  if writing the command failed
+	 */
+    public function psubscribe($pattern, $callback)
+    {
+        $args = array('PSUBSCRIBE', $pattern);
+
+        $command = sprintf('*%d%s%s%s', 2, CRLF, implode(array_map(function($arg) {
+            return sprintf('$%d%s%s', strlen($arg), CRLF, $arg);
+        }, $args), CRLF), CRLF);
+
+        for ($written = 0; $written < strlen($command); $written += $fwrite)
+        {
+            $fwrite = fwrite($this->connection, substr($command, $written));
+            if ($fwrite === false)
+            {
+                throw new \RedisException('Failed to write entire command to stream');
+            }
+        }
+
+        while ( ! feof($this->connection))
+        {
+            try
+            {
+                $response = $this->readResponse();
+                $callback($response);
+            }
+            catch(\RedisException $e)
+            {
+                \Log::warning($e->getMessage(), 'Redis_Db::readResponse');
+            }
+        }
+    }
+
+	/**
 	 */
 	public function __call($name, $args)
 	{
