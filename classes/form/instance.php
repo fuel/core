@@ -514,16 +514,17 @@ class Form_Instance
 
 			if ( ! isset($attributes['selected']))
 			{
-				$attributes['selected'] = ! isset($attributes['value']) ? null : $attributes['value'];
+				$attributes['selected'] = ! isset($attributes['value']) ? (isset($attributes['default']) ? $attributes['default'] : null) : $attributes['value'];
 			}
 		}
 		else
 		{
 			$attributes['name'] = (string) $field;
-			$attributes['selected'] = $values;
+			$attributes['selected'] = $values ?: (isset($attributes['default']) ? $attributes['default'] : null);
 			$attributes['options'] = $options;
 		}
 		unset($attributes['value']);
+		unset($attributes['default']);
 
 		if ( ! isset($attributes['options']) || ! is_array($attributes['options']))
 		{
