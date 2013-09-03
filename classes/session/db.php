@@ -185,6 +185,9 @@ class Session_Db extends \Session_Driver
 			{
 				// then update the cookie
 				$this->_set_cookie(array($this->keys['session_id']));
+
+				// and update the record
+				$this->record = \DB::select()->where('session_id', '=', $session['session_id'])->from($this->config['table'])->execute($this->config['database']);
 			}
 			else
 			{
