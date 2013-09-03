@@ -177,7 +177,7 @@ class Fuel
 		// Run Input Filtering
 		\Security::clean_input();
 
-		\Event::register('shutdown', 'Fuel::finish');
+		\Event::register('fuel-shutdown', 'Fuel::finish');
 
 		// Always load classes, config & language set in always_load.php config
 		static::always_load();

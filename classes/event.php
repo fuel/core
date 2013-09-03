@@ -57,25 +57,6 @@ abstract class Event
 		return static::$instances[$name];
 	}
 
-	// --------------------------------------------------------------------
-
-	/**
-	 * method called by register_shutdown_event
-	 *
-	 * @access	public
-	 * @param	void
-	 * @return	void
-	 */
-	public static function shutdown()
-	{
-		$instance = static::instance();
-		if ($instance->has_events('shutdown'))
-		{
-			// trigger the shutdown events
-			$instance->trigger('shutdown', '', 'none', true);
-		}
-	}
-
 	/**
 	 * Static call forwarder
 	 *

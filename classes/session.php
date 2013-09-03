@@ -114,7 +114,7 @@ class Session
 		else
 		{
 			// register a shutdown event to update the session
-			\Event::register('shutdown', array($driver, 'write'));
+			\Event::register('fuel-shutdown', array($driver, 'write'));
 
 			// init the session
 			$driver->init();
