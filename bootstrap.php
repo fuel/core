@@ -46,14 +46,13 @@ register_shutdown_function(function ()
 	// occuring before the main config file is loaded
 	\Config::get('security.output_filter', null) or \Config::set('security.output_filter', 'Security::htmlentities');
 
-	// Fire off
 	try
 	{
 		// fire any app shutdown events
-		\Event::instance()->has_events('shutdown') and \Event::instance()->trigger('shutdown', '', 'none', true);
+		\Event::instance()->trigger('shutdown', '', 'none', true);
 
 		// fire any framework shutdown events
-		\Event::instance()->has_events('fuel-shutdown') and \Event::instance()->trigger('fuel-shutdown', '', 'none', true);
+		\Event::instance()->trigger('fuel-shutdown', '', 'none', true);
 	}
 	catch (\Exception $e)
 	{
