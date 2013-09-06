@@ -65,7 +65,7 @@ return array(
 	),
 
 	// Twitter bootstrap 3.x template
-	'bootstrap'                   => array(
+	'bootstrap3'                   => array(
 		'wrapper'                 => "<ul class=\"pagination\">\n\t{pagination}\n\t</ul>\n",
 
 		'first'                   => "\n\t\t<li>{link}</li>",
@@ -104,7 +104,7 @@ return array(
 	),
 
 	// Twitter bootstrap 2.x template
-	'bootstrap2'                   => array(
+	'bootstrap'                   => array(
 		'wrapper'                 => "<div class=\"pagination\">\n\t<ul>{pagination}\n\t</ul>\n</div>\n",
 
 		'first'                   => "\n\t\t<li>{link}</li>",
