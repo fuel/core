@@ -226,7 +226,7 @@ class Security
 
 			foreach ($value as $k => $v)
 			{
-				$value->{$k} = static::htmlentities($v, $flags, $encoding, $double_encode);
+				$value->{trim($k)} = static::htmlentities($v, $flags, $encoding, $double_encode);
 			}
 		}
 		elseif (is_object($value))
