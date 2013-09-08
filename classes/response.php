@@ -127,7 +127,10 @@ class Response
 			$url = $url !== '' ? \Uri::create($url) : \Uri::base();
 		}
 
-		strpos($url, '*') !== false and $url = \Uri::segment_replace($url);
+		if (\Config::get('response.redirect_with_wildcards', true))
+		{
+			strpos($url, '*') !== false and $url = \Uri::segment_replace($url);
+		}
 
 		if ($method == 'location')
 		{
