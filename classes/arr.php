@@ -841,6 +841,49 @@ class Arr
 	}
 
 	/**
+	 * Merge 2 arrays recursively, differs in 2 important ways from array_merge_recursive()
+	 * - When there's 2 different values and not both arrays, the latter value overwrites the earlier
+	 *   instead of merging both into an array
+	 * - Numeric keys are never changed
+	 *
+	 * @param   array  multiple variables all of which must be arrays
+	 * @return  array
+	 * @throws  \InvalidArgumentException
+	 */
+	public static function merge_assoc()
+	{
+		$array  = func_get_arg(0);
+		$arrays = array_slice(func_get_args(), 1);
+
+		if ( ! is_array($array))
+		{
+			throw new \InvalidArgumentException('Arr::merge_assoc() - all arguments must be arrays.');
+		}
+
+		foreach ($arrays as $arr)
+		{
+			if ( ! is_array($arr))
+			{
+				throw new \InvalidArgumentException('Arr::merge_assoc() - all arguments must be arrays.');
+			}
+
+			foreach ($arr as $k => $v)
+			{
+				if (is_array($v) and array_key_exists($k, $array) and is_array($array[$k]))
+				{
+					$array[$k] = static::merge_assoc($array[$k], $v);
+				}
+				else
+				{
+					$array[$k] = $v;
+				}
+			}
+		}
+
+		return $array;
+	}
+
+	/**
 	 * Prepends a value with an asociative key to an array.
 	 * Will overwrite if the value exists.
 	 *
