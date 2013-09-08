@@ -148,8 +148,15 @@ class Fieldset
 	 * @param  string
 	 * @param  array
 	 */
-	protected function __construct($name, array $config = array())
+	public function __construct($name = '', array $config = array())
 	{
+		// support new Fieldset($config) syntax
+		if (is_array($name))
+		{
+			$config = $name;
+			$name = '';
+		}
+
 		if (isset($config['validation_instance']))
 		{
 			$this->validation($config['validation_instance']);
