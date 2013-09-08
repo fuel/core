@@ -323,6 +323,51 @@ class Test_Arr extends TestCase
 	}
 
 	/**
+	 * Tests Arr::merge_assoc()
+	 *
+	 * @test
+	 */
+	public function test_merge_assoc()
+	{
+		$arr1 = array(
+			'one' => 1,
+			2 => 2,
+			3 => 3,
+			4 => array(
+				56
+			),
+			5=> 87
+		);
+
+		$arr2 = array(
+			1 => 27,
+			2 => 90,
+			4 => array(
+				'give_me' => 'bandwidth',
+			),
+			6 => '90',
+			7 => 'php',
+		);
+
+		$expected = array(
+			'one' => 1,
+			2 => 90,
+			3 => 3,
+			4 => array(
+				56,
+				'give_me' => 'bandwidth',
+			),
+			5=> 87,
+			1 => 27,
+			6 => '90',
+			7 => 'php',
+		);
+
+		$output = Arr::merge_assoc($arr1, $arr2);
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
 	 * Tests Arr::insert()
 	 *
 	 * @test
