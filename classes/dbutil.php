@@ -584,7 +584,7 @@ class DBUtil
 		catch (\Database_Exception $e)
 		{
 			// check if we have a DB connection at all
-			$connection = \Database_Connection::instance($db ? $db : static::$connection)->connection();
+			$connection = \Database_Connection::instance($db ? $db : static::$connection)->has_connection();
 
 			// if no connection could be made, re throw the exception
 			if ( ! $connection)
@@ -617,6 +617,15 @@ class DBUtil
 		}
 		catch (\Database_Exception $e)
 		{
+			// check if we have a DB connection at all
+			$connection = \Database_Connection::instance($db ? $db : static::$connection)->has_connection();
+
+			// if no connection could be made, re throw the exception
+			if ( ! $connection)
+			{
+				throw $e;
+			}
+
 			return false;
 		}
 	}

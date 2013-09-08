@@ -730,4 +730,17 @@ abstract class Database_Connection
 		$this->_connection or $this->connect();
 		return $this->_connection;
 	}
+
+	/**
+	 * Returns whether or not we have a valid database connection object
+	 *
+	 *     $db->has_connection()
+	 *
+	 * @return  bool
+	 */
+	public function has_connection()
+	{
+		// return the status of the connection
+		return $this->_connection ? true : false;
+	}
 }
