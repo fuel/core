@@ -1038,6 +1038,25 @@ class Arr
 	}
 
 	/**
+	 * Returns the array with all numeric keys re-indexed, and string keys untouched
+	 *
+	 * @param   array  $arr       the array to reindex
+	 * @return  array   reindexed array
+	 */
+	public static function reindex($arr)
+	{
+		// reindex this level
+		$arr = array_merge($arr);
+
+		foreach ($arr as $k => &$v)
+		{
+			is_array($v) and $v = static::reindex($v);
+		}
+
+		return $arr;
+	}
+
+	/**
 	 * Get the previous value or key from an array using the current array key
 	 *
 	 * @param   array    $array  the array containing the values
