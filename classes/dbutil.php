@@ -385,26 +385,36 @@ class DBUtil
 	 *
 	 * @param    string    $charset       the character set
 	 * @param    bool      $is_default    whether to use default
+	 * @param    string    $db       the database name in the config
+	 * @param    string    $collation       the collating sequence to be used
 	 * @return   string    the formated charset sql
 	 */
-	protected static function process_charset($charset = null, $is_default = false, $db = null)
+	protected static function process_charset($charset = null, $is_default = false, $db = null, $collation = null)
 	{
 		$charset or $charset = \Config::get('db.'.($db ? $db : \Config::get('db.active')).'.charset', null);
+
 		if (empty($charset))
 		{
 			return '';
 		}
 
-		if (($pos = stripos($charset, '_')) !== false)
+		if ($is_default)
 		{
-			$charset = ' CHARACTER SET '.substr($charset, 0, $pos).' COLLATE '.$charset;
+			$charset = ' DEFAULT '.$charset;
 		}
 		else
 		{
-			$charset = ' CHARACTER SET '.$charset;
-		}
+			$collation or $collation = \Config::get('db.'.($db ? $db : \Config::get('db.active')).'.collation', null);
 
-		$is_default and $charset = ' DEFAULT'.$charset;
+			if (empty($collation))
+			{
+				$charset = ' CHARACTER SET '.$charset;
+			}
+			else
+			{
+				$charset = ' CHARACTER SET '.$charset.' COLLATE '.$collation;
+			}
+		}
 
 		return $charset;
 	}
