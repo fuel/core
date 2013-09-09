@@ -398,22 +398,20 @@ class DBUtil
 			return '';
 		}
 
-		if ($is_default)
+		$collation or $collation = \Config::get('db.'.($db ? $db : \Config::get('db.active')).'.collation', null);
+
+		if (empty($collation))
 		{
-			$charset = ' DEFAULT '.$charset;
+			$charset = ' CHARACTER SET '.$charset;
 		}
 		else
 		{
-			$collation or $collation = \Config::get('db.'.($db ? $db : \Config::get('db.active')).'.collation', null);
+			$charset = ' CHARACTER SET '.$charset.' COLLATE '.$collation;
+		}
 
-			if (empty($collation))
-			{
-				$charset = ' CHARACTER SET '.$charset;
-			}
-			else
-			{
-				$charset = ' CHARACTER SET '.$charset.' COLLATE '.$collation;
-			}
+		if ($is_default)
+		{
+			$charset = ' DEFAULT'.$charset;
 		}
 
 		return $charset;
