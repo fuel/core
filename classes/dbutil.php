@@ -400,7 +400,7 @@ class DBUtil
 
 		if ($is_default)
 		{
-			$charset = ' DEFAULT '.$charset;
+			$charset = ' DEFAULT CHARACTER SET '.$charset;
 		}
 		else
 		{
