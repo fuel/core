@@ -526,5 +526,9 @@ class Input
 			parse_str(static::$php_input, static::$put_patch_delete);
 			static::$input = array_merge(static::$input, static::$put_patch_delete);
 		}
+		else
+		{
+			static::$put_patch_delete = array();
+		}
 	}
 }
