@@ -146,7 +146,10 @@ class Request
 	public static function reset_request()
 	{
 		// Let's make the previous Request active since we are done executing this one.
-		static::$active = static::$active->parent();
+		if ( ! static::$active = static::$active->parent())
+		{
+			static::$main = null;
+		}
 	}
 
 
