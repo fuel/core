@@ -143,15 +143,14 @@ class Request
 	 *
 	 * @return  void
 	 */
-	public static function reset_request()
+	public static function reset_request($full = false)
 	{
 		// Let's make the previous Request active since we are done executing this one.
-		if ( ! static::$active = static::$active->parent())
+		if ($full or ! static::$active = static::$active->parent())
 		{
 			static::$main = null;
 		}
 	}
-
 
 	/**
 	 * Holds the response object of the request.
