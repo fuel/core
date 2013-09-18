@@ -18,6 +18,16 @@ namespace Fuel\Core;
 abstract class Database_Connection
 {
 	/**
+	 * @var string Cache of the name of the master connection
+	 */
+	protected static $_replication_master;
+
+	/**
+	 * @var string Cache of the name of the slave connection
+	 */
+	protected static $_replication_slave;
+
+	/**
 	 * @var  array  Database instances
 	 */
 	public static $instances = array();
@@ -33,20 +43,37 @@ abstract class Database_Connection
 	 *     // Create a custom configured instance
 	 *     $db = static::instance('custom', $config);
 	 *
-	 * @param   string $name   instance name
-	 * @param   array  $config configuration parameters
+	 * @param   string $name     instance name
+	 * @param   array  $config   configuration parameters
+	 * @param   bool   $writable when replication is enabled, whether to return the master connection
 	 *
 	 * @return  Database_Connection
 	 *
 	 * @throws \FuelException
 	 */
-	public static function instance($name = null, array $config = null)
+	public static function instance($name = null, array $config = null, $writable = true)
 	{
 		\Config::load('db', true);
 		if ($name === null)
 		{
-			// Use the default instance name
-			$name = \Config::get('db.active');
+			if (\Config::get('db.replication.enable') and ($master = \Config::get('db.replication.master', array())) and ($slave = \Config::get('db.replication.slave', array())))
+			{
+				if ($writable)
+				{
+					is_null(static::$_replication_master) and static::$_replication_master = \Arr::get($master, array_rand($master));
+					$name = static::$_replication_master;
+				}
+				else
+				{
+					is_null(static::$_replication_slave) and static::$_replication_slave = \Arr::get($slave, array_rand($slave));
+					$name = static::$_replication_slave;
+				}
+			}
+			else
+			{
+				// Use the default instance name
+				$name = \Config::get('db.active');
+			}
 		}
 
 		if ( ! isset(static::$instances[$name]))
