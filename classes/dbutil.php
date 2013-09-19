@@ -406,20 +406,20 @@ class DBUtil
 			$charset = substr($charset, 0, $pos);
 		}
 
+		$charset = 'CHARACTER SET '.$charset;
+
 		if ($is_default)
 		{
-			$charset = ' DEFAULT '.$charset;
+			$charset = 'DEFAULT '.$charset;
 		}
-		else
+
+		if ( ! empty($collation))
 		{
-			if (empty($collation))
+			if ($is_default)
 			{
-				$charset = ' CHARACTER SET '.$charset;
+				$charset .= ' DEFAULT';
 			}
-			else
-			{
-				$charset = ' CHARACTER SET '.$charset.' COLLATE '.$collation;
-			}
+			$charset .= ' COLLATE '.$collation;
 		}
 
 		return $charset;
