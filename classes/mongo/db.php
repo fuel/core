@@ -199,7 +199,7 @@ class Mongo_Db
 		}
 		catch (\MongoConnectionException $e)
 		{
-			throw new \Mongo_DbException("Unable to connect to MongoDB: {$e->getMessage()}");
+			throw new \Mongo_DbException("Unable to connect to MongoDB: {$e->getMessage()}", $e->getCode());
 		}
 	}
 
@@ -225,7 +225,7 @@ class Mongo_Db
 			}
 			catch (\Exception $e)
 			{
-				throw new \Mongo_DbException("Unable to drop Mongo database `{$database}`: {$e->getMessage()}");
+				throw new \Mongo_DbException("Unable to drop Mongo database `{$database}`: {$e->getMessage()}", $e->getCode());
 			}
 
 		}
@@ -259,7 +259,7 @@ class Mongo_Db
 			}
 			catch (\Exception $e)
 			{
-				throw new \Mongo_DbException("Unable to drop Mongo collection `{$col}`: {$e->getMessage()}");
+				throw new \Mongo_DbException("Unable to drop Mongo collection `{$col}`: {$e->getMessage()}", $e->getCode());
 			}
 		}
 	}
@@ -697,7 +697,7 @@ class Mongo_Db
 	{
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("In order to retrieve documents from MongoDB");
+			throw new \Mongo_DbException("In order to retrieve documents from MongoDB you must provide a collection name.");
 		}
 
 		if ($this->profiling)
@@ -736,7 +736,7 @@ class Mongo_Db
 	{
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("In order to retrieve a count of documents from MongoDB");
+			throw new \Mongo_DbException("In order to retrieve a count of documents from MongoDB you must provide a collection name.");
 		}
 
 		if ($this->profiling)
@@ -778,12 +778,12 @@ class Mongo_Db
 	{
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection selected to insert into");
+			throw new \Mongo_DbException("No Mongo collection selected to insert");
 		}
 
 		if (empty($insert) or ! is_array($insert))
 		{
-			throw new \Mongo_DbException("Nothing to insert into Mongo collection or insert is not an array");
+			throw new \Mongo_DbException("Nothing to insert into Mongo collection or insert value is not an array");
 		}
 
 		try
@@ -817,7 +817,7 @@ class Mongo_Db
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \Mongo_DbException("Insert of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Insert of data into MongoDB failed: {$e->getMessage()}", $e->getCode());
 		}
 	}
 
@@ -838,7 +838,7 @@ class Mongo_Db
 
 		if (empty($data) or ! is_array($data))
 		{
-			throw new \Mongo_DbException("Nothing to update in Mongo collection or update is not an array");
+			throw new \Mongo_DbException("Nothing to update in Mongo collection or update value is not an array");
 		}
 
 		try
@@ -870,7 +870,7 @@ class Mongo_Db
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \Mongo_DbException("Update of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Update of data into MongoDB failed: {$e->getMessage()}", $e->getCode());
 		}
 	}
 
@@ -890,7 +890,7 @@ class Mongo_Db
 
 		if (empty($data) or ! is_array($data))
 		{
-			throw new \Mongo_DbException("Nothing to update in Mongo collection or update is not an array");
+			throw new \Mongo_DbException("Nothing to update in Mongo collection or update value is not an array");
 		}
 
 		try
@@ -920,7 +920,7 @@ class Mongo_Db
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \Mongo_DbException("Update of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Update of data into MongoDB failed: {$e->getMessage()}", $e->getCode());
 		}
 	}
 
@@ -962,7 +962,7 @@ class Mongo_Db
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \Mongo_DbException("Delete of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Delete of data into MongoDB failed: {$e->getMessage()}", $e->getCode());
 		}
 	}
 
@@ -1004,7 +1004,7 @@ class Mongo_Db
 		}
 		catch (\MongoCursorException $e)
 		{
-			throw new \Mongo_DbException("Delete of data into MongoDB failed: {$e->getMessage()}");
+			throw new \Mongo_DbException("Delete of data from MongoDB failed: {$e->getMessage()}", $e->getCode());
 		}
 	}
 
@@ -1025,7 +1025,7 @@ class Mongo_Db
 
 		catch (\MongoCursorException $e)
 		{
-			throw new \Mongo_DbException("MongoDB command failed to execute: {$e->getMessage()}");
+			throw new \Mongo_DbException("MongoDB command failed to execute: {$e->getMessage()}", $e->getCode());
 		}
 	}
 
@@ -1043,7 +1043,7 @@ class Mongo_Db
 	{
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection specified to add index to");
+			throw new \Mongo_DbException("No Mongo collection specified to add an index to");
 		}
 
 		if (empty($keys) or ! is_array($keys))
@@ -1087,7 +1087,7 @@ class Mongo_Db
 	{
 		if (empty($collection))
 		{
-			throw new \Mongo_DbException("No Mongo collection specified to remove index from");
+			throw new \Mongo_DbException("No Mongo collection specified to remove an index from");
 		}
 
 		if (empty($keys) or ! is_array($keys))
