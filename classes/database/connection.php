@@ -18,14 +18,9 @@ namespace Fuel\Core;
 abstract class Database_Connection
 {
 	/**
-	 * @var string Cache of the name of the master connection
+	 * @var string Cache of the name of the readonly connection
 	 */
-	protected static $_replication_master;
-
-	/**
-	 * @var string Cache of the name of the slave connection
-	 */
-	protected static $_replication_slave;
+	protected static $_readonly;
 
 	/**
 	 * @var  array  Database instances
@@ -56,23 +51,13 @@ abstract class Database_Connection
 		\Config::load('db', true);
 		if ($name === null)
 		{
-			if (\Config::get('db.replication.enable') and ($master = \Config::get('db.replication.master', array())) and ($slave = \Config::get('db.replication.slave', array())))
+			// Use the default instance name
+			$name = \Config::get('db.active');
+
+			if ( ! $writable and ($readonly = \Config::get("db.{$name}.readonly")))
 			{
-				if ($writable)
-				{
-					is_null(static::$_replication_master) and static::$_replication_master = \Arr::get($master, array_rand($master));
-					$name = static::$_replication_master;
-				}
-				else
-				{
-					is_null(static::$_replication_slave) and static::$_replication_slave = \Arr::get($slave, array_rand($slave));
-					$name = static::$_replication_slave;
-				}
-			}
-			else
-			{
-				// Use the default instance name
-				$name = \Config::get('db.active');
+				is_null(static::$_readonly) and static::$_readonly = \Arr::get($readonly, array_rand($readonly));
+				$name = static::$_readonly;
 			}
 		}
 
