@@ -400,18 +400,26 @@ class DBUtil
 
 		$collation or $collation = \Config::get('db.'.($db ? $db : \Config::get('db.active')).'.collation', null);
 
-		if (empty($collation))
+		if (empty($collation) and ($pos = stripos($charset, '_')) !== false)
 		{
-			$charset = ' CHARACTER SET '.$charset;
-		}
-		else
-		{
-			$charset = ' CHARACTER SET '.$charset.' COLLATE '.$collation;
+			$collation = $charset;
+			$charset = substr($charset, 0, $pos);
 		}
 
 		if ($is_default)
 		{
-			$charset = ' DEFAULT'.$charset;
+			$charset = ' DEFAULT '.$charset;
+		}
+		else
+		{
+			if (empty($collation))
+			{
+				$charset = ' CHARACTER SET '.$charset;
+			}
+			else
+			{
+				$charset = ' CHARACTER SET '.$charset.' COLLATE '.$collation;
+			}
 		}
 
 		return $charset;
