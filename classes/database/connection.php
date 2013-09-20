@@ -20,7 +20,7 @@ abstract class Database_Connection
 	/**
 	 * @var string Cache of the name of the readonly connection
 	 */
-	protected static $_readonly;
+	protected static $_readonly = array();
 
 	/**
 	 * @var  array  Database instances
@@ -53,12 +53,12 @@ abstract class Database_Connection
 		{
 			// Use the default instance name
 			$name = \Config::get('db.active');
+		}
 
-			if ( ! $writable and ($readonly = \Config::get("db.{$name}.readonly")))
-			{
-				is_null(static::$_readonly) and static::$_readonly = \Arr::get($readonly, array_rand($readonly));
-				$name = static::$_readonly;
-			}
+		if ( ! $writable and ($readonly = \Config::get("db.{$name}.readonly")))
+		{
+			! isset(static::$_readonly[$name]) and static::$_readonly[$name] = \Arr::get($readonly, array_rand($readonly));
+			$name = static::$_readonly[$name];
 		}
 
 		if ( ! isset(static::$instances[$name]))
