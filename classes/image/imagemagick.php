@@ -31,15 +31,15 @@ class Image_Imagemagick extends \Image_Driver
 			{
 				$this->image_temp = $this->config['temp_dir'].substr($this->config['temp_append'].md5(time() * microtime()), 0, 32).'.png';
 			}
-			while (file_exists($this->image_temp));
+			while (is_file($this->image_temp));
 		}
-		elseif (file_exists($this->image_temp))
+		elseif (is_file($this->image_temp))
 		{
 			$this->debug('Removing previous temporary image.');
 			unlink($this->image_temp);
 		}
 		$this->debug('Temp file: '.$this->image_temp);
-		if (!file_exists($this->config['temp_dir']) || !is_dir($this->config['temp_dir']))
+		if ( ! is_dir($this->config['temp_dir']))
 		{
 			throw new \RuntimeException("The temp directory that was given does not exist.");
 		}
@@ -349,7 +349,7 @@ class Image_Imagemagick extends \Image_Driver
 
 	public function __destruct()
 	{
-		if (file_exists($this->image_temp))
+		if (is_file($this->image_temp))
 		{
 			unlink($this->image_temp);
 		}

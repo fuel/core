@@ -272,7 +272,7 @@ class Ftp
 			return false;
 		}
 
-		if ( ! file_exists($local_path))
+		if ( ! is_file($local_path))
 		{
 			throw new \FtpFileAccessException('No source file');
 			return false;

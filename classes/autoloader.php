@@ -277,7 +277,7 @@ class Autoloader
 			{
 				$path = APPPATH.'classes/'.static::class_to_path($class);
 
-				if (file_exists($path))
+				if (is_file($path))
 				{
 					include $path;
 					static::init_class($class);

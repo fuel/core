@@ -652,7 +652,7 @@ class Migrate
 			}
 
 			// delete any old migration config file that may exist
-			file_exists(APPPATH.'config'.DS.'migrations.php') and unlink(APPPATH.'config'.DS.'migrations.php');
+			is_file(APPPATH.'config'.DS.'migrations.php') and unlink(APPPATH.'config'.DS.'migrations.php');
 		}
 
 		// set connection to default

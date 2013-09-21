@@ -126,7 +126,7 @@ abstract class Image_Driver
 			'filename'    => $filename,
 			'return_data' => $return_data
 		);
-		if (file_exists($filename))
+		if (is_file($filename))
 		{
 			// Check the extension
 			$ext = $this->check_extension($filename, false, $force_extension);
@@ -444,7 +444,7 @@ abstract class Image_Driver
 	{
 		$filename = realpath($filename);
 		$return = false;
-		if (file_exists($filename) and $this->check_extension($filename, false))
+		if (is_file($filename) and $this->check_extension($filename, false))
 		{
 			$x = 0;
 			$y = 0;

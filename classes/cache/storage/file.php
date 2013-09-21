@@ -77,7 +77,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	{
 		foreach($dependencies as $dep)
 		{
-			if (file_exists($file = static::$path.str_replace('.', DS, $dep).'.cache'))
+			if (is_file($file = static::$path.str_replace('.', DS, $dep).'.cache'))
 			{
 				$filemtime = filemtime($file);
 				if ($filemtime === false || $filemtime > $this->created)
@@ -85,9 +85,9 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 					return false;
 				}
 			}
-			elseif (file_exists($dep))
+			elseif (is_file($dep))
 			{
-				$filemtime = filemtime($file);
+				$filemtime = filemtime($dep);
 				if ($filemtime === false || $filemtime > $this->created)
 				{
 					return false;
@@ -107,7 +107,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	 */
 	public function delete()
 	{
-		if (file_exists($file = static::$path.$this->identifier_to_path($this->identifier).'.cache'))
+		if (is_file($file = static::$path.$this->identifier_to_path($this->identifier).'.cache'))
 		{
 			unlink($file);
 			$this->reset();
@@ -319,7 +319,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	{
 		$id_path = $this->identifier_to_path( $this->identifier );
 		$file = static::$path.$id_path.'.cache';
-		if ( ! file_exists($file))
+		if ( ! is_file($file))
 		{
 			return false;
 		}

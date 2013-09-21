@@ -214,7 +214,7 @@ class Session_File extends \Session_Driver
 		{
 			// delete the session file
 			$file = $this->config['path'].$this->config['cookie_name'].'_'.$this->keys['session_id'];
-			if (file_exists($file))
+			if (is_file($file))
 			{
 				unlink($file);
 			}
@@ -237,7 +237,7 @@ class Session_File extends \Session_Driver
 	{
 		// create the session file
 		$file = $this->config['path'].$this->config['cookie_name'].'_'.$session_id;
-		$exists = file_exists($file);
+		$exists = is_file($file);
 		$handle = fopen($file,'c');
 		if ($handle)
 		{
@@ -277,7 +277,7 @@ class Session_File extends \Session_Driver
 		$payload = false;
 
 		$file = $this->config['path'].$this->config['cookie_name'].'_'.$session_id;
-		if (file_exists($file))
+		if (is_file($file))
 		{
 			$handle = fopen($file,'r');
 			if ($handle)
