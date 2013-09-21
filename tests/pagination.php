@@ -218,6 +218,86 @@ class Test_Pagination extends TestCase
 		$expected = 4;
 		$this->assertEquals($expected, $test);
 	}
+
+	/**
+	 * raw render
+	 *
+	 */
+	public function test_pagination_raw_render()
+	{
+		// set Request::$main & $active
+		$this->set_request('welcome/index/5');
+
+		$this->set_uri_segment_config();
+		$pagination = Pagination::forge(__METHOD__, $this->config);
+
+		$expected = array(
+			'previous' => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/4",
+				'title' => "&laquo;",
+				'type' => "previous",
+			),
+			0 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/1",
+				'title' => 1,
+				'type' => "regular",
+			),
+			1 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/2",
+				'title' => 2,
+				'type' => "regular",
+			),
+			2 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/3",
+				'title' => 3,
+				'type' => "regular",
+			),
+			3 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/4",
+				'title' => 4,
+				'type' => "regular",
+			),
+			4 => array(
+				'uri' => "#",
+				'title' => 5,
+				'type' => "active",
+			),
+			5 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/6",
+				'title' => 6,
+				'type' => "regular",
+			),
+			6 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/7",
+				'title' => 7,
+				'type' => "regular",
+			),
+			7 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/8",
+				'title' => 8,
+				'type' => "regular",
+			),
+			8 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/9",
+				'title' => 9,
+				'type' => "regular",
+			),
+			9 => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/10",
+				'title' => 10,
+				'type' => "regular",
+			),
+			'next' => array(
+				'uri' => "http://docs.fuelphp.com/welcome/index/6",
+				'title' => "&raquo;",
+				'type' => "next",
+			),
+		);
+
+		$test = $pagination->render(true);
+		$this->assertEquals($expected, $test);
+	}
+
 	/**
 	 * first page
 	 *

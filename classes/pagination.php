@@ -166,6 +166,11 @@ class Pagination
 	);
 
 	/**
+	 * raw pagination results
+	 */
+	protected $raw_results = array();
+
+	/**
 	 *
 	 */
 	public function __construct($config = array())
@@ -254,15 +259,17 @@ class Pagination
 	/**
 	 * Creates the pagination markup
 	 *
-	 * @return	string	Markup for the pagination block
+	 * @return	mixed	HTML Markup for page number links, or an array of raw pagination data
 	 */
-	public function render()
+	public function render($raw = false)
 	{
 		// no links if we only have one page
 		if ($this->config['total_pages'] == 1)
 		{
-			return '';
+			return $raw ? array() : '';
 		}
+
+		$this->raw_results = array();
 
 		$html = str_replace(
 			'{pagination}',
@@ -270,13 +277,13 @@ class Pagination
 			$this->template['wrapper']
 		);
 
-		return $html;
+		return $raw ? $this->raw_results : $html;
 	}
 
 	/**
 	 * generate the HTML for the page links only
 	 *
-	 * @return	string	Markup for page number links
+	 * @return	string	Markup for the pagination block
 	 */
 	public function pages_render()
 	{
@@ -303,6 +310,7 @@ class Pagination
 				    str_replace(array('{uri}', '{page}'), array('#', $i), $this->template['active-link']),
 				    $this->template['active']
 				);
+				$this->raw_results[] = array('uri' => '#', 'title' => $i, 'type' => 'active');
 			}
 			else
 			{
@@ -311,6 +319,7 @@ class Pagination
 				    str_replace(array('{uri}', '{page}'), array($this->_make_link($i), $i), $this->template['regular-link']),
 				    $this->template['regular']
 				);
+				$this->raw_results[] = array('uri' => $this->_make_link($i), 'title' => $i, 'type' => 'regular');
 			}
 		}
 
@@ -339,6 +348,7 @@ class Pagination
 					str_replace(array('{uri}', '{page}'), array($this->_make_link(1), $marker), $this->template['first-link']),
 					$this->template['first']
 				);
+				$this->raw_results['first'] = array('uri' => $this->_make_link(1), 'title' => $marker, 'type' => 'first');
 			}
 			else
 			{
@@ -347,6 +357,7 @@ class Pagination
 					str_replace(array('{uri}', '{page}'), array('#', $marker), $this->template['first-inactive-link']),
 					$this->template['first-inactive']
 				);
+				$this->raw_results['first'] = array('uri' => '#', 'title' => $marker, 'type' => 'first-inactive');
 			}
 		}
 
@@ -375,6 +386,7 @@ class Pagination
 				    str_replace(array('{uri}', '{page}'), array('#', $marker), $this->template['previous-inactive-link']),
 				    $this->template['previous-inactive']
 				);
+				$this->raw_results['previous'] = array('uri' => '#', 'title' => $marker, 'type' => 'previous-inactive');
 			}
 			else
 			{
@@ -386,6 +398,7 @@ class Pagination
 				    str_replace(array('{uri}', '{page}'), array($this->_make_link($previous_page), $marker), $this->template['previous-link']),
 				    $this->template['previous']
 				);
+				$this->raw_results['previous'] = array('uri' => $this->_make_link($previous_page), 'title' => $marker, 'type' => 'previous');
 			}
 		}
 
@@ -414,6 +427,7 @@ class Pagination
 				    str_replace(array('{uri}', '{page}'), array('#', $marker), $this->template['next-inactive-link']),
 				    $this->template['next-inactive']
 				);
+				$this->raw_results['next'] = array('uri' => '#', 'title' => $marker, 'type' => 'next-inactive');
 			}
 			else
 			{
@@ -424,6 +438,7 @@ class Pagination
 				    str_replace(array('{uri}', '{page}'), array($this->_make_link($next_page), $marker), $this->template['next-link']),
 				    $this->template['next']
 				);
+				$this->raw_results['next'] = array('uri' => $this->_make_link($next_page), 'title' => $marker, 'type' => 'next');
 			}
 		}
 
@@ -452,6 +467,7 @@ class Pagination
 					str_replace(array('{uri}', '{page}'), array($this->_make_link($this->config['total_pages']), $marker), $this->template['last-link']),
 					$this->template['last']
 				);
+				$this->raw_results['last'] = array('uri' => $this->_make_link($this->config['total_pages']), 'title' => $marker, 'type' => 'last');
 			}
 			else
 			{
@@ -460,6 +476,7 @@ class Pagination
 					str_replace(array('{uri}', '{page}'), array('#', $marker), $this->template['last-inactive-link']),
 					$this->template['last-inactive']
 				);
+				$this->raw_results['last'] = array('uri' => '#', 'title' => $marker, 'type' => 'last-inactive');
 			}
 		}
 
