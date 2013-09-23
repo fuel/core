@@ -1225,7 +1225,7 @@ class Arr
 
 		foreach ($keys as $key)
 		{
-			$ret[$key] = \Arr::get($array, $key, $default);
+			$ret[$key] = static::get($array, $key, $default);
 		}
 
 		return $ret;
