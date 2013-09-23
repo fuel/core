@@ -1209,7 +1209,7 @@ class Arr
 	}
 
 	/**
-	 * Return the subset of the array by the supplied keys.
+	 * Return the subset of the array defined by the supplied keys.
 	 *
 	 * Returns $default for missing keys, as with Arr::get()
 	 *
