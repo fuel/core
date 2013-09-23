@@ -1207,4 +1207,27 @@ class Arr
 		// return the value or the key of the array entry the next key points to
 		return $get_value ? $array[$keys[$index+1]] : $keys[$index+1];
 	}
+
+	/**
+	 * Return the subset of the array defined by the supplied keys.
+	 *
+	 * Returns $default for missing keys, as with Arr::get()
+	 *
+	 * @param   array    $array    the array containing the values
+	 * @param   array    $keys     list of keys (or indices) to return
+	 * @param   mixed    $default  value of missing keys; default null
+	 *
+	 * @return  array  An array containing the same set of keys provided.
+	 */
+	public function subset(array $array, array $keys, $default = null)
+	{
+		$ret = [];
+
+		foreach ($keys as $key)
+		{
+			static::set($ret, $key, static::get($array, $key, $default));
+		}
+
+		return $ret;
+	}
 }
