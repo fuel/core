@@ -1219,12 +1219,15 @@ class Arr
 	 *
 	 * @return  array  An array containing the same set of keys provided.
 	 */
-	public function subset($array, $keys, $default=null)
+	public function subset($array, $keys, $default = null)
 	{
 		$ret = [];
-		foreach ($keys as $key) {
+
+		foreach ($keys as $key)
+		{
 			$ret[$key] = \Arr::get($array, $key, $default);
 		}
+
 		return $ret;
 	}
 }
