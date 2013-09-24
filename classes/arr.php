@@ -1219,7 +1219,7 @@ class Arr
 	 *
 	 * @return  array  An array containing the same set of keys provided.
 	 */
-	public function subset(array $array, array $keys, $default = null)
+	public static function subset(array $array, array $keys, $default = null)
 	{
 		$result = array();
 
