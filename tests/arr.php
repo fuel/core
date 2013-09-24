@@ -941,4 +941,68 @@ class Test_Arr extends TestCase
 		$test = \Arr::next_by_value($arr, 'A', false);
 		$this->assertTrue($expected === $test);
 	}
+
+	/**
+	 * Tests Arr::subset()
+	 *
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_subset_basic_usage($person)
+	{
+		$expected = array(
+			"name" => "Jack",
+			"location" => array(
+				"city" => "Pittsburgh",
+				"state" => "PA",
+				"country" => "US"
+			),
+		);
+
+		$got = \Arr::subset($person, array("name", "location"));
+		$this->assertEquals($expected, $got);
+
+		$expected = array(
+			"name" => "Jack",
+			"location" => array(
+				"country" => "US"
+			),
+		);
+
+		$got = \Arr::subset($person, array("name", "location.country"));
+		$this->assertEquals($expected, $got);
+	}
+
+	/**
+	 * Tests Arr::subset()
+	 *
+	 * @test
+	 * @dataProvider person_provider
+	 */
+	public function test_subset_missing_items($person)
+	{
+		$expected = array(
+			"name" => "Jack",
+			"location" => array(
+				"street" => null,
+				"country" => "US"
+			),
+			"occupation" => null
+		);
+
+		$got = \Arr::subset($person, array("name", "location.street", "location.country", "occupation"));
+		$this->assertEquals($expected, $got);
+
+		$expected = array(
+			"name" => "Jack",
+			"location" => array(
+				"street" => "Unknown",
+				"country" => "US"
+			),
+			"occupation" => "Unknown"
+		);
+
+		$got = \Arr::subset($person, array("name", "location.street", "location.country", "occupation"), "Unknown");
+		$this->assertEquals($expected, $got);
+	}
 }
