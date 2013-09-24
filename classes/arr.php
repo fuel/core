@@ -1221,13 +1221,13 @@ class Arr
 	 */
 	public function subset(array $array, array $keys, $default = null)
 	{
-		$ret = [];
+		$result = array();
 
 		foreach ($keys as $key)
 		{
-			static::set($ret, $key, static::get($array, $key, $default));
+			static::set($result, $key, static::get($array, $key, $default));
 		}
 
-		return $ret;
+		return $result;
 	}
 }
