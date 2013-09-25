@@ -193,12 +193,11 @@ class Format
 		$newline = \Config::get('format.csv.newline', "\n");
 		$delimiter or $delimiter = \Config::get('format.csv.delimiter', ',');
 		$enclosure = \Config::get('format.csv.enclosure', '"');
-		$escape = \Config::get('format.csv.escape', '\\');
 
 		// escape function
-		$escaper = function($items) use($enclosure, $escape) {
-			return array_map(function($item) use($enclosure, $escape){
-				return str_replace($enclosure, $escape.$enclosure, $item);
+		$escaper = function($items) use($enclosure) {
+			return array_map(function($item) use($enclosure){
+				return str_replace($enclosure, $enclosure.$enclosure, $item);
 			}, $items);
 		};
 
