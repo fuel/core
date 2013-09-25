@@ -96,6 +96,12 @@ class Module
 			$ns  => $path.'classes'.DS,
 		), true);
 
+		// optionally load bootstrap.php
+		if (\Finder::forge(array($path))->locate('', 'bootstrap') !== false)
+		{
+			\Fuel::load($path . 'bootstrap.php');
+		}
+
 		static::$modules[$module] = $path;
 
 		return true;
