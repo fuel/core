@@ -21,11 +21,19 @@
 
 return array(
 	'csv' => array(
-		'delimiter' => ',',
-		'enclosure' => '"',
-		'newline'   => "\n",
+		'import' => array(
+			'delimiter' => ',',
+			'enclosure' => '"',
+			'newline'   => "\n",
+			'escape'    => '"',
+		),
+		'export' => array(
+			'delimiter' => ',',
+			'enclosure' => '"',
+			'newline'   => "\n",
+			'escape'    => '"',
+		),
 		'regex_newline'   => '\n',
-		'escape'    => '\\',
 	),
 	'xml' => array(
 		'basenode' => 'xml',

@@ -190,10 +190,10 @@ class Format
 	public function to_csv($data = null, $delimiter = null)
 	{
 		// csv format settings
-		$newline = \Config::get('format.csv.newline', "\n");
-		$delimiter or $delimiter = \Config::get('format.csv.delimiter', ',');
-		$enclosure = \Config::get('format.csv.enclosure', '"');
-		$escape = \Config::get('format.csv.escape', '\\');
+		$newline = \Config::get('format.csv.export.newline', \Config::get('format.csv.newline', "\n"));
+		$delimiter or $delimiter = \Config::get('format.csv.export.delimiter', \Config::get('format.csv.delimiter', ','));
+		$enclosure = \Config::get('format.csv.export.enclosure', \Config::get('format.csv.enclosure', '"'));
+		$escape = \Config::get('format.csv.export.escape', \Config::get('format.csv.escape', '"'));
 
 		// escape function
 		$escaper = function($items) use($enclosure, $escape) {
@@ -378,12 +378,12 @@ class Format
 	{
 		$data = array();
 
-		$rows = preg_split('/(?<='.preg_quote(\Config::get('format.csv.enclosure', '"')).')'.\Config::get('format.csv.regex_newline', '\n').'/', trim($string));
+		$rows = preg_split('/(?<='.preg_quote(\Config::get('format.csv.import.enclosure', \Config::get('format.csv.enclosure', '"'))).')'.\Config::get('format.csv.regex_newline', '\n').'/', trim($string));
 
 		// csv config
-		$delimiter = \Config::get('format.csv.delimiter', ',');
-		$enclosure = \Config::get('format.csv.enclosure', '"');
-		$escape = \Config::get('format.csv.escape', '\\');
+		$delimiter = \Config::get('format.csv.import.delimiter', \Config::get('format.csv.delimiter', ','));
+		$enclosure = \Config::get('format.csv.import.enclosure', \Config::get('format.csv.enclosure', '"'));
+		$escape = \Config::get('format.csv.import.escape', \Config::get('format.csv.escape', '"'));
 
 		// Get the headings
 		$headings = str_replace($escape.$enclosure, $enclosure, str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape));
