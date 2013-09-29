@@ -154,7 +154,7 @@ class Security
 		return $var;
 	}
 
-	public static function xss_clean($value)
+	public static function xss_clean($value, array $options = array())
 	{
 		if ( ! is_array($value))
 		{
@@ -163,7 +163,7 @@ class Security
 				import('htmlawed/htmlawed', 'vendor');
 			}
 
-			return htmLawed($value, array('safe' => 1, 'balanced' => 0, 'clean_ms_char' => 1));
+			return htmLawed($value, array_merge(array('safe' => 1, 'balanced' => 0), $options));
 		}
 
 		foreach ($value as $k => $v)
