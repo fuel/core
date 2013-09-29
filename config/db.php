@@ -42,6 +42,7 @@ return array(
 		'collation'    => false,
 		'enable_cache' => true,
 		'profiling'    => false,
+		'readonly'     => false,
 	),
 
 	/**
@@ -63,6 +64,7 @@ return array(
 		'collation'    => false,
 		'enable_cache' => true,
 		'profiling'    => false,
+		'readonly'     => false,
 	),
 	 */
 

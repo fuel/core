@@ -226,8 +226,8 @@ class Database_Query
 	{
 		if ( ! is_object($db))
 		{
-			// Get the database instance
-			// (If this query is a instance of Database_Query_Builder_Select then use the slave connection)
+			// Get the database instance. If this query is a instance of
+			// Database_Query_Builder_Select then use the slave connection if configured
 			$db = \Database_Connection::instance($db, null, ! $this instanceof \Database_Query_Builder_Select);
 		}
 
