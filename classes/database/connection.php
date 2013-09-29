@@ -18,6 +18,11 @@ namespace Fuel\Core;
 abstract class Database_Connection
 {
 	/**
+	 * @var string Cache of the name of the readonly connection
+	 */
+	protected static $_readonly;
+
+	/**
 	 * @var  array  Database instances
 	 */
 	public static $instances = array();
@@ -33,20 +38,27 @@ abstract class Database_Connection
 	 *     // Create a custom configured instance
 	 *     $db = static::instance('custom', $config);
 	 *
-	 * @param   string $name   instance name
-	 * @param   array  $config configuration parameters
+	 * @param   string $name     instance name
+	 * @param   array  $config   configuration parameters
+	 * @param   bool   $writable when replication is enabled, whether to return the master connection
 	 *
 	 * @return  Database_Connection
 	 *
 	 * @throws \FuelException
 	 */
-	public static function instance($name = null, array $config = null)
+	public static function instance($name = null, array $config = null, $writable = true)
 	{
 		\Config::load('db', true);
 		if ($name === null)
 		{
 			// Use the default instance name
 			$name = \Config::get('db.active');
+
+			if ( ! $writable and ($readonly = \Config::get("db.{$name}.readonly")))
+			{
+				is_null(static::$_readonly) and static::$_readonly = \Arr::get($readonly, array_rand($readonly));
+				$name = static::$_readonly;
+			}
 		}
 
 		if ( ! isset(static::$instances[$name]))
