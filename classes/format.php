@@ -119,12 +119,14 @@ class Format
 	 * @param   null|string  $basenode
 	 * @return  string
 	 */
-	public function to_xml($data = null, $structure = null, $basenode = 'xml')
+	public function to_xml($data = null, $structure = null, $basenode = null)
 	{
 		if ($data == null)
 		{
 			$data = $this->_data;
 		}
+
+		is_null($basenode) and $basenode = \Config::get('format.xml.basenode', 'xml');
 
 		// turn off compatibility mode as simple xml throws a wobbly if you don't.
 		if (ini_get('zend.ze1_compatibility_mode') == 1)
