@@ -570,6 +570,30 @@ class Validation
 	}
 
 	/**
+	 * Return error message
+	 *
+	 * Return specific error message or all error messages thrown during validation
+	 *
+	 * @param   string  fieldname
+	 * @param   mixed   value to return when not validated
+	 * @return  string|array  the error message or full array of error messages
+	 */
+	public function error_message($field = null, $default = false)
+	{
+		if ($field === null)
+		{
+			$messages = array();
+			foreach ($this->error() as $field => $e)
+			{
+				$messages[$field] = $e->get_message();
+			}
+			return $messages;
+		}
+
+		return array_key_exists($field, $this->errors) ? $this->errors[$field]->get_message() : $default;
+	}
+
+	/**
 	 * Show errors
 	 *
 	 * Returns all errors in a list or with set markup from $options param
