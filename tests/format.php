@@ -184,7 +184,7 @@ line 2","Value 3"',
 <xml><articles><article><title>test</title><author>foo</author></article></articles></xml>
 ';
 
-		// $this->assertEquals($expected, Format::forge($array)->to_xml());
+		$this->assertEquals($expected, Format::forge($array)->to_xml());
 	}
 
 	/**
@@ -207,7 +207,7 @@ line 2","Value 3"',
 <root><articles><article><title>test</title><author>foo</author></article></articles></root>
 ';
 
-		// $this->assertEquals($expected, Format::forge($array)->to_xml(null, null, 'root'));
+		$this->assertEquals($expected, Format::forge($array)->to_xml(null, null, 'root'));
 	}
 
 	/**
@@ -230,7 +230,7 @@ line 2","Value 3"',
 <xml><articles><article><title>test</title><author>&lt;h1&gt;hero&lt;/h1&gt;</author></article></articles></xml>
 ';
 
-		// $this->assertEquals($expected, Format::forge($array)->to_xml());
+		$this->assertEquals($expected, Format::forge($array)->to_xml());
 	}
 
 	/**
