@@ -59,6 +59,11 @@ class Autoloader
 	protected static $auto_initialize = null;
 
 	/**
+	 * @var  array  list of secondary autoloaded classes
+	 */
+	protected static $loaded_classlist = array();
+
+	/**
 	 * Adds a namespace search path.  Any class in the given namespace will be
 	 * looked for in the given path.
 	 *
@@ -229,6 +234,11 @@ class Autoloader
 		if (empty(static::$auto_initialize))
 		{
 			static::$auto_initialize = $class;
+			static::$loaded_classlist = array();
+		}
+		else
+		{
+			static::$loaded_classlist[] = $class;
 		}
 
 		if (isset(static::$classes[$class]))
@@ -290,6 +300,7 @@ class Autoloader
 		if (static::$auto_initialize == $class)
 		{
 			static::$auto_initialize = null;
+			$classlist = array();
 		}
 
 		return $loaded;
@@ -356,9 +367,12 @@ class Autoloader
 	 */
 	protected static function init_class($class)
 	{
-		if (static::$auto_initialize === $class)
+		if (static::$auto_initialize === $class or ($parents = class_parents($class) and in_array(key(class_parents($class)),static::$loaded_classlist)))
 		{
-			static::$auto_initialize = null;
+			if (static::$auto_initialize === $class)
+			{
+				static::$auto_initialize = null;
+			}
 			if (method_exists($class, '_init') and is_callable($class.'::_init'))
 			{
 				call_user_func($class.'::_init');
