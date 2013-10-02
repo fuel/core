@@ -905,7 +905,7 @@ class Validation
 			}
 			elseif ($flags == 'all')
 			{
-				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes');
+				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'brackets', 'braces');
 			}
 			else
 			{
@@ -925,6 +925,8 @@ class Validation
 		$pattern .= in_array('dashes', $flags) ? '_\-' : '';
 		$pattern .= in_array('singlequotes', $flags) ? "'" : '';
 		$pattern .= in_array('doublequotes', $flags) ? "\"" : '';
+		$pattern .= in_array('brackets', $flags) ? "\(\)" : '';
+		$pattern .= in_array('braces', $flags) ? "\{\}" : '';
 		$pattern = empty($pattern) ? '/^(.*)$/' : ('/^(['.$pattern.'])+$/');
 		$pattern .= in_array('utf8', $flags) ? 'u' : '';
 
