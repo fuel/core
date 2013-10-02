@@ -117,7 +117,7 @@ class Format
 	 * @param   mixed        $data
 	 * @param   null         $structure
 	 * @param   null|string  $basenode
-	 * @param   null|bool    whether to escape tags in node
+	 * @param   null|bool    whether to use CDATA in nodes
 	 * @return  string
 	 */
 	public function to_xml($data = null, $structure = null, $basenode = null, $use_cdata = null)
