@@ -234,7 +234,7 @@ line 2","Value 3"',
 	}
 
 	/**
-	 * Test for Format::forge($foo)->to_xml(null, null, 'xml', false)
+	 * Test for Format::forge($foo)->to_xml(null, null, 'xml', true)
 	 *
 	 * @test
 	 */
@@ -253,6 +253,6 @@ line 2","Value 3"',
 <xml><articles><article><title>test</title><author><![CDATA[<h1>hero</h1>]]></author></article></articles></xml>
 ';
 
-		$this->assertEquals($expected, Format::forge($array)->to_xml(null, null, 'xml', false));
+		$this->assertEquals($expected, Format::forge($array)->to_xml(null, null, 'xml', true));
 	}
 }

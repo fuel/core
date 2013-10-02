@@ -120,7 +120,7 @@ class Format
 	 * @param   null|bool    whether to escape tags in node
 	 * @return  string
 	 */
-	public function to_xml($data = null, $structure = null, $basenode = null, $escape_tags = null)
+	public function to_xml($data = null, $structure = null, $basenode = null, $use_cdata = null)
 	{
 		if ($data == null)
 		{
@@ -128,7 +128,7 @@ class Format
 		}
 
 		is_null($basenode) and $basenode = \Config::get('format.xml.basenode', 'xml');
-		is_null($escape_tags) and $escape_tags = \Config::get('format.xml.escape_tags', true);
+		is_null($use_cdata) and $use_cdata = \Config::get('format.xml.use_cdata', false);
 
 		// turn off compatibility mode as simple xml throws a wobbly if you don't.
 		if (ini_get('zend.ze1_compatibility_mode') == 1)
@@ -167,16 +167,16 @@ class Format
 				// recursive call if value is not empty
 				if( ! empty($value))
 				{
-					$this->to_xml($value, $node, $key, $escape_tags);
+					$this->to_xml($value, $node, $key, $use_cdata);
 				}
 			}
 
 			else
 			{
 				// add single node.
-				$escaped = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, "UTF-8");
+				$encoded = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, "UTF-8");
 
-				if ( ! $escape_tags and ($escaped !== (string) $value))
+				if ($use_cdata and ($encoded !== (string) $value))
 				{
 					$dom = dom_import_simplexml($structure->addChild($key));
 					$owner = $dom->ownerDocument;
@@ -184,7 +184,7 @@ class Format
 				}
 				else
 				{
-					$structure->addChild($key, $escaped);
+					$structure->addChild($key, $encoded);
 				}
 			}
 		}
