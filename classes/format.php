@@ -117,9 +117,10 @@ class Format
 	 * @param   mixed        $data
 	 * @param   null         $structure
 	 * @param   null|string  $basenode
+	 * @param   null|bool    whether to use CDATA in nodes
 	 * @return  string
 	 */
-	public function to_xml($data = null, $structure = null, $basenode = null)
+	public function to_xml($data = null, $structure = null, $basenode = null, $use_cdata = null)
 	{
 		if ($data == null)
 		{
@@ -127,6 +128,7 @@ class Format
 		}
 
 		is_null($basenode) and $basenode = \Config::get('format.xml.basenode', 'xml');
+		is_null($use_cdata) and $use_cdata = \Config::get('format.xml.use_cdata', false);
 
 		// turn off compatibility mode as simple xml throws a wobbly if you don't.
 		if (ini_get('zend.ze1_compatibility_mode') == 1)
@@ -165,16 +167,25 @@ class Format
 				// recursive call if value is not empty
 				if( ! empty($value))
 				{
-					$this->to_xml($value, $node, $key);
+					$this->to_xml($value, $node, $key, $use_cdata);
 				}
 			}
 
 			else
 			{
 				// add single node.
-				$value = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, "UTF-8");
+				$encoded = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, "UTF-8");
 
-				$structure->addChild($key, $value);
+				if ($use_cdata and ($encoded !== (string) $value))
+				{
+					$dom = dom_import_simplexml($structure->addChild($key));
+					$owner = $dom->ownerDocument;
+					$dom->appendChild($owner->createCDATASection($value));
+				}
+				else
+				{
+					$structure->addChild($key, $encoded);
+				}
 			}
 		}
 

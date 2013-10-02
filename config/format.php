@@ -37,5 +37,6 @@ return array(
 	),
 	'xml' => array(
 		'basenode' => 'xml',
+		'use_cdata' => false,
 	),
 );
