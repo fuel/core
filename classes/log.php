@@ -99,6 +99,9 @@ class Log
 	 */
 	public static function instance()
 	{
+		// make sure we have an instance
+		static::$monolog or static::_init();
+
 		// return the created instance
 		return static::$monolog;
 	}
@@ -225,7 +228,7 @@ class Log
 		}
 
 		// log the message
-		static::$monolog->log($level, (empty($method) ? '' : $method.' - ').$msg);
+		static::instance()->log($level, (empty($method) ? '' : $method.' - ').$msg);
 
 		return true;
 	}
