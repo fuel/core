@@ -408,16 +408,16 @@ if ( ! function_exists('get_common_path'))
  */
 if ( ! function_exists('call_fuel_func_array'))
 {
-	function call_fuel_func_array ($callback , array $args)
+	function call_fuel_func_array($callback , array $args)
 	{
-		// deal with specials such as array('parent', '__construct)
-		if (is_array($callback) and isset($callback[1]) and is_string($callback[0]))
+		// deal with "class::method" syntax
+		if (is_string($callback) and strpos($callback, '::') !== false)
 		{
-			$callback = $callback[0].'::'.$callback[1];
+			$callback = explode('::', $callback);
 		}
 
 		// if an array is passed, extract the object and method to call
-		if (is_array($callback) and isset($callback[1]))
+		if (is_array($callback) and isset($callback[1]) and is_object($callback[0]))
 		{
 			list($instance, $method) = $callback;
 
@@ -441,9 +441,36 @@ if ( ! function_exists('call_fuel_func_array'))
 			}
 		}
 
+		elseif (is_array($callback) and isset($callback[1]) and is_string($callback[0]))
+		{
+			list($class, $method) = $callback;
+			$class = '\\'.ltrim($class, '\\');
+
+			// calling the method directly is faster then call_user_func_array() !
+			switch (count($args))
+			{
+				case 0:
+					return $class::$method();
+
+				case 1:
+					return $class::$method($args[0]);
+
+				case 2:
+					return $class::$method($args[0], $args[1]);
+
+				case 3:
+					return $class::$method($args[0], $args[1], $args[2]);
+
+				case 4:
+					return $class::$method($args[0], $args[1], $args[2], $args[3]);
+			}
+		}
+
 		// if it's a string, it's a native function or a static method call
 		elseif (is_string($callback) or $callback instanceOf \Closure)
 		{
+			is_string($callback) and $callback = ltrim($callback, '\\');
+
 			// calling the method directly is faster then call_user_func_array() !
 			switch (count($args))
 			{
@@ -463,12 +490,8 @@ if ( ! function_exists('call_fuel_func_array'))
 					return $callback($args[0], $args[1], $args[2], $args[3]);
 			}
 		}
-		else
-		{
-			throw new \Exception('unknown callback type passed to call_fuel_func_array()');
-		}
 
-		// fallback
+		// fallback, handle the old way
 		return call_user_func_array($callback, $args);
 	}
 }
