@@ -236,7 +236,7 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	 */
 	public function having($column, $op = null, $value = null)
 	{
-		return call_user_func_array(array($this, 'and_having'), func_get_args());
+		return call_fuel_func_array(array($this, 'and_having'), func_get_args());
 	}
 
 	/**

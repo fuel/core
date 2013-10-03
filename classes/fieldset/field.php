@@ -128,7 +128,7 @@ class Fieldset_Field
 
 		foreach ($rules as $rule)
 		{
-			call_user_func_array(array($this, 'add_rule'), (array) $rule);
+			call_fuel_func_array(array($this, 'add_rule'), (array) $rule);
 		}
 	}
 

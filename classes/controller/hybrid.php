@@ -77,7 +77,7 @@ abstract class Controller_Hybrid extends \Controller_Rest
 		// check if the action method exists
 		if (method_exists($this, $controller_method))
 		{
-			return call_user_func_array(array($this, $controller_method), $arguments);
+			return call_fuel_func_array(array($this, $controller_method), $arguments);
 		}
 
 		// if not, we got ourselfs a genuine 404!

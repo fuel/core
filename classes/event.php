@@ -70,7 +70,7 @@ abstract class Event
 
 		if (method_exists($instance, $func))
 		{
-			return call_user_func_array(array($instance, $func), $args);
+			return call_fuel_func_array(array($instance, $func), $args);
 		}
 
 		throw new \BadMethodCallException('Call to undefined method: '.get_called_class().'::'.$func);

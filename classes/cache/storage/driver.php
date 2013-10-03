@@ -315,7 +315,7 @@ abstract class Cache_Storage_Driver
 		catch (\CacheNotFoundException $e)
 		{
 			// Create the contents
-			$contents = call_user_func_array($callback, $args);
+			$contents = call_fuel_func_array($callback, $args);
 
 			$this->set($contents, $expiration, $dependencies);
 		}

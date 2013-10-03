@@ -62,7 +62,7 @@ class Pagination
 		// call the method on the default instance
 		if ($instance = static::instance() and method_exists($instance, $name))
 		{
-			return call_user_func_array(array($instance, $name), $arguments);
+			return call_fuel_func_array(array($instance, $name), $arguments);
 		}
 
 		throw new \BadMethodCallException('The pagination class doesn\'t have a method called "'.$name.'"');

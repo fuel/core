@@ -365,7 +365,7 @@ class Request
 		{
 			if ($this->route->callable !== null)
 			{
-				$response = call_user_func_array($this->route->callable, array($this));
+				$response = call_fuel_func_array($this->route->callable, array($this));
 
 				if ( ! $response instanceof Response)
 				{

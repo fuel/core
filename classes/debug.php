@@ -477,7 +477,7 @@ JS;
 		}
 
 		// call the function to be benchmarked
-		$result = is_callable($callable) ? call_user_func_array($callable, $params) : null;
+		$result = is_callable($callable) ? call_fuel_func_array($callable, $params) : null;
 
 		// get the after-benchmark time
 		if (function_exists('getrusage'))

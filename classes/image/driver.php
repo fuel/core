@@ -99,7 +99,7 @@ abstract class Image_Driver
 						$action[$i] = preg_replace('#\$' . $x . '#', $vars[$x], $action[$i]);
 					}
 				}
-				call_user_func_array(array($this, $func), $action);
+				call_fuel_func_array(array($this, $func), $action);
 			}
 			$this->config = $old_config;
 		}
@@ -855,7 +855,7 @@ abstract class Image_Driver
 				$tmpfunc[$i] = var_export($action[$i], true);
 			}
 			$this->debug('', "<b>Executing <code>" . implode(", ", $tmpfunc) . "</code></b>");
-			call_user_func_array(array(&$this, '_' . $action[0]), array_slice($action, 1));
+			call_fuel_func_array(array(&$this, '_' . $action[0]), array_slice($action, 1));
 		}
 		if (($clear === null and $this->config['clear_queue']) or $clear === true)
 		{

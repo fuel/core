@@ -35,7 +35,7 @@ abstract class Database_Query_Builder_Where extends \Database_Query_Builder
 	 */
 	public function where()
 	{
-		return call_user_func_array(array($this, 'and_where'), func_get_args());
+		return call_fuel_func_array(array($this, 'and_where'), func_get_args());
 	}
 
 	/**

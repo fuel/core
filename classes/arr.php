@@ -733,7 +733,7 @@ class Arr
 
 		$args[] = &$array;
 
-		call_user_func_array('array_multisort', $args);
+		call_fuel_func_array('array_multisort', $args);
 		return $array;
 	}
 

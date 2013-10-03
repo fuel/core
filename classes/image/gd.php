@@ -345,7 +345,7 @@ class Image_Gd extends \Image_Driver
 			$vars[] = floor(($this->config['quality'] / 100) * 9);
 		}
 
-		call_user_func_array('image'.$filetype, $vars);
+		call_fuel_func_array('image'.$filetype, $vars);
 		if ($this->config['persistence'] === false)
 		{
 			$this->reload();
@@ -374,7 +374,7 @@ class Image_Gd extends \Image_Driver
 			$vars[] = floor(($this->config['quality'] / 100) * 9);
 		}
 
-		call_user_func_array('image'.$filetype, $vars);
+		call_fuel_func_array('image'.$filetype, $vars);
 
 		if ($this->config['persistence'] === false)
 		{

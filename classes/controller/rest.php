@@ -150,7 +150,7 @@ abstract class Controller_Rest extends \Controller
 			// If method is not available, set status code to 404
 			if (method_exists($this, $controller_method))
 			{
-				return call_user_func_array(array($this, $controller_method), $arguments);
+				return call_fuel_func_array(array($this, $controller_method), $arguments);
 			}
 			else
 			{
