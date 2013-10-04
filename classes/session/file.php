@@ -286,7 +286,10 @@ class Session_File extends \Session_Driver
 				while(!flock($handle, LOCK_SH));
 
 				// read the session data
-				$payload = fread($handle, filesize($file));
+				if ($size = filesize($file))
+				{
+					$payload = fread($handle, $size);
+				}
 
 				//release the lock
 				flock($handle, LOCK_UN);
