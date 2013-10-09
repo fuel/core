@@ -127,6 +127,7 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Config'               => COREPATH.'classes/config.php',
 		'Fuel\\Core\\ConfigException'      => COREPATH.'classes/config.php',
+		'Fuel\\Core\\Config_Db'            => COREPATH.'classes/config/db.php',
 		'Fuel\\Core\\Config_File'          => COREPATH.'classes/config/file.php',
 		'Fuel\\Core\\Config_Ini'           => COREPATH.'classes/config/ini.php',
 		'Fuel\\Core\\Config_Json'          => COREPATH.'classes/config/json.php',
