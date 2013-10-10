@@ -221,6 +221,7 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Lang'               => COREPATH.'classes/lang.php',
 		'Fuel\\Core\\LangException'      => COREPATH.'classes/lang.php',
+		'Fuel\\Core\\Lang_Db'            => COREPATH.'classes/lang/db.php',
 		'Fuel\\Core\\Lang_File'          => COREPATH.'classes/lang/file.php',
 		'Fuel\\Core\\Lang_Ini'           => COREPATH.'classes/lang/ini.php',
 		'Fuel\\Core\\Lang_Json'          => COREPATH.'classes/lang/json.php',
