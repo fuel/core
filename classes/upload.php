@@ -279,7 +279,7 @@ class Upload
 	public static function register($event, $callback)
 	{
 		// make sure we're setting the correct events
-		$event = str_replace(array('before', 'after', 'validate'), array('before_save', 'after_save', 'after_validate'), $event);
+		$event = str_replace(array('before', 'after', 'validate'), array('before_save', 'after_save', 'after_validation'), $event);
 
 		static::$upload->register($event, $callback);
 	}
