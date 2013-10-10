@@ -275,6 +275,25 @@ return array(
 		'redirect_with_wildcards' => true,
 	),
 
+	/**
+	 * Config settings
+	 */
+	'config' => array(
+		/*
+		 * Name of the table used by the Config_Db driver
+		 */
+		'table_name' => 'config',
+	),
+
+	/**
+	 * Lang settings
+	 */
+	'lang' => array(
+		/*
+		 * Name of the table used by the Lang_Db driver
+		 */
+		'table_name' => 'lang',
+	),
 
 	/**
 	 * To enable you to split up your application into modules which can be
