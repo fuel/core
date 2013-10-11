@@ -162,6 +162,9 @@ class Input
 				$uri = substr($uri, 1);
 			}
 
+			// decode the uri, and put any + back (does not mean a space in the url path)
+			$uri = str_replace(' ', '+', urldecode($uri));
+
 			// Lets split the URI up in case it contains a ?.  This would
 			// indicate the server requires 'index.php?' and that mod_rewrite
 			// is not being used.
