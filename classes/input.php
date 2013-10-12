@@ -163,7 +163,7 @@ class Input
 			}
 
 			// decode the uri, and put any + back (does not mean a space in the url path)
-			$uri = str_replace(' ', '+', urldecode($uri));
+			$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
 
 			// Lets split the URI up in case it contains a ?.  This would
 			// indicate the server requires 'index.php?' and that mod_rewrite
