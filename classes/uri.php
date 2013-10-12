@@ -278,11 +278,15 @@ class Uri
 			$uri = null;
 		}
 
-		// merge them with the existing query string data
-		$vars = array_merge(\Input::get(), $vars);
+		// if we have a custom URI, use that
+		if ($uri === null)
+		{
+			// use the current URI if not is passed
+			$uri = static::current();
 
-		// use the current URI if not is passed
-		$uri === null and $uri = static::current();
+			// merge them with the existing query string data
+			$vars = array_merge(\Input::get(), $vars);
+		}
 
 		// return the updated uri
 		return static::create($uri, array(), $vars, $secure);

@@ -120,6 +120,35 @@ class Test_Uri extends TestCase
 		$expected = "varA=varA&varB=1&varC=varC";
 		$this->assertEquals($expected, $output);
 	}
+
+	/**
+	 * Tests Uri::update_query_string()
+	 *
+	 * @test
+	 */
+	public function test_update_query_string()
+	{
+		Config::set('base_url', 'http://example.com/test');
+		Config::set('index_file', null);
+		Config::set('url_suffix', '');
+		$_GET = array('one' => 1, 'two' => 2);
+
+		$output = Uri::update_query_string(array('three' => 3));
+		$expected = 'http://example.com/test?one=1&two=2&three=3';
+		$this->assertEquals($expected, $output);
+
+		$output = Uri::update_query_string(array('two' => 3));
+		$expected = 'http://example.com/test?one=1&two=3';
+		$this->assertEquals($expected, $output);
+
+		$output = Uri::update_query_string(array('four' => 4), 'http://localhost/controller');
+		$expected = 'http://localhost/controller?four=4';
+		$this->assertEquals($expected, $output);
+
+		$output = Uri::update_query_string('three', 3, true);
+		$expected = 'https://example.com/test?one=1&two=2&three=3';
+		$this->assertEquals($expected, $output);
+	}
 }
 
 
