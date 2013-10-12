@@ -58,9 +58,11 @@ class Uri
 	/**
 	 * Replace all * wildcards in a URI by the current segment in that location
 	 *
+	 * @param  string  $url     The url containing the wildcards
+	 * @param  bool    $secure  To force a particular HTTP scheme
 	 * @return  string
 	 */
-	public static function segment_replace($url)
+	public static function segment_replace($url, $secure = null)
 	{
 		// get the path from the url
 		$parts = parse_url($url);
@@ -85,6 +87,12 @@ class Uri
 
 		// re-assemble the path
 		$parts['path'] = '/'.implode('/', $segments);
+
+		// do we need to force a scheme?
+		if (is_bool($secure))
+		{
+			$parts['scheme'] = $secure ? 'https' : 'http';
+		}
 
 		// and rebuild the url with the new path
 		if (empty($parts['host']))
@@ -250,6 +258,34 @@ class Uri
 		}
 
 		return http_build_query($params);
+	}
+
+	/**
+	 * Updates the query string of the current or passed URL with the data passed
+	 *
+	 * @param  array|string  $vars    Assoc array of GET variables, or a get variable name
+	 * @param  string|mixed  $uri     Optional URI to use if $vars is an array, otherwise the get variable name
+	 * @param  bool          $secure  If false, force http. If true, force https
+	 *
+	 * @return string
+	 */
+	public static function update_query_string($vars = array(), $uri = null, $secure = null)
+	{
+		// unify the input data
+		if ( ! is_array($vars))
+		{
+			$vars = array($vars => $uri);
+			$uri = null;
+		}
+
+		// merge them with the existing query string data
+		$vars = array_merge(\Input::get(), $vars);
+
+		// use the current URI if not is passed
+		$uri === null and $uri = static::current();
+
+		// return the updated uri
+		return static::create($uri, array(), $vars, $secure);
 	}
 
 	/**
