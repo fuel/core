@@ -315,7 +315,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		{
 			case 'database':
 				// do we have a database config
-				if (empty($value) or ! is_array($value))
+				if (empty($value) or ! is_string($value))
 				{
 					$value = 'default';
 				}
