@@ -302,6 +302,9 @@ class Theme
 			throw new \ThemeException('No valid template could be found. Use set_template() to define a page template.');
 		}
 
+		// storage for rendered results
+		$rendered = array();
+
 		// pre-process all defined partials
 		foreach ($this->partials as $key => $partials)
 		{
@@ -316,17 +319,17 @@ class Theme
 			if ( ! empty($output) and array_key_exists($key, $this->chrome))
 			{
 				// encapsulate the partial in the chrome template
-				$this->partials[$key] = $this->chrome[$key]['view']->set($this->chrome[$key]['var'], $output, false);
+				$rendered[$key] = $this->chrome[$key]['view']->set($this->chrome[$key]['var'], $output, false);
 			}
 			else
 			{
 				// store the partial output
-				$this->partials[$key] = $output;
+				$rendered[$key] = $output;
 			}
 		}
 
 		// assign the partials to the template
-		$this->template->set('partials', $this->partials, false);
+		$this->template->set('partials', $rendered, false);
 
 		// return the template
 		return $this->template;
