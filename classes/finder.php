@@ -141,7 +141,7 @@ class Finder
 		{
 			if ($pos === null)
 			{
-				array_push($this->paths, $this->prep_path($path));
+				$this->paths[] = $this->prep_path($path);
 			}
 			elseif ($pos === -1)
 			{
@@ -195,7 +195,7 @@ class Finder
 
 		foreach ($paths as $path)
 		{
-			array_push($this->flash_paths, $this->prep_path($path));
+			$this->flash_paths[] = $this->prep_path($path);
 		}
 
 		return $this;
