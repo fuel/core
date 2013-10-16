@@ -222,7 +222,7 @@ class Security
 				}
 			}
 			// Can sanitize itself
-			else {
+			elseif ($value instanceof SelfSanitize) {
 				$value->set_sanitizer(function($val) use($flags, $encoding, $double_encode) {
 					return static::htmlentities($val, $flags, $encoding, $double_encode);
 				});
