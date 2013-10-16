@@ -520,7 +520,7 @@ class Form_Instance
 		else
 		{
 			$attributes['name'] = (string) $field;
-			$attributes['selected'] = $values ?: (isset($attributes['default']) ? $attributes['default'] : null);
+			$attributes['selected'] = ($values === null or $values === array()) ? (isset($attributes['default']) ? $attributes['default'] : $values) : $values;
 			$attributes['options'] = $options;
 		}
 		unset($attributes['value']);
