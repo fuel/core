@@ -385,7 +385,7 @@ JS;
 			return $str;
 		}
 		else {
-			return static::dump(debug_backtrace());
+			return static::dump($trace);
 		}
 	}
 
