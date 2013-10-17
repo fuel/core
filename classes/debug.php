@@ -367,19 +367,28 @@ JS;
 		if (\Fuel::$is_cli) {
 			// Special case for CLI since the var_dump of a backtrace is of little use.
 			$str = '';
-			foreach ($trace as $frame) {
-				if (isset($frame['function'])) {
-					if (isset($frame['class'])) {
-						$str .= $frame['class'] . '::';
-					}
+			foreach ($trace as $i => $frame) {
+				$line = "#$i\t";
 
-					$str .= $frame['function'] . " called at ";
+				if (! isset($frame['file'])) {
+					$line .= "[internal function]";
+				}
+				else {
+					$line .= $frame['file'] . ":" . $frame['line'];
 				}
 
-				$frame['file'] = preg_replace('{' . COREPATH . '}', 'COREPATH/', $frame['file']);
-				$frame['file'] = preg_replace('{' . APPPATH . '}', 'APPPATH/', $frame['file']);
+				$line .= "\t";
 
-				$str .= $frame['file'] . " on line " . $frame['line'] . "\n";
+				if (isset($frame['function'])) {
+					if (isset($frame['class'])) {
+						$line .= $frame['class'] . '::';
+					}
+
+					$line .= $frame['function'] . "()";
+				}
+
+				$str .= $line . "\n";
+
 			}
 
 			return $str;
