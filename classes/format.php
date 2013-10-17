@@ -27,11 +27,6 @@ class Format
 {
 
 	/**
-	 * @var  array|mixed  input to convert
-	 */
-	protected $_data = array();
-
-	/**
 	 * Returns an instance of the Format object.
 	 *
 	 *     echo Format::forge(array('foo' => 'bar'))->to_xml();
@@ -46,6 +41,16 @@ class Format
 	}
 
 	/**
+	 * @var  array|mixed  input to convert
+	 */
+	protected $_data = array();
+
+	/**
+	 * @var  bool 	whether to ignore namespaces when parsing xml
+	 */
+	protected $ignore_namespaces = true;
+
+	/**
 	 * Do not use this directly, call forge()
 	 */
 	public function __construct($data = null, $from_type = null)
@@ -53,6 +58,13 @@ class Format
 		// If the provided data is already formatted we should probably convert it to an array
 		if ($from_type !== null)
 		{
+
+			if ($from_type == 'xml:ns')
+			{
+				$this->ignore_namespaces = false;
+				$from_type = 'xml';
+			}
+
 			if (method_exists($this, '_from_' . $from_type))
 			{
 				$data = call_user_func(array($this, '_from_' . $from_type), $data);
@@ -351,15 +363,45 @@ class Format
 	 * @param   string  $string
 	 * @return  array
 	 */
-	protected function _from_xml($string)
+	protected function _from_xml($string, $recursive = false)
 	{
+
+		// If it forged with 'xml:ns'
+		if ( ! $this->ignore_namespaces)
+		{
+			static $escape_keys = array();
+			$recursive or $escape_keys = array('_xmlns' => 'xmlns');
+
+			if ( ! $recursive and strpos($string, 'xmlns') !== false and preg_match_all('/(\<.+?\>)/s', $string, $matches))
+			{
+				foreach ($matches[1] as $tag)
+				{
+					$escaped_tag = $tag;
+
+					strpos($tag, 'xmlns=') !== false and $escaped_tag = str_replace('xmlns=', '_xmlns=', $tag);
+
+					if (preg_match_all('/[\s\<\/]([^\/\s\'"]*?:\S*?)[=\/\>\s]/s', $escaped_tag, $xmlns))
+					{
+						foreach ($xmlns[1] as $ns)
+						{
+							$escaped = \Arr::search($escape_keys, $ns);
+							$escaped or $escape_keys[$escaped = str_replace(':', '_', $ns)] = $ns;
+							$string = str_replace($tag, $escaped_tag = str_replace($ns, $escaped, $escaped_tag), $string);
+							$tag = $escaped_tag;
+						}
+					}
+				}
+			}
+		}
+
 		$_arr = is_string($string) ? simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : $string;
 		$arr = array();
 
 		// Convert all objects SimpleXMLElement to array recursively
 		foreach ((array)$_arr as $key => $val)
 		{
-			$arr[$key] = (is_array($val) or is_object($val)) ? $this->_from_xml($val) : $val;
+			$this->ignore_namespaces or $key = \Arr::get($escape_keys, $key, $key);
+			$arr[$key] = (is_array($val) or is_object($val)) ? $this->_from_xml($val, true) : $val;
 		}
 
 		return $arr;
