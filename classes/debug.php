@@ -354,9 +354,39 @@ JS;
 		return $debug_lines;
 	}
 
-	public static function backtrace()
+	/**
+	 * Output the call stack from here, or the supplied one.
+	 *
+	 * @param	array		(optional) A backtrace to output
+	 * @return  string		Formatted backtrace
+	 */
+	public static function backtrace($trace = null)
 	{
-		return static::dump(debug_backtrace());
+		$trace or $trace = debug_backtrace();
+
+		if (\Fuel::$is_cli) {
+			// Special case for CLI since the var_dump of a backtrace is of little use.
+			$str = '';
+			foreach ($trace as $frame) {
+				if (isset($frame['function'])) {
+					if (isset($frame['class'])) {
+						$str .= $frame['class'] . '::';
+					}
+
+					$str .= $frame['function'] . " called at ";
+				}
+
+				$frame['file'] = preg_replace('{' . COREPATH . '}', 'COREPATH/', $frame['file']);
+				$frame['file'] = preg_replace('{' . APPPATH . '}', 'APPPATH/', $frame['file']);
+
+				$str .= $frame['file'] . " on line " . $frame['line'] . "\n";
+			}
+
+			return $str;
+		}
+		else {
+			return static::dump(debug_backtrace());
+		}
 	}
 
 	/**
