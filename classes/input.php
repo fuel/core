@@ -174,8 +174,13 @@ class Input
 			if ( ! empty($matches))
 			{
 				$uri = $matches[1];
-				$_SERVER['QUERY_STRING'] = $matches[2];
-				parse_str($matches[2], $_GET);
+
+				// only reconstruct $_GET if we didn't have a query string
+				if (empty($_SERVER['QUERY_STRING']))
+				{
+					$_SERVER['QUERY_STRING'] = $matches[2];
+					parse_str($matches[2], $_GET);
+				}
 			}
 		}
 
