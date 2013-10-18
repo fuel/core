@@ -442,6 +442,27 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	}
 
 	/**
+	 * Magic isset to check if values exist
+	 *
+	 * @param   string  $property  The property name
+	 * @return  bool  whether or not the property exists
+	 */
+	public function __isset($property)
+	{
+		return isset($this->_data[$property]);
+	}
+
+	/**
+	 * Magic unset to remove existing properties
+	 *
+	 * @param   string  $property  The property name
+	 */
+	public function __unset($property)
+	{
+		unset($this->_data[$property]);
+	}
+
+	/**
 	 * Sets an array of values to class properties
 	 *
 	 * @param   array  $data  The data
