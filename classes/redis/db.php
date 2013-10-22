@@ -107,7 +107,7 @@ class Redis_Db
 			empty($config['password']) or $this->auth($config['password']);
 
 			// Multiple databases support
-			isset($config['database']) and $this->select($config['database']);
+			empty($config['database']) or $this->select($config['database']);
 		}
 	}
 
