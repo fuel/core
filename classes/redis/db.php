@@ -105,6 +105,9 @@ class Redis_Db
 		{
 			// execute the auth command if a password is present in config
 			empty($config['password']) or $this->auth($config['password']);
+
+			// Multiple databases support
+			isset($config['database']) and $this->select($config['database']);
 		}
 	}
 
