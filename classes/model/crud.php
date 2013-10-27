@@ -438,7 +438,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 			return $this->_sanitization_enabled ? \Security::clean($this->_data[$property], null, 'security.output_filter') : $this->_data[$property];
 		}
 
-		throw new \OutOfBoundsException('Property "'.$offset.'" not found for '.get_called_class().'.');
+		throw new \OutOfBoundsException('Property "'.$property.'" not found for '.get_called_class().'.');
 	}
 
 	/**
