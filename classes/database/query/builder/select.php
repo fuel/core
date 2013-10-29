@@ -54,6 +54,11 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	protected $_last_join;
 
 	/**
+	 * @var  bool  Whether this query will write
+	 */
+	protected $_is_writing = false;
+
+	/**
 	 * Sets the initial columns to select from.
 	 *
 	 * @param  array  $columns  column list

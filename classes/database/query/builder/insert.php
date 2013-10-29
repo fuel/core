@@ -29,6 +29,11 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	protected $_values = array();
 
 	/**
+	 * @var  bool  Whether this query will write
+	 */
+	protected $_is_writing = true;
+
+	/**
 	 * Set the table and columns for an insert.
 	 *
 	 * @param   mixed $table   table name or array($table, $alias) or object

@@ -52,6 +52,11 @@ class Database_Query
 	protected $_as_object = false;
 
 	/**
+	 * @var  bool  Whether this query will write
+	 */
+	protected $_is_writing = null;
+
+	/**
 	 * Creates a new SQL query of the specified type.
 	 *
 	 * @param string $sql   query string
@@ -195,7 +200,7 @@ class Database_Query
 		if ( ! $db instanceof \Database_Connection)
 		{
 			// Get the database instance
-			$db = \Database_Connection::instance($db);
+			$db = \Database_Connection::instance($db, null, $this->is_writing());
 		}
 
 		// Import the SQL locally
@@ -226,9 +231,7 @@ class Database_Query
 	{
 		if ( ! is_object($db))
 		{
-			// Get the database instance. If this query is a instance of
-			// Database_Query_Builder_Select then use the slave connection if configured
-			$db = \Database_Connection::instance($db, null, ! $this instanceof \Database_Query_Builder_Select);
+			$db = \Database_Connection::instance($db, null, $this->is_writing());
 		}
 
 		// Compile the SQL query
@@ -269,6 +272,20 @@ class Database_Query
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Whether this query will write
+	 *
+	 * @return bool
+	 */
+	protected function is_writing()
+	{
+		if (is_null($this->_is_writing))
+		{
+			$this->_is_writing = ($this->_type != \DB::SELECT and strtoupper(substr(ltrim($this->_sql,'('), 0, 6)) != 'SELECT');
+		}
+		return $this->_is_writing;
 	}
 
 }
