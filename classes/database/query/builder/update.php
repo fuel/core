@@ -34,6 +34,11 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	protected $_last_join;
 
 	/**
+	 * @var  bool  Whether this query will write
+	 */
+	protected $_is_writing = true;
+
+	/**
 	 * Set the table for a update.
 	 *
 	 * @param  mixed  $table  table name or array($table, $alias) or object
