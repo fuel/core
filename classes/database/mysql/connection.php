@@ -243,7 +243,7 @@ class Database_MySQL_Connection extends \Database_Connection
 				}
 			}
 
-			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql, $stacktrace);
+			$benchmark = \Profiler::start($this->_instance, $sql, $stacktrace);
 		}
 
 		if ( ! empty($this->_config['connection']['persistent'])
