@@ -202,7 +202,7 @@ class Database_PDO_Connection extends \Database_Connection
 				}
 			}
 
-			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql, $stacktrace);
+			$benchmark = \Profiler::start($this->_instance, $sql, $stacktrace);
 		}
 
 		// run the query. if the connection is lost, try 3 times to reconnect
