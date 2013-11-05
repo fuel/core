@@ -16,7 +16,7 @@ namespace Fuel\Tasks;
  * Install task
  *
  * Run this task to set default write permissions and environment stuff
- * for your app. This could be expanded in app/tasks for applicaiton specific stuff.
+ * for your app. This could be expanded in app/tasks for application specific stuff.
  *
  * @package		Fuel
  * @version		1.0
@@ -36,7 +36,6 @@ class Install
 			{
 				\Cli::write("\t".'Made writable: '.$path, 'green');
 			}
-
 			else
 			{
 				\Cli::write("\t".'Failed to make writable: '.$path, 'red');
