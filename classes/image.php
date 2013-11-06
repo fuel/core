@@ -61,7 +61,7 @@ class Image
 		$config = array_merge(\Config::get('image', array()), $config);
 
 		$protocol = ucfirst( ! empty($config['driver']) ? $config['driver'] : 'gd');
-		$class = 'Image_'.$protocol;
+		$class = '\\Image_'.$protocol;
 		if ($protocol == 'Driver' || ! class_exists($class))
 		{
 			throw new \FuelException('Driver '.$protocol.' is not a valid driver for image manipulation.');
