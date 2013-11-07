@@ -811,6 +811,12 @@ abstract class Image_Driver
 	{
 		// Sanitize double negatives
 		$input = str_replace('--', '', $input);
+		
+		// Depending on php configuration, float are sometimes converted to strings
+		// using commas instead of points. This notation can create issues since the
+		// conversion from string to float will return an integer.
+		// For instance: "1.2" / 10 == 0.12 but "1,2" / 10 == 0.1...
+		$input = str_replace(',', '.', $input);
 
 		$orig = $input;
 		$sizes = $this->sizes();
