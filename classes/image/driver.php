@@ -735,6 +735,7 @@ abstract class Image_Driver
 			$red = 0;
 			$green = 0;
 			$blue = 0;
+			$alpha = 0;
 		}
 		else
 		{
@@ -745,24 +746,29 @@ abstract class Image_Driver
 			}
 
 			// Break apart the hex
-			if (strlen($hex) == 6)
+			if (strlen($hex) == 6 or strlen($hex) == 8)
 			{
 				$red   = hexdec(substr($hex, 0, 2));
 				$green = hexdec(substr($hex, 2, 2));
 				$blue  = hexdec(substr($hex, 4, 2));
+				$alpha = hexdec(substr($hex, 6, 2));
 			}
 			else
 			{
 				$red   = hexdec(substr($hex, 0, 1).substr($hex, 0, 1));
 				$green = hexdec(substr($hex, 1, 1).substr($hex, 1, 1));
 				$blue  = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
+				$alpha = hexdec(substr($hex, 3, 1).substr($hex, 3, 1));
 			}
 		}
+		
+		$alpha = floor($alpha / 2.55);
 
 		return array(
 			'red' => $red,
 			'green' => $green,
 			'blue' => $blue,
+			'alpha' => $alpha,
 		);
 	}
 
