@@ -180,6 +180,7 @@ class Input
 				{
 					$_SERVER['QUERY_STRING'] = $matches[2];
 					parse_str($matches[2], $_GET);
+					$_GET = \Security::clean($_GET);
 				}
 			}
 		}
