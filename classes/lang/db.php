@@ -29,7 +29,8 @@ class Lang_Db implements Lang_Interface
 	{
 		$this->identifier = $identifier;
 
-		$this->languages = $languages;
+		// we need the highest priority language last in the list
+		$this->languages = array_reverse($languages);
 
 		$this->vars = array(
 			'APPPATH' => APPPATH,
