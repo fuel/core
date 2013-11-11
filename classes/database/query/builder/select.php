@@ -393,7 +393,7 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 		if ( ! $db instanceof \Database_Connection)
 		{
 			// Get the database instance
-			$db = \Database_Connection::instance($db);
+			$db = $this->_connection ?: \Database_Connection::instance($db);
 		}
 
 		// Callback to quote identifiers
