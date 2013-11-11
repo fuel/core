@@ -130,7 +130,7 @@ abstract class Lang_File implements Lang_Interface
 			$paths = array_merge($paths, \Finder::search('lang'.DS.$lang, $this->file, $this->ext, true));
 		}
 
-		if (count($paths) == 0)
+		if (empty($paths))
 		{
 			throw new \LangException(sprintf('File "%s" does not exist.', $this->file));
 		}
