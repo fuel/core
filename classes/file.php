@@ -790,7 +790,7 @@ class File
 		empty($mime) or $info['mimetype'] = $mime;
 		empty($name) or $info['basename'] = $name;
 
-		\Event::register('shutdown', function () use($info, $area, $class) {
+		\Event::register('fuel-shutdown', function () use($info, $area, $class) {
 
 			if ( ! $file = call_user_func(array($class, 'open_file'), @fopen($info['realpath'], 'rb'), LOCK_SH, $area))
 			{
