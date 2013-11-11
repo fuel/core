@@ -45,6 +45,7 @@ abstract class Lang_File implements Lang_Interface
 	public function load($overwrite = false)
 	{
 		$paths = $this->find_file();
+
 		$lang = array();
 
 		foreach ($paths as $path)
@@ -129,7 +130,12 @@ abstract class Lang_File implements Lang_Interface
 			$paths = array_merge($paths, \Finder::search('lang'.DS.$lang, $this->file, $this->ext, true));
 		}
 
-		throw new \LangException(sprintf('File "%s" does not exist.', $this->file));
+		if (count($paths) == 0)
+		{
+			throw new \LangException(sprintf('File "%s" does not exist.', $this->file));
+		}
+
+		return $paths;
 	}
 
 	/**
