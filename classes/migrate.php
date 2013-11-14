@@ -248,7 +248,7 @@ class Migrate
 				$migrations = array_reverse($migrations, true);
 
 				// if no version was given, only revert the last migration
-				is_null($version) and $migrations = array_slice($migrations,-1,1, true);
+				is_null($version) and $migrations = array_slice($migrations, -1, 1, true);
 
 				// revert the installed migrations
 				return static::run($migrations, $name, $type, 'down');
