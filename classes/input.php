@@ -145,7 +145,7 @@ class Input
 			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
 			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
 			{
-				$uri = substr($uri, strlen($base_url));
+				$uri = substr($uri, strlen($base_url) - 1);
 			}
 
 			// If we are using an index file (not mod_rewrite) then remove it
