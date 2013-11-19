@@ -162,6 +162,13 @@ class Fuel
 
 		static::$locale = \Config::get('locale', static::$locale);
 
+		// Set locale, log warning when it fails
+		if (static::$locale)
+		{
+			setlocale(LC_ALL, static::$locale) or
+				logger(\Fuel::L_WARNING, 'The configured locale '.static::$locale.' is not installed on your system.', __METHOD__);
+		}
+
 		if ( ! static::$is_cli)
 		{
 			if (\Config::get('base_url') === null)
@@ -181,13 +188,6 @@ class Fuel
 		// Load in the routes
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
-
-		// Set locale, log warning when it fails
-		if (static::$locale)
-		{
-			setlocale(LC_ALL, static::$locale) or
-				logger(\Fuel::L_WARNING, 'The configured locale '.static::$locale.' is not installed on your system.', __METHOD__);
-		}
 
 		// BC FIX FOR APPLICATIONS <= 1.6.1, makes Redis_Db available as Redis,
 		// like it was in versions before 1.7
