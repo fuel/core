@@ -55,7 +55,6 @@ abstract class Controller_Rest extends \Controller
 		'jsonp'=> 'text/javascript',
 		'serialized' => 'application/vnd.php.serialized',
 		'php' => 'text/plain',
-		'html' => 'text/html',
 		'csv' => 'application/csv',
 	);
 
