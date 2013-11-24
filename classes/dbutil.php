@@ -34,7 +34,7 @@ class DBUtil
 	 */
 	public static function set_connection($connection)
 	{
-		if ( ! is_string($connection))
+		if ($connection !== null and ! is_string($connection))
 		{
 			throw new \FuelException('A connection must be supplied as a string.');
 		}
