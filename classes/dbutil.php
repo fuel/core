@@ -317,7 +317,7 @@ class DBUtil
 	{
 		if (strtoupper($index_name) == 'PRIMARY')
 		{
-			$sql = 'ALTER_TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
+			$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
 			$sql .= ' DROP PRIMARY KEY';
 		}
 		else
