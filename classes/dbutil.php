@@ -218,7 +218,7 @@ class DBUtil
 	 */
 	public static function create_index($table, $index_columns, $index_name = '', $index = '', $db = null)
 	{
-		static $accepted_index = array('UNIQUE', 'FULLTEXT', 'SPATIAL', 'NONCLUSTERED');
+		static $accepted_index = array('UNIQUE', 'FULLTEXT', 'SPATIAL', 'NONCLUSTERED', 'PRIMARY');
 
 		// make sure the index type is uppercase
 		$index !== '' and $index = strtoupper($index);
@@ -245,34 +245,60 @@ class DBUtil
 			}
 		}
 
-		$sql = 'CREATE ';
-
-		$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
-
-		$sql .= 'INDEX ';
-		$sql .= \DB::quote_identifier($index_name, $db ? $db : static::$connection);
-		$sql .= ' ON ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
-		if (is_array($index_columns))
+		if ($index == 'PRIMARY')
 		{
-			$columns = '';
-			foreach ($index_columns as $key => $value)
+			$sql = 'ALTER TABLE ';
+			$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
+			$sql .= ' ADD PRIMARY KEY ';
+			if (is_array($index_columns))
 			{
-				if (is_numeric($key))
+				$columns = '';
+				foreach ($index_columns as $key => $value)
 				{
-					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value, $db ? $db : static::$connection);
+					if (is_numeric($key))
+					{
+						$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value, $db ? $db : static::$connection);
+					}
+					else
+					{
+						$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key, $db ? $db : static::$connection).' '.strtoupper($value);
+					}
 				}
-				else
-				{
-					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key, $db ? $db : static::$connection).' '.strtoupper($value);
-				}
+				$sql .= ' ('.$columns.')';
 			}
-			$sql .= ' ('.$columns.')';
 		}
 		else
 		{
-			$sql .= ' ('.\DB::quote_identifier($index_columns, $db ? $db : static::$connection).')';
+			$sql = 'CREATE ';
+
+			$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
+
+			$sql .= 'INDEX ';
+			$sql .= \DB::quote_identifier($index_name, $db ? $db : static::$connection);
+			$sql .= ' ON ';
+			$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
+			if (is_array($index_columns))
+			{
+				$columns = '';
+				foreach ($index_columns as $key => $value)
+				{
+					if (is_numeric($key))
+					{
+						$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value, $db ? $db : static::$connection);
+					}
+					else
+					{
+						$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key, $db ? $db : static::$connection).' '.strtoupper($value);
+					}
+				}
+				$sql .= ' ('.$columns.')';
+			}
+			else
+			{
+				$sql .= ' ('.\DB::quote_identifier($index_columns, $db ? $db : static::$connection).')';
+			}
 		}
+
 
 		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
