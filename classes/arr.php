@@ -53,6 +53,11 @@ class Arr
 			return $return;
 		}
 
+		if (array_key_exists($key, $array))
+		{
+			return $array[$key];
+		}
+
 		foreach (explode('.', $key) as $key_part)
 		{
 			if (($array instanceof \ArrayAccess and isset($array[$key_part])) === false)
