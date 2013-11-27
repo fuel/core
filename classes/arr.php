@@ -953,9 +953,10 @@ class Arr
 	 * @param   string  $default   The default value
 	 * @param   bool    $recursive Whether to get keys recursive
 	 * @param   string  $delimiter The delimiter, when $recursive is true
+	 * @param   bool    $strict    If true, do a strict key comparison
 	 * @return  mixed
 	 */
-	public static function search($array, $value, $default = null, $recursive = true, $delimiter = '.')
+	public static function search($array, $value, $default = null, $recursive = true, $delimiter = '.', $strict = false)
 	{
 		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
 		{
@@ -972,7 +973,7 @@ class Arr
 			throw new \InvalidArgumentException('Expects parameter 5 must be an string.');
 		}
 
-		$key = array_search($value, $array);
+		$key = array_search($value, $array, $strict);
 
 		if ($recursive and $key === false)
 		{
@@ -981,7 +982,7 @@ class Arr
 			{
 				if (is_array($v))
 				{
-					$rk = static::search($v, $value, $default, true, $delimiter);
+					$rk = static::search($v, $value, $default, true, $delimiter, $strict);
 					if ($rk !== $default)
 					{
 						$keys = array($k, $rk);
