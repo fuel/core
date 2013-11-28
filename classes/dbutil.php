@@ -440,7 +440,7 @@ class DBUtil
 		}
 
 		$sql = 'ALTER TABLE ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, static::$connection)).' ';
 		$sql .= 'ADD ';
 		$sql .= ltrim(static::process_foreign_keys(array($foreign_key)), ',');
 
@@ -457,7 +457,7 @@ class DBUtil
 	public static function drop_foreign_key($table, $fk_name)
 	{
 		$sql = 'ALTER TABLE ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, static::$connection)).' ';
 		$sql .= 'DROP FOREIGN KEY '.\DB::quote_identifier($fk_name);
 
 		return \DB::query($sql, \DB::UPDATE)->execute();
@@ -498,7 +498,7 @@ class DBUtil
 			$sql = '';
 			! empty($definition['constraint']) and $sql .= " CONSTRAINT ".\DB::quote_identifier($definition['constraint']);
 			$sql .= " FOREIGN KEY (".\DB::quote_identifier($definition['key']).')';
-			$sql .= " REFERENCES ".\DB::quote_identifier(\DB::table_prefix($definition['reference']['table'])).' (';
+			$sql .= " REFERENCES ".\DB::quote_identifier(\DB::table_prefix($definition['reference']['table'], static::$connection)).' (';
 			if (is_array($definition['reference']['column']))
 			{
 				$sql .= implode(', ', \DB::quote_identifier($definition['reference']['column']));
