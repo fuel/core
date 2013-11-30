@@ -154,26 +154,29 @@ class Migrate
 		// run migrations on all specified modules
 		foreach (static::$modules as $module)
 		{
-			if (\Module::exists($module))
+			// check if the module exists
+			if ( ! \Module::exists($module))
 			{
-				static::$name($module, 'module');
+				\Cli::write('Requested module "'.$module.'" does not exist!', 'light_red');
 			}
 			else
 			{
-				\Cli::write('The module "'.$module.'" can not be located.', 'red');
+				// run the migration
+				static::$name($module, 'module');
 			}
 		}
 
 		// run migrations on all specified packages
 		foreach (static::$packages as $package)
 		{
-			if (\Package::exists($package))
+			// check if the module exists
+			if ( ! \Package::exists($package))
 			{
-				static::$name($package, 'package');
+				\Cli::write('Requested package "'.$package.'" does not exist!', 'light_red');
 			}
 			else
 			{
-				\Cli::write('The package "'.$package.'" can not be located.', 'red');
+				static::$name($package, 'package');
 			}
 		}
 	}
