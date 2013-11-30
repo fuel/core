@@ -285,7 +285,7 @@ class Format
 		// To allow exporting ArrayAccess objects like Orm\Model instances they need to be
 		// converted to an array first
 		$data = (is_array($data) or is_object($data)) ? $this->to_array($data) : $data;
-		return $pretty ? static::pretty_json($data) : json_encode($data);
+		return $pretty ? static::pretty_json($data) : json_encode($data, \Config::get('format.json.encode.option', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
 	}
 
 	/**
@@ -488,7 +488,7 @@ class Format
 	 */
 	protected static function pretty_json($data)
 	{
-		$json = json_encode($data);
+		$json = json_encode($data, \Config::get('format.json.encode.option', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
 
 		if ( ! $json)
 		{

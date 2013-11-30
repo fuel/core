@@ -303,4 +303,29 @@ line 2","Value 3"',
 
 		$this->assertEquals($expected, $data);
 	}
+	/**
+	 * Test for Format::forge($foo)->to_json()
+	 *
+	 * @test
+	 */
+	public function test_to_json()
+	{
+		$array = array(
+			'articles' => array(
+				array(
+					'title' => 'test',
+					'author' => 'foo',
+					'tag' => '<tag>',
+					'apos' => 'McDonald\'s',
+					'quot' => '"test"',
+					'amp' => 'M&M',
+					
+				)
+			)
+		);
+
+		$expected = '{"articles":[{"title":"test","author":"foo","tag":"\u003Ctag\u003E","apos":"McDonald\u0027s","quot":"\u0022test\u0022","amp":"M\u0026M"}]}';
+
+		$this->assertEquals($expected, Format::forge($array)->to_json());
+	}
 }
