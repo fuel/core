@@ -76,9 +76,6 @@ class Database_MySQLi_Connection extends \Database_Connection
 			'compress'	 => true,
 		));
 
-		// Prevent this information from showing up in traces
-		unset($this->_config['connection']['username'], $this->_config['connection']['password']);
-
 		try
 		{
 			if ($socket != '')
@@ -127,7 +124,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			if ($this->_connection->error)
 			{
 				// Unable to connect, select database, etc
-				throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+				throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $this->_connection->error), $this->_connection->errno);
 			}
 		}
 		catch (\ErrorException $e)

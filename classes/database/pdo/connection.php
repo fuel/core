@@ -70,9 +70,6 @@ class Database_PDO_Connection extends \Database_Connection
 			'compress'   => false,
 		));
 
-		// Clear the connection parameters for security
-		$this->_config['connection'] = array();
-
 		// determine db type
 		$_dsn_find_collon = strpos($dsn, ':');
 		$this->_db_type = $_dsn_find_collon ? substr($dsn, 0, $_dsn_find_collon) : null;
@@ -100,7 +97,7 @@ class Database_PDO_Connection extends \Database_Connection
 		catch (\PDOException $e)
 		{
 			$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
-			throw new \Database_Exception($e->getMessage(), $error_code, $e);
+			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $error_code, $e);
 		}
 
 		if ( ! empty($this->_config['charset']))
