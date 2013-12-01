@@ -211,19 +211,19 @@ abstract class Controller_Rest extends \Controller
 			}
 		}
 
-		// Format not supported, but the output is an array
-		elseif (is_array($data))
+		// Format not supported, but the output is an array or an object that can not be cast to string
+		elseif (is_array($data) or (is_object($data) and ! method_exists($data, '__toString')))
 		{
 			if (\Fuel::$env == \Fuel::PRODUCTION)
 			{
 				// not acceptable in production
 				$http_status = 406;
-				$this->response->body('The requested REST method returned array, which is not compatible with the output format "'.$this->format.'"');
+				$this->response->body('The requested REST method returned an array or object, which is not compatible with the output format "'.$this->format.'"');
 			}
 			else
 			{
 				// convert it to json so we can at least read it while we're developing
-				$this->response->body('The requested REST method returned an array:<br /><br />'.\Format::forge($data)->to_json(null, true));
+				$this->response->body('The requested REST method returned an array or object:<br /><br />'.\Format::forge($data)->to_json(null, true));
 			}
 		}
 
