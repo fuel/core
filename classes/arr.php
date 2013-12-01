@@ -53,6 +53,11 @@ class Arr
 			return $return;
 		}
 
+		if (array_key_exists($key, $array))
+		{
+			return $array[$key];
+		}
+
 		foreach (explode('.', $key) as $key_part)
 		{
 			if (($array instanceof \ArrayAccess and isset($array[$key_part])) === false)
@@ -824,7 +829,7 @@ class Arr
 				// numeric keys are appended
 				if (is_int($k))
 				{
-					array_key_exists($k, $array) ? array_push($array, $v) : $array[$k] = $v;
+					array_key_exists($k, $array) ? $array[] = $v : $array[$k] = $v;
 				}
 				elseif (is_array($v) and array_key_exists($k, $array) and is_array($array[$k]))
 				{
@@ -948,9 +953,10 @@ class Arr
 	 * @param   string  $default   The default value
 	 * @param   bool    $recursive Whether to get keys recursive
 	 * @param   string  $delimiter The delimiter, when $recursive is true
+	 * @param   bool    $strict    If true, do a strict key comparison
 	 * @return  mixed
 	 */
-	public static function search($array, $value, $default = null, $recursive = true, $delimiter = '.')
+	public static function search($array, $value, $default = null, $recursive = true, $delimiter = '.', $strict = false)
 	{
 		if ( ! is_array($array) and ! $array instanceof \ArrayAccess)
 		{
@@ -967,7 +973,7 @@ class Arr
 			throw new \InvalidArgumentException('Expects parameter 5 must be an string.');
 		}
 
-		$key = array_search($value, $array);
+		$key = array_search($value, $array, $strict);
 
 		if ($recursive and $key === false)
 		{
@@ -976,7 +982,7 @@ class Arr
 			{
 				if (is_array($v))
 				{
-					$rk = static::search($v, $value, $default, true, $delimiter);
+					$rk = static::search($v, $value, $default, true, $delimiter, $strict);
 					if ($rk !== $default)
 					{
 						$keys = array($k, $rk);

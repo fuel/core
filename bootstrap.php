@@ -268,6 +268,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Route'     => COREPATH.'classes/route.php',
 		'Fuel\\Core\\Router'    => COREPATH.'classes/router.php',
 
+		'Fuel\\Core\\Sanitization'       => COREPATH.'classes/sanitization.php',
+
 		'Fuel\\Core\\Security'           => COREPATH.'classes/security.php',
 		'Fuel\\Core\\SecurityException'  => COREPATH.'classes/security.php',
 

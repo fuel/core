@@ -244,11 +244,16 @@ class Migrate
 			// found any?
 			if ( ! empty($migrations))
 			{
-				// we're going down, so reverse the order of mygrations
-				$migrations = array_reverse($migrations, true);
-
 				// if no version was given, only revert the last migration
-				is_null($version) and $migrations = array(reset($migrations));
+				if (is_null($version))
+				{
+					$migrations = array_slice($migrations, -1, 1, true);
+				}
+				else
+				{
+					// we're going down, so reverse the order of migrations
+					$migrations = array_reverse($migrations, true);
+				}
 
 				// revert the installed migrations
 				return static::run($migrations, $name, $type, 'down');

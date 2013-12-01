@@ -287,7 +287,7 @@ class Asset_Instance
 			switch($type)
 			{
 				case 'css':
-					$attr['type'] = 'text/css';
+					isset($attr['type']) or $attr['type'] = 'text/css';
 					if ($inline)
 					{
 						$css .= html_tag('style', $attr, PHP_EOL.$file.PHP_EOL).PHP_EOL;

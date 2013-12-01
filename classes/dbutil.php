@@ -34,7 +34,7 @@ class DBUtil
 	 */
 	public static function set_connection($connection)
 	{
-		if ( ! is_string($connection))
+		if ($connection !== null and ! is_string($connection))
 		{
 			throw new \FuelException('A connection must be supplied as a string.');
 		}
@@ -218,7 +218,7 @@ class DBUtil
 	 */
 	public static function create_index($table, $index_columns, $index_name = '', $index = '', $db = null)
 	{
-		static $accepted_index = array('UNIQUE', 'FULLTEXT', 'SPATIAL', 'NONCLUSTERED');
+		static $accepted_index = array('UNIQUE', 'FULLTEXT', 'SPATIAL', 'NONCLUSTERED', 'PRIMARY');
 
 		// make sure the index type is uppercase
 		$index !== '' and $index = strtoupper($index);
@@ -245,34 +245,60 @@ class DBUtil
 			}
 		}
 
-		$sql = 'CREATE ';
-
-		$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
-
-		$sql .= 'INDEX ';
-		$sql .= \DB::quote_identifier($index_name, $db ? $db : static::$connection);
-		$sql .= ' ON ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
-		if (is_array($index_columns))
+		if ($index == 'PRIMARY')
 		{
-			$columns = '';
-			foreach ($index_columns as $key => $value)
+			$sql = 'ALTER TABLE ';
+			$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
+			$sql .= ' ADD PRIMARY KEY ';
+			if (is_array($index_columns))
 			{
-				if (is_numeric($key))
+				$columns = '';
+				foreach ($index_columns as $key => $value)
 				{
-					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value, $db ? $db : static::$connection);
+					if (is_numeric($key))
+					{
+						$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value, $db ? $db : static::$connection);
+					}
+					else
+					{
+						$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key, $db ? $db : static::$connection).' '.strtoupper($value);
+					}
 				}
-				else
-				{
-					$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key, $db ? $db : static::$connection).' '.strtoupper($value);
-				}
+				$sql .= ' ('.$columns.')';
 			}
-			$sql .= ' ('.$columns.')';
 		}
 		else
 		{
-			$sql .= ' ('.\DB::quote_identifier($index_columns, $db ? $db : static::$connection).')';
+			$sql = 'CREATE ';
+
+			$index !== '' and $sql .= (in_array($index, $accepted_index)) ? $index.' ' : '';
+
+			$sql .= 'INDEX ';
+			$sql .= \DB::quote_identifier($index_name, $db ? $db : static::$connection);
+			$sql .= ' ON ';
+			$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
+			if (is_array($index_columns))
+			{
+				$columns = '';
+				foreach ($index_columns as $key => $value)
+				{
+					if (is_numeric($key))
+					{
+						$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($value, $db ? $db : static::$connection);
+					}
+					else
+					{
+						$columns .= ($columns=='' ? '' : ', ').\DB::quote_identifier($key, $db ? $db : static::$connection).' '.strtoupper($value);
+					}
+				}
+				$sql .= ' ('.$columns.')';
+			}
+			else
+			{
+				$sql .= ' ('.\DB::quote_identifier($index_columns, $db ? $db : static::$connection).')';
+			}
 		}
+
 
 		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
@@ -289,8 +315,16 @@ class DBUtil
 	 */
 	public static function drop_index($table, $index_name, $db = null)
 	{
-		$sql = 'DROP INDEX '.\DB::quote_identifier($index_name, $db ? $db : static::$connection);
-		$sql .= ' ON '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
+		if (strtoupper($index_name) == 'PRIMARY')
+		{
+			$sql = 'ALTER TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
+			$sql .= ' DROP PRIMARY KEY';
+		}
+		else
+		{
+			$sql = 'DROP INDEX '.\DB::quote_identifier($index_name, $db ? $db : static::$connection);
+			$sql .= ' ON '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection);
+		}
 
 		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
@@ -440,7 +474,7 @@ class DBUtil
 		}
 
 		$sql = 'ALTER TABLE ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, static::$connection)).' ';
 		$sql .= 'ADD ';
 		$sql .= ltrim(static::process_foreign_keys(array($foreign_key)), ',');
 
@@ -457,7 +491,7 @@ class DBUtil
 	public static function drop_foreign_key($table, $fk_name)
 	{
 		$sql = 'ALTER TABLE ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table)).' ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, static::$connection)).' ';
 		$sql .= 'DROP FOREIGN KEY '.\DB::quote_identifier($fk_name);
 
 		return \DB::query($sql, \DB::UPDATE)->execute();
@@ -498,7 +532,7 @@ class DBUtil
 			$sql = '';
 			! empty($definition['constraint']) and $sql .= " CONSTRAINT ".\DB::quote_identifier($definition['constraint']);
 			$sql .= " FOREIGN KEY (".\DB::quote_identifier($definition['key']).')';
-			$sql .= " REFERENCES ".\DB::quote_identifier(\DB::table_prefix($definition['reference']['table'])).' (';
+			$sql .= " REFERENCES ".\DB::quote_identifier(\DB::table_prefix($definition['reference']['table'], static::$connection)).' (';
 			if (is_array($definition['reference']['column']))
 			{
 				$sql .= implode(', ', \DB::quote_identifier($definition['reference']['column']));

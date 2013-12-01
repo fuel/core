@@ -203,7 +203,7 @@ class Autoloader
 		}
 		else
 		{
-			array_push(static::$core_namespaces, $namespace);
+			static::$core_namespaces[] = $namespace;
 		}
 	}
 

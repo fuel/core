@@ -76,9 +76,6 @@ class Database_MySQLi_Connection extends \Database_Connection
 			'compress'	 => true,
 		));
 
-		// Prevent this information from showing up in traces
-		unset($this->_config['connection']['username'], $this->_config['connection']['password']);
-
 		try
 		{
 			if ($socket != '')
@@ -127,7 +124,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			if ($this->_connection->error)
 			{
 				// Unable to connect, select database, etc
-				throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+				throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $this->_connection->error), $this->_connection->errno);
 			}
 		}
 		catch (\ErrorException $e)
@@ -252,7 +249,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 				}
 			}
 
-			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql, $stacktrace);
+			$benchmark = \Profiler::start($this->_instance, $sql, $stacktrace);
 		}
 
 		if ( ! empty($this->_config['connection']['persistent']) and $this->_config['connection']['database'] !== static::$_current_databases[$this->_connection_id])

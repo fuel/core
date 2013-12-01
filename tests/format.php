@@ -255,4 +255,77 @@ line 2","Value 3"',
 
 		$this->assertEquals($expected, Format::forge($array)->to_xml(null, null, 'xml', true));
 	}
+
+	/**
+	 * Test for Format::forge($namespaced_xml, 'xml')->to_array()
+	 *
+	 * @test
+	 */
+	public function test_namespaced_xml()
+	{
+		$xml = '<?xml version="1.0" encoding="utf-8"?>
+<xml xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:app="http://www.w3.org/2007/app"><article><title>test</title><app:title>app test</app:title></article></xml>';
+
+		$data = Format::forge($xml, 'xml')->to_array();
+
+		$expected = array(
+			'article' => array(
+				'title' => 'test',
+			)
+		);
+
+		$this->assertEquals($expected, $data);
+	}
+
+	/**
+	 * Test for Format::forge($namespaced_xml, 'xml:ns')->to_array()
+	 *
+	 * @test
+	 */
+	public function test_namespaced_xml_and_include_xmlns()
+	{
+		$xml = '<?xml version="1.0" encoding="utf-8"?>
+<xml xmlns="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:app="http://www.w3.org/2007/app"><article><title>test</title><app:title>app test</app:title></article></xml>';
+
+		$data = Format::forge($xml, 'xml:ns')->to_array();
+
+		$expected = array(
+			'@attributes' => array(
+				'xmlns' => 'http://www.w3.org/2005/Atom',
+				'xmlns:media' => 'http://search.yahoo.com/mrss/',
+				'xmlns:app' => 'http://www.w3.org/2007/app',
+			),
+			'article' => array(
+				'title' => 'test',
+				'app:title' => 'app test',
+			)
+		);
+
+		$this->assertEquals($expected, $data);
+	}
+	/**
+	 * Test for Format::forge($foo)->to_json()
+	 *
+	 * @test
+	 */
+	public function test_to_json()
+	{
+		$array = array(
+			'articles' => array(
+				array(
+					'title' => 'test',
+					'author' => 'foo',
+					'tag' => '<tag>',
+					'apos' => 'McDonald\'s',
+					'quot' => '"test"',
+					'amp' => 'M&M',
+					
+				)
+			)
+		);
+
+		$expected = '{"articles":[{"title":"test","author":"foo","tag":"\u003Ctag\u003E","apos":"McDonald\u0027s","quot":"\u0022test\u0022","amp":"M\u0026M"}]}';
+
+		$this->assertEquals($expected, Format::forge($array)->to_json());
+	}
 }
