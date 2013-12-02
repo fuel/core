@@ -449,7 +449,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function __isset($property)
 	{
-		return array_key_exists($property, $this->_data);
+		return isset($this->_data[$data]);
 	}
 
 	/**
