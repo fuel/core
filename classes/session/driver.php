@@ -68,7 +68,7 @@ abstract class Session_Driver
 	public function destroy()
 	{
 		// delete the session cookie
-		\Cookie::delete($this->config['cookie_name']);
+ 		\Cookie::delete($this->config['cookie_name'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
 
 		// reset the stored session data
 		$this->keys = $this->flash = $this->data = array();
