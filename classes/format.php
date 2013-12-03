@@ -488,7 +488,7 @@ class Format
 	 */
 	protected static function pretty_json($data)
 	{
-		$json = json_encode($data, \Config::get('format.json.encode.option', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
+		$json = json_encode($data, \Config::get('format.json.encode.options', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
 
 		if ( ! $json)
 		{
