@@ -32,6 +32,18 @@ unset($app_path, $core_path, $package_path, $_SERVER['app_path'], $_SERVER['core
 defined('FUEL_START_TIME') or define('FUEL_START_TIME', microtime(true));
 defined('FUEL_START_MEM') or define('FUEL_START_MEM', memory_get_usage());
 
+// Load the Composer autoloader if present
+defined('VENDORPATH') or define('VENDORPATH', realpath(COREPATH.'..'.DS.'vendor').DS);
+if ( ! is_file(VENDORPATH.'autoload.php'))
+{
+	die('Composer is not installed. Please run "php composer.phar update" in the project root to install Composer');
+}
+require VENDORPATH.'autoload.php';
+
+// Load in the Fuel autoloader
+require COREPATH.'classes'.DIRECTORY_SEPARATOR.'autoloader.php';
+class_alias('Fuel\\Core\\Autoloader', 'Autoloader');
+
 // Boot the app
 require_once APPPATH.'bootstrap.php';
 
