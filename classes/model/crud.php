@@ -1,4 +1,3 @@
-
 <?php
 /**
  * Part of the Fuel framework.
