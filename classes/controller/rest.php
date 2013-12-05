@@ -181,11 +181,11 @@ abstract class Controller_Rest extends \Controller
 			$this->response->set_header('Content-Type', $this->_supported_formats[$this->format]);
 		}
 
-		// no data returned? Set the NO CONTENT status on the response
+		// no data returned?
 		if ((is_array($data) and empty($data)) or ($data == ''))
 		{
-			$this->response->status = $this->no_data_status;
-			return $this->response;
+			// override the http status with the NO CONTENT status
+			$http_status = $this->no_data_status;
 		}
 
 		// make sure we have a valid return status
