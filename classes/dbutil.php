@@ -372,7 +372,7 @@ class DBUtil
 
 			if(array_key_exists('DEFAULT', $attr))
 			{
-				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT']));
+				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::quote($attr['DEFAULT']));
 			}
 
 			if(array_key_exists('NULL', $attr) and $attr['NULL'] === true)
