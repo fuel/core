@@ -248,9 +248,18 @@ class Security
 			// Add to $already_cleaned variable when object
 			is_object($value) and $already_cleaned[] = $value;
 
-			foreach ($value as $k => $v)
-			{
-				$value[$k] = static::htmlentities($v, $flags, $encoding, $double_encode);
+			// Cannot sanitize itself
+			if ( ! is_object($value) || ! ($value instanceof SelfSanitize)) {
+				foreach ($value as $k => $v)
+				{
+					$value[$k] = static::htmlentities($v, $flags, $encoding, $double_encode);
+				}
+			}
+			// Can sanitize itself
+			elseif ($value instanceof SelfSanitize) {
+				$value->set_sanitizer(function($val) use($flags, $encoding, $double_encode) {
+					return static::htmlentities($val, $flags, $encoding, $double_encode);
+				});
 			}
 		}
 		elseif ($value instanceof \Iterator or get_class($value) == 'stdClass')
