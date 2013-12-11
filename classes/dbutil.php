@@ -394,6 +394,11 @@ class DBUtil
 				$sql .= ' PRIMARY KEY';
 			}
 
+			if (array_key_exists('COMMENT', $attr))
+			{
+				$sql .= ' COMMENT '.\DB::escape($attr['COMMENT'], $db ? $db : static::$connection);
+			}
+
 			if (array_key_exists('FIRST', $attr) and $attr['FIRST'] === true)
 			{
 				$sql .= ' FIRST';
@@ -401,11 +406,6 @@ class DBUtil
 			elseif (array_key_exists('AFTER', $attr) and strval($attr['AFTER']))
 			{
 				$sql .= ' AFTER '.\DB::quote_identifier($attr['AFTER'], $db ? $db : static::$connection);
-			}
-
-			if (array_key_exists('COMMENT', $attr))
-			{
-				$sql .= ' COMMENT '.\DB::escape($attr['COMMENT'], $db ? $db : static::$connection);
 			}
 
 			$sql_fields[] = $sql;
