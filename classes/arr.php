@@ -53,6 +53,8 @@ class Arr
 			return $return;
 		}
 
+		is_object($key) and $key = (string) $key;
+
 		if (array_key_exists($key, $array))
 		{
 			return $array[$key];
