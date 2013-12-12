@@ -189,7 +189,13 @@ abstract class Config_File implements Config_Interface
 			mkdir($path['dirname'], 0777, true);
 		}
 
-		return \File::update($path['dirname'], $path['basename'], $output);
+		$return = \File::update($path['dirname'], $path['basename'], $output);
+		if ($return)
+		{
+			\Config::load('file', true);
+			chmod($path['dirname'].DS.$path['basename'], \Config::get('file.chmod.files', 0666));
+		}
+		return $return;
 	}
 
 	/**

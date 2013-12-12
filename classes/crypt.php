@@ -70,13 +70,9 @@ class Crypt
 		// update the config if needed
 		if ($update === true)
 		{
-			// load the file config
-			\Config::load('file', true);
-
 			try
 			{
 				\Config::save('crypt', static::$config);
-				chmod(APPPATH.'config'.DS.'crypt.php', \Config::get('file.chmod.files', 0666));
 			}
 			catch (\FileAccessException $e)
 			{
