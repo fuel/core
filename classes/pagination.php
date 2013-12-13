@@ -295,9 +295,29 @@ class Pagination
 
 		$html = '';
 
-		// let's get the starting and ending page number, this is determined using num_links
-		$end = (($this->config['calculated_page'] + $this->config['num_links']) < $this->config['total_pages']) ? $this->config['calculated_page'] + $this->config['num_links'] : $this->config['total_pages'];
-		$start = ($end - $this->config['num_links']) < 1 ? 1 : $end - $this->config['num_links'];
+		// calculate start- and end page numbers
+		$start = $this->config['calculated_page'] - floor($this->config['num_links'] / 2);
+		$end = $this->config['calculated_page'] + floor($this->config['num_links'] / 2);
+
+		// adjustment for rounding errors
+		if ($end - $start == $this->config['num_links'])
+		{
+			$end--;
+		}
+
+		// adjust for the first few pages
+		if ($start < 1)
+		{
+			$end -= $start - 1;
+			$start = 1;
+		}
+
+		// make sure we don't overshoot the total
+		if ($end > $this->config['total_pages'])
+		{
+			$start = max(1, $start - $end + $this->config['total_pages']);
+			$end = $this->config['total_pages'];
+		}
 
 		for($i = $start; $i <= $end; $i++)
 		{
