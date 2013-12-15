@@ -179,12 +179,6 @@ class Pagination
 		// make sure config is an array
 		is_array($config) or $config = array('name' => $config);
 
-		// validate the config
-		foreach ($config as $name => $value)
-		{
-			$config[$name] = $this->_validate($name, $value);
-		}
-
 		// and we have a template name
 		array_key_exists('name', $config) or $config['name'] = \Config::get('pagination.active', 'default');
 
@@ -621,13 +615,62 @@ class Pagination
 	}
 
 	/**
-	 * Generate a pagination link
+	 * Validate the input configuration
 	 */
 	protected function _validate($name, $value)
 	{
-		switch ($name)
+ 		switch ($name)
 		{
-			// validate link_offset, and adjust if needed
+			case 'offset':
+			case 'total_items':
+				// make sure it's an integer
+				if ($value != intval($value))
+				{
+					$value = 0;
+				}
+				// and that it's within bounds
+				$value = max(0, $value);
+			break;
+
+			// integer or string
+			case 'uri_segment':
+				if (is_numeric($value))
+				{
+					// make sure it's an integer
+					if ($value != intval($value))
+					{
+						$value = 1;
+					}
+					// and that it's within bounds
+					$value = max(1, $value);
+				}
+			break;
+
+			// validate integer values
+			case 'current_page':
+			case 'per_page':
+			case 'limit':
+			case 'total_pages':
+			case 'num_links':
+				// make sure it's an integer
+				if ($value != intval($value))
+				{
+					$value = 1;
+				}
+				// and that it's within bounds
+				$value = max(1, $value);
+			break;
+
+			// validate booleans
+			case 'show_first':
+			case 'show_last':
+				if ( ! is_bool($value))
+				{
+					$value = (bool) $value;
+				}
+			break;
+
+			// validate the link offset, and adjust if needed
 			case 'link_offset':
 				// make sure we have a fraction between 0 and 1
 				if ($value > 1)
