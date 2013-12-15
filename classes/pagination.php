@@ -132,6 +132,7 @@ class Pagination
 		'show_first'              => false,
 		'show_last'               => false,
 		'pagination_url'          => null,
+		'link_offset'             => 0.5,
 	);
 
 	/**
@@ -177,6 +178,12 @@ class Pagination
 	{
 		// make sure config is an array
 		is_array($config) or $config = array('name' => $config);
+
+		// validate the config
+		foreach ($config as $name => $value)
+		{
+			$config[$name] = $this->_validate($name, $value);
+		}
 
 		// and we have a template name
 		array_key_exists('name', $config) or $config['name'] = \Config::get('pagination.active', 'default');
@@ -234,6 +241,8 @@ class Pagination
 		}
 		else
 		{
+			$value = $this->_validate($name, $value);
+
 			if (array_key_exists($name, $this->config))
 			{
 				$this->config[$name] = $value;
@@ -296,20 +305,21 @@ class Pagination
 		$html = '';
 
 		// calculate start- and end page numbers
-		$start = $this->config['calculated_page'] - floor($this->config['num_links'] / 2);
-		$end = $this->config['calculated_page'] + floor($this->config['num_links'] / 2);
-
-		// adjustment for rounding errors
-		if ($end - $start == $this->config['num_links'])
-		{
-			$end--;
-		}
+		$start = $this->config['calculated_page'] - floor($this->config['num_links'] * $this->config['link_offset']);
+		$end = $this->config['calculated_page'] + floor($this->config['num_links'] * ( 1 - $this->config['link_offset']));
 
 		// adjust for the first few pages
 		if ($start < 1)
 		{
 			$end -= $start - 1;
 			$start = 1;
+		}
+
+		// make sure we don't overshoot the current page due to rounding issues
+		if ($end < $this->config['calculated_page'])
+		{
+			$start++;
+			$end++;
 		}
 
 		// make sure we don't overshoot the total
@@ -319,7 +329,7 @@ class Pagination
 			$end = $this->config['total_pages'];
 		}
 
-		for($i = $start; $i <= $end; $i++)
+		for($i = intval($start); $i <= intval($end); $i++)
 		{
 			if ($this->config['calculated_page'] == $i)
 			{
@@ -610,4 +620,26 @@ class Pagination
 		return str_replace('{page}', $page, $this->config['pagination_url']);
 	}
 
+	/**
+	 * Generate a pagination link
+	 */
+	protected function _validate($name, $value)
+	{
+		switch ($name)
+		{
+			// validate link_offset, and adjust if needed
+			case 'link_offset':
+				// make sure we have a fraction between 0 and 1
+				if ($value > 1)
+				{
+					$value = $value / 100;
+				}
+
+				// and that it's within bounds
+				$value = max(0.01, min($value, 0.99));
+			break;
+		}
+
+		return $value;
+	}
 }
