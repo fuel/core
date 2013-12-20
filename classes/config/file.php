@@ -164,7 +164,7 @@ abstract class Config_File implements Config_Interface
 					$this->file = substr($this->file, $pos+2);
 
 					// strip the classes directory as we need the module root
-					$path = substr($path,0, -8).'config'.DS.$this->file;
+					$path = substr($path,0, -8).'config'.DS.$this->file.$this->ext;
 				}
 				else
 				{
