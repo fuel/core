@@ -490,7 +490,7 @@ else {
 			$return_output .='<tr>
 				<td class="'.$class.'">'.$query['sql'];
 			$return_output .='<em>';
-			$return_output .='Speed: <b>'.$query['time'].'</b>';
+			$return_output .='Connection name: <b>'.$query['dbname'].'</b><br />Speed: <b>'.$query['time'].'</b>';
 			$query['duplicate'] and $return_output .=' &middot; <b>DUPLICATE</b>';
 			if(isset($query['explain'])) {
 				$return_output .= '<br />Query analysis:';
