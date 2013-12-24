@@ -29,7 +29,7 @@ class Cookie
 	/**
 	 * @var  array  Cookie class configuration defaults
 	 */
-	private static $config = array(
+	protected static $config = array(
 		'expiration'            => 0,
 		'path'                  => '/',
 		'domain'                => null,
