@@ -106,9 +106,16 @@ abstract class Controller_Hybrid extends \Controller_Rest
 				}
 			}
 
+			// deal with returned array's in non-restful calls
+			elseif (is_array($response))
+			{
+				$response = \Format::forge()->to_json($response, true);
+			}
+
+			// and make sure we have a valid Response object
 			if ( ! $response instanceof Response)
 			{
-				$response = $this->response($response);
+				$response = \Response::forge($response, $this->response_status);
 			}
 		}
 
