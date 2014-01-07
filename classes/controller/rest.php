@@ -429,7 +429,9 @@ abstract class Controller_Rest extends \Controller
 
 	protected function _prepare_digest_auth()
 	{
-		$uniqid = uniqid(""); // Empty argument for backward compatibility
+		// Empty argument for backward compatibility
+		$uniqid = uniqid("");
+
 		// We need to test which server authentication variable to use
 		// because the PHP ISAPI module in IIS acts different from CGI
 		if (\Input::server('PHP_AUTH_DIGEST'))
@@ -445,25 +447,32 @@ abstract class Controller_Rest extends \Controller
 			$digest_string = '';
 		}
 
-		/* The $_SESSION['error_prompted'] variabile is used to ask
-		  the password again if none given or if the user enters
-		  a wrong auth. informations. */
+		// Prompt for authentication if we don't have a digest string
 		if (empty($digest_string))
 		{
 			static::_force_login($uniqid);
 			return false;
 		}
 
-		// We need to retrieve authentication informations from the $auth_data variable
-		preg_match_all('@(username|nonce|uri|nc|cnonce|qop|response)=[\'"]?([^\'",]+)@', $digest_string, $matches);
-		$digest = array_combine($matches[1], $matches[2]);
+		// We need to retrieve authentication informations from the $digest_string variable
+		$digest_params = explode(', ', $digest_string);
+		foreach ($digest_params as $digest_param)
+		{
+			$digest_param = explode('=', $digest_param, 2);
+			if (isset($digest_param[1]))
+			{
+				$digest[$digest_param[0]] = trim($digest_param[1], '"');
+			}
+		}
 
+		// if no username, or an invalid username found, re-authenticate
 		if ( ! array_key_exists('username', $digest) or ! static::_check_login($digest['username']))
 		{
 			static::_force_login($uniqid);
 			return false;
 		}
 
+		// validate the configured login/password
 		$valid_logins = \Config::get('rest.valid_logins');
 		$valid_pass = $valid_logins[$digest['username']];
 
