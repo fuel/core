@@ -603,7 +603,7 @@ class Pagination
 			}
 
 			// re-assemble the url
-			$query = empty($url['query']) ? '' : '?'.preg_replace('/%7Bpage%7D/', '{page}', http_build_query($url['query']));
+			$query = empty($url['query']) ? '' : '?'.preg_replace('/%7Bpage%7D/', '{page}', http_build_query($url['query'], '', '&amp;'));
 			unset($url['query']);
 			empty($url['scheme']) or $url['scheme'] .= '://';
 			empty($url['port']) or $url['host'] .= ':';
