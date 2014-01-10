@@ -511,11 +511,11 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		$test = $_make_link->invoke($pagination, 1);
-		$expected = '/welcome/index/1?foo=bar&fuel%5B0%5D=php1&fuel%5B1%5D=php2';
+		$expected = '/welcome/index/1?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
 		$this->assertEquals($expected, $test);
 
 		$test = $_make_link->invoke($pagination, 99);
-		$expected = '/welcome/index/99?foo=bar&fuel%5B0%5D=php1&fuel%5B1%5D=php2';
+		$expected = '/welcome/index/99?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
 		$this->assertEquals($expected, $test);
 	}
 
@@ -535,11 +535,11 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		$test = $_make_link->invoke($pagination, 1);
-		$expected = '/welcome/index/1?foo=bar&fuel%5B0%5D=php1&fuel%5B1%5D=php2';
+		$expected = '/welcome/index/1?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
 		$this->assertEquals($expected, $test);
 
 		$test = $_make_link->invoke($pagination, 99);
-		$expected = '/welcome/index/99?foo=bar&fuel%5B0%5D=php1&fuel%5B1%5D=php2';
+		$expected = '/welcome/index/99?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
 		$this->assertEquals($expected, $test);
 	}
 
@@ -700,11 +700,11 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		$test = $_make_link->invoke($pagination, 1);
-		$expected = 'welcome/index/?foo=bar&fuel%5B0%5D=php1&fuel%5B1%5D=php2&p=1';
+		$expected = 'welcome/index/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=1';
 		$this->assertEquals($expected, $test);
 
 		$test = $_make_link->invoke($pagination, 99);
-		$expected = 'welcome/index/?foo=bar&fuel%5B0%5D=php1&fuel%5B1%5D=php2&p=99';
+		$expected = 'welcome/index/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=99';
 		$this->assertEquals($expected, $test);
 	}
 
@@ -723,11 +723,11 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		$test = $_make_link->invoke($pagination, 1);
-		$expected = 'http://docs.fuelphp.com/?foo=bar&fuel%5B0%5D=php1&fuel%5B1%5D=php2&p=1';
+		$expected = 'http://docs.fuelphp.com/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=1';
 		$this->assertEquals($expected, $test);
 
 		$test = $_make_link->invoke($pagination, 99);
-		$expected = 'http://docs.fuelphp.com/?foo=bar&fuel%5B0%5D=php1&fuel%5B1%5D=php2&p=99';
+		$expected = 'http://docs.fuelphp.com/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=99';
 		$this->assertEquals($expected, $test);
 	}
 
@@ -746,11 +746,11 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		$test = $_make_link->invoke($pagination, 1);
-		$expected = 'http://docs.fuelphp.com/?foo=bar&p=1&fuel%5B0%5D=php1&fuel%5B1%5D=php2';
+		$expected = 'http://docs.fuelphp.com/?foo=bar&amp;p=1&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
 		$this->assertEquals($expected, $test);
 
 		$test = $_make_link->invoke($pagination, 99);
-		$expected = 'http://docs.fuelphp.com/?foo=bar&p=99&fuel%5B0%5D=php1&fuel%5B1%5D=php2';
+		$expected = 'http://docs.fuelphp.com/?foo=bar&amp;p=99&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2';
 		$this->assertEquals($expected, $test);
 	}
 }
