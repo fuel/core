@@ -100,6 +100,18 @@ abstract class Database_Connection
 	protected $_instance;
 
 	/**
+	 *
+	 * @var bool $_in_transation allows transactions
+	 */
+	protected $_in_transaction = false;
+	
+	/**
+	 *
+	 * @var int Transaction nesting depth counter
+	 */
+	protected $_transaction_depth = 0;
+	
+	/**
 	 * @var  resource  Raw server connection
 	 */
 	protected $_connection;
@@ -698,37 +710,112 @@ abstract class Database_Connection
 	 *
 	 *     $db->in_transaction();
 	 *
-	 * @return  bool
+	 * @return bool
 	 */
-	abstract public function in_transaction();
-
+	public function in_transaction()
+	{
+		return $this->_in_transaction;
+	}
+	
 	/**
-	 * Begins a transaction on instance
+	 * Begins a nested transaction on instance
 	 *
 	 *     $db->start_transaction();
 	 *
-	 * @return  bool
+	 * @return bool
 	 */
-	abstract public function start_transaction();
-
+	public function start_transaction()
+	{
+		$result = true;
+	
+		$this->_transaction_depth ++;
+	
+		if ($this->_transaction_depth == 1)
+		{
+			if ($this->driver_start_transaction())
+			{
+				$this->_in_transaction = true;
+			}
+			else
+			{
+				$result = false;
+			}
+		}
+	
+		return $result;
+	}
+	
 	/**
-	 * Commits all pending transactional queries
+	 * Commits nested transaction
 	 *
 	 *     $db->commit_transaction();
 	 *
-	 * @return  bool
+	 * @return bool
 	 */
-	abstract public function commit_transaction();
-
+	public function commit_transaction()
+	{
+		// Fake call of the commit
+		if ($this->_transaction_depth <= 0)
+		{
+			return false;
+		}
+	
+		$this->_transaction_depth --;
+		if ($this->_transaction_depth)
+		{
+			$result = true;
+		}
+		else
+		{
+			$this->_in_transaction = false;
+			$result = $this->driver_commit();
+		}
+	
+		return $result;
+	}
+	
 	/**
-	 * Rollsback all pending transactional queries
+	 * Rollsback all nested pending transactions
 	 *
 	 *     $db->rollback_transaction();
 	 *
-	 * @return  bool
+	 * @return bool
 	 */
-	abstract public function rollback_transaction();
-
+	public function rollback_transaction()
+	{
+		$result = true;
+	
+		if ($this->_transaction_depth > 0)
+		{
+			$this->_transaction_depth = 0;
+			$this->_in_transaction = false;
+			return $this->driver_rollback();
+		}
+	
+		return $result;
+	}
+	
+	/**
+	 * Begins a transaction on the driver level
+	 *
+	 * @return bool
+	 */
+	abstract protected function driver_start_transaction();
+	
+	/**
+	 * Commits all pending transactional queries on the driver level
+	 *
+	 * @return bool
+	*/
+	abstract protected function driver_commit();
+	
+	/**
+	 * Rollsback all pending transactional queries on the driver level
+	 *
+	 * @return bool
+	*/
+	abstract protected function driver_rollback();
+	
 	/**
 	 * Returns the raw connection object for custom method access
 	 *

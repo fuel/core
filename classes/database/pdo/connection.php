@@ -25,11 +25,6 @@ class Database_PDO_Connection extends \Database_Connection
 	protected $_identifier = '';
 
 	/**
-	 * @var  bool  $_in_transation  allows transactions
-	 */
-	protected $_in_transaction = false;
-
-	/**
 	 * @var  string  $_db_type  which kind of DB is used
 	 */
 	public $_db_type = '';
@@ -432,24 +427,13 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
-	 * Returns wether the connection is in transaction
-	 *
-	 * @return bool
-	 */
-	public function in_transaction()
-	{
-		return $this->_in_transaction;
-	}
-
-	/**
 	 * Start a transaction
 	 *
 	 * @return bool
 	 */
-	public function start_transaction()
+	protected function driver_start_transaction()
 	{
 		$this->_connection or $this->connect();
-		$this->_in_transaction = true;
 		return $this->_connection->beginTransaction();
 	}
 
@@ -458,9 +442,8 @@ class Database_PDO_Connection extends \Database_Connection
 	 *
 	 * @return bool
 	 */
-	public function commit_transaction()
+	protected function driver_commit()
 	{
-		$this->_in_transaction = false;
 		return $this->_connection->commit();
 	}
 
@@ -468,9 +451,8 @@ class Database_PDO_Connection extends \Database_Connection
 	 * Rollback a transaction
 	 * @return bool
 	 */
-	public function rollback_transaction()
+	protected function driver_rollback()
 	{
-		$this->_in_transaction = false;
 		return $this->_connection->rollBack();
 	}
 }
