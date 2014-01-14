@@ -210,9 +210,10 @@ class Format
 	 *
 	 * @param   mixed   $data
 	 * @param   mixed   $delimiter
+	 * @param   array   $headings  Custom headings to use
 	 * @return  string
 	 */
-	public function to_csv($data = null, $delimiter = null)
+	public function to_csv($data = null, $delimiter = null, $headings = null)
 	{
 		// csv format settings
 		$newline = \Config::get('format.csv.newline', \Config::get('format.csv.export.newline', "\n"));
@@ -237,25 +238,28 @@ class Format
 			$data = $this->to_array($data);
 		}
 
-		// Multi-dimensional array
-		if (is_array($data) and \Arr::is_multi($data))
+		if ($headings === null)
 		{
-			$data = array_values($data);
-
-			if (\Arr::is_assoc($data[0]))
+			// Multi-dimensional array
+			if (is_array($data) and \Arr::is_multi($data))
 			{
-				$headings = array_keys($data[0]);
+				$data = array_values($data);
+	
+				if (\Arr::is_assoc($data[0]))
+				{
+					$headings = array_keys($data[0]);
+				}
+				else
+				{
+					$headings = array_shift($data);
+				}
 			}
+			// Single array
 			else
 			{
-				$headings = array_shift($data);
+				$headings = array_keys((array) $data);
+				$data = array($data);
 			}
-		}
-		// Single array
-		else
-		{
-			$headings = array_keys((array) $data);
-			$data = array($data);
 		}
 
 		$output = $enclosure.implode($enclosure.$delimiter.$enclosure, $escaper($headings)).$enclosure.$newline;
