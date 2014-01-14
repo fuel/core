@@ -7,11 +7,12 @@
  * @package    Fuel/Database
  * @category   Base
  * @author     Kohana Team
+ * @author     Nested transactions - Sergey Ogarkov, sogarkov@gmail.com
  * @copyright  (c) 2008-2010 Kohana Team
  * @license    http://kohanaphp.com/license
  */
 
-namespace Fuel\Core;
+//namespace Fuel\Core;
 
 
 
@@ -107,7 +108,8 @@ abstract class Database_Connection
 	
 	/**
 	 *
-	 * @var int Transaction nesting depth counter
+	 * @var int Transaction nesting depth counter. 
+	 * Should be modified AFTER a driver has changed the level successfully
 	 */
 	protected $_transaction_depth = 0;
 	
@@ -728,9 +730,7 @@ abstract class Database_Connection
 	{
 		$result = true;
 	
-		$this->_transaction_depth ++;
-	
-		if ($this->_transaction_depth == 1)
+		if ($this->_transaction_depth == 0)
 		{
 			if ($this->driver_start_transaction())
 			{
@@ -741,6 +741,14 @@ abstract class Database_Connection
 				$result = false;
 			}
 		}
+		else
+		{ 
+			$result = $this->set_savepoint($this->_transaction_depth);
+			// If savepoint is not supported it is not an error
+			! isset($result) and $result = true;
+		}
+
+		$result and $this->_transaction_depth ++;
 	
 		return $result;
 	}
@@ -760,10 +768,11 @@ abstract class Database_Connection
 			return false;
 		}
 	
-		$this->_transaction_depth --;
-		if ($this->_transaction_depth)
+		if ($this->_transaction_depth - 1)
 		{
-			$result = true;
+			$result = $this->release_savepoint($this->_transaction_depth - 1);
+			// If savepoint is not supported it is not an error
+			! isset($result) and $result = true;
 		}
 		else
 		{
@@ -771,27 +780,51 @@ abstract class Database_Connection
 			$result = $this->driver_commit();
 		}
 	
+		$result and $this->_transaction_depth --;
+		
 		return $result;
 	}
 	
 	/**
-	 * Rollsback all nested pending transactions
+	 * Rollsback nested pending transaction queries. 
+	 * Rollback to the current level uses SAVEPOINT,
+	 * it does not work if current RDBMS does not support them.
+	 * In this case system rollbacks all queries and closes the transaction
 	 *
 	 *     $db->rollback_transaction();
-	 *
+	 *     
+	 * @param bool $rollback_all:
+	 *  true  - rollback everything and close transaction;
+	 *  false - rollback only current level 
+	 *  
 	 * @return bool
 	 */
-	public function rollback_transaction()
+	public function rollback_transaction($rollback_all = false)
 	{
-		$result = true;
-	
 		if ($this->_transaction_depth > 0)
 		{
-			$this->_transaction_depth = 0;
-			$this->_in_transaction = false;
-			return $this->driver_rollback();
+			if($rollback_all or $this->_transaction_depth == 1)
+			{
+				if($result = $this->driver_rollback())
+				{
+					$this->_transaction_depth = 0;
+					$this->_in_transaction = false;
+				}
+			}
+			else 
+			{
+				$result = $this->rollback_savepoint($this->_transaction_depth - 1);
+				// If savepoint is not supported it is not an error
+				! isset($result) and $result = true;
+				
+				$result and $this->_transaction_depth -- ;
+			}
 		}
-	
+		else 
+		{	
+			$result = false;
+		}
+
 		return $result;
 	}
 	
@@ -815,6 +848,42 @@ abstract class Database_Connection
 	 * @return bool
 	*/
 	abstract protected function driver_rollback();
+	
+	/**
+	 * Sets savepoint of the transaction
+	 * 
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully; 
+	 *                 false - failed to set savepoint;
+	 *                 null  - RDBMS does not support savepoints
+	 */
+	protected function set_savepoint($name) {
+		return null;
+	}
+
+	/**
+	 * Release savepoint of the transaction
+	 *
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully;
+	 *                 false - failed to set savepoint;
+	 *                 null  - RDBMS does not support savepoints
+	 */
+	protected function release_savepoint($name) {
+		return null;
+	}
+
+	/**
+	 * Rollback savepoint of the transaction
+	 *
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully;
+	 *                 false - failed to set savepoint;
+	 *                 null  - RDBMS does not support savepoints
+	 */
+	protected function rollback_savepoint($name) {
+		return null;
+	}
 	
 	/**
 	 * Returns the raw connection object for custom method access

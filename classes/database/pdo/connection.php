@@ -9,7 +9,7 @@
  * @license    http://kohanaphp.com/license
  */
 
-namespace Fuel\Core;
+//namespace Fuel\Core;
 
 
 class Database_PDO_Connection extends \Database_Connection
@@ -455,4 +455,44 @@ class Database_PDO_Connection extends \Database_Connection
 	{
 		return $this->_connection->rollBack();
 	}
+	
+	/**
+	 * Sets savepoint of the transaction
+	 * 
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully; 
+	 *                 false - failed to set savepoint;
+	 *                 null  - RDBMS does not support savepoints
+	 */
+	protected function set_savepoint($name) {
+		$result = $this->_connection->exec('SAVEPOINT LEVEL'.$name);
+		return $result !== false;
+	}
+
+	/**
+	 * Release savepoint of the transaction
+	 *
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully;
+	 *                 false - failed to set savepoint;
+	 *                 null  - RDBMS does not support savepoints
+	 */
+	protected function release_savepoint($name) {
+		$result = $this->_connection->exec('RELEASE SAVEPOINT LEVEL'.$name);
+		return $result !== false;
+	}
+
+	/**
+	 * Rollback savepoint of the transaction
+	 *
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully;
+	 *                 false - failed to set savepoint;
+	 *                 null  - RDBMS does not support savepoints
+	 */
+	protected function rollback_savepoint($name) {
+		$result = $this->_connection->exec('ROLLBACK TO SAVEPOINT LEVEL'.$name);
+		return $result !== false;
+	}
+	
 }

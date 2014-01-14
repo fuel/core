@@ -9,7 +9,7 @@
  * @license    http://kohanaphp.com/license
  */
 
-namespace Fuel\Core;
+//namespace Fuel\Core;
 
 
 
@@ -479,5 +479,41 @@ class Database_MySQL_Connection extends \Database_Connection
 		$this->query(0, 'SET AUTOCOMMIT=1', false);
 		return true;
 	}
+	
+	/**
+	 * Sets savepoint of the transaction
+	 * 
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully; 
+	 *                 false - failed to set savepoint;
+	 */
+	protected function set_savepoint($name) {
+		$this->query(0, 'SAVEPOINT LEVEL'.$name, false);
+		return true;
+	}
 
+	/**
+	 * Release savepoint of the transaction
+	 *
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully;
+	 *                 false - failed to set savepoint;
+	 */
+	protected function release_savepoint($name) {
+		$this->query(0, 'RELEASE SAVEPOINT LEVEL'.$name, false);
+		return true;
+	}
+
+	/**
+	 * Rollback savepoint of the transaction
+	 *
+	 * @param string $name name of the savepoint
+	 * @return boolean true  - savepoint was set successfully;
+	 *                 false - failed to set savepoint;
+	 */
+	protected function rollback_savepoint($name) {
+		$this->query(0, 'ROLLBACK TO SAVEPOINT LEVEL'.$name, false);
+		return true;
+	}
+	
 }
