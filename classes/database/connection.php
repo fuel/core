@@ -12,7 +12,7 @@
  * @license    http://kohanaphp.com/license
  */
 
-//namespace Fuel\Core;
+namespace Fuel\Core;
 
 
 
