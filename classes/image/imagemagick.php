@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -17,7 +17,7 @@ class Image_Imagemagick extends \Image_Driver
 
 	protected $image_temp = null;
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
-	protected $size_cache = null;
+	protected $sizes_cache = null;
 	protected $im_path = null;
 
 	public function load($filename, $return_data = false, $force_extension = false)
@@ -181,7 +181,7 @@ class Image_Imagemagick extends \Image_Driver
 		$is_loaded_file = $filename == null;
 		if ( ! $is_loaded_file or $this->sizes_cache == null or !$usecache)
 		{
-			$reason = ($filename != null ? "filename" : ($this->size_cache == null ? 'cache' : 'option'));
+			$reason = ($filename != null ? "filename" : ($this->sizes_cache == null ? 'cache' : 'option'));
 			$this->debug("Generating size of image... (triggered by $reason)");
 
 			if ($is_loaded_file and ! empty($this->image_temp))

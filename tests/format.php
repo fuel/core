@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.6
+ * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -302,5 +302,75 @@ line 2","Value 3"',
 		);
 
 		$this->assertEquals($expected, $data);
+	}
+
+	/**
+	 * Test for Format::forge($foo)->to_json()
+	 *
+	 * @test
+	 */
+	public function test_to_json()
+	{
+		$array = array(
+			'articles' => array(
+				array(
+					'title' => 'test',
+					'author' => 'foo',
+					'tag' => '<tag>',
+					'apos' => 'McDonald\'s',
+					'quot' => '"test"',
+					'amp' => 'M&M',
+
+				)
+			)
+		);
+
+		$expected = '{"articles":[{"title":"test","author":"foo","tag":"\u003Ctag\u003E","apos":"McDonald\u0027s","quot":"\u0022test\u0022","amp":"M\u0026M"}]}';
+
+		$this->assertEquals($expected, Format::forge($array)->to_json());
+
+		// pretty json
+		$expected = '{
+	"articles": [
+		{
+			"title": "test",
+			"author": "foo",
+			"tag": "\u003Ctag\u003E",
+			"apos": "McDonald\u0027s",
+			"quot": "\u0022test\u0022",
+			"amp": "M\u0026M"
+		}
+	]
+}';
+		$this->assertEquals($expected, Format::forge($array)->to_json(null, true));
+
+		// change config options
+		$config = \Config::get('format.json.encode.options');
+		\Config::set('format.json.encode.options', 0);
+
+		$expected = <<<EOD
+{"articles":[{"title":"test","author":"foo","tag":"<tag>","apos":"McDonald's","quot":"\"test\"","amp":"M&M"}]}
+EOD;
+		$this->assertEquals($expected, Format::forge($array)->to_json());
+
+		// pretty json
+		$expected = <<<EOD
+{
+	"articles": [
+		{
+			"title": "test",
+			"author": "foo",
+			"tag": "<tag>",
+			"apos": "McDonald's",
+			"quot": "\"test\"",
+			"amp": "M&M"
+		}
+	]
+}
+EOD;
+		$this->assertEquals($expected, Format::forge($array)->to_json(null, true));
+
+		// restore config options
+		\Config::set('format.json.encode.options', $config);
 	}
 }

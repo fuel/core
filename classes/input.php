@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -145,7 +145,7 @@ class Input
 			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
 			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
 			{
-				$uri = substr($uri, strlen($base_url));
+				$uri = substr($uri, strlen($base_url) - 1);
 			}
 
 			// If we are using an index file (not mod_rewrite) then remove it
@@ -180,6 +180,7 @@ class Input
 				{
 					$_SERVER['QUERY_STRING'] = $matches[2];
 					parse_str($matches[2], $_GET);
+					$_GET = \Security::clean($_GET);
 				}
 			}
 		}
@@ -524,10 +525,10 @@ class Input
 	{
 		static::$input = array_merge($_GET, $_POST);
 
-		if (\Input::method() == 'PUT' or \Input::method() == 'PATCH' or\Input::method() == 'DELETE')
+		if (\Input::method() == 'PUT' or \Input::method() == 'PATCH' or \Input::method() == 'DELETE')
 		{
 			static::$php_input === null and static::$php_input = file_get_contents('php://input');
-			if (strpos(static::headers('Content-Type'), 'www-form-urlencoded') > 0)
+			if (strpos(static::headers('Content-Type'), 'www-form-urlencoded') > 0 and \Config::get('security.form-double-urlencoded', false))
 			{
 				static::$php_input = urldecode(static::$php_input);
 			}

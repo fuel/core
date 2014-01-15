@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -352,15 +352,6 @@ class Response
 	 */
 	public function __toString()
 	{
-		// special treatment for array's
-		if (is_array($this->body))
-		{
-			// this var_dump() is here intentionally !
-			ob_start();
-			var_dump($this->body);
-			$this->body = html_entity_decode(ob_get_clean());
-		}
-
 		return (string) $this->body;
 	}
 }

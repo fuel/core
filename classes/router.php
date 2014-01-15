@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -124,7 +124,7 @@ class Router
 						{
 							$replace = $named_params[$key];
 						}
-						
+
 						if (($pos = strpos($url, $target)) !== false)
 						{
 							$url = substr_replace($url, $replace, $pos, strlen($target));
@@ -259,15 +259,25 @@ class Router
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
-			$class = $namespace.static::$prefix.\Inflector::words_to_upper(implode('_', $temp_segments));
+			// determine which classes to check. First, all underscores, or all namespaced
+			$classes = array(
+				$namespace.static::$prefix.\Inflector::words_to_upper(implode(substr(static::$prefix,-1,1), $temp_segments), substr(static::$prefix,-1,1)),
+			);
+
+			// if we're namespacing, check a hybrid version too
+			$classes[] = $namespace.static::$prefix.\Inflector::words_to_upper(implode('_', $temp_segments));
+
 			array_pop($temp_segments);
-			if (class_exists($class))
+			foreach ($classes as $class)
 			{
-				return array(
-					'controller'    => $class,
-					'action'        => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
-					'method_params' => array_slice($segments, $key + 2),
-				);
+				if (class_exists($class))
+				{
+					return array(
+						'controller'    => $class,
+						'action'        => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
+						'method_params' => array_slice($segments, $key + 2),
+					);
+				}
 			}
 		}
 

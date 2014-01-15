@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -76,6 +76,7 @@ return array(
 			'hostname'  => '127.0.0.1',
 			'port'      => 6379,
 			'timeout'	=> null,
+			'database'  => 0
 		)
 	),
 

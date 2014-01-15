@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -105,6 +105,9 @@ class Redis_Db
 		{
 			// execute the auth command if a password is present in config
 			empty($config['password']) or $this->auth($config['password']);
+
+			// Select database using zero-based numeric index
+			empty($config['database']) or $this->select($config['database']);
 		}
 	}
 

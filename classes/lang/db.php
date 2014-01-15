@@ -29,7 +29,8 @@ class Lang_Db implements Lang_Interface
 	{
 		$this->identifier = $identifier;
 
-		$this->languages = $languages;
+		// we need the highest priority language last in the list
+		$this->languages = array_reverse($languages);
 
 		$this->vars = array(
 			'APPPATH' => APPPATH,
@@ -152,7 +153,7 @@ class Lang_Db implements Lang_Interface
 	public function save($identifier, $contents)
 	{
 		// get the language and the identifier
-		list ($language, $identifier) = explode('/', $identifier, 2);
+		list ($language, $identifier) = explode(DS, $identifier, 2);
 		$identifier = basename($identifier, '.db');
 
 		// prep the contents

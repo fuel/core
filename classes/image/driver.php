@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -289,8 +289,8 @@ abstract class Image_Driver
 			// See which is the biggest ratio
 			if (function_exists('bcdiv'))
 			{
-				$width_ratio  = bcdiv((float) $width, $sizes->width, 10);
-				$height_ratio = bcdiv((float) $height, $sizes->height, 10);
+				$width_ratio  = bcdiv($width, $sizes->width, 10);
+				$height_ratio = bcdiv($height, $sizes->height, 10);
 				$compare = bccomp($width_ratio, $height_ratio, 10);
 				if ($compare > -1)
 				{
@@ -735,6 +735,7 @@ abstract class Image_Driver
 			$red = 0;
 			$green = 0;
 			$blue = 0;
+			$alpha = 0;
 		}
 		else
 		{
@@ -745,24 +746,29 @@ abstract class Image_Driver
 			}
 
 			// Break apart the hex
-			if (strlen($hex) == 6)
+			if (strlen($hex) == 6 or strlen($hex) == 8)
 			{
 				$red   = hexdec(substr($hex, 0, 2));
 				$green = hexdec(substr($hex, 2, 2));
 				$blue  = hexdec(substr($hex, 4, 2));
+				$alpha = hexdec(substr($hex, 6, 2));
 			}
 			else
 			{
 				$red   = hexdec(substr($hex, 0, 1).substr($hex, 0, 1));
 				$green = hexdec(substr($hex, 1, 1).substr($hex, 1, 1));
 				$blue  = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
+				$alpha = hexdec(substr($hex, 3, 1).substr($hex, 3, 1));
 			}
 		}
+		
+		$alpha = floor($alpha / 2.55);
 
 		return array(
 			'red' => $red,
 			'green' => $green,
 			'blue' => $blue,
+			'alpha' => $alpha,
 		);
 	}
 
@@ -805,6 +811,12 @@ abstract class Image_Driver
 	{
 		// Sanitize double negatives
 		$input = str_replace('--', '', $input);
+		
+		// Depending on php configuration, float are sometimes converted to strings
+		// using commas instead of points. This notation can create issues since the
+		// conversion from string to float will return an integer.
+		// For instance: "1.2" / 10 == 0.12 but "1,2" / 10 == 0.1...
+		$input = str_replace(',', '.', $input);
 
 		$orig = $input;
 		$sizes = $this->sizes();

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -127,10 +127,6 @@ class Fuel
 			throw new \FuelException("You can't initialize Fuel more than once.");
 		}
 
-		// BC FIX FOR APPLICATIONS <= 1.6.1, makes Redis_Db available as Redis,
-		// like it was in versions before 1.7
-		class_exists('Redis', false) or class_alias('Redis_Db', 'Redis');
-
 		static::$_paths = array(APPPATH, COREPATH);
 
 		// Is Fuel running on the command line?
@@ -166,6 +162,13 @@ class Fuel
 
 		static::$locale = \Config::get('locale', static::$locale);
 
+		// Set locale, log warning when it fails
+		if (static::$locale)
+		{
+			setlocale(LC_ALL, static::$locale) or
+				logger(\Fuel::L_WARNING, 'The configured locale '.static::$locale.' is not installed on your system.', __METHOD__);
+		}
+
 		if ( ! static::$is_cli)
 		{
 			if (\Config::get('base_url') === null)
@@ -186,12 +189,9 @@ class Fuel
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
-		// Set locale, log warning when it fails
-		if (static::$locale)
-		{
-			setlocale(LC_ALL, static::$locale) or
-				logger(\Fuel::L_WARNING, 'The configured locale '.static::$locale.' is not installed on your system.', __METHOD__);
-		}
+		// BC FIX FOR APPLICATIONS <= 1.6.1, makes Redis_Db available as Redis,
+		// like it was in versions before 1.7
+		class_exists('Redis', false) or class_alias('Redis_Db', 'Redis');
 
 		static::$initialized = true;
 

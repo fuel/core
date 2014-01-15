@@ -6,16 +6,14 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
-use MarkdownExtra_Parser;
-
 /**
- * This is a small wrapper around the MarkdownExtra_Parser class.
+ * This is a small wrapper around the Markdown composer package.
  *
  * @package     Fuel
  * @subpackage  Core
@@ -23,7 +21,7 @@ use MarkdownExtra_Parser;
 class Markdown
 {
 	/**
-	 * @var  MarkdownExtra_Parser  The MD parser instance
+	 * @var  MarkdownExtra  The Markdown Extra parser instance
 	 */
 	protected static $parser = null;
 
@@ -34,12 +32,22 @@ class Markdown
 	 */
 	public static function _init()
 	{
-		if ( ! class_exists('MarkdownExtra_Parser', false))
+		if ( ! class_exists('Michelf\MarkdownExtra'))
 		{
-			include COREPATH.'vendor'.DS.'markdown'.DS.'markdown.php';
+			throw new \FuelException('The Markdown composer library isn\'t installed. Make sure it\'s in your "composer.json", then run "composer update" to install it!');
 		}
 
-		static::$parser = new MarkdownExtra_Parser();
+		static::$parser = new \Michelf\MarkdownExtra();
+	}
+
+	/**
+	 * Runs the Markdown parser instance, so you can pass custom configuration
+	 *
+	 * @return  MarkdownExtra
+	 */
+	public static function instance()
+	{
+		return static::$parser;
 	}
 
 	/**

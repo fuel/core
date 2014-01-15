@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -215,10 +215,10 @@ class Format
 	public function to_csv($data = null, $delimiter = null)
 	{
 		// csv format settings
-		$newline = \Config::get('format.csv.export.newline', \Config::get('format.csv.newline', "\n"));
-		$delimiter or $delimiter = \Config::get('format.csv.export.delimiter', \Config::get('format.csv.delimiter', ','));
-		$enclosure = \Config::get('format.csv.export.enclosure', \Config::get('format.csv.enclosure', '"'));
-		$escape = \Config::get('format.csv.export.escape', \Config::get('format.csv.escape', '"'));
+		$newline = \Config::get('format.csv.newline', \Config::get('format.csv.export.newline', "\n"));
+		$delimiter or $delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.export.delimiter', ','));
+		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.export.enclosure', '"'));
+		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.export.escape', '"'));
 
 		// escape function
 		$escaper = function($items) use($enclosure, $escape) {
@@ -285,7 +285,7 @@ class Format
 		// To allow exporting ArrayAccess objects like Orm\Model instances they need to be
 		// converted to an array first
 		$data = (is_array($data) or is_object($data)) ? $this->to_array($data) : $data;
-		return $pretty ? static::pretty_json($data) : json_encode($data);
+		return $pretty ? static::pretty_json($data) : json_encode($data, \Config::get('format.json.encode.options', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
 	}
 
 	/**
@@ -433,12 +433,12 @@ class Format
 	{
 		$data = array();
 
-		$rows = preg_split('/(?<='.preg_quote(\Config::get('format.csv.import.enclosure', \Config::get('format.csv.enclosure', '"'))).')'.\Config::get('format.csv.regex_newline', '\n').'/', trim($string));
+		$rows = preg_split('/(?<='.preg_quote(\Config::get('format.csv.enclosure', \Config::get('format.csv.import.enclosure', '"'))).')'.\Config::get('format.csv.regex_newline', '\n').'/', trim($string));
 
 		// csv config
-		$delimiter = \Config::get('format.csv.import.delimiter', \Config::get('format.csv.delimiter', ','));
-		$enclosure = \Config::get('format.csv.import.enclosure', \Config::get('format.csv.enclosure', '"'));
-		$escape = \Config::get('format.csv.import.escape', \Config::get('format.csv.escape', '"'));
+		$delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.import.delimiter', ','));
+		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.import.enclosure', '"'));
+		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.import.escape', '"'));
 
 		// Get the headings
 		$headings = str_replace($escape.$enclosure, $enclosure, str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape));
@@ -488,7 +488,7 @@ class Format
 	 */
 	protected static function pretty_json($data)
 	{
-		$json = json_encode($data);
+		$json = json_encode($data, \Config::get('format.json.encode.options', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
 
 		if ( ! $json)
 		{

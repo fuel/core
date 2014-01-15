@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -217,6 +217,13 @@ return array(
 		 * throw exceptions unless they are instances of the classes in this array.
 		 */
 		'whitelisted_classes' => array(),
+
+		/**
+		 * Set this to true of your client sends data using the HTTP PUT, DELETE or PATCH methods
+		 * using the www-form-urlencoded content-type, and it's contents is urlencoded locally
+		 * before submitting
+		 */
+		'form-double-urlencoded' => false,
 	),
 
 	/**
