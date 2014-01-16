@@ -32,7 +32,7 @@ class Config_Php extends \Config_File
 <?php
 
 CONF;
-		$output .= 'return '.str_replace(array('  ', 'array (', '\''.APPPATH, '\''.DOCROOT, '\''.COREPATH, '\''.PKGPATH), array("\t", 'array(', 'APPPATH.\'', 'DOCROOT.\'', 'COREPATH.\'', 'PKGPATH.\''), var_export($contents, true)).";\n";
+		$output .= 'return '.str_replace(array('array ('.PHP_EOL, '\''.APPPATH, '\''.DOCROOT, '\''.COREPATH, '\''.PKGPATH), array('array('.PHP_EOL, 'APPPATH.\'', 'DOCROOT.\'', 'COREPATH.\'', 'PKGPATH.\''), var_export($contents, true)).";\n";
 		return $output;
 	}
 }
