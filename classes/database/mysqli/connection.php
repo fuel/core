@@ -132,7 +132,8 @@ class Database_MySQLi_Connection extends \Database_Connection
 			// No connection exists
 			$this->_connection = null;
 
-			throw new \Database_Exception('No MySQLi Connection', 0);
+			$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
+			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $error_code, $e);
 		}
 
 		// \xFF is a better delimiter, but the PHP driver uses underscore
