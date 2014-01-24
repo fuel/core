@@ -504,8 +504,8 @@ class Input
 					$headers[$key] = $value;
 				}
 
-				$value = static::server('CONTENT_TYPE') and $headers['Content-Type'] = $value;
-				$value = static::server('CONTENT_LENGTH') and $headers['Content-Length'] = $value;
+				$value = static::server('Content_Type', static::server('Content-Type')) and $headers['Content-Type'] = $value;
+				$value = static::server('Content_Length', static::server('Content-Length')) and $headers['Content-Length'] = $value;
 			}
 			else
 			{
