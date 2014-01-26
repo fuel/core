@@ -96,7 +96,7 @@ class Agent
 	protected static $defaults = array(
 		'browscap' => array(
 			'enabled' => true,
-			'url' => 'http://tempdownloads.browserscap.com/stream.asp?Lite_PHP_BrowsCapINI',
+			'url' => 'http://browscap.org/stream?q=Lite_PHP_BrowsCapINI',
 			'method' => 'wrapper',
 			'file' => '',
 		),
