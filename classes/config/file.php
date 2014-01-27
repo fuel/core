@@ -192,8 +192,19 @@ abstract class Config_File implements Config_Interface
 		$return = \File::update($path['dirname'], $path['basename'], $output);
 		if ($return)
 		{
-			\Config::load('file', true);
-			chmod($path['dirname'].DS.$path['basename'], \Config::get('file.chmod.files', 0666));
+			try
+			{
+				\Config::load('file', true);
+				chmod($path['dirname'].DS.$path['basename'], \Config::get('file.chmod.files', 0666));
+			}
+			catch (\PhpErrorException $e)
+			{
+				// if we get something else then a chmod error, bail out
+				if (substr($e->getMessage(),0,8) !== 'chmod():')
+				{
+					throw new $e;
+				}
+			}
 		}
 		return $return;
 	}
