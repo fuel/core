@@ -417,6 +417,7 @@ else {
 
 		$class = '';
 		foreach($output['logs']['console'] as $log) {
+			$log['data'] = htmlentities($log['data']);
 			$return_output .='<tr class="pqp-log-'.$log['type'].'">
 				<td class="pqp-type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
