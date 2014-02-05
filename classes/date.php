@@ -172,13 +172,12 @@ class Date
 		}
 
 		// convert it into a timestamp
-		$datetime = new \DateTime();
-		$datetime->setDate($time['tm_year'] + 1900, $time['tm_mon'] + 1, $time['tm_mday'])->setTime($time['tm_hour'], $time['tm_min'], $time['tm_sec']);
-		$timestamp = $datetime->format('U');
+		$timestamp = mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],
+						$time['tm_mon'] + 1, $time['tm_mday'], $time['tm_year'] + 1900);
 
 		if ($timestamp === false)
 		{
-			throw new \OutOfBoundsException('Input was invalid.');
+			throw new \OutOfBoundsException('Input was invalid.'.(PHP_INT_SIZE == 4?' A 32-bit system only supports dates between 1901 and 2038.':''));
 		}
 
 		return static::forge($timestamp);
