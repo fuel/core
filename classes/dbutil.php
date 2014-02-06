@@ -95,7 +95,7 @@ class DBUtil
 	 */
 	public static function rename_table($table, $new_table_name, $db = null)
 	{
-		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute($db ? $db : static::$connection);
+		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name, $db ? $db : static::$connection)),\DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
