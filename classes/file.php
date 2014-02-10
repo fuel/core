@@ -104,6 +104,26 @@ class File
 	}
 
 	/**
+	 * Check for file existence
+	 *
+	 * @param   string  path to file to check
+	 * @param   string|File_Area|null  file area name, object or null for base area
+	 * @return  bool
+	 */
+	public static function exists($path, $area = null)
+	{
+		$path = rtrim(static::instance($area)->get_path($path), '\\/');
+
+		// resolve symlinks
+		while ($path and is_link($path))
+		{
+			$path = readlink($path);
+		}
+
+		return is_file($path);
+	}
+
+	/**
 	 * Create an empty file
 	 *
 	 * @param   string  directory where to create file
