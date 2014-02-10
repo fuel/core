@@ -782,15 +782,16 @@ class File
 	 * @param  string|null  custom name for the file to be downloaded
 	 * @param  string|null  custom mime type or null for file mime type
 	 * @param  string|File_Area|null  file area name, object or null for base area
+	 * @param  bool         delete the file after download when true
 	 */
-	public static function download($path, $name = null, $mime = null, $area = null)
+	public static function download($path, $name = null, $mime = null, $area = null, $delete = false)
 	{
 		$info = static::file_info($path, $area);
 		$class = get_called_class();
 		empty($mime) or $info['mimetype'] = $mime;
 		empty($name) or $info['basename'] = $name;
 
-		\Event::register('fuel-shutdown', function () use($info, $area, $class) {
+		\Event::register('fuel-shutdown', function () use($info, $area, $class, $delete) {
 
 			if ( ! $file = call_user_func(array($class, 'open_file'), @fopen($info['realpath'], 'rb'), LOCK_SH, $area))
 			{
@@ -819,6 +820,11 @@ class File
 			}
 
 			call_user_func(array($class, 'close_file'), $file, $area);
+
+			if ($delete)
+			{
+				call_user_func(array($class, 'delete'), $file, $area);
+			}
 		});
 
 		exit;
