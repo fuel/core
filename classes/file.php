@@ -843,7 +843,7 @@ class File
 
 			if ($delete)
 			{
-				call_user_func(array($class, 'delete'), $file, $area);
+				call_user_func(array($class, 'delete'), $info['realpath'], $area);
 			}
 		});
 
