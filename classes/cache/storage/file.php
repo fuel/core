@@ -323,6 +323,10 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 		{
 			return false;
 		}
+		if ( ! filesize($file))
+		{
+			return false;
+		}
 
 		$handle = fopen($file, 'r');
 		if ( ! $handle)
