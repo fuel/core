@@ -284,6 +284,9 @@ class Asset_Instance
 				$file = $filename;
 			}
 
+			$uri_path = $file;
+			strpos($uri_path, DOCROOT) === 0 and $uri_path = substr($uri_path, strlen(DOCROOT));
+
 			switch($type)
 			{
 				case 'css':
@@ -298,7 +301,7 @@ class Asset_Instance
 						{
 							$attr['rel'] = 'stylesheet';
 						}
-						$attr['href'] = $file;
+						$attr['href'] = $uri_path;
 
 						$css .= $this->_indent.html_tag('link', $attr).PHP_EOL;
 					}
@@ -311,13 +314,13 @@ class Asset_Instance
 					}
 					else
 					{
-						$attr['src'] = $file;
+						$attr['src'] = $uri_path;
 
 						$js .= $this->_indent.html_tag('script', $attr, '').PHP_EOL;
 					}
 				break;
 				case 'img':
-					$attr['src'] = $file;
+					$attr['src'] = $uri_path;
 					$attr['alt'] = isset($attr['alt']) ? $attr['alt'] : '';
 
 					$img .= html_tag('img', $attr );
@@ -461,8 +464,6 @@ class Asset_Instance
 
 			if (is_file($newfile = $path.$folder.$this->_unify_path($file, null, false)))
 			{
-				strpos($newfile, DOCROOT) === 0 and $newfile = substr($newfile, strlen(DOCROOT));
-
 				// return the file found, make sure it uses forward slashes on Windows
 				return str_replace(DS, '/', $newfile);
 			}
