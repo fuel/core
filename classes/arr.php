@@ -252,21 +252,21 @@ class Arr
 	/**
 	 * Converts an array of key => values into a multi-dimensional associative array with the provided field names
 	 *
-	 * @param   array   $assoc      the array to convert
+	 * @param   array   $array      the array to convert
 	 * @param   string  $key_field  the field name of the key field
 	 * @param   string  $val_field  the field name of the value field
 	 * @return  array
 	 * @throws  \InvalidArgumentException
 	 */
-	public static function keyval_to_assoc($assoc, $key_field, $val_field)
+	public static function keyval_to_assoc($array, $key_field, $val_field)
 	{
-		if ( ! is_array($assoc) and ! $assoc instanceof \Iterator)
+		if ( ! is_array($array) and ! $array instanceof \Iterator)
 		{
 			throw new \InvalidArgumentException('The first parameter must be an array.');
 		}
 
 		$output = array();
-		foreach ($assoc as $key => $value)
+		foreach ($array as $key => $value)
 		{
 			$output[] = array(
 				$key_field => $key,
