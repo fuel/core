@@ -126,6 +126,38 @@ class Test_Arr extends TestCase
 	}
 
 	/**
+	 * Tests Arr::keyval_to_assoc()
+	 *
+	 * @test
+	 */
+	public function test_keyval_to_assoc()
+	{
+		$keyval = array(
+			'red' => 'Apple',
+			'yellow' => 'Banana',
+			'purple' => 'Grape',
+			);
+
+		$expected = array(
+			array(
+				'color' => 'red',
+				'name' => 'Apple',
+				),
+			array(
+				'color' => 'yellow',
+				'name' => 'Banana',
+				),
+			array(
+				'color' => 'purple',
+				'name' => 'Grape',
+				),
+			);
+
+		$output = Arr::keyval_to_assoc($keyval, 'color', 'name');
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
 	 * Tests Arr::key_exists()
 	 *
 	 * @test
