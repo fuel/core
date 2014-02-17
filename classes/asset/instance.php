@@ -265,6 +265,7 @@ class Asset_Instance
 						}
 						else
 						{
+							$file = str_replace(DOCROOT, '', $file);
 							$file = $this->_asset_url.$file.($this->_add_mtime ? '?'.filemtime($file) : '');
 						}
 					}
@@ -277,15 +278,16 @@ class Asset_Instance
 						$file = file_get_contents($file);
 						$inline = true;
 					}
+					else
+					{
+						$file = str_replace(DOCROOT, '', $file);
+					}
 				}
 			}
 			else
 			{
 				$file = $filename;
 			}
-
-			$uri_path = $file;
-			strpos($uri_path, DOCROOT) === 0 and $uri_path = substr($uri_path, strlen(DOCROOT));
 
 			switch($type)
 			{
@@ -301,7 +303,7 @@ class Asset_Instance
 						{
 							$attr['rel'] = 'stylesheet';
 						}
-						$attr['href'] = $uri_path;
+						$attr['href'] = $file;
 
 						$css .= $this->_indent.html_tag('link', $attr).PHP_EOL;
 					}
@@ -314,13 +316,13 @@ class Asset_Instance
 					}
 					else
 					{
-						$attr['src'] = $uri_path;
+						$attr['src'] = $file;
 
 						$js .= $this->_indent.html_tag('script', $attr, '').PHP_EOL;
 					}
 				break;
 				case 'img':
-					$attr['src'] = $uri_path;
+					$attr['src'] = $file;
 					$attr['alt'] = isset($attr['alt']) ? $attr['alt'] : '';
 
 					$img .= html_tag('img', $attr );
