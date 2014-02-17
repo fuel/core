@@ -265,8 +265,8 @@ class Asset_Instance
 						}
 						else
 						{
-							$file = str_replace(DOCROOT, '', $file);
 							$file = $this->_asset_url.$file.($this->_add_mtime ? '?'.filemtime($file) : '');
+							$file = str_replace(DOCROOT, '', $file);
 						}
 					}
 				}
