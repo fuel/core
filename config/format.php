@@ -33,7 +33,7 @@ return array(
 			'newline'   => "\n",
 			'escape'    => '"',
 		),
-		'regex_newline'   => '\n',
+		'regex_newline'   => "\n",
 	),
 	'xml' => array(
 		'basenode' => 'xml',
