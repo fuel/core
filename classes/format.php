@@ -434,7 +434,7 @@ class Format
 		$data = array();
 
 		// explode the string into rows
-		$rows = explode(\Config::get('format.csv.regex_newline', '\n'), trim($string));
+		$rows = explode(\Config::get('format.csv.regex_newline', "\n"), trim($string));
 
 		// csv config
 		$delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.import.delimiter', ','));
