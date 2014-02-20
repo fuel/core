@@ -126,7 +126,7 @@ if ( ! function_exists('array_to_attr'))
 				$property = $value;
 			}
 
-			$attr_str .= $property.'="'.$value.'" ';
+			$attr_str .= $property.'="'.str_replace('"', '&quot;', $value).'" ';
 		}
 
 		// We strip off the last space for return
