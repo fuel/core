@@ -68,7 +68,7 @@ class Response
 		424 => 'Failed Dependency',
 		426 => 'Upgrade Required',
 		428 => 'Precondition Required',
-		428 => 'Too Many Requests',
+		429 => 'Too Many Requests',
 		431 => 'Request Header Fields Too Large',
 		500 => 'Internal Server Error',
 		501 => 'Not Implemented',
