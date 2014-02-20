@@ -25,15 +25,16 @@ return array(
 			'delimiter' => ',',
 			'enclosure' => '"',
 			'newline'   => "\n",
-			'escape'    => '"',
+			'escape'    => '\\',
 		),
 		'export' => array(
 			'delimiter' => ',',
 			'enclosure' => '"',
 			'newline'   => "\n",
-			'escape'    => '"',
+			'escape'    => '\\',
 		),
 		'regex_newline'   => "\n",
+		'enclose_numbers' => true,
 	),
 	'xml' => array(
 		'basenode' => 'xml',
