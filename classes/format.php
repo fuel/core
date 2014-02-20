@@ -210,21 +210,27 @@ class Format
 	 *
 	 * @param   mixed   $data
 	 * @param   mixed   $delimiter
+	 * @param   mixed   $enclose_numbers
 	 * @return  string
 	 */
-	public function to_csv($data = null, $delimiter = null)
+	public function to_csv($data = null, $delimiter = null, $enclose_numbers = null)
 	{
 		// csv format settings
 		$newline = \Config::get('format.csv.newline', \Config::get('format.csv.export.newline', "\n"));
 		$delimiter or $delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.export.delimiter', ','));
 		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.export.enclosure', '"'));
-		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.export.escape', '"'));
+		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.export.escape', '\\'));
+		is_null($enclose_numbers) and $enclose_numbers = \Config::get('format.csv.delimit_numbers',  true);
 
-		// escape function
-		$escaper = function($items) use($enclosure, $escape) {
-			return array_map(function($item) use($enclosure, $escape){
-				return str_replace($enclosure, $escape.$enclosure, $item);
-			}, $items);
+		// escape, delimit and enclose function
+		$escaper = function($items, $enclose_numbers) use($enclosure, $escape, $delimiter) {
+			return 	implode($delimiter, array_map(function($item) use($enclosure, $escape, $delimiter, $enclose_numbers) {
+				if ( ! is_numeric($item) or $enclose_numbers)
+				{
+					$item = $enclosure.str_replace($enclosure, $escape.$enclosure, $item).$enclosure;
+				}
+				return $item;
+			}, $items));
 		};
 
 		if ($data === null)
@@ -258,11 +264,11 @@ class Format
 			$data = array($data);
 		}
 
-		$output = $enclosure.implode($enclosure.$delimiter.$enclosure, $escaper($headings)).$enclosure.$newline;
+		$output = $escaper($headings, true).$newline;
 
 		foreach ($data as $row)
 		{
-			$output .= $enclosure.implode($enclosure.$delimiter.$enclosure, $escaper((array) $row)).$enclosure.$newline;
+			$output .= $escaper($row, $enclose_numbers).$newline;
 		}
 
 		return rtrim($output, $newline);
@@ -433,8 +439,7 @@ class Format
 	{
 		$data = array();
 
-		// explode the string into rows
-		$rows = explode(\Config::get('format.csv.regex_newline', "\n"), trim($string));
+		$rows = preg_split('/(?<=[0-9'.preg_quote(\Config::get('format.csv.enclosure', \Config::get('format.csv.import.enclosure', '"'))).'])'.\Config::get('format.csv.regex_newline', "\n").'/', trim($string));
 
 		// csv config
 		$delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.import.delimiter', ','));
