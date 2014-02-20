@@ -37,6 +37,21 @@ line 2","Value 3"',
 		);
 	}
 
+	public static function array_provider2()
+	{
+		return array(
+			array(
+				array(
+					array('First' => 'Jane','Last' => 'Doe','Email' => 'jane@doe.com','Nr1' => 3434534,'Nr2' => 1,'Remark' => 'asdfasdf','Nr3' => 23432),
+					array('First' => 'John','Last' => 'Doe','Email' => 'john@doe.com','Nr1' => 52939494,'Nr2' => 1,'Remark' => 'dfdfdf','Nr3' => 35353),
+				),
+				'"First","Last","Email","Nr1","Nr2","Remark","Nr3"
+"Jane","Doe","jane@doe.com",3434534,1,"asdfasdf",23432
+"John","Doe","john@doe.com",52939494,1,"dfdfdf",35353',
+			),
+		);
+	}
+
 	/**
 	 * Test for Format::forge($foo, 'csv')->to_array()
 	 *
@@ -46,7 +61,17 @@ line 2","Value 3"',
 	public function test_from_csv($array, $csv)
 	{
 		$this->assertEquals($array, Format::forge($csv, 'csv')->to_array());
+	}
 
+	/**
+	 * Test for Format::forge($foo, 'csv')->to_array()
+	 *
+	 * @test
+	 * @dataProvider array_provider2
+	 */
+	public function test_from_csv2($array, $csv)
+	{
+		$this->assertEquals($array, Format::forge($csv, 'csv')->to_array());
 	}
 
 	/**
@@ -58,6 +83,17 @@ line 2","Value 3"',
 	public function test_to_csv($array, $csv)
 	{
 		$this->assertEquals($csv, Format::forge($array)->to_csv());
+	}
+
+	/**
+	 * Test for Format::forge($foo)->to_csv() without delimiting numbers
+	 *
+	 * @test
+	 * @dataProvider array_provider2
+	 */
+	public function test_to_csv2($array, $csv)
+	{
+		$this->assertEquals($csv, Format::forge($array)->to_csv(null, null, false));
 	}
 
 	/**
