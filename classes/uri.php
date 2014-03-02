@@ -152,7 +152,7 @@ class Uri
 	public static function create($uri = null, $variables = array(), $get_variables = array(), $secure = null)
 	{
 		$url = '';
-		$uri = $uri ?: static::string();
+		is_null($uri) and $uri = static::string();
 
 		// If the given uri is not a full URL
 		if( ! preg_match("#^(http|https|ftp)://#i", $uri))
