@@ -414,6 +414,11 @@ class Fieldset
 
 		if ( ! array_key_exists($name, $this->fields))
 		{
+			if ( ! $flatten)
+			{
+				return false;
+			}
+
 			foreach ($this->fieldset_children as $fieldset)
 			{
 				if (($field = $fieldset->field($name)) !== false)
