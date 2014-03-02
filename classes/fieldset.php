@@ -395,30 +395,32 @@ class Fieldset
 	{
 		if ($name === null)
 		{
-			if ( ! $flatten)
-			{
-				return $this->fields;
-			}
-
 			$fields = $this->fields;
-			foreach ($this->fieldset_children as $fs_name => $fieldset)
+
+			if ($flatten)
 			{
-				if ($tabular_form or ! $fieldset->get_tabular_form())
+				foreach ($this->fieldset_children as $fs_name => $fieldset)
 				{
-					\Arr::insert_after_key($fields, $fieldset->field(null, true), $fs_name);
+					if ($tabular_form or ! $fieldset->get_tabular_form())
+					{
+						\Arr::insert_after_key($fields, $fieldset->field(null, true), $fs_name);
+					}
+					unset($fields[$fs_name]);
 				}
-				unset($fields[$fs_name]);
 			}
 			return $fields;
 		}
 
 		if ( ! array_key_exists($name, $this->fields))
 		{
-			foreach ($this->fieldset_children as $fieldset)
+			if ($flatten)
 			{
-				if (($field = $fieldset->field($name)) !== false)
+				foreach ($this->fieldset_children as $fieldset)
 				{
-					return $field;
+					if (($field = $fieldset->field($name)) !== false)
+					{
+						return $field;
+					}
 				}
 			}
 			return false;
