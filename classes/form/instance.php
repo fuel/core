@@ -106,11 +106,10 @@ class Form_Instance
 		$attributes = ! is_array($attributes) ? array('action' => $attributes) : $attributes;
 
 		// If there is still no action set, Form-post
-		if( ! array_key_exists('action', $attributes) or $attributes['action'] === null)
+		if( ! array_key_exists('action', $attributes) or empty($attributes['action']))
 		{
-			$attributes['action'] = \Uri::main();
+			$attributes['action'] = \Uri::string();
 		}
-
 
 		// If not a full URL, create one
 		elseif ( ! strpos($attributes['action'], '://'))
