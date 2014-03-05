@@ -533,16 +533,16 @@ abstract class Session_Driver
 			$cookie = \Cookie::get($this->config['cookie_name'], false);
 		}
 
-		// if not found, check the URL for a cookie
-		if ($cookie === false)
-		{
-			$cookie = \Input::get($this->config['cookie_name'], false);
-		}
-
 		// if not found, was a session-id present in the HTTP header?
 		if ($cookie === false)
 		{
 			$cookie = \Input::headers($this->config['http_header_name'], false);
+		}
+
+		// if not found, check the URL for a cookie
+		if ($cookie === false)
+		{
+			$cookie = \Input::get($this->config['cookie_name'], false);
 		}
 
 		if ($cookie !== false)
@@ -559,6 +559,7 @@ abstract class Session_Driver
 					($this->config['driver'] !== 'cookie' and ! is_string($cookie[0])))
 				{
 					// invalid specific format
+					logger('DEBUG', 'Error: Invalid session cookie specific format');
 					$cookie = false;
 				}
 			}
@@ -572,6 +573,7 @@ abstract class Session_Driver
 			// invalid general format
 			else
 			{
+				logger('DEBUG', 'Error: Invalid session cookie general format');
 				$cookie = false;
 			}
 		}
