@@ -31,6 +31,7 @@ class Test_Fieldset extends TestCase
 		$rp = new \ReflectionProperty($request, 'main');
 		$rp->setAccessible(true);
 		$rp->setValue($request, $request);
+		\Request::active($request);
 	}
 
 	public function tearDown()
