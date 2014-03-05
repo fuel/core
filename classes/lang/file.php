@@ -25,8 +25,7 @@ abstract class Lang_File implements Lang_Interface
 	{
 		$this->file = $file;
 
-		// we need the highest priority language last in the list
-		$this->languages = array_reverse($languages);
+		$this->languages = $languages;
 
 		$this->vars = array(
 			'APPPATH' => APPPATH,
@@ -135,7 +134,7 @@ abstract class Lang_File implements Lang_Interface
 			throw new \LangException(sprintf('File "%s" does not exist.', $this->file));
 		}
 
-		return $paths;
+		return array_reverse($paths);
 	}
 
 	/**
