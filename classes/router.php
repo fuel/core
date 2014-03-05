@@ -256,21 +256,23 @@ class Router
 	protected static function parse_segments($segments, $namespace = '', $module = false)
 	{
 		$temp_segments = $segments;
+		$prefix = static::get_prefix();
 
 		foreach (array_reverse($segments, true) as $key => $segment)
 		{
 			// determine which classes to check. First, all underscores, or all namespaced
 			$classes = array(
-				$namespace.static::$prefix.\Inflector::words_to_upper(implode(substr(static::$prefix,-1,1), $temp_segments), substr(static::$prefix,-1,1)),
+				$namespace.$prefix.\Inflector::words_to_upper(implode(substr($prefix,-1,1), $temp_segments), substr($prefix,-1,1)),
 			);
 
 			// if we're namespacing, check a hybrid version too
-			$classes[] = $namespace.static::$prefix.\Inflector::words_to_upper(implode('_', $temp_segments));
+			$classes[] = $namespace.$prefix.\Inflector::words_to_upper(implode('_', $temp_segments));
 
 			array_pop($temp_segments);
+
 			foreach ($classes as $class)
 			{
-				if (class_exists($class))
+				if (static::check_class($class))
 				{
 					return array(
 						'controller'    => $class,
@@ -284,8 +286,8 @@ class Router
 		// Fall back for default module controllers
 		if ($module)
 		{
-			$class = $namespace.static::$prefix.ucfirst($module);
-			if (class_exists($class))
+			$class = $namespace.$prefix.ucfirst($module);
+			if (static::check_class($class))
 			{
 				return array(
 					'controller'    => $class,
@@ -295,6 +297,27 @@ class Router
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * Checks whether class exists.
+	 *
+	 * @param string $class The class name to check.
+	 * @return bool True if $class exists, false otherwise.
+	 */
+	protected static function check_class($class)
+	{
+		return class_exists($class);
+	}
+
+	/**
+	 * Get prefix.
+	 *
+	 * @return string Prefix as defined in config controller_prefix.
+	 */
+	protected static function get_prefix()
+	{
+		return static::$prefix;
 	}
 }
 
