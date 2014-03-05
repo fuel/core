@@ -134,8 +134,14 @@ class Fuel
 
 		\Config::load($config);
 
+		// Disable output compression if the client doesn't support it
+		if (static::$is_cli or ! in_array('gzip', explode(', ', \Input::headers('Accept-Encoding', ''))))
+		{
+			\Config::set('ob_callback', null);
+		}
+
 		// Start up output buffering
-		static::$is_cli or ob_start(\Config::get('ob_callback', null));
+		ob_start(\Config::get('ob_callback'));
 
 		if (\Config::get('caching', false))
 		{
@@ -249,7 +255,7 @@ class Fuel
 				}
 			}
 			// Restart the output buffer and send the new output
-			ob_start();
+			ob_start(\Config::get('ob_callback'));
 			echo $output;
 		}
 	}
