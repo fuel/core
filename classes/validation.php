@@ -349,14 +349,15 @@ class Validation
 		$this->errors = array();
 		$this->input = $input ?: array();
 		$fields = $this->field();
+
 		foreach($fields as $field_name => $field)
 		{
 			if ($field instanceof Fieldset)
 			{
-				if ($field->validation()->run($input))
+				if (! $field->validation()->run($input))
 				{
 					// Fieldset::$name is protected so we have to do it this way
-					$errors[$field_name] = 1;
+					$this->errors[$field_name] = 1;
 				}
 				continue;
 			}
