@@ -347,7 +347,7 @@ class Validation
 
 		$this->validated = array();
 		$this->errors = array();
-		$this->input = $input ?: array();
+		$this->set_input($input);
 		$fields = $this->field();
 
 		foreach($fields as $field_name => $field)
@@ -408,6 +408,19 @@ class Validation
 		$this->callables = $callable_backup;
 
 		return empty($this->errors);
+	}
+
+	/**
+	 * Set the input data array. Defaults to the empty array.
+	 *
+	 * @param  array  Input data, e.g. POST data.
+	 *
+	 * @return  $this
+	 */
+	public function set_input($input = null)
+	{
+		$this->input = $input ?: array();
+		return $this;
 	}
 
 	/**
