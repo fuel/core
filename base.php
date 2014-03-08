@@ -146,7 +146,7 @@ if ( ! function_exists('html_tag'))
 {
 	function html_tag($tag, $attr = array(), $content = false)
 	{
-		$has_content = (bool) ($content !== false and $content !== null);
+		$has_content = (bool) (($content !== false and $content !== null) or (property_exists('\Html', 'void_elements') and ! in_array($tag, \Html::$void_elements)));
 		$html = '<'.$tag;
 
 		$html .= ( ! empty($attr)) ? ' '.(is_array($attr) ? array_to_attr($attr) : $attr) : '';

@@ -29,6 +29,8 @@ class Html
 {
 	public static $doctypes = null;
 	public static $html5 = true;
+	public static $void_elements = array("area","base","br","col","embed","hr","img","input","keygen","link","menuitem","meta","param","source","track","wbr");
+
 
 	/**
 	 * Creates an html link
