@@ -20,7 +20,7 @@ namespace Fuel\Core;
  */
 class Test_Router extends TestCase
 {
- 	public function test_foo() {}
+    public function test_foo() {}
 
     /**
      * Provider for test_classnames.
@@ -125,25 +125,14 @@ class Test_Router extends TestCase
      */
     public function test_classnames($url, $controller, $action, $check_class, $get_prefix)
     {
-        $router = $this->getMockBuilder('\\Router')
-        ->setMethods(array(
-            'check_class',
-            'get_prefix'
-        ))
-        ->getMock();
-
         // Mock check_class to avoid class_exists and autoloader.
-        $router::staticExpects($this->any())
-        ->method('check_class')
-        ->will($this->returnCallback($check_class));
+        Test_Router_Mock::$check_class = $check_class;
 
-        // Mock get_prefix to avoid Config abd test both
+        // Mock get_prefix to avoid Config and test both
         // Controller\\ and Controller_ prefixes.
-        $router::staticExpects($this->any())
-        ->method('get_prefix')
-        ->will($this->returnCallback($get_prefix));
+        Test_Router_Mock::$get_prefix = $get_prefix;
 
-        $match = $router::process(\Request::forge($url));
+        $match = Test_Router_Mock::process(\Request::forge($url));
         $this->assertEquals($controller, $match->controller);
         $this->assertEquals($action, $match->action);
         $this->assertEquals(array(), $match->method_params);
