@@ -51,13 +51,13 @@ class Log
 		try
 		{
 			// determine the name and location of the logfile
-			$path     = \Config::get('log_path');
-			$filename = \Config::get('log_filename');
-			
-			if($filename === null)
+			$path     = \Config::get('log_path', APPPATH.'logs'.DS);
+			$filename = \Config::get('log_file', null);
+
+			if(empty($filename))
 			{
-				$rootpath = $path.date('Y').'/';
-				$filepath = $path.date('Y/m').'/';
+				$rootpath = $path.date('Y').DS;
+				$filepath = $path.date('Y/m').DS;
 				$filename = $filepath.date('d').'.php';
 			}
 			else

@@ -126,13 +126,16 @@ return array(
 	 * Fuel::L_DEBUG
 	 * Fuel::L_INFO
 	 * Fuel::L_ALL
-	 *
-	 * log_filename		optional, if you want set explicit filename, null to composed in yyyy/mm folders with dd as filename
 	 */
 	'log_threshold'    => Fuel::L_WARNING,
+
+	/**
+	 * Log file and path. If no filename is given, it will be generated.
+	 */
+	'log_file'         => null,
 	'log_path'         => APPPATH.'logs/',
+
 	'log_date_format'  => 'Y-m-d H:i:s',
-	'log_filename'     => null,
 
 	/**
 	 * Security settings
