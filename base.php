@@ -146,12 +146,31 @@ if ( ! function_exists('html_tag'))
 {
 	function html_tag($tag, $attr = array(), $content = false)
 	{
-		$has_content = (bool) ($content !== false and $content !== null);
-		$html = '<'.$tag;
+		// list of void elements (tags that can not have content)
+		static $void_elements = array(
+			// html4
+			"area","base","br","col","hr","img","input","link","meta","param",
+			// html5
+			"command","embed","keygen","source","track","wbr",
+			// html5.1
+			"menuitem",
+		);
 
+		// construct the HTML
+		$html = '<'.$tag;
 		$html .= ( ! empty($attr)) ? ' '.(is_array($attr) ? array_to_attr($attr) : $attr) : '';
-		$html .= $has_content ? '>' : ' />';
-		$html .= $has_content ? $content.'</'.$tag.'>' : '';
+
+		// a void element?
+		if (in_array(strtolower($tag), $void_elements))
+		{
+			// these can not have content
+			$html .= ' />';
+		}
+		else
+		{
+			// add the content and close the tag
+			$html .= '>'.$content.'</'.$tag.'>';
+		}
 
 		return $html;
 	}
