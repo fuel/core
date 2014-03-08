@@ -51,9 +51,21 @@ class Log
 		try
 		{
 			// determine the name and location of the logfile
-			$rootpath = \Config::get('log_path').date('Y').'/';
-			$filepath = \Config::get('log_path').date('Y/m').'/';
-			$filename = $filepath.date('d').'.php';
+			$path     = \Config::get('log_path');
+			$filename = \Config::get('log_filename');
+			
+			if($filename === null)
+			{
+				$rootpath = $path.date('Y').'/';
+				$filepath = $path.date('Y/m').'/';
+				$filename = $filepath.date('d').'.php';
+			}
+			else
+			{
+				$rootpath = $path;
+				$filepath = $path;
+				$filename = $path.$filename;
+			}
 
 			// get the required folder permissions
 			$permission = \Config::get('file.chmod.folders', 0777);
