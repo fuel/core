@@ -138,6 +138,11 @@ return array(
 	'log_date_format'  => 'Y-m-d H:i:s',
 
 	/**
+	 * If true, a backtrace is printed when a PHP fatal error is encountered in CLI mode
+	 */
+	'cli_backtrace'    => false,
+
+	/**
 	 * Security settings
 	 */
 	'security' => array(

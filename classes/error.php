@@ -189,6 +189,11 @@ class Error
 		if (\Fuel::$is_cli)
 		{
 			\Cli::write(\Cli::color($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line'], 'red'));
+			if (\Config::get('cli_backtrace'))
+			{
+				\Cli::write('Stack trace:');
+				\Cli::write(\Debug::backtrace($e->getTrace()));
+			}
 			return;
 		}
 
@@ -305,5 +310,3 @@ class Error
 	}
 
 }
-
-
