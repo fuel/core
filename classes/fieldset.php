@@ -556,12 +556,18 @@ class Fieldset
 	 */
 	public function repopulate()
 	{
-		$fields = $this->field(null, true);
+		$fields = $this->field(null);
 		foreach ($fields as $f)
 		{
 			// Don't repopulate the CSRF field
 			if ($f->name === \Config::get('security.csrf_token_key', 'fuel_csrf_token'))
 			{
+				continue;
+			}
+
+			if ($f instanceof Fieldset)
+			{
+				$f->repopulate();
 				continue;
 			}
 
