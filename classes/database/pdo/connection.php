@@ -89,6 +89,12 @@ class Database_PDO_Connection extends \Database_Connection
 			$attrs[\PDO::MYSQL_ATTR_COMPRESS] = true;
 		}
 
+		// add the charset to the DSN if needed
+		if ( ! empty($this->_config['charset']) and strpos($dsn, ';charset=') === false)
+		{
+			$dsn .= ';charset='.$this->_config['charset'];
+		}
+
 		try
 		{
 			// Create a new PDO connection
