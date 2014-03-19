@@ -219,6 +219,19 @@ abstract class ViewModel
 	}
 
 	/**
+	 * Magic method, unsets a given variable.
+	 *
+	 *     unset($view->foo);
+	 *
+	 * @param   string  variable name
+	 * @return  void
+	 */
+	public function __unset($key)
+	{
+		unset($this->_view->$key);
+	}
+
+	/**
 	 * Assigns a value by reference. The benefit of binding is that values can
 	 * be altered without re-setting them. It is also possible to bind variables
 	 * before they have values. Assigned values will be available as a
