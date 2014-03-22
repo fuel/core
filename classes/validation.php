@@ -903,9 +903,13 @@ class Validation
 			{
 				$flags = array('singlequotes', 'doublequotes');
 			}
+			elseif ($flags == 'slashes')
+			{
+				$flags = array('forwardslashes', 'backslashes');
+			}			
 			elseif ($flags == 'all')
 			{
-				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'brackets', 'braces');
+				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'forwardslashes', 'backslashes', 'brackets', 'braces');
 			}
 			else
 			{
@@ -923,6 +927,8 @@ class Validation
 		$pattern .= in_array('commas', $flags) && ! in_array('punctuation', $flags) ? ',' : '';
 		$pattern .= in_array('punctuation', $flags) ? "\.,\!\?:;\&" : '';
 		$pattern .= in_array('dashes', $flags) ? '_\-' : '';
+		$pattern .= in_array('forwardslashes', $flags) ? '\/' : '';
+		$pattern .= in_array('backslashes', $flags) ? '\\\\' : '';
 		$pattern .= in_array('singlequotes', $flags) ? "'" : '';
 		$pattern .= in_array('doublequotes', $flags) ? "\"" : '';
 		$pattern .= in_array('brackets', $flags) ? "\(\)" : '';
