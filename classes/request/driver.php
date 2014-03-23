@@ -5,6 +5,15 @@ namespace Fuel\Core;
 class RequestException extends \HttpNotFoundException {}
 class RequestStatusException extends \RequestException {}
 
+/**
+ *  Request_Driver adbstract Class
+ *
+ *  Request driver interface
+ *
+ * @package   Fuel\Core
+ *
+ */
+
 abstract class Request_Driver
 {
 	/**
