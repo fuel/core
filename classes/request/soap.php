@@ -2,6 +2,15 @@
 
 namespace Fuel\Core;
 
+/**
+ * Request_Soap Class
+ *
+ * Soap driver for Requests
+ *
+ * @package   Fuel\Core
+ *
+ */
+
 class Request_Soap extends \Request_Driver
 {
 	protected static $wsdl_settings = array('wsdl', 'classmap', 'cache_wsdl');
