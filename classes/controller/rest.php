@@ -259,6 +259,12 @@ abstract class Controller_Rest extends \Controller
 	 */
 	protected function _detect_format()
 	{
+		// A format has been passed as a named parameter in the route
+		if ($this->param('format') and array_key_exists($this->param('format'), $this->_supported_formats))
+		{
+			return $this->param('format');
+		}
+
 		// A format has been passed as an argument in the URL and it is supported
 		if (\Input::param('format') and array_key_exists(\Input::param('format'), $this->_supported_formats))
 		{
