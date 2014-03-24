@@ -2,6 +2,16 @@
 
 namespace Fuel\Core;
 
+
+/**
+ * Request_Curl Class
+ *
+ * Curl driver for Requests
+ *
+ * @package   Fuel\Core
+ *
+ */
+ 
 class Request_Curl extends \Request_Driver
 {
 	/**
