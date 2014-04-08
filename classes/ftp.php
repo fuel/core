@@ -453,6 +453,9 @@ class Ftp
 
 		if ($list !== false and count($list) > 0)
 		{
+			if (preg_match('/\/\.\.|\/\.$/', $item)) {
+				continue;
+			}
 			foreach ($list as $item)
 			{
 				// If we can't delete the item it's probaly a folder so
