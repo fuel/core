@@ -459,7 +459,11 @@ class Ftp
 				// we'll recursively call delete_dir()
 				if ( ! @ftp_delete($this->_conn_id, $item))
 				{
-					$this->delete_dir($item);
+					// don't recurse into current of parent directory
+					if ( ! preg_match('/\/\.\.|\/\.$/', $item)) 
+					{
+						$this->delete_dir($item);
+					}
 				}
 			}
 		}
