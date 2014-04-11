@@ -745,7 +745,7 @@ abstract class Database_Connection
 		{ 
 			$result = $this->set_savepoint($this->_transaction_depth);
 			// If savepoint is not supported it is not an error
-			! isset($result) and $result = true;
+			isset($result) or $result = true;
 		}
 
 		$result and $this->_transaction_depth ++;
@@ -799,7 +799,7 @@ abstract class Database_Connection
 	 *  
 	 * @return bool
 	 */
-	public function rollback_transaction($rollback_all = false)
+	public function rollback_transaction($rollback_all = true)
 	{
 		if ($this->_transaction_depth > 0)
 		{
@@ -815,7 +815,7 @@ abstract class Database_Connection
 			{
 				$result = $this->rollback_savepoint($this->_transaction_depth - 1);
 				// If savepoint is not supported it is not an error
-				! isset($result) and $result = true;
+				isset($result) or $result = true;
 				
 				$result and $this->_transaction_depth -- ;
 			}
@@ -857,7 +857,8 @@ abstract class Database_Connection
 	 *                 false - failed to set savepoint;
 	 *                 null  - RDBMS does not support savepoints
 	 */
-	protected function set_savepoint($name) {
+	protected function set_savepoint($name) 
+	{
 		return null;
 	}
 
@@ -869,7 +870,8 @@ abstract class Database_Connection
 	 *                 false - failed to set savepoint;
 	 *                 null  - RDBMS does not support savepoints
 	 */
-	protected function release_savepoint($name) {
+	protected function release_savepoint($name) 
+	{
 		return null;
 	}
 
@@ -881,7 +883,8 @@ abstract class Database_Connection
 	 *                 false - failed to set savepoint;
 	 *                 null  - RDBMS does not support savepoints
 	 */
-	protected function rollback_savepoint($name) {
+	protected function rollback_savepoint($name) 
+	{
 		return null;
 	}
 	
