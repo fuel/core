@@ -402,7 +402,7 @@ class DB
 	 *             false - rollback only current level 
 	 * @return  bool
 	 */
-	public static function rollback_transaction($db = null, $rollback_all = false)
+	public static function rollback_transaction($db = null, $rollback_all = true)
 	{
 		return \Database_Connection::instance($db)->rollback_transaction($rollback_all);
 	}
