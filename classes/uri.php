@@ -167,7 +167,7 @@ class Uri
 		$url .= ltrim($uri, '/');
 
 		// Add a url_suffix if defined and the url doesn't already have one
-		if (substr($url, -1) != '/' and (($suffix = strrchr($url, '.')) === false or strlen($suffix) > 4))
+	        if (substr($url, -1) != '/' and (($suffix = \Config::get('url_suffix')) == false or !strrpos($uri,$suffix)))
 		{
 			\Config::get('url_suffix') and $url .= \Config::get('url_suffix');
 		}
