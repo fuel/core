@@ -237,7 +237,7 @@ class View
 			try
 			{
 				// Load the view within the current scope
-				include $__file_name;
+				include_once $__file_name;
 			}
 			catch (\Exception $e)
 			{
