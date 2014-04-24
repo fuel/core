@@ -233,8 +233,7 @@ class Autoloader
 
 		if (isset(static::$classes[$class]))
 		{
-			include str_replace('/', DS, static::$classes[$class]);
-			static::init_class($class);
+			static::init_class($class, str_replace('/', DS, static::$classes[$class]));
 			$loaded = true;
 		}
 		elseif ($full_class = static::find_core_class($class))
@@ -243,7 +242,10 @@ class Autoloader
 			{
 				include static::prep_path(static::$classes[$full_class]);
 			}
-			class_alias($full_class, $class);
+			if ( ! class_exists($class, false))
+			{
+				class_alias($full_class, $class);
+			}
 			static::init_class($class);
 			$loaded = true;
 		}
@@ -264,8 +266,7 @@ class Autoloader
 						);
 						if (is_file($path))
 						{
-							require $path;
-							static::init_class($class);
+							static::init_class($class, $path);
 							$loaded = true;
 							break;
 						}
@@ -279,8 +280,7 @@ class Autoloader
 
 				if (is_file($path))
 				{
-					include $path;
-					static::init_class($class);
+					static::init_class($class, $path);
 					$loaded = true;
 				}
 			}
@@ -353,9 +353,29 @@ class Autoloader
 	 * it calls it.
 	 *
 	 * @param	string	the class name
+	 * @param	string	the file containing the class to include
 	 */
-	protected static function init_class($class)
+	protected static function init_class($class, $file = null)
 	{
+		// include the file if needed
+		if ($file)
+		{
+			include $file;
+		}
+
+		// make sure the requested class exists in the file (or already loaded
+		if ( ! class_exists($class, false) and ! interface_exists($class, false))
+		{
+			if ($file)
+			{
+				throw new \Exception('File "'.\Fuel::clean_path($file).'" does not contain class "'.$class.'"');
+			}
+			else
+			{
+				throw new \FuelException('Class "'.$class.'" is not defined');
+			}
+		}
+
 		if (static::$auto_initialize === $class)
 		{
 			static::$auto_initialize = null;
