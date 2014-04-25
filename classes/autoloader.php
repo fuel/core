@@ -363,26 +363,40 @@ class Autoloader
 			include $file;
 		}
 
-		// make sure the requested class exists in the file (or already loaded
-		if ( ! class_exists($class, false) and ! interface_exists($class, false))
+		// if the loaded file contains a class...
+		if (class_exists($class, false))
 		{
-			if ($file)
+			// call the classes static init if needed
+			if (static::$auto_initialize === $class)
 			{
-				throw new \Exception('File "'.\Fuel::clean_path($file).'" does not contain class "'.$class.'"');
-			}
-			else
-			{
-				throw new \FuelException('Class "'.$class.'" is not defined');
+				static::$auto_initialize = null;
+				if (method_exists($class, '_init') and is_callable($class.'::_init'))
+				{
+					call_user_func($class.'::_init');
+				}
 			}
 		}
 
-		if (static::$auto_initialize === $class)
+		// or an interface...
+		elseif (interface_exists($class, false))
 		{
-			static::$auto_initialize = null;
-			if (method_exists($class, '_init') and is_callable($class.'::_init'))
-			{
-				call_user_func($class.'::_init');
-			}
+			// nothing to do here
+		}
+
+		// or a trait if you're not on 5.3 anymore...
+		elseif (function_exists('trait_exists') and trait_exists($class, false))
+		{
+			// nothing to do here
+		}
+
+		// else something went wrong somewhere, barf and exit now
+		elseif ($file)
+		{
+			throw new \Exception('File "'.\Fuel::clean_path($file).'" does not contain class "'.$class.'"');
+		}
+		else
+		{
+			throw new \FuelException('Class "'.$class.'" is not defined');
 		}
 	}
 }
