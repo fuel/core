@@ -537,12 +537,12 @@ class Mongo_Db
 		$value = (string) trim($value);
 		$value = quotemeta($value);
 
-		if ($enable_start_wildcard !== TRUE)
+		if ($enable_start_wildcard == TRUE)
 		{
 			$value = '^' . $value;
 		}
 
-		if ($enable_end_wildcard !== TRUE)
+		if ($enable_end_wildcard == TRUE)
 		{
 			$value .= '$';
 		}
