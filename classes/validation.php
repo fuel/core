@@ -475,7 +475,7 @@ class Validation
 
 		$output = call_fuel_func_array(reset($rule), array_merge(array($value), $params));
 
-		if ($output === false && $value !== false)
+		if ($output === false and ($value !== false or key($rule) == 'required'))
 		{
 			throw new \Validation_Error($field, $value, $rule, $params);
 		}
@@ -906,7 +906,7 @@ class Validation
 			elseif ($flags == 'slashes')
 			{
 				$flags = array('forwardslashes', 'backslashes');
-			}			
+			}
 			elseif ($flags == 'all')
 			{
 				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'forwardslashes', 'backslashes', 'brackets', 'braces');
