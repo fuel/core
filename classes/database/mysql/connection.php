@@ -461,7 +461,6 @@ class Database_MySQL_Connection extends \Database_Connection
 
 	protected function driver_start_transaction()
 	{
-		$this->query(0, 'SET AUTOCOMMIT=0', false);
 		$this->query(0, 'START TRANSACTION', false);
 		return true;
 	}
@@ -469,22 +468,20 @@ class Database_MySQL_Connection extends \Database_Connection
 	protected function driver_commit()
 	{
 		$this->query(0, 'COMMIT', false);
-		$this->query(0, 'SET AUTOCOMMIT=1', false);
 		return true;
 	}
 
 	protected function driver_rollback()
 	{
 		$this->query(0, 'ROLLBACK', false);
-		$this->query(0, 'SET AUTOCOMMIT=1', false);
 		return true;
 	}
-	
+
 	/**
 	 * Sets savepoint of the transaction
-	 * 
+	 *
 	 * @param string $name name of the savepoint
-	 * @return boolean true  - savepoint was set successfully; 
+	 * @return boolean true  - savepoint was set successfully;
 	 *                 false - failed to set savepoint;
 	 */
 	protected function set_savepoint($name) {
@@ -515,5 +512,5 @@ class Database_MySQL_Connection extends \Database_Connection
 		$this->query(0, 'ROLLBACK TO SAVEPOINT LEVEL'.$name, false);
 		return true;
 	}
-	
+
 }
