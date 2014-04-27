@@ -33,11 +33,12 @@ class Format
 	 *
 	 * @param   mixed  general date to be converted
 	 * @param   string  data format the file was provided in
+	 * @param   mixed  additional parameter that can be passed on to a 'from' method
 	 * @return  Format
 	 */
-	public static function forge($data = null, $from_type = null)
+	public static function forge($data = null, $from_type = null, $param = null)
 	{
-		return new static($data, $from_type);
+		return new static($data, $from_type, $param);
 	}
 
 	/**
@@ -52,8 +53,13 @@ class Format
 
 	/**
 	 * Do not use this directly, call forge()
+	 *
+	 * @param   mixed  general date to be converted
+	 * @param   string  data format the file was provided in
+	 * @param   mixed  additional parameter that can be passed on to a 'from' method
+	 * @return  Format
 	 */
-	public function __construct($data = null, $from_type = null)
+	public function __construct($data = null, $from_type = null, $param = null)
 	{
 		// If the provided data is already formatted we should probably convert it to an array
 		if ($from_type !== null)
@@ -67,7 +73,7 @@ class Format
 
 			if (method_exists($this, '_from_' . $from_type))
 			{
-				$data = call_user_func(array($this, '_from_' . $from_type), $data);
+				$data = call_user_func_array(array($this, '_from_' . $from_type), array($data, $param));
 			}
 
 			else
@@ -437,9 +443,10 @@ class Format
 	 * Import CSV data
 	 *
 	 * @param   string  $string
+	 * @param   bool    $no_headings
 	 * @return  array
 	 */
-	protected function _from_csv($string)
+	protected function _from_csv($string, $no_headings = false)
 	{
 		$data = array();
 
@@ -461,17 +468,29 @@ class Format
 		}
 
 		// Get the headings
-		$headings = str_replace($escape.$enclosure, $enclosure, str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape));
-		$headcount = count($headings);
+		if ($no_headings !== false)
+		{
+			$headings = str_replace($escape.$enclosure, $enclosure, str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape));
+			$headcount = count($headings);
+		}
 
 		// Process the rows
 		$incomplete = '';
 		foreach ($rows as $row)
 		{
+			// process the row
 			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.($incomplete?$newline:'').$row, $delimiter, $enclosure, $escape));
+
+			// if we didn't have headers, the first row determines the number of fields
+			if ( ! isset($headcount))
+			{
+				$headcount = count($data_fields);
+			}
+
+			// finish the row if the have the correct field count, otherwise add the data to the next row
 			if (count($data_fields) == $headcount)
 			{
-				$data[] = array_combine($headings, $data_fields);
+				$data[] = $no_headings === false ? $data_fields : array_combine($headings, $data_fields);
 				$incomplete = '';
 			}
 			else

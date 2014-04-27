@@ -98,6 +98,21 @@ John;Doe;john@doe.com;52939494;1;dfdfdf;35353',
 		);
 	}
 
+	public static function array_provider4()
+	{
+		return array(
+			array(
+				array(
+					array(0 => 'Value 1', 1 => 35, 2 => 123123),
+					array(0 => 'Value 1', 1 => "Value\nline 2", 2 => 'Value 3'),
+				),
+				'"Value 1","35","123123"
+"Value 1","Value
+line 2","Value 3"',
+			),
+		);
+	}
+
 	/**
 	 * Test for Format::forge($foo, 'csv')->to_array()
 	 *
@@ -139,6 +154,17 @@ John;Doe;john@doe.com;52939494;1;dfdfdf;35353',
 		\Config::set('format.csv.import.delimiter', ',');
 		\Config::set('format.csv.export.enclosure', '"');
 		\Config::set('format.csv.export.delimiter', ',');
+	}
+
+	/**
+	 * Test for Format::forge($foo, 'csv')->to_array() without CSV headers
+	 *
+	 * @test
+	 * @dataProvider array_provider4
+	 */
+	public function test_from_csv4($array, $csv)
+	{
+		$this->assertEquals($array, Format::forge($csv, 'csv', false)->to_array());
 	}
 
 	/**
