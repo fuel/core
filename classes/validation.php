@@ -770,6 +770,24 @@ class Validation
 	}
 
 	/**
+	 * Match against an array of values
+	 *
+	 * @param   string
+	 * @param   array
+	 * @return  bool
+	 */
+	public function _validation_match_collection($val, $collection = array())
+	{
+		if ( ! is_array($collection))
+		{
+			$collection = func_get_args();
+			array_shift($collection);
+		}
+
+		return in_array($val, $collection);
+	}
+
+	/**
 	 * Minimum string length
 	 *
 	 * @param   string
