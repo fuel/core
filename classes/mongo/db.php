@@ -1145,6 +1145,17 @@ class Mongo_Db
 	}
 
 	/**
+	 *	Returns all collection objects
+	 *
+	 *	@param	bool	$system_collections  wether or not to include system collections
+	 *	@usage	$collections = $mongodb->list_collections();
+	 */
+	public function list_collections($system_collections = false)
+	{
+		return ($this->db->listCollections($system_collections));
+	}
+
+	/**
 	 *	Resets the class variables to default settings
 	 */
 	protected function _clear()
