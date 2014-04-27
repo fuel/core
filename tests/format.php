@@ -121,7 +121,7 @@ John;Doe;john@doe.com;52939494;1;dfdfdf;35353',
 	}
 
 	/**
-	 * Test for Format::forge($foo, 'csv')->to_array()
+	 * Test for Format::forge($foo, 'csv')->to_array() with different delimiter and no enclosures
 	 *
 	 * @test
 	 * @dataProvider array_provider3
@@ -134,6 +134,11 @@ John;Doe;john@doe.com;52939494;1;dfdfdf;35353',
 		\Config::set('format.csv.export.delimiter', ';');
 
 		$this->assertEquals($array, Format::forge($csv, 'csv')->to_array());
+
+		\Config::set('format.csv.import.enclosure', '"');
+		\Config::set('format.csv.import.delimiter', ',');
+		\Config::set('format.csv.export.enclosure', '"');
+		\Config::set('format.csv.export.delimiter', ',');
 	}
 
 	/**
@@ -156,6 +161,27 @@ John;Doe;john@doe.com;52939494;1;dfdfdf;35353',
 	public function test_to_csv2($array, $csv)
 	{
 		$this->assertEquals($csv, Format::forge($array)->to_csv(null, null, false));
+	}
+
+	/**
+	 * Test for Format::forge($foo)->to_csv() with different delimiter and no enclosures
+	 *
+	 * @test
+	 * @dataProvider array_provider3
+	 */
+	public function test_to_csv3($array, $csv)
+	{
+		\Config::set('format.csv.import.enclosure', '');
+		\Config::set('format.csv.import.delimiter', ';');
+		\Config::set('format.csv.export.enclosure', '');
+		\Config::set('format.csv.export.delimiter', ';');
+
+		$this->assertEquals($csv, Format::forge($array)->to_csv());
+
+		\Config::set('format.csv.import.enclosure', '"');
+		\Config::set('format.csv.import.delimiter', ',');
+		\Config::set('format.csv.export.enclosure', '"');
+		\Config::set('format.csv.export.delimiter', ',');
 	}
 
 	/**
