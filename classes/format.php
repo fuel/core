@@ -211,9 +211,10 @@ class Format
 	 * @param   mixed   $data
 	 * @param   mixed   $delimiter
 	 * @param   mixed   $enclose_numbers
+	 * @param   array   $headings  Custom headings to use
 	 * @return  string
 	 */
-	public function to_csv($data = null, $delimiter = null, $enclose_numbers = null)
+	public function to_csv($data = null, $delimiter = null, $enclose_numbers = null, array $headings = array())
 	{
 		// csv format settings
 		$newline = \Config::get('format.csv.newline', \Config::get('format.csv.export.newline', "\n"));
@@ -244,24 +245,27 @@ class Format
 		}
 
 		// Multi-dimensional array
-		if (is_array($data) and \Arr::is_multi($data))
+		if (empty($headings))
 		{
-			$data = array_values($data);
-
-			if (\Arr::is_assoc($data[0]))
+			if (is_array($data) and \Arr::is_multi($data))
 			{
-				$headings = array_keys($data[0]);
+				$data = array_values($data);
+
+				if (\Arr::is_assoc($data[0]))
+				{
+					$headings = array_keys($data[0]);
+				}
+				else
+				{
+					$headings = array_shift($data);
+				}
 			}
+			// Single array
 			else
 			{
-				$headings = array_shift($data);
+				$headings = array_keys((array) $data);
+				$data = array($data);
 			}
-		}
-		// Single array
-		else
-		{
-			$headings = array_keys((array) $data);
-			$data = array($data);
 		}
 
 		$output = $escaper($headings, true).$newline;
