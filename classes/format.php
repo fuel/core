@@ -443,25 +443,41 @@ class Format
 	{
 		$data = array();
 
-		$rows = preg_split('/(?<=[0-9'.preg_quote(\Config::get('format.csv.enclosure', \Config::get('format.csv.import.enclosure', '"'))).'])'.\Config::get('format.csv.regex_newline', "\n").'/', trim($string));
-
 		// csv config
+		$newline = \Config::get('format.csv.regex_newline', "\n");
 		$delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.import.delimiter', ','));
-		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.import.enclosure', '"'));
 		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.import.escape', '"'));
+		// have to do this in two steps, empty string is a valid value for enclosure!
+		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.import.enclosure', null));
+		$enclosure === null and $enclosure = '"';
+
+		if (empty($enclosure))
+		{
+			$rows = preg_split('/(['.$newline.'])/m', trim($string), -1, PREG_SPLIT_NO_EMPTY);
+		}
+		else
+		{
+			$rows = preg_split('/(?<=[0-9'.preg_quote($enclosure).'])'.$newline.'/', trim($string));
+		}
 
 		// Get the headings
 		$headings = str_replace($escape.$enclosure, $enclosure, str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape));
+		$headcount = count($headings);
 
+		// Process the rows
+		$incomplete = '';
 		foreach ($rows as $row)
 		{
-			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($row, $delimiter, $enclosure, $escape));
-
-			if (count($data_fields) == count($headings))
+			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.$newline.$row, $delimiter, $enclosure, $escape));
+			if (count($data_fields) == $headcount)
 			{
 				$data[] = array_combine($headings, $data_fields);
+				$incomplete = '';
 			}
-
+			else
+			{
+				$incomplete = $row;
+			}
 		}
 
 		return $data;
