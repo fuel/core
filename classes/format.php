@@ -381,7 +381,6 @@ class Format
 	 */
 	protected function _from_xml($string, $recursive = false)
 	{
-
 		// If it forged with 'xml:ns'
 		if ( ! $this->ignore_namespaces)
 		{
@@ -411,13 +410,20 @@ class Format
 		}
 
 		$_arr = is_string($string) ? simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : $string;
-		$arr = array();
 
 		// Convert all objects SimpleXMLElement to array recursively
+		$arr = array();
 		foreach ((array)$_arr as $key => $val)
 		{
 			$this->ignore_namespaces or $key = \Arr::get($escape_keys, $key, $key);
-			$arr[$key] = (is_array($val) or is_object($val)) ? $this->_from_xml($val, true) : $val;
+			if ( ! $val instanceOf \SimpleXMLElement or $val->count() or $val->attributes())
+			{
+				$arr[$key] = (is_array($val) or is_object($val)) ? $this->_from_xml($val, true) : $val;
+			}
+			else
+			{
+				$arr[$val->getName()] = null;
+			}
 		}
 
 		return $arr;
