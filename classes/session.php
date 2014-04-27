@@ -65,6 +65,47 @@ class Session
 		{
 			static::instance();
 		}
+
+		if (\Config::get('session.native_emulation', false))
+		{
+			// emulate native PHP sessions
+			session_set_save_handler (
+				// open
+				function ($savePath, $sessionName) {
+				},
+				// close
+				function () {
+				},
+				// read
+				function ($sessionId) {
+					// copy all existing session vars into the PHP session store
+					$_SESSION = \Session::get();
+					$_SESSION['__org'] = $_SESSION;
+				},
+				// write
+				function ($sessionId, $data) {
+					// get the original data
+					$org = isset($_SESSION['__org']) ? $_SESSION['__org'] : array();
+					unset($_SESSION['__org']);
+
+					// do we need to remove stuff?
+					if ($remove = array_diff_key($org, $_SESSION))
+					{
+						\Session::delete(array_keys($remove));
+					}
+
+					// add or update the remainder
+					empty($_SESSION) or \Session::set($_SESSION);
+				},
+				// destroy
+				function ($sessionId) {
+					\Session::destroy();
+				},
+				// gc
+				function ($lifetime) {
+				}
+			);
+		}
 	}
 
 	// --------------------------------------------------------------------

@@ -42,6 +42,13 @@ register_shutdown_function(function ()
 	// reset the autoloader
 	\Autoloader::_reset();
 
+	// if we have sessions loaded, and native session emulation active
+	if (\Config::get('session.native_emulation', false))
+	{
+		// close the name session
+		session_id() and session_write_close();
+	}
+
 	// make sure we're having an output filter so we can display errors
 	// occuring before the main config file is loaded
 	\Config::get('security.output_filter', null) or \Config::set('security.output_filter', 'Security::htmlentities');
