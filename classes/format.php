@@ -468,7 +468,7 @@ class Format
 		$incomplete = '';
 		foreach ($rows as $row)
 		{
-			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.$newline.$row, $delimiter, $enclosure, $escape));
+			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.($incomplete?$newline:'').$row, $delimiter, $enclosure, $escape));
 			if (count($data_fields) == $headcount)
 			{
 				$data[] = array_combine($headings, $data_fields);
