@@ -62,7 +62,7 @@ abstract class Request_Driver
 	/**
 	 * @var  bool  whether to attempt auto-formatting the response
 	 */
-	protected $auto_format = true;
+	protected $auto_format = false;
 
 	/**
 	 * @var  string  $method  request method
