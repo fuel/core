@@ -657,7 +657,7 @@ class Theme
 			throw new \ThemeException(sprintf('Could not find theme "%s".', $theme['name']));
 		}
 
-		if ( ! ($file = $this->find_file($this->config['info_file_name'], array($theme['name']))))
+		if ( ! ($file = $this->find_file($this->config['info_file_name'], array($theme))))
 		{
 			throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme['name'], $this->config['info_file_name']));
 		}
