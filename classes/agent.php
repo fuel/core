@@ -424,7 +424,7 @@ class Agent
 			case 'local':
 				if ( ! is_file(static::$config['browscap']['file']) or filesize(static::$config['browscap']['file']) == 0)
 				{
-					throw new \Exception('Agent class: could not open the local browscap.ini file.');
+					throw new \Exception('Agent class: could not open the local browscap.ini file: '.static::$config['browscap']['file']);
 				}
 				$data = @file_get_contents(static::$config['browscap']['file']);
 			break;

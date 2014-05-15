@@ -31,6 +31,21 @@ class Test_Agent extends TestCase
 		$_SERVER['HTTP_ACCEPT_CHARSET'] = 'UTF-8,ISO-8859-1,*';
 		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (X11; U; Linux x86_64; en-US; rv:1.9.2.16) Gecko/20110322 Fedora/3.6.16-1.fc14 Firefox/3.6.16';
 
+		// and uses a known config
+		\Config::set('agent', array(
+			'browscap' => array(
+				'enabled' => true,
+				'url' => '',
+				'method' => 'local',
+				'file' => __DIR__.DS.'agent'.DS.'browscap.ini',
+			),
+			'cache' => array(
+				'driver' => '',
+				'expiry' => 1,
+				'identifier' => 'fuel.agent-test',
+			)
+		));
+
 		// by re-running the class init manually
 		\Agent::_init();
 	}
