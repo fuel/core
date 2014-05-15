@@ -197,6 +197,11 @@ class Config
 				return $default;
 			}
 
+			if ( ! is_scalar($val))
+			{
+				return $val;
+			}
+
 			static::$itemcache[$item] = $val;
 		}
 
