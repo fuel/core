@@ -456,6 +456,7 @@ class Agent
 				}
 				catch (\ErrorException $e)
 				{
+					logger(\Fuel::L_ERROR, 'Failed to download browscap.ini file.', 'Agent::parse_browscap');
 					$data = false;
 				}
 			default:
@@ -475,7 +476,7 @@ class Agent
 			}
 			catch (\Exception $e)
 			{
-				logger(\Fuel::L_ERROR, 'Failed to download browscap.ini file.', 'Agent::parse_browscap');
+				logger(\Fuel::L_ERROR, 'Failed to get the cache of browscap.ini file.', 'Agent::parse_browscap');
 			}
 		}
 		else
