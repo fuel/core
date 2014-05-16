@@ -134,6 +134,10 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	public function driver_name()
 	{
+		// Make sure the database is connected
+		$this->_connection or $this->connect();
+
+		// Getting driver name
 		return $this->_connection->getAttribute(\PDO::ATTR_DRIVER_NAME);
 	}
 
