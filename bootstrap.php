@@ -308,6 +308,6 @@ function setup_autoloader()
 		'Fuel\\Core\\Validation_Error'  => COREPATH.'classes/validation/error.php',
 
 		'Fuel\\Core\\View'       => COREPATH.'classes/view.php',
-		'Fuel\\Core\\ViewModel'  => COREPATH.'classes/viewmodel.php',
+		'Fuel\\Core\\Viewmodel'  => COREPATH.'classes/viewmodel.php',
 	));
 };

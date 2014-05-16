@@ -21,14 +21,14 @@ namespace Fuel\Core;
  * @category    Core
  * @author      Jelmer Schreuder
  */
-abstract class ViewModel
+abstract class Viewmodel
 {
 	/**
-	 * Factory for fetching the ViewModel
+	 * Factory for fetching the Viewmodel
 	 *
-	 * @param   string  ViewModel classname without View_ prefix or full classname
+	 * @param   string  Viewmodel classname without View_ prefix or full classname
 	 * @param   string  Method to execute
-	 * @return  ViewModel
+	 * @return  Viewmodel
 	 */
 	public static function forge($viewmodel, $method = 'view', $auto_filter = null, $view = null)
 	{
