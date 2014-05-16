@@ -120,7 +120,7 @@ class Autoloader
 	 */
 	public static function add_class($class, $path)
 	{
-		static::$classes[$class] = $path;
+		static::$classes[strtolower($class)] = $path;
 	}
 
 	/**
@@ -133,7 +133,7 @@ class Autoloader
 	{
 		foreach ($classes as $class => $path)
 		{
-			static::$classes[$class] = $path;
+			static::$classes[strtolower($class)] = $path;
 		}
 	}
 
@@ -177,7 +177,7 @@ class Autoloader
 	{
 		foreach (static::$core_namespaces as $ns)
 		{
-			if (array_key_exists($ns_class = $ns.'\\'.$class, static::$classes))
+			if (array_key_exists(strtolower($ns_class = $ns.'\\'.$class), static::$classes))
 			{
 				return $ns_class;
 			}
@@ -231,16 +231,16 @@ class Autoloader
 			static::$auto_initialize = $class;
 		}
 
-		if (isset(static::$classes[$class]))
+		if (isset(static::$classes[strtolower($class)]))
 		{
-			static::init_class($class, str_replace('/', DS, static::$classes[$class]));
+			static::init_class($class, str_replace('/', DS, static::$classes[strtolower($class)]));
 			$loaded = true;
 		}
 		elseif ($full_class = static::find_core_class($class))
 		{
 			if ( ! class_exists($full_class, false) and ! interface_exists($full_class, false))
 			{
-				include static::prep_path(static::$classes[$full_class]);
+				include static::prep_path(static::$classes[strtolower($full_class)]);
 			}
 			if ( ! class_exists($class, false))
 			{
