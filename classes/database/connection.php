@@ -105,14 +105,14 @@ abstract class Database_Connection
 	 * @var bool $_in_transation allows transactions
 	 */
 	protected $_in_transaction = false;
-	
+
 	/**
 	 *
-	 * @var int Transaction nesting depth counter. 
+	 * @var int Transaction nesting depth counter.
 	 * Should be modified AFTER a driver has changed the level successfully
 	 */
 	protected $_transaction_depth = 0;
-	
+
 	/**
 	 * @var  resource  Raw server connection
 	 */
@@ -659,21 +659,11 @@ abstract class Database_Connection
 			return $this->quote_identifier($value).' AS '.$this->quote_identifier($alias);
 		}
 
-		if (strpos($value, '"') !== false)
-		{
-			// required for PHP 5.5- (no access to $this in closure)
-			$that = $this;
-			// Quote the column in FUNC("ident") identifiers
-			return preg_replace_callback('/"(.+?)"/', function ($matches) use($that) { return $that->quote_identifier($matches[1]); }, $value);
-		}
-		elseif (preg_match("/^'(.*)?'$/", $value))
-		{
-			// return quoted values as-is
-			return $value;
-		}
-		elseif (strpos($value, '.') !== false)
+		if (strpos($value, '.') !== false)
 		{
 			// Split the identifier into the individual parts
+            // This is slightly broken, because a table or column name
+            // (or user-defined alias!) might legitimately contain a period.
 			$parts = explode('.', $value);
 
 			if ($prefix = $this->table_prefix())
@@ -689,10 +679,12 @@ abstract class Database_Connection
 			// Quote each of the parts
 			return implode('.', array_map(array($this, __FUNCTION__), $parts));
 		}
-		else
-		{
-			return $this->_identifier.$value.$this->_identifier;
-		}
+
+		// That you can simply escape the identifier by doubling
+		// it is a built-in assumption which may not be valid for
+		// all connection types!  However, it's true for MySQL,
+		// SQLite, Postgres and other ANSI SQL-compliant DBs.
+		return $this->_identifier.str_replace($this->_identifier, $this->_identifier.$this->_identifier, $value).$this->_identifier;
 	}
 
 	/**
@@ -718,7 +710,7 @@ abstract class Database_Connection
 	{
 		return $this->_in_transaction;
 	}
-	
+
 	/**
 	 * Begins a nested transaction on instance
 	 *
@@ -729,7 +721,7 @@ abstract class Database_Connection
 	public function start_transaction()
 	{
 		$result = true;
-	
+
 		if ($this->_transaction_depth == 0)
 		{
 			if ($this->driver_start_transaction())
@@ -742,17 +734,17 @@ abstract class Database_Connection
 			}
 		}
 		else
-		{ 
+		{
 			$result = $this->set_savepoint($this->_transaction_depth);
 			// If savepoint is not supported it is not an error
 			isset($result) or $result = true;
 		}
 
 		$result and $this->_transaction_depth ++;
-	
+
 		return $result;
 	}
-	
+
 	/**
 	 * Commits nested transaction
 	 *
@@ -767,7 +759,7 @@ abstract class Database_Connection
 		{
 			return false;
 		}
-	
+
 		if ($this->_transaction_depth - 1)
 		{
 			$result = $this->release_savepoint($this->_transaction_depth - 1);
@@ -779,24 +771,24 @@ abstract class Database_Connection
 			$this->_in_transaction = false;
 			$result = $this->driver_commit();
 		}
-	
+
 		$result and $this->_transaction_depth --;
-		
+
 		return $result;
 	}
-	
+
 	/**
-	 * Rollsback nested pending transaction queries. 
+	 * Rollsback nested pending transaction queries.
 	 * Rollback to the current level uses SAVEPOINT,
 	 * it does not work if current RDBMS does not support them.
 	 * In this case system rollbacks all queries and closes the transaction
 	 *
 	 *     $db->rollback_transaction();
-	 *     
+	 *
 	 * @param bool $rollback_all:
 	 *  true  - rollback everything and close transaction;
-	 *  false - rollback only current level 
-	 *  
+	 *  false - rollback only current level
+	 *
 	 * @return bool
 	 */
 	public function rollback_transaction($rollback_all = true)
@@ -811,53 +803,53 @@ abstract class Database_Connection
 					$this->_in_transaction = false;
 				}
 			}
-			else 
+			else
 			{
 				$result = $this->rollback_savepoint($this->_transaction_depth - 1);
 				// If savepoint is not supported it is not an error
 				isset($result) or $result = true;
-				
+
 				$result and $this->_transaction_depth -- ;
 			}
 		}
-		else 
-		{	
+		else
+		{
 			$result = false;
 		}
 
 		return $result;
 	}
-	
+
 	/**
 	 * Begins a transaction on the driver level
 	 *
 	 * @return bool
 	 */
 	abstract protected function driver_start_transaction();
-	
+
 	/**
 	 * Commits all pending transactional queries on the driver level
 	 *
 	 * @return bool
 	*/
 	abstract protected function driver_commit();
-	
+
 	/**
 	 * Rollsback all pending transactional queries on the driver level
 	 *
 	 * @return bool
 	*/
 	abstract protected function driver_rollback();
-	
+
 	/**
 	 * Sets savepoint of the transaction
-	 * 
+	 *
 	 * @param string $name name of the savepoint
-	 * @return boolean true  - savepoint was set successfully; 
+	 * @return boolean true  - savepoint was set successfully;
 	 *                 false - failed to set savepoint;
 	 *                 null  - RDBMS does not support savepoints
 	 */
-	protected function set_savepoint($name) 
+	protected function set_savepoint($name)
 	{
 		return null;
 	}
@@ -870,7 +862,7 @@ abstract class Database_Connection
 	 *                 false - failed to set savepoint;
 	 *                 null  - RDBMS does not support savepoints
 	 */
-	protected function release_savepoint($name) 
+	protected function release_savepoint($name)
 	{
 		return null;
 	}
@@ -883,11 +875,11 @@ abstract class Database_Connection
 	 *                 false - failed to set savepoint;
 	 *                 null  - RDBMS does not support savepoints
 	 */
-	protected function rollback_savepoint($name) 
+	protected function rollback_savepoint($name)
 	{
 		return null;
 	}
-	
+
 	/**
 	 * Returns the raw connection object for custom method access
 	 *
