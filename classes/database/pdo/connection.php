@@ -85,7 +85,7 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 
 		// add the charset to the DSN if needed
-		if ( ! empty($this->_config['charset']) and strpos($dsn, ';charset=') === false)
+		if ( ! empty($this->_config['charset']) and strpos($dsn, ';charset=') === false and strtolower($this->_db_type) != 'sqlite')
 		{
 			$dsn .= ';charset='.$this->_config['charset'];
 		}
@@ -103,16 +103,8 @@ class Database_PDO_Connection extends \Database_Connection
 
 		if ( ! empty($this->_config['charset']))
 		{
-			// Set Charset for SQL Server connection
-			if (strtolower($this->driver_name()) == 'sqlsrv')
-			{
-				$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_SYSTEM);
-			}
-			else
-			{
-				// Set the character set
-				$this->set_charset($this->_config['charset']);
-			}
+			// Set the character set
+			$this->set_charset($this->_config['charset']);
 		}
 	}
 
@@ -151,8 +143,23 @@ class Database_PDO_Connection extends \Database_Connection
 		// Make sure the database is connected
 		$this->_connection or $this->connect();
 
-		// Execute a raw SET NAMES query
-		$this->_connection->exec('SET NAMES '.$this->quote($charset));
+		// Set Charset for SQL Server connection
+		if (strtolower($this->driver_name()) == 'sqlsrv')
+		{
+			$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_SYSTEM);
+		}
+		// Set Charset for SQLite connection
+		elseif (strtolower($this->driver_name()) == 'sqlite')
+		{
+			// Execute a raw PRAGMA encoding query
+			$this->_connection->exec('PRAGMA encoding = ' . $this->quote($charset));
+		}
+		// Set Charset for any connection except ODBC, as it throws exception
+		elseif (strtolower($this->driver_name()) != 'odbc')
+		{
+			// Execute a raw SET NAMES query
+			$this->_connection->exec('SET NAMES '.$this->quote($charset));
+		}
 	}
 
 	/**
