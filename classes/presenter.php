@@ -208,6 +208,21 @@ abstract class Presenter
 	}
 
 	/**
+	 * The same as set(), except this defaults to not-encoding the variable
+	 * on output.
+	 *
+	 *     $view->set_safe('foo', 'bar');
+	 *
+	 * @param   string   variable name or an array of variables
+	 * @param   mixed    value
+	 * @return  $this
+	 */
+	public function set_safe($key, $value = null)
+	{
+		return $this->set($key, $value, false);
+	}
+
+	/**
 	 * Magic method, determines if a variable is set.
 	 *
 	 *     isset($view->foo);
