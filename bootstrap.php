@@ -258,6 +258,8 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Pagination'           => COREPATH.'classes/pagination.php',
 
+		'Fuel\\Core\\Presenter'            => COREPATH.'classes/presenter.php',
+
 		'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
 
 		'Fuel\\Core\\Request'                 => COREPATH.'classes/request.php',
