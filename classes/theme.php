@@ -128,7 +128,7 @@ class Theme
 		if (empty($config))
 		{
 			\Config::load('theme', true, false, true);
-			$config = \Config::get('theme', false);
+			$config = \Config::get('theme', array());
 		}
 
 		// Order of this addition is important, do not change this.
