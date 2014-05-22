@@ -179,6 +179,12 @@ class Session_Db extends \Session_Driver
 			{
 				// update the database
 				$result = \DB::update($this->config['table'])->set($session)->where('session_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
+
+				// if it failed, perhaps we have missed a session id rotation?
+				if ($result === 0)
+				{
+					$result = \DB::update($this->config['table'])->set($session)->where('previous_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
+				}
 			}
 
 			// update went well?
