@@ -88,6 +88,8 @@ abstract class Request_Driver
 		'text/xml' => 'xml',
 		'application/json' => 'json',
 		'text/json' => 'json',
+		'application/vnd.api+json' => 'json',
+		'application/json-patch+json' => 'json',
 		'text/csv' => 'csv',
 		'application/csv' => 'csv',
 		'application/vnd.php.serialized' => 'serialize',
