@@ -107,4 +107,12 @@ return array(
 	 * The asset will then be skipped.
 	 */
 	'fail_silently' => false,
+
+	/**
+	 * When set to true, the Asset class will always true to resolve an asset URI
+	 * to a local asset, even if the asset URL is an absolute URL, for example
+	 * one that points to another hostname.
+	 */
+	'always_resolve' => false,
+
 );

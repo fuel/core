@@ -75,6 +75,11 @@ class Asset_Instance
 	protected $_fail_silently = false;
 
 	/**
+	 * @var  bool  if true, will always true to resolve assets. if false, it will only try to resolve if the asset url is relative.
+	 */
+	protected $_always_resolve = false;
+
+	/**
 	 * Parse the config and initialize the object instance
 	 *
 	 * @return  void
@@ -103,11 +108,12 @@ class Asset_Instance
 			}
 		}
 
-		$this->_add_mtime = $config['add_mtime'];
+		$this->_add_mtime = (bool) $config['add_mtime'];
 		$this->_asset_url = $config['url'];
 		$this->_indent = str_repeat($config['indent_with'], $config['indent_level']);
-		$this->_auto_render = $config['auto_render'];
-		$this->_fail_silently = $config['fail_silently'];
+		$this->_auto_render = (bool) $config['auto_render'];
+		$this->_fail_silently = (bool) $config['fail_silently'];
+		$this->_always_resolve = (bool) $config['always_resolve'];
 	}
 
 	/**
@@ -235,10 +241,10 @@ class Asset_Instance
 			$inline = $item['raw'];
 
 			// only do a file search if the asset is not a URI
-			if ( ! preg_match('|^(\w+:)?//|', $filename))
+			if ($this->_always_resolve or ! preg_match('|^(\w+:)?//|', $filename))
 			{
 				// and only if the asset is local to the applications base_url
-				if ( ! preg_match('|^(\w+:)?//|', $this->_asset_url) or strpos($this->_asset_url, \Config::get('base_url')) === 0)
+				if ($this->_always_resolve or ! preg_match('|^(\w+:)?//|', $this->_asset_url) or strpos($this->_asset_url, \Config::get('base_url')) === 0)
 				{
 					if ( ! ($file = $this->find_file($filename, $type)))
 					{
