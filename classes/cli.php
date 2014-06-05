@@ -29,6 +29,8 @@ class Cli
 
 	public static $wait_msg = 'Press any key to continue...';
 
+	public static $nocolor = false;
+
 	protected static $args = array();
 
 	protected static $foreground_colors = array(
@@ -407,6 +409,11 @@ class Cli
 	public static function color($text, $foreground, $background = null, $format=null)
 	{
 		if (static::is_windows() and ! \Input::server('ANSICON'))
+		{
+			return $text;
+		}
+
+		if (static::$nocolor)
 		{
 			return $text;
 		}
