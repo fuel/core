@@ -64,6 +64,9 @@ class Cli
 		'light_gray'	=> '47',
 	);
 
+	protected static $STDOUT;
+	protected static $STDERR;
+
 	/**
 	 * Static constructor.	Parses all the CLI params.
 	 */
@@ -88,6 +91,9 @@ class Cli
 		// Readline is an extension for PHP that makes interactive with PHP much more bash-like
 		// http://www.php.net/manual/en/readline.installation.php
 		static::$readline_support = extension_loaded('readline');
+
+		static::$STDERR = STDERR;
+		static::$STDOUT = STDOUT;
 	}
 
 	/**
@@ -242,7 +248,7 @@ class Cli
 				$extra_output = ' [ '.implode(', ', $options).' ]';
 			}
 
-			fwrite(STDOUT, $output.$extra_output.': ');
+			fwrite(static::$STDOUT, $output.$extra_output.': ');
 		}
 
 		// Read the input from keyboard.
@@ -287,7 +293,7 @@ class Cli
 			$text = static::color($text, $foreground, $background);
 		}
 
-		fwrite(STDOUT, $text.PHP_EOL);
+		fwrite(static::$STDOUT, $text.PHP_EOL);
 	}
 
 	/**
@@ -307,7 +313,7 @@ class Cli
 			$text = static::color($text, $foreground, $background);
 		}
 
-		fwrite(STDERR, $text.PHP_EOL);
+		fwrite(static::$STDERR, $text.PHP_EOL);
 	}
 
 	/**
@@ -335,7 +341,7 @@ class Cli
 
 			while ($time > 0)
 			{
-				fwrite(STDOUT, $time.'... ');
+				fwrite(static::$STDOUT, $time.'... ');
 				sleep(1);
 				$time--;
 			}
@@ -393,7 +399,7 @@ class Cli
 			? static::new_line(40)
 
 			// Anything with a flair of Unix will handle these magic characters
-			: fwrite(STDOUT, chr(27)."[H".chr(27)."[2J");
+			: fwrite(static::$STDOUT, chr(27)."[H".chr(27)."[2J");
 	}
 
 	/**
@@ -469,5 +475,24 @@ class Cli
 	    }
 	}
 
+	/**
+	 * Redirect STDERR writes to this file or fh
+	 *
+	 * @param  filehandle|string|File  $fh  Opened filehandle or string filename.
+	 */
+	public static function stderr($fh)
+	{
+		static::$STDERR = $fh;
+	}
+
+	/**
+	 * Redirect STDOUT writes to this file or fh
+	 *
+	 * @param  filehandle|string|File  $fh  Opened filehandle or string filename.
+	 */
+	public static function stdout($fh)
+	{
+		static::$STDOUT = $fh;
+	}
 }
 
