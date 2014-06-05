@@ -478,20 +478,30 @@ class Cli
 	/**
 	 * Redirect STDERR writes to this file or fh
 	 *
-	 * @param  filehandle|string|File  $fh  Opened filehandle or string filename.
+	 * Is not smart about opening the file if it's a string. Existing files will be truncated.
+	 *
+	 * @param  resource|string  $fh  Opened filehandle or string filename.
 	 */
 	public static function stderr($fh)
 	{
+		if (is_string($fh)) {
+			$fh = fopen($fh, "w");
+		}
 		static::$STDERR = $fh;
 	}
 
 	/**
 	 * Redirect STDOUT writes to this file or fh
 	 *
-	 * @param  filehandle|string|File  $fh  Opened filehandle or string filename.
+	 * Is not smart about opening the file if it's a string. Existing files will be truncated.
+	 *
+	 * @param  resource|string  $fh  Opened filehandle or string filename.
 	 */
 	public static function stdout($fh)
 	{
+		if (is_string($fh)) {
+			$fh = fopen($fh, "w");
+		}
 		static::$STDOUT = $fh;
 	}
 }
