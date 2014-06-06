@@ -478,31 +478,47 @@ class Cli
 	/**
 	 * Redirect STDERR writes to this file or fh
 	 *
+	 * Call with no argument to retrieve the current filehandle.
+	 *
 	 * Is not smart about opening the file if it's a string. Existing files will be truncated.
 	 *
 	 * @param  resource|string  $fh  Opened filehandle or string filename.
+	 *
+	 * @return resource
 	 */
-	public static function stderr($fh)
+	public static function stderr($fh = null)
 	{
-		if (is_string($fh)) {
-			$fh = fopen($fh, "w");
+		if (! is_null($fh)) {
+			if (is_string($fh)) {
+				$fh = fopen($fh, "w");
+			}
+			static::$STDERR = $fh;
 		}
-		static::$STDERR = $fh;
+
+		return $fh;
 	}
 
 	/**
 	 * Redirect STDOUT writes to this file or fh
 	 *
+	 * Call with no argument to retrieve the current filehandle.
+	 *
 	 * Is not smart about opening the file if it's a string. Existing files will be truncated.
 	 *
-	 * @param  resource|string  $fh  Opened filehandle or string filename.
+	 * @param  resource|string|null  $fh  Opened filehandle or string filename.
+	 *
+	 * @return resource
 	 */
-	public static function stdout($fh)
+	public static function stdout($fh = null)
 	{
-		if (is_string($fh)) {
-			$fh = fopen($fh, "w");
+		if (! is_null($fh)) {
+			if (is_string($fh)) {
+				$fh = fopen($fh, "w");
+			}
+			static::$STDOUT = $fh;
 		}
-		static::$STDOUT = $fh;
+
+		return static::$STDOUT;
 	}
 }
 
