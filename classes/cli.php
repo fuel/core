@@ -495,7 +495,7 @@ class Cli
 			static::$STDERR = $fh;
 		}
 
-		return $fh;
+		return static::$STDERR;
 	}
 
 	/**
