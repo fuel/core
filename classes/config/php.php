@@ -28,7 +28,7 @@ class Config_Php extends \Config_File
 	public static function _init()
 	{
 		// do we have Opcache active?
-		static::$uses_opcache = PHP_VERSION_ID >= 50500 and function_exists('opcache_invalidate');
+		static::$uses_opcache = (PHP_VERSION_ID >= 50500 and function_exists('opcache_invalidate'));
 
 		// do we have APC active?
 		static::$uses_apc = function_exists('apc_compile_file');
