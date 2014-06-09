@@ -488,6 +488,8 @@ class Cli
 	 */
 	public static function stderr($fh = null)
 	{
+		$orig = static::$STDERR;
+
 		if (! is_null($fh)) {
 			if (is_string($fh)) {
 				$fh = fopen($fh, "w");
@@ -495,7 +497,7 @@ class Cli
 			static::$STDERR = $fh;
 		}
 
-		return static::$STDERR;
+		return $orig;
 	}
 
 	/**
@@ -511,6 +513,8 @@ class Cli
 	 */
 	public static function stdout($fh = null)
 	{
+		$orig = static::$STDOUT;
+
 		if (! is_null($fh)) {
 			if (is_string($fh)) {
 				$fh = fopen($fh, "w");
@@ -518,7 +522,7 @@ class Cli
 			static::$STDOUT = $fh;
 		}
 
-		return static::$STDOUT;
+		return $orig;
 	}
 }
 
