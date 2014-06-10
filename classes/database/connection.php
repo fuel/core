@@ -72,7 +72,7 @@ abstract class Database_Connection
 
 			if ( ! isset($config['type']))
 			{
-				throw new \FuelException('Database type not defined in "{$name}" configuration or "{$name}" configuration does not exist');
+				throw new \FuelException("Database type not defined in \"{$name}\" configuration or \"{$name}\" configuration does not exist");
 			}
 
 			// Set the driver class name
