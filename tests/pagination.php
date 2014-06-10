@@ -38,6 +38,11 @@ class Test_Pagination extends TestCase
 		$rp->setValue($this->request, $this->request);
 	}
 
+	protected function setUp()
+	{
+		$this->old_base_url = Config::get('base_url');
+	}
+
 	public function tearDown()
 	{
 		// remove the fake uri
@@ -60,6 +65,9 @@ class Test_Pagination extends TestCase
 		$rp = new \ReflectionProperty($request, 'active');
 		$rp->setAccessible(true);
 		$rp->setValue($request, false);
+
+		// ensure base_url is reset even if an exception occurs
+		Config::set('base_url', $this->old_base_url);
 	}
 
 /**********************************
@@ -129,9 +137,6 @@ class Test_Pagination extends TestCase
 		$test = $_make_link->invoke($pagination, 1);
 		$expected = 'http://docs.fuelphp.com/welcome/index/1';
 		$this->assertEquals($expected, $test);
-
-		// reset base_url
-		Config::set('base_url', null);
 	}
 
 	public function test_uri_segment_set_pagination_url_after_forging_fail()
@@ -550,9 +555,6 @@ class Test_Pagination extends TestCase
 		$test = $_make_link->invoke($pagination, 1);
 		$expected = 'http://docs.fuelphp.com/?p=1';
 		$this->assertEquals($expected, $test);
-
-		// reset base_url
-		Config::set('base_url', null);
 	}
 
 	public function test_query_string_get_total_pages()
