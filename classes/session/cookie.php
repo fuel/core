@@ -83,7 +83,7 @@ class Session_Cookie extends \Session_Driver
 		}
 		elseif ($payload === false)
 		{
-			logger('DEBUG', 'Error: cookie payload is missing!');
+			// no cookie found
 		}
 		elseif ( ! isset($payload[0]) or ! is_array($payload[0]))
 		{
