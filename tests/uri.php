@@ -20,6 +20,19 @@ namespace Fuel\Core;
  */
 class Test_Uri extends TestCase
 {
+	public function setUp()
+	{
+		$this->old_url_suffix = Config::get('url_suffix');
+		$this->old_index_file = Config::get('index_file');
+		$this->old_base_url = Config::get('base_url');
+	}
+
+	public function tearDown()
+	{
+		Config::set('url_suffix', $this->old_url_suffix);
+		Config::set('index_file', $this->old_index_file);
+		Config::set('base_url', $this->old_base_url);
+	}
 
 	/**
 	 * Tests Uri::create()
