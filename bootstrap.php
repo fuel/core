@@ -69,6 +69,10 @@ register_shutdown_function(function ()
 			\Cli::beep();
 			exit(1);
 		}
+		else
+		{
+			logger(\Fuel::L_ERROR, 'shutdown - ' . $e->getMessage()." in ".$e->getFile()." on ".$e->getLine());
+		}
 	}
 	return \Error::shutdown_handler();
 });
