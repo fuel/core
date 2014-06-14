@@ -12,8 +12,6 @@
 
 namespace Fuel\Core;
 
-
-
 // --------------------------------------------------------------------
 
 class Session_Db extends \Session_Driver
@@ -179,13 +177,34 @@ class Session_Db extends \Session_Driver
 				}
 				else
 				{
-						// update the database
-						$result = \DB::update($this->config['table'])->set($session)->where('session_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
+					// update the database
+					$result = \DB::update($this->config['table'])->set($session)->where('session_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
 
-					// if it failed, perhaps we have missed a session id rotation?
+					// if it failed, perhaps we have lost a session id due to rotation?
 					if ($result === 0)
 					{
-						$result = \DB::update($this->config['table'])->set($session)->where('previous_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
+						// if so, there must be a session record with our session_id as previous_id
+						$result = \DB::select()->where('previous_id', '=', $this->record->get('session_id'))->from($this->config['table'])->execute($this->config['database']);
+						if ($result->count())
+						{
+							logger(\Fuel::L_WARNING, 'Session update failed, session record recovered using previous id. Lost rotation data?');
+
+							// update the session data
+							$this->keys['session_id'] = $result->get('session_id');
+							$this->keys['previous_id'] = $result->get('previous_id');
+
+							// and recreate the payload
+							$session = $this->keys;
+							$session['payload'] = $this->_serialize(array($this->keys, $this->data, $this->flash));
+
+							// and update the database
+							$result = \DB::update($this->config['table'])->set($session)->where('session_id', '=', $this->keys['session_id'])->execute($this->config['database']);
+						}
+						else
+						{
+							logger(\Fuel::L_ERROR, 'Session update failed, session record could not be recovered using the previous id');
+							$result = false;
+						}
 					}
 				}
 
@@ -194,10 +213,6 @@ class Session_Db extends \Session_Driver
 				{
 					// then update the cookie
 					$this->_set_cookie(array($this->keys['session_id']));
-				}
-				else
-				{
-					logger(\Fuel::L_ERROR, 'Session update failed, session record could not be found. Concurrency issue?');
 				}
 
 				// do some garbage collection
