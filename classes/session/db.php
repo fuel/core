@@ -169,40 +169,52 @@ class Session_Db extends \Session_Driver
 			$session = $this->keys;
 			$session['payload'] = $this->_serialize(array($this->keys, $this->data, $this->flash));
 
-			// do we need to create a new session?
-			if (is_null($this->record))
+			try
 			{
-				// create the new session record
-				$result = \DB::insert($this->config['table'], array_keys($session))->values($session)->execute($this->config['database']);
-			}
-			else
-			{
-				// update the database
-				$result = \DB::update($this->config['table'])->set($session)->where('session_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
-
-				// if it failed, perhaps we have missed a session id rotation?
-				if ($result === 0)
+				// do we need to create a new session?
+				if (is_null($this->record))
 				{
-					$result = \DB::update($this->config['table'])->set($session)->where('previous_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
+					// create the new session record
+					list($notused, $result) = \DB::insert($this->config['table'], array_keys($session))->values($session)->execute($this->config['database']);
+				}
+				else
+				{
+						// update the database
+						$result = \DB::update($this->config['table'])->set($session)->where('session_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
+
+					// if it failed, perhaps we have missed a session id rotation?
+					if ($result === 0)
+					{
+						$result = \DB::update($this->config['table'])->set($session)->where('previous_id', '=', $this->record->get('session_id'))->execute($this->config['database']);
+					}
+				}
+
+				// update went well?
+				if ($result !== 0)
+				{
+					// then update the cookie
+					$this->_set_cookie(array($this->keys['session_id']));
+				}
+				else
+				{
+					logger(\Fuel::L_ERROR, 'Session update failed, session record could not be found. Concurrency issue?');
+				}
+
+				// do some garbage collection
+				if (mt_rand(0,100) < $this->config['gc_probability'])
+				{
+					$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
+					$result = \DB::delete($this->config['table'])->where('updated', '<', $expired)->execute($this->config['database']);
 				}
 			}
+			catch (Database_Exception $e)
+			{
+				// strip the actual query from the message
+				$msg = $e->getMessage();
+				$msg = substr($msg, 0, strlen($msg)  - strlen(strrchr($msg, ':')));
 
-			// update went well?
-			if ($result !== false)
-			{
-				// then update the cookie
-				$this->_set_cookie(array($this->keys['session_id']));
-			}
-			else
-			{
-				logger(\Fuel::L_ERROR, 'Session update failed, session record could not be found. Concurrency issue?');
-			}
-
-			// do some garbage collection
-			if (mt_rand(0,100) < $this->config['gc_probability'])
-			{
-				$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
-				$result = \DB::delete($this->config['table'])->where('updated', '<', $expired)->execute($this->config['database']);
+				// and rethrow it
+				throw new \Database_Exception($msg);
 			}
 		}
 
