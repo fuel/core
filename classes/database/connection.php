@@ -56,7 +56,7 @@ abstract class Database_Connection
 			$name = \Config::get('db.active');
 		}
 
-		if ( ! $writable and ($readonly = \Config::get("db.{$name}.readonly", false)))
+		if ( ! $writable and ($readonly = \Config::get('db.'.$name.'.readonly', false)))
 		{
 			! isset(static::$_readonly[$name]) and static::$_readonly[$name] = \Arr::get($readonly, array_rand($readonly));
 			$name = static::$_readonly[$name];
@@ -67,12 +67,12 @@ abstract class Database_Connection
 			if ($config === null)
 			{
 				// Load the configuration for this database
-				$config = \Config::get("db.{$name}");
+				$config = \Config::get('db.'.$name);
 			}
 
 			if ( ! isset($config['type']))
 			{
-				throw new \FuelException('Database type not defined in "{$name}" configuration or "{$name}" configuration does not exist');
+				throw new \FuelException('Database type not defined in "'.$name.'" configuration or "'.$name.'" configuration does not exist');
 			}
 
 			// Set the driver class name
