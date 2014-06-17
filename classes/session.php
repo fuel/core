@@ -264,7 +264,7 @@ class Session
 	 */
 	public static function key($name = 'session_id')
 	{
-		return static::instance()->key($name);
+		return static::$_instance ? static::instance()->key($name) : null;
 	}
 
 	// --------------------------------------------------------------------
