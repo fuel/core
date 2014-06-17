@@ -109,7 +109,7 @@ class Session_Db extends \Session_Driver
 				else
 				{
 					// cookie present, but session record missing. force creation of a new session
-					logger('DEBUG', 'Error: Session cookie present but corresponding record is missing');
+					logger('DEBUG', 'Error: Session cookie with ID "'.$cookie[0].'" present but corresponding record is missing');
 					return $this->read(true);
 				}
 			}
