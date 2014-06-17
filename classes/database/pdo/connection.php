@@ -306,11 +306,30 @@ class Database_PDO_Connection extends \Database_Connection
 	 *
 	 * @param string $like
 	 *
-	 * @throws \FuelException
+	 * @return array
 	 */
 	public function list_tables($like = null)
 	{
-		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
+		$this->_connection or $this->connect();
+
+		$query = 'SHOW TABLES';
+
+		if (is_string($like))
+		{
+			$query .= ' LIKE ' . $this->quote($like);
+		}
+
+		$q = $this->_connection->prepare($query);
+		$q->execute();
+		$result = $q->fetchAll();
+
+		$tables = array();
+		foreach ($result as $row)
+		{
+			$tables[] = reset($row);
+		}
+
+		return $tables;
 	}
 
 	/**
