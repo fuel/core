@@ -803,13 +803,15 @@ class File
 	 * @param  string|null  custom mime type or null for file mime type
 	 * @param  string|File_Area|null  file area name, object or null for base area
 	 * @param  bool         delete the file after download when true
+	 * @param  string       disposition, must be 'attachment' or 'inline'
 	 */
-	public static function download($path, $name = null, $mime = null, $area = null, $delete = false)
+	public static function download($path, $name = null, $mime = null, $area = null, $delete = false, $disposition = 'attachment')
 	{
 		$info = static::file_info($path, $area);
 		$class = get_called_class();
 		empty($mime) or $info['mimetype'] = $mime;
 		empty($name) or $info['basename'] = $name;
+		in_array($disposition, array('inline', 'attachment')) or $disposition = 'attachment';
 
 		\Event::register('fuel-shutdown', function () use($info, $area, $class, $delete) {
 
@@ -827,12 +829,12 @@ class File
 			! ini_get('safe_mode') and set_time_limit(0);
 
 			header('Content-Type: '.$info['mimetype']);
-			header('Content-Disposition: attachment; filename="'.$info['basename'].'"');
-			header('Content-Description: File Transfer');
+			header('Content-Disposition: '.$disposition.'; filename="'.$info['basename'].'"');
+			$disposition == 'attachment' and header('Content-Description: File Transfer');
 			header('Content-Length: '.$info['size']);
 			header('Content-Transfer-Encoding: binary');
-			header('Expires: 0');
-			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			$disposition == 'attachment' and header('Expires: 0');
+			$disposition == 'attachment' and header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
 			while( ! feof($file))
 			{
