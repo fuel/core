@@ -813,7 +813,7 @@ class File
 		empty($name) or $info['basename'] = $name;
 		in_array($disposition, array('inline', 'attachment')) or $disposition = 'attachment';
 
-		\Event::register('fuel-shutdown', function () use($info, $area, $class, $delete) {
+		\Event::register('fuel-shutdown', function () use($info, $area, $class, $delete, $disposition) {
 
 			if ( ! $file = call_user_func(array($class, 'open_file'), @fopen($info['realpath'], 'rb'), LOCK_SH, $area))
 			{
