@@ -475,7 +475,7 @@ class Fieldset_Field
 	 *
 	 * @return  string
 	 */
-	public function build()
+	public function build($template = true)
 	{
 		$form = $this->fieldset()->form();
 
@@ -563,7 +563,7 @@ class Fieldset_Field
 			break;
 		}
 
-		if (empty($build_field) or $this->type == 'hidden')
+		if (empty($build_field) or $this->type == 'hidden' or $template === false)
 		{
 			return $build_field;
 		}
