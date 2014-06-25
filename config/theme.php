@@ -36,7 +36,7 @@ return array(
 	 * on the fly via Theme::add_path($path) or Theme::add_paths(array($path1, $path2));
 	 */
 	'paths' => array(
-		DOCROOT.'themes',
+		APPPATH.'themes',
 	),
 
 	/**
