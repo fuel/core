@@ -163,6 +163,9 @@ class Session_Db extends \Session_Driver
 			// record the last update time of the session
 			$this->keys['updated'] = $this->time->get_timestamp();
 
+			// add a random identifier, we need the payload to be absolutely unique
+			$this->flash[$this->config['flash_id'].'::__session_identifier__'] = array('state' => 'expire', 'value' => sha1(uniqid(rand(), true)));
+
 			// create the session record, and add the session payload
 			$session = $this->keys;
 			$session['payload'] = $this->_serialize(array($this->keys, $this->data, $this->flash));
