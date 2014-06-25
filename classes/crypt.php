@@ -190,7 +190,7 @@ class Crypt
 		{
 			$result |= ord($a[$i]) ^ ord($b[$i]);
 		}
-		return $result == 0;
+		return $result === 0;
 	}
 }
 
