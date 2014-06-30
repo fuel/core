@@ -540,4 +540,14 @@ class Input
 			static::$put_patch_delete = array();
 		}
 	}
+	
+	/**
+	 * Whether it is POST method
+	 * 
+	 * @return boolean
+	 */
+	public static function is_post()
+	{
+		return static::server('REQUEST_METHOD') === 'POST';
+	}
 }
