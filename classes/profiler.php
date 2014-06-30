@@ -66,7 +66,7 @@ class Profiler
 		if (static::$profiler)
 		{
 			static::$query['time'] = (static::$profiler->getMicroTime() - static::$query['time']) *1000;
-			array_push(static::$profiler->queries, static::$query);
+			static::$profiler->queries[] = static::$query;
 			static::$profiler->queryCount++;
 		}
 	}
