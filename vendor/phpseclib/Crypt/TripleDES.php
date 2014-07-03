@@ -56,13 +56,6 @@ namespace PHPSecLib;
  */
 
 /**
- * Include Crypt_DES
- */
-if (!class_exists('Crypt_DES')) {
-    include_once 'DES.php';
-}
-
-/**
  * Encrypt / decrypt using inner chaining
  *
  * Inner chaining is used by SSH-1 and is generally considered to be less secure then outer chaining (CRYPT_DES_MODE_CBC3).

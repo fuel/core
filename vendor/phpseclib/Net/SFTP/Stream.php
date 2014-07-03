@@ -154,10 +154,6 @@ class Net_SFTP_Stream
         if (defined('NET_SFTP_STREAM_LOGGING')) {
             echo "__construct()\r\n";
         }
-
-        if (!class_exists('Net_SFTP')) {
-            include_once 'Net/SFTP.php';
-        }
     }
 
     /**

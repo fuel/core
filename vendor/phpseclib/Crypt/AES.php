@@ -64,13 +64,6 @@ namespace PHPSecLib;
  * @link      http://phpseclib.sourceforge.net
  */
 
-/**
- * Include Crypt_Rijndael
- */
-if (!class_exists('Crypt_Rijndael')) {
-    include_once 'Rijndael.php';
-}
-
 /**#@+
  * @access public
  * @see Crypt_AES::encrypt()

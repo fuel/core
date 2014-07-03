@@ -68,9 +68,7 @@ namespace PHPSecLib;
  *
  * Base cipher class
  */
-if (!class_exists('Crypt_Base')) {
-    include_once 'Base.php';
-}
+$base = new Crypt_Base();
 
 /**#@+
  * @access private
