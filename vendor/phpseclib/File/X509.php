@@ -1,4 +1,7 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+namespace PHPSecLib;
 
 /**
  * Pure-PHP X.509 Parser
@@ -42,7 +45,7 @@
  * @link      http://phpseclib.sourceforge.net
  */
 
-use \phpseclib\Math\BigInteger;
+use \PHPSecLib\Math\BigInteger;
 
 /**
  * Include File_ASN1

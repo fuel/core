@@ -1,4 +1,7 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+namespace PHPSecLib;
 
 /**
  * Pure-PHP implementation of SSHv2.
@@ -67,7 +70,7 @@
  */
 
 // Used to do Diffie-Hellman key exchange and DSA/RSA signature verification.
-use \phpseclib\Math\BigInteger;
+use \PHPSecLib\Math\BigInteger;
 
 /**#@+
  * Execution Bitmap Masks

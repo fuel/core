@@ -1,4 +1,7 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+namespace PHPSecLib;
 
 /**
  * Pure-PHP implementation of SSHv1.
@@ -64,7 +67,7 @@
  * @link      http://phpseclib.sourceforge.net
  */
 
-use \phpseclib\Math\BigInteger;
+use \PHPSecLib\Math\BigInteger;
 
 /**#@+
  * Encryption Methods

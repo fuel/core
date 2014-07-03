@@ -1,4 +1,8 @@
 <?php
+/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
+
+namespace PHPSecLib;
+
 /**
  * Pure-PHP ssh-agent client.
  *
