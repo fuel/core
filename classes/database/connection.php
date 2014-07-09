@@ -659,7 +659,7 @@ abstract class Database_Connection
 			return $this->quote_identifier($value).' AS '.$this->quote_identifier($alias);
 		}
 
-		if (preg_match_all('/^["\'].*["\']$/', $value) !== false)
+		if (preg_match('/^(["\']).*\1$/m', $value))
 		{
 			return $value;
 		}
@@ -667,13 +667,12 @@ abstract class Database_Connection
 		if (strpos($value, '.') !== false)
 		{
 			// Split the identifier into the individual parts
-            // This is slightly broken, because a table or column name
-            // (or user-defined alias!) might legitimately contain a period.
+			// This is slightly broken, because a table or column name
+			// (or user-defined alias!) might legitimately contain a period.
 			$parts = explode('.', $value);
 
 			if ($prefix = $this->table_prefix())
 			{
-
 				// Get the offset of the table name, 2nd-to-last part
 				// This works for databases that can have 3 identifiers (Postgre)
 				$offset = count($parts) - 2;
