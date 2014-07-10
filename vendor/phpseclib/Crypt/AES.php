@@ -64,6 +64,11 @@ namespace PHPSecLib;
  * @link      http://phpseclib.sourceforge.net
  */
 
+/**
+ * Make sure we have the base loaded
+ */
+class_exists('PHPSecLib\Crypt_Base');
+
 /**#@+
  * @access public
  * @see Crypt_AES::encrypt()

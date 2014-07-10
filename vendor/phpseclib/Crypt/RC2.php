@@ -55,11 +55,9 @@ namespace PHPSecLib;
  */
 
 /**
- * Include Crypt_Base
- *
- * Base cipher class
+ * Make sure we have the base loaded
  */
-$base = new Crypt_Base();
+class_exists('PHPSecLib\Crypt_Base');
 
 /**#@+
  * @access public
