@@ -384,6 +384,22 @@ class Fieldset
 	}
 
 	/**
+	 * Delete a field instane
+	 *
+	 * @param   string  field name or null to fetch an array of all
+	 * @return  Fieldset  this fieldset, for chaining
+	 */
+	public function delete($name)
+	{
+		if (isset($this->field[$name]))
+		{
+			unset($this->field[$name]);
+		}
+
+		return $this;
+	}
+
+	/**
 	 * Get Field instance
 	 *
 	 * @param   string|null           field name or null to fetch an array of all
