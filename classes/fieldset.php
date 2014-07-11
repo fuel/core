@@ -384,7 +384,7 @@ class Fieldset
 	}
 
 	/**
-	 * Delete a field instane
+	 * Delete a field instance
 	 *
 	 * @param   string  field name or null to fetch an array of all
 	 * @return  Fieldset  this fieldset, for chaining
