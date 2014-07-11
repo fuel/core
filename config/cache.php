@@ -70,6 +70,11 @@ return array(
 	'redis'  => array(
 		'database'  => 'default'  // name of the redis database to use (as configured in config/db.php)
 	),
+
+	// specific configuration settings for the xcache driver
+	'xcache'  => array(
+		'cache_id'  => 'fuel',  // unique id to distinquish fuel cache items from others stored on the same server(s)
+	),
 );
 
 
