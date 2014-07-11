@@ -16,4 +16,4 @@ namespace Fuel\Core;
  * A Fuel Specific extension of the PHPUnit TestCase.  This will
  * be used for custom functionality in the future.
  */
-class TestCase extends \PHPUnit_Framework_TestCase { }
+abstract class TestCase extends \PHPUnit_Framework_TestCase { }
