@@ -11,7 +11,7 @@ namespace Fuel\Core;
  * @package   Fuel\Core
  *
  */
- 
+
 class Request_Curl extends \Request_Driver
 {
 	/**
@@ -153,7 +153,7 @@ class Request_Curl extends \Request_Driver
 		// Execute the request & and hide all output
 		$body = curl_exec($connection);
 		$this->response_info = curl_getinfo($connection);
-		$mime = isset($this->headers['Accept']) ? $this->headers['Accept'] : $this->response_info('content_type', 'text/plain');
+		$mime = $this->response_info('content_type', 'text/plain');
 
 		// Was header data requested?
 		$headers = array();
@@ -174,7 +174,7 @@ class Request_Curl extends \Request_Driver
 			}
 		}
 
-		$this->set_response($body, $this->response_info('http_code', 200), $mime, $headers);
+		$this->set_response($body, $this->response_info('http_code', 200), $mime, $headers, isset($this->headers['Accept']) ? $this->headers['Accept'] : null);
 
 		// Request failed
 		if ($body === false)
