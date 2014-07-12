@@ -70,11 +70,11 @@ class Router
 
 		if ($prepend)
 		{
-			\Arr::prepend(static::$routes, $name, new \Route($path, $options, $case_sensitive));
+			\Arr::prepend(static::$routes, $name, new \Route($path, $options, $case_sensitive, $name));
 			return;
 		}
 
-		static::$routes[$name] = new \Route($path, $options, $case_sensitive);
+		static::$routes[$name] = new \Route($path, $options, $case_sensitive, $name);
 	}
 
 	/**
