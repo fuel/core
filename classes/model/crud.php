@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -433,7 +433,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function __get($property)
 	{
-		if (isset($this->_data[$property]))
+		if (array_key_exists($property, $this->_data))
 		{
 			return $this->_sanitization_enabled ? \Security::clean($this->_data[$property], null, 'security.output_filter') : $this->_data[$property];
 		}
@@ -762,7 +762,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function offsetExists($offset)
 	{
-		return isset($this->_data[$offset]);
+		return array_key_exists($offset, $this->_data);
 	}
 
 	/**
@@ -784,7 +784,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function offsetGet($offset)
 	{
-		if (isset($this->_data[$offset]))
+		if (array_key_exists($offset, $this->_data))
 		{
 			return $this->_data[$offset];
 		}

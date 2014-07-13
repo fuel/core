@@ -94,7 +94,18 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 		// Get all of the passed values
 		$values = func_get_args();
 
-		$this->_values = array_merge($this->_values, $values);
+		// And process them
+		foreach ($values as $value)
+		{
+			if (is_array(reset($value)))
+			{
+				$this->_values = array_merge($this->_values, $value);
+			}
+			else
+			{
+				$this->_values[] = $value;
+			}
+		}
 
 		return $this;
 	}

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -475,7 +475,7 @@ class Validation
 
 		$output = call_fuel_func_array(reset($rule), array_merge(array($value), $params));
 
-		if ($output === false && $value !== false)
+		if ($output === false and ($value !== false or key($rule) == 'required'))
 		{
 			throw new \Validation_Error($field, $value, $rule, $params);
 		}
@@ -770,6 +770,24 @@ class Validation
 	}
 
 	/**
+	 * Match against an array of values
+	 *
+	 * @param   string
+	 * @param   array
+	 * @return  bool
+	 */
+	public function _validation_match_collection($val, $collection = array())
+	{
+		if ( ! is_array($collection))
+		{
+			$collection = func_get_args();
+			array_shift($collection);
+		}
+
+		return in_array($val, $collection);
+	}
+
+	/**
 	 * Minimum string length
 	 *
 	 * @param   string
@@ -903,9 +921,13 @@ class Validation
 			{
 				$flags = array('singlequotes', 'doublequotes');
 			}
+			elseif ($flags == 'slashes')
+			{
+				$flags = array('forwardslashes', 'backslashes');
+			}
 			elseif ($flags == 'all')
 			{
-				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'brackets', 'braces');
+				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'forwardslashes', 'backslashes', 'brackets', 'braces');
 			}
 			else
 			{
@@ -923,6 +945,8 @@ class Validation
 		$pattern .= in_array('commas', $flags) && ! in_array('punctuation', $flags) ? ',' : '';
 		$pattern .= in_array('punctuation', $flags) ? "\.,\!\?:;\&" : '';
 		$pattern .= in_array('dashes', $flags) ? '_\-' : '';
+		$pattern .= in_array('forwardslashes', $flags) ? '\/' : '';
+		$pattern .= in_array('backslashes', $flags) ? '\\\\' : '';
 		$pattern .= in_array('singlequotes', $flags) ? "'" : '';
 		$pattern .= in_array('doublequotes', $flags) ? "\"" : '';
 		$pattern .= in_array('brackets', $flags) ? "\(\)" : '';

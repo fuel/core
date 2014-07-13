@@ -329,7 +329,7 @@ $printarray = function($items, $depth, &$class, &$count) use(&$printarray)
 		{
 			$output .= '<b>'.\Security::htmlentities($value).'</b>';
 		}
-		$output .= str_repeat('&rsaquo;&nbsp;', $depth).$item.'</td></tr>';
+		$output .= str_repeat('&rsaquo;&nbsp;', $depth).\Security::htmlentities($item).'</td></tr>';
 		if($class == '') $class = 'pqp-alt'; else $class = '';
 		is_array($value) and $output .= $printarray($value, $depth + 1, $class, $count);
 		is_object($value) and $output .= $printarray($value, $depth + 1, $class, $count);
@@ -417,6 +417,7 @@ else {
 
 		$class = '';
 		foreach($output['logs']['console'] as $log) {
+			$log['data'] = \Security::htmlentities($log['data']);
 			$return_output .='<tr class="pqp-log-'.$log['type'].'">
 				<td class="pqp-type">'.$log['type'].'</td>
 				<td class="'.$class.'">';
@@ -490,7 +491,7 @@ else {
 			$return_output .='<tr>
 				<td class="'.$class.'">'.$query['sql'];
 			$return_output .='<em>';
-			$return_output .='Speed: <b>'.$query['time'].'</b>';
+			$return_output .='Connection name: <b>'.$query['dbname'].'</b><br />Speed: <b>'.$query['time'].'</b>';
 			$query['duplicate'] and $return_output .=' &middot; <b>DUPLICATE</b>';
 			if(isset($query['explain'])) {
 				$return_output .= '<br />Query analysis:';

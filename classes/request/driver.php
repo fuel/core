@@ -62,7 +62,7 @@ abstract class Request_Driver
 	/**
 	 * @var  bool  whether to attempt auto-formatting the response
 	 */
-	protected $auto_format = true;
+	protected $auto_format = false;
 
 	/**
 	 * @var  string  $method  request method
@@ -85,6 +85,7 @@ abstract class Request_Driver
 	 */
 	protected static $auto_detect_formats = array(
 		'application/xml' => 'xml',
+		'application/soap+xml' => 'xml',
 		'text/xml' => 'xml',
 		'application/json' => 'json',
 		'text/json' => 'json',
@@ -281,22 +282,86 @@ abstract class Request_Driver
 	}
 
 	/**
+	 * Validate if a given mime type is accepted according to an accept header
+	 *
+	 * @param  string  $mime
+	 * @param  string  $accept_header
+	 * @return bool
+	 */
+	protected function mime_in_header($mime, $accept_header)
+	{
+		// make sure we have input
+		if (empty($mime) or empty($accept_header))
+		{
+			// no header or no mime to check
+			return true;
+		}
+
+		// process the accept header and get a list of accepted mimes
+		$accept_mimes = array();
+		$accept_header = explode(',', $accept_header);
+		foreach ($accept_header as $accept_def)
+		{
+			$accept_def = explode(';', $accept_def);
+			$accept_def = trim($accept_def[0]);
+			if ( ! in_array($accept_def, $accept_mimes))
+			{
+				$accept_mimes[] = $accept_def;
+			}
+		}
+
+		// match on generic mime type
+		if (in_array('*/*', $accept_mimes))
+		{
+			return true;
+		}
+
+		// match on full mime type
+		if (in_array($mime, $accept_mimes))
+		{
+			return true;
+		}
+
+		// match on generic mime type
+		$mime = substr($mime, 0, strpos($mime, '/')).'/*';
+		if (in_array($mime, $accept_mimes))
+		{
+			return true;
+		}
+
+		// no match
+		return false;
+	}
+
+
+	/**
 	 * Creates the Response and optionally attempts to auto-format the output
 	 *
 	 * @param   string  $body
 	 * @param   int     $status
 	 * @param   string  $mime
 	 * @param   array   $headers
+	 * @param   string  $accept_header
 	 * @return  Response
+	 *
+	 * @throws OutOfRangeException if an accept header was specified, but the mime type isn't in it
 	 */
-	public function set_response($body, $status, $mime = null, $headers = array())
+	public function set_response($body, $status, $mime = null, $headers = array(), $accept_header = null)
 	{
+		// did we use an accept header? If so, validate the returned mimetype
+		if ( ! $this->mime_in_header($mime, $accept_header))
+		{
+			throw new \OutOfRangeException('The mimetype "'.$mime.'" of the returned response is not acceptable according to the accept header send.');
+		}
+
+		// do we have auto formatting enabled and can we format this mime type?
 		if ($this->auto_format and array_key_exists($mime, static::$auto_detect_formats))
 		{
 			$body = \Format::forge($body, static::$auto_detect_formats[$mime])->to_array();
 		}
 
 		$this->response = \Response::forge($body, $status, $headers);
+
 		return $this->response;
 	}
 

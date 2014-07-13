@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -319,7 +319,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	{
 		$id_path = $this->identifier_to_path( $this->identifier );
 		$file = static::$path.$id_path.'.cache';
-		if ( ! is_file($file))
+		if ( ! is_file($file) or ($size = filesize($file)) == 0)
 		{
 			return false;
 		}
@@ -334,7 +334,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 		while( ! flock($handle, LOCK_SH));
 
 		// read the session data
-		$payload = fread($handle, filesize($file));
+		$payload = fread($handle, $size);
 
 		//release the lock
 		flock($handle, LOCK_UN);

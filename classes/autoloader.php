@@ -6,14 +6,14 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
 /**
- * The Autloader is responsible for all class loading.  It allows you to define
+ * The Autoloader is responsible for all class loading.  It allows you to define
  * different load paths based on namespaces.  It also lets you set explicit paths
  * for classes to be loaded from.
  *
@@ -120,7 +120,7 @@ class Autoloader
 	 */
 	public static function add_class($class, $path)
 	{
-		static::$classes[$class] = $path;
+		static::$classes[strtolower($class)] = $path;
 	}
 
 	/**
@@ -133,7 +133,7 @@ class Autoloader
 	{
 		foreach ($classes as $class => $path)
 		{
-			static::$classes[$class] = $path;
+			static::$classes[strtolower($class)] = $path;
 		}
 	}
 
@@ -177,7 +177,7 @@ class Autoloader
 	{
 		foreach (static::$core_namespaces as $ns)
 		{
-			if (array_key_exists($ns_class = $ns.'\\'.$class, static::$classes))
+			if (array_key_exists(strtolower($ns_class = $ns.'\\'.$class), static::$classes))
 			{
 				return $ns_class;
 			}
@@ -231,19 +231,21 @@ class Autoloader
 			static::$auto_initialize = $class;
 		}
 
-		if (isset(static::$classes[$class]))
+		if (isset(static::$classes[strtolower($class)]))
 		{
-			include str_replace('/', DS, static::$classes[$class]);
-			static::init_class($class);
+			static::init_class($class, str_replace('/', DS, static::$classes[strtolower($class)]));
 			$loaded = true;
 		}
 		elseif ($full_class = static::find_core_class($class))
 		{
 			if ( ! class_exists($full_class, false) and ! interface_exists($full_class, false))
 			{
-				include static::prep_path(static::$classes[$full_class]);
+				include static::prep_path(static::$classes[strtolower($full_class)]);
 			}
-			class_alias($full_class, $class);
+			if ( ! class_exists($class, false))
+			{
+				class_alias($full_class, $class);
+			}
 			static::init_class($class);
 			$loaded = true;
 		}
@@ -264,8 +266,7 @@ class Autoloader
 						);
 						if (is_file($path))
 						{
-							require $path;
-							static::init_class($class);
+							static::init_class($class, $path);
 							$loaded = true;
 							break;
 						}
@@ -279,8 +280,7 @@ class Autoloader
 
 				if (is_file($path))
 				{
-					include $path;
-					static::init_class($class);
+					static::init_class($class, $path);
 					$loaded = true;
 				}
 			}
@@ -353,16 +353,50 @@ class Autoloader
 	 * it calls it.
 	 *
 	 * @param	string	the class name
+	 * @param	string	the file containing the class to include
 	 */
-	protected static function init_class($class)
+	protected static function init_class($class, $file = null)
 	{
-		if (static::$auto_initialize === $class)
+		// include the file if needed
+		if ($file)
 		{
-			static::$auto_initialize = null;
-			if (method_exists($class, '_init') and is_callable($class.'::_init'))
+			include $file;
+		}
+
+		// if the loaded file contains a class...
+		if (class_exists($class, false))
+		{
+			// call the classes static init if needed
+			if (static::$auto_initialize === $class)
 			{
-				call_user_func($class.'::_init');
+				static::$auto_initialize = null;
+				if (method_exists($class, '_init') and is_callable($class.'::_init'))
+				{
+					call_user_func($class.'::_init');
+				}
 			}
+		}
+
+		// or an interface...
+		elseif (interface_exists($class, false))
+		{
+			// nothing to do here
+		}
+
+		// or a trait if you're not on 5.3 anymore...
+		elseif (function_exists('trait_exists') and trait_exists($class, false))
+		{
+			// nothing to do here
+		}
+
+		// else something went wrong somewhere, barf and exit now
+		elseif ($file)
+		{
+			throw new \Exception('File "'.\Fuel::clean_path($file).'" does not contain class "'.$class.'"');
+		}
+		else
+		{
+			throw new \FuelException('Class "'.$class.'" is not defined');
 		}
 	}
 }

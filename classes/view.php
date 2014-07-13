@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -127,7 +127,7 @@ class View
 		}
 
 		// store the current request search paths to deal with out-of-context rendering
-		if (class_exists('Request', false) and $active = \Request::active() and \Request::main() != $active)
+		if (class_exists('Request', false) and $active = \Request::active() and \Request::main() !== $active)
 		{
 			$this->request_paths = $active->get_paths();
 		}

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -24,7 +24,7 @@ class Test_Str extends TestCase
 	public function truncate_provider()
 	{
 		return array(
-			array(15, 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'),
+			array(15, 'Lorem ipsum dolor sit amet, Пиочинаючюи adipiscing elit.'),
 		);
 	}
 
@@ -66,10 +66,6 @@ class Test_Str extends TestCase
 
 		$output = Str::truncate($string, $limit, '...', false);
 		$expected = '<h1>Lorem ipsum...';
-		$this->assertEquals($expected, $output);
-
-		$output = Str::truncate($string, $limit, '...', true);
-		$expected = '<h1>Lorem ipsum dol...</h1>';
 		$this->assertEquals($expected, $output);
 	}
 

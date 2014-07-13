@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -22,8 +22,12 @@ if ( ! function_exists('import'))
 	function import($path, $folder = 'classes')
 	{
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-		require_once COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
-
+		// load it ffrom the core if it exists
+		if (is_file(COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php'))
+		{
+			require_once COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
+		}
+		// if the app has an override (or a non-core file), load that too
 		if (is_file(APPPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php'))
 		{
 			require_once APPPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
@@ -126,7 +130,7 @@ if ( ! function_exists('array_to_attr'))
 				$property = $value;
 			}
 
-			$attr_str .= $property.'="'.$value.'" ';
+			$attr_str .= $property.'="'.str_replace('"', '&quot;', $value).'" ';
 		}
 
 		// We strip off the last space for return
@@ -146,12 +150,31 @@ if ( ! function_exists('html_tag'))
 {
 	function html_tag($tag, $attr = array(), $content = false)
 	{
-		$has_content = (bool) ($content !== false and $content !== null);
-		$html = '<'.$tag;
+		// list of void elements (tags that can not have content)
+		static $void_elements = array(
+			// html4
+			"area","base","br","col","hr","img","input","link","meta","param",
+			// html5
+			"command","embed","keygen","source","track","wbr",
+			// html5.1
+			"menuitem",
+		);
 
+		// construct the HTML
+		$html = '<'.$tag;
 		$html .= ( ! empty($attr)) ? ' '.(is_array($attr) ? array_to_attr($attr) : $attr) : '';
-		$html .= $has_content ? '>' : ' />';
-		$html .= $has_content ? $content.'</'.$tag.'>' : '';
+
+		// a void element?
+		if (in_array(strtolower($tag), $void_elements))
+		{
+			// these can not have content
+			$html .= ' />';
+		}
+		else
+		{
+			// add the content and close the tag
+			$html .= '>'.$content.'</'.$tag.'>';
+		}
 
 		return $html;
 	}

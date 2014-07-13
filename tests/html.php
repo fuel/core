@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.6
+ * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -20,6 +20,19 @@ namespace Fuel\Core;
  */
 class Test_Html extends TestCase
 {
+	public function setUp()
+	{
+		$this->old_url_suffix = Config::get('url_suffix');
+		$this->old_index_file = Config::get('index_file');
+		$this->old_base_url = Config::get('base_url');
+	}
+
+	public function tearDown()
+	{
+		Config::set('url_suffix', $this->old_url_suffix);
+		Config::set('index_file', $this->old_index_file);
+		Config::set('base_url', $this->old_base_url);
+	}
 
 	/**
 	 * Tests Html::meta()
@@ -58,8 +71,9 @@ class Test_Html extends TestCase
 	public function test_anchor()
 	{
 		// Query string tests
-		Config::set('url_suffix', '');
-		Config::set('index_file', '');
+		Config::set('url_suffix', null);
+		Config::set('index_file', null);
+		Config::set('base_url', null);
 
 		// External uri
 		$output = Html::anchor('http://google.com', 'Go to Google');
@@ -92,10 +106,6 @@ class Test_Html extends TestCase
 		$this->assertEquals($expected, $output);
 		$_SERVER['HTTP_HOST'] = $host;
 
-		// Get original values to reset once done
-		$index_file = Config::get('index_file');
-		$url_suffix = Config::get('url_suffix');
-
 		$output = Html::anchor('search?q=query', 'Search');
 		$expected = '<a href="search?q=query">Search</a>';
 		$this->assertEquals($expected, $output);
@@ -105,10 +115,6 @@ class Test_Html extends TestCase
 		$output = Html::anchor('search?q=query', 'Search');
 		$expected = '<a href="search.html?q=query">Search</a>';
 		$this->assertEquals($expected, $output);
-
-		// Reset to original values
-		Config::set('index_file', $index_file);
-		Config::set('url_suffix', $url_suffix);
 	}
 
 	/**

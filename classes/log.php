@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -51,9 +51,21 @@ class Log
 		try
 		{
 			// determine the name and location of the logfile
-			$rootpath = \Config::get('log_path').date('Y').'/';
-			$filepath = \Config::get('log_path').date('Y/m').'/';
-			$filename = $filepath.date('d').'.php';
+			$path     = \Config::get('log_path', APPPATH.'logs'.DS);
+			$filename = \Config::get('log_file', null);
+
+			if(empty($filename))
+			{
+				$rootpath = $path.date('Y').DS;
+				$filepath = $path.date('Y/m').DS;
+				$filename = $filepath.date('d').'.php';
+			}
+			else
+			{
+				$rootpath = $path;
+				$filepath = $path;
+				$filename = $path.$filename;
+			}
 
 			// get the required folder permissions
 			$permission = \Config::get('file.chmod.folders', 0777);

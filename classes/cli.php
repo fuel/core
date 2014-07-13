@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -28,6 +28,8 @@ class Cli
 	public static $readline_support = false;
 
 	public static $wait_msg = 'Press any key to continue...';
+
+	public static $nocolor = false;
 
 	protected static $args = array();
 
@@ -62,6 +64,9 @@ class Cli
 		'light_gray'	=> '47',
 	);
 
+	protected static $STDOUT;
+	protected static $STDERR;
+
 	/**
 	 * Static constructor.	Parses all the CLI params.
 	 */
@@ -86,6 +91,9 @@ class Cli
 		// Readline is an extension for PHP that makes interactive with PHP much more bash-like
 		// http://www.php.net/manual/en/readline.installation.php
 		static::$readline_support = extension_loaded('readline');
+
+		static::$STDERR = STDERR;
+		static::$STDOUT = STDOUT;
 	}
 
 	/**
@@ -240,7 +248,7 @@ class Cli
 				$extra_output = ' [ '.implode(', ', $options).' ]';
 			}
 
-			fwrite(STDOUT, $output.$extra_output.': ');
+			fwrite(static::$STDOUT, $output.$extra_output.': ');
 		}
 
 		// Read the input from keyboard.
@@ -285,7 +293,7 @@ class Cli
 			$text = static::color($text, $foreground, $background);
 		}
 
-		fwrite(STDOUT, $text.PHP_EOL);
+		fwrite(static::$STDOUT, $text.PHP_EOL);
 	}
 
 	/**
@@ -305,7 +313,7 @@ class Cli
 			$text = static::color($text, $foreground, $background);
 		}
 
-		fwrite(STDERR, $text.PHP_EOL);
+		fwrite(static::$STDERR, $text.PHP_EOL);
 	}
 
 	/**
@@ -333,7 +341,7 @@ class Cli
 
 			while ($time > 0)
 			{
-				fwrite(STDOUT, $time.'... ');
+				fwrite(static::$STDOUT, $time.'... ');
 				sleep(1);
 				$time--;
 			}
@@ -391,7 +399,7 @@ class Cli
 			? static::new_line(40)
 
 			// Anything with a flair of Unix will handle these magic characters
-			: fwrite(STDOUT, chr(27)."[H".chr(27)."[2J");
+			: fwrite(static::$STDOUT, chr(27)."[H".chr(27)."[2J");
 	}
 
 	/**
@@ -407,6 +415,11 @@ class Cli
 	public static function color($text, $foreground, $background = null, $format=null)
 	{
 		if (static::is_windows() and ! \Input::server('ANSICON'))
+		{
+			return $text;
+		}
+
+		if (static::$nocolor)
 		{
 			return $text;
 		}
@@ -462,5 +475,54 @@ class Cli
 	    }
 	}
 
+	/**
+	 * Redirect STDERR writes to this file or fh
+	 *
+	 * Call with no argument to retrieve the current filehandle.
+	 *
+	 * Is not smart about opening the file if it's a string. Existing files will be truncated.
+	 *
+	 * @param  resource|string  $fh  Opened filehandle or string filename.
+	 *
+	 * @return resource
+	 */
+	public static function stderr($fh = null)
+	{
+		$orig = static::$STDERR;
+
+		if (! is_null($fh)) {
+			if (is_string($fh)) {
+				$fh = fopen($fh, "w");
+			}
+			static::$STDERR = $fh;
+		}
+
+		return $orig;
+	}
+
+	/**
+	 * Redirect STDOUT writes to this file or fh
+	 *
+	 * Call with no argument to retrieve the current filehandle.
+	 *
+	 * Is not smart about opening the file if it's a string. Existing files will be truncated.
+	 *
+	 * @param  resource|string|null  $fh  Opened filehandle or string filename.
+	 *
+	 * @return resource
+	 */
+	public static function stdout($fh = null)
+	{
+		$orig = static::$STDOUT;
+
+		if (! is_null($fh)) {
+			if (is_string($fh)) {
+				$fh = fopen($fh, "w");
+			}
+			static::$STDOUT = $fh;
+		}
+
+		return $orig;
+	}
 }
 

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -72,10 +72,13 @@ return array(
 	'post_cookie_name'	=> '',
 
 	// for requests in which you don't want to use cookies, use an HTTP header by this name to pass the cookie to the session driver
-	'header_header_name' => 'Session-Id',
+	'http_header_name' => 'Session-Id',
 
 	// if false, no cookie will be added to the response send back to the client
 	'enable_cookie'	=> true,
+
+	// if true, session data will be synced with PHP's native $_SESSION, to allow easier integration of third-party components
+	'native_emulation'	=> false,
 
 	/**
 	 * specific driver configurations. to override a global setting, just add it to the driver config with a different value

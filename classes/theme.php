@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -128,7 +128,7 @@ class Theme
 		if (empty($config))
 		{
 			\Config::load('theme', true, false, true);
-			$config = \Config::get('theme', false);
+			$config = \Config::get('theme', array());
 		}
 
 		// Order of this addition is important, do not change this.
@@ -219,10 +219,26 @@ class Theme
 	 * @param   string  Method to execute
 	 * @param   bool    $auto_filter  Auto filter the view data
 	 * @return  View    New View object
+	 *
+	 * @deprecated 1.8
 	 */
 	public function viewmodel($view, $method = 'view', $auto_filter = null)
 	{
-		return \ViewModel::forge($view, $method, $auto_filter, $this->find_file($view));
+		return \Viewmodel::forge($view, $method, $auto_filter, $this->find_file($view));
+	}
+
+	/**
+	 * Loads a presenter, and have it use the view from the currently active theme,
+	 * the fallback theme, or the standard FuelPHP cascading file system
+	 *
+	 * @param   string  Presenter classname without Presenter_ prefix or full classname
+	 * @param   string  Method to execute
+	 * @param   bool    $auto_filter  Auto filter the view data
+	 * @return  View    New View object
+	 */
+	public function presenter($view, $method = 'view', $auto_filter = null)
+	{
+		return \Presenter::forge($view, $method, $auto_filter, $this->find_file($view));
 	}
 
 	/**
@@ -338,9 +354,9 @@ class Theme
 	/**
 	 * Sets a partial for the current template
 	 *
-	 * @param   string  				$section   Name of the partial section in the template
-	 * @param   string|View|ViewModel	$view      View, or name of the view
-	 * @param   bool					$overwrite If true overwrite any already defined partials for this section
+	 * @param   string  						$section   Name of the partial section in the template
+	 * @param   string|View|ViewModel|Presenter	$view      View, or name of the view
+	 * @param   bool							$overwrite If true overwrite any already defined partials for this section
 	 * @return  View
 	 */
 	public function set_partial($section, $view, $overwrite = false)
@@ -418,11 +434,11 @@ class Theme
 	/**
 	 * Sets a chrome for a partial
 	 *
-	 * @param   string  				$section	Name of the partial section in the template
-	 * @param   string|View|ViewModel	$view   	chrome View, or name of the view
-	 * @param   string  				$var		Name of the variable in the chome that will output the partial
+	 * @param   string  						$section	Name of the partial section in the template
+	 * @param   string|View|ViewModel|Presenter	$view   	chrome View, or name of the view
+	 * @param   string  						$var		Name of the variable in the chome that will output the partial
 	 *
-	 * @return  View|ViewModel, the view partial
+	 * @return  View|ViewModel|Presenter, the view partial
 	 */
 	public function set_chrome($section, $view, $var = 'content')
 	{
@@ -440,9 +456,9 @@ class Theme
 	/**
 	 * Get a set chrome view
 	 *
-	 * @param   string  				$section	Name of the partial section in the template
-	 * @param   string|View|ViewModel	$view   	chrome View, or name of the view
-	 * @param   string  				$var		Name of the variable in the chome that will output the partial
+	 * @param   string  						$section	Name of the partial section in the template
+	 * @param   string|View|ViewModel|Presenter	$view   	chrome View, or name of the view
+	 * @param   string  						$var		Name of the variable in the chome that will output the partial
 	 *
 	 * @return  void
 	 */
@@ -657,7 +673,7 @@ class Theme
 			throw new \ThemeException(sprintf('Could not find theme "%s".', $theme['name']));
 		}
 
-		if ( ! ($file = $this->find_file($this->config['info_file_name'], array($theme['name']))))
+		if ( ! ($file = $this->find_file($this->config['info_file_name'], array($theme))))
 		{
 			throw new \ThemeException(sprintf('Theme "%s" is missing "%s".', $theme['name'], $this->config['info_file_name']));
 		}

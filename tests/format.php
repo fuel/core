@@ -3,10 +3,10 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.6
+ * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -20,6 +20,37 @@ namespace Fuel\Core;
  */
 class Test_Format extends TestCase
 {
+	protected function setUp()
+	{
+		Config::load('format', true);
+		Config::set('format', array(
+			'csv' => array(
+				'import' => array(
+					'delimiter' => ',',
+					'enclosure' => '"',
+					'newline'   => "\n",
+					'escape'    => '\\',
+				),
+				'export' => array(
+					'delimiter' => ',',
+					'enclosure' => '"',
+					'newline'   => "\n",
+					'escape'    => '\\',
+				),
+				'regex_newline'   => "\n",
+				'enclose_numbers' => true,
+			),
+			'xml' => array(
+				'basenode' => 'xml',
+				'use_cdata' => false,
+			),
+			'json' => array(
+				'encode' => array(
+					'options' => JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP,
+				)
+			)
+		));
+	}
 
 	public static function array_provider()
 	{
@@ -37,6 +68,51 @@ line 2","Value 3"',
 		);
 	}
 
+	public static function array_provider2()
+	{
+		return array(
+			array(
+				array(
+					array('First' => 'Jane','Last' => 'Doe','Email' => 'jane@doe.com','Nr1' => 3434534,'Nr2' => 1,'Remark' => "asdfasdf\nasdfasdf",'Nr3' => 23432),
+					array('First' => 'John','Last' => 'Doe','Email' => 'john@doe.com','Nr1' => 52939494,'Nr2' => 1,'Remark' => 'dfdfdf','Nr3' => 35353),
+				),
+				'"First","Last","Email","Nr1","Nr2","Remark","Nr3"
+"Jane","Doe","jane@doe.com",3434534,1,"asdfasdf'."\n".'asdfasdf",23432
+"John","Doe","john@doe.com",52939494,1,"dfdfdf",35353',
+			),
+		);
+	}
+
+	public static function array_provider3()
+	{
+		return array(
+			array(
+				array(
+					array('First' => 'Jane','Last' => 'Doe','Email' => 'jane@doe.com','Nr1' => 3434534,'Nr2' => 1,'Remark' => "asdfasdf\nasdfasdf",'Nr3' => 23432),
+					array('First' => 'John','Last' => 'Doe','Email' => 'john@doe.com','Nr1' => 52939494,'Nr2' => 1,'Remark' => 'dfdfdf','Nr3' => 35353),
+				),
+				'First;Last;Email;Nr1;Nr2;Remark;Nr3
+Jane;Doe;jane@doe.com;3434534;1;asdfasdf'."\n".'asdfasdf;23432
+John;Doe;john@doe.com;52939494;1;dfdfdf;35353',
+			),
+		);
+	}
+
+	public static function array_provider4()
+	{
+		return array(
+			array(
+				array(
+					array(0 => 'Value 1', 1 => 35, 2 => 123123),
+					array(0 => 'Value 1', 1 => "Value\nline 2", 2 => 'Value 3'),
+				),
+				'"Value 1","35","123123"
+"Value 1","Value
+line 2","Value 3"',
+			),
+		);
+	}
+
 	/**
 	 * Test for Format::forge($foo, 'csv')->to_array()
 	 *
@@ -46,7 +122,49 @@ line 2","Value 3"',
 	public function test_from_csv($array, $csv)
 	{
 		$this->assertEquals($array, Format::forge($csv, 'csv')->to_array());
+	}
 
+	/**
+	 * Test for Format::forge($foo, 'csv')->to_array()
+	 *
+	 * @test
+	 * @dataProvider array_provider2
+	 */
+	public function test_from_csv2($array, $csv)
+	{
+		$this->assertEquals($array, Format::forge($csv, 'csv')->to_array());
+	}
+
+	/**
+	 * Test for Format::forge($foo, 'csv')->to_array() with different delimiter and no enclosures
+	 *
+	 * @test
+	 * @dataProvider array_provider3
+	 */
+	public function test_from_csv3($array, $csv)
+	{
+		\Config::set('format.csv.import.enclosure', '');
+		\Config::set('format.csv.import.delimiter', ';');
+		\Config::set('format.csv.export.enclosure', '');
+		\Config::set('format.csv.export.delimiter', ';');
+
+		$this->assertEquals($array, Format::forge($csv, 'csv')->to_array());
+
+		\Config::set('format.csv.import.enclosure', '"');
+		\Config::set('format.csv.import.delimiter', ',');
+		\Config::set('format.csv.export.enclosure', '"');
+		\Config::set('format.csv.export.delimiter', ',');
+	}
+
+	/**
+	 * Test for Format::forge($foo, 'csv')->to_array() without CSV headers
+	 *
+	 * @test
+	 * @dataProvider array_provider4
+	 */
+	public function test_from_csv4($array, $csv)
+	{
+		$this->assertEquals($array, Format::forge($csv, 'csv', false)->to_array());
 	}
 
 	/**
@@ -58,6 +176,38 @@ line 2","Value 3"',
 	public function test_to_csv($array, $csv)
 	{
 		$this->assertEquals($csv, Format::forge($array)->to_csv());
+	}
+
+	/**
+	 * Test for Format::forge($foo)->to_csv() without delimiting numbers
+	 *
+	 * @test
+	 * @dataProvider array_provider2
+	 */
+	public function test_to_csv2($array, $csv)
+	{
+		$this->assertEquals($csv, Format::forge($array)->to_csv(null, null, false));
+	}
+
+	/**
+	 * Test for Format::forge($foo)->to_csv() with different delimiter and no enclosures
+	 *
+	 * @test
+	 * @dataProvider array_provider3
+	 */
+	public function test_to_csv3($array, $csv)
+	{
+		\Config::set('format.csv.import.enclosure', '');
+		\Config::set('format.csv.import.delimiter', ';');
+		\Config::set('format.csv.export.enclosure', '');
+		\Config::set('format.csv.export.delimiter', ';');
+
+		$this->assertEquals($csv, Format::forge($array)->to_csv());
+
+		\Config::set('format.csv.import.enclosure', '"');
+		\Config::set('format.csv.import.delimiter', ',');
+		\Config::set('format.csv.export.enclosure', '"');
+		\Config::set('format.csv.export.delimiter', ',');
 	}
 
 	/**
@@ -303,6 +453,7 @@ line 2","Value 3"',
 
 		$this->assertEquals($expected, $data);
 	}
+
 	/**
 	 * Test for Format::forge($foo)->to_json()
 	 *
@@ -319,7 +470,7 @@ line 2","Value 3"',
 					'apos' => 'McDonald\'s',
 					'quot' => '"test"',
 					'amp' => 'M&M',
-					
+
 				)
 			)
 		);
@@ -327,5 +478,49 @@ line 2","Value 3"',
 		$expected = '{"articles":[{"title":"test","author":"foo","tag":"\u003Ctag\u003E","apos":"McDonald\u0027s","quot":"\u0022test\u0022","amp":"M\u0026M"}]}';
 
 		$this->assertEquals($expected, Format::forge($array)->to_json());
+
+		// pretty json
+		$expected = '{
+	"articles": [
+		{
+			"title": "test",
+			"author": "foo",
+			"tag": "\u003Ctag\u003E",
+			"apos": "McDonald\u0027s",
+			"quot": "\u0022test\u0022",
+			"amp": "M\u0026M"
+		}
+	]
+}';
+		$this->assertEquals($expected, Format::forge($array)->to_json(null, true));
+
+		// change config options
+		$config = \Config::get('format.json.encode.options');
+		\Config::set('format.json.encode.options', 0);
+
+		$expected = <<<EOD
+{"articles":[{"title":"test","author":"foo","tag":"<tag>","apos":"McDonald's","quot":"\"test\"","amp":"M&M"}]}
+EOD;
+		$this->assertEquals($expected, Format::forge($array)->to_json());
+
+		// pretty json
+		$expected = <<<EOD
+{
+	"articles": [
+		{
+			"title": "test",
+			"author": "foo",
+			"tag": "<tag>",
+			"apos": "McDonald's",
+			"quot": "\"test\"",
+			"amp": "M&M"
+		}
+	]
+}
+EOD;
+		$this->assertEquals($expected, Format::forge($array)->to_json(null, true));
+
+		// restore config options
+		\Config::set('format.json.encode.options', $config);
 	}
 }

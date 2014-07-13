@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -132,6 +132,7 @@ class Pagination
 		'show_first'              => false,
 		'show_last'               => false,
 		'pagination_url'          => null,
+		'link_offset'             => 0.5,
 	);
 
 	/**
@@ -234,6 +235,8 @@ class Pagination
 		}
 		else
 		{
+			$value = $this->_validate($name, $value);
+
 			if (array_key_exists($name, $this->config))
 			{
 				$this->config[$name] = $value;
@@ -295,13 +298,32 @@ class Pagination
 
 		$html = '';
 
-		// let's get the starting page number, this is determined using num_links
-		$start = (($this->config['calculated_page'] - $this->config['num_links']) > 0) ? $this->config['calculated_page'] - ($this->config['num_links'] - 1) : 1;
+		// calculate start- and end page numbers
+		$start = $this->config['calculated_page'] - floor($this->config['num_links'] * $this->config['link_offset']);
+		$end = $this->config['calculated_page'] + floor($this->config['num_links'] * ( 1 - $this->config['link_offset']));
 
-		// let's get the ending page number
-		$end = (($this->config['calculated_page'] + $this->config['num_links']) < $this->config['total_pages']) ? $this->config['calculated_page'] + $this->config['num_links'] : $this->config['total_pages'];
+		// adjust for the first few pages
+		if ($start < 1)
+		{
+			$end -= $start - 1;
+			$start = 1;
+		}
 
-		for($i = $start; $i <= $end; $i++)
+		// make sure we don't overshoot the current page due to rounding issues
+		if ($end < $this->config['calculated_page'])
+		{
+			$start++;
+			$end++;
+		}
+
+		// make sure we don't overshoot the total
+		if ($end > $this->config['total_pages'])
+		{
+			$start = max(1, $start - $end + $this->config['total_pages']);
+			$end = $this->config['total_pages'];
+		}
+
+		for($i = intval($start); $i <= intval($end); $i++)
 		{
 			if ($this->config['calculated_page'] == $i)
 			{
@@ -581,7 +603,7 @@ class Pagination
 			}
 
 			// re-assemble the url
-			$query = empty($url['query']) ? '' : '?'.preg_replace('/%7Bpage%7D/', '{page}', http_build_query($url['query']));
+			$query = empty($url['query']) ? '' : '?'.preg_replace('/%7Bpage%7D/', '{page}', http_build_query($url['query'], '', '&amp;'));
 			unset($url['query']);
 			empty($url['scheme']) or $url['scheme'] .= '://';
 			empty($url['port']) or $url['host'] .= ':';
@@ -592,4 +614,75 @@ class Pagination
 		return str_replace('{page}', $page, $this->config['pagination_url']);
 	}
 
+	/**
+	 * Validate the input configuration
+	 */
+	protected function _validate($name, $value)
+	{
+ 		switch ($name)
+		{
+			case 'offset':
+			case 'total_items':
+				// make sure it's an integer
+				if ($value != intval($value))
+				{
+					$value = 0;
+				}
+				// and that it's within bounds
+				$value = max(0, $value);
+			break;
+
+			// integer or string
+			case 'uri_segment':
+				if (is_numeric($value))
+				{
+					// make sure it's an integer
+					if ($value != intval($value))
+					{
+						$value = 1;
+					}
+					// and that it's within bounds
+					$value = max(1, $value);
+				}
+			break;
+
+			// validate integer values
+			case 'current_page':
+			case 'per_page':
+			case 'limit':
+			case 'total_pages':
+			case 'num_links':
+				// make sure it's an integer
+				if ($value != intval($value))
+				{
+					$value = 1;
+				}
+				// and that it's within bounds
+				$value = max(1, $value);
+			break;
+
+			// validate booleans
+			case 'show_first':
+			case 'show_last':
+				if ( ! is_bool($value))
+				{
+					$value = (bool) $value;
+				}
+			break;
+
+			// validate the link offset, and adjust if needed
+			case 'link_offset':
+				// make sure we have a fraction between 0 and 1
+				if ($value > 1)
+				{
+					$value = $value / 100;
+				}
+
+				// and that it's within bounds
+				$value = max(0.01, min($value, 0.99));
+			break;
+		}
+
+		return $value;
+	}
 }

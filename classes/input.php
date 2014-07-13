@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -504,8 +504,8 @@ class Input
 					$headers[$key] = $value;
 				}
 
-				$value = static::server('Content-Type') and $headers['Content-Type'] = $value;
-				$value = static::server('Content-Length') and $headers['Content-Length'] = $value;
+				$value = static::server('Content_Type', static::server('Content-Type')) and $headers['Content-Type'] = $value;
+				$value = static::server('Content_Length', static::server('Content-Length')) and $headers['Content-Length'] = $value;
 			}
 			else
 			{

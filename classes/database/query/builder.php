@@ -194,10 +194,11 @@ abstract class Database_Query_Builder extends \Database_Query
 		{
 			list ($column, $direction) = $group;
 
+			$direction = strtoupper($direction);
 			if ( ! empty($direction))
 			{
 				// Make the direction uppercase
-				$direction = ' '.strtoupper($direction);
+				$direction = ' '.($direction == 'ASC' ? 'ASC' : 'DESC');
 			}
 
 			$sort[] = $db->quote_identifier($column).$direction;

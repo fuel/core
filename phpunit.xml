@@ -19,5 +19,8 @@
 		<testsuite name="app">
 			<directory suffix=".php">../app/tests</directory>
 		</testsuite>
+		<testsuite name="modules">
+			<directory suffix=".php">../app/modules/*/tests</directory>
+		</testsuite>
 	</testsuites>
 </phpunit>

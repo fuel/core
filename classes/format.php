@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -33,11 +33,12 @@ class Format
 	 *
 	 * @param   mixed  general date to be converted
 	 * @param   string  data format the file was provided in
+	 * @param   mixed  additional parameter that can be passed on to a 'from' method
 	 * @return  Format
 	 */
-	public static function forge($data = null, $from_type = null)
+	public static function forge($data = null, $from_type = null, $param = null)
 	{
-		return new static($data, $from_type);
+		return new static($data, $from_type, $param);
 	}
 
 	/**
@@ -52,8 +53,13 @@ class Format
 
 	/**
 	 * Do not use this directly, call forge()
+	 *
+	 * @param   mixed  general date to be converted
+	 * @param   string  data format the file was provided in
+	 * @param   mixed  additional parameter that can be passed on to a 'from' method
+	 * @return  Format
 	 */
-	public function __construct($data = null, $from_type = null)
+	public function __construct($data = null, $from_type = null, $param = null)
 	{
 		// If the provided data is already formatted we should probably convert it to an array
 		if ($from_type !== null)
@@ -67,7 +73,7 @@ class Format
 
 			if (method_exists($this, '_from_' . $from_type))
 			{
-				$data = call_user_func(array($this, '_from_' . $from_type), $data);
+				$data = call_user_func_array(array($this, '_from_' . $from_type), array($data, $param));
 			}
 
 			else
@@ -210,21 +216,28 @@ class Format
 	 *
 	 * @param   mixed   $data
 	 * @param   mixed   $delimiter
+	 * @param   mixed   $enclose_numbers
+	 * @param   array   $headings  Custom headings to use
 	 * @return  string
 	 */
-	public function to_csv($data = null, $delimiter = null)
+	public function to_csv($data = null, $delimiter = null, $enclose_numbers = null, array $headings = array())
 	{
 		// csv format settings
-		$newline = \Config::get('format.csv.export.newline', \Config::get('format.csv.newline', "\n"));
-		$delimiter or $delimiter = \Config::get('format.csv.export.delimiter', \Config::get('format.csv.delimiter', ','));
-		$enclosure = \Config::get('format.csv.export.enclosure', \Config::get('format.csv.enclosure', '"'));
-		$escape = \Config::get('format.csv.export.escape', \Config::get('format.csv.escape', '"'));
+		$newline = \Config::get('format.csv.newline', \Config::get('format.csv.export.newline', "\n"));
+		$delimiter or $delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.export.delimiter', ','));
+		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.export.enclosure', '"'));
+		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.export.escape', '\\'));
+		is_null($enclose_numbers) and $enclose_numbers = \Config::get('format.csv.delimit_numbers',  true);
 
-		// escape function
-		$escaper = function($items) use($enclosure, $escape) {
-			return array_map(function($item) use($enclosure, $escape){
-				return str_replace($enclosure, $escape.$enclosure, $item);
-			}, $items);
+		// escape, delimit and enclose function
+		$escaper = function($items, $enclose_numbers) use($enclosure, $escape, $delimiter) {
+			return 	implode($delimiter, array_map(function($item) use($enclosure, $escape, $delimiter, $enclose_numbers) {
+				if ( ! is_numeric($item) or $enclose_numbers)
+				{
+					$item = $enclosure.str_replace($enclosure, $escape.$enclosure, $item).$enclosure;
+				}
+				return $item;
+			}, $items));
 		};
 
 		if ($data === null)
@@ -238,31 +251,34 @@ class Format
 		}
 
 		// Multi-dimensional array
-		if (is_array($data) and \Arr::is_multi($data))
+		if (empty($headings))
 		{
-			$data = array_values($data);
-
-			if (\Arr::is_assoc($data[0]))
+			if (is_array($data) and \Arr::is_multi($data))
 			{
-				$headings = array_keys($data[0]);
+				$data = array_values($data);
+
+				if (\Arr::is_assoc($data[0]))
+				{
+					$headings = array_keys($data[0]);
+				}
+				else
+				{
+					$headings = array_shift($data);
+				}
 			}
+			// Single array
 			else
 			{
-				$headings = array_shift($data);
+				$headings = array_keys((array) $data);
+				$data = array($data);
 			}
 		}
-		// Single array
-		else
-		{
-			$headings = array_keys((array) $data);
-			$data = array($data);
-		}
 
-		$output = $enclosure.implode($enclosure.$delimiter.$enclosure, $escaper($headings)).$enclosure.$newline;
+		$output = $escaper($headings, true).$newline;
 
 		foreach ($data as $row)
 		{
-			$output .= $enclosure.implode($enclosure.$delimiter.$enclosure, $escaper((array) $row)).$enclosure.$newline;
+			$output .= $escaper($row, $enclose_numbers).$newline;
 		}
 
 		return rtrim($output, $newline);
@@ -285,7 +301,7 @@ class Format
 		// To allow exporting ArrayAccess objects like Orm\Model instances they need to be
 		// converted to an array first
 		$data = (is_array($data) or is_object($data)) ? $this->to_array($data) : $data;
-		return $pretty ? static::pretty_json($data) : json_encode($data, \Config::get('format.json.encode.option', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
+		return $pretty ? static::pretty_json($data) : json_encode($data, \Config::get('format.json.encode.options', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
 	}
 
 	/**
@@ -365,7 +381,6 @@ class Format
 	 */
 	protected function _from_xml($string, $recursive = false)
 	{
-
 		// If it forged with 'xml:ns'
 		if ( ! $this->ignore_namespaces)
 		{
@@ -395,13 +410,20 @@ class Format
 		}
 
 		$_arr = is_string($string) ? simplexml_load_string($string, 'SimpleXMLElement', LIBXML_NOCDATA) : $string;
-		$arr = array();
 
 		// Convert all objects SimpleXMLElement to array recursively
+		$arr = array();
 		foreach ((array)$_arr as $key => $val)
 		{
 			$this->ignore_namespaces or $key = \Arr::get($escape_keys, $key, $key);
-			$arr[$key] = (is_array($val) or is_object($val)) ? $this->_from_xml($val, true) : $val;
+			if ( ! $val instanceOf \SimpleXMLElement or $val->count() or $val->attributes())
+			{
+				$arr[$key] = (is_array($val) or is_object($val)) ? $this->_from_xml($val, true) : $val;
+			}
+			else
+			{
+				$arr[$val->getName()] = null;
+			}
 		}
 
 		return $arr;
@@ -427,31 +449,60 @@ class Format
 	 * Import CSV data
 	 *
 	 * @param   string  $string
+	 * @param   bool    $no_headings
 	 * @return  array
 	 */
-	protected function _from_csv($string)
+	protected function _from_csv($string, $no_headings = false)
 	{
 		$data = array();
 
-		$rows = preg_split('/(?<='.preg_quote(\Config::get('format.csv.import.enclosure', \Config::get('format.csv.enclosure', '"'))).')'.\Config::get('format.csv.regex_newline', '\n').'/', trim($string));
-
 		// csv config
-		$delimiter = \Config::get('format.csv.import.delimiter', \Config::get('format.csv.delimiter', ','));
-		$enclosure = \Config::get('format.csv.import.enclosure', \Config::get('format.csv.enclosure', '"'));
-		$escape = \Config::get('format.csv.import.escape', \Config::get('format.csv.escape', '"'));
+		$newline = \Config::get('format.csv.regex_newline', "\n");
+		$delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.import.delimiter', ','));
+		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.import.escape', '"'));
+		// have to do this in two steps, empty string is a valid value for enclosure!
+		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.import.enclosure', null));
+		$enclosure === null and $enclosure = '"';
+
+		if (empty($enclosure))
+		{
+			$rows = preg_split('/(['.$newline.'])/m', trim($string), -1, PREG_SPLIT_NO_EMPTY);
+		}
+		else
+		{
+			$rows = preg_split('/(?<=[0-9'.preg_quote($enclosure).'])'.$newline.'/', trim($string));
+		}
 
 		// Get the headings
-		$headings = str_replace($escape.$enclosure, $enclosure, str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape));
+		if ($no_headings !== false)
+		{
+			$headings = str_replace($escape.$enclosure, $enclosure, str_getcsv(array_shift($rows), $delimiter, $enclosure, $escape));
+			$headcount = count($headings);
+		}
 
+		// Process the rows
+		$incomplete = '';
 		foreach ($rows as $row)
 		{
-			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($row, $delimiter, $enclosure, $escape));
+			// process the row
+			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.($incomplete?$newline:'').$row, $delimiter, $enclosure, $escape));
 
-			if (count($data_fields) == count($headings))
+			// if we didn't have headers, the first row determines the number of fields
+			if ( ! isset($headcount))
 			{
-				$data[] = array_combine($headings, $data_fields);
+				$headcount = count($data_fields);
 			}
 
+			// finish the row if the have the correct field count, otherwise add the data to the next row
+			if (count($data_fields) == $headcount)
+			{
+				$data[] = $no_headings === false ? $data_fields : array_combine($headings, $data_fields);
+				$incomplete = '';
+			}
+			else
+			{
+				$incomplete = $row;
+			}
 		}
 
 		return $data;
@@ -488,7 +539,7 @@ class Format
 	 */
 	protected static function pretty_json($data)
 	{
-		$json = json_encode($data, \Config::get('format.json.encode.option', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
+		$json = json_encode($data, \Config::get('format.json.encode.options', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP));
 
 		if ( ! $json)
 		{

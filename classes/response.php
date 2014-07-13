@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -68,7 +68,7 @@ class Response
 		424 => 'Failed Dependency',
 		426 => 'Upgrade Required',
 		428 => 'Precondition Required',
-		428 => 'Too Many Requests',
+		429 => 'Too Many Requests',
 		431 => 'Request Header Fields Too Large',
 		500 => 'Internal Server Error',
 		501 => 'Not Implemented',

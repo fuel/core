@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -42,6 +42,13 @@ register_shutdown_function(function ()
 	// reset the autoloader
 	\Autoloader::_reset();
 
+	// if we have sessions loaded, and native session emulation active
+	if (\Config::get('session.native_emulation', false))
+	{
+		// close the name session
+		session_id() and session_write_close();
+	}
+
 	// make sure we're having an output filter so we can display errors
 	// occuring before the main config file is loaded
 	\Config::get('security.output_filter', null) or \Config::set('security.output_filter', 'Security::htmlentities');
@@ -61,6 +68,10 @@ register_shutdown_function(function ()
 			\Cli::error("Error: ".$e->getMessage()." in ".$e->getFile()." on ".$e->getLine());
 			\Cli::beep();
 			exit(1);
+		}
+		else
+		{
+			logger(\Fuel::L_ERROR, 'shutdown - ' . $e->getMessage()." in ".$e->getFile()." on ".$e->getLine());
 		}
 	}
 	return \Error::shutdown_handler();
@@ -124,6 +135,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Cache_Storage_File'        => COREPATH.'classes/cache/storage/file.php',
 		'Fuel\\Core\\Cache_Storage_Memcached'   => COREPATH.'classes/cache/storage/memcached.php',
 		'Fuel\\Core\\Cache_Storage_Redis'       => COREPATH.'classes/cache/storage/redis.php',
+		'Fuel\\Core\\Cache_Storage_Xcache'      => COREPATH.'classes/cache/storage/xcache.php',
 
 		'Fuel\\Core\\Config'               => COREPATH.'classes/config.php',
 		'Fuel\\Core\\ConfigException'      => COREPATH.'classes/config.php',
@@ -251,6 +263,8 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Pagination'           => COREPATH.'classes/pagination.php',
 
+		'Fuel\\Core\\Presenter'            => COREPATH.'classes/presenter.php',
+
 		'Fuel\\Core\\Profiler'             => COREPATH.'classes/profiler.php',
 
 		'Fuel\\Core\\Request'                 => COREPATH.'classes/request.php',
@@ -301,6 +315,6 @@ function setup_autoloader()
 		'Fuel\\Core\\Validation_Error'  => COREPATH.'classes/validation/error.php',
 
 		'Fuel\\Core\\View'       => COREPATH.'classes/view.php',
-		'Fuel\\Core\\ViewModel'  => COREPATH.'classes/viewmodel.php',
+		'Fuel\\Core\\Viewmodel'  => COREPATH.'classes/viewmodel.php',
 	));
 };

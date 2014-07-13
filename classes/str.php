@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -39,6 +39,16 @@ class Str
 		{
 			// Handle special characters.
 			preg_match_all('/&[a-z]+;/i', strip_tags($string), $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+			// fix preg_match_all broken multibyte support
+			if (strlen($string !== mb_strlen($string)))
+			{
+				$correction = 0;
+				foreach ($matches as $index => $match)
+				{
+					$matches[$index][0][1] -= $correction;
+					$correction += (strlen($match[0][0]) - mb_strlen($match[0][0]));
+				}
+			}
 			foreach ($matches as $match)
 			{
 				if ($match[0][1] >= $limit)
@@ -50,6 +60,17 @@ class Str
 
 			// Handle all the html tags.
 			preg_match_all('/<[^>]+>([^<]*)/', $string, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+			// fix preg_match_all broken multibyte support
+			if (strlen($string !== mb_strlen($string)))
+			{
+				$correction = 0;
+				foreach ($matches as $index => $match)
+				{
+					$matches[$index][0][1] -= $correction;
+					$matches[$index][1][1] -= $correction;
+					$correction += (strlen($match[0][0]) - mb_strlen($match[0][0]));
+				}
+			}
 			foreach ($matches as $match)
 			{
 				if($match[0][1] - $offset >= $limit)

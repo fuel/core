@@ -164,7 +164,7 @@ abstract class Config_File implements Config_Interface
 					$this->file = substr($this->file, $pos+2);
 
 					// strip the classes directory as we need the module root
-					$path = substr($path,0, -8).'config'.DS.$this->file;
+					$path = substr($path,0, -8).'config'.DS.$this->file.$this->ext;
 				}
 				else
 				{
@@ -189,7 +189,24 @@ abstract class Config_File implements Config_Interface
 			mkdir($path['dirname'], 0777, true);
 		}
 
-		return \File::update($path['dirname'], $path['basename'], $output);
+		$return = \File::update($path['dirname'], $path['basename'], $output);
+		if ($return)
+		{
+			try
+			{
+				\Config::load('file', true);
+				chmod($path['dirname'].DS.$path['basename'], \Config::get('file.chmod.files', 0666));
+			}
+			catch (\PhpErrorException $e)
+			{
+				// if we get something else then a chmod error, bail out
+				if (substr($e->getMessage(),0,8) !== 'chmod():')
+				{
+					throw new $e;
+				}
+			}
+		}
+		return $return;
 	}
 
 	/**

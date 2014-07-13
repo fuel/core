@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -518,34 +518,28 @@ class Mongo_Db
 	 *		s = dotall, "." matches everything, including newlines
 	 *		u = match unicode
 	 *
-	 *	@param $enable_start_wildcard
-	 *	If set to anything other than TRUE, a starting line character "^" will be prepended
+	 *	@param $disable_start_wildcard
+	 *	If this value evaluates to false, no starting line character "^" will be prepended
 	 *	to the search value, representing only searching for a value at the start of
 	 *	a new line.
 	 *
-	 *	@param $enable_end_wildcard
-	 *	If set to anything other than TRUE, an ending line character "$" will be appended
+	 *	@param $disable_end_wildcard
+	 *	If this value evaluates to false, no ending line character "$" will be appended
 	 *	to the search value, representing only searching for a value at the end of
 	 *	a line.
 	 *
-	 *	@usage	$mongodb->like('foo', 'bar', 'im', false, TRUE);
+	 *	@usage	$mongodb->like('foo', 'bar', 'im', false, true);
 	 */
-	public function like($field = '', $value = '', $flags = 'i', $enable_start_wildcard = TRUE, $enable_end_wildcard = TRUE)
+	public function like($field = '', $value = '', $flags = 'i', $disable_start_wildcard = false, $disable_end_wildcard = false)
 	{
 		$field = (string) trim($field);
 		$this->_where_init($field);
+
 		$value = (string) trim($value);
 		$value = quotemeta($value);
 
-		if ($enable_start_wildcard !== TRUE)
-		{
-			$value = '^' . $value;
-		}
-
-		if ($enable_end_wildcard !== TRUE)
-		{
-			$value .= '$';
-		}
+		(bool) $disable_start_wildcard === false and $value = '^'.$value;
+		(bool) $disable_end_wildcard === false and $value .= '$';
 
 		$regex = "/$value/$flags";
 		$this->wheres[$field] = new \MongoRegex($regex);
@@ -1148,6 +1142,17 @@ class Mongo_Db
 	public function get_collection($collection)
 	{
 		return ($this->db->{$collection});
+	}
+
+	/**
+	 *	Returns all collection objects
+	 *
+	 *	@param	bool	$system_collections  wether or not to include system collections
+	 *	@usage	$collections = $mongodb->list_collections();
+	 */
+	public function list_collections($system_collections = false)
+	{
+		return ($this->db->listCollections($system_collections));
 	}
 
 	/**

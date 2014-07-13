@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -106,11 +106,10 @@ class Form_Instance
 		$attributes = ! is_array($attributes) ? array('action' => $attributes) : $attributes;
 
 		// If there is still no action set, Form-post
-		if( ! array_key_exists('action', $attributes) or $attributes['action'] === null)
+		if( ! array_key_exists('action', $attributes) or empty($attributes['action']))
 		{
 			$attributes['action'] = \Uri::main();
 		}
-
 
 		// If not a full URL, create one
 		elseif ( ! strpos($attributes['action'], '://'))

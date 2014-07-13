@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -189,6 +189,11 @@ class Error
 		if (\Fuel::$is_cli)
 		{
 			\Cli::write(\Cli::color($data['severity'].' - '.$data['message'].' in '.\Fuel::clean_path($data['filepath']).' on line '.$data['error_line'], 'red'));
+			if (\Config::get('cli_backtrace'))
+			{
+				\Cli::write('Stack trace:');
+				\Cli::write(\Debug::backtrace($e->getTrace()));
+			}
 			return;
 		}
 
@@ -305,5 +310,3 @@ class Error
 	}
 
 }
-
-

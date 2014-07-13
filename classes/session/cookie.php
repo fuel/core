@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -77,25 +77,29 @@ class Session_Cookie extends \Session_Driver
 		$payload = $this->_get_cookie();
 
 		// validate it
-		if ($payload === false or $force )
+		if ($force)
 		{
-			// not a valid cookie, or a forced session reset
+			// a forced session reset
+		}
+		elseif ($payload === false)
+		{
+			// no cookie found
 		}
 		elseif ( ! isset($payload[0]) or ! is_array($payload[0]))
 		{
-			// not a valid cookie payload
+			logger('DEBUG', 'Error: not a valid cookie payload!');
 		}
 		elseif ($payload[0]['updated'] + $this->config['expiration_time'] <= $this->time->get_timestamp())
 		{
-			// session has expired
+			logger('DEBUG', 'Error: session id has expired!');
 		}
 		elseif ($this->config['match_ip'] and $payload[0]['ip_hash'] !== md5(\Input::ip().\Input::real_ip()))
 		{
-			// IP address doesn't match
+			logger('DEBUG', 'Error: IP address in the session doesn\'t match this requests source IP!');
 		}
 		elseif ($this->config['match_ua'] and $payload[0]['user_agent'] !== \Input::user_agent())
 		{
-			// user agent doesn't match
+			logger('DEBUG', 'Error: User agent in the session doesn\'t match the browsers user agent string!');
 		}
 		else
 		{

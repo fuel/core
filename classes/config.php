@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -195,6 +195,11 @@ class Config
 			if ($val === static::$default_check_value)
 			{
 				return $default;
+			}
+
+			if ( ! is_scalar($val))
+			{
+				return $val;
 			}
 
 			static::$itemcache[$item] = $val;

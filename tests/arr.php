@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -122,6 +122,38 @@ class Test_Arr extends TestCase
 			'purple' => 'Grape',
 			);
 		$output = Arr::assoc_to_keyval($assoc, 'color', 'name');
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Tests Arr::keyval_to_assoc()
+	 *
+	 * @test
+	 */
+	public function test_keyval_to_assoc()
+	{
+		$keyval = array(
+			'red' => 'Apple',
+			'yellow' => 'Banana',
+			'purple' => 'Grape',
+			);
+
+		$expected = array(
+			array(
+				'color' => 'red',
+				'name' => 'Apple',
+				),
+			array(
+				'color' => 'yellow',
+				'name' => 'Banana',
+				),
+			array(
+				'color' => 'purple',
+				'name' => 'Grape',
+				),
+			);
+
+		$output = Arr::keyval_to_assoc($keyval, 'color', 'name');
 		$this->assertEquals($expected, $output);
 	}
 

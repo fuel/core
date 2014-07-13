@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -59,7 +59,7 @@ class Debug
 				if (isset($trace['file']))
 				{
 					// If being called from within, show the file above in the backtrack
-					if (strpos($trace['file'], 'core/classes/debug.php') !== FALSE)
+					if (strpos($trace['file'], 'core/classes/debug.php') !== false)
 					{
 						$callee = $backtrace[$stack+1];
 						$label = \Inflector::humanize($backtrace[$stack+1]['function']);
@@ -114,7 +114,7 @@ JS;
 		$backtrace = debug_backtrace();
 
 		// If being called from within, show the file above in the backtrack
-		if (strpos($backtrace[0]['file'], 'core/classes/debug.php') !== FALSE)
+		if (strpos($backtrace[0]['file'], 'core/classes/debug.php') !== false)
 		{
 			$callee = $backtrace[1];
 			$label = \Inflector::humanize($backtrace[1]['function']);
@@ -354,9 +354,54 @@ JS;
 		return $debug_lines;
 	}
 
-	public static function backtrace()
+	/**
+	 * Output the call stack from here, or the supplied one.
+	 *
+	 * @param	array		(optional) A backtrace to output
+	 * @return  string		Formatted backtrace
+	 */
+	public static function backtrace($trace = null)
 	{
-		return static::dump(debug_backtrace());
+		$trace or $trace = debug_backtrace();
+
+		if (\Fuel::$is_cli) {
+			// Special case for CLI since the var_dump of a backtrace is of little use.
+			$str = '';
+			foreach ($trace as $i => $frame)
+			{
+				$line = "#$i\t";
+
+				if ( ! isset($frame['file']))
+				{
+					$line .= "[internal function]";
+				}
+				else
+				{
+					$line .= $frame['file'] . ":" . $frame['line'];
+				}
+
+				$line .= "\t";
+
+				if (isset($frame['function']))
+				{
+					if (isset($frame['class']))
+					{
+						$line .= $frame['class'] . '::';
+					}
+
+					$line .= $frame['function'] . "()";
+				}
+
+				$str .= $line . "\n";
+
+			}
+
+			return $str;
+		}
+		else
+		{
+			return static::dump($trace);
+		}
 	}
 
 	/**
@@ -501,4 +546,3 @@ JS;
 	}
 
 }
-

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -70,13 +70,9 @@ class Crypt
 		// update the config if needed
 		if ($update === true)
 		{
-			// load the file config
-			\Config::load('file', true);
-
 			try
 			{
 				\Config::save('crypt', static::$config);
-				chmod(APPPATH.'config'.DS.'crypt.php', \Config::get('file.chmod.files', 0666));
 			}
 			catch (\FileAccessException $e)
 			{
@@ -194,7 +190,7 @@ class Crypt
 		{
 			$result |= ord($a[$i]) ^ ord($b[$i]);
 		}
-		return $result == 0;
+		return $result === 0;
 	}
 }
 

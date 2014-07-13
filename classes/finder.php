@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -518,9 +518,13 @@ class Finder
 				{
 					chmod($dir.$file, \Config::get('file.chmod.files', 0666));
 				}
-				catch (\Exception $e)
+				catch (\PhpErrorException $e)
 				{
-					// we probably don't have permission, lets hope rights are ok
+					// if we get something else then a chmod error, bail out
+					if (substr($e->getMessage(),0,8) !== 'chmod():')
+					{
+						throw new $e;
+					}
 				}
 			}
 

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -52,6 +52,8 @@ class Arr
 			}
 			return $return;
 		}
+
+		is_object($key) and $key = (string) $key;
 
 		if (array_key_exists($key, $array))
 		{
@@ -242,6 +244,34 @@ class Arr
 			{
 				$output[$row[$key_field]] = $row[$val_field];
 			}
+		}
+
+		return $output;
+	}
+
+	/**
+	 * Converts an array of key => values into a multi-dimensional associative array with the provided field names
+	 *
+	 * @param   array   $array      the array to convert
+	 * @param   string  $key_field  the field name of the key field
+	 * @param   string  $val_field  the field name of the value field
+	 * @return  array
+	 * @throws  \InvalidArgumentException
+	 */
+	public static function keyval_to_assoc($array, $key_field, $val_field)
+	{
+		if ( ! is_array($array) and ! $array instanceof \Iterator)
+		{
+			throw new \InvalidArgumentException('The first parameter must be an array.');
+		}
+
+		$output = array();
+		foreach ($array as $key => $value)
+		{
+			$output[] = array(
+				$key_field => $key,
+				$val_field => $value
+			);
 		}
 
 		return $output;

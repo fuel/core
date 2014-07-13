@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -95,7 +95,7 @@ class DBUtil
 	 */
 	public static function rename_table($table, $new_table_name, $db = null)
 	{
-		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name)),\DB::UPDATE)->execute($db ? $db : static::$connection);
+		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name, $db ? $db : static::$connection)),\DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -372,7 +372,7 @@ class DBUtil
 
 			if(array_key_exists('DEFAULT', $attr))
 			{
-				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::escape($attr['DEFAULT']));
+				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::quote($attr['DEFAULT']));
 			}
 
 			if(array_key_exists('NULL', $attr) and $attr['NULL'] === true)
@@ -394,6 +394,11 @@ class DBUtil
 				$sql .= ' PRIMARY KEY';
 			}
 
+			if (array_key_exists('COMMENT', $attr))
+			{
+				$sql .= ' COMMENT '.\DB::escape($attr['COMMENT'], $db ? $db : static::$connection);
+			}
+
 			if (array_key_exists('FIRST', $attr) and $attr['FIRST'] === true)
 			{
 				$sql .= ' FIRST';
@@ -401,11 +406,6 @@ class DBUtil
 			elseif (array_key_exists('AFTER', $attr) and strval($attr['AFTER']))
 			{
 				$sql .= ' AFTER '.\DB::quote_identifier($attr['AFTER'], $db ? $db : static::$connection);
-			}
-
-			if (array_key_exists('COMMENT', $attr))
-			{
-				$sql .= ' COMMENT '.\DB::escape($attr['COMMENT'], $db ? $db : static::$connection);
 			}
 
 			$sql_fields[] = $sql;

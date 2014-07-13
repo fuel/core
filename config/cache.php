@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2013 Fuel Development Team
+ * @copyright  2010 - 2014 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -69,6 +69,11 @@ return array(
 	// specific configuration settings for the redis driver
 	'redis'  => array(
 		'database'  => 'default'  // name of the redis database to use (as configured in config/db.php)
+	),
+
+	// specific configuration settings for the xcache driver
+	'xcache'  => array(
+		'cache_id'  => 'fuel',  // unique id to distinquish fuel cache items from others stored on the same server(s)
 	),
 );
 
