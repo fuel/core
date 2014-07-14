@@ -19,7 +19,7 @@ class Profiler
 	{
 		if ( ! \Fuel::$is_cli and ! \Input::is_ajax() and ! static::$profiler)
 		{
-			static::$profiler = new PhpQuickProfiler(FUEL_START_TIME);
+			static::$profiler = new \PhpQuickProfiler(FUEL_START_TIME);
 			static::$profiler->queries = array();
 			static::$profiler->queryCount = 0;
 			static::mark(__METHOD__.' Start');
