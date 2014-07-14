@@ -470,7 +470,7 @@ class DBUtil
 	{
 		if ( ! is_array($foreign_key))
 		{
-			throw new InvalidArgumentException('Foreign key for add_foreign_key() must be specified as an array');
+			throw new \InvalidArgumentException('Foreign key for add_foreign_key() must be specified as an array');
 		}
 
 		$sql = 'ALTER TABLE ';
