@@ -292,8 +292,8 @@ abstract class Presenter
 	{
 		if (class_exists('Request', false))
 		{
-			$current_request = Request::active();
-			Request::active($this->_active_request);
+			$current_request = \Request::active();
+			\Request::active($this->_active_request);
 		}
 
 		$this->before();
@@ -304,7 +304,7 @@ abstract class Presenter
 
 		if (class_exists('Request', false))
 		{
-			Request::active($current_request);
+			\Request::active($current_request);
 		}
 
 		return $return;
