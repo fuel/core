@@ -13,7 +13,7 @@
 namespace Fuel\Core;
 
 
-class HttpNotFoundException extends HttpException
+class HttpNotFoundException extends \HttpException
 {
 	public function response()
 	{
@@ -21,7 +21,7 @@ class HttpNotFoundException extends HttpException
 	}
 }
 
-class HttpServerErrorException extends HttpException
+class HttpServerErrorException extends \HttpException
 {
 	public function response()
 	{
