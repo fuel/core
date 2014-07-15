@@ -127,7 +127,7 @@ return array(
 	 * Fuel::L_INFO
 	 * Fuel::L_ALL
 	 */
-	'log_threshold'    => Fuel::L_WARNING,
+	'log_threshold'    => \Fuel::L_WARNING,
 
 	/**
 	 * Log file and path. If no filename is given, it will be generated.
