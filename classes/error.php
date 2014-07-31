@@ -25,7 +25,7 @@ class PhpErrorException extends \ErrorException
 	public function recover()
 	{
 		// handle the error based on the config and the environment we're in
-		if (static::$count <= Config::get('errors.throttle', 10))
+		if (static::$count <= \Config::get('errors.throttle', 10))
 		{
 			logger(\Fuel::L_ERROR, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
 

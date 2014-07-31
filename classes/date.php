@@ -299,8 +299,8 @@ class Date
 
 	public function __construct($timestamp = null, $timezone = null)
 	{
-		is_null( $timestamp ) and $timestamp = time() + static::$server_gmt_offset;
-		! $timezone and $timezone   = \Fuel::$timezone;
+		is_null($timestamp) and $timestamp = time() + static::$server_gmt_offset;
+		! $timezone and $timezone = \Fuel::$timezone;
 
 		$this->timestamp = $timestamp;
 		$this->set_timezone($timezone);
@@ -413,5 +413,3 @@ class Date
 		return $this->format();
 	}
 }
-
-
