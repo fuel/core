@@ -102,7 +102,8 @@ class Crypt
 	 */
 	public static function encode($value, $key = false, $keylength = false)
 	{
-		if (!$key) {
+		if ( ! $key)
+		{
 			$key = static::safe_b64decode(static::$config['crypto_key']);
 			// Used for backwards compatibility with encrypted data prior
 			// to FuelPHP 1.7.2, when phpseclib was updated, and became a
@@ -110,7 +111,8 @@ class Crypt
 			$keylength = 128;
 		}
 
-		if ($keylength) {
+		if ($keylength)
+		{
 			static::$crypter->setKeyLength($keylength);
 		}
 
@@ -135,7 +137,8 @@ class Crypt
 	 */
 	public static function decode($value, $key = false, $keylength = false)
 	{
-		if (!$key) {
+		if ( ! $key)
+		{
 			$key = static::safe_b64decode(static::$config['crypto_key']);
 			// Used for backwards compatibility with encrypted data prior
 			// to FuelPHP 1.7.2, when phpseclib was updated, and became a
@@ -143,9 +146,11 @@ class Crypt
 			$keylength = 128;
 		}
 
-		if ($keylength) {
+		if ($keylength)
+		{
 			static::$crypter->setKeyLength($keylength);
 		}
+
 		static::$crypter->setKey($key);
 		static::$crypter->setIV(static::safe_b64decode(static::$config['crypto_iv']));
 
