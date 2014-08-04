@@ -275,6 +275,22 @@ class Request_Curl extends \Request_Driver
 	}
 
 	/**
+	 * PATCH request
+	 *
+	 * @param   array  $params
+	 * @return  void
+	 */
+	protected function method_patch()
+	{
+		$params = is_array($this->params) ? $this->encode($this->params) : $this->params;
+
+		$this->set_option(CURLOPT_POSTFIELDS, $params);
+
+		// Override method, I think this makes $_POST DELETE data but... we'll see eh?
+		$this->set_header('X-HTTP-Method-Override', 'PATCH');
+	}
+
+	/**
 	 * DELETE request
 	 *
 	 * @param   array  $params
