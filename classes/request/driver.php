@@ -195,6 +195,29 @@ abstract class Request_Driver
 	}
 
 	/**
+	 * set request http headers
+	 *
+	 * @param   array  $headers
+	 * @return  Request_Driver
+	 */
+	public function set_headers(array $headers)
+	{
+		foreach ($headers as $key => $value)
+		{
+			if (is_int($key))
+			{
+				$this->headers[] = $value;
+			}
+			else
+			{
+				$this->headers[$key] = $value;
+			}
+		}
+
+		return $this;
+	}
+
+	/**
 	 * set a request http header
 	 *
 	 * @param   string  $header
