@@ -540,4 +540,14 @@ class Input
 			static::$put_patch_delete = array();
 		}
 	}
+
+	/**
+	 * Return's the query string
+	 *
+	 * @return  string
+	 */
+	public static function query_string($default = '')
+	{
+		return static::server('QUERY_STRING', $default);
+	}
 }
