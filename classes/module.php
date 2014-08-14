@@ -148,6 +148,7 @@ class Module
 		else
 		{
 			$paths = \Config::get('module_paths', array());
+			$module = strtolower($module);
 
 			foreach ($paths as $path)
 			{
