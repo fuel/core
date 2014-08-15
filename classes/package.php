@@ -142,6 +142,7 @@ class Package
 		{
 			$paths = \Config::get('package_paths', array());
 			empty($paths) and $paths = array(PKGPATH);
+			$package = strtolower($package);
 
 			foreach ($paths as $path)
 			{
