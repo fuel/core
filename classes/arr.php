@@ -1266,4 +1266,30 @@ class Arr
 
 		return $result;
 	}
+
+	/**
+	 * Replace keys in an array and preserve the original order
+	 *
+	 * @param  array  $array the array
+	 * @param  array  $keys  the array containing the keys in old => new format
+	 *
+	 * @return array
+	 */
+	public static function replace_keys(array $array, array $keys)
+	{
+		$all_keys = array_keys($array);
+
+		// Loop all keys
+		foreach ($all_keys as &$key)
+		{
+			// and replace old ones
+			if (array_key_exists($key, $keys))
+			{
+				$key = $keys[$key];
+			}
+		}
+
+		// Recombine the array with the updated keys
+		return array_combine($all_keys, $array);
+	}
 }
