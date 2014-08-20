@@ -141,7 +141,7 @@ class Fuel
 		}
 
 		// Start up output buffering
-		ob_start(\Config::get('ob_callback'));
+		static::$is_cli or ob_start(\Config::get('ob_callback'));
 
 		if (\Config::get('caching', false))
 		{
