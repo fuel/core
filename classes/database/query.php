@@ -216,6 +216,11 @@ class Database_Query
 	 */
 	public function compile($db = null)
 	{
+		if ($this->_connection !== null && $db !== null)
+		{
+			$db = $this->_connection;
+		}
+
 		if ( ! $db instanceof \Database_Connection)
 		{
 			// Get the database instance
@@ -248,6 +253,11 @@ class Database_Query
 	 */
 	public function execute($db = null)
 	{
+		if ($this->_connection !== null && $db !== null)
+		{
+			$db = $this->_connection;
+		}
+
 		if ( ! is_object($db))
 		{
 			// Get the database instance. If this query is a instance of
