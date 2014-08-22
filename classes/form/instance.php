@@ -610,6 +610,10 @@ class Form_Instance
 		{
 			empty($id) or $attributes['for'] = $this->get_config('auto_id_prefix', 'form_').$id;
 		}
+		elseif ($id !== null)
+		{
+			$attributes['for'] = $id;
+		}
 
 		unset($attributes['label']);
 
