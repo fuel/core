@@ -216,7 +216,7 @@ class Database_Query
 	 */
 	public function compile($db = null)
 	{
-		if ($this->_connection !== null and $db !== null)
+		if ($this->_connection !== null and $db === null)
 		{
 			$db = $this->_connection;
 		}
@@ -253,7 +253,7 @@ class Database_Query
 	 */
 	public function execute($db = null)
 	{
-		if ($this->_connection !== null and $db !== null)
+		if ($this->_connection !== null and $db === null)
 		{
 			$db = $this->_connection;
 		}
