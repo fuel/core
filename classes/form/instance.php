@@ -606,13 +606,16 @@ class Form_Instance
 			isset($attributes['id']) and $id = $attributes['id'];
 		}
 
-		if (empty($attributes['for']) and $this->get_config('auto_id', false) == true)
+		if (empty($attributes['for']) and ! empty($id))
 		{
-			empty($id) or $attributes['for'] = $this->get_config('auto_id_prefix', 'form_').$id;
-		}
-		elseif ($id !== null)
-		{
-			$attributes['for'] = $id;
+			if ($this->get_config('auto_id', false) == true)
+			{
+				$attributes['for'] = $this->get_config('auto_id_prefix', 'form_').$id;
+			}
+			else
+			{
+				$attributes['for'] = $id;
+			}
 		}
 
 		unset($attributes['label']);
