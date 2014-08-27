@@ -3,7 +3,7 @@
  * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.7
+ * @version    1.8
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2014 Fuel Development Team
@@ -15,30 +15,38 @@ namespace Fuel\Core;
 /**
  * Some of this code was written by Flinn Mueller.
  *
- * @package		Fuel
- * @category	Core
- * @copyright	Flinn Mueller
- * @link		http://docs.fuelphp.com/classes/inlector.html
+ * @package     Fuel
+ * @category    Core
+ * @copyright   Flinn Mueller
+ * @link        http://docs.fuelphp.com/classes/inlector.html
  */
 class Inflector
 {
 
+        /**
+         * Array contenting uncountable words
+         * @var array 
+         */
 	protected static $uncountable_words;
 
+        /**
+         * Array contenting singular rules
+         * @var array 
+         */
         protected static $singular_rules;
 	
+        /**
+         *  Array contenting plural rules
+         * @var array 
+         */
         protected static $plural_rules;
-	        
+
 	public static function _init()
 	{
-            \Config::load('inflector', true, false, true);
-            
-            static::$uncountable_words = \Config::get('inflector.uncountable_words');
-            
-            static::$singular_rules = \Config::get('inflector.singular_rules');
-            
-            static::$plural_rules = \Config::get('inflector.plural_rules');
-
+                \Config::load('inflector', true, false, true);
+                static::$uncountable_words = \Config::get('inflector.uncountable_words');
+                static::$singular_rules    = \Config::get('inflector.singular_rules');
+                static::$plural_rules      = \Config::get('inflector.plural_rules');
   	}
 
 	/**
