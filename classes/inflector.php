@@ -43,10 +43,11 @@ class Inflector
 
 	public static function _init()
 	{
-                \Config::load('inflector', true, false, true);
-                static::$uncountable_words = \Config::get('inflector.uncountable_words');
-                static::$singular_rules    = \Config::get('inflector.singular_rules');
-                static::$plural_rules      = \Config::get('inflector.plural_rules');
+                \Lang::load('inflector', true, false, true);
+                
+                static::$uncountable_words = \Lang::get('inflector.uncountable_words');
+                static::$singular_rules    = \Lang::get('inflector.singular_rules');
+                static::$plural_rules      = \Lang::get('inflector.plural_rules');
   	}
 
 	/**
