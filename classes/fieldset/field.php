@@ -144,12 +144,15 @@ class Fieldset_Field
 		{
 			// remove the field from the fieldset
 			$this->fieldset->delete($this->name);
+
+			// reset the fieldset
+			$this->fieldset = null;
+
+			// add this field to the new fieldset
+			$fieldset->add($this);
 		}
 
-		// add this field to the new fieldset
-		$fieldset->add($this);
-
-		// swap fieldsets
+		// assign the new fieldset
 		$this->fieldset = $fieldset;
 
 		return $this;
