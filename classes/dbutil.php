@@ -56,7 +56,7 @@ class DBUtil
 		$sql = 'CREATE DATABASE';
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
-		$charset = static::process_charset($charset, true);
+		$charset = static::process_charset($charset, true, $db);
 
 		return \DB::query($sql.\DB::quote_identifier($database, $db ? $db : static::$connection).$charset, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
@@ -95,7 +95,7 @@ class DBUtil
 	 */
 	public static function rename_table($table, $new_table_name, $db = null)
 	{
-		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name, $db ? $db : static::$connection)),\DB::UPDATE)->execute($db ? $db : static::$connection);
+		return \DB::query('RENAME TABLE '.\DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' TO '.\DB::quote_identifier(\DB::table_prefix($new_table_name, $db ? $db : static::$connection), $db ? $db : static::$connection),\DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
 
 	/**
@@ -118,7 +118,7 @@ class DBUtil
 		$sql .= $if_not_exists ? ' IF NOT EXISTS ' : ' ';
 
 		$sql .= \DB::quote_identifier(\DB::table_prefix($table, $db ? $db : static::$connection), $db ? $db : static::$connection).' (';
-		$sql .= static::process_fields($fields);
+		$sql .= static::process_fields($fields, '', $db);
 		if ( ! empty($primary_keys))
 		{
 			$key_name = \DB::quote_identifier(implode('_', $primary_keys), $db ? $db : static::$connection);
@@ -126,11 +126,11 @@ class DBUtil
 			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 
-		empty($foreign_keys) or $sql .= static::process_foreign_keys($foreign_keys);
+		empty($foreign_keys) or $sql .= static::process_foreign_keys($foreign_keys, $db);
 
 		$sql .= "\n)";
 		$sql .= ($engine !== false) ? ' ENGINE = '.$engine.' ' : '';
-		$sql .= static::process_charset($charset, true).";";
+		$sql .= static::process_charset($charset, true, $db).";";
 
 		return \DB::query($sql, \DB::UPDATE)->execute($db ? $db : static::$connection);
 	}
@@ -197,7 +197,7 @@ class DBUtil
 			$use_brackets = ! in_array($type, array('ADD', 'CHANGE', 'MODIFY'));
 			$use_brackets and $sql .= $type.' ';
 			$use_brackets and $sql .= '(';
-			$sql .= static::process_fields($fields, (( ! $use_brackets) ? $type.' ' : ''));
+			$sql .= static::process_fields($fields, (( ! $use_brackets) ? $type.' ' : ''), $db);
 			$use_brackets and $sql .= ')';
 		}
 
@@ -363,7 +363,7 @@ class DBUtil
 				}
 			}
 
-			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET'], $db ? $db : static::$connection) : '';
+			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET'], $db) : '';
 
 			if (array_key_exists('UNSIGNED', $attr) and $attr['UNSIGNED'] === true)
 			{
@@ -474,11 +474,11 @@ class DBUtil
 		}
 
 		$sql = 'ALTER TABLE ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table, static::$connection)).' ';
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, static::$connection), static::$connection).' ';
 		$sql .= 'ADD ';
-		$sql .= ltrim(static::process_foreign_keys(array($foreign_key)), ',');
+		$sql .= ltrim(static::process_foreign_keys(array($foreign_key), static::$connection), ',');
 
-		return \DB::query($sql, \DB::UPDATE)->execute();
+		return \DB::query($sql, \DB::UPDATE)->execute(static::$connection);
 	}
 
 	/**
@@ -491,10 +491,10 @@ class DBUtil
 	public static function drop_foreign_key($table, $fk_name)
 	{
 		$sql = 'ALTER TABLE ';
-		$sql .= \DB::quote_identifier(\DB::table_prefix($table, static::$connection)).' ';
-		$sql .= 'DROP FOREIGN KEY '.\DB::quote_identifier($fk_name);
+		$sql .= \DB::quote_identifier(\DB::table_prefix($table, static::$connection), static::$connection).' ';
+		$sql .= 'DROP FOREIGN KEY '.\DB::quote_identifier($fk_name, static::$connection);
 
-		return \DB::query($sql, \DB::UPDATE)->execute();
+		return \DB::query($sql, \DB::UPDATE)->execute(static::$connection);
 	}
 
 
@@ -530,16 +530,16 @@ class DBUtil
 			}
 
 			$sql = '';
-			! empty($definition['constraint']) and $sql .= " CONSTRAINT ".\DB::quote_identifier($definition['constraint']);
-			$sql .= " FOREIGN KEY (".\DB::quote_identifier($definition['key']).')';
-			$sql .= " REFERENCES ".\DB::quote_identifier(\DB::table_prefix($definition['reference']['table'], static::$connection)).' (';
+			! empty($definition['constraint']) and $sql .= " CONSTRAINT ".\DB::quote_identifier($definition['constraint'], $db ? $db : static::$connection);
+			$sql .= " FOREIGN KEY (".\DB::quote_identifier($definition['key'], $db ? $db : static::$connection).')';
+			$sql .= " REFERENCES ".\DB::quote_identifier(\DB::table_prefix($definition['reference']['table'], $db ? $db : static::$connection), $db ? $db : static::$connection).' (';
 			if (is_array($definition['reference']['column']))
 			{
-				$sql .= implode(', ', \DB::quote_identifier($definition['reference']['column']));
+				$sql .= implode(', ', \DB::quote_identifier($definition['reference']['column'], $db ? $db : static::$connection));
 			}
 			else
 			{
-				$sql .= \DB::quote_identifier($definition['reference']['column']);
+				$sql .= \DB::quote_identifier($definition['reference']['column'], $db ? $db : static::$connection);
 			}
 			$sql .= ')';
 			! empty($definition['on_update']) and $sql .= " ON UPDATE ".$definition['on_update'];
