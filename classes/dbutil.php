@@ -342,7 +342,7 @@ class DBUtil
 				$_prefix = 'CHANGE ';
 			}
 			$sql = "\n\t".$_prefix;
-			$sql .= \DB::quote_identifier($field);
+			$sql .= \DB::quote_identifier($field, $db ? $db : static::$connection);
 			$sql .= (array_key_exists('NAME', $attr) and $attr['NAME'] !== $field) ? ' '.\DB::quote_identifier($attr['NAME'], $db ? $db : static::$connection).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
 
@@ -372,7 +372,7 @@ class DBUtil
 
 			if(array_key_exists('DEFAULT', $attr))
 			{
-				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::quote($attr['DEFAULT']));
+				$sql .= ' DEFAULT '.(($attr['DEFAULT'] instanceof \Database_Expression) ? $attr['DEFAULT']  : \DB::quote($attr['DEFAULT'], $db ? $db : static::$connection));
 			}
 
 			if(array_key_exists('NULL', $attr) and $attr['NULL'] === true)
