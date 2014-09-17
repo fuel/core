@@ -751,14 +751,14 @@ abstract class Image_Driver
 				$red   = hexdec(substr($hex, 0, 2));
 				$green = hexdec(substr($hex, 2, 2));
 				$blue  = hexdec(substr($hex, 4, 2));
-				$alpha = hexdec(substr($hex, 6, 2));
+				$alpha = hexdec(substr($hex, 6, 2) === false ? 100 : substr($hex, 6, 2));
 			}
 			else
 			{
 				$red   = hexdec(substr($hex, 0, 1).substr($hex, 0, 1));
 				$green = hexdec(substr($hex, 1, 1).substr($hex, 1, 1));
 				$blue  = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
-				$alpha = hexdec(substr($hex, 3, 1).substr($hex, 3, 1));
+				$alpha = 0xFF;
 			}
 		}
 		
