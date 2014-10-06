@@ -391,9 +391,9 @@ class Fieldset
 	 */
 	public function delete($name)
 	{
-		if (isset($this->field[$name]))
+		if (isset($this->fields[$name]))
 		{
-			unset($this->field[$name]);
+			unset($this->fields[$name]);
 		}
 
 		return $this;
