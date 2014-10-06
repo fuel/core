@@ -20,7 +20,7 @@ namespace Fuel\Core;
  * @subpackage  Core
  * @category    Core
  */
-abstract class Viewmodel extends Presenter
+abstract class Viewmodel extends \Presenter
 {
 	// namespace prefix
 	protected static $ns_prefix = 'View_';

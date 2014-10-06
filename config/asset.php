@@ -71,11 +71,11 @@ return array(
 	/**
 	 * URL to your Fuel root. Typically this will be your base URL:
 	 *
-	 * Config::get('base_url')
+	 * \Config::get('base_url')
 	 *
 	 * These MUST include the trailing slash ('/')
 	 */
-	'url' => Config::get('base_url'),
+	'url' => \Config::get('base_url'),
 
 	/**
 	 * Whether to append the assets last modified timestamp to the url.

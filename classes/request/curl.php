@@ -55,7 +55,7 @@ class Request_Curl extends \Request_Driver
 	protected function connection()
 	{
 		// If no a protocol in URL, assume its a local link
-		! preg_match('!^\w+://! i', $this->resource) and $this->resource = Uri::create($this->resource);
+		! preg_match('!^\w+://! i', $this->resource) and $this->resource = \Uri::create($this->resource);
 
 		return curl_init($this->resource);
 	}

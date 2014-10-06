@@ -111,11 +111,11 @@ set_error_handler(function ($severity, $message, $filepath, $line)
 
 function setup_autoloader()
 {
-	Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
+	\Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
-	Autoloader::add_namespace('PHPSecLib', COREPATH.'vendor'.DS.'phpseclib'.DS, true);
+	\Autoloader::add_namespace('PHPSecLib', COREPATH.'vendor'.DS.'phpseclib'.DS, true);
 
-	Autoloader::add_classes(array(
+	\Autoloader::add_classes(array(
 		'Fuel\\Core\\Agent'           => COREPATH.'classes/agent.php',
 
 		'Fuel\\Core\\Arr'             => COREPATH.'classes/arr.php',

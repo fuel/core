@@ -284,11 +284,11 @@ class Migrate
 		// Loop through the runnable migrations and run them
 		foreach ($migrations as $ver => $migration)
 		{
-			logger(Fuel::L_INFO, 'Migrating to version: '.$ver);
+			logger(\Fuel::L_INFO, 'Migrating to version: '.$ver);
 			$result = call_user_func(array(new $migration['class'], $method));
 			if ($result === false)
 			{
-				logger(Fuel::L_INFO, 'Skipped migration to '.$ver.'.');
+				logger(\Fuel::L_INFO, 'Skipped migration to '.$ver.'.');
 				return false;
 			}
 
@@ -299,7 +299,7 @@ class Migrate
 
 		static::$connection === null or \DBUtil::set_connection(null);
 
-		empty($done) or logger(Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
+		empty($done) or logger(\Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
 
 		return $done;
 	}
