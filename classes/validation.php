@@ -774,7 +774,7 @@ class Validation
 	 *
 	 * @param   string
 	 * @param   array
-     * @param   bool  whether to do type comparison
+	 * @param   bool  whether to do type comparison
 	 * @return  bool
 	 */
 	public function _validation_match_collection($val, $collection = array(), $strict = false)
