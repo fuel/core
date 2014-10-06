@@ -774,9 +774,10 @@ class Validation
 	 *
 	 * @param   string
 	 * @param   array
+     * @param   bool  whether to do type comparison
 	 * @return  bool
 	 */
-	public function _validation_match_collection($val, $collection = array())
+	public function _validation_match_collection($val, $collection = array(), $strict = false)
 	{
 		if ( ! is_array($collection))
 		{
@@ -784,7 +785,7 @@ class Validation
 			array_shift($collection);
 		}
 
-		return in_array($val, $collection);
+		return in_array($val, $collection, $strict);
 	}
 
 	/**
