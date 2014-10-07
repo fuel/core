@@ -250,7 +250,7 @@ if ( ! function_exists('e'))
 {
 	function e($string)
 	{
-		return Security::htmlentities($string);
+		return \Security::htmlentities($string);
 	}
 }
 
