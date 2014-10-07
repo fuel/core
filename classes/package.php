@@ -48,6 +48,7 @@ class Package
 	{
 		if (is_array($package))
 		{
+			$result = true;
 			foreach ($package as $pkg => $path)
 			{
 				if (is_numeric($pkg))
@@ -55,9 +56,9 @@ class Package
 					$pkg = $path;
 					$path = null;
 				}
-				static::load($pkg, $path);
+				$result = $result and static::load($pkg, $path);
 			}
-			return false;
+			return $result;
 		}
 
 		if (static::loaded($package))
@@ -141,6 +142,7 @@ class Package
 		{
 			$paths = \Config::get('package_paths', array());
 			empty($paths) and $paths = array(PKGPATH);
+			$package = strtolower($package);
 
 			foreach ($paths as $path)
 			{

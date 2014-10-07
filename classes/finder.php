@@ -317,7 +317,11 @@ class Finder
 		if ($multiple)
 		{
 			// make sure cache is not used if the loaded package and module list is changed
-			$cache_id = md5(implode('|', \Module::loaded()).'|'.implode('|', \Package::loaded())).'.';
+			$cachekey = '';
+			class_exists('Module', false) and $cachekey .= implode('|', \Module::loaded());
+			$cachekey .= '|';
+			class_exists('Package', false) and $cachekey .= implode('|', \Package::loaded());
+			$cache_id = md5($cachekey).'.';
 		}
 		else
 		{

@@ -76,7 +76,7 @@ class Lang
 		if ( ! $reload and
 		     ! is_array($file) and
 		     ! is_object($file) and
-		    array_key_exists($file, static::$loaded_files))
+		    array_key_exists($language.'/'.$file, static::$loaded_files))
 		{
 			$group === true and $group = $file;
 			if ($group === null or $group === false or ! isset(static::$lines[$language][$group]))
@@ -108,7 +108,7 @@ class Lang
 
 			if (class_exists($class))
 			{
-				static::$loaded_files[$file] = true;
+				static::$loaded_files[$language.'/'.$file] = true;
 				$file = new $class($file, $languages);
 			}
 			else
