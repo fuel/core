@@ -40,7 +40,7 @@ class Test_Validation extends TestCase
 					'dns' => '127.0.0.1',
 					'snd' => '127.0.0',
 					'url' => 'http://www.google.com',
-                    'gender' => 'M',
+					'gender' => 'M',
 				)
 			)
 		);
