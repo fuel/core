@@ -121,30 +121,23 @@ class Cache_Storage_Xcache extends \Cache_Storage_Driver
 
 		if (is_array($index))
 		{
-			// limit the delete if we have a valid section
-			if ( ! empty($section))
+			$dirs = array();
+			foreach ($index as $dir)
 			{
-				$dirs = in_array($section, $index) ? array($section) : array();
-			}
-			else
-			{
-				$dirs = $index;
-			}
-
-			// loop through the indexes, delete all stored keys, then delete the indexes
-			foreach ($dirs as $dir)
-			{
-				$list = xcache_get($dir);
-				foreach ($list as $item)
+				if (strpos($dir, $section) === 0)
 				{
-					xcache_unset($item[0]);
+					$dirs[] = $dir;
+					$list = xcache_get($dir);
+					foreach ($list as $item)
+					{
+						xcache_unset($item[0]);
+					}
+					xcache_unset($dir);
 				}
-				xcache_unset($dir);
 			}
 
 			// update the directory index
-			$index = array_diff($index, $dirs);
-			xcache_set($this->config['cache_id'].'__DIR__', $index);
+			$dirs and xcache_set($this->config['cache_id'].'__DIR__', array_diff($index, $dirs));
 		}
 	}
 
