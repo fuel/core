@@ -224,7 +224,6 @@ class Autoloader
 
 		$loaded = false;
 		$class = ltrim($class, '\\');
-		$namespaced = ($pos = strripos($class, '\\')) !== false;
 
 		if (empty(static::$auto_initialize))
 		{
