@@ -279,7 +279,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 			{
 				throw new \FuelException(get_called_class().'::count where statement must be an array or a closure.');
 			}
-			$query = $query->where($where);
+			$query = $query->where(array($where));
 		}
 
 		if ( ! empty($group_by))
