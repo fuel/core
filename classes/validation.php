@@ -906,10 +906,10 @@ class Validation
 			{
 				$flags = array('alpha', 'utf8', 'numeric');
 			}
-            elseif ($flags == 'specials')
-            {
-                $flags = array('specials', 'utf8');
-            }
+			elseif ($flags == 'specials')
+			{
+				$flags = array('specials', 'utf8');
+			}
 			elseif ($flags == 'url_safe')
 			{
 				$flags = array('alpha', 'numeric', 'dashes');
