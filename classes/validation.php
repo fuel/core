@@ -906,6 +906,10 @@ class Validation
 			{
 				$flags = array('alpha', 'utf8', 'numeric');
 			}
+            elseif ($flags == 'specials')
+            {
+                $flags = array('specials', 'utf8');
+            }
 			elseif ($flags == 'url_safe')
 			{
 				$flags = array('alpha', 'numeric', 'dashes');
@@ -928,7 +932,7 @@ class Validation
 			}
 			elseif ($flags == 'all')
 			{
-				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'forwardslashes', 'backslashes', 'brackets', 'braces');
+				$flags = array('alpha', 'utf8', 'numeric', 'specials', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'forwardslashes', 'backslashes', 'brackets', 'braces');
 			}
 			else
 			{
@@ -939,6 +943,7 @@ class Validation
 		$pattern = ! in_array('uppercase', $flags) && in_array('alpha', $flags) ? 'a-z' : '';
 		$pattern .= ! in_array('lowercase', $flags) && in_array('alpha', $flags) ? 'A-Z' : '';
 		$pattern .= in_array('numeric', $flags) ? '0-9' : '';
+		$pattern .= in_array('specials', $flags) ? '[:alpha:]' : '';
 		$pattern .= in_array('spaces', $flags) ? ' ' : '';
 		$pattern .= in_array('newlines', $flags) ? "\n" : '';
 		$pattern .= in_array('tabs', $flags) ? "\t" : '';
@@ -953,7 +958,7 @@ class Validation
 		$pattern .= in_array('brackets', $flags) ? "\(\)" : '';
 		$pattern .= in_array('braces', $flags) ? "\{\}" : '';
 		$pattern = empty($pattern) ? '/^(.*)$/' : ('/^(['.$pattern.'])+$/');
-		$pattern .= in_array('utf8', $flags) ? 'u' : '';
+		$pattern .= in_array('utf8', $flags) || in_array('specials', $flags) ? 'u' : '';
 
 		return preg_match($pattern, $val) > 0;
 	}
