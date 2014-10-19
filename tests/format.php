@@ -179,7 +179,7 @@ line 2","Value 3"',
 	}
 
 	/**
-	 * Test for Format::forge($foo)->to_csv() without delimiting numbers
+	 * Test for Format::forge($foo)->to_csv() without enclosuring numbers
 	 *
 	 * @test
 	 * @dataProvider array_provider2
