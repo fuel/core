@@ -227,7 +227,7 @@ class Format
 		$delimiter or $delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.export.delimiter', ','));
 		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.export.enclosure', '"'));
 		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.export.escape', '\\'));
-		is_null($enclose_numbers) and $enclose_numbers = \Config::get('format.csv.delimit_numbers',  true);
+		is_null($enclose_numbers) and $enclose_numbers = \Config::get('format.csv.enclose_numbers', true);
 
 		// escape, delimit and enclose function
 		$escaper = function($items, $enclose_numbers) use($enclosure, $escape, $delimiter) {
