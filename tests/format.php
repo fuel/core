@@ -43,6 +43,7 @@ class Test_Format extends TestCase
 			'xml' => array(
 				'basenode' => 'xml',
 				'use_cdata' => false,
+				'bool_representation' => null,
 			),
 			'json' => array(
 				'encode' => array(
@@ -109,6 +110,26 @@ John;Doe;john@doe.com;52939494;1;dfdfdf;35353',
 				'"Value 1","35","123123"
 "Value 1","Value
 line 2","Value 3"',
+			),
+		);
+	}
+
+	public static function array_provider5()
+	{
+		return array(
+			array(
+				array(
+					array('field1' => 'Value 1', 'field2' => 35, 'field3' => true, 'field4' => false),
+				),
+				'<?xml version="1.0" encoding="utf-8"?>
+<xml><item><field1>Value 1</field1><field2>35</field2><field3>1</field3><field4/></item></xml>
+',
+				'<?xml version="1.0" encoding="utf-8"?>
+<xml><item><field1>Value 1</field1><field2>35</field2><field3>true</field3><field4>false</field4></item></xml>
+',
+				'<?xml version="1.0" encoding="utf-8"?>
+<xml><item><field1>Value 1</field1><field2>35</field2><field3>1</field3><field4>0</field4></item></xml>
+',
 			),
 		);
 	}
@@ -381,6 +402,22 @@ line 2","Value 3"',
 ';
 
 		$this->assertEquals($expected, Format::forge($array)->to_xml());
+	}
+
+	/**
+	 * Test for Format::forge($foo)->to_xml(null, null, null, null, true)
+	 *
+	 * @test
+	 * @dataProvider array_provider5
+	 */
+	public function test_to_xml_boolean($array, $default, $true, $number)
+	{
+		// default
+		$this->assertEquals($default, Format::forge($array)->to_xml());
+		// true/false
+		$this->assertEquals($true, Format::forge($array)->to_xml(null, null, null, null, true));
+		// 1/0
+		$this->assertEquals($number, Format::forge($array)->to_xml(null, null, null, null, 1));
 	}
 
 	/**
