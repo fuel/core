@@ -301,7 +301,7 @@ class Format
 	 * To JSON conversion
 	 *
 	 * @param   mixed  $data
-	 * @param   bool   wether to make the json pretty
+	 * @param   bool   whether to make the json pretty
 	 * @return  string
 	 */
 	public function to_json($data = null, $pretty = false)
@@ -321,7 +321,7 @@ class Format
 	 * To JSONP conversion
 	 *
 	 * @param   mixed   $data
-	 * @param   bool    $pretty    wether to make the json pretty
+	 * @param   bool    $pretty    whether to make the json pretty
 	 * @param   string  $callback  JSONP callback
 	 * @return  string  formatted JSONP
 	 */

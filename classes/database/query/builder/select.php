@@ -19,7 +19,7 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	protected $_select = array();
 
 	/**
-	 * @var bool  $_distinct  wether to select distinct values
+	 * @var bool  $_distinct  whether to select distinct values
 	 */
 	protected $_distinct = false;
 

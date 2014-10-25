@@ -127,7 +127,7 @@ class Validation
 	protected $callables = array();
 
 	/**
-	 * @var  bool  $global_input_fallback  wether to fall back to Input::param
+	 * @var  bool  $global_input_fallback  whether to fall back to Input::param
 	 */
 	protected $global_input_fallback = true;
 
