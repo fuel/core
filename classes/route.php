@@ -41,7 +41,7 @@ class Route
 	public $case_sensitive = false;
 
 	/**
-	 * @var  boolean  wether to strip the extension from the URI
+	 * @var  boolean  whether to strip the extension from the URI
 	 */
 	public $strip_extension = true;
 

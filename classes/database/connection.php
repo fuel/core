@@ -270,7 +270,7 @@ abstract class Database_Connection
 	/**
 	 * Per connection cache controlle setter/getter
 	 *
-	 * @param   bool   $bool  wether to enable it [optional]
+	 * @param   bool   $bool  whether to enable it [optional]
 	 *
 	 * @return  mixed  cache boolean when getting, current instance when setting.
 	 */

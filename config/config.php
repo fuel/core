@@ -214,7 +214,7 @@ return array(
 		'htmlentities_flags' => ENT_QUOTES,
 
 		/**
-		 * Wether to encode HTML entities as well
+		 * Whether to encode HTML entities as well
 		 */
 		'htmlentities_double_encode' => false,
 
@@ -258,7 +258,7 @@ return array(
 	 */
 	'validation' => array(
 		/**
-		 * Wether to fallback to global when a value is not found in the input array.
+		 * Whether to fallback to global when a value is not found in the input array.
 		 */
 		'global_input_fallback' => true,
 	),
@@ -278,7 +278,7 @@ return array(
 		'case_sensitive' => true,
 
 		/**
-		 *  Wether to strip the extension
+		 *  Whether to strip the extension
 		 */
 		'strip_extension' => true,
 	),
@@ -288,7 +288,7 @@ return array(
 	 */
 	'response' => array(
 		/**
-		 *  Wether to support URI wildcards when redirecting
+		 *  Whether to support URI wildcards when redirecting
 		 */
 		'redirect_with_wildcards' => true,
 	),

@@ -216,7 +216,7 @@ class Inflector
 	 * Only works with UTF-8.
 	 *
 	 * @param   string  $str              string to translate
-	 * @param   bool    $allow_non_ascii  wether to remove non ascii
+	 * @param   bool    $allow_non_ascii  whether to remove non ascii
 	 * @return  string                    translated string
 	 */
 	public static function ascii($str, $allow_non_ascii = false)
@@ -241,8 +241,8 @@ class Inflector
 	 *
 	 * @param   string  $str              the text
 	 * @param   string  $sep              the separator
-	 * @param   bool    $lowercase        wether to convert to lowercase
-	 * @param   bool    $allow_non_ascii  wether to allow non ascii
+	 * @param   bool    $lowercase        whether to convert to lowercase
+	 * @param   bool    $allow_non_ascii  whether to allow non ascii
 	 * @return  string                    the new title
 	 */
 	public static function friendly_title($str, $sep = '-', $lowercase = false, $allow_non_ascii = false)

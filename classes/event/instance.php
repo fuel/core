@@ -94,7 +94,7 @@ class Event_Instance
 	 *
 	 * @param   string   $event     event to remove from
 	 * @param   mixed    $callback  callback to remove [optional, null for all]
-	 * @return  boolean  wether one or all callbacks have been removed
+	 * @return  boolean  whether one or all callbacks have been removed
 	 */
  	public function unregister($event, $callback = null)
 	{
@@ -136,7 +136,7 @@ class Event_Instance
 	 * @param	string	 The name of the event
 	 * @param	mixed	 Any data that is to be passed to the listener
 	 * @param	string	 The return type
-	 * @param   boolean  Wether to fire events ordered LIFO instead of FIFO
+	 * @param   boolean  Whether to fire events ordered LIFO instead of FIFO
 	 * @return	mixed	 The return of the listeners, in the return type
 	 */
 	public function trigger($event, $data = '', $return_type = 'string', $reversed = false)
