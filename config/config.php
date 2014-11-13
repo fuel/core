@@ -306,6 +306,16 @@ return array(
 		 * Database that holds the config table
 		 */
 		'database' => null,
+
+		/*
+		 * Array of servers and portnumbers that run the memcached service for config data
+		 */
+		'memcached'	=> array(
+			'identifier' => 'config',
+			'servers' => array(
+				array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100)
+			),
+		),
 	),
 
 	/**

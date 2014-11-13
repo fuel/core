@@ -145,7 +145,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Config_Json'          => COREPATH.'classes/config/json.php',
 		'Fuel\\Core\\Config_Interface'     => COREPATH.'classes/config/interface.php',
 		'Fuel\\Core\\Config_Php'           => COREPATH.'classes/config/php.php',
-		'Fuel\\Core\\Config_Yml'          => COREPATH.'classes/config/yml.php',
+		'Fuel\\Core\\Config_Yml'           => COREPATH.'classes/config/yml.php',
+		'Fuel\\Core\\Config_Memcached'     => COREPATH.'classes/config/memcached.php',
 
 		'Fuel\\Core\\Controller'           => COREPATH.'classes/controller.php',
 		'Fuel\\Core\\Controller_Rest'      => COREPATH.'classes/controller/rest.php',
