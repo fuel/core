@@ -301,6 +301,11 @@ return array(
 		 * Name of the table used by the Config_Db driver
 		 */
 		'table_name' => 'config',
+
+		/*
+		 * Database that holds the config table
+		 */
+		'database' => null,
 	),
 
 	/**
