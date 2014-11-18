@@ -128,7 +128,7 @@ class Request_Soap extends \Request_Driver
 		// Execute the request & and hide all output
 		try
 		{
-			$body = $this->connection()->__soapCall($this->function, $this->params, array(), $this->get_headers(), $headers);
+			$body = $this->connection()->__soapCall($this->function, array('parameters' => $this->params), array(), $this->get_headers(), $headers);
 			$this->response_info = $headers;
 
 			$mime = $this->response_info('content_type', 'application/soap+xml');
