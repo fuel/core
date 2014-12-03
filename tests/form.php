@@ -233,4 +233,46 @@ class Test_Form extends TestCase
 		$expected = '';
 		$this->assertEquals($expected, $output);
 	}
+
+	/**
+	* Tests Form::label()
+	*
+	* @test
+	*/
+	public function test_label_auto_id_true()
+	{
+		$config = \Config::get('form.auto_id');
+		\Config::set('form.auto_id', true);
+		
+		$form = \Form::forge(__METHOD__);
+		
+		$label = 'label';
+		$id = 'id';
+		$output = $form->label($label, $id);
+		$expected = '<label for="form_id">label</label>';
+		$this->assertEquals($expected, $output);
+		
+		\Config::set('form.auto_id', $config);
+	}
+
+	/**
+	* Tests Form::label()
+	* 
+	* @test
+	*/
+	public function test_label_auto_id_false()
+	{
+		$config = \Config::get('form.auto_id');
+		\Config::set('form.auto_id', false);
+		
+		$form = \Form::forge(__METHOD__);
+		
+		$label = 'label';
+		$id = 'id';
+		$output = $form->label($label, $id);
+		$expected = '<label for="id">label</label>';
+		$this->assertEquals($expected, $output);
+		
+		\Config::set('form.auto_id', $config);
+	}
 }

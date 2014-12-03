@@ -751,17 +751,17 @@ abstract class Image_Driver
 				$red   = hexdec(substr($hex, 0, 2));
 				$green = hexdec(substr($hex, 2, 2));
 				$blue  = hexdec(substr($hex, 4, 2));
-				$alpha = hexdec(substr($hex, 6, 2));
+				$alpha = (strlen($hex) == 8) ? hexdec(substr($hex, 6, 2)) : 255;
 			}
 			else
 			{
 				$red   = hexdec(substr($hex, 0, 1).substr($hex, 0, 1));
 				$green = hexdec(substr($hex, 1, 1).substr($hex, 1, 1));
 				$blue  = hexdec(substr($hex, 2, 1).substr($hex, 2, 1));
-				$alpha = hexdec(substr($hex, 3, 1).substr($hex, 3, 1));
+				$alpha = (strlen($hex) > 3) ? hexdec(substr($hex, 3, 1).substr($hex, 3, 1)) : 255;
 			}
 		}
-		
+
 		$alpha = floor($alpha / 2.55);
 
 		return array(
@@ -811,7 +811,7 @@ abstract class Image_Driver
 	{
 		// Sanitize double negatives
 		$input = str_replace('--', '', $input);
-		
+
 		// Depending on php configuration, float are sometimes converted to strings
 		// using commas instead of points. This notation can create issues since the
 		// conversion from string to float will return an integer.

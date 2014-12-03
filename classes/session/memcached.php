@@ -74,10 +74,15 @@ class Session_Memcached extends \Session_Driver
 			// add the configured servers
 			$this->memcached->addServers($this->config['servers']);
 
-			// check if we can connect to the server(s)
-			if ($this->memcached->getVersion() === false)
+			// check if we can connect to all the server(s)
+			$added = static::$memcached->getStats();
+			foreach (static::$config['servers'] as $server)
 			{
-				throw new \FuelException('Memcached sessions are configured, but there is no connection possible. Check your configuration.');
+				$server = $server['host'].':'.$server['port'];
+				if ( ! isset($added[$server]) or $added[$server]['pid'] == -1)
+				{
+					throw new \FuelException('Memcached sessions are configured, but there is no connection possible. Check your configuration.');
+				}
 			}
 		}
 	}

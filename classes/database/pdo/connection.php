@@ -97,7 +97,19 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 		catch (\PDOException $e)
 		{
-			$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
+			// and convert the exception in a database exception
+			if ( ! is_numeric($error_code = $e->getCode()))
+			{
+				if ($this->_connection)
+				{
+					$error_code = $this->_connection->errorinfo();
+					$error_code = $error_code[1];
+				}
+				else
+				{
+					$error_code = 0;
+				}
+			}
 			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $error_code, $e);
 		}
 
@@ -206,7 +218,7 @@ class Database_PDO_Connection extends \Database_Connection
 					// Only log if no paths we defined, or we have a path match
 					if ($include or empty($paths))
 					{
-						$stacktrace[] = array('file' => Fuel::clean_path($page['file']), 'line' => $page['line']);
+						$stacktrace[] = array('file' => \Fuel::clean_path($page['file']), 'line' => $page['line']);
 					}
 				}
 			}
@@ -242,7 +254,19 @@ class Database_PDO_Connection extends \Database_Connection
 						isset($benchmark) and  \Profiler::delete($benchmark);
 
 						// and convert the exception in a database exception
-						$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
+						if ( ! is_numeric($error_code = $e->getCode()))
+						{
+							if ($this->_connection)
+							{
+								$error_code = $this->_connection->errorinfo();
+								$error_code = $error_code[1];
+							}
+							else
+							{
+								$error_code = 0;
+							}
+						}
+
 						throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $error_code, $e);
 					}
 				}
@@ -251,7 +275,18 @@ class Database_PDO_Connection extends \Database_Connection
 				else
 				{
 					// and convert the exception in a database exception
-					$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
+					if ( ! is_numeric($error_code = $e->getCode()))
+					{
+						if ($this->_connection)
+						{
+							$error_code = $this->_connection->errorinfo();
+							$error_code = $error_code[1];
+						}
+						else
+						{
+							$error_code = 0;
+						}
+					}
 					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $error_code, $e);
 				}
 			}
@@ -472,12 +507,12 @@ class Database_PDO_Connection extends \Database_Connection
 	{
 		return $this->_connection->rollBack();
 	}
-	
+
 	/**
 	 * Sets savepoint of the transaction
-	 * 
+	 *
 	 * @param string $name name of the savepoint
-	 * @return boolean true  - savepoint was set successfully; 
+	 * @return boolean true  - savepoint was set successfully;
 	 *                 false - failed to set savepoint;
 	 *                 null  - RDBMS does not support savepoints
 	 */
@@ -511,5 +546,5 @@ class Database_PDO_Connection extends \Database_Connection
 		$result = $this->_connection->exec('ROLLBACK TO SAVEPOINT LEVEL'.$name);
 		return $result !== false;
 	}
-	
+
 }

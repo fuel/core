@@ -96,12 +96,27 @@ class Crypt
 	 *
 	 * @param	string	value to encrypt
 	 * @param	string	optional custom key to be used for this encryption
+	 * @param	int	optional key length
 	 * @access	public
 	 * @return	string	encrypted value
 	 */
-	public static function encode($value, $key = false)
+	public static function encode($value, $key = false, $keylength = false)
 	{
-		$key ? static::$crypter->setKey($key) : static::$crypter->setKey(static::safe_b64decode(static::$config['crypto_key']));
+		if ( ! $key)
+		{
+			$key = static::safe_b64decode(static::$config['crypto_key']);
+			// Used for backwards compatibility with encrypted data prior
+			// to FuelPHP 1.7.2, when phpseclib was updated, and became a
+			// bit smarter about figuring out key lengths.
+			$keylength = 128;
+		}
+
+		if ($keylength)
+		{
+			static::$crypter->setKeyLength($keylength);
+		}
+
+		static::$crypter->setKey($key);
 		static::$crypter->setIV(static::safe_b64decode(static::$config['crypto_iv']));
 
 		$value = static::$crypter->encrypt($value);
@@ -116,12 +131,27 @@ class Crypt
 	 *
 	 * @param	string	value to decrypt
 	 * @param	string	optional custom key to be used for this encryption
+	 * @param	int	optional key length
 	 * @access	public
 	 * @return	string	encrypted value
 	 */
-	public static function decode($value, $key = false)
+	public static function decode($value, $key = false, $keylength = false)
 	{
-		$key ? static::$crypter->setKey($key) : static::$crypter->setKey(static::safe_b64decode(static::$config['crypto_key']));
+		if ( ! $key)
+		{
+			$key = static::safe_b64decode(static::$config['crypto_key']);
+			// Used for backwards compatibility with encrypted data prior
+			// to FuelPHP 1.7.2, when phpseclib was updated, and became a
+			// bit smarter about figuring out key lengths.
+			$keylength = 128;
+		}
+
+		if ($keylength)
+		{
+			static::$crypter->setKeyLength($keylength);
+		}
+
+		static::$crypter->setKey($key);
 		static::$crypter->setIV(static::safe_b64decode(static::$config['crypto_iv']));
 
 		$value = static::safe_b64decode($value);

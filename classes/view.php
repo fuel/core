@@ -127,7 +127,7 @@ class View
 		}
 
 		// store the current request search paths to deal with out-of-context rendering
-		if (class_exists('Request', false) and $active = \Request::active() and \Request::main() != $active)
+		if (class_exists('Request', false) and $active = \Request::active() and \Request::main() !== $active)
 		{
 			$this->request_paths = $active->get_paths();
 		}
@@ -379,6 +379,11 @@ class View
 	 */
 	public function set_filename($file)
 	{
+		// strip the extension from it
+		$pathinfo = pathinfo($file);
+		empty($pathinfo['extension']) or $this->extension = $pathinfo['extension'];
+		$file = $pathinfo['dirname'].DS.$pathinfo['filename'];
+
 		// set find_file's one-time-only search paths
 		\Finder::instance()->flash($this->request_paths);
 

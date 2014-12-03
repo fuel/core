@@ -41,9 +41,14 @@ class Route
 	public $case_sensitive = false;
 
 	/**
-	 * @var  boolean  wether to strip the extension from the URI
+	 * @var  boolean  whether to strip the extension from the URI
 	 */
 	public $strip_extension = true;
+
+	/**
+	 * @var  string  route name
+	 */
+	public $name = null;
 
 	/**
 	 * @var  string  route module
@@ -80,13 +85,14 @@ class Route
 	 */
 	protected $search = null;
 
-	public function __construct($path, $translation = null, $case_sensitive = null, $strip_extension = null)
+	public function __construct($path, $translation = null, $case_sensitive = null, $strip_extension = null, $name = null)
 	{
 		$this->path = $path;
 		$this->translation = ($translation === null) ? $path : $translation;
 		$this->search = ($translation == stripslashes($path)) ? $path : $this->compile();
 		$this->case_sensitive = ($case_sensitive === null) ? \Config::get('routing.case_sensitive', true) : $case_sensitive;
 		$this->strip_extension = ($strip_extension === null) ? \Config::get('routing.strip_extension', true) : $strip_extension;
+		$this->name = $name;
 	}
 
 	/**

@@ -216,6 +216,11 @@ class Database_Query
 	 */
 	public function compile($db = null)
 	{
+		if ($this->_connection !== null and $db === null)
+		{
+			$db = $this->_connection;
+		}
+
 		if ( ! $db instanceof \Database_Connection)
 		{
 			// Get the database instance
@@ -248,6 +253,11 @@ class Database_Query
 	 */
 	public function execute($db = null)
 	{
+		if ($this->_connection !== null and $db === null)
+		{
+			$db = $this->_connection;
+		}
+
 		if ( ! is_object($db))
 		{
 			// Get the database instance. If this query is a instance of
@@ -269,7 +279,7 @@ class Database_Query
 				break;
 		}
 
-		if ($db->caching() and ! empty($this->_lifetime) and $this->_type === DB::SELECT)
+		if ($db->caching() and ! empty($this->_lifetime) and $this->_type === \DB::SELECT)
 		{
 			$cache_key = empty($this->_cache_key) ?
 				'db.'.md5('Database_Connection::query("'.$db.'", "'.$sql.'")') : $this->_cache_key;
@@ -277,9 +287,9 @@ class Database_Query
 			try
 			{
 				$result = $cache->get();
-				return new Database_Result_Cached($result, $sql, $this->_as_object);
+				return new \Database_Result_Cached($result, $sql, $this->_as_object);
 			}
-			catch (CacheNotFoundException $e) {}
+			catch (\CacheNotFoundException $e) {}
 		}
 
 		// Execute the query

@@ -139,11 +139,20 @@ class Fieldset_Field
 	 */
 	public function set_fieldset(Fieldset $fieldset)
 	{
+		// if we currently have a fieldset
 		if ($this->fieldset)
 		{
-			throw new \RuntimeException('Field already belongs to a fieldset, cannot be reassigned.');
+			// remove the field from the fieldset
+			$this->fieldset->delete($this->name);
+
+			// reset the fieldset
+			$this->fieldset = null;
+
+			// add this field to the new fieldset
+			$fieldset->add($this);
 		}
 
+		// assign the new fieldset
 		$this->fieldset = $fieldset;
 
 		return $this;

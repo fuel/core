@@ -109,12 +109,12 @@ class Str
 	}
 
 	/**
-	 * Checks wether a string has a precific beginning.
+	 * Checks whether a string has a precific beginning.
 	 *
 	 * @param   string   $str          string to check
 	 * @param   string   $start        beginning to check for
-	 * @param   boolean  $ignore_case  wether to ignore the case
-	 * @return  boolean  wether a string starts with a specified beginning
+	 * @param   boolean  $ignore_case  whether to ignore the case
+	 * @return  boolean  whether a string starts with a specified beginning
 	 */
 	public static function starts_with($str, $start, $ignore_case = false)
 	{
@@ -122,12 +122,12 @@ class Str
 	}
 
 	/**
-	 * Checks wether a string has a precific ending.
+	 * Checks whether a string has a precific ending.
 	 *
 	 * @param   string   $str          string to check
 	 * @param   string   $end          ending to check for
-	 * @param   boolean  $ignore_case  wether to ignore the case
-	 * @return  boolean  wether a string ends with a specified ending
+	 * @param   boolean  $ignore_case  whether to ignore the case
+	 * @return  boolean  whether a string ends with a specified ending
 	 */
 	public static function ends_with($str, $end, $ignore_case = false)
 	{

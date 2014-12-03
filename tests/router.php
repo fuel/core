@@ -20,8 +20,6 @@ namespace Fuel\Core;
  */
 class Test_Router extends TestCase
 {
-    public function test_foo() {}
-
     /**
      * Provider for test_classnames.
      */
@@ -137,4 +135,33 @@ class Test_Router extends TestCase
         $this->assertEquals($action, $match->action);
         $this->assertEquals(array(), $match->method_params);
     }
+
+	public function test_add_route_and_router_name()
+	{
+		$path = 'testing/route';
+		$options = null;
+		$prepend = false;
+		$case_sensitive = null;
+		Router::add($path, $options, $prepend, $case_sensitive);
+		
+		$this->assertEquals($path, Router::$routes[$path]->path);
+		$this->assertEquals($path, Router::$routes[$path]->name);
+		
+		Router::delete($path);
+	}
+
+	public function test_add_route_and_router_option_name()
+	{
+		$path = 'testing/route';
+		$name = 'option_name';
+		$options = array('name' => $name);
+		$prepend = false;
+		$case_sensitive = null;
+		Router::add($path, $options, $prepend, $case_sensitive);
+		
+		$this->assertEquals($path, Router::$routes[$name]->path);
+		$this->assertEquals($name, Router::$routes[$name]->name);
+		
+		Router::delete($name);
+	}
 }

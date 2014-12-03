@@ -71,7 +71,7 @@ class_alias('Fuel\\Core\\Autoloader', 'Autoloader');
 require_once APPPATH.'bootstrap.php';
 
 // Set test mode
-Fuel::$is_test = true;
+\Fuel::$is_test = true;
 
 // Import the TestCase class
 import('testcase');

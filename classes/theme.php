@@ -409,7 +409,7 @@ class Theme
 	}
 
 	/**
-	 * Returns wether or not a section has partials defined
+	 * Returns whether or not a section has partials defined
 	 *
 	 * @param   string  				$section   Name of the partial section in the template
 	 * @return  bool

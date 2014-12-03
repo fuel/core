@@ -69,6 +69,10 @@ register_shutdown_function(function ()
 			\Cli::beep();
 			exit(1);
 		}
+		else
+		{
+			logger(\Fuel::L_ERROR, 'shutdown - ' . $e->getMessage()." in ".$e->getFile()." on ".$e->getLine());
+		}
 	}
 	return \Error::shutdown_handler();
 });
@@ -107,11 +111,11 @@ set_error_handler(function ($severity, $message, $filepath, $line)
 
 function setup_autoloader()
 {
-	Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
+	\Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
-	Autoloader::add_namespace('PHPSecLib', COREPATH.'vendor'.DS.'phpseclib'.DS, true);
+	\Autoloader::add_namespace('PHPSecLib', COREPATH.'vendor'.DS.'phpseclib'.DS, true);
 
-	Autoloader::add_classes(array(
+	\Autoloader::add_classes(array(
 		'Fuel\\Core\\Agent'           => COREPATH.'classes/agent.php',
 
 		'Fuel\\Core\\Arr'             => COREPATH.'classes/arr.php',
@@ -131,6 +135,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Cache_Storage_File'        => COREPATH.'classes/cache/storage/file.php',
 		'Fuel\\Core\\Cache_Storage_Memcached'   => COREPATH.'classes/cache/storage/memcached.php',
 		'Fuel\\Core\\Cache_Storage_Redis'       => COREPATH.'classes/cache/storage/redis.php',
+		'Fuel\\Core\\Cache_Storage_Xcache'      => COREPATH.'classes/cache/storage/xcache.php',
 
 		'Fuel\\Core\\Config'               => COREPATH.'classes/config.php',
 		'Fuel\\Core\\ConfigException'      => COREPATH.'classes/config.php',
@@ -140,7 +145,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Config_Json'          => COREPATH.'classes/config/json.php',
 		'Fuel\\Core\\Config_Interface'     => COREPATH.'classes/config/interface.php',
 		'Fuel\\Core\\Config_Php'           => COREPATH.'classes/config/php.php',
-		'Fuel\\Core\\Config_Yml'          => COREPATH.'classes/config/yml.php',
+		'Fuel\\Core\\Config_Yml'           => COREPATH.'classes/config/yml.php',
+		'Fuel\\Core\\Config_Memcached'     => COREPATH.'classes/config/memcached.php',
 
 		'Fuel\\Core\\Controller'           => COREPATH.'classes/controller.php',
 		'Fuel\\Core\\Controller_Rest'      => COREPATH.'classes/controller/rest.php',

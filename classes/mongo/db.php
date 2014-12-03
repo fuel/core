@@ -1147,7 +1147,7 @@ class Mongo_Db
 	/**
 	 *	Returns all collection objects
 	 *
-	 *	@param	bool	$system_collections  wether or not to include system collections
+	 *	@param	bool	$system_collections  whether or not to include system collections
 	 *	@usage	$collections = $mongodb->list_collections();
 	 */
 	public function list_collections($system_collections = false)

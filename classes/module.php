@@ -46,6 +46,7 @@ class Module
 	{
 		if (is_array($module))
 		{
+			$result = true;
 			foreach ($module as $mod => $path)
 			{
 				if (is_numeric($mod))
@@ -53,9 +54,9 @@ class Module
 					$mod = $path;
 					$path = null;
 				}
-				static::load($mod, $path);
+				$result = $result and static::load($mod, $path);
 			}
-			return false;
+			return $result;
 		}
 
 
@@ -85,7 +86,7 @@ class Module
 		// make sure the path exists
 		if ( ! is_dir($path))
 		{
-			throw new ModuleNotFoundException("Module '$module' could not be found at '".\Fuel::clean_path($path)."'");
+			throw new \ModuleNotFoundException("Module '$module' could not be found at '".\Fuel::clean_path($path)."'");
 		}
 
 		// determine the module namespace
@@ -147,6 +148,7 @@ class Module
 		else
 		{
 			$paths = \Config::get('module_paths', array());
+			$module = strtolower($module);
 
 			foreach ($paths as $path)
 			{

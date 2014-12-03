@@ -605,7 +605,7 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the key before which to insert
-	 * @param   bool         wether the input is an associative array
+	 * @param   bool         whether the input is an associative array
 	 * @return  bool         false when key isn't found in the array, otherwise true
 	 */
 	public static function insert_before_key(array &$original, $value, $key, $is_assoc = false)
@@ -628,7 +628,7 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the key after which to insert
-	 * @param   bool         wether the input is an associative array
+	 * @param   bool         whether the input is an associative array
 	 * @return  bool         false when key isn't found in the array, otherwise true
 	 */
 	public static function insert_after_key(array &$original, $value, $key, $is_assoc = false)
@@ -650,7 +650,7 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the value after which to insert
-	 * @param   bool         wether the input is an associative array
+	 * @param   bool         whether the input is an associative array
 	 * @return  bool         false when value isn't found in the array, otherwise true
 	 */
 	public static function insert_after_value(array &$original, $value, $search, $is_assoc = false)
@@ -672,7 +672,7 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the value after which to insert
-	 * @param   bool         wether the input is an associative array
+	 * @param   bool         whether the input is an associative array
 	 * @return  bool         false when value isn't found in the array, otherwise true
 	 */
 	public static function insert_before_value(array &$original, $value, $search, $is_assoc = false)
@@ -743,7 +743,7 @@ class Arr
 	 *
 	 * @param   array  $array        collection of arrays/objects to sort
 	 * @param   array  $conditions   sorting conditions
-	 * @param   bool   @ignore_case  wether to sort case insensitive
+	 * @param   bool   @ignore_case  whether to sort case insensitive
 	 */
 	public static function multisort($array, $conditions, $ignore_case = false)
 	{
@@ -936,7 +936,7 @@ class Arr
 	 *
 	 * @param   mixed  $needle    what to search for
 	 * @param   array  $haystack  array to search in
-	 * @return  bool   wether the needle is found in the haystack.
+	 * @return  bool   whether the needle is found in the haystack.
 	 */
 	public static function in_array_recursive($needle, $haystack, $strict = false)
 	{

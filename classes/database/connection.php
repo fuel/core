@@ -270,7 +270,7 @@ abstract class Database_Connection
 	/**
 	 * Per connection cache controlle setter/getter
 	 *
-	 * @param   bool   $bool  wether to enable it [optional]
+	 * @param   bool   $bool  whether to enable it [optional]
 	 *
 	 * @return  mixed  cache boolean when getting, current instance when setting.
 	 */
@@ -659,11 +659,16 @@ abstract class Database_Connection
 			return $this->quote_identifier($value).' AS '.$this->quote_identifier($alias);
 		}
 
+		if (preg_match('/^(["\']).*\1$/m', $value))
+		{
+			return $value;
+		}
+
 		if (strpos($value, '.') !== false)
 		{
 			// Split the identifier into the individual parts
-            // This is slightly broken, because a table or column name
-            // (or user-defined alias!) might legitimately contain a period.
+			// This is slightly broken, because a table or column name
+			// (or user-defined alias!) might legitimately contain a period.
 			$parts = explode('.', $value);
 
 			if ($prefix = $this->table_prefix())

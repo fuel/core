@@ -39,6 +39,7 @@ return array(
 	'xml' => array(
 		'basenode' => 'xml',
 		'use_cdata' => false,
+		'bool_representation' => null,
 	),
 	'json' => array(
 		'encode' => array(

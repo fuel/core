@@ -313,7 +313,21 @@ class Finder
 			return $multiple ? array($file) : $file;
 		}
 
-		$cache_id = $multiple ? 'M.' : 'S.';
+		// determine the cache prefix
+		if ($multiple)
+		{
+			// make sure cache is not used if the loaded package and module list is changed
+			$cachekey = '';
+			class_exists('Module', false) and $cachekey .= implode('|', \Module::loaded());
+			$cachekey .= '|';
+			class_exists('Package', false) and $cachekey .= implode('|', \Package::loaded());
+			$cache_id = md5($cachekey).'.';
+		}
+		else
+		{
+			$cache_id = 'S.';
+		}
+
 		$paths = array();
 
 		// If a filename contains a :: then it is trying to be found in a namespace.

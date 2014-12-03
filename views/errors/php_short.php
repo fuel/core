@@ -1,1 +1,1 @@
-<strong><?php echo $type; ?>:</strong> <?php echo $message; ?> in <?php echo $filepath, ' [', $line, ']: ', $function; ?>
+<strong><?php echo $type; ?>:</strong> <?php echo e($message); ?> in <?php echo $filepath, ' [', $line, ']: ', $function; ?>
