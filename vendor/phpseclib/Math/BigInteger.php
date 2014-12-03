@@ -69,6 +69,8 @@ namespace PHPSecLib\Math;
  * @link      http://pear.php.net/package/Math_BigInteger
  */
 
+use \phpseclib\Crypt\Random;
+
 /**#@+
  * Reduction constants
  *
@@ -327,9 +329,12 @@ class BigInteger
 
         switch ( MATH_BIGINTEGER_MODE ) {
             case MATH_BIGINTEGER_MODE_GMP:
-                if (is_resource($x) && get_resource_type($x) == 'GMP integer') {
-                    $this->value = $x;
-                    return;
+                switch (true) {
+                    case is_resource($x) && get_resource_type($x) == 'GMP integer':
+                    // PHP 5.6 switched GMP from using resources to objects
+                    case is_object($x) && get_class($x) == 'GMP':
+                        $this->value = $x;
+                        return;
                 }
                 $this->value = gmp_init(0);
                 break;
@@ -899,7 +904,7 @@ class BigInteger
             $value = $x_value;
         }
 
-        $value[] = 0; // just in case the carry adds an extra digit
+        $value[count($value)] = 0; // just in case the carry adds an extra digit
 
         $carry = 0;
         for ($i = 0, $j = 1; $j < $size; $i+=2, $j+=2) {
@@ -2113,7 +2118,7 @@ class BigInteger
 
         if ($this->_compare($result, false, $temp[MATH_BIGINTEGER_VALUE], $temp[MATH_BIGINTEGER_SIGN]) < 0) {
             $corrector_value = $this->_array_repeat(0, $n_length + 1);
-            $corrector_value[] = 1;
+            $corrector_value[count($corrector_value)] = 1;
             $result = $this->_add($result, false, $corrector_value, false);
             $result = $result[MATH_BIGINTEGER_VALUE];
         }
@@ -2877,7 +2882,7 @@ class BigInteger
         $leading_ones = chr((1 << ($new_bits & 0x7)) - 1) . str_repeat(chr(0xFF), $new_bits >> 3);
         $this->_base256_lshift($leading_ones, $current_bits);
 
-        $temp = str_pad($temp, ceil($this->bits / 8), chr(0), STR_PAD_LEFT);
+        $temp = str_pad($temp, strlen($leading_ones), chr(0), STR_PAD_LEFT);
 
         return $this->_normalize(new static($leading_ones | $temp, 256));
     }
@@ -3019,7 +3024,7 @@ class BigInteger
     /**
      * Generates a random BigInteger
      *
-     * Byte length is equal to $length. Uses crypt_random if it's loaded and mt_rand if it's not.
+     * Byte length is equal to $length. Uses Crypt\Random if it's loaded and mt_rand if it's not.
      *
      * @param Integer $length
      * @return \PHPSecLib\Math\BigInteger
@@ -3027,8 +3032,8 @@ class BigInteger
      */
     function _random_number_helper($size)
     {
-        if (function_exists('crypt_random_string')) {
-            $random = crypt_random_string($size);
+        if (class_exists('phpseclib\Crypt\Random')) {
+            $random = Random::string($size);
         } else {
             $random = '';
 
@@ -3440,7 +3445,7 @@ class BigInteger
         }
 
         if ( $carry ) {
-            $this->value[] = $carry;
+            $this->value[count($this->value)] = $carry;
         }
 
         while ($num_digits--) {
