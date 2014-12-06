@@ -272,6 +272,11 @@ class View
 				$filter = array_key_exists($key, $rules) ? $rules[$key] : null;
 				$filter = is_null($filter) ? $auto_filter : $filter;
 
+				if ($value instanceOf \Closure)
+				{
+					$value = $value();
+				}
+
 				$value = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
 
