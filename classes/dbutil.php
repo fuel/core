@@ -694,8 +694,14 @@ class DBUtil
 		}
 		else
 		{
+			if ( ! in_array($type, array('info', 'warning' , 'error')))
+			{
+				$type = \Fuel::L_INFO;
+			}
+
 			logger(ucfirst($type), 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
 		}
+
 		return false;
 	}
 
