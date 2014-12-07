@@ -8,7 +8,7 @@ Please see LICENSE and AUTHORS for futher licensing information.
 
 # FuelPHP Additions
 This is a manual update of phpseclib by Rob Thomas based on git commit 
-2ea46f8091c706e5fedde24ba98d2e8e724a407f in the php5 branch.
+cd10ded72e8be3d9160bedf28e8b21e5d63b3f89 in the php5 branch.
 
 Normally, a sub-project like this would be brought in with Composer, but, as it's
 not namespaced, it requires manual patching.
@@ -22,4 +22,5 @@ command 'git format-patch -1 shahash', and then patch -p1 the resulting output.
 Packager: Rob Thomas <rob.thomas@schmoozecom.com>
 Source: https://github.com/phpseclib/phpseclib
 License: MIT
-Commit: 2ea46f8091c706e5fedde24ba98d2e8e724a407f
+Commit: cd10ded72e8be3d9160bedf28e8b21e5d63b3f89
+Date: 2014-12-03

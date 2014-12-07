@@ -67,6 +67,7 @@ namespace PHPSecLib;
  * @link      http://phpseclib.sourceforge.net
  */
 
+use \PHPSecLib\Crypt\Random;
 use \PHPSecLib\Math\BigInteger;
 
 /**#@+
@@ -522,15 +523,6 @@ class Net_SSH1
      */
     function __construct($host, $port = 22, $timeout = 10, $cipher = NET_SSH1_CIPHER_3DES)
     {
-        // Include Crypt_Random
-        // the class_exists() will only be called if the crypt_random_string function hasn't been defined and
-        // will trigger a call to __autoload() if you're wanting to auto-load classes
-        // call function_exists() a second time to stop the include_once from being called outside
-        // of the auto loader
-        if (!function_exists('crypt_random_string') && !class_exists('Crypt_Random') && !function_exists('crypt_random_string')) {
-            include_once 'Crypt/Random.php';
-        }
-
         $this->protocol_flags = array(
             1  => 'NET_SSH1_MSG_DISCONNECT',
             2  => 'NET_SSH1_SMSG_PUBLIC_KEY',
@@ -638,7 +630,7 @@ class Net_SSH1
 
         $session_id = pack('H*', md5($host_key_public_modulus->toBytes() . $server_key_public_modulus->toBytes() . $anti_spoofing_cookie));
 
-        $session_key = crypt_random_string(32);
+        $session_key = Random::string(32);
         $double_encrypted_session_key = $session_key ^ str_pad($session_id, 32, chr(0));
 
         if ($server_key_public_modulus->compare($host_key_public_modulus) < 0) {
@@ -1186,7 +1178,7 @@ class Net_SSH1
 
         $length = strlen($data) + 4;
 
-        $padding = crypt_random_string(8 - ($length & 7));
+        $padding = Random::string(8 - ($length & 7));
 
         $orig = $data;
         $data = $padding . $data;
@@ -1337,9 +1329,9 @@ class Net_SSH1
      * calls this call modexp, instead, but I think this makes things clearer, maybe...
      *
      * @see Net_SSH1::__construct()
-     * @param Math_BigInteger $m
+     * @param BigInteger $m
      * @param Array $key
-     * @return Math_BigInteger
+     * @return BigInteger
      * @access private
      */
     function _rsa_crypt($m, $key)
@@ -1372,7 +1364,7 @@ class Net_SSH1
         $length = strlen($modulus) - strlen($m) - 3;
         $random = '';
         while (strlen($random) != $length) {
-            $block = crypt_random_string($length - strlen($random));
+            $block = Random::string($length - strlen($random));
             $block = str_replace("\x00", '', $block);
             $random.= $block;
         }
