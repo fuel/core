@@ -38,6 +38,7 @@ class Router
 	 * @param  string
 	 * @param  string|array|Route  either the translation for $path, an array for verb routing or an instance of Route
 	 * @param  bool                whether to prepend the route(s) to the routes array
+	 * @param  bool                whether to check case sensitive
 	 */
 	public static function add($path, $options = null, $prepend = false, $case_sensitive = null)
 	{
@@ -142,6 +143,7 @@ class Router
 	 * Delete one or multiple routes
 	 *
 	 * @param  string
+	 * @param  bool     whether to check case sensitive
 	 */
 	public static function delete($path, $case_sensitive = null)
 	{
