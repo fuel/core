@@ -140,6 +140,11 @@ class Database_MySQL_Connection extends \Database_Connection
 		static::$_current_databases[$this->_connection_id] = $database;
 	}
 
+	/**
+	 * Disconnect from the database
+	 *
+	 * @throws  \Exception  when the mysql database is not disconnected properly
+	 */
 	public function disconnect()
 	{
 		try
@@ -333,6 +338,12 @@ class Database_MySQL_Connection extends \Database_Connection
 		return parent::datatype($type);
 	}
 
+	/**
+	 * List tables
+	 *
+	 * @param   string  $like  pattern of table name
+	 * @return  array   array of table name
+	 */
 	public function list_tables($like = null)
 	{
 		if (is_string($like))
@@ -355,6 +366,13 @@ class Database_MySQL_Connection extends \Database_Connection
 		return $tables;
 	}
 
+	/**
+	 * List table columns
+	 *
+	 * @param   string  $table  table name
+	 * @param   string  $like   column name pattern
+	 * @return  array   array of column structure
+	 */
 	public function list_columns($table, $like = null)
 	{
 		// Quote the table name
@@ -439,6 +457,12 @@ class Database_MySQL_Connection extends \Database_Connection
 		return $columns;
 	}
 
+	/**
+	 * Escape query for sql
+	 *
+	 * @param   mixed   $value  value of string castable
+	 * @return  string  escaped sql string
+	 */
 	public function escape($value)
 	{
 		// Make sure the database is connected
@@ -512,5 +536,4 @@ class Database_MySQL_Connection extends \Database_Connection
 		$this->query(0, 'ROLLBACK TO SAVEPOINT LEVEL'.$name, false);
 		return true;
 	}
-
 }

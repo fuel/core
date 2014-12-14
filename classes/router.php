@@ -38,6 +38,7 @@ class Router
 	 * @param  string
 	 * @param  string|array|Route  either the translation for $path, an array for verb routing or an instance of Route
 	 * @param  bool                whether to prepend the route(s) to the routes array
+	 * @param  bool                whether to check case sensitive
 	 */
 	public static function add($path, $options = null, $prepend = false, $case_sensitive = null)
 	{
@@ -142,6 +143,7 @@ class Router
 	 * Delete one or multiple routes
 	 *
 	 * @param  string
+	 * @param  bool     whether to check case sensitive
 	 */
 	public static function delete($path, $case_sensitive = null)
 	{
@@ -184,9 +186,9 @@ class Router
 	/**
 	 * Processes the given request using the defined routes
 	 *
-	 * @param	Request		the given Request object
-	 * @param	bool		whether to use the defined routes or not
-	 * @return	mixed		the match array or false
+	 * @param   Request     the given Request object
+	 * @param   bool        whether to use the defined routes or not
+	 * @return  mixed       the match array or false
 	 */
 	public static function process(\Request $request, $route = true)
 	{
@@ -221,8 +223,8 @@ class Router
 	/**
 	 * Find the controller that matches the route requested
 	 *
-	 * @param	Route  $match  the given Route object
-	 * @return	mixed  the match array or false
+	 * @param   Route  $match  the given Route object
+	 * @return  mixed  the match array or false
 	 */
 	protected static function parse_match($match)
 	{

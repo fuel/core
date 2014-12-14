@@ -18,28 +18,28 @@ use \PHPSecLib\Crypt_Hash;
 class Crypt
 {
 
-	/*
+	/**
 	 * Crypto object used to encrypt/decrypt
 	 *
 	 * @var	object
 	 */
 	private static $crypter = null;
 
-	/*
+	/**
 	 * Hash object used to generate hashes
 	 *
 	 * @var	object
 	 */
 	private static $hasher = null;
 
-	/*
+	/**
 	 * Crypto configuration
 	 *
 	 * @var	array
 	 */
 	private static $config = array();
 
-	/*
+	/**
 	 * initialisation and auto configuration
 	 */
 	public static function _init()
@@ -91,7 +91,7 @@ class Crypt
 
 	// --------------------------------------------------------------------
 
-	/*
+	/**
 	 * encrypt a string value, optionally with a custom key
 	 *
 	 * @param	string	value to encrypt
@@ -126,7 +126,7 @@ class Crypt
 
 	// --------------------------------------------------------------------
 
-	/*
+	/**
 	 * decrypt a string value, optionally with a custom key
 	 *
 	 * @param	string	value to decrypt
