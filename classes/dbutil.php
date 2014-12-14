@@ -45,11 +45,12 @@ class DBUtil
 	/**
 	 * Creates a database.  Will throw a Database_Exception if it cannot.
 	 *
-	 * @throws	Fuel\Database_Exception
-	 * @param	string	$database	the database name
-	 * @param	string	$database	the character set
-	 * @param	boolean	$if_not_exists  whether to add an IF NOT EXISTS statement.
-	 * @return	int		the number of affected rows
+	 * @throws  Fuel\Database_Exception
+	 * @param   string  $database       the database name
+	 * @param   string  $database       the character set
+	 * @param   boolean $if_not_exists  whether to add an IF NOT EXISTS statement.
+	 * @param   string  $db             the database connection to use
+	 * @return  int     the number of affected rows
 	 */
 	public static function create_database($database, $charset = null, $if_not_exists = true, $db = null)
 	{
@@ -64,9 +65,10 @@ class DBUtil
 	/**
 	 * Drops a database.  Will throw a Database_Exception if it cannot.
 	 *
-	 * @throws	Fuel\Database_Exception
-	 * @param	string	$database	the database name
-	 * @return	int		the number of affected rows
+	 * @throws  Fuel\Database_Exception
+	 * @param   string  $database   the database name
+	 * @param   string  $db         the database connection to use
+	 * @return  int     the number of affected rows
 	 */
 	public static function drop_database($database, $db = null)
 	{
@@ -76,9 +78,10 @@ class DBUtil
 	/**
 	 * Drops a table.  Will throw a Database_Exception if it cannot.
 	 *
-	 * @throws	Fuel\Database_Exception
-	 * @param	string	$table	the table name
-	 * @return	int		the number of affected rows
+	 * @throws  Fuel\Database_Exception
+	 * @param   string  $table  the table name
+	 * @param   string  $db     the database connection to use
+	 * @return  int     the number of affected rows
 	 */
 	public static function drop_table($table, $db = null)
 	{
@@ -88,10 +91,11 @@ class DBUtil
 	/**
 	 * Renames a table.  Will throw a Database_Exception if it cannot.
 	 *
-	 * @throws	\Database_Exception
-	 * @param	string	$table			the old table name
-	 * @param	string	$new_table_name	the new table name
-	 * @return	int		the number of affected
+	 * @throws  \Database_Exception
+	 * @param   string  $table          the old table name
+	 * @param   string  $new_table_name the new table name
+	 * @param   string  $db             the database connection to use
+	 * @return  int     the number of affected
 	 */
 	public static function rename_table($table, $new_table_name, $db = null)
 	{
@@ -101,15 +105,16 @@ class DBUtil
 	/**
 	 * Creates a table.
 	 *
-	 * @throws	 \Database_Exception
-	 * @param    string    $table          the table name
-	 * @param    array     $fields         the fields array
-	 * @param    array     $primary_keys   an array of primary keys
-	 * @param    boolean   $if_not_exists  whether to add an IF NOT EXISTS statement.
-	 * @param    string    $engine         storage engine overwrite
-	 * @param    string    $charset        default charset overwrite
-	 * @param    array     $foreign_keys   an array of foreign keys
-	 * @return   int       number of affected rows.
+	 * @throws  \Database_Exception
+	 * @param   string  $table          the table name
+	 * @param   array   $fields         the fields array
+	 * @param   array   $primary_keys   an array of primary keys
+	 * @param   boolean $if_not_exists  whether to add an IF NOT EXISTS statement.
+	 * @param   string  $engine         storage engine overwrite
+	 * @param   string  $charset        default charset overwrite
+	 * @param   array   $foreign_keys   an array of foreign keys
+	 * @param   string  $db             the database connection to use
+	 * @return  int     number of affected rows.
 	 */
 	public static function create_table($table, $fields, $primary_keys = array(), $if_not_exists = true, $engine = false, $charset = null, $foreign_keys = array(), $db = null)
 	{
@@ -138,10 +143,11 @@ class DBUtil
 	/**
 	 * Adds fields to a table a table.  Will throw a Database_Exception if it cannot.
 	 *
-	 * @throws	Fuel\Database_Exception
-	 * @param	string	$table			the table name
-	 * @param	array	$fields			the new fields
-	 * @return	int		the number of affected
+	 * @throws  Fuel\Database_Exception
+	 * @param   string  $table   the table name
+	 * @param   array   $fields  the new fields
+	 * @param   string  $db      the database connection to use
+	 * @return  int     the number of affected
 	 */
 	public static function add_fields($table, $fields, $db = null)
 	{
@@ -151,10 +157,10 @@ class DBUtil
 	/**
 	 * Modifies fields in a table.  Will throw a Database_Exception if it cannot.
 	 *
-	 * @throws	Fuel\Database_Exception
-	 * @param	string	$table			the table name
-	 * @param	array	$fields			the modified fields
-	 * @return	int		the number of affected
+	 * @throws  Fuel\Database_Exception
+	 * @param   string  $table    the table name
+	 * @param   array   $fields   the modified fields
+	 * @return  int     the number of affected
 	 */
 	public static function modify_fields($table, $fields, $db = null)
 	{
@@ -164,10 +170,11 @@ class DBUtil
 	/**
 	 * Drops fields from a table a table.  Will throw a Database_Exception if it cannot.
 	 *
-	 * @throws	Fuel\Database_Exception
-	 * @param	string			$table			the table name
-	 * @param	string|array	$fields			the fields
-	 * @return	int				the number of affected
+	 * @throws  Fuel\Database_Exception
+	 * @param   string        $table   the table name
+	 * @param   string|array  $fields  the fields
+	 * @param   string        $db      the database connection to use
+	 * @return  int           the number of affected
 	 */
 	public static function drop_fields($table, $fields, $db = null)
 	{
@@ -207,14 +214,15 @@ class DBUtil
 	/**
 	 * Creates an index on that table.
 	 *
-	 * @access	public
+	 * @access  public
 	 * @static
-	 * @param	string	$table
-	 * @param	string	$index_name
-	 * @param	string	$index_columns
-	 * @param	string	$index (should be 'unique', 'fulltext', 'spatial' or 'nonclustered')
-	 * @return	bool
-	 * @author	Thomas Edwards
+	 * @param   string  $table
+	 * @param   string  $index_name
+	 * @param   string  $index_columns
+	 * @param   string  $index (should be 'unique', 'fulltext', 'spatial' or 'nonclustered')
+	 * @param   string  $db    the database connection to use
+	 * @return  bool
+	 * @author  Thomas Edwards
 	 */
 	public static function create_index($table, $index_columns, $index_name = '', $index = '', $db = null)
 	{
@@ -306,12 +314,13 @@ class DBUtil
 	/**
 	 * Drop an index from a table.
 	 *
-	 * @access	public
+	 * @access  public
 	 * @static
-	 * @param	string $table
-	 * @param	string $index_name
-	 * @return	bool
-	 * @author	Thomas Edwards
+	 * @param   string  $table
+	 * @param   string  $index_name
+	 * @param   string  $db          the database connection to use
+	 * @return  bool
+	 * @author  Thomas Edwards
 	 */
 	public static function drop_index($table, $index_name, $db = null)
 	{
@@ -419,8 +428,8 @@ class DBUtil
 	 *
 	 * @param    string    $charset       the character set
 	 * @param    bool      $is_default    whether to use default
-	 * @param    string    $db       the database name in the config
-	 * @param    string    $collation       the collating sequence to be used
+	 * @param    string    $db            the database name in the config
+	 * @param    string    $collation     the collating sequence to be used
 	 * @return   string    the formated charset sql
 	 */
 	protected static function process_charset($charset = null, $is_default = false, $db = null, $collation = null)
@@ -462,9 +471,9 @@ class DBUtil
 	/**
 	 * Adds a single foreign key to a table
 	 *
-	 * @param	string	$table			the table name
-	 * @param	array 	$foreign_key	a single foreign key
-	 * @return 	int		number of affected rows
+	 * @param   string  $table          the table name
+	 * @param   array   $foreign_key    a single foreign key
+	 * @return  int     number of affected rows
 	 */
 	public static function add_foreign_key($table, $foreign_key)
 	{
@@ -484,9 +493,9 @@ class DBUtil
 	/**
 	 * Drops a foreign key from a table
 	 *
-	 * @param	string	$table		the table name
-	 * @param	string	$fk_name	the foreign key name
-	 * @return 	int		number of affected rows
+	 * @param   string  $table      the table name
+	 * @param   string  $fk_name    the foreign key name
+	 * @return  int     number of affected rows
 	 */
 	public static function drop_foreign_key($table, $fk_name)
 	{
@@ -501,8 +510,9 @@ class DBUtil
 	/**
 	 * Returns string of foreign keys
 	 *
-	 * @param    array    $foreign_keys       Array of foreign key rules
-	 * @return   string    the formated foreign key string
+	 * @param   array   $foreign_keys  Array of foreign key rules
+	 * @param   string  $db            the database connection to use
+	 * @return  string  the formated foreign key string
 	 */
 	public static function process_foreign_keys($foreign_keys, $db = null)
 	{
@@ -554,9 +564,10 @@ class DBUtil
 	/**
 	 * Truncates a table.
 	 *
-	 * @throws    Fuel\Database_Exception
-	 * @param     string    $table    the table name
-	 * @return    int       the number of affected rows
+	 * @throws  Fuel\Database_Exception
+	 * @param   string  $table  the table name
+	 * @param   string  $db     the database connection to use
+	 * @return  int     the number of affected rows
 	 */
 	public static function truncate_table($table, $db = null)
 	{
@@ -567,8 +578,9 @@ class DBUtil
 	/**
 	 * Analyzes a table.
 	 *
-	 * @param     string    $table    the table name
-	 * @return    bool      whether the table is OK
+	 * @param   string  $table  the table name
+	 * @param   string  $db     the database connection to use
+	 * @return  bool    whether the table is OK
 	 */
 	public static function analyze_table($table, $db = null)
 	{
@@ -578,8 +590,9 @@ class DBUtil
 	/**
 	 * Checks a table.
 	 *
-	 * @param     string    $table    the table name
-	 * @return    bool      whether the table is OK
+	 * @param   string  $table  the table name
+	 * @param   string  $db     the database connection to use
+	 * @return  bool    whether the table is OK
 	 */
 	public static function check_table($table, $db = null)
 	{
@@ -589,8 +602,9 @@ class DBUtil
 	/**
 	 * Optimizes a table.
 	 *
-	 * @param     string    $table    the table name
-	 * @return    bool      whether the table has been optimized
+	 * @param   string  $table  the table name
+	 * @param   string  $db     the database connection to use
+	 * @return  bool    whether the table has been optimized
 	 */
 	public static function optimize_table($table, $db = null)
 	{
@@ -600,8 +614,9 @@ class DBUtil
 	/**
 	 * Repairs a table.
 	 *
-	 * @param     string    $table    the table name
-	 * @return    bool      whether the table has been repaired
+	 * @param   string  $table  the table name
+	 * @param   string  $db     the database connection to use
+	 * @return  bool    whether the table has been repaired
 	 */
 	public static function repair_table($table, $db = null)
 	{
@@ -612,6 +627,7 @@ class DBUtil
 	 * Checks if a given table exists.
 	 *
 	 * @param   string  $table  Table name
+	 * @param   string  $db     the database connection to use
 	 * @return  bool
 	 */
 	public static function table_exists($table, $db = null)
@@ -639,8 +655,9 @@ class DBUtil
 	/**
 	 * Checks if given field(s) in a given table exists.
 	 *
-	 * @param   string         $table    Table name
-	 * @param   string|array   $columns  columns to check
+	 * @param   string          $table      Table name
+	 * @param   string|array    $columns    columns to check
+	 * @param   string          $db         the database connection to use
 	 * @return  bool
 	 */
 	public static function field_exists($table, $columns, $db = null)
@@ -673,9 +690,10 @@ class DBUtil
 	/*
 	 * Executes table maintenance. Will throw FuelException when the operation is not supported.
 	 *
-	 * @throws	FuelException
-	 * @param     string    $table    the table name
-	 * @return    bool      whether the operation has succeeded
+	 * @throws  FuelException
+	 * @param   string  $table  the table name
+	 * @param   string  $db     the database connection to use
+	 * @return  bool    whether the operation has succeeded
 	 */
 	protected static function table_maintenance($operation, $table, $db = null)
 	{

@@ -163,6 +163,11 @@ class Database_MySQLi_Connection extends \Database_Connection
 		static::$_current_databases[$this->_connection_id] = $database;
 	}
 
+	/**
+	 * Disconnect from the database
+	 *
+	 * @throws  \Exception  when the mysql database is not disconnected properly
+	 */
 	public function disconnect()
 	{
 		try
@@ -196,6 +201,19 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 	}
 
+	/**
+	 * Execute query
+	 *
+	 * @param   integer $type       query type (\DB::SELECT, \DB::INSERT, etc.)
+	 * @param   string  $sql        SQL string
+	 * @param   mixed   $as_object  used when query type is SELECT
+	 *
+	 * @throws  \Database_Exception
+	 *
+	 * @return  mixed  when SELECT then return an iterator of results,<br>
+	 *                 when UPDATE then return a list of insert id and rows created,<br>
+	 *                 in other case return the number of rows affected
+	 */
 	public function query($type, $sql, $as_object)
 	{
 		// Make sure the database is connected
@@ -351,6 +369,12 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return parent::datatype($type);
 	}
 
+	/**
+	 * List tables
+	 *
+	 * @param   string  $like   pattern of table name
+	 * @return  array   array of table names
+	 */
 	public function list_tables($like = null)
 	{
 		if (is_string($like))
@@ -373,6 +397,13 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return $tables;
 	}
 
+	/**
+	 * List table columns
+	 *
+	 * @param   string  $table  table name
+	 * @param   string  $like   column name pattern
+	 * @return  array   array of column structure
+	 */
 	public function list_columns($table, $like = null)
 	{
 		// Quote the table name
@@ -457,6 +488,12 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return $columns;
 	}
 
+	/**
+	 * Escape query for sql
+	 *
+	 * @param   mixed   $value  value of string castable
+	 * @return  string  escaped sql string
+	 */
 	public function escape($value)
 	{
 		// Make sure the database is connected

@@ -924,7 +924,7 @@ class Arr
 	 *
 	 * @param   array           $arr     the array to prepend to
 	 * @param   string|array    $key     the key or array of keys and values
-	 * @param   mixed           $valye   the value to prepend
+	 * @param   mixed           $value   the value to prepend
 	 */
 	public static function prepend(&$arr, $key, $value = null)
 	{
