@@ -123,7 +123,17 @@ class DBUtil
 		{
 			$key_name = \DB::quote_identifier(implode('_', $primary_keys), $db ? $db : static::$connection);
 			$primary_keys = \DB::quote_identifier($primary_keys, $db ? $db : static::$connection);
-			$sql .= ",\n\tPRIMARY KEY ".$key_name." (" . implode(', ', $primary_keys) . ")";
+			$sql .= ",\n\tPRIMARY KEY ";
+			if (strtolower(\Config::get('db.'.($db ? $db : \Config::get('db.active')).'.type')) === 'pdo')
+			{
+				$dsn = \Config::get('db.'.($db ? $db : \Config::get('db.active')).'.connection.dsn');
+				$_dsn_find_collon = strpos($dsn, ':');
+				if (($_dsn_find_collon ? substr($dsn, 0, $_dsn_find_collon) : null) !== 'sqlite')
+				{
+					$sql .= $key_name;
+				}
+			}
+			$sql .= $key_name." (" . implode(', ', $primary_keys) . ")";
 		}
 
 		empty($foreign_keys) or $sql .= static::process_foreign_keys($foreign_keys, $db);
