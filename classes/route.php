@@ -155,8 +155,8 @@ class Route
 	 * Parses a route match and returns the controller, action and params.
 	 *
 	 * @access  public
-	 * @param   string  The matched route
-	 * @param   array   Named parameters
+	 * @param   string  $uri           The matched route
+	 * @param   array   $named_params  Named parameters
 	 * @return  object  $this
 	 */
 	public function matched($uri = '', $named_params = array())
