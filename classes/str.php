@@ -98,7 +98,9 @@ class Str
 	/**
 	 * Add's _1 to a string or increment the ending number to allow _2, _3, etc
 	 *
-	 * @param   string  $str  required
+	 * @param   string  $str        required
+	 * @param   int     $first      number that is used to mean first
+	 * @param   string  $separator  separtor between the name and the number
 	 * @return  string
 	 */
 	public static function increment($str, $first = 1, $separator = '_')
