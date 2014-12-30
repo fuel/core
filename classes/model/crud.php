@@ -405,7 +405,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function __construct(array $data = array())
 	{
-		if (isset($this->_data[static::primary_key()]))
+		if (isset($data[static::primary_key()]))
 		{
 			$this->is_new(false);
 		}
