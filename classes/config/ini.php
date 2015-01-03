@@ -7,6 +7,9 @@ namespace Fuel\Core;
  */
 class Config_Ini extends \Config_File
 {
+	/**
+	 * @var  string  the extension used by this ini file parser
+	 */
 	protected $ext = '.ini';
 
 	/**

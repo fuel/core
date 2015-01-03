@@ -7,6 +7,9 @@ namespace Fuel\Core;
  */
 class Config_Yml extends \Config_File
 {
+	/**
+	 * @var  string  the extension used by this yaml file parser
+	 */
 	protected $ext = '.yml';
 
 	/**
