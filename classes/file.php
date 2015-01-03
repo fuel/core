@@ -299,7 +299,7 @@ class File
 						}
 					}
 
-					$not = substr($f, 0, 1) == '!';  // whether it's a negative condition
+					$not = substr($f, 0, 1) === '!';  // whether it's a negative condition
 					$f = $not ? substr($f, 1) : $f;
 					// on negative condition a match leads to a continue
 					if (($match = preg_match('/'.$f.'/uiD', $file) > 0) and $not)
@@ -830,11 +830,11 @@ class File
 
 			header('Content-Type: '.$info['mimetype']);
 			header('Content-Disposition: '.$disposition.'; filename="'.$info['basename'].'"');
-			$disposition == 'attachment' and header('Content-Description: File Transfer');
+			$disposition === 'attachment' and header('Content-Description: File Transfer');
 			header('Content-Length: '.$info['size']);
 			header('Content-Transfer-Encoding: binary');
-			$disposition == 'attachment' and header('Expires: 0');
-			$disposition == 'attachment' and header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			$disposition === 'attachment' and header('Expires: 0');
+			$disposition === 'attachment' and header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
 			while( ! feof($file))
 			{
