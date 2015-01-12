@@ -92,10 +92,16 @@ class Fieldset_Field
 	 * @param  array
 	 * @param  array
 	 * @param  Fieldset
+	 * @throws \RuntimeException
 	 */
 	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), $fieldset = null)
 	{
 		$this->name = (string) $name;
+
+		if ($this->name === "")
+		{
+			throw new \RuntimeException('Fieldset field name may not be empty.');
+		}
 
 		// determine the field's base name (for fields with array indices)
 		$this->basename = ($pos = strpos($this->name, '[')) ? rtrim(substr(strrchr($this->name, '['), 1), ']') : $this->name;
