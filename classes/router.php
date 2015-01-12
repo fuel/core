@@ -142,42 +142,53 @@ class Router
 	/**
 	 * Delete one or multiple routes
 	 *
-	 * @param  string
-	 * @param  bool     whether to check case sensitive
+	 * @param  string|array  route path, or array of route paths
+	 * @param  bool          whether to check case sensitive
 	 */
 	public static function delete($path, $case_sensitive = null)
 	{
-		$case_sensitive ?: \Config::get('routing.case_sensitive', true);
-
-		// support the usual route path placeholders
-		$path = str_replace(array(
-			':any',
-			':alnum',
-			':num',
-			':alpha',
-			':segment',
-		), array(
-			'.+',
-			'[[:alnum:]]+',
-			'[[:digit:]]+',
-			'[[:alpha:]]+',
-			'[^/]*',
-		), $path);
-
-		foreach (static::$routes as $name => $route)
+		// if multiple paths are passed, recurse
+		if (is_array($path))
 		{
-			if ($case_sensitive)
+			foreach($path as $p)
 			{
-				if (preg_match('#^'.$path.'$#uD', $name))
-				{
-					unset(static::$routes[$name]);
-				}
+				static::delete($p, $case_sensitive);
 			}
-			else
+		}
+		else
+		{
+			$case_sensitive ?: \Config::get('routing.case_sensitive', true);
+
+			// support the usual route path placeholders
+			$path = str_replace(array(
+				':any',
+				':alnum',
+				':num',
+				':alpha',
+				':segment',
+			), array(
+				'.+',
+				'[[:alnum:]]+',
+				'[[:digit:]]+',
+				'[[:alpha:]]+',
+				'[^/]*',
+			), $path);
+
+			foreach (static::$routes as $name => $route)
 			{
-				if (preg_match('#^'.$path.'$#uiD', $name))
+				if ($case_sensitive)
 				{
-					unset(static::$routes[$name]);
+					if (preg_match('#^'.$path.'$#uD', $name))
+					{
+						unset(static::$routes[$name]);
+					}
+				}
+				else
+				{
+					if (preg_match('#^'.$path.'$#uiD', $name))
+					{
+						unset(static::$routes[$name]);
+					}
 				}
 			}
 		}

@@ -82,6 +82,11 @@ class Module
 			}
 
 		}
+		else
+		{
+			// make sure it's terminated properly
+			$path = rtrim($path, DS).DS;
+		}
 
 		// make sure the path exists
 		if ( ! is_dir($path))
@@ -110,9 +115,37 @@ class Module
 	 */
 	public static function unload($module)
 	{
-		// delete all routes for this module
-		\Router::delete($module.'/(:any)');
+		// we can only unload a loaded module
+		if (isset(static::$modules[$module]))
+		{
+			$path = static::$modules[$module];
 
+			if (is_file($path .= 'config/routes.php'))
+			{
+				// load and add the module routes
+				$module_routes = \Fuel::load($path);
+
+				$route_names = array();
+				foreach($module_routes as $name => $_route)
+				{
+					if ($name === '_root_')
+					{
+						$name = $module;
+					}
+					elseif (strpos($name, $module.'/') !== 0 and $name != $module and $name !== '_404_')
+					{
+						$name = $module.'/'.$name;
+					}
+
+					$route_names[] = $name;
+				};
+
+				// delete the defined module routes
+				\Router::delete($route_names);
+			}
+		}
+
+		// delete this module
 		unset(static::$modules[$module]);
 	}
 
