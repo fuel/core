@@ -945,7 +945,7 @@ class Validation
 		$pattern .= in_array('numeric', $flags) ? '0-9' : '';
 		$pattern .= in_array('specials', $flags) ? '[:alpha:]' : '';
 		$pattern .= in_array('spaces', $flags) ? ' ' : '';
-		$pattern .= in_array('newlines', $flags) ? "\n" : '';
+		$pattern .= in_array('newlines', $flags) ? "\r\n" : '';
 		$pattern .= in_array('tabs', $flags) ? "\t" : '';
 		$pattern .= in_array('dots', $flags) && ! in_array('punctuation', $flags) ? '\.' : '';
 		$pattern .= in_array('commas', $flags) && ! in_array('punctuation', $flags) ? ',' : '';
