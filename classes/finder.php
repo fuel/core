@@ -304,12 +304,16 @@ class Finder
 		// absolute path requested?
 		if ($file[0] === '/' or substr($file,1,2) === ':\\')
 		{
+			// if the base file does not exist, stick the extension to the back of it
+			if ( ! is_file($file))
+			{
+				$file .= $ext;
+			}
 			if ( ! is_file($file))
 			{
 				// at this point, found would be either empty array or false
 				return $found;
 			}
-
 			return $multiple ? array($file) : $file;
 		}
 
