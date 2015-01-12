@@ -107,7 +107,7 @@ class Input
 
 		if (\Fuel::$is_cli)
 		{
-			if ($uri = \Cli::option('uri') !== null)
+			if (($uri = \Cli::option('uri')) !== null)
 			{
 				static::$detected_uri = $uri;
 			}
