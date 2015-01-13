@@ -364,8 +364,8 @@ class Fuel
 		static $search = array('\\', APPPATH, COREPATH, PKGPATH, DOCROOT);
 		static $replace = array('/', 'APPPATH/', 'COREPATH/', 'PKGPATH/', 'DOCROOT/');
 
-		// additional paths configured
-		$extra = \Config::get('profiling_paths', array());
+		// additional paths configured than need cleaning
+		$extra = \Config::get('security.clean_paths', array());
 		foreach ($extra as $r => $s)
 		{
 			$search[] = $s;
