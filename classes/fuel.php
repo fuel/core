@@ -360,8 +360,19 @@ class Fuel
 	 */
 	public static function clean_path($path)
 	{
-		static $search = array(APPPATH, COREPATH, PKGPATH, DOCROOT, '\\');
-		static $replace = array('APPPATH/', 'COREPATH/', 'PKGPATH/', 'DOCROOT/', '/');
+		// framework default paths
+		static $search = array('\\', APPPATH, COREPATH, PKGPATH, DOCROOT);
+		static $replace = array('/', 'APPPATH/', 'COREPATH/', 'PKGPATH/', 'DOCROOT/');
+
+		// additional paths configured
+		$extra = \Config::get('profiling_paths', array());
+		foreach ($extra as $r => $s)
+		{
+			$search[] = $s;
+			$replace[] = $r.'/';
+		}
+
+		// clean up and return it
 		return str_ireplace($search, $replace, $path);
 	}
 }
