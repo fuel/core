@@ -513,7 +513,7 @@ class Input
 			}
 		}
 
-		return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : \Arr::get($headers, $index, $default));
+		return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : \Arr::get(array_change_key_case($headers), strtolower($index), $default));
 	}
 
 	/**
