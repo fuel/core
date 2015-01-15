@@ -130,16 +130,22 @@ class Lang
 			$group = $group === true ? $file->group() : $group;
 		}
 
+		isset(static::$lines[$language]) or static::$lines[$language] = array();
 		if ($group === null)
 		{
-			isset(static::$lines[$language]) or static::$lines[$language] = array();
 			static::$lines[$language] = $overwrite ? array_merge(static::$lines[$language], $lang) : \Arr::merge(static::$lines[$language], $lang);
 		}
 		else
 		{
 			$group = ($group === true) ? $file : $group;
-			isset(static::$lines[$language][$group]) or static::$lines[$language][$group] = array();
-			static::$lines[$language][$group] = $overwrite ? array_merge(static::$lines[$language][$group], $lang) : \Arr::merge(static::$lines[$language][$group], $lang);
+			if ($overwrite)
+			{
+				\Arr::set(static::$lines[$language], $group, array_merge(\Arr::get(static::$lines[$language], $group, array()), $lang));
+			}
+			else
+			{
+				\Arr::set(static::$lines[$language], $group, \Arr::merge(\Arr::get(static::$lines[$language], $group, array()), $lang));
+			}
 		}
 
 		return $lang;
