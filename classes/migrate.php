@@ -281,6 +281,20 @@ class Migrate
 
 		static::$connection === null or \DBUtil::set_connection(static::$connection);
 
+		// Make sure we have class access
+		switch ($type)
+		{
+			case "package":
+				\Package::load($name);
+				break;
+
+			case "module":
+				\Module::load($name);
+				break;
+
+			default:
+		}
+
 		// Loop through the runnable migrations and run them
 		foreach ($migrations as $ver => $migration)
 		{
