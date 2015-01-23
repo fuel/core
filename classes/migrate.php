@@ -284,11 +284,11 @@ class Migrate
 		// Make sure we have class access
 		switch ($type)
 		{
-			case "package":
+			case 'package':
 				\Package::load($name);
 				break;
 
-			case "module":
+			case 'module':
 				\Module::load($name);
 				break;
 
