@@ -386,8 +386,11 @@ class View
 	{
 		// strip the extension from it
 		$pathinfo = pathinfo($file);
-		empty($pathinfo['extension']) or $this->extension = $pathinfo['extension'];
-		$file = $pathinfo['dirname'].DS.$pathinfo['filename'];
+		if ( ! empty($pathinfo['extension']))
+		{
+			$this->extension = $pathinfo['extension'];
+			$file = substr($file, 0, strlen($this->extension)*-1 - 1);
+		}
 
 		// set find_file's one-time-only search paths
 		\Finder::instance()->flash($this->request_paths);
