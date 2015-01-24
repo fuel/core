@@ -117,6 +117,11 @@ class Theme
 	protected $chrome = array();
 
 	/**
+	 * @var  array  $order	Order in which partial sections should be rendered
+	 */
+	protected $order = array();
+
+	/**
 	 * Sets up the theme object.  If a config is given, it will not use the config
 	 * file.
 	 *
@@ -305,6 +310,17 @@ class Theme
 	}
 
 	/**
+	 * Define a custom order for a partial section
+	 *
+	 * @var  string  name of the partial section
+	 * @throws  \ThemeException
+	 */
+	public function set_order($section, $order)
+	{
+		$this->order[$section] = $order;
+	}
+
+	/**
 	 * Render the partials and the theme template
 	 *
 	 * @return  string|View
@@ -321,11 +337,23 @@ class Theme
 		// storage for rendered results
 		$rendered = array();
 
-		// pre-process all defined partials
+		// make sure we have a render ordering for all defined partials
 		foreach ($this->partials as $key => $partials)
 		{
+			if ( ! isset($this->order[$key]))
+			{
+				$this->order[$key] = 0;
+			}
+		}
+
+		// determine the rendering sequence
+		asort($this->order, SORT_NUMERIC);
+
+		// pre-process all defined partials in defined order
+		foreach ($this->order as $key => $order)
+		{
 			$output = '';
-			foreach ($partials as $index => $partial)
+			foreach ($this->partials[$key] as $index => $partial)
 			{
 				// render the partial
 				$output .= $partial->render();
