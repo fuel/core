@@ -236,14 +236,18 @@ class Theme
 	 * Loads a presenter, and have it use the view from the currently active theme,
 	 * the fallback theme, or the standard FuelPHP cascading file system
 	 *
-	 * @param   string  Presenter classname without Presenter_ prefix or full classname
+	 * @param   string  Presenter classname without View_ prefix or full classname
 	 * @param   string  Method to execute
-	 * @param   bool    $auto_filter  Auto filter the view data
-	 * @return  View    New View object
+	 * @param   bool    Auto filter the view data
+	 * @param   string  Custom View to associate with this persenter
+	 * @return  Presenter
 	 */
-	public function presenter($view, $method = 'view', $auto_filter = null)
+	public function presenter($presenter, $method = 'view', $auto_filter = null, $view = null)
 	{
-		return \Presenter::forge($view, $method, $auto_filter, $this->find_file($view));
+		// if no custom view is given, make it equal to the presenter name
+		is_null($view) and $view = $presenter;
+
+		return \Presenter::forge($presenter, $method, $auto_filter, $this->find_file($view));
 	}
 
 	/**
