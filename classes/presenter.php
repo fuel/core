@@ -30,6 +30,8 @@ abstract class Presenter
 	 *
 	 * @param   string  Presenter classname without View_ prefix or full classname
 	 * @param   string  Method to execute
+	 * @param   bool    Auto filter the view data
+	 * @param   string  View to associate with this persenter
 	 * @return  Presenter
 	 */
 	public static function forge($presenter, $method = 'view', $auto_filter = null, $view = null)
@@ -47,21 +49,26 @@ abstract class Presenter
 		// determine the presenter namespace from the current request context
 		$namespace = \Request::active() ? ucfirst(\Request::active()->module) : '';
 
-		// list of possible presenter classnames, start with the namespaced one
-		$classes = array($namespace.'\\'.static::$ns_prefix.$presenter);
-
-		// add the global version if needed
-		empty($namespace) or $classes[] = static::$ns_prefix.$presenter;
+		// create the list of possible class prefixes
+		$prefixes = array(static::$ns_prefix, $namespace.'\\');
 
 		/**
-		 * Add non prefixed classnames to the list, for BC reasons
+		 * Add non prefixed classnames to the list as well, for BC reasons
 		 *
 		 * @deprecated 1.6
 		 */
-		$classes[] = $namespace.'\\'.$presenter;
+		if ( ! empty($namespace))
+		{
+			array_unshift($prefixes, $namespace.'\\'.static::$ns_prefix);
+			$prefixes[] = '';
+		}
 
-		// and add the global version of that if needed
-		empty($namespace) or $classes[] = $presenter;
+		// create the list of possible presenter classnames, start with the namespaced one
+		$classes = array();
+		foreach ($prefixes as $prefix)
+		{
+			$classes[] = $prefix.$presenter;
+		}
 
 		// check if we can find one
 		foreach ($classes as $class)
