@@ -49,7 +49,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 		}
 
 		// Start the query with no SQL
-		return parent::__construct('', \DB::INSERT);
+		parent::__construct('', \DB::INSERT);
 	}
 
 	/**
