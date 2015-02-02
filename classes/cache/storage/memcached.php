@@ -67,7 +67,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 
 			// check if we can connect to all the server(s)
 			$added = static::$memcached->getStats();
-			foreach (static::$config['servers'] as $server)
+			foreach ($this->config['servers'] as $server)
 			{
 				$server = $server['host'].':'.$server['port'];
 				if ( ! isset($added[$server]) or $added[$server]['pid'] == -1)

@@ -75,8 +75,8 @@ class Session_Memcached extends \Session_Driver
 			$this->memcached->addServers($this->config['servers']);
 
 			// check if we can connect to all the server(s)
-			$added = static::$memcached->getStats();
-			foreach (static::$config['servers'] as $server)
+			$added = $this->memcached->getStats();
+			foreach ($this->config['servers'] as $server)
 			{
 				$server = $server['host'].':'.$server['port'];
 				if ( ! isset($added[$server]) or $added[$server]['pid'] == -1)
