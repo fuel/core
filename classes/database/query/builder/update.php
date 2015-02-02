@@ -49,7 +49,7 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 		}
 
 		// Start the query with no SQL
-		return parent::__construct('', \DB::UPDATE);
+		parent::__construct('', \DB::UPDATE);
 	}
 
 	/**
