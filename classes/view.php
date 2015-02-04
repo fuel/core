@@ -429,13 +429,23 @@ class View
 		{
 			return $this->data;
 		}
-		elseif (array_key_exists($key, $this->data))
+		elseif (strpos($key, '.') === false)
 		{
-			return $this->data[$key];
+			if (array_key_exists($key, $this->data))
+			{
+				return $this->data[$key];
+			}
+			elseif (array_key_exists($key, static::$global_data))
+			{
+				return static::$global_data[$key];
+			}
 		}
-		elseif (array_key_exists($key, static::$global_data))
+		else
 		{
-			return static::$global_data[$key];
+			if (($result = \Arr::get($this->data, $key, \Arr::get(static::$global_data, $key, '__KEY__LOOKUP__MISS__'))) !== '__KEY__LOOKUP__MISS__')
+			{
+				return $result;
+			}
 		}
 
 		if (is_null($default) and func_num_args() === 1)
