@@ -724,11 +724,11 @@ class DBUtil
 		{
 			if ( ! in_array($type, array('info', 'warning' , 'error')))
 			{
-			    $type = \Fuel::L_INFO;
+				$type = \Fuel::L_INFO;
 			}
                         else
                         {
-			    $type = ucfirst($type);
+				$type = ucfirst($type);
                         }
 
 			logger($type, 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
