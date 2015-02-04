@@ -356,26 +356,26 @@ class Theme
 		// pre-process all defined partials in defined order
 		foreach ($this->order as $key => $order)
 		{
+			$output = '';
 			if (isset($this->partials[$key]))
 			{
-				$output = '';
 				foreach ($this->partials[$key] as $index => $partial)
 				{
 					// render the partial
 					$output .= $partial->render();
 				}
+			}
 
-				// store the rendered output
-				if ( ! empty($output) and array_key_exists($key, $this->chrome))
-				{
-					// encapsulate the partial in the chrome template
-					$rendered[$key] = $this->chrome[$key]['view']->set($this->chrome[$key]['var'], $output, false);
-				}
-				else
-				{
-					// store the partial output
-					$rendered[$key] = $output;
-				}
+			// store the rendered output
+			if ( ! empty($output) and array_key_exists($key, $this->chrome))
+			{
+				// encapsulate the partial in the chrome template
+				$rendered[$key] = $this->chrome[$key]['view']->set($this->chrome[$key]['var'], $output, false);
+			}
+			else
+			{
+				// store the partial output
+				$rendered[$key] = $output;
 			}
 		}
 
