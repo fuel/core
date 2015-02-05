@@ -40,6 +40,9 @@ class Crypt
 		\Config::load('crypt', true);
 		static::$defaults = \Config::get('crypt', array ());
 
+		// create the default instance
+		$instance = static::forge();
+
 		// generate random crypto keys if we don't have them or they are incorrect length
 		$update = false;
 		foreach(array('crypto_key', 'crypto_iv', 'crypto_hmac') as $key)
@@ -49,7 +52,7 @@ class Crypt
 				$crypto = '';
 				for ($i = 0; $i < 8; $i++)
 				{
-					$crypto .= $this->_safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
+					$crypto .= $instance->_safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
 				}
 				static::$defaults[$key] = $crypto;
 				$update = true;
