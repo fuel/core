@@ -711,24 +711,23 @@ class DBUtil
 		$type = $result->get('Msg_type');
 		$message = $result->get('Msg_text');
 		$table = $result->get('Table');
+
 		if ($type === 'status' and in_array(strtolower($message), array('ok','table is already up to date')))
 		{
 			return true;
 		}
 
-		if ($type === 'error')
+		// make sure we have a type logger can handle
+		if (in_array($type, array('info', 'warning' , 'error')))
 		{
-			logger(\Fuel::L_ERROR, 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
+			$type = strtoupper($type);
 		}
 		else
 		{
-			if ( ! in_array($type, array('info', 'warning' , 'error')))
-			{
-				$type = \Fuel::L_INFO;
-			}
-
-			logger(ucfirst($type), 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
+			$type = \Fuel::L_INFO;
 		}
+
+		logger($type, 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
 
 		return false;
 	}
