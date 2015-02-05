@@ -89,6 +89,7 @@ class Crypt
 	{
 		if ( ! \array_key_exists($name, static::$instances))
 		{
+			$config['name'] = $name;
 			static::$instances[$name] = static::forge($config);
 		}
 
@@ -103,7 +104,11 @@ class Crypt
 	 */
 	public static function forge(array $config = array())
 	{
-		return new static($config);
+		// get the name of the instance to be created
+		$name = isset($config['name']) ? $config['name'] : '_default_';
+
+		// return the named instance
+		return static::instance($name, $config);
 	}
 
 	/**
