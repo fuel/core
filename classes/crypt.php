@@ -41,7 +41,7 @@ class Crypt
 		static::$defaults = \Config::get('crypt', array ());
 
 		// create the default instance
-		$instance = static::forge();
+		$instance = static::instance();
 
 		// generate random crypto keys if we don't have them or they are incorrect length
 		$update = false;
@@ -90,7 +90,7 @@ class Crypt
 		if ( ! \array_key_exists($name, static::$instances))
 		{
 			$config['name'] = $name;
-			static::$instances[$name] = static::forge($config);
+			static::$instances[$name] = new static($config);
 		}
 
 		return static::$instances[$name];
