@@ -242,7 +242,7 @@ abstract class Database_Connection
 			if (stripos($sql, 'LIMIT') !== false)
 			{
 				// Remove LIMIT from the SQL
-				$sql = preg_replace('/\sLIMIT\s+[^a-z]+/i', ' ', $sql);
+				$sql = preg_replace('/\sLIMIT\s+[^a-z\)]+/i', ' ', $sql);
 			}
 
 			if (stripos($sql, 'OFFSET') !== false)
