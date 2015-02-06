@@ -6,15 +6,14 @@
  * @category   Query/Result
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team
+ * @copyright  (c) 2010-2015 Fuel Development Team
  * @license    http://kohanaphp.com/license
  */
 
 namespace Fuel\Core;
 
-
-
-abstract class Database_Result implements \Countable, \Iterator, \SeekableIterator, \ArrayAccess {
-
+abstract class Database_Result implements \Countable, \Iterator, \SeekableIterator, \ArrayAccess, \Sanitization
+{
 	/**
 	 * @var  string Executed SQL for this result
 	 */
@@ -39,6 +38,11 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 * @var  bool  $_as_object  return rows as an object or associative array
 	 */
 	protected $_as_object;
+
+	/**
+	 * @var  bool  $_sanitization_enabled  If this is a records data will be sanitized on get
+	 */
+	protected $_sanitization_enabled = false;
 
 	/**
 	 * Sets the total number of rows and stores the result locally.
@@ -196,14 +200,34 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 		{
 			if (isset($row->$name))
 			{
-				return $row->$name;
+				// sanitize the data if needed
+				if ( ! $this->_sanitization_enabled)
+				{
+					$result = $row->$name;
+				}
+				else
+				{
+					$result = \Security::clean($row->$name, null, 'security.output_filter');
+				}
+
+				return $result;
 			}
 		}
 		else
 		{
 			if (isset($row[$name]))
 			{
-				return $row[$name];
+				// sanitize the data if needed
+				if ( ! $this->_sanitization_enabled)
+				{
+					$result = $row[$name];
+				}
+				else
+				{
+					$result = \Security::clean($row[$name], null, 'security.output_filter');
+				}
+
+				return $result;
 			}
 		}
 
@@ -255,7 +279,15 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 			return null;
 		}
 
-		return $this->current();
+		$result = $this->current();
+
+		// sanitize the data if needed
+		if ($this->_sanitization_enabled)
+		{
+			$result = \Security::clean($result, null, 'security.output_filter');
+		}
+
+		return $result;
 	}
 
 	/**
@@ -348,4 +380,37 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 		return $this->offsetExists($this->_current_row);
 	}
 
+	/**
+	 * Enable sanitization mode in the object
+	 *
+	 * @return  $this
+	 */
+	public function sanitize()
+	{
+		$this->_sanitization_enabled = true;
+
+		return $this;
+	}
+
+	/**
+	 * Disable sanitization mode in the object
+	 *
+	 * @return  $this
+	 */
+	public function unsanitize()
+	{
+		$this->_sanitization_enabled = false;
+
+		return $this;
+	}
+
+	/**
+	 * Returns the current sanitization state of the object
+	 *
+	 * @return  bool
+	 */
+	public function sanitized()
+	{
+		return $this->_sanitization_enabled;
+	}
 }
