@@ -17,44 +17,52 @@ use \PHPSecLib\Crypt_Hash;
 
 class Crypt
 {
-	/**
-	 * All the Crypt instances
-	 *
-	 * @var  array
-	 */
-	protected static $instances = array();
 
 	/**
-	 * Default crypto configuration
+	 * Crypto object used to encrypt/decrypt
+	 *
+	 * @var	object
+	 */
+	private static $crypter = null;
+
+	/**
+	 * Hash object used to generate hashes
+	 *
+	 * @var	object
+	 */
+	private static $hasher = null;
+
+	/**
+	 * Crypto configuration
 	 *
 	 * @var	array
 	 */
-	protected static $defaults = array();
+	private static $config = array();
 
 	/**
 	 * initialisation and auto configuration
 	 */
 	public static function _init()
 	{
-		// load the default config
-		\Config::load('crypt', true);
-		static::$defaults = \Config::get('crypt', array ());
+		static::$crypter = new Crypt_AES();
+		static::$hasher = new Crypt_Hash('sha256');
 
-		// create the default instance
-		$instance = static::instance();
+		// load the config
+		\Config::load('crypt', true);
+		static::$config = \Config::get('crypt', array ());
 
 		// generate random crypto keys if we don't have them or they are incorrect length
 		$update = false;
 		foreach(array('crypto_key', 'crypto_iv', 'crypto_hmac') as $key)
 		{
-			if ( empty(static::$defaults[$key]) or (strlen(static::$defaults[$key]) % 4) != 0)
+			if ( empty(static::$config[$key]) or (strlen(static::$config[$key]) % 4) != 0)
 			{
 				$crypto = '';
 				for ($i = 0; $i < 8; $i++)
 				{
-					$crypto .= $instance->_safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
+					$crypto .= static::safe_b64encode(pack('n', mt_rand(0, 0xFFFF)));
 				}
-				static::$defaults[$key] = $crypto;
+				static::$config[$key] = $crypto;
 				$update = true;
 			}
 		}
@@ -64,137 +72,24 @@ class Crypt
 		{
 			try
 			{
-				\Config::save('crypt', static::$defaults);
+				\Config::save('crypt', static::$config);
 			}
 			catch (\FileAccessException $e)
 			{
 				// failed to write the config file, inform the user
 				echo \View::forge('errors/crypt_keys', array(
-					'keys' => static::$defaults
+					'keys' => static::$config
 				));
 				die();
 			}
 		}
+
+		static::$crypter->enableContinuousBuffer();
+
+		static::$hasher->setKey(static::safe_b64decode(static::$config['crypto_hmac']));
 	}
 
-	/**
-	 * Acts as a Multiton.  Will return the requested instance, or will create
-	 * a new named one if it does not exist.
-	 *
-	 * @param   string    $name  The instance name
-	 *
-	 * @return  Crypt
-	 */
-	public static function instance($name = '_default_', array $config = array())
-	{
-		if ( ! \array_key_exists($name, static::$instances))
-		{
-			$config['name'] = $name;
-			static::$instances[$name] = new static($config);
-		}
-
-		return static::$instances[$name];
-	}
-
-	/**
-	 * Gets a new instance of the Crypt class.
-	 *
-	 * @param   array  $config  Optional config override
-	 * @return  Crypt
-	 */
-	public static function forge(array $config = array())
-	{
-		// get the name of the instance to be created
-		$name = isset($config['name']) ? $config['name'] : '_default_';
-
-		// return the named instance
-		return static::instance($name, $config);
-	}
-
-	/**
-	 * Magic method, capture static calls to this class
-	 *
-	 * @var  string  name of the method called
-	 * @var  array   arguments to be passed to the method
-	 *
-	 * @return mixed
-	 */
-	public static function __callStatic ($method, array $args)
-	{
-		// fetch the default instance
-		$instance = static::instance();
-
-		// make sure the called method exists
-		if (method_exists($instance, $method))
-		{
-			return call_user_func_array(array($instance, $method), $args);
-		}
-
-		// oops, it didn't...
-		trigger_error('Call to undefined method '.__CLASS__.'::'.$method.'()', E_USER_ERROR);
-	}
-
-	/**
-	 * Crypto object used to encrypt/decrypt
-	 *
-	 * @var	object
-	 */
-	protected $crypter = null;
-
-	/**
-	 * Hash object used to generate hashes
-	 *
-	 * @var	object
-	 */
-	protected $hasher = null;
-
-	/**
-	 * Crypto configuration
-	 *
-	 * @var	array
-	 */
-	protected $config = array();
-
-	/**
-	 * Sets up the theme object.  If a config is given, it will not use the config
-	 * file.
-	 *
-	 * @param   array  $config  Optional config override
-	 * @return  void
-	 */
-	public function __construct(array $config = array())
-	{
-		// allow config overloading for a specific instance
-		$this->config = array_merge(static::$defaults, $config);
-
-		// create the crypter and hasher objects
-		$this->crypter = new Crypt_AES();
-		$this->hasher = new Crypt_Hash('sha256');
-
-		// and initialize them
-		$this->crypter->enableContinuousBuffer();
-		$this->hasher->setKey($this->_safe_b64decode($this->config['crypto_hmac']));
-	}
-
-	/**
-	 * Magic method, capture calls to this class
-	 *
-	 * @var  string  name of the method called
-	 * @var  array   arguments to be passed to the method
-	 *
-	 * @return mixed
-	 */
-	public function __call($method, array $args)
-	{
-		// make sure the called method exists
-		if (method_exists($this, $method))
-		{
-			return call_user_func_array(array($this, $method), $args);
-		}
-
-		// oops, it didn't...
-		trigger_error('Call to undefined method '.__CLASS__.'::'.$method.'()', E_USER_ERROR);
-	}
+	// --------------------------------------------------------------------
 
 	/**
 	 * encrypt a string value, optionally with a custom key
@@ -205,11 +100,11 @@ class Crypt
 	 * @access	public
 	 * @return	string	encrypted value
 	 */
-	protected function encode($value, $key = false, $keylength = false)
+	public static function encode($value, $key = false, $keylength = false)
 	{
 		if ( ! $key)
 		{
-			$key = $this->_safe_b64decode($this->config['crypto_key']);
+			$key = static::safe_b64decode(static::$config['crypto_key']);
 			// Used for backwards compatibility with encrypted data prior
 			// to FuelPHP 1.7.2, when phpseclib was updated, and became a
 			// bit smarter about figuring out key lengths.
@@ -218,14 +113,15 @@ class Crypt
 
 		if ($keylength)
 		{
-			$this->crypter->setKeyLength($keylength);
+			static::$crypter->setKeyLength($keylength);
 		}
 
-		$this->crypter->setKey($key);
-		$this->crypter->setIV($this->_safe_b64decode($this->config['crypto_iv']));
+		static::$crypter->setKey($key);
+		static::$crypter->setIV(static::safe_b64decode(static::$config['crypto_iv']));
 
-		$value = $this->crypter->encrypt($value);
-		return $this->_safe_b64encode($this->_add_hmac($value));
+		$value = static::$crypter->encrypt($value);
+		return static::safe_b64encode(static::add_hmac($value));
+
 	}
 
 	// --------------------------------------------------------------------
@@ -239,11 +135,11 @@ class Crypt
 	 * @access	public
 	 * @return	string	encrypted value
 	 */
-	protected function decode($value, $key = false, $keylength = false)
+	public static function decode($value, $key = false, $keylength = false)
 	{
 		if ( ! $key)
 		{
-			$key = $this->_safe_b64decode($this->config['crypto_key']);
+			$key = static::safe_b64decode(static::$config['crypto_key']);
 			// Used for backwards compatibility with encrypted data prior
 			// to FuelPHP 1.7.2, when phpseclib was updated, and became a
 			// bit smarter about figuring out key lengths.
@@ -252,16 +148,16 @@ class Crypt
 
 		if ($keylength)
 		{
-			$this->crypter->setKeyLength($keylength);
+			static::$crypter->setKeyLength($keylength);
 		}
 
-		$this->crypter->setKey($key);
-		$this->crypter->setIV($this->_safe_b64decode($this->config['crypto_iv']));
+		static::$crypter->setKey($key);
+		static::$crypter->setIV(static::safe_b64decode(static::$config['crypto_iv']));
 
-		$value = $this->_safe_b64decode($value);
-		if ($value = $this->_validate_hmac($value))
+		$value = static::safe_b64decode($value);
+		if ($value = static::validate_hmac($value))
 		{
-			return $this->crypter->decrypt($value);
+			return static::$crypter->decrypt($value);
 		}
 		else
 		{
@@ -271,14 +167,14 @@ class Crypt
 
 	// --------------------------------------------------------------------
 
-	protected function _safe_b64encode($value)
+	private static function safe_b64encode($value)
 	{
 		$data = base64_encode($value);
 		$data = str_replace(array('+','/','='), array('-','_',''), $data);
 		return $data;
 	}
 
-	protected function _safe_b64decode($value)
+	private static function safe_b64decode($value)
 	{
 		$data = str_replace(array('-','_'), array('+','/'), $value);
 		$mod4 = strlen($data) % 4;
@@ -289,16 +185,16 @@ class Crypt
 		return base64_decode($data);
 	}
 
-	protected function _add_hmac($value)
+	private static function add_hmac($value)
 	{
 		// calculate the hmac-sha256 hash of this value
-		$hmac = $this->_safe_b64encode($this->hasher->hash($value));
+		$hmac = static::safe_b64encode(static::$hasher->hash($value));
 
 		// append it and return the hmac protected string
 		return $value.$hmac;
 	}
 
-	protected function _validate_hmac($value)
+	private static function validate_hmac($value)
 	{
 		// strip the hmac-sha256 hash from the value
 		$hmac = substr($value, strlen($value)-43);
@@ -307,10 +203,10 @@ class Crypt
 		$value = substr($value, 0, strlen($value)-43);
 
 		// only return the value if it wasn't tampered with
-		return ($this->_secure_compare($this->_safe_b64encode($this->hasher->hash($value)), $hmac)) ? $value : false;
+		return (static::secure_compare(static::safe_b64encode(static::$hasher->hash($value)), $hmac)) ? $value : false;
 	}
 
-	protected function _secure_compare($a, $b)
+	private static function secure_compare($a, $b)
 	{
 		// make sure we're only comparing equal length strings
 		if (strlen($a) !== strlen($b))
