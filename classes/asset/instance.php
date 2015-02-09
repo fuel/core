@@ -496,6 +496,8 @@ class Asset_Instance
 	{
 		if ($file = $this->find_file($file, $type, $folder))
 		{
+			strpos($file, DOCROOT) === 0 and $file = substr($file, strlen(DOCROOT));
+
 			return $this->_asset_url.$file;
 		}
 
