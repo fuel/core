@@ -523,7 +523,7 @@ class Pagination
 			}
 			else
 			{
-				$this->config['calculated_page'] = (int) \Request::main()->uri->get_segment($this->config['uri_segment']);
+				$this->config['calculated_page'] = (int) \Request::main()->uri->get_segment($this->config['uri_segment'], 1);
 			}
 		}
 
