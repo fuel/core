@@ -510,9 +510,6 @@ class Pagination
 	 */
 	protected function _recalculate()
 	{
-		// calculate the number of pages
-		$this->config['total_pages'] = (int) ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
-
 		// get the current page number, either from the one set, or from the URI or the query string
 		if ($this->config['current_page'])
 		{
@@ -530,14 +527,21 @@ class Pagination
 			}
 		}
 
-		// make sure the current page is within bounds
-		if ($this->config['calculated_page'] > $this->config['total_pages'])
+		// do we have the total number of items?
+		if ($this->config['total_items'] > 0)
 		{
-			$this->config['calculated_page'] = $this->config['total_pages'];
-		}
-		elseif ($this->config['calculated_page'] < 1)
-		{
-			$this->config['calculated_page'] = 1;
+			// calculate the number of pages
+			$this->config['total_pages'] = (int) ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
+
+			// make sure the current page is within bounds
+			if ($this->config['calculated_page'] > $this->config['total_pages'])
+			{
+				$this->config['calculated_page'] = $this->config['total_pages'];
+			}
+			elseif ($this->config['calculated_page'] < 1)
+			{
+				$this->config['calculated_page'] = 1;
+			}
 		}
 
 		// the current page must be zero based so that the offset for page 1 is 0.
