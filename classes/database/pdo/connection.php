@@ -345,7 +345,40 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	public function list_tables($like = null)
 	{
+		if (strtolower($this->driver_name()) == 'mysql')
+		{
+			return $this->list_tables_mysql($like);
+		}
+
 		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
+	}
+
+	/**
+	 * List tables for PDO_MYSQL
+	 * 
+	 * @param string $like
+	 * @return array
+	 */
+	protected function list_tables_mysql($like = null)
+	{
+		$query = 'SHOW TABLES';
+
+		if (is_string($like))
+		{
+			$query .= ' LIKE ' . $this->quote($like);
+		}
+
+		$q = $this->_connection->prepare($query);
+		$q->execute();
+		$result = $q->fetchAll();
+
+		$tables = array();
+		foreach ($result as $row)
+		{
+			$tables[] = reset($row);
+		}
+
+		return $tables;
 	}
 
 	/**
