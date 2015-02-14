@@ -15,6 +15,8 @@
 
 - - - - - - - - - - - - - - - - - - - - - */
 
+include_once('display.php');
+
 class PhpQuickProfiler {
 
 	public $output = array();
