@@ -339,11 +339,11 @@ class Input
 		// if called before a request is active, fall back to the global server setting
 		if (\Config::get('security.allow_x_headers', false))
 		{
-			return \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', $default));
+			return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', $default));
 		}
 		else
 		{
-			return \Input::server('REQUEST_METHOD', $default);
+			return static::server('REQUEST_METHOD', $default);
 		}
 	}
 
@@ -525,7 +525,7 @@ class Input
 	{
 		static::$input = array_merge($_GET, $_POST);
 
-		if (\Input::method() == 'PUT' or \Input::method() == 'PATCH' or \Input::method() == 'DELETE')
+		if (static::method() == 'PUT' or static::method() == 'PATCH' or static::method() == 'DELETE')
 		{
 			static::$php_input === null and static::$php_input = file_get_contents('php://input');
 			if (strpos(static::headers('Content-Type'), 'www-form-urlencoded') > 0 and \Config::get('security.form-double-urlencoded', false))
