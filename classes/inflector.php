@@ -105,15 +105,15 @@ class Inflector
 	{
 		\Lang::load('inflector', true, false, true);
 
-		if ($rules = \Lang::get('inflector.uncountable_words', null))
+		if ($rules = \Lang::get('inflector.uncountable_words', array()))
 		{
 			static::$uncountable_words = $rules;
 		}
-		if ($rules = \Lang::get('inflector.singular_rules', null))
+		if ($rules = \Lang::get('inflector.singular_rules', array()))
 		{
 			static::$singular_rules = $rules;
 		}
-		if ($rules = \Lang::get('inflector.plural_rules', null))
+		if ($rules = \Lang::get('inflector.plural_rules', array()))
 		{
 			static::$plural_rules = $rules;
 		}
