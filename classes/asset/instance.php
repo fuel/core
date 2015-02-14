@@ -62,7 +62,7 @@ class Asset_Instance
 	/**
 	 * @var  string  prefix for generated output to provide proper indentation
 	 */
-	protected $_ident = '';
+	protected $_indent = '';
 
 	/**
 	 * @var  bool  if true, directly renders the output of no group name is given
@@ -352,6 +352,7 @@ class Asset_Instance
 	 * @param	mixed	       The file name, or an array files.
 	 * @param	array	       An array of extra attributes
 	 * @param	string	       The asset group name
+	 * @param	boolean	       whether to return the raw file or not when group is not set (optional)
 	 * @return	string|object  Rendered asset or current instance when adding to group
 	 */
 	public function css($stylesheets = array(), $attr = array(), $group = null, $raw = false)
@@ -389,6 +390,7 @@ class Asset_Instance
 	 * @param	mixed	       The file name, or an array files.
 	 * @param	array	       An array of extra attributes
 	 * @param	string	       The asset group name
+	 * @param	boolean	       whether to return the raw file or not when group is not set (optional)
 	 * @return	string|object  Rendered asset or current instance when adding to group
 	 */
 	public function js($scripts = array(), $attr = array(), $group = null, $raw = false)
@@ -461,6 +463,7 @@ class Asset_Instance
 	 *
 	 * @access	public
 	 * @param	string	The filename to locate
+	 * @param	string	The type of asset file to search
 	 * @param	string	The sub-folder to look in (optional)
 	 * @return	mixed	Either the path to the file or false if not found
 	 */
@@ -489,6 +492,7 @@ class Asset_Instance
 	 *
 	 * @access	public
 	 * @param	string	The filename to locate
+	 * @param	string	The type of asset file
 	 * @param	string	The sub-folder to look in (optional)
 	 * @return	mixed	Either the path to the file or false if not found
 	 */
@@ -554,6 +558,7 @@ class Asset_Instance
 	 * @access	private
 	 * @param	string	The path
 	 * @param	mixed	Optional directory separator
+	 * @param	boolean	Optional whether to add trailing directory separator
 	 * @return	string
 	 */
 	protected function _unify_path($path, $ds = null, $trailing = true)
