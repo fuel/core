@@ -23,11 +23,17 @@ namespace Fuel\Core;
 class Inflector
 {
 
+	/**
+	 * @var  array  default list of uncountable words, in English
+	 */
 	protected static $uncountable_words = array(
 		'equipment', 'information', 'rice', 'money',
 		'species', 'series', 'fish', 'meta'
 	);
 
+	/**
+	 * @var  array  default list of iregular plural words, in English
+	 */
 	protected static $plural_rules = array(
 		'/^(ox)$/i'                 => '\1\2en',     // ox
 		'/([m|l])ouse$/i'           => '\1ice',      // mouse, louse
@@ -50,6 +56,9 @@ class Inflector
 		'/$/'                      => 's',
 	);
 
+	/**
+	 * @var  array  default list of iregular singular words, in English
+	 */
 	protected static $singular_rules = array(
 		'/(matr)ices$/i'         => '\1ix',
 		'/(vert|ind)ices$/i'     => '\1ex',
@@ -80,6 +89,35 @@ class Inflector
 		'/([^us])s$/i'           => '\1',
 	);
 
+	/**
+	 * Load any localized rules on first load
+	 */
+	public static function _init()
+	{
+		static::load_rules();
+	}
+
+	/**
+	 * Load any localized rulesets based on the current language configuration
+	 * If not exists, the current rules remain active
+	 */
+	public static function load_rules()
+	{
+		\Lang::load('inflector', true, false, true);
+
+		if ($rules = \Lang::get('inflector.uncountable_words', null))
+		{
+			static::$uncountable_words = $rules;
+		}
+		if ($rules = \Lang::get('inflector.singular_rules', null))
+		{
+			static::$singular_rules = $rules;
+		}
+		if ($rules = \Lang::get('inflector.plural_rules', null))
+		{
+			static::$plural_rules = $rules;
+		}
+  	}
 
 	/**
 	 * Add order suffix to numbers ex. 1st 2nd 3rd 4th 5th
