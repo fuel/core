@@ -247,7 +247,7 @@ class Redis_Db
 		{
 			// error reply
 			case '-':
-				throw new \RedisException(trim(substr($reply, 4)));
+				throw new \RedisException(trim(substr($reply, 1)));
 				break;
 
 			// inline reply
