@@ -278,7 +278,9 @@ class Asset_Instance
 				}
 				else
 				{
-					$file = $this->_asset_url.$this->_path_folders[$type].$filename;
+					// a remote file and multiple paths? use the first one!
+					$path = reset($this->_asset_paths[$type]);
+					$file = $this->_asset_url.$path.$filename;
 					if ($raw or $inline)
 					{
 						$file = file_get_contents($file);
