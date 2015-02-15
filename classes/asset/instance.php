@@ -156,7 +156,7 @@ class Asset_Instance
 			{
 				is_numeric($key) and $key = $folder;
 				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder),DS);
-				array_unshift($this->_asset_paths[$key], $folder);
+				in_array($folder, $this->_asset_paths[$key]) or array_unshift($this->_asset_paths[$key], $folder);
 			}
 		}
 		else
@@ -169,7 +169,7 @@ class Asset_Instance
 			}
 
 			$path = $this->_unify_path($path);
-			array_unshift($this->_asset_paths[$type], $path);
+			in_array($path, $this->_asset_paths[$type]) or array_unshift($this->_asset_paths[$type], $path);
 		}
 		return $this;
 	}
