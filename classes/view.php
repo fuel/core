@@ -483,11 +483,7 @@ class View
 		{
 			foreach ($key as $name => $value)
 			{
-				if ($filter !== null)
-				{
-					$this->local_filter[$name] = $filter;
-				}
-				$this->data[$name] = $value;
+				$this->set($name, $value, $filter);
 			}
 		}
 		else
@@ -496,7 +492,15 @@ class View
 			{
 				$this->local_filter[$key] = $filter;
 			}
-			$this->data[$key] = $value;
+
+			if (strpos($key, '.') === false)
+			{
+				$this->data[$key] = $value;
+			}
+			else
+			{
+				\Arr::set($this->data, $key, $value);
+			}
 		}
 
 		return $this;
