@@ -339,7 +339,7 @@ class Input
 		// if called before a request is active, fall back to the global server setting
 		if (\Config::get('security.allow_x_headers', false))
 		{
-			return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', $default));
+			return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', static::server('REQUEST_METHOD', $default));
 		}
 		else
 		{
