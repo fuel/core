@@ -335,7 +335,7 @@ class Database_PDO_Connection extends \Database_Connection
 			return $result->errorCode() === '00000' ? $result->rowCount() : -1;
 		}
 
-		return $result;
+		return $result->errorCode() === '00000' ? true : false;
 	}
 
 	/**
