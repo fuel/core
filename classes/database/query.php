@@ -268,15 +268,26 @@ class Database_Query
 		// Compile the SQL query
 		$sql = $this->compile($db);
 
-		switch(strtoupper(substr(ltrim($sql,'('), 0, 6)))
+		// make sure we have a SQL type to work with
+		if (is_null($this->_type))
 		{
-			case 'SELECT':
-				$this->_type = \DB::SELECT;
-				break;
-			case 'INSERT':
-			case 'CREATE':
-				$this->_type = \DB::INSERT;
-				break;
+			switch(strtoupper(substr(ltrim($sql,'('), 0, 6)))
+			{
+				case 'SELECT':
+					$this->_type = \DB::SELECT;
+					break;
+				case 'INSERT':
+					$this->_type = \DB::INSERT;
+					break;
+				case 'UPDATE':
+					$this->_type = \DB::UPDATE;
+					break;
+				case 'DELETE':
+					$this->_type = \DB::DELETE;
+					break;
+				default:
+					$this->_type = 0;
+			}
 		}
 
 		if ($db->caching() and ! empty($this->_lifetime) and $this->_type === \DB::SELECT)

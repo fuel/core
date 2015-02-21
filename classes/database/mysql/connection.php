@@ -283,11 +283,13 @@ class Database_MySQL_Connection extends \Database_Connection
 				mysql_affected_rows($this->_connection),
 			);
 		}
-		else
+		elseif ($type === \DB::UPDATE or $type === \DB::DELETE)
 		{
 			// Return the number of rows affected
 			return mysql_affected_rows($this->_connection);
 		}
+
+		return $result;
 	}
 
 	public function datatype($type)

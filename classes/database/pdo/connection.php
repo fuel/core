@@ -329,11 +329,13 @@ class Database_PDO_Connection extends \Database_Connection
 				$result->rowCount(),
 			);
 		}
-		else
+		elseif ($type === \DB::UPDATE or $type === \DB::DELETE)
 		{
 			// Return the number of rows affected
 			return $result->errorCode() === '00000' ? $result->rowCount() : -1;
 		}
+
+		return $result;
 	}
 
 	/**
@@ -355,7 +357,7 @@ class Database_PDO_Connection extends \Database_Connection
 
 	/**
 	 * List tables for PDO_MYSQL
-	 * 
+	 *
 	 * @param string $like
 	 * @return array
 	 */

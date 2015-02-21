@@ -314,11 +314,13 @@ class Database_MySQLi_Connection extends \Database_Connection
 				$this->_connection->affected_rows,
 			);
 		}
-		else
+		elseif ($type === \DB::UPDATE or $type === \DB::DELETE)
 		{
 			// Return the number of rows affected
 			return $this->_connection->affected_rows;
 		}
+
+		return $result;
 	}
 
 	public function datatype($type)
