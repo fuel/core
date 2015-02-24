@@ -277,7 +277,7 @@ class Autoloader
 
 			if ( ! $loaded)
 			{
-				$path = APPPATH.'classes/'.static::class_to_path($class);
+				$path = APPPATH.'classes'.DS.static::class_to_path($class);
 
 				if (is_file($path))
 				{
