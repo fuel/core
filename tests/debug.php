@@ -32,7 +32,7 @@ class Test_Debug extends TestCase
         // Restore original value
         \Fuel::$is_cli = $this->old_is_cli;
     }
-    
+
  	public function test_debug_dump_normally()
  	{
 		$expected = '	<script type="text/javascript">function fuel_debug_toggle(a){if(document.getElementById){if(document.getElementById(a).style.display=="none"){document.getElementById(a).style.display="block"}else{document.getElementById(a).style.display="none"}}else{if(document.layers){if(document.id.display=="none"){document.id.display="block"}else{document.id.display="none"}}else{if(document.all.id.style.display=="none"){document.all.id.style.display="block"}else{document.all.id.style.display="none"}}}};</script><div class="fuelphp-dump" style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;"><h1 style="border-bottom: 1px solid #CCC; padding: 0 0 5px 0; margin: 0 0 5px 0; font: bold 120% sans-serif;">COREPATH/tests/debug.php @ line: 41</h1><pre style="overflow:auto;font-size:100%;"><strong>Variable #1:</strong>'."\n".'<i></i> <strong></strong> (Integer): 1'."\n\n\n".'<strong>Variable #2:</strong>'."\n".'<i></i> <strong></strong> (Integer): 2'."\n\n\n".'<strong>Variable #3:</strong>'."\n".'<i></i> <strong></strong> (Integer): 3'."\n\n\n".'</pre></div>';
@@ -59,7 +59,7 @@ class Test_Debug extends TestCase
 
   	public function test_debug_dump_by_call_fuel_func_array()
  	{
-		$expected = '<div class="fuelphp-dump" style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;"><h1 style="border-bottom: 1px solid #CCC; padding: 0 0 5px 0; margin: 0 0 5px 0; font: bold 120% sans-serif;">COREPATH/base.php @ line: 491</h1><pre style="overflow:auto;font-size:100%;"><strong>Variable #1:</strong>
+		$expected = '<div class="fuelphp-dump" style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;"><h1 style="border-bottom: 1px solid #CCC; padding: 0 0 5px 0; margin: 0 0 5px 0; font: bold 120% sans-serif;">COREPATH/base.php @ line: 489</h1><pre style="overflow:auto;font-size:100%;"><strong>Variable #1:</strong>
 <i></i> <strong></strong> (Integer): 1
 
 
