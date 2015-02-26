@@ -23,7 +23,6 @@ namespace Fuel\Core;
  */
 abstract class Controller_Template extends \Controller
 {
-
 	/**
 	* @var string page template
 	*/

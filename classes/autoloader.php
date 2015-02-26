@@ -22,7 +22,6 @@ namespace Fuel\Core;
  */
 class Autoloader
 {
-
 	/**
 	 * @var  array  $classes  holds all the classes and paths
 	 */
@@ -45,7 +44,7 @@ class Autoloader
 	 * @var  array  list off namespaces of which classes will be aliased to global namespace
 	 */
 	protected static $core_namespaces = array(
-		'Fuel\\Core'
+		'Fuel\\Core',
 	);
 
 	/**

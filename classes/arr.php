@@ -21,7 +21,6 @@ namespace Fuel\Core;
  */
 class Arr
 {
-
 	/**
 	 * Gets a dot-notated key from an array, with a default value if it does
 	 * not exist.
@@ -270,7 +269,7 @@ class Arr
 		{
 			$output[] = array(
 				$key_field => $key,
-				$val_field => $value
+				$val_field => $value,
 			);
 		}
 
@@ -439,7 +438,7 @@ class Arr
 			{
 				if ($remove_prefix === true)
 				{
-					$key = preg_replace('/^'.$prefix.'/','',$key);
+					$key = preg_replace('/^'.$prefix.'/', '', $key);
 				}
 				$return[$key] = $val;
 			}
@@ -503,7 +502,7 @@ class Arr
 			{
 				if ($remove_suffix === true)
 				{
-					$key = preg_replace('/'.$suffix.'$/','',$key);
+					$key = preg_replace('/'.$suffix.'$/', '', $key);
 				}
 				$return[$key] = $val;
 			}

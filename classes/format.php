@@ -25,7 +25,6 @@ namespace Fuel\Core;
  */
 class Format
 {
-
 	/**
 	 * Returns an instance of the Format object.
 	 *
@@ -426,7 +425,7 @@ class Format
 
 		// Convert all objects SimpleXMLElement to array recursively
 		$arr = array();
-		foreach ((array)$_arr as $key => $val)
+		foreach ((array) $_arr as $key => $val)
 		{
 			$this->ignore_namespaces or $key = \Arr::get($escape_keys, $key, $key);
 			if ( ! $val instanceOf \SimpleXMLElement or $val->count() or $val->attributes())
@@ -498,7 +497,7 @@ class Format
 		foreach ($rows as $row)
 		{
 			// process the row
-			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.($incomplete?$newline:'').$row, $delimiter, $enclosure, $escape));
+			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.($incomplete ? $newline : '').$row, $delimiter, $enclosure, $escape));
 
 			// if we didn't have headers, the first row determines the number of fields
 			if ( ! isset($headcount))

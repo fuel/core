@@ -42,5 +42,3 @@ class Test_Router_Mock extends Router
 		return $callback();
 	}
 }
-
-

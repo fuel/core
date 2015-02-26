@@ -35,7 +35,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller_';
-                }
+                },
             ),
             array(
                 'api/app',
@@ -46,7 +46,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller\\';
-                }
+                },
             ),
             array(
                 'api/app/version',
@@ -57,7 +57,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller_';
-                }
+                },
             ),
             array(
                 'api/app/version',
@@ -67,7 +67,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller\\';
-                }
+                },
             ),
             array(
                 'api/app/version/more',
@@ -78,7 +78,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller_';
-                }
+                },
             ),
             array(
                 'api/app/version/more',
@@ -88,7 +88,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller\\';
-                }
+                },
             ),
             array(
                 'api/app/version/more/subdirs',
@@ -99,7 +99,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller_';
-                }
+                },
             ),
             array(
                 'api/app/version/more/subdirs',
@@ -110,8 +110,8 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller\\';
-                }
-            )
+                },
+            ),
         );
     }
 

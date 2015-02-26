@@ -12,11 +12,8 @@
 
 namespace Fuel\Core;
 
-
-
 abstract class Session_Driver
 {
-
 	/*
 	 * @var	session class configuration
 	 */
@@ -53,7 +50,6 @@ abstract class Session_Driver
 	 * @return	void
 	 */
 	abstract function create();
-
 
 	// --------------------------------------------------------------------
 	// generic driver methods
@@ -736,5 +732,3 @@ abstract class Session_Driver
 	}
 
 }
-
-

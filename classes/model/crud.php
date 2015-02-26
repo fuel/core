@@ -14,7 +14,6 @@ namespace Fuel\Core;
 
 class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializable, \Sanitization
 {
-
 	/**
 	 * @var  string  $_table_name  The table name (must set this in your Model)
 	 */

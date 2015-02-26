@@ -12,21 +12,18 @@
 
 namespace Fuel\Core;
 
-
-
 // --------------------------------------------------------------------
 
 class Session_Memcached extends \Session_Driver
 {
-
 	/**
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
 		'cookie_name'		=> 'fuelmid',				// name of the session cookie for memcached based sessions
 		'servers'			=> array(					// array of servers and portnumbers that run the memcached service
-								array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100)
-							)
+								array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
+							),
 	);
 
 	/*
@@ -367,5 +364,3 @@ class Session_Memcached extends \Session_Driver
 	}
 
 }
-
-

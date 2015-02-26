@@ -12,7 +12,6 @@
 
 namespace Fuel\Core;
 
-
 /**
  * Presenter
  *
@@ -291,7 +290,6 @@ abstract class Presenter
 		return $this->_view->auto_filter($setting);
 	}
 
-
 	/**
 	 * Add variables through method and after() and create template as a string
 	 */
@@ -334,5 +332,3 @@ abstract class Presenter
 		}
 	}
 }
-
-

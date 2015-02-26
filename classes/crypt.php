@@ -41,7 +41,7 @@ class Crypt
 
 		// load the config
 		\Config::load('crypt', true);
-		static::$defaults = \Config::get('crypt', array ());
+		static::$defaults = \Config::get('crypt', array());
 
 		// generate random crypto keys if we don't have them or they are incorrect length
 		$update = false;
@@ -70,7 +70,7 @@ class Crypt
 			{
 				// failed to write the config file, inform the user
 				echo \View::forge('errors/crypt_keys', array(
-					'keys' => static::$defaults
+					'keys' => static::$defaults,
 				));
 				die();
 			}
@@ -127,7 +127,7 @@ class Crypt
 	protected static function safe_b64encode($value)
 	{
 		$data = base64_encode($value);
-		$data = str_replace(array('+','/','='), array('-','_',''), $data);
+		$data = str_replace(array('+', '/', '='), array('-', '_', ''), $data);
 		return $data;
 	}
 
@@ -136,7 +136,7 @@ class Crypt
 	 */
 	protected static function safe_b64decode($value)
 	{
-		$data = str_replace(array('-','_'), array('+','/'), $value);
+		$data = str_replace(array('-', '_'), array('+', '/'), $value);
 		$mod4 = strlen($data) % 4;
 		if ($mod4)
 		{

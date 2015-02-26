@@ -22,9 +22,7 @@
 
 namespace Fuel\Core;
 
-
 class RedisException extends \FuelException {}
-
 
 /**
  * Redisent, a Redis interface for the modest among us

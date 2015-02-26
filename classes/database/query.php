@@ -11,11 +11,8 @@
 
 namespace Fuel\Core;
 
-
-
 class Database_Query
 {
-
 	/**
 	 * @var  int  Query type
 	 */
@@ -271,7 +268,7 @@ class Database_Query
 		// make sure we have a SQL type to work with
 		if (is_null($this->_type))
 		{
-			switch(strtoupper(substr(ltrim($sql,'('), 0, 6)))
+			switch(strtoupper(substr(ltrim($sql, '('), 0, 6)))
 			{
 				case 'SELECT':
 					$this->_type = \DB::SELECT;

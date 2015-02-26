@@ -24,7 +24,6 @@ namespace Fuel\Core;
  */
 class Cli
 {
-
 	public static $readline_support = false;
 
 	public static $wait_msg = 'Press any key to continue...';
@@ -157,7 +156,6 @@ class Cli
 		echo $prefix;
 		return fgets(STDIN);
 	}
-
 
 	/**
 	 * Asks the user for input.  This can have either 1 or 2 arguments.
@@ -362,7 +360,6 @@ class Cli
 		}
 	}
 
-
 	/**
 	 * if operating system === windows
 	 */
@@ -525,4 +522,3 @@ class Cli
 		return $orig;
 	}
 }
-

@@ -137,7 +137,7 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			}
 
 			// Quote each of the identifiers used for the condition
-			$conditions[] = $db->quote_identifier($c1).$op.' '.(is_null($c2)?'NULL':$db->quote_identifier($c2));
+			$conditions[] = $db->quote_identifier($c1).$op.' '.(is_null($c2) ? 'NULL' : $db->quote_identifier($c2));
 		}
 
 		// remove the first chain type

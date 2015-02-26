@@ -165,7 +165,7 @@ abstract class Lang_File implements Lang_Interface
 					$identifier = substr($identifier, $pos+2);
 
 					// strip the classes directory as we need the module root
-					$path = substr($path,0, -8).'lang'.DS.$identifier;
+					$path = substr($path, 0, -8).'lang'.DS.$identifier;
 				}
 				else
 				{

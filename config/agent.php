@@ -19,7 +19,6 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-
 return array(
 
 	/**
@@ -102,5 +101,3 @@ return array(
 	),
 
 );
-
-

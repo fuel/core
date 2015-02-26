@@ -25,7 +25,6 @@ namespace Fuel\Core;
  */
 class Cookie
 {
-
 	/**
 	 * @var  array  Cookie class configuration defaults
 	 */
@@ -123,5 +122,3 @@ class Cookie
 		return static::set($name, null, -86400, $path, $domain, $secure, $http_only);
 	}
 }
-
-

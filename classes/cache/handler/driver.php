@@ -12,10 +12,7 @@
 
 namespace Fuel\Core;
 
-
-
 interface Cache_Handler_Driver {
-
 	/**
 	 * Should make the contents readable
 	 *
@@ -32,5 +29,3 @@ interface Cache_Handler_Driver {
 	 */
 	public function writable($contents);
 }
-
-

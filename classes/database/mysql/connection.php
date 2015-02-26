@@ -11,11 +11,8 @@
 
 namespace Fuel\Core;
 
-
-
 class Database_MySQL_Connection extends \Database_Connection
 {
-
 	/**
 	 * @var  array  Database in use by each connection
 	 */
@@ -294,8 +291,7 @@ class Database_MySQL_Connection extends \Database_Connection
 
 	public function datatype($type)
 	{
-		static $types = array
-		(
+		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => true, 'character_maximum_length' => '65535'),
 			'bool'                      => array('type' => 'bool'),
 			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
@@ -482,7 +478,7 @@ class Database_MySQL_Connection extends \Database_Connection
 	public function error_info()
 	{
 		$errno = mysql_errno($this->_connection);
-		return array($errno, empty($errno)? null : $errno, empty($errno) ? null : mysql_error($this->_connection));
+		return array($errno, empty($errno) ? null : $errno, empty($errno) ? null : mysql_error($this->_connection));
 	}
 
 	protected function driver_start_transaction()

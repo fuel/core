@@ -163,5 +163,3 @@ class Test_Uri extends TestCase
 		$this->assertEquals($expected, $output);
 	}
 }
-
-

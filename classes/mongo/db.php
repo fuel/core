@@ -24,13 +24,10 @@ namespace Fuel\Core;
  * @license 	http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-
 class Mongo_DbException extends \FuelException {}
-
 
 class Mongo_Db
 {
-
 	/**
 	 * Holds the current Mongo connection object
 	 *
@@ -1180,4 +1177,3 @@ class Mongo_Db
 		}
 	}
 }
-

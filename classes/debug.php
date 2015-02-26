@@ -23,7 +23,6 @@ namespace Fuel\Core;
  */
 class Debug
 {
-
 	public static $max_nesting_level = 5;
 
 	public static $js_toggle_open = false;
@@ -168,10 +167,10 @@ JS;
 		{
 			$id = 'fuel_debug_'.mt_rand();
 			$return .= "<i>{$scope}</i> <strong>{$name}</strong>";
-			$return .=  " (Array, ".count($var)." element".(count($var)!=1?"s":"").")";
+			$return .=  " (Array, ".count($var)." element".(count($var)!=1 ? "s" : "").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
-				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open?"close":"open")."\">&crarr;</a>\n";
+				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>\n";
 			}
 			else
 			{
@@ -191,7 +190,7 @@ JS;
 				}
 				if (count($var) > 0)
 				{
-					$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open?"block":"none").";\">$sub_return</span>";
+					$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open ? "block" : "none").";\">$sub_return</span>";
 				}
 				else
 				{
@@ -255,7 +254,7 @@ JS;
 			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
 			if (count($vars) > 0 and static::$max_nesting_level > $level)
 			{
-				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open?"close":"open")."\">&crarr;</a>\n";
+				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>\n";
 			}
 			$return .= "\n";
 
@@ -287,7 +286,7 @@ JS;
 
 			if (count($vars) > 0)
 			{
-				$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open?"block":"none").";\">$sub_return</span>";
+				$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open ? "block" : "none").";\">$sub_return</span>";
 			}
 			else
 			{
@@ -517,7 +516,7 @@ JS;
 		else
 		{
 			list($usec, $sec) = explode(" ", microtime());
-			$utime_before = ((float)$usec + (float)$sec);
+			$utime_before = ((float) $usec + (float) $sec);
 			$stime_before = 0;
 		}
 
@@ -534,14 +533,14 @@ JS;
 		else
 		{
 			list($usec, $sec) = explode(" ", microtime());
-			$utime_after = ((float)$usec + (float)$sec);
+			$utime_after = ((float) $usec + (float) $sec);
 			$stime_after = 0;
 		}
 
 		return array(
 			'user' => sprintf('%1.6f', $utime_after - $utime_before),
 			'system' => sprintf('%1.6f', $stime_after - $stime_before),
-			'result' => $result
+			'result' => $result,
 		);
 	}
 

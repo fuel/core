@@ -12,11 +12,8 @@
 
 namespace Fuel\Core;
 
-
-
 class Cache_Storage_Redis extends \Cache_Storage_Driver
 {
-
 	/**
 	 * @const  string  Tag used for opening & closing cache properties
 	 */
@@ -220,7 +217,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 			'created'          => $this->created,
 			'expiration'       => $this->expiration,
 			'dependencies'     => $this->dependencies,
-			'content_handler'  => $this->content_handler
+			'content_handler'  => $this->content_handler,
 		);
 		$properties = '{{'.static::PROPS_TAG.'}}'.json_encode($properties).'{{/'.static::PROPS_TAG.'}}';
 

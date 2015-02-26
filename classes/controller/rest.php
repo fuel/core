@@ -4,7 +4,6 @@ namespace Fuel\Core;
 
 abstract class Controller_Rest extends \Controller
 {
-
 	/**
 	 * @var  null|string  Set this in a controller to use a default format
 	 */

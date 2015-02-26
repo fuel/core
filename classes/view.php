@@ -12,7 +12,6 @@
 
 namespace Fuel\Core;
 
-
 /**
  * View class
  *
@@ -26,7 +25,6 @@ namespace Fuel\Core;
  */
 class View
 {
-
 	/**
 	 * @var  array  Global view data
 	 */
@@ -371,7 +369,6 @@ class View
 
 		return $this;
 	}
-
 
 	/**
 	 * Sets the view filename.

@@ -12,11 +12,8 @@
 
 namespace Fuel\Core;
 
-
-
 class File_Handler_Directory
 {
-
 	/**
 	 * @var	string	path to the file
 	 */
@@ -185,5 +182,3 @@ class File_Handler_Directory
 		throw new \BadMethodCallException('Get_size method is unavailable on directories.');
 	}
 }
-
-

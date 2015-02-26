@@ -13,7 +13,6 @@ namespace Fuel\Core;
 
 class Database_MySQL_Result extends \Database_Result
 {
-
 	protected $_internal_row = 0;
 
 	public function __construct($result, $sql, $as_object)

@@ -19,7 +19,6 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-
 return array(
 
 	/*
@@ -33,7 +32,7 @@ return array(
 			'default' => 0,
 		),
 		'module' => array(),
-		'package' => array()
+		'package' => array(),
 	),
 
 	/*
@@ -53,4 +52,3 @@ return array(
 	'table' => 'migration',
 
 );
-

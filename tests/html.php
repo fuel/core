@@ -231,5 +231,3 @@ class Test_Html extends TestCase
 		$this->assertEquals($expected, $output);
 	}
 }
-
-

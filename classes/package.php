@@ -28,7 +28,6 @@ class PackageNotFoundException extends \FuelException { }
  */
 class Package
 {
-
 	/**
 	 * @var  array  $packages  Holds all the loaded package information.
 	 */

@@ -257,7 +257,7 @@ class Test_Form extends TestCase
 
 	/**
 	* Tests Form::label()
-	* 
+	*
 	* @test
 	*/
 	public function test_label_auto_id_false()

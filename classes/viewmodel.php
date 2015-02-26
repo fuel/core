@@ -12,7 +12,6 @@
 
 namespace Fuel\Core;
 
-
 /**
  * ViewModel, alias for Presenter, for BC purposes
  *

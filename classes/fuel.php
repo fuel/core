@@ -25,7 +25,6 @@ class FuelException extends \Exception {}
  */
 class Fuel
 {
-
 	/**
 	 * @var  string  The version of Fuel
 	 */

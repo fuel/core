@@ -19,7 +19,6 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-
 return array(
 	/**
 	 * The driver to be used. Currently gd, imagemagick or imagick
@@ -104,7 +103,5 @@ return array(
 			)
 		)
 		*/
-	)
+	),
 );
-
-

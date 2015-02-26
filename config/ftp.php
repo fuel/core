@@ -19,7 +19,6 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-
 return array(
 
 	'default' => array(
@@ -29,8 +28,6 @@ return array(
 		'port'			=>		21,
 		'passive'		=>		true,
 		'ssl_mode'		=>		false,
-		'debug'			=>		false
-	)
+		'debug'			=>		false,
+	),
 );
-
-

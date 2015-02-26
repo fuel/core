@@ -12,13 +12,10 @@
 
 namespace Fuel\Core;
 
-
-
 // --------------------------------------------------------------------
 
 class Session_Cookie extends \Session_Driver
 {
-
 	/**
 	 * array of driver config defaults
 	 */
@@ -181,5 +178,3 @@ class Session_Cookie extends \Session_Driver
 		return parent::_validate_config($validated);
 	}
 }
-
-

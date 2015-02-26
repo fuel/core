@@ -83,7 +83,7 @@ class Test_Fieldset extends TestCase
 		));
 		$ops = array('male', 'female');
 		$form->add('gender', '', array(
-			'options' => $ops, 'type' => 'radio', 'value' => 1
+			'options' => $ops, 'type' => 'radio', 'value' => 1,
 		));
 
 		$output = $form->build();

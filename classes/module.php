@@ -26,12 +26,10 @@ class ModuleNotFoundException extends \FuelException { }
  */
 class Module
 {
-
 	/**
 	 * @var  array  $modules  Holds all the loaded module information.
 	 */
 	protected static $modules = array();
-
 
 	/**
 	 * Loads the given module.  If a path is not given, then 'module_paths' is used.
@@ -58,7 +56,6 @@ class Module
 			}
 			return $result;
 		}
-
 
 		if (static::loaded($module))
 		{

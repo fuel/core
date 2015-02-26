@@ -12,7 +12,6 @@
 
 namespace Fuel\Core;
 
-
 interface Sanitization
 {
 	/**

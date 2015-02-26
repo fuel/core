@@ -81,4 +81,3 @@ class Test_Debug extends TestCase
 		$this->assertEquals($expected, $output);
  	}
 }
-

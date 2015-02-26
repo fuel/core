@@ -12,8 +12,6 @@
 
 namespace Fuel\Core;
 
-
-
 /**
  * Fieldset Class
  *

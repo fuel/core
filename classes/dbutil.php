@@ -21,7 +21,6 @@ namespace Fuel\Core;
  */
 class DBUtil
 {
-
 	/**
 	 * @var  string  $connection  the database connection (identifier)
 	 */
@@ -317,7 +316,6 @@ class DBUtil
 			}
 		}
 
-
 		return \DB::query($sql, 0)->execute($db ? $db : static::$connection);
 	}
 
@@ -365,7 +363,7 @@ class DBUtil
 			$sql .= (array_key_exists('NAME', $attr) and $attr['NAME'] !== $field) ? ' '.\DB::quote_identifier($attr['NAME'], $db ? $db : static::$connection).' ' : '';
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
 
-			if(array_key_exists('CONSTRAINT',$attr))
+			if(array_key_exists('CONSTRAINT', $attr))
 			{
 				if(is_array($attr['CONSTRAINT']))
 				{
@@ -374,7 +372,7 @@ class DBUtil
 					{
 						$sql .= (is_string($constraint) ? "'".$constraint."'" : $constraint).", ";
 					}
-					$sql = rtrim($sql,', '). ")";
+					$sql = rtrim($sql, ', '). ")";
 				}
 				else
 				{
@@ -515,7 +513,6 @@ class DBUtil
 
 		return \DB::query($sql, 0)->execute(static::$connection);
 	}
-
 
 	/**
 	 * Returns string of foreign keys
@@ -712,13 +709,13 @@ class DBUtil
 		$message = $result->get('Msg_text');
 		$table = $result->get('Table');
 
-		if ($type === 'status' and in_array(strtolower($message), array('ok','table is already up to date')))
+		if ($type === 'status' and in_array(strtolower($message), array('ok', 'table is already up to date')))
 		{
 			return true;
 		}
 
 		// make sure we have a type logger can handle
-		if (in_array($type, array('info', 'warning' , 'error')))
+		if (in_array($type, array('info', 'warning', 'error')))
 		{
 			$type = strtoupper($type);
 		}
@@ -742,4 +739,3 @@ class DBUtil
 	}
 
 }
-

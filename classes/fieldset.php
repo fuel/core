@@ -12,8 +12,6 @@
 
 namespace Fuel\Core;
 
-
-
 // ------------------------------------------------------------------------
 
 /**
@@ -543,7 +541,7 @@ class Fieldset
 			if (is_array($input) or $input instanceof \ArrayAccess)
 			{
 				// convert form field array's to Fuel dotted notation
-				$name = str_replace(array('[',']'), array('.', ''), $f->name);
+				$name = str_replace(array('[', ']'), array('.', ''), $f->name);
 
 				// fetch the value for this field, and set it if found
 				$value = \Arr::get($input, $name, null);
@@ -625,7 +623,7 @@ class Fieldset
 				{
 					continue;
 				}
-				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label'])?\Lang::get($settings['label'], array(), $settings['label']):'').'</th>'.PHP_EOL;
+				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label']) ? \Lang::get($settings['label'], array(), $settings['label']) : '').'</th>'.PHP_EOL;
 			}
 			$fields_output .= "\t".'<th>'.\Config::get('form.tabular_delete_label', 'Delete?').'</th>'.PHP_EOL;
 
@@ -828,7 +826,7 @@ class Fieldset
 		// load the config for embedded forms
 		$this->set_config(array(
 			'form_template' => \Config::get('form.tabular_form_template', "<table>{fields}</table>\n"),
-			'field_template' => \Config::get('form.tabular_field_template', "{field}")
+			'field_template' => \Config::get('form.tabular_field_template', "{field}"),
 		));
 
 		// add the rows to the tabular form fieldset
@@ -841,7 +839,7 @@ class Fieldset
 			$fieldset->add_model($model, $row)->set_fieldset_tag(false);
 			$fieldset->set_config(array(
 				'form_template' => \Config::get('form.tabular_row_template', "<table>{fields}</table>\n"),
-				'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
+				'field_template' => \Config::get('form.tabular_row_field_template', "{field}"),
 			));
 			$fieldset->add($this->tabular_form_relation.'['.$row->{$primary_key}.'][_delete]', '', array('type' => 'checkbox', 'value' => 1));
 		}
@@ -857,7 +855,7 @@ class Fieldset
 			$fieldset->add_model($model)->set_fieldset_tag(false);
 			$fieldset->set_config(array(
 				'form_template' => \Config::get('form.tabular_row_template', "<tr>{fields}</tr>"),
-				'field_template' => \Config::get('form.tabular_row_field_template', "{field}")
+				'field_template' => \Config::get('form.tabular_row_field_template', "{field}"),
 			));
 			$fieldset->add($this->tabular_form_relation.'_new['.$i.'][_delete]', '', array('type' => 'checkbox', 'value' => 0, 'disabled' => 'disabled'));
 

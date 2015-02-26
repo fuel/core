@@ -14,7 +14,6 @@ namespace Fuel\Core;
 
 abstract class Controller
 {
-
 	/**
 	 * @var  Request  The current Request object
 	 */
@@ -77,4 +76,3 @@ abstract class Controller
 		return $this->request->params();
 	}
 }
-

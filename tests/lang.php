@@ -20,7 +20,6 @@ namespace Fuel\Core;
  */
 class Test_Lang extends TestCase
 {
-
 	/**
 	 * Test for Lang::get()
 	 *

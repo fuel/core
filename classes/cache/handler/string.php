@@ -12,11 +12,8 @@
 
 namespace Fuel\Core;
 
-
-
 class Cache_Handler_String implements \Cache_Handler_Driver
 {
-
 	public function readable($contents)
 	{
 		return (string) $contents;
@@ -27,4 +24,3 @@ class Cache_Handler_String implements \Cache_Handler_Driver
 		return (string) $contents;
 	}
 }
-

@@ -658,7 +658,7 @@ class Theme
 			$name = $theme;
 			$theme = array(
 				'name' => $name,
-				'path' => $path
+				'path' => $path,
 			);
 		}
 

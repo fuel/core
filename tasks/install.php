@@ -25,7 +25,6 @@ namespace Fuel\Tasks;
 
 class Install
 {
-
 	public static function run()
 	{
 		$writable_paths = array(APPPATH.'cache', APPPATH.'logs', APPPATH.'tmp', APPPATH.'config');
@@ -43,4 +42,3 @@ class Install
 		}
 	}
 }
-

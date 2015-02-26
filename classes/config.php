@@ -116,7 +116,7 @@ class Config
 			{
 				static::$items[$group] = array();
 			}
-			static::$items[$group] = $overwrite ? array_merge(static::$items[$group],$config) : \Arr::merge(static::$items[$group],$config);
+			static::$items[$group] = $overwrite ? array_merge(static::$items[$group], $config) : \Arr::merge(static::$items[$group], $config);
 			$group .= '.';
 			foreach (static::$itemcache as $key => $value)
 			{

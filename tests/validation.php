@@ -41,8 +41,8 @@ class Test_Validation extends TestCase
 					'snd' => '127.0.0',
 					'url' => 'http://www.google.com',
 					'gender' => 'M',
-				)
-			)
+				),
+			),
 		);
 	}
 
