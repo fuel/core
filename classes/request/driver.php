@@ -333,7 +333,6 @@ abstract class Request_Driver
 		return false;
 	}
 
-
 	/**
 	 * Creates the Response and optionally attempts to auto-format the output
 	 *

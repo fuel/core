@@ -14,8 +14,6 @@
 
 namespace Fuel\Core;
 
-
-
 abstract class Database_Connection
 {
 	/**
@@ -252,8 +250,7 @@ abstract class Database_Connection
 			}
 
 			// Get the total rows from the last query executed
-			$result = $this->query
-			(
+			$result = $this->query(
 				\DB::SELECT,
 				'SELECT COUNT(*) AS '.$this->quote_identifier('total_rows').' '.
 				'FROM ('.$sql.') AS '.$this->quote_table('counted_results'),
@@ -314,8 +311,7 @@ abstract class Database_Connection
 	 */
 	public function datatype($type)
 	{
-		static $types = array
-		(
+		static $types = array(
 			// SQL-92
 			'bit'                           => array('type' => 'string', 'exact' => true),
 			'bit varying'                   => array('type' => 'string'),
@@ -594,7 +590,7 @@ abstract class Database_Connection
 		if (is_array($value))
 		{
 			// Separate the column and alias
-			list ($value, $alias) = $value;
+			list($value, $alias) = $value;
 
 			return $value.' AS '.$this->quote_identifier($alias);
 		}
@@ -654,7 +650,7 @@ abstract class Database_Connection
 		elseif (is_array($value))
 		{
 			// Separate the column and alias
-			list ($value, $alias) = $value;
+			list($value, $alias) = $value;
 
 			return $this->quote_identifier($value).' AS '.$this->quote_identifier($alias);
 		}

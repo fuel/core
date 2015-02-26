@@ -27,7 +27,6 @@ namespace Fuel\Core;
 
 class Agent
 {
-
 	/**
 	 * @var  array  information about the current browser
 	 */

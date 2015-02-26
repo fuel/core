@@ -25,7 +25,6 @@ namespace Fuel\Core;
  */
 class Asset_Instance
 {
-
 	/**
 	 * @var  array  the asset paths to be searched
 	 */
@@ -155,7 +154,7 @@ class Asset_Instance
 			foreach ($type as $key => $folder)
 			{
 				is_numeric($key) and $key = $folder;
-				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder),DS);
+				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder), DS);
 				in_array($folder, $this->_asset_paths[$key]) or array_unshift($this->_asset_paths[$key], $folder);
 			}
 		}
@@ -190,7 +189,7 @@ class Asset_Instance
 			foreach ($type as $key => $folder)
 			{
 				is_numeric($key) and $key = $folder;
-				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder),DS);
+				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder), DS);
 				if (($found = array_search($folder, $this->_asset_paths[$key])) !== false)
 				{
 					unset($this->_asset_paths[$key][$found]);
@@ -543,7 +542,7 @@ class Asset_Instance
 				'type'	=>	$type,
 				'file'	=>	$asset,
 				'raw'	=>	$raw,
-				'attr'	=>	(array) $attr
+				'attr'	=>	(array) $attr,
 			);
 		}
 	}

@@ -14,7 +14,6 @@ namespace Fuel\Core;
 
 class Image_Gd extends \Image_Driver
 {
-
 	protected $image_data = null;
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
 	protected $gdresizefunc = "imagecopyresampled";
@@ -137,7 +136,7 @@ class Image_Gd extends \Image_Driver
 
 	protected function _flip($mode)
 	{
-		$sizes	= (array)$this->sizes();
+		$sizes	= (array) $this->sizes();
 		$source = array_merge($sizes, array('x' => 0, 'y' => 0));
 
 		switch ($mode)
@@ -235,7 +234,7 @@ class Image_Gd extends \Image_Driver
 						'red' => 0,
 						'green' => 0,
 						'blue' => 0,
-						'alpha' => 0
+						'alpha' => 0,
 					);
 				}
 				else
@@ -314,7 +313,7 @@ class Image_Gd extends \Image_Driver
 			$width  = imagesx($this->image_data);
 			$height = imagesy($this->image_data);
 		}
-		else if (is_resource($filename))
+		elseif (is_resource($filename))
 		{
 			$width  = imagesx($filename);
 			$height = imagesy($filename);
@@ -356,7 +355,7 @@ class Image_Gd extends \Image_Driver
 
 	public function output($filetype = null)
 	{
-		$this->gdresizefunc = ($filetype == 'gif') ? 'imagecopyresized': $this->gdresizefunc = 'imagecopyresampled';
+		$this->gdresizefunc = ($filetype == 'gif') ? 'imagecopyresized' : $this->gdresizefunc = 'imagecopyresampled';
 
 		extract(parent::output($filetype));
 

@@ -22,13 +22,12 @@ namespace Fuel\Core;
  */
 class Inflector
 {
-
 	/**
 	 * @var  array  default list of uncountable words, in English
 	 */
 	protected static $uncountable_words = array(
 		'equipment', 'information', 'rice', 'money',
-		'species', 'series', 'fish', 'meta'
+		'species', 'series', 'fish', 'meta',
 	);
 
 	/**
@@ -456,4 +455,3 @@ class Inflector
 		return ! (\in_array(\Str::lower(\strval($word)), static::$uncountable_words));
 	}
 }
-

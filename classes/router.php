@@ -106,7 +106,7 @@ class Router
 			{
 				if (is_string($name) and ($pos = strpos($url, '(:'.$name.')')) !== false)
 				{
-					$url = substr_replace($url,$value,$pos,strlen($name)+3);
+					$url = substr_replace($url, $value, $pos, strlen($name)+3);
 				}
 			}
 
@@ -275,7 +275,7 @@ class Router
 		{
 			// determine which classes to check. First, all underscores, or all namespaced
 			$classes = array(
-				$namespace.$prefix.\Inflector::words_to_upper(implode(substr($prefix,-1,1), $temp_segments), substr($prefix,-1,1)),
+				$namespace.$prefix.\Inflector::words_to_upper(implode(substr($prefix, -1, 1), $temp_segments), substr($prefix, -1, 1)),
 			);
 
 			// if we're namespacing, check a hybrid version too
@@ -333,5 +333,3 @@ class Router
 		return static::$prefix;
 	}
 }
-
-

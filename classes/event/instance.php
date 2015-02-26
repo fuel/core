@@ -22,7 +22,6 @@ namespace Fuel\Core;
  */
 class Event_Instance
 {
-
 	/**
 	 * @var	array	An array of listeners
 	 */
@@ -42,7 +41,6 @@ class Event_Instance
 			$this->register($event, $callback);
 		}
 	}
-
 
 	// --------------------------------------------------------------------
 
@@ -231,4 +229,3 @@ class Event_Instance
 		return false;
 	}
 }
-

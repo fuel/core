@@ -12,7 +12,6 @@
 
 namespace Fuel\Core;
 
-
 class Pagination
 {
 	/**
@@ -219,7 +218,6 @@ class Pagination
 			return null;
 		}
 	}
-
 
 	/**
 	 * configuration value setter

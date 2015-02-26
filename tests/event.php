@@ -20,7 +20,6 @@ namespace Fuel\Core;
  */
 class Test_Event extends TestCase
 {
-
 	/**
 	 * Test for Event::register()
 	 *

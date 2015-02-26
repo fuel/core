@@ -12,19 +12,16 @@
 
 namespace Fuel\Core;
 
-
-
 // --------------------------------------------------------------------
 
 class Session_Redis extends \Session_Driver
 {
-
 	/**
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
 		'cookie_name'		=> 'fuelrid',				// name of the session cookie for redis based sessions
-		'database'			=> 'default'				// name of the redis database to use (as configured in config/db.php)
+		'database'			=> 'default',				// name of the redis database to use (as configured in config/db.php)
 	);
 
 	/*
@@ -300,5 +297,3 @@ class Session_Redis extends \Session_Driver
 	}
 
 }
-
-

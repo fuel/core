@@ -22,7 +22,6 @@ namespace Fuel\Core;
  */
 class Uri
 {
-
 	/**
 	 * Returns the desired segment, or $default if it does not exist.
 	 *

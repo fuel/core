@@ -48,8 +48,8 @@ class Test_Format extends TestCase
 			'json' => array(
 				'encode' => array(
 					'options' => JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP,
-				)
-			)
+				),
+			),
 		));
 	}
 
@@ -260,58 +260,56 @@ line 2","Value 3"',
 	</testsuites>
 </phpunit>';
 
-		$expected = array (
-			'@attributes' => array (
+		$expected = array(
+			'@attributes' => array(
 				'colors' => 'true',
 				'stopOnFailure' => 'false',
 				'bootstrap' => 'bootstrap_phpunit.php',
 			),
-			'php' => array (
-				'server' => array (
-					0 => array (
-						'@attributes' => array (
+			'php' => array(
+				'server' => array(
+					0 => array(
+						'@attributes' => array(
 							'name' => 'doc_root',
 							'value' => '../../',
 						),
 					),
-					1 => array (
-						'@attributes' => array (
+					1 => array(
+						'@attributes' => array(
 							'name' => 'app_path',
 							'value' => 'fuel/app',
 						),
 					),
-					2 => array (
-						'@attributes' => array (
+					2 => array(
+						'@attributes' => array(
 							'name' => 'core_path',
 							'value' => 'fuel/core',
 						),
 					),
-					3 => array (
-						'@attributes' => array (
+					3 => array(
+						'@attributes' => array(
 							'name' => 'package_path',
 							'value' => 'fuel/packages',
 						),
 					),
 				),
 			),
-			'testsuites' => array (
-				'testsuite' => array (
-					0 => array (
-						'@attributes' => array (
+			'testsuites' => array(
+				'testsuite' => array(
+					0 => array(
+						'@attributes' => array(
 							'name' => 'core',
 						),
 						'directory' => '../core/tests',
 					),
-					1 => array (
-						'@attributes' =>
-						array (
+					1 => array(
+						'@attributes' => array(
 							'name' => 'packages',
 						),
 						'directory' => '../packages/*/tests',
 					),
-					2 => array (
-						'@attributes' =>
-						array (
+					2 => array(
+						'@attributes' => array(
 							'name' => 'app',
 						),
 						'directory' => '../app/tests',
@@ -347,8 +345,8 @@ line 2","Value 3"',
 				array(
 					'title' => 'test',
 					'author' => 'foo',
-				)
-			)
+				),
+			),
 		);
 
 		$expected = '<?xml version="1.0" encoding="utf-8"?>
@@ -370,8 +368,8 @@ line 2","Value 3"',
 				array(
 					'title' => 'test',
 					'author' => 'foo',
-				)
-			)
+				),
+			),
 		);
 
 		$expected = '<?xml version="1.0" encoding="utf-8"?>
@@ -393,8 +391,8 @@ line 2","Value 3"',
 				array(
 					'title' => 'test',
 					'author' => '<h1>hero</h1>',
-				)
-			)
+				),
+			),
 		);
 
 		$expected = '<?xml version="1.0" encoding="utf-8"?>
@@ -432,8 +430,8 @@ line 2","Value 3"',
 				array(
 					'title' => 'test',
 					'author' => '<h1>hero</h1>',
-				)
-			)
+				),
+			),
 		);
 
 		$expected = '<?xml version="1.0" encoding="utf-8"?>
@@ -458,7 +456,7 @@ line 2","Value 3"',
 		$expected = array(
 			'article' => array(
 				'title' => 'test',
-			)
+			),
 		);
 
 		$this->assertEquals($expected, $data);
@@ -485,7 +483,7 @@ line 2","Value 3"',
 			'article' => array(
 				'title' => 'test',
 				'app:title' => 'app test',
-			)
+			),
 		);
 
 		$this->assertEquals($expected, $data);
@@ -508,8 +506,8 @@ line 2","Value 3"',
 					'quot' => '"test"',
 					'amp' => 'M&M',
 
-				)
-			)
+				),
+			),
 		);
 
 		$expected = '{"articles":[{"title":"test","author":"foo","tag":"\u003Ctag\u003E","apos":"McDonald\u0027s","quot":"\u0022test\u0022","amp":"M\u0026M"}]}';

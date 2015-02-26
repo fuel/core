@@ -30,7 +30,6 @@ namespace Fuel\Core;
  */
 class Date
 {
-
 	/**
 	 * Time constants (and only those that are constant, thus not MONTH/YEAR)
 	 */
@@ -63,8 +62,8 @@ class Date
 			{
 				// convert the format string from glibc to date format (where possible)
 				$new_format = str_replace(
-					array('%a', '%A', '%d', '%e', '%j', '%u', '%w', '%U'  , '%V', '%W'  , '%b', '%B', '%h', '%m', '%C'  , '%g', '%G', '%y', '%Y', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r'     , '%R' , '%S', '%T'   , '%X'  , '%z', '%Z', '%c'  , '%D'   , '%F'   , '%s', '%x'  , '%n', '%t', '%%'),
-					array('D' , 'l' , 'd' , 'j' , 'N' , 'z' , 'w' , '[^^]', 'W' , '[^^]', 'M' , 'F' , 'M' , 'm' , '[^^]', 'Y' , 'o' , 'y' , 'Y' , 'H' , 'G' , 'h' , 'g' , 'i' , 'A' , 'a' , 'H:i:s A', 'H:i', 's' , 'H:i:s', '[^^]', 'O' , 'T ', '[^^]', 'm/d/Y', 'Y-m-d', 'U' , '[^^]', "\n", "\t", '%'),
+					array('%a', '%A', '%d', '%e', '%j', '%u', '%w', '%U', '%V', '%W', '%b', '%B', '%h', '%m', '%C', '%g', '%G', '%y', '%Y', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r', '%R', '%S', '%T', '%X', '%z', '%Z', '%c', '%D', '%F', '%s', '%x', '%n', '%t', '%%'),
+					array('D', 'l', 'd', 'j', 'N', 'z', 'w', '[^^]', 'W', '[^^]', 'M', 'F', 'M', 'm', '[^^]', 'Y', 'o', 'y', 'Y', 'H', 'G', 'h', 'g', 'i', 'A', 'a', 'H:i:s A', 'H:i', 's', 'H:i:s', '[^^]', 'O', 'T ', '[^^]', 'm/d/Y', 'Y-m-d', 'U', '[^^]', "\n", "\t", '%'),
 					$format
 				);
 
@@ -177,7 +176,7 @@ class Date
 
 		if ($timestamp === false)
 		{
-			throw new \OutOfBoundsException('Input was invalid.'.(PHP_INT_SIZE == 4?' A 32-bit system only supports dates between 1901 and 2038.':''));
+			throw new \OutOfBoundsException('Input was invalid.'.(PHP_INT_SIZE == 4 ? ' A 32-bit system only supports dates between 1901 and 2038.' : ''));
 		}
 
 		return static::forge($timestamp);
@@ -281,7 +280,7 @@ class Date
 		}
 
 		$text = \Lang::get('date.text', array(
-			'time' => \Lang::get('date.'.$periods[$j], array('t' => $difference))
+			'time' => \Lang::get('date.'.$periods[$j], array('t' => $difference)),
 		));
 
 		return $text;

@@ -28,7 +28,6 @@ namespace Fuel\Core;
  */
 class Num
 {
-
 	/**
 	 * Cached byte units
 	 *

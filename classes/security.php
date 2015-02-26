@@ -24,7 +24,6 @@ class SecurityException extends \DomainException {}
  */
 class Security
 {
-
 	/**
 	 * @var  string  the token as submitted in the cookie from the previous request
 	 */

@@ -20,7 +20,6 @@ namespace Fuel\Core;
  */
 class Test_Agent extends TestCase
 {
-
 	/**
 	 * need to setup a fake browser environment
 	 */

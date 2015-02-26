@@ -14,5 +14,4 @@ namespace Fuel\Core;
 
 class Model
 {
-
 }

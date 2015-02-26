@@ -12,11 +12,8 @@
 
 namespace Fuel\Core;
 
-
-
 class Cache_Handler_Serialized implements \Cache_Handler_Driver
 {
-
 	public function readable($contents)
 	{
 		return unserialize($contents);
@@ -28,5 +25,3 @@ class Cache_Handler_Serialized implements \Cache_Handler_Driver
 	}
 
 }
-
-

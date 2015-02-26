@@ -16,7 +16,6 @@ namespace Fuel\Core;
 
 class Session_Db extends \Session_Driver
 {
-
 	/*
 	 * @var	session database result object
 	 */
@@ -28,7 +27,7 @@ class Session_Db extends \Session_Driver
 	protected static $_defaults = array(
 		'cookie_name'		=> 'fueldid',				// name of the session cookie for database based sessions
 		'table'				=> 'sessions',				// name of the sessions table
-		'gc_probability'	=> 5						// probability % (between 0 and 100) for garbage collection
+		'gc_probability'	=> 5,						// probability % (between 0 and 100) for garbage collection
 	);
 
 	// --------------------------------------------------------------------
@@ -219,7 +218,7 @@ class Session_Db extends \Session_Driver
 				}
 
 				// do some garbage collection
-				if (mt_rand(0,100) < $this->config['gc_probability'])
+				if (mt_rand(0, 100) < $this->config['gc_probability'])
 				{
 					$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
 					$result = \DB::delete($this->config['table'])->where('updated', '<', $expired)->execute($this->config['database']);

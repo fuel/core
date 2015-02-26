@@ -94,7 +94,5 @@ return array(
 	'change_case'		=> false,
 
 	// maximum lengh of the filename, after all name modifications have been made. 0 = no maximum
-	'max_length'		=> 0
+	'max_length'		=> 0,
 );
-
-

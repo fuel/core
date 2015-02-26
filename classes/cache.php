@@ -12,14 +12,11 @@
 
 namespace Fuel\Core;
 
-
 // Exception thrown when the Cache was found but expired (auto deleted)
 class CacheExpiredException extends \CacheNotFoundException {}
 
-
 class Cache
 {
-
 	/**
 	 * Loads any default caching settings when available
 	 */
@@ -137,4 +134,3 @@ class Cache
 		return $cache->delete_all($section);
 	}
 }
-

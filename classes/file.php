@@ -12,7 +12,6 @@
 
 namespace Fuel\Core;
 
-
 class FileAccessException extends \FuelException {}
 class OutsideAreaException extends \OutOfBoundsException {}
 class InvalidPathException extends \FileAccessException {}
@@ -28,7 +27,6 @@ class InvalidPathException extends \FileAccessException {}
  */
 class File
 {
-
 	/**
 	 * @var  array  loaded area's
 	 */
@@ -164,7 +162,7 @@ class File
 	public static function create_dir($basepath, $name, $chmod = null, $area = null)
 	{
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
-		$new_dir	= static::instance($area)->get_path($basepath.trim($name,'\\/'));
+		$new_dir	= static::instance($area)->get_path($basepath.trim($name, '\\/'));
 		is_null($chmod) and $chmod = \Config::get('file.chmod.folders', 0777);
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))

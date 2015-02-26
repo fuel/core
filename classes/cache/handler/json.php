@@ -12,11 +12,8 @@
 
 namespace Fuel\Core;
 
-
-
 class Cache_Handler_Json implements \Cache_Handler_Driver
 {
-
 	public function readable($contents)
 	{
 		$array = false;
@@ -40,5 +37,3 @@ class Cache_Handler_Json implements \Cache_Handler_Driver
 		return $array.json_encode($contents);
 	}
 }
-
-

@@ -2,7 +2,6 @@
 
 namespace Fuel\Core;
 
-
 /**
  * Request_Curl Class
  *

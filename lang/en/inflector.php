@@ -3,17 +3,17 @@
 return array(
     
         'uncountable_words' => array(
-                'equipment', 
-                'information', 
-                'rice', 
+                'equipment',
+                'information',
+                'rice',
                 'money',
-                'species', 
-                'series', 
-                'fish', 
-                'meta'
+                'species',
+                'series',
+                'fish',
+                'meta',
         ),
     
-        'singular_rules' => array(               
+        'singular_rules' => array(
                 '/(matr)ices$/i'         => '\1ix',
                 '/(vert|ind)ices$/i'     => '\1ex',
                 '/^(ox)en/i'             => '\1',
@@ -41,9 +41,9 @@ return array(
                 '/(c)hildren$/i'         => '\1\2hild',
                 '/(n)ews$/i'             => '\1\2ews',
                 '/([^us])s$/i'           => '\1',
-        ),	    
+        ),
     
-        'plural_rules' => array(     
+        'plural_rules' => array(
                 '/^(ox)$/i'                 => '\1\2en',     // ox
                 '/([m|l])ouse$/i'           => '\1ice',      // mouse, louse
                 '/(matr|vert|ind)ix|ex$/i'  => '\1ices',     // matrix, vertex, index

@@ -13,7 +13,7 @@ class Config_Memcached implements Config_Interface
 	protected static $config = array(
 		'identifier' => 'config',
 		'servers' => array(
-			array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100)
+			array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
 		),
 	);
 
@@ -66,7 +66,6 @@ class Config_Memcached implements Config_Interface
 	protected $ext = '.mem';
 
 	protected $vars = array();
-
 
 	/**
 	 * Sets up the file to be parsed and variables

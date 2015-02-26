@@ -20,6 +20,5 @@ namespace Fuel\Core;
  */
 class Test_Cli extends TestCase
 {
-
  	public function test_foo() {}
 }

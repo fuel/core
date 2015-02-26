@@ -199,7 +199,7 @@ class Input
 			if ( ! empty($ext))
 			{
 				// if it has a slash in it, it's a URI segment with a dot in it
-				if (strpos($ext,'/') === false)
+				if (strpos($ext, '/') === false)
 				{
 					static::$detected_ext = ltrim($ext, '.');
 

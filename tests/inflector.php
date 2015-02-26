@@ -20,7 +20,6 @@ namespace Fuel\Core;
  */
 class Test_Inflector extends TestCase
 {
-
 	public function ordinalize_provider()
 	{
 		return array(
@@ -315,4 +314,3 @@ class Test_Inflector extends TestCase
 		$this->assertEquals($expected, $output);
 	}
 }
-

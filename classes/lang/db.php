@@ -81,7 +81,6 @@ class Lang_Db implements Lang_Interface
 			}
 		}
 
-
 		return $lang;
 	}
 
@@ -153,7 +152,7 @@ class Lang_Db implements Lang_Interface
 	public function save($identifier, $contents)
 	{
 		// get the language and the identifier
-		list ($language, $identifier) = explode(DS, $identifier, 2);
+		list($language, $identifier) = explode(DS, $identifier, 2);
 		$identifier = basename($identifier, '.db');
 
 		// prep the contents

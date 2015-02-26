@@ -19,7 +19,6 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-
 return array(
 
 	// The default File_Area config
@@ -80,5 +79,3 @@ return array(
 	),
 
 );
-
-

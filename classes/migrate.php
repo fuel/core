@@ -318,7 +318,6 @@ class Migrate
 		return $done;
 	}
 
-
 	/**
 	 * add an installed migration to the database
 	 *

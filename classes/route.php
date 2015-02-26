@@ -14,7 +14,6 @@ namespace Fuel\Core;
 
 class Route
 {
-
 	/**
 	 * @var  array  segments array
 	 */

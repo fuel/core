@@ -12,10 +12,8 @@
 
 namespace Fuel\Core;
 
-
 class Response
 {
-
 	/**
 	 * @var  array  An array of status codes and messages
 	 *

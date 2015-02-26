@@ -13,7 +13,6 @@ namespace Fuel\Core;
 
 class Database_Result_Cached extends \Database_Result
 {
-
 	/**
 	 * @param  array   $result
 	 * @param  string  $sql

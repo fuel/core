@@ -103,7 +103,6 @@ if ( ! function_exists('logger'))
 	}
 }
 
-
 /**
  * Takes an array of attributes and turns it into a string for an html tag
  *
@@ -318,7 +317,7 @@ if (!function_exists('http_build_url'))
 			$flags |= HTTP_URL_STRIP_FRAGMENT;
 		}
 		// HTTP_URL_STRIP_AUTH becomes HTTP_URL_STRIP_USER and HTTP_URL_STRIP_PASS
-		else if ($flags & HTTP_URL_STRIP_AUTH)
+		elseif ($flags & HTTP_URL_STRIP_AUTH)
 		{
 			$flags |= HTTP_URL_STRIP_USER;
 			$flags |= HTTP_URL_STRIP_PASS;
@@ -376,10 +375,9 @@ if (!function_exists('http_build_url'))
 		// note: scheme and host are never stripped
 		foreach ($keys as $key)
 		{
-			if ($flags & (int)constant('HTTP_URL_STRIP_' . strtoupper($key)))
+			if ($flags & (int) constant('HTTP_URL_STRIP_' . strtoupper($key)))
 				unset($parse_url[$key]);
 		}
-
 
 		$new_url = $parse_url;
 
@@ -431,7 +429,7 @@ if ( ! function_exists('get_common_path'))
  */
 if ( ! function_exists('call_fuel_func_array'))
 {
-	function call_fuel_func_array($callback , array $args)
+	function call_fuel_func_array($callback, array $args)
 	{
 		// deal with "class::method" syntax
 		if (is_string($callback) and strpos($callback, '::') !== false)

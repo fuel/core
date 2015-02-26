@@ -11,7 +11,6 @@
 
 namespace Fuel\Core;
 
-
 class Database_PDO_Connection extends \Database_Connection
 {
 	/**
@@ -316,7 +315,6 @@ class Database_PDO_Connection extends \Database_Connection
 			{
 				$result = $result->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
 			}
-
 
 			// Return an iterator of results
 			return new \Database_Result_Cached($result, $sql, $as_object);

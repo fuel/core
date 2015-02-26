@@ -19,7 +19,6 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-
 return array(
 	/**
 	 * global configuration
@@ -93,14 +92,14 @@ return array(
 	'file'				=> array(
 		'cookie_name'		=> 'fuelfid',				// name of the session cookie for file based sessions
 		'path'				=>	'/tmp',					// path where the session files should be stored
-		'gc_probability'	=>	5						// probability % (between 0 and 100) for garbage collection
+		'gc_probability'	=>	5,						// probability % (between 0 and 100) for garbage collection
 						),
 
 	// specific configuration settings for memcached based sessions
 	'memcached'			=> array(
 		'cookie_name'		=> 'fuelmid',				// name of the session cookie for memcached based sessions
 		'servers'			=> array(					// array of servers and portnumbers that run the memcached service
-								'default' => array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100)
+								'default' => array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
 							),
 						),
 
@@ -109,14 +108,12 @@ return array(
 		'cookie_name'		=> 'fueldid',				// name of the session cookie for database based sessions
 		'database'			=> null,					// name of the database name (as configured in config/db.php)
 		'table'				=> 'sessions',				// name of the sessions table
-		'gc_probability'	=> 5						// probability % (between 0 and 100) for garbage collection
+		'gc_probability'	=> 5,						// probability % (between 0 and 100) for garbage collection
 						),
 
 	// specific configuration settings for redis based sessions
 	'redis'			=> array(
 		'cookie_name'		=> 'fuelrid',				// name of the session cookie for redis based sessions
-		'database'			=> 'default'				// name of the redis database to use (as configured in config/db.php)
-						)
+		'database'			=> 'default',				// name of the redis database to use (as configured in config/db.php)
+						),
 );
-
-

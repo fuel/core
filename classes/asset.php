@@ -25,7 +25,6 @@ namespace Fuel\Core;
  */
 class Asset
 {
-
 	/**
 	 * default instance
 	 *

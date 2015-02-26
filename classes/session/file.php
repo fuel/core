@@ -12,20 +12,17 @@
 
 namespace Fuel\Core;
 
-
-
 // --------------------------------------------------------------------
 
 class Session_File extends \Session_Driver
 {
-
 	/**
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
 		'cookie_name'		=> 'fuelfid',				// name of the session cookie for file based sessions
 		'path'				=>	'/tmp',					// path where the session files should be stored
-		'gc_probability'	=>	5						// probability % (between 0 and 100) for garbage collection
+		'gc_probability'	=>	5,						// probability % (between 0 and 100) for garbage collection
 	);
 
 	// --------------------------------------------------------------------
@@ -176,7 +173,7 @@ class Session_File extends \Session_Driver
 			$this->_set_cookie(array($this->keys['session_id']));
 
 			// do some garbage collection
-			if (mt_rand(0,100) < $this->config['gc_probability'])
+			if (mt_rand(0, 100) < $this->config['gc_probability'])
 			{
 				if ($handle = opendir($this->config['path']))
 				{
@@ -238,7 +235,7 @@ class Session_File extends \Session_Driver
 		// create the session file
 		$file = $this->config['path'].$this->config['cookie_name'].'_'.$session_id;
 		$exists = is_file($file);
-		$handle = fopen($file,'c');
+		$handle = fopen($file, 'c');
 		if ($handle)
 		{
 			// wait for a lock
@@ -279,7 +276,7 @@ class Session_File extends \Session_Driver
 		$file = $this->config['path'].$this->config['cookie_name'].'_'.$session_id;
 		if (is_file($file))
 		{
-			$handle = fopen($file,'r');
+			$handle = fopen($file, 'r');
 			if ($handle)
 			{
 				// wait for a lock
@@ -368,5 +365,3 @@ class Session_File extends \Session_Driver
 	}
 
 }
-
-

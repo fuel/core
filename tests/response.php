@@ -91,12 +91,12 @@ class Test_Response extends TestCase
 
 		// check when body is null
 		$this->assertTrue(is_string($response->__toString()));
-		$this->assertSame((string)null, $response->__toString());
+		$this->assertSame((string) null, $response->__toString());
 		// check when body is not null
 		$value = 12345;
 		$response->body($value);
 		$this->assertTrue(is_string($response->__toString()));
-		$this->assertSame((string)$value, $response->__toString());
+		$this->assertSame((string) $value, $response->__toString());
 
 		$value = '54321';
 		$response->body($value);

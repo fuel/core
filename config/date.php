@@ -19,7 +19,6 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-
 return array(
 
 	/**
@@ -41,6 +40,6 @@ return array(
 		'eu_full'	 => '%H:%M, %d %B %Y',
 
 		'24h'		 => '%H:%M',
-		'12h'		 => '%I:%M %p'
-	)
+		'12h'		 => '%I:%M %p',
+	),
 );

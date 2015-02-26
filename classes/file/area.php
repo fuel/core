@@ -12,11 +12,8 @@
 
 namespace Fuel\Core;
 
-
-
 class File_Area
 {
-
 	/**
 	 * @var	string	path to basedir restriction, null for no restriction
 	 */
@@ -197,7 +194,7 @@ class File_Area
 			throw new \LogicException('File operation not allowed: cannot create file url whithout a basedir and file outside DOCROOT.');
 		}
 
-		return rtrim($this->url, '/').'/'.ltrim(str_replace(DS, '/', substr($path, strlen($basedir))),'/');
+		return rtrim($this->url, '/').'/'.ltrim(str_replace(DS, '/', substr($path, strlen($basedir))), '/');
 	}
 
 	/* -------------------------------------------------------------------------------------
@@ -275,5 +272,3 @@ class File_Area
 		return \File::get_size($path, $this);
 	}
 }
-
-

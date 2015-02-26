@@ -12,8 +12,6 @@
 
 namespace Fuel\Core;
 
-
-
 // ------------------------------------------------------------------------
 
 /**
@@ -354,7 +352,7 @@ class Validation
 			static::set_active_field($field);
 
 			// convert form field array's to Fuel dotted notation
-			$name = str_replace(array('[',']'), array('.', ''), $field->name);
+			$name = str_replace(array('[', ']'), array('.', ''), $field->name);
 
 			$value = $this->input($name);
 			if (($allow_partial === true and $value === null)
@@ -500,16 +498,16 @@ class Validation
 		}
 
 		// key transformation from form array to dot notation
-		if (strpos($key,'[') !== false)
+		if (strpos($key, '[') !== false)
 		{
-			$key = str_replace(array('[', ']'),array('.', ''),$key);
+			$key = str_replace(array('[', ']'), array('.', ''), $key);
 		}
 
 		// if we don't have this key
 		if ( ! array_key_exists($key, $this->input))
 		{
 			// it might be in dot-notation
-			if (strpos($key,'.') !== false)
+			if (strpos($key, '.') !== false)
 			{
 				// check the input first
 				if (($result = \Arr::get($this->input, $key, null)) !== null)
@@ -608,7 +606,7 @@ class Validation
 			'close_list'   => \Config::get('validation.close_list', '</ul>'),
 			'open_error'   => \Config::get('validation.open_error', '<li>'),
 			'close_error'  => \Config::get('validation.close_error', '</li>'),
-			'no_errors'    => \Config::get('validation.no_errors', '')
+			'no_errors'    => \Config::get('validation.no_errors', ''),
 		);
 		$options = array_merge($default, $options);
 

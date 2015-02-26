@@ -19,7 +19,6 @@
  * This will allow you to upgrade fuel without losing your custom config.
  */
 
-
 return array(
 
 	/**
@@ -322,7 +321,7 @@ return array(
 		'memcached'	=> array(
 			'identifier' => 'config',
 			'servers' => array(
-				array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100)
+				array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
 			),
 		),
 	),
@@ -361,7 +360,6 @@ return array(
 	'package_paths' => array(
 		//PKGPATH
 	),
-
 
 	/**************************************************************************/
 	/* Always Load                                                            */

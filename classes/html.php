@@ -12,8 +12,6 @@
 
 namespace Fuel\Core;
 
-
-
 // ------------------------------------------------------------------------
 
 /**
@@ -44,7 +42,7 @@ class Html
 		if ( ! preg_match('#^(\w+://|javascript:|\#)# i', $href))
 		{
 			$urlparts = explode('?', $href, 2);
-			$href = \Uri::create($urlparts[0], array(), isset($urlparts[1])?$urlparts[1]:array(), $secure);
+			$href = \Uri::create($urlparts[0], array(), isset($urlparts[1]) ? $urlparts[1] : array(), $secure);
 		}
 		elseif ( ! preg_match('#^(javascript:|\#)# i', $href) and is_bool($secure))
 		{

@@ -277,7 +277,7 @@ class Finder
 		$found = array();
 		foreach ($paths as $path)
 		{
-			$files = new \GlobIterator(rtrim($path.$directory,DS).DS.$filter);
+			$files = new \GlobIterator(rtrim($path.$directory, DS).DS.$filter);
 			foreach($files as $file)
 			{
 				$found[] = $file->getPathname();
@@ -302,7 +302,7 @@ class Finder
 		$found = $multiple ? array() : false;
 
 		// absolute path requested?
-		if ($file[0] === '/' or substr($file,1,2) === ':\\')
+		if ($file[0] === '/' or substr($file, 1, 2) === ':\\')
 		{
 			// if the base file does not exist, stick the extension to the back of it
 			if ( ! is_file($file))
@@ -539,7 +539,7 @@ class Finder
 				catch (\PhpErrorException $e)
 				{
 					// if we get something else then a chmod error, bail out
-					if (substr($e->getMessage(),0,8) !== 'chmod():')
+					if (substr($e->getMessage(), 0, 8) !== 'chmod():')
 					{
 						throw new $e;
 					}

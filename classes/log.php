@@ -166,7 +166,6 @@ class Log
 		return static::write(\Fuel::L_ERROR, $msg, $method);
 	}
 
-
 	/**
 	 * Write Log File
 	 *

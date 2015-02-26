@@ -20,7 +20,6 @@ namespace Fuel\Core;
  */
 class Str
 {
-
 	/**
 	 * Truncates a string to the given length.  It will optionally preserve
 	 * HTML tags if $is_html is set to true.
@@ -91,7 +90,7 @@ class Str
 		}
 		$new_string = static::sub($string, 0, $limit = min(static::length($string),  $limit + $offset));
 		$new_string .= (static::length($string) > $limit ? $continuation : '');
-		$new_string .= (count($tags = array_reverse($tags)) ? '</'.implode('></',$tags).'>' : '');
+		$new_string .= (count($tags = array_reverse($tags)) ? '</'.implode('></', $tags).'>' : '');
 		return $new_string;
 	}
 
@@ -446,5 +445,3 @@ class Str
 		return strlen(strip_tags($string)) < strlen($string);
 	}
 }
-
-

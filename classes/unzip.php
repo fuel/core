@@ -12,8 +12,6 @@
 
 namespace Fuel\Core;
 
-
-
 /**
  * UnZip Class
  *
@@ -35,7 +33,6 @@ namespace Fuel\Core;
  */
 class Unzip
 {
-
 	private $compressed_list = array();
 
 	// List of files in the ZIP
@@ -609,7 +606,7 @@ class Unzip
 				'uncompressed_size' => $file['uncompressed_size'][1],
 				'extra_field' => $file['extra_field'],
 				'general_bit_flag' => str_pad(decbin($file['general_bit_flag'][1]), 8, '0', STR_PAD_LEFT),
-				'contents_start_offset' => $file['contents_start_offset']
+				'contents_start_offset' => $file['contents_start_offset'],
 			);
 
 			return $i;
@@ -618,5 +615,3 @@ class Unzip
 		return false;
 	}
 }
-
-

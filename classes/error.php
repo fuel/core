@@ -146,7 +146,7 @@ class Error
 		// don't do anything if error reporting is disabled
 		if (error_reporting() !== 0)
 		{
-			$fatal = (bool)( ! in_array($severity, \Config::get('errors.continue_on', array())));
+			$fatal = (bool) ( ! in_array($severity, \Config::get('errors.continue_on', array())));
 
 			if ($fatal)
 			{
@@ -172,7 +172,7 @@ class Error
 	 */
 	public static function show_php_error(\Exception $e)
 	{
-		$fatal = (bool)( ! in_array($e->getCode(), \Config::get('errors.continue_on', array())));
+		$fatal = (bool) ( ! in_array($e->getCode(), \Config::get('errors.continue_on', array())));
 		$data = static::prepare_exception($e, $fatal);
 
 		if ($fatal)
