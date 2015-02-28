@@ -365,7 +365,9 @@ abstract class Database_Connection
 		);
 
 		if (isset($types[$type]))
+		{
 			return $types[$type];
+		}
 
 		return array();
 	}
