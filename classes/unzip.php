@@ -124,7 +124,10 @@ class Unzip
 				}
 			}
 
-			if (substr($file, -1, 1) == '/') continue;
+			if (substr($file, -1, 1) == '/')
+			{
+				continue;
+			}
 
 			$file_locations[] = $file_location = $this->_target_dir . '/' . ($preserve_filepath ? $file : basename($file));
 
