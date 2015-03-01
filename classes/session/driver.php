@@ -432,7 +432,10 @@ abstract class Session_Driver
 	 */
 	public function set_config($name, $value = null)
 	{
-		if (isset($this->config[$name])) $this->config[$name] = $value;
+		if (isset($this->config[$name]))
+		{
+			$this->config[$name] = $value;
+		}
 
 		return $this;
 	}

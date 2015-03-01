@@ -229,7 +229,10 @@ abstract class Cache_Storage_Driver
 		$current_expiration = $this->expiration;
 
 		// Use either the given value or the class property
-		if ( ! is_null($contents)) $this->set_contents($contents);
+		if ( ! is_null($contents))
+		{
+			$this->set_contents($contents);
+		}
 		$this->expiration	= ($expiration !== false) ? $expiration : $this->expiration;
 		$this->dependencies	= ( ! empty($dependencies)) ? $dependencies : $this->dependencies;
 

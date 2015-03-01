@@ -363,7 +363,9 @@ class Database_MySQLi_Connection extends \Database_Connection
 		$type = str_replace(' zerofill', '', $type);
 
 		if (isset($types[$type]))
+		{
 			return $types[$type];
+		}
 
 		return parent::datatype($type);
 	}

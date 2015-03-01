@@ -89,9 +89,13 @@ class Image
 		if (static::$_instance === null)
 		{
 			if ($value !== null)
+			{
 				$index = array($index => $value);
+			}
 			if (is_array($index))
+			{
 				static::$_config = array_merge(static::$_config, $index);
+			}
 			static::instance();
 			return static::instance();
 		} else {
