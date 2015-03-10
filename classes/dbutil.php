@@ -380,7 +380,7 @@ class DBUtil
 				}
 			}
 
-			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET'], $db) : '';
+			$sql .= array_key_exists('CHARSET', $attr) ? static::process_charset($attr['CHARSET'], false, $db) : '';
 
 			if (array_key_exists('UNSIGNED', $attr) and $attr['UNSIGNED'] === true)
 			{
