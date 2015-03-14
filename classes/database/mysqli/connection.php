@@ -183,6 +183,11 @@ class Database_MySQLi_Connection extends \Database_Connection
 			// Database is probably not disconnected
 			$status = ! ($this->_connection instanceof \MySQLi);
 		}
+		if($status)
+		{
+			unset(self::$instances[$this->_instance]);
+			unset(static::$_readonly[$this->_instance]);
+		}
 
 		return $status;
 	}
