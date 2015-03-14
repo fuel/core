@@ -25,9 +25,9 @@ class Session_Db extends \Session_Driver
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
-		'cookie_name'		=> 'fueldid',				// name of the session cookie for database based sessions
-		'table'				=> 'sessions',				// name of the sessions table
-		'gc_probability'	=> 5,						// probability % (between 0 and 100) for garbage collection
+		'cookie_name'    => 'fueldid',				// name of the session cookie for database based sessions
+		'table'          => 'sessions',				// name of the sessions table
+		'gc_probability' => 5,						// probability % (between 0 and 100) for garbage collection
 	);
 
 	// --------------------------------------------------------------------
@@ -51,12 +51,12 @@ class Session_Db extends \Session_Driver
 	public function create($payload = '')
 	{
 		// create a new session
-		$this->keys['session_id']	= $this->_new_session_id();
-		$this->keys['previous_id']	= $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_hash']		= md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']	= \Input::user_agent();
-		$this->keys['created'] 		= $this->time->get_timestamp();
-		$this->keys['updated'] 		= $this->keys['created'];
+		$this->keys['session_id']  = $this->_new_session_id();
+		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
+		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
+		$this->keys['user_agent']  = \Input::user_agent();
+		$this->keys['created']     = $this->time->get_timestamp();
+		$this->keys['updated']     = $this->keys['created'];
 
 		// add the payload
 		$this->keys['payload'] = $payload;
@@ -226,12 +226,8 @@ class Session_Db extends \Session_Driver
 					$this->_set_cookie(array($this->keys['session_id']));
 				}
 
-				// do some garbage collection
-				if (mt_rand(0, 100) < $this->config['gc_probability'])
-				{
-					$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
-					$result = \DB::delete($this->config['table'])->where('updated', '<', $expired)->execute($this->config['database']);
-				}
+				// Run garbage collector
+				$this->gc();
 			}
 			catch (Database_Exception $e)
 			{
@@ -245,6 +241,25 @@ class Session_Db extends \Session_Driver
 		}
 
 		return $this;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Garbage Collector
+	 *
+	 * @access	public
+	 * @return	bool
+	 */
+	public function gc()
+	{
+		if (mt_rand(0, 100) < $this->config['gc_probability'])
+		{
+			$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
+			$result = \DB::delete($this->config['table'])->where('updated', '<', $expired)->execute($this->config['database']);
+		}
+
+		return true;
 	}
 
 	// --------------------------------------------------------------------
