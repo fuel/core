@@ -251,7 +251,7 @@ class Mongo_Db
 		{
 			try
 			{
-				static::instance()->connection->{$db}->{$col}->drop();
+				static::instance($db)->db->{$col}->drop();
 				return true;
 			}
 			catch (\Exception $e)
