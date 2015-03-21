@@ -20,8 +20,8 @@ class Session_Redis extends \Session_Driver
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
-		'cookie_name'		=> 'fuelrid',				// name of the session cookie for redis based sessions
-		'database'			=> 'default',				// name of the redis database to use (as configured in config/db.php)
+		'cookie_name' => 'fuelrid',				// name of the session cookie for redis based sessions
+		'database'    => 'default',				// name of the redis database to use (as configured in config/db.php)
 	);
 
 	/*
@@ -70,12 +70,12 @@ class Session_Redis extends \Session_Driver
 	public function create()
 	{
 		// create a new session
-		$this->keys['session_id']	= $this->_new_session_id();
-		$this->keys['previous_id']	= $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_hash']		= md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']	= \Input::user_agent();
-		$this->keys['created'] 		= $this->time->get_timestamp();
-		$this->keys['updated'] 		= $this->keys['created'];
+		$this->keys['session_id']  = $this->_new_session_id();
+		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
+		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
+		$this->keys['user_agent']  = \Input::user_agent();
+		$this->keys['created']     = $this->time->get_timestamp();
+		$this->keys['updated']     = $this->keys['created'];
 
 		return $this;
 	}

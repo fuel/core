@@ -20,10 +20,10 @@ class Session_Memcached extends \Session_Driver
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
-		'cookie_name'		=> 'fuelmid',				// name of the session cookie for memcached based sessions
-		'servers'			=> array(					// array of servers and portnumbers that run the memcached service
-								array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
-							),
+		'cookie_name' => 'fuelmid',				// name of the session cookie for memcached based sessions
+		'servers'     => array(					// array of servers and portnumbers that run the memcached service
+			array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
+		),
 	);
 
 	/*
@@ -95,12 +95,12 @@ class Session_Memcached extends \Session_Driver
 	public function create()
 	{
 		// create a new session
-		$this->keys['session_id']	= $this->_new_session_id();
-		$this->keys['previous_id']	= $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_hash']		= md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']	= \Input::user_agent();
-		$this->keys['created'] 		= $this->time->get_timestamp();
-		$this->keys['updated'] 		= $this->keys['created'];
+		$this->keys['session_id']  = $this->_new_session_id();
+		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
+		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
+		$this->keys['user_agent']  = \Input::user_agent();
+		$this->keys['created']     = $this->time->get_timestamp();
+		$this->keys['updated']     = $this->keys['created'];
 
 		return $this;
 	}

@@ -44,12 +44,12 @@ class Session_Cookie extends \Session_Driver
 	public function create()
 	{
 		// create a new session
-		$this->keys['session_id']	= $this->_new_session_id();
-		$this->keys['ip_hash']		= md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']	= \Input::user_agent();
-		$this->keys['created'] 		= $this->time->get_timestamp();
-		$this->keys['updated'] 		= $this->keys['created'];
-		$this->keys['payload'] 		= '';
+		$this->keys['session_id'] = $this->_new_session_id();
+		$this->keys['ip_hash']    = md5(\Input::ip().\Input::real_ip());
+		$this->keys['user_agent'] = \Input::user_agent();
+		$this->keys['created']    = $this->time->get_timestamp();
+		$this->keys['updated']    = $this->keys['created'];
+		$this->keys['payload']    = '';
 
 		return $this;
 	}

@@ -20,9 +20,9 @@ class Session_File extends \Session_Driver
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
-		'cookie_name'		=> 'fuelfid',				// name of the session cookie for file based sessions
-		'path'				=>	'/tmp',					// path where the session files should be stored
-		'gc_probability'	=>	5,						// probability % (between 0 and 100) for garbage collection
+		'cookie_name'    => 'fuelfid',				// name of the session cookie for file based sessions
+		'path'           =>	'/tmp',					// path where the session files should be stored
+		'gc_probability' =>	5,						// probability % (between 0 and 100) for garbage collection
 	);
 
 	// --------------------------------------------------------------------
@@ -46,12 +46,12 @@ class Session_File extends \Session_Driver
 	public function create()
 	{
 		// create a new session
-		$this->keys['session_id']	= $this->_new_session_id();
-		$this->keys['previous_id']	= $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_hash']		= md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']	= \Input::user_agent();
-		$this->keys['created'] 		= $this->time->get_timestamp();
-		$this->keys['updated'] 		= $this->keys['created'];
+		$this->keys['session_id']  = $this->_new_session_id();
+		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
+		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
+		$this->keys['user_agent']  = \Input::user_agent();
+		$this->keys['created']     = $this->time->get_timestamp();
+		$this->keys['updated']     = $this->keys['created'];
 
 		return $this;
 	}
@@ -181,25 +181,8 @@ class Session_File extends \Session_Driver
 			// then update the cookie
 			$this->_set_cookie(array($this->keys['session_id']));
 
-			// do some garbage collection
-			if (mt_rand(0, 100) < $this->config['gc_probability'])
-			{
-				if ($handle = opendir($this->config['path']))
-				{
-					$expire = $this->time->get_timestamp() - $this->config['expiration_time'];
-
-					while (($file = readdir($handle)) !== false)
-					{
-						if (filetype($this->config['path'] . $file) == 'file' and
-							strpos($file, $this->config['cookie_name'].'_') === 0 and
-							filemtime($this->config['path'] . $file) < $expire)
-						{
-							@unlink($this->config['path'] . $file);
-						}
-					}
-					closedir($handle);
-				}
-			}
+			// Run garbage collector
+			$this->gc();
 		}
 
 		return $this;
@@ -229,6 +212,40 @@ class Session_File extends \Session_Driver
 		parent::destroy();
 
 		return $this;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Garbage Collector
+	 *
+	 * @access	public
+	 * @return	bool
+	 */
+	public function gc()
+	{
+		// do some garbage collection
+		if (mt_rand(0, 100) < $this->config['gc_probability'])
+		{
+			if ($handle = opendir($this->config['path']))
+			{
+				$expire = $this->time->get_timestamp() - $this->config['expiration_time'];
+
+				while (($file = readdir($handle)) !== false)
+				{
+					if (filetype($this->config['path'] . $file) == 'file' and
+						strpos($file, $this->config['cookie_name'].'_') === 0 and
+						filemtime($this->config['path'] . $file) < $expire)
+					{
+						@unlink($this->config['path'] . $file);
+					}
+				}
+
+				closedir($handle);
+			}
+		}
+
+		return true;
 	}
 
 	// --------------------------------------------------------------------
@@ -372,5 +389,4 @@ class Session_File extends \Session_Driver
 		// validate all global settings as well
 		return parent::_validate_config($validated);
 	}
-
 }
