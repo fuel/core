@@ -153,8 +153,11 @@ class Database_MySQL_Connection extends \Database_Connection
 			{
 				if ($status = mysql_close($this->_connection))
 				{
-					// Clear the connection
+					// clear the connection
 					$this->_connection = null;
+
+					// and reset the savepoint depth
+					$this->_transaction_depth = 0;
 				}
 			}
 		}

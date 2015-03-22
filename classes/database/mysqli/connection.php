@@ -175,7 +175,15 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 			if ($this->_connection instanceof \MySQLi)
 			{
-				$status = $this->_connection->close();
+				if ($status = $this->_connection->close())
+				{
+					// clear the connection
+					$this->_connection = null;
+
+					// and reset the savepoint depth
+					$this->_transaction_depth = 0;
+				}
+
 			}
 		}
 		catch (\Exception $e)

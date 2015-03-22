@@ -124,8 +124,11 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	public function disconnect()
 	{
-		// Destroy the PDO object
+		// destroy the PDO object
 		$this->_connection = null;
+
+		// and reset the savepoint depth
+		$this->_transaction_depth = 0;
 
 		return true;
 	}
