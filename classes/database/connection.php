@@ -254,7 +254,7 @@ abstract class Database_Connection
 			if (stripos($sql, 'ORDER BY') !== false)
 			{
 				// Remove ORDER BY from the SQL to improve performacnce
-				$sql = preg_replace('/ORDER BY.*?(?=\\)|$)/mi', '', $sql);
+				$sql = preg_replace('/ORDER BY [^,\s)]*(?:\s*,\s*[^,\s)]+)*/mi', '', $sql);
 			}
 
 			// Get the total rows from the last query executed
