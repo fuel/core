@@ -783,7 +783,7 @@ class Validation
 			array_shift($collection);
 		}
 
-		return in_array($val, $collection, $strict);
+		return $this->_empty($val) || in_array($val, $collection, $strict);
 	}
 
 	/**
