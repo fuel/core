@@ -12,6 +12,14 @@
 
 namespace Fuel\Core;
 
+class HttpNoAccessException extends HttpException
+{
+	public function response()
+	{
+		return new \Response(\View::forge('403'), 403);
+	}
+}
+
 class HttpNotFoundException extends HttpException
 {
 	public function response()
