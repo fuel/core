@@ -362,7 +362,14 @@ class Theme
 				foreach ($this->partials[$key] as $index => $partial)
 				{
 					// render the partial
-					$output .= $partial->render();
+					if (is_callable(array($partial, 'render')))
+					{
+						$output .= $partial->render();
+					}
+					else
+					{
+						$output .= $partial;
+					}
 				}
 			}
 
