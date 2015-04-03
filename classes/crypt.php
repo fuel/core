@@ -247,7 +247,7 @@ class Crypt
 		}
 
 		// static method calls are called on the defaukt instance
-		return call_user_func_array(array(static::instance(), $method), $args);
+		return call_user_func_array(array($this, $method), $args);
 	}
 
 	/**
