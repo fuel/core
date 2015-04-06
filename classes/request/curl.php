@@ -343,7 +343,7 @@ class Request_Curl extends \Request_Driver
 				break;
 
 			default:
-					if (count($input) === 1 && key($input) === 'array')
+					if (count($input) === 1 and key($input) === 'array')
 					{
 						// multipart/form-data
 						return $input['array'];
