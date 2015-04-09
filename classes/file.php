@@ -175,7 +175,7 @@ class File
 		}
 
 		// unify the path separators, and get the part we need to add to the basepath
-		$new_dir = substr(str_replace(array('\\', '/'), DS, $new_dir), strlen($basepath));
+		$new_dir = substr(str_replace(array('\\', '/'), DS, $new_dir), strpos($new_dir, $name));
 
 		// recursively create the directory. we can't use mkdir permissions or recursive
 		// due to the fact that mkdir is restricted by the current users umask
