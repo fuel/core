@@ -45,6 +45,11 @@ class Migrate
 	protected static $package_count = 0;
 
 	/**
+	 * @var  bool  flag to indicate a rerun is needed
+	 */
+	protected static $rerun = false;
+
+	/**
 	 * sets the properties by grabbing Cli options
 	 */
 	public function __construct()
@@ -145,40 +150,47 @@ class Migrate
 			return static::help();
 		}
 
-		// run app (default) migrations if default is true
-		if (static::$default)
+		do
 		{
-			static::$name('default', 'app');
-		}
+			// reset the rerun flag
+			static::$rerun = false;
 
-		// run migrations on all specified modules
-		foreach (static::$modules as $module)
-		{
-			// check if the module exists
-			if ( ! \Module::exists($module))
+			// run app (default) migrations if default is true
+			if (static::$default)
 			{
-				\Cli::write('Requested module "'.$module.'" does not exist!', 'light_red');
+				static::$name('default', 'app');
 			}
-			else
-			{
-				// run the migration
-				static::$name($module, 'module');
-			}
-		}
 
-		// run migrations on all specified packages
-		foreach (static::$packages as $package)
-		{
-			// check if the module exists
-			if ( ! \Package::exists($package))
+			// run migrations on all specified modules
+			foreach (static::$modules as $module)
 			{
-				\Cli::write('Requested package "'.$package.'" does not exist!', 'light_red');
+				// check if the module exists
+				if ( ! \Module::exists($module))
+				{
+					\Cli::write('Requested module "'.$module.'" does not exist!', 'light_red');
+				}
+				else
+				{
+					// run the migration
+					static::$name($module, 'module');
+				}
 			}
-			else
+
+			// run migrations on all specified packages
+			foreach (static::$packages as $package)
 			{
-				static::$name($package, 'package');
+				// check if the module exists
+				if ( ! \Package::exists($package))
+				{
+					\Cli::write('Requested package "'.$package.'" does not exist!', 'light_red');
+				}
+				else
+				{
+					static::$name($package, 'package');
+				}
 			}
 		}
+		while (static::$rerun);
 	}
 
 	/**
@@ -237,7 +249,10 @@ class Migrate
 		{
 			if ($migrations === false)
 			{
-				\Cli::write('Some migrations where skipped for '.$type.':'.$name.'. Please re-run the migrations.', 'cyan');
+				\Cli::write('Some migrations for '.$type.':'.$name.' are postponed due to dependencies.', 'cyan');
+
+				// set the rerun flag
+				static::$rerun = true;
 			}
 			elseif ($version !== '')
 			{
