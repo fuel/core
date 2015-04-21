@@ -61,7 +61,7 @@ abstract class Presenter
 			$split = explode('::', $presenter, 2);
 			if (isset($split[1]))
 			{
-				array_unshift($prefixes, ucfirst($split[0]));
+				array_unshift($prefixes, ucfirst($split[0]).'\\'.static::$ns_prefix);
 				$presenter = $split[1];
 			}
 		}
