@@ -38,13 +38,6 @@ abstract class Presenter
 		// if no custom view is given, make it equal to the presenter name
 		is_null($view) and $view = $presenter;
 
-		// strip any extensions from the view name to determine the presenter to load
-		$presenter = \Inflector::words_to_upper(str_replace(
-			array('/', DS),
-			'_',
-			strpos($presenter, '.') === false ? $presenter : substr($presenter, 0, -strlen(strrchr($presenter, '.')))
-		));
-
 		// determine the presenter namespace from the current request context
 		$namespace = \Request::active() ? ucfirst(\Request::active()->module) : '';
 
@@ -61,6 +54,24 @@ abstract class Presenter
 			array_unshift($prefixes, $namespace.'\\'.static::$ns_prefix);
 			$prefixes[] = '';
 		}
+
+		// loading from a specific namespace?
+		if (strpos($presenter, '::') !== false)
+		{
+			$split = explode('::', $presenter, 2);
+			if (isset($split[1]))
+			{
+				array_unshift($prefixes, ucfirst($split[0]));
+				$presenter = $split[1];
+			}
+		}
+
+		// strip any extensions from the view name to determine the presenter to load
+		$presenter = \Inflector::words_to_upper(str_replace(
+			array('/', DS),
+			'_',
+			strpos($presenter, '.') === false ? $presenter : substr($presenter, 0, -strlen(strrchr($presenter, '.')))
+		));
 
 		// create the list of possible presenter classnames, start with the namespaced one
 		$classes = array();
