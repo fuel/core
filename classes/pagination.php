@@ -578,6 +578,12 @@ class Pagination
 				$url['query'] = array();
 			}
 
+			// make sure we don't destroy any fragments
+			if (isset($url['fragment']))
+			{
+				$url['fragment'] = '#'.$url['fragment'];
+			}
+
 			// do we have a segment offset due to the base_url containing segments?
 			$seg_offset = parse_url(rtrim(\Uri::base(), '/'));
 			$seg_offset = empty($seg_offset['path']) ? 0 : count(explode('/', trim($seg_offset['path'], '/')));
