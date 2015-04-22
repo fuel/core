@@ -245,7 +245,23 @@ class Theme
 	public function presenter($presenter, $method = 'view', $auto_filter = null, $view = null)
 	{
 		// if no custom view is given, make it equal to the presenter name
-		is_null($view) and $view = $presenter;
+		if (is_null($view))
+		{
+			// loading from a specific namespace?
+			if (strpos($presenter, '::') !== false)
+			{
+				$split = explode('::', $presenter, 2);
+				if (isset($split[1]))
+				{
+					// remove the namespace from the view name
+					$view = $split[1];
+				}
+			}
+			else
+			{
+				$view = $presenter;
+			}
+		}
 
 		return \Presenter::forge($presenter, $method, $auto_filter, $this->find_file($view));
 	}
