@@ -35,9 +35,6 @@ abstract class Presenter
 	 */
 	public static function forge($presenter, $method = 'view', $auto_filter = null, $view = null)
 	{
-		// if no custom view is given, make it equal to the presenter name
-		is_null($view) and $view = $presenter;
-
 		// determine the presenter namespace from the current request context
 		$namespace = \Request::active() ? ucfirst(\Request::active()->module) : '';
 
@@ -65,6 +62,9 @@ abstract class Presenter
 				$presenter = $split[1];
 			}
 		}
+
+		// if no custom view is given, make it equal to the presenter name
+		is_null($view) and $view = $presenter;
 
 		// strip any extensions from the view name to determine the presenter to load
 		$presenter = \Inflector::words_to_upper(str_replace(
