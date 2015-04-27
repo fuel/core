@@ -342,9 +342,17 @@ class Request_Curl extends \Request_Driver
 					return \Format::forge($input)->to_csv();
 				break;
 
-			// Format as Query String
 			default:
-					return http_build_query($input, null, '&');
+					if (count($input) === 1 and key($input) === 'form-data')
+					{
+						// multipart/form-data
+						return $input['form-data'];
+					}
+					else
+					{
+						//application/x-www-form-urlencoded
+						return http_build_query($input, null, '&');
+					}
 				break;
 		}
 	}
