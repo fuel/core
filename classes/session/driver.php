@@ -684,6 +684,7 @@ abstract class Session_Driver
 				case 'expire_on_close':
 				case 'flash_expire_after_get':
 				case 'flash_auto_expire':
+				case 'native_emulation':
 					// make sure it's a boolean
 					$item = (bool) $item;
 				break;
