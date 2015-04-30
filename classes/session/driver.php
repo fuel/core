@@ -709,10 +709,13 @@ abstract class Session_Driver
 				break;
 
 				case 'rotation_time':
-					// make sure it's an integer
-					$item = (int) $item;
-					// invalid? set it to 5 minutes
-					$item <= 0 and $item = 300;
+					if ($item !== false)
+					{
+						// make sure it's an integer
+						$item = (int) $item;
+						// invalid? set it to 5 minutes
+						$item <= 0 and $item = 300;
+					}
 				break;
 
 				case 'flash_id':
