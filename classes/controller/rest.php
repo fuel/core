@@ -170,15 +170,23 @@ abstract class Controller_Rest extends \Controller
 	 *
 	 * @param   mixed
 	 * @param   int
+     * @param   array
 	 * @return  object  Response instance
 	 */
-	protected function response($data = array(), $http_status = null)
+	protected function response($data = array(), $http_status = 200, $headers = array())
 	{
 		// set the correct response header
 		if (method_exists('Format', 'to_'.$this->format))
 		{
 			$this->response->set_header('Content-Type', $this->_supported_formats[$this->format]);
 		}
+
+        // set additional headers as defined by $headers
+        if (!empty($headers)) {
+            foreach ($headers as $header => $value) {
+                $this->response->set_header($header, $value);
+            }
+        }
 
 		// no data returned?
 		if ((is_array($data) and empty($data)) or ($data == ''))
