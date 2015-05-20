@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -27,7 +27,6 @@ namespace Fuel\Core;
 
 class Agent
 {
-
 	/**
 	 * @var  array  information about the current browser
 	 */

@@ -11,8 +11,6 @@
 
 namespace Fuel\Core;
 
-
-
 class Database_MySQLi_Connection extends \Database_Connection
 {
 	/**
@@ -163,6 +161,11 @@ class Database_MySQLi_Connection extends \Database_Connection
 		static::$_current_databases[$this->_connection_id] = $database;
 	}
 
+	/**
+	 * Disconnect from the database
+	 *
+	 * @throws  \Exception  when the mysql database is not disconnected properly
+	 */
 	public function disconnect()
 	{
 		try
@@ -172,7 +175,15 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 			if ($this->_connection instanceof \MySQLi)
 			{
-				$status = $this->_connection->close();
+				if ($status = $this->_connection->close())
+				{
+					// clear the connection
+					$this->_connection = null;
+
+					// and reset the savepoint depth
+					$this->_transaction_depth = 0;
+				}
+
 			}
 		}
 		catch (\Exception $e)
@@ -196,6 +207,19 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 	}
 
+	/**
+	 * Execute query
+	 *
+	 * @param   integer $type       query type (\DB::SELECT, \DB::INSERT, etc.)
+	 * @param   string  $sql        SQL string
+	 * @param   mixed   $as_object  used when query type is SELECT
+	 *
+	 * @throws  \Database_Exception
+	 *
+	 * @return  mixed  when SELECT then return an iterator of results,<br>
+	 *                 when UPDATE then return a list of insert id and rows created,<br>
+	 *                 in other case return the number of rows affected
+	 */
 	public function query($type, $sql, $as_object)
 	{
 		// Make sure the database is connected
@@ -240,7 +264,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 					// Only log if no paths we defined, or we have a path match
 					if ($include or empty($paths))
 					{
-						$stacktrace[] = array('file' => Fuel::clean_path($page['file']), 'line' => $page['line']);
+						$stacktrace[] = array('file' => \Fuel::clean_path($page['file']), 'line' => $page['line']);
 					}
 				}
 			}
@@ -296,17 +320,18 @@ class Database_MySQLi_Connection extends \Database_Connection
 				$this->_connection->affected_rows,
 			);
 		}
-		else
+		elseif ($type === \DB::UPDATE or $type === \DB::DELETE)
 		{
 			// Return the number of rows affected
 			return $this->_connection->affected_rows;
 		}
+
+		return $result;
 	}
 
 	public function datatype($type)
 	{
-		static $types = array
-		(
+		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => true, 'character_maximum_length' => '65535'),
 			'bool'                      => array('type' => 'bool'),
 			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
@@ -346,11 +371,19 @@ class Database_MySQLi_Connection extends \Database_Connection
 		$type = str_replace(' zerofill', '', $type);
 
 		if (isset($types[$type]))
+		{
 			return $types[$type];
+		}
 
 		return parent::datatype($type);
 	}
 
+	/**
+	 * List tables
+	 *
+	 * @param   string  $like   pattern of table name
+	 * @return  array   array of table names
+	 */
 	public function list_tables($like = null)
 	{
 		if (is_string($like))
@@ -373,6 +406,13 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return $tables;
 	}
 
+	/**
+	 * List table columns
+	 *
+	 * @param   string  $table  table name
+	 * @param   string  $like   column name pattern
+	 * @return  array   array of column structure
+	 */
 	public function list_columns($table, $like = null)
 	{
 		// Quote the table name
@@ -457,6 +497,12 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return $columns;
 	}
 
+	/**
+	 * Escape query for sql
+	 *
+	 * @param   mixed   $value  value of string castable
+	 * @return  string  escaped sql string
+	 */
 	public function escape($value)
 	{
 		// Make sure the database is connected
@@ -474,7 +520,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 	public function error_info()
 	{
 		$errno = $this->_connection->errno;
-		return array($errno, empty($errno)? null : $errno, empty($errno) ? null : $this->_connection->error);
+		return array($errno, empty($errno) ? null : $errno, empty($errno) ? null : $this->_connection->error);
 	}
 
 	protected function driver_start_transaction()

@@ -6,12 +6,11 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
-
 
 /**
  * View class
@@ -26,7 +25,6 @@ namespace Fuel\Core;
  */
 class View
 {
-
 	/**
 	 * @var  array  Global view data
 	 */
@@ -272,6 +270,11 @@ class View
 				$filter = array_key_exists($key, $rules) ? $rules[$key] : null;
 				$filter = is_null($filter) ? $auto_filter : $filter;
 
+				if ($value instanceOf \Closure)
+				{
+					$value = $value();
+				}
+
 				$value = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
 
@@ -367,7 +370,6 @@ class View
 		return $this;
 	}
 
-
 	/**
 	 * Sets the view filename.
 	 *
@@ -379,13 +381,21 @@ class View
 	 */
 	public function set_filename($file)
 	{
+		// strip the extension from it
+		$pathinfo = pathinfo($file);
+		if ( ! empty($pathinfo['extension']))
+		{
+			$this->extension = $pathinfo['extension'];
+			$file = substr($file, 0, strlen($this->extension)*-1 - 1);
+		}
+
 		// set find_file's one-time-only search paths
 		\Finder::instance()->flash($this->request_paths);
 
 		// locate the view file
 		if (($path = \Finder::search('views', $file, '.'.$this->extension, false, false)) === false)
 		{
-			throw new \FuelException('The requested view could not be found: '.\Fuel::clean_path($file));
+			throw new \FuelException('The requested view could not be found: '.\Fuel::clean_path($file).'.'.$this->extension);
 		}
 
 		// Store the file path locally
@@ -416,13 +426,23 @@ class View
 		{
 			return $this->data;
 		}
-		elseif (array_key_exists($key, $this->data))
+		elseif (strpos($key, '.') === false)
 		{
-			return $this->data[$key];
+			if (array_key_exists($key, $this->data))
+			{
+				return $this->data[$key];
+			}
+			elseif (array_key_exists($key, static::$global_data))
+			{
+				return static::$global_data[$key];
+			}
 		}
-		elseif (array_key_exists($key, static::$global_data))
+		else
 		{
-			return static::$global_data[$key];
+			if (($result = \Arr::get($this->data, $key, \Arr::get(static::$global_data, $key, '__KEY__LOOKUP__MISS__'))) !== '__KEY__LOOKUP__MISS__')
+			{
+				return $result;
+			}
 		}
 
 		if (is_null($default) and func_num_args() === 1)
@@ -460,11 +480,7 @@ class View
 		{
 			foreach ($key as $name => $value)
 			{
-				if ($filter !== null)
-				{
-					$this->local_filter[$name] = $filter;
-				}
-				$this->data[$name] = $value;
+				$this->set($name, $value, $filter);
 			}
 		}
 		else
@@ -473,7 +489,15 @@ class View
 			{
 				$this->local_filter[$key] = $filter;
 			}
-			$this->data[$key] = $value;
+
+			if (strpos($key, '.') === false)
+			{
+				$this->data[$key] = $value;
+			}
+			else
+			{
+				\Arr::set($this->data, $key, $value);
+			}
 		}
 
 		return $this;

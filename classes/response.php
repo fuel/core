@@ -6,16 +6,14 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
-
 class Response
 {
-
 	/**
 	 * @var  array  An array of status codes and messages
 	 *
@@ -152,13 +150,16 @@ class Response
 	/**
 	 * Redirects back to the previous page, if that page is within the current
 	 * application. If not, it will redirect to the given url, and if none is
-	 * given, back to the application root
+	 * given, back to the application root. If the current page is the application
+	 * root, an exception is thrown
 	 *
 	 * @param   string  $url     The url
 	 * @param   string  $method  The redirect method
 	 * @param   int     $code    The redirect status code
 	 *
 	 * @return  void
+	 *
+	 * @throws  RuntimeException  If it would redirect back to itself
 	 */
 	public static function redirect_back($url = '', $method = 'location', $code = 302)
 	{
@@ -171,6 +172,12 @@ class Response
 				// redirect back to where we came from
 				static::redirect($referrer, $method, $code);
 			}
+		}
+
+		// make sure we're not redirecting back to ourself
+		if (\Uri::create($url) == \Uri::current())
+		{
+			throw new \RuntimeException('You can not redirect back here, it would result in a redirect loop!');
 		}
 
 		// no referrer or an external link, do a normal redirect

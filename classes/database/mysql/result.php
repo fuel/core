@@ -13,7 +13,6 @@ namespace Fuel\Core;
 
 class Database_MySQL_Result extends \Database_Result
 {
-
 	protected $_internal_row = 0;
 
 	public function __construct($result, $sql, $as_object)
@@ -50,7 +49,9 @@ class Database_MySQL_Result extends \Database_Result
 	public function current()
 	{
 		if ($this->_current_row !== $this->_internal_row and ! $this->seek($this->_current_row))
+		{
 			return false;
+		}
 
 		// Increment internal row for optimization assuming rows are fetched in order
 		$this->_internal_row++;

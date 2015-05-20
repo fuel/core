@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -49,7 +49,7 @@ class Session
 		'flash_id'                  => 'flash',
 		'flash_auto_expire'         => true,
 		'flash_expire_after_get'    => true,
-		'post_cookie_name'          => ''
+		'post_cookie_name'          => '',
 	);
 
 	// --------------------------------------------------------------------
@@ -69,7 +69,7 @@ class Session
 		if (\Config::get('session.native_emulation', false))
 		{
 			// emulate native PHP sessions
-			session_set_save_handler (
+			session_set_save_handler(
 				// open
 				function ($savePath, $sessionName) {
 				},
@@ -393,5 +393,3 @@ class Session
 	}
 
 }
-
-

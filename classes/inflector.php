@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -22,12 +22,17 @@ namespace Fuel\Core;
  */
 class Inflector
 {
-
+	/**
+	 * @var  array  default list of uncountable words, in English
+	 */
 	protected static $uncountable_words = array(
 		'equipment', 'information', 'rice', 'money',
-		'species', 'series', 'fish', 'meta'
+		'species', 'series', 'fish', 'meta',
 	);
 
+	/**
+	 * @var  array  default list of iregular plural words, in English
+	 */
 	protected static $plural_rules = array(
 		'/^(ox)$/i'                 => '\1\2en',     // ox
 		'/([m|l])ouse$/i'           => '\1ice',      // mouse, louse
@@ -50,6 +55,9 @@ class Inflector
 		'/$/'                      => 's',
 	);
 
+	/**
+	 * @var  array  default list of iregular singular words, in English
+	 */
 	protected static $singular_rules = array(
 		'/(matr)ices$/i'         => '\1ix',
 		'/(vert|ind)ices$/i'     => '\1ex',
@@ -80,6 +88,35 @@ class Inflector
 		'/([^us])s$/i'           => '\1',
 	);
 
+	/**
+	 * Load any localized rules on first load
+	 */
+	public static function _init()
+	{
+		static::load_rules();
+	}
+
+	/**
+	 * Load any localized rulesets based on the current language configuration
+	 * If not exists, the current rules remain active
+	 */
+	public static function load_rules()
+	{
+		\Lang::load('inflector', true, false, true);
+
+		if ($rules = \Lang::get('inflector.uncountable_words', array()))
+		{
+			static::$uncountable_words = $rules;
+		}
+		if ($rules = \Lang::get('inflector.singular_rules', array()))
+		{
+			static::$singular_rules = $rules;
+		}
+		if ($rules = \Lang::get('inflector.plural_rules', array()))
+		{
+			static::$plural_rules = $rules;
+		}
+  	}
 
 	/**
 	 * Add order suffix to numbers ex. 1st 2nd 3rd 4th 5th
@@ -216,7 +253,7 @@ class Inflector
 	 * Only works with UTF-8.
 	 *
 	 * @param   string  $str              string to translate
-	 * @param   bool    $allow_non_ascii  wether to remove non ascii
+	 * @param   bool    $allow_non_ascii  whether to remove non ascii
 	 * @return  string                    translated string
 	 */
 	public static function ascii($str, $allow_non_ascii = false)
@@ -241,8 +278,8 @@ class Inflector
 	 *
 	 * @param   string  $str              the text
 	 * @param   string  $sep              the separator
-	 * @param   bool    $lowercase        wether to convert to lowercase
-	 * @param   bool    $allow_non_ascii  wether to allow non ascii
+	 * @param   bool    $lowercase        whether to convert to lowercase
+	 * @param   bool    $allow_non_ascii  whether to allow non ascii
 	 * @return  string                    the new title
 	 */
 	public static function friendly_title($str, $sep = '-', $lowercase = false, $allow_non_ascii = false)
@@ -418,4 +455,3 @@ class Inflector
 		return ! (\in_array(\Str::lower(\strval($word)), static::$uncountable_words));
 	}
 }
-

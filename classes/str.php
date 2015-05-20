@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -20,7 +20,6 @@ namespace Fuel\Core;
  */
 class Str
 {
-
 	/**
 	 * Truncates a string to the given length.  It will optionally preserve
 	 * HTML tags if $is_html is set to true.
@@ -91,14 +90,16 @@ class Str
 		}
 		$new_string = static::sub($string, 0, $limit = min(static::length($string),  $limit + $offset));
 		$new_string .= (static::length($string) > $limit ? $continuation : '');
-		$new_string .= (count($tags = array_reverse($tags)) ? '</'.implode('></',$tags).'>' : '');
+		$new_string .= (count($tags = array_reverse($tags)) ? '</'.implode('></', $tags).'>' : '');
 		return $new_string;
 	}
 
 	/**
 	 * Add's _1 to a string or increment the ending number to allow _2, _3, etc
 	 *
-	 * @param   string  $str  required
+	 * @param   string  $str        required
+	 * @param   int     $first      number that is used to mean first
+	 * @param   string  $separator  separtor between the name and the number
 	 * @return  string
 	 */
 	public static function increment($str, $first = 1, $separator = '_')
@@ -109,12 +110,12 @@ class Str
 	}
 
 	/**
-	 * Checks wether a string has a precific beginning.
+	 * Checks whether a string has a precific beginning.
 	 *
 	 * @param   string   $str          string to check
 	 * @param   string   $start        beginning to check for
-	 * @param   boolean  $ignore_case  wether to ignore the case
-	 * @return  boolean  wether a string starts with a specified beginning
+	 * @param   boolean  $ignore_case  whether to ignore the case
+	 * @return  boolean  whether a string starts with a specified beginning
 	 */
 	public static function starts_with($str, $start, $ignore_case = false)
 	{
@@ -122,12 +123,12 @@ class Str
 	}
 
 	/**
-	 * Checks wether a string has a precific ending.
+	 * Checks whether a string has a precific ending.
 	 *
 	 * @param   string   $str          string to check
 	 * @param   string   $end          ending to check for
-	 * @param   boolean  $ignore_case  wether to ignore the case
-	 * @return  boolean  wether a string ends with a specified ending
+	 * @param   boolean  $ignore_case  whether to ignore the case
+	 * @return  boolean  whether a string ends with a specified ending
 	 */
 	public static function ends_with($str, $end, $ignore_case = false)
 	{
@@ -444,5 +445,3 @@ class Str
 		return strlen(strip_tags($string)) < strlen($string);
 	}
 }
-
-

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -83,7 +83,7 @@ class Test_Fieldset extends TestCase
 		));
 		$ops = array('male', 'female');
 		$form->add('gender', '', array(
-			'options' => $ops, 'type' => 'radio', 'value' => 1
+			'options' => $ops, 'type' => 'radio', 'value' => 1,
 		));
 
 		$output = $form->build();

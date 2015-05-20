@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -22,7 +22,6 @@ namespace Fuel\Core;
  */
 class Form_Instance
 {
-
 	/**
 	 * Valid types for input tags (including HTML5)
 	 */
@@ -31,7 +30,7 @@ class Form_Instance
 		'datetime-local', 'email', 'file', 'hidden', 'image',
 		'month', 'number', 'password', 'radio', 'range',
 		'reset', 'search', 'submit', 'tel', 'text', 'time',
-		'url', 'week'
+		'url', 'week',
 	);
 
 	/**
@@ -552,13 +551,13 @@ class Form_Instance
 				{
 					$optgroup = $listoptions($val, $selected, $level + 1);
 					$optgroup .= str_repeat("\t", $level);
-					$input .= str_repeat("\t", $level).html_tag('optgroup', array('label' => $key , 'style' => 'text-indent: '.(20+10*($level-1)).'px;'), $optgroup).PHP_EOL;
+					$input .= str_repeat("\t", $level).html_tag('optgroup', array('label' => $key, 'style' => 'text-indent: '.(20+10*($level-1)).'px;'), $optgroup).PHP_EOL;
 				}
 				else
 				{
 					$opt_attr = array('value' => $key);
 					$level > 1 and $opt_attr['style'] = 'text-indent: '.(10*($level-1)).'px;';
-					(in_array((string)$key, $selected, true)) && $opt_attr[] = 'selected';
+					(in_array((string) $key, $selected, true)) && $opt_attr[] = 'selected';
 					$input .= str_repeat("\t", $level);
 					$opt_attr['value'] = ($current_obj->get_config('prep_value', true) && empty($attributes['dont_prep'])) ?
 						$current_obj->prep_value($opt_attr['value']) : $opt_attr['value'];
@@ -581,7 +580,7 @@ class Form_Instance
 		}
 
 		// if it's a multiselect, make sure the name is an array
-		if (isset($attributes['multiple']) and substr($attributes['name'],-2) != '[]')
+		if (isset($attributes['multiple']) and substr($attributes['name'], -2) != '[]')
 		{
 			$attributes['name'] .= '[]';
 		}
@@ -606,9 +605,16 @@ class Form_Instance
 			isset($attributes['id']) and $id = $attributes['id'];
 		}
 
-		if (empty($attributes['for']) and $this->get_config('auto_id', false) == true)
+		if (empty($attributes['for']) and ! empty($id))
 		{
-			empty($id) or $attributes['for'] = $this->get_config('auto_id_prefix', 'form_').$id;
+			if ($this->get_config('auto_id', false) == true)
+			{
+				$attributes['for'] = $this->get_config('auto_id_prefix', 'form_').$id;
+			}
+			else
+			{
+				$attributes['for'] = $id;
+			}
 		}
 
 		unset($attributes['label']);

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -25,7 +25,6 @@ namespace Fuel\Core;
  */
 class Asset_Instance
 {
-
 	/**
 	 * @var  array  the asset paths to be searched
 	 */
@@ -62,7 +61,7 @@ class Asset_Instance
 	/**
 	 * @var  string  prefix for generated output to provide proper indentation
 	 */
-	protected $_ident = '';
+	protected $_indent = '';
 
 	/**
 	 * @var  bool  if true, directly renders the output of no group name is given
@@ -155,8 +154,8 @@ class Asset_Instance
 			foreach ($type as $key => $folder)
 			{
 				is_numeric($key) and $key = $folder;
-				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder),DS);
-				array_unshift($this->_asset_paths[$key], $folder);
+				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder), DS);
+				in_array($folder, $this->_asset_paths[$key]) or array_unshift($this->_asset_paths[$key], $folder);
 			}
 		}
 		else
@@ -169,7 +168,7 @@ class Asset_Instance
 			}
 
 			$path = $this->_unify_path($path);
-			array_unshift($this->_asset_paths[$type], $path);
+			in_array($path, $this->_asset_paths[$type]) or array_unshift($this->_asset_paths[$type], $path);
 		}
 		return $this;
 	}
@@ -190,7 +189,7 @@ class Asset_Instance
 			foreach ($type as $key => $folder)
 			{
 				is_numeric($key) and $key = $folder;
-				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder),DS);
+				$folder = $this->_unify_path($path).ltrim($this->_unify_path($folder), DS);
 				if (($found = array_search($folder, $this->_asset_paths[$key])) !== false)
 				{
 					unset($this->_asset_paths[$key][$found]);
@@ -278,7 +277,9 @@ class Asset_Instance
 				}
 				else
 				{
-					$file = $this->_asset_url.$this->_path_folders[$type].$filename;
+					// a remote file and multiple paths? use the first one!
+					$path = reset($this->_asset_paths[$type]);
+					$file = $this->_asset_url.$path.$filename;
 					if ($raw or $inline)
 					{
 						$file = file_get_contents($file);
@@ -352,6 +353,7 @@ class Asset_Instance
 	 * @param	mixed	       The file name, or an array files.
 	 * @param	array	       An array of extra attributes
 	 * @param	string	       The asset group name
+	 * @param	boolean	       whether to return the raw file or not when group is not set (optional)
 	 * @return	string|object  Rendered asset or current instance when adding to group
 	 */
 	public function css($stylesheets = array(), $attr = array(), $group = null, $raw = false)
@@ -389,6 +391,7 @@ class Asset_Instance
 	 * @param	mixed	       The file name, or an array files.
 	 * @param	array	       An array of extra attributes
 	 * @param	string	       The asset group name
+	 * @param	boolean	       whether to return the raw file or not when group is not set (optional)
 	 * @return	string|object  Rendered asset or current instance when adding to group
 	 */
 	public function js($scripts = array(), $attr = array(), $group = null, $raw = false)
@@ -461,6 +464,7 @@ class Asset_Instance
 	 *
 	 * @access	public
 	 * @param	string	The filename to locate
+	 * @param	string	The type of asset file to search
 	 * @param	string	The sub-folder to look in (optional)
 	 * @return	mixed	Either the path to the file or false if not found
 	 */
@@ -489,6 +493,7 @@ class Asset_Instance
 	 *
 	 * @access	public
 	 * @param	string	The filename to locate
+	 * @param	string	The type of asset file
 	 * @param	string	The sub-folder to look in (optional)
 	 * @return	mixed	Either the path to the file or false if not found
 	 */
@@ -496,6 +501,8 @@ class Asset_Instance
 	{
 		if ($file = $this->find_file($file, $type, $folder))
 		{
+			strpos($file, DOCROOT) === 0 and $file = substr($file, strlen(DOCROOT));
+
 			return $this->_asset_url.$file;
 		}
 
@@ -535,7 +542,7 @@ class Asset_Instance
 				'type'	=>	$type,
 				'file'	=>	$asset,
 				'raw'	=>	$raw,
-				'attr'	=>	(array) $attr
+				'attr'	=>	(array) $attr,
 			);
 		}
 	}
@@ -552,6 +559,7 @@ class Asset_Instance
 	 * @access	private
 	 * @param	string	The path
 	 * @param	mixed	Optional directory separator
+	 * @param	boolean	Optional whether to add trailing directory separator
 	 * @return	string
 	 */
 	protected function _unify_path($path, $ds = null, $trailing = true)

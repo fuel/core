@@ -6,13 +6,11 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
-
-
 
 // ------------------------------------------------------------------------
 
@@ -127,7 +125,7 @@ class Validation
 	protected $callables = array();
 
 	/**
-	 * @var  bool  $global_input_fallback  wether to fall back to Input::param
+	 * @var  bool  $global_input_fallback  whether to fall back to Input::param
 	 */
 	protected $global_input_fallback = true;
 
@@ -354,7 +352,7 @@ class Validation
 			static::set_active_field($field);
 
 			// convert form field array's to Fuel dotted notation
-			$name = str_replace(array('[',']'), array('.', ''), $field->name);
+			$name = str_replace(array('[', ']'), array('.', ''), $field->name);
 
 			$value = $this->input($name);
 			if (($allow_partial === true and $value === null)
@@ -500,16 +498,16 @@ class Validation
 		}
 
 		// key transformation from form array to dot notation
-		if (strpos($key,'[') !== false)
+		if (strpos($key, '[') !== false)
 		{
-			$key = str_replace(array('[', ']'),array('.', ''),$key);
+			$key = str_replace(array('[', ']'), array('.', ''), $key);
 		}
 
 		// if we don't have this key
 		if ( ! array_key_exists($key, $this->input))
 		{
 			// it might be in dot-notation
-			if (strpos($key,'.') !== false)
+			if (strpos($key, '.') !== false)
 			{
 				// check the input first
 				if (($result = \Arr::get($this->input, $key, null)) !== null)
@@ -608,7 +606,7 @@ class Validation
 			'close_list'   => \Config::get('validation.close_list', '</ul>'),
 			'open_error'   => \Config::get('validation.open_error', '<li>'),
 			'close_error'  => \Config::get('validation.close_error', '</li>'),
-			'no_errors'    => \Config::get('validation.no_errors', '')
+			'no_errors'    => \Config::get('validation.no_errors', ''),
 		);
 		$options = array_merge($default, $options);
 
@@ -774,9 +772,10 @@ class Validation
 	 *
 	 * @param   string
 	 * @param   array
+	 * @param   bool  whether to do type comparison
 	 * @return  bool
 	 */
-	public function _validation_match_collection($val, $collection = array())
+	public function _validation_match_collection($val, $collection = array(), $strict = false)
 	{
 		if ( ! is_array($collection))
 		{
@@ -784,7 +783,7 @@ class Validation
 			array_shift($collection);
 		}
 
-		return in_array($val, $collection);
+		return $this->_empty($val) || in_array($val, $collection, $strict);
 	}
 
 	/**
@@ -905,6 +904,10 @@ class Validation
 			{
 				$flags = array('alpha', 'utf8', 'numeric');
 			}
+			elseif ($flags == 'specials')
+			{
+				$flags = array('specials', 'utf8');
+			}
 			elseif ($flags == 'url_safe')
 			{
 				$flags = array('alpha', 'numeric', 'dashes');
@@ -927,7 +930,7 @@ class Validation
 			}
 			elseif ($flags == 'all')
 			{
-				$flags = array('alpha', 'utf8', 'numeric', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'forwardslashes', 'backslashes', 'brackets', 'braces');
+				$flags = array('alpha', 'utf8', 'numeric', 'specials', 'spaces', 'newlines', 'tabs', 'punctuation', 'singlequotes', 'doublequotes', 'dashes', 'forwardslashes', 'backslashes', 'brackets', 'braces');
 			}
 			else
 			{
@@ -938,8 +941,9 @@ class Validation
 		$pattern = ! in_array('uppercase', $flags) && in_array('alpha', $flags) ? 'a-z' : '';
 		$pattern .= ! in_array('lowercase', $flags) && in_array('alpha', $flags) ? 'A-Z' : '';
 		$pattern .= in_array('numeric', $flags) ? '0-9' : '';
+		$pattern .= in_array('specials', $flags) ? '[:alpha:]' : '';
 		$pattern .= in_array('spaces', $flags) ? ' ' : '';
-		$pattern .= in_array('newlines', $flags) ? "\n" : '';
+		$pattern .= in_array('newlines', $flags) ? "\r\n" : '';
 		$pattern .= in_array('tabs', $flags) ? "\t" : '';
 		$pattern .= in_array('dots', $flags) && ! in_array('punctuation', $flags) ? '\.' : '';
 		$pattern .= in_array('commas', $flags) && ! in_array('punctuation', $flags) ? ',' : '';
@@ -952,7 +956,7 @@ class Validation
 		$pattern .= in_array('brackets', $flags) ? "\(\)" : '';
 		$pattern .= in_array('braces', $flags) ? "\{\}" : '';
 		$pattern = empty($pattern) ? '/^(.*)$/' : ('/^(['.$pattern.'])+$/');
-		$pattern .= in_array('utf8', $flags) ? 'u' : '';
+		$pattern .= in_array('utf8', $flags) || in_array('specials', $flags) ? 'u' : '';
 
 		return preg_match($pattern, $val) > 0;
 	}

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -281,14 +281,28 @@ class Migrate
 
 		static::$connection === null or \DBUtil::set_connection(static::$connection);
 
+		// Make sure we have class access
+		switch ($type)
+		{
+			case 'package':
+				\Package::load($name);
+				break;
+
+			case 'module':
+				\Module::load($name);
+				break;
+
+			default:
+		}
+
 		// Loop through the runnable migrations and run them
 		foreach ($migrations as $ver => $migration)
 		{
-			logger(Fuel::L_INFO, 'Migrating to version: '.$ver);
+			logger(\Fuel::L_INFO, 'Migrating to version: '.$ver);
 			$result = call_user_func(array(new $migration['class'], $method));
 			if ($result === false)
 			{
-				logger(Fuel::L_INFO, 'Skipped migration to '.$ver.'.');
+				logger(\Fuel::L_INFO, 'Skipped migration to '.$ver.'.');
 				return false;
 			}
 
@@ -299,11 +313,10 @@ class Migrate
 
 		static::$connection === null or \DBUtil::set_connection(null);
 
-		empty($done) or logger(Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
+		empty($done) or logger(\Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
 
 		return $done;
 	}
-
 
 	/**
 	 * add an installed migration to the database
@@ -450,20 +463,20 @@ class Migrate
 				// make sure it exists in the migration file loaded
 				if ( ! class_exists($class, false))
 				{
-					throw new FuelException(sprintf('Migration "%s" does not contain expected class "%s"', $migration['path'], $class));
+					throw new \FuelException(sprintf('Migration "%s" does not contain expected class "%s"', $migration['path'], $class));
 				}
 
 				// and that it contains an "up" and "down" method
 				if ( ! is_callable(array($class, 'up')) or ! is_callable(array($class, 'down')))
 				{
-					throw new FuelException(sprintf('Migration class "%s" must include public methods "up" and "down"', $name));
+					throw new \FuelException(sprintf('Migration class "%s" must include public methods "up" and "down"', $name));
 				}
 
 				$migrations[$ver]['class'] = $class;
 			}
 			else
 			{
-				throw new FuelException(sprintf('Invalid Migration filename "%s"', $migration['path']));
+				throw new \FuelException(sprintf('Invalid Migration filename "%s"', $migration['path']));
 			}
 		}
 

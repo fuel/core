@@ -6,12 +6,11 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
-
 
 class FileAccessException extends \FuelException {}
 class OutsideAreaException extends \OutOfBoundsException {}
@@ -28,7 +27,6 @@ class InvalidPathException extends \FileAccessException {}
  */
 class File
 {
-
 	/**
 	 * @var  array  loaded area's
 	 */
@@ -164,7 +162,7 @@ class File
 	public static function create_dir($basepath, $name, $chmod = null, $area = null)
 	{
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
-		$new_dir	= static::instance($area)->get_path($basepath.trim($name,'\\/'));
+		$new_dir	= static::instance($area)->get_path($basepath.trim($name, '\\/'));
 		is_null($chmod) and $chmod = \Config::get('file.chmod.folders', 0777);
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))
@@ -177,7 +175,7 @@ class File
 		}
 
 		// unify the path separators, and get the part we need to add to the basepath
-		$new_dir = substr(str_replace(array('\\', '/'), DS, $new_dir), strlen($basepath));
+		$new_dir = substr(str_replace(array('\\', '/'), DS, $new_dir), strpos($new_dir, $name));
 
 		// recursively create the directory. we can't use mkdir permissions or recursive
 		// due to the fact that mkdir is restricted by the current users umask
@@ -299,7 +297,7 @@ class File
 						}
 					}
 
-					$not = substr($f, 0, 1) == '!';  // whether it's a negative condition
+					$not = substr($f, 0, 1) === '!';  // whether it's a negative condition
 					$f = $not ? substr($f, 1) : $f;
 					// on negative condition a match leads to a continue
 					if (($match = preg_match('/'.$f.'/uiD', $file) > 0) and $not)
@@ -830,11 +828,11 @@ class File
 
 			header('Content-Type: '.$info['mimetype']);
 			header('Content-Disposition: '.$disposition.'; filename="'.$info['basename'].'"');
-			$disposition == 'attachment' and header('Content-Description: File Transfer');
+			$disposition === 'attachment' and header('Content-Description: File Transfer');
 			header('Content-Length: '.$info['size']);
 			header('Content-Transfer-Encoding: binary');
-			$disposition == 'attachment' and header('Expires: 0');
-			$disposition == 'attachment' and header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			$disposition === 'attachment' and header('Expires: 0');
+			$disposition === 'attachment' and header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 
 			while( ! feof($file))
 			{

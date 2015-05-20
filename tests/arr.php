@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -20,7 +20,6 @@ namespace Fuel\Core;
  */
 class Test_Arr extends TestCase
 {
-
 	public static function person_provider()
 	{
 		return array(
@@ -32,7 +31,7 @@ class Test_Arr extends TestCase
 					"location" => array(
 						"city" => "Pittsburgh",
 						"state" => "PA",
-						"country" => "US"
+						"country" => "US",
 					),
 				),
 			),
@@ -276,7 +275,6 @@ class Test_Arr extends TestCase
 		$this->assertEquals($expected, $output);
 	}
 
-
 	/**
 	 * Tests Arr::get()
 	 *
@@ -313,7 +311,7 @@ class Test_Arr extends TestCase
 	 */
 	public function test_flatten()
 	{
-		$indexed = array ( array('a'), array('b'), array('c') );
+		$indexed = array( array('a'), array('b'), array('c') );
 
 		$expected = array(
 			"0_0" => "a",
@@ -335,7 +333,46 @@ class Test_Arr extends TestCase
 		$people = array(
 			array(
 				"name" => "Jack",
-				"age" => 21
+				"age" => 21,
+			),
+			array(
+				"name" => "Jill",
+				"age" => 23,
+			),
+		);
+
+		$expected = array(
+			"0:name" => "Jack",
+			"0:age" => 21,
+			"1:name" => "Jill",
+			"1:age" => 23,
+		);
+
+		$output = Arr::flatten_assoc($people);
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Tests Arr::flatten_assoc() with recursive arrays
+	 *
+	 * @test
+	 */
+	public function test_flatten_recursive_index()
+	{
+		$people = array(
+			array(
+				"name" => "Jack",
+				"age" => 21,
+				"children" => array(
+					array(
+						"name" => "Johnny",
+						"age" => 4,
+					),
+					array(
+						"name" => "Jimmy",
+						"age" => 3,
+					)
+				)
 			),
 			array(
 				"name" => "Jill",
@@ -346,11 +383,15 @@ class Test_Arr extends TestCase
 		$expected = array(
 			"0:name" => "Jack",
 			"0:age" => 21,
+			"0:children:0:name" => "Johnny",
+			"0:children:0:age" => 4,
+			"0:children:1:name" => "Jimmy",
+			"0:children:1:age" => 3,
 			"1:name" => "Jill",
 			"1:age" => 23
 		);
 
-		$output = Arr::flatten_assoc($people);
+		$output = Arr::flatten($people, ':');
 		$this->assertEquals($expected, $output);
 	}
 
@@ -366,9 +407,9 @@ class Test_Arr extends TestCase
 			2 => 2,
 			3 => 3,
 			4 => array(
-				56
+				56,
 			),
-			5=> 87
+			5=> 87,
 		);
 
 		$arr2 = array(
@@ -538,22 +579,22 @@ class Test_Arr extends TestCase
 					array(
 						'info' => array(
 							'pet' => array(
-								'type' => 'dog'
-							)
+								'type' => 'dog',
+							),
 						),
 					),
 					array(
 						'info' => array(
 							'pet' => array(
-								'type' => 'fish'
-							)
+								'type' => 'fish',
+							),
 						),
 					),
 					array(
 						'info' => array(
 							'pet' => array(
-								'type' => 'cat'
-							)
+								'type' => 'cat',
+							),
 						),
 					),
 				),
@@ -563,26 +604,26 @@ class Test_Arr extends TestCase
 					array(
 						'info' => array(
 							'pet' => array(
-								'type' => 'cat'
-							)
+								'type' => 'cat',
+							),
 						),
 					),
 					array(
 						'info' => array(
 							'pet' => array(
-								'type' => 'dog'
-							)
+								'type' => 'dog',
+							),
 						),
 					),
 					array(
 						'info' => array(
 							'pet' => array(
-								'type' => 'fish'
-							)
+								'type' => 'fish',
+							),
 						),
 					),
-				)
-			)
+				),
+			),
 		);
 	}
 
@@ -638,11 +679,11 @@ class Test_Arr extends TestCase
 		$data = array(
 			'epic' => 'win',
 			'weak' => 'sauce',
-			'foo' => 'bar'
+			'foo' => 'bar',
 		);
 		$expected = array(
 			'epic' => 'win',
-			'foo' => 'bar'
+			'foo' => 'bar',
 		);
 		$expected_remove = array(
 			'weak' => 'sauce',
@@ -782,7 +823,6 @@ class Test_Arr extends TestCase
 		$expected = 'three.test.b';
 		$this->assertEquals($expected, Arr::search($arr_multi, 'b', null, true));
 	}
-
 
 	/**
 	 * Tests Arr::sum()
@@ -987,7 +1027,7 @@ class Test_Arr extends TestCase
 			"location" => array(
 				"city" => "Pittsburgh",
 				"state" => "PA",
-				"country" => "US"
+				"country" => "US",
 			),
 		);
 
@@ -997,7 +1037,7 @@ class Test_Arr extends TestCase
 		$expected = array(
 			"name" => "Jack",
 			"location" => array(
-				"country" => "US"
+				"country" => "US",
 			),
 		);
 
@@ -1017,9 +1057,9 @@ class Test_Arr extends TestCase
 			"name" => "Jack",
 			"location" => array(
 				"street" => null,
-				"country" => "US"
+				"country" => "US",
 			),
-			"occupation" => null
+			"occupation" => null,
 		);
 
 		$got = \Arr::subset($person, array("name", "location.street", "location.country", "occupation"));
@@ -1029,9 +1069,9 @@ class Test_Arr extends TestCase
 			"name" => "Jack",
 			"location" => array(
 				"street" => "Unknown",
-				"country" => "US"
+				"country" => "US",
 			),
-			"occupation" => "Unknown"
+			"occupation" => "Unknown",
 		);
 
 		$got = \Arr::subset($person, array("name", "location.street", "location.country", "occupation"), "Unknown");

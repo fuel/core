@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -28,7 +28,6 @@ class PackageNotFoundException extends \FuelException { }
  */
 class Package
 {
-
 	/**
 	 * @var  array  $packages  Holds all the loaded package information.
 	 */
@@ -48,6 +47,7 @@ class Package
 	{
 		if (is_array($package))
 		{
+			$result = true;
 			foreach ($package as $pkg => $path)
 			{
 				if (is_numeric($pkg))
@@ -55,9 +55,9 @@ class Package
 					$pkg = $path;
 					$path = null;
 				}
-				static::load($pkg, $path);
+				$result = $result and static::load($pkg, $path);
 			}
-			return false;
+			return $result;
 		}
 
 		if (static::loaded($package))
@@ -141,6 +141,7 @@ class Package
 		{
 			$paths = \Config::get('package_paths', array());
 			empty($paths) and $paths = array(PKGPATH);
+			$package = strtolower($package);
 
 			foreach ($paths as $path)
 			{

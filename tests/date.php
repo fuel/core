@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -38,11 +38,11 @@ class Test_Date extends TestCase
 		$expected = 31;
 		$this->assertEquals($expected, $output);
 
-		$output = Date::days_in_month(2,2001);
+		$output = Date::days_in_month(2, 2001);
 		$expected = 28;
 		$this->assertEquals($expected, $output);
 
-		$output = Date::days_in_month(2,2000);
+		$output = Date::days_in_month(2, 2000);
 		$expected = 29;
 		$this->assertEquals($expected, $output);
 	}
@@ -66,8 +66,6 @@ class Test_Date extends TestCase
 	{
 		$output = Date::days_in_month(13);
 	}
-
-
 
 	/**
 	 * Test for Date::format()
@@ -167,4 +165,3 @@ class Test_Date extends TestCase
 		$this->assertEquals('2 months ago', $output);
 	}
 }
-

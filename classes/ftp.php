@@ -6,17 +6,15 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
-
 class FtpConnectionException extends \FuelException {}
 
 class FtpFileAccessException extends \FuelException {}
-
 
 /**
  * FTP Class
@@ -460,7 +458,7 @@ class Ftp
 				if ( ! @ftp_delete($this->_conn_id, $item))
 				{
 					// don't recurse into current of parent directory
-					if ( ! preg_match('/\/\.\.|\/\.$/', $item)) 
+					if ( ! preg_match('/\/\.\.|\/\.$/', $item))
 					{
 						$this->delete_dir($item);
 					}
@@ -620,7 +618,7 @@ class Ftp
 			'phtml',
 			'shtml',
 			'log',
-			'xml'
+			'xml',
 		);
 
 		return in_array($ext, $text_types) ? 'ascii' : 'binary';
@@ -658,4 +656,3 @@ class Ftp
 	}
 
 }
-

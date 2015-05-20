@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -76,7 +76,7 @@ class Lang
 		if ( ! $reload and
 		     ! is_array($file) and
 		     ! is_object($file) and
-		    array_key_exists($file, static::$loaded_files))
+		    array_key_exists($language.'/'.$file, static::$loaded_files))
 		{
 			$group === true and $group = $file;
 			if ($group === null or $group === false or ! isset(static::$lines[$language][$group]))
@@ -108,7 +108,7 @@ class Lang
 
 			if (class_exists($class))
 			{
-				static::$loaded_files[$file] = true;
+				static::$loaded_files[$language.'/'.$file] = true;
 				$file = new $class($file, $languages);
 			}
 			else
@@ -130,16 +130,22 @@ class Lang
 			$group = $group === true ? $file->group() : $group;
 		}
 
+		isset(static::$lines[$language]) or static::$lines[$language] = array();
 		if ($group === null)
 		{
-			isset(static::$lines[$language]) or static::$lines[$language] = array();
 			static::$lines[$language] = $overwrite ? array_merge(static::$lines[$language], $lang) : \Arr::merge(static::$lines[$language], $lang);
 		}
 		else
 		{
 			$group = ($group === true) ? $file : $group;
-			isset(static::$lines[$language][$group]) or static::$lines[$language][$group] = array();
-			static::$lines[$language][$group] = $overwrite ? array_merge(static::$lines[$language][$group], $lang) : \Arr::merge(static::$lines[$language][$group], $lang);
+			if ($overwrite)
+			{
+				\Arr::set(static::$lines[$language], $group, array_merge(\Arr::get(static::$lines[$language], $group, array()), $lang));
+			}
+			else
+			{
+				\Arr::set(static::$lines[$language], $group, \Arr::merge(\Arr::get(static::$lines[$language], $group, array()), $lang));
+			}
 		}
 
 		return $lang;

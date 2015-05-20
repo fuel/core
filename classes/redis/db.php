@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -22,9 +22,7 @@
 
 namespace Fuel\Core;
 
-
 class RedisException extends \FuelException {}
-
 
 /**
  * Redisent, a Redis interface for the modest among us
@@ -247,7 +245,7 @@ class Redis_Db
 		{
 			// error reply
 			case '-':
-				throw new \RedisException(trim(substr($reply, 4)));
+				throw new \RedisException(trim(substr($reply, 1)));
 				break;
 
 			// inline reply

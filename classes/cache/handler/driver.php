@@ -6,16 +6,13 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
-
-
 interface Cache_Handler_Driver {
-
 	/**
 	 * Should make the contents readable
 	 *
@@ -32,5 +29,3 @@ interface Cache_Handler_Driver {
 	 */
 	public function writable($contents);
 }
-
-

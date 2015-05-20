@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -18,7 +18,6 @@
  *
  * This will allow you to upgrade fuel without losing your custom config.
  */
-
 
 return array(
 
@@ -71,11 +70,11 @@ return array(
 	/**
 	 * URL to your Fuel root. Typically this will be your base URL:
 	 *
-	 * Config::get('base_url')
+	 * \Config::get('base_url')
 	 *
 	 * These MUST include the trailing slash ('/')
 	 */
-	'url' => Config::get('base_url'),
+	'url' => \Config::get('base_url'),
 
 	/**
 	 * Whether to append the assets last modified timestamp to the url.

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -25,11 +25,10 @@ class FuelException extends \Exception {}
  */
 class Fuel
 {
-
 	/**
 	 * @var  string  The version of Fuel
 	 */
-	const VERSION = '1.7.2';
+	const VERSION = '1.7.3';
 
 	/**
 	 * @var  string  constant used for when in testing mode
@@ -127,10 +126,6 @@ class Fuel
 			throw new \FuelException("You can't initialize Fuel more than once.");
 		}
 
-		// BC FIX FOR APPLICATIONS <= 1.6.1, makes Redis_Db available as Redis,
-		// like it was in versions before 1.7
-		class_exists('Redis', false) or class_alias('Redis_Db', 'Redis');
-
 		static::$_paths = array(APPPATH, COREPATH);
 
 		// Is Fuel running on the command line?
@@ -145,7 +140,7 @@ class Fuel
 		}
 
 		// Start up output buffering
-		ob_start(\Config::get('ob_callback'));
+		static::$is_cli or ob_start(\Config::get('ob_callback'));
 
 		if (\Config::get('caching', false))
 		{
@@ -172,6 +167,13 @@ class Fuel
 
 		static::$locale = \Config::get('locale', static::$locale);
 
+		// Set locale, log warning when it fails
+		if (static::$locale)
+		{
+			setlocale(LC_ALL, static::$locale) or
+				logger(\Fuel::L_WARNING, 'The configured locale '.static::$locale.' is not installed on your system.', __METHOD__);
+		}
+
 		if ( ! static::$is_cli)
 		{
 			if (\Config::get('base_url') === null)
@@ -192,12 +194,9 @@ class Fuel
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
-		// Set locale, log warning when it fails
-		if (static::$locale)
-		{
-			setlocale(LC_ALL, static::$locale) or
-				logger(\Fuel::L_WARNING, 'The configured locale '.static::$locale.' is not installed on your system.', __METHOD__);
-		}
+		// BC FIX FOR APPLICATIONS <= 1.6.1, makes Redis_Db available as Redis,
+		// like it was in versions before 1.7
+		class_exists('Redis', false) or class_alias('Redis_Db', 'Redis');
 
 		static::$initialized = true;
 
@@ -360,8 +359,19 @@ class Fuel
 	 */
 	public static function clean_path($path)
 	{
-		static $search = array(APPPATH, COREPATH, PKGPATH, DOCROOT, '\\');
-		static $replace = array('APPPATH/', 'COREPATH/', 'PKGPATH/', 'DOCROOT/', '/');
+		// framework default paths
+		static $search = array('\\', APPPATH, COREPATH, PKGPATH, DOCROOT);
+		static $replace = array('/', 'APPPATH/', 'COREPATH/', 'PKGPATH/', 'DOCROOT/');
+
+		// additional paths configured than need cleaning
+		$extra = \Config::get('security.clean_paths', array());
+		foreach ($extra as $r => $s)
+		{
+			$search[] = $s;
+			$replace[] = $r.'/';
+		}
+
+		// clean up and return it
 		return str_ireplace($search, $replace, $path);
 	}
 }

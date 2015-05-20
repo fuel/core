@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -18,7 +18,6 @@
  *
  * This will allow you to upgrade fuel without losing your custom config.
  */
-
 
 return array(
 
@@ -33,7 +32,7 @@ return array(
 			'default' => 0,
 		),
 		'module' => array(),
-		'package' => array()
+		'package' => array(),
 	),
 
 	/*
@@ -53,4 +52,3 @@ return array(
 	'table' => 'migration',
 
 );
-

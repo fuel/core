@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -24,7 +24,6 @@ class SecurityException extends \DomainException {}
  */
 class Security
 {
-
 	/**
 	 * @var  string  the token as submitted in the cookie from the previous request
 	 */

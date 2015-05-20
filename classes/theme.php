@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -115,6 +115,11 @@ class Theme
 	 * @var  array  $chrome	Storage for defined partial chrome
 	 */
 	protected $chrome = array();
+
+	/**
+	 * @var  array  $order	Order in which partial sections should be rendered
+	 */
+	protected $order = array();
 
 	/**
 	 * Sets up the theme object.  If a config is given, it will not use the config
@@ -231,14 +236,34 @@ class Theme
 	 * Loads a presenter, and have it use the view from the currently active theme,
 	 * the fallback theme, or the standard FuelPHP cascading file system
 	 *
-	 * @param   string  Presenter classname without Presenter_ prefix or full classname
+	 * @param   string  Presenter classname without View_ prefix or full classname
 	 * @param   string  Method to execute
-	 * @param   bool    $auto_filter  Auto filter the view data
-	 * @return  View    New View object
+	 * @param   bool    Auto filter the view data
+	 * @param   string  Custom View to associate with this persenter
+	 * @return  Presenter
 	 */
-	public function presenter($view, $method = 'view', $auto_filter = null)
+	public function presenter($presenter, $method = 'view', $auto_filter = null, $view = null)
 	{
-		return \Presenter::forge($view, $method, $auto_filter, $this->find_file($view));
+		// if no custom view is given, make it equal to the presenter name
+		if (is_null($view))
+		{
+			// loading from a specific namespace?
+			if (strpos($presenter, '::') !== false)
+			{
+				$split = explode('::', $presenter, 2);
+				if (isset($split[1]))
+				{
+					// remove the namespace from the view name
+					$view = $split[1];
+				}
+			}
+			else
+			{
+				$view = $presenter;
+			}
+		}
+
+		return \Presenter::forge($presenter, $method, $auto_filter, $this->find_file($view));
 	}
 
 	/**
@@ -305,6 +330,17 @@ class Theme
 	}
 
 	/**
+	 * Define a custom order for a partial section
+	 *
+	 * @var  string  name of the partial section
+	 * @throws  \ThemeException
+	 */
+	public function set_order($section, $order)
+	{
+		$this->order[$section] = $order;
+	}
+
+	/**
 	 * Render the partials and the theme template
 	 *
 	 * @return  string|View
@@ -321,14 +357,36 @@ class Theme
 		// storage for rendered results
 		$rendered = array();
 
-		// pre-process all defined partials
+		// make sure we have a render ordering for all defined partials
 		foreach ($this->partials as $key => $partials)
 		{
-			$output = '';
-			foreach ($partials as $index => $partial)
+			if ( ! isset($this->order[$key]))
 			{
-				// render the partial
-				$output .= $partial->render();
+				$this->order[$key] = 0;
+			}
+		}
+
+		// determine the rendering sequence
+		asort($this->order, SORT_NUMERIC);
+
+		// pre-process all defined partials in defined order
+		foreach ($this->order as $key => $order)
+		{
+			$output = '';
+			if (isset($this->partials[$key]))
+			{
+				foreach ($this->partials[$key] as $index => $partial)
+				{
+					// render the partial
+					if (is_callable(array($partial, 'render')))
+					{
+						$output .= $partial->render();
+					}
+					else
+					{
+						$output .= $partial;
+					}
+				}
 			}
 
 			// store the rendered output
@@ -409,7 +467,7 @@ class Theme
 	}
 
 	/**
-	 * Returns wether or not a section has partials defined
+	 * Returns whether or not a section has partials defined
 	 *
 	 * @param   string  				$section   Name of the partial section in the template
 	 * @return  bool
@@ -623,7 +681,7 @@ class Theme
 			$name = $theme;
 			$theme = array(
 				'name' => $name,
-				'path' => $path
+				'path' => $path,
 			);
 		}
 

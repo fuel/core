@@ -6,17 +6,14 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
-
-
 class Cache_Storage_Xcache extends \Cache_Storage_Driver
 {
-
 	/**
 	 * @const  string  Tag used for opening & closing cache properties
 	 */
@@ -114,37 +111,30 @@ class Cache_Storage_Xcache extends \Cache_Storage_Driver
 	public function delete_all($section)
 	{
 		// determine the section index name
-		$section = $this->config['cache_id'].(empty($section)?'':'.'.$section);
+		$section = $this->config['cache_id'].(empty($section) ? '' : '.'.$section);
 
 		// get the directory index
 		$index = xcache_get($this->config['cache_id'].'__DIR__');
 
 		if (is_array($index))
 		{
-			// limit the delete if we have a valid section
-			if ( ! empty($section))
+			$dirs = array();
+			foreach ($index as $dir)
 			{
-				$dirs = in_array($section, $index) ? array($section) : array();
-			}
-			else
-			{
-				$dirs = $index;
-			}
-
-			// loop through the indexes, delete all stored keys, then delete the indexes
-			foreach ($dirs as $dir)
-			{
-				$list = xcache_get($dir);
-				foreach ($list as $item)
+				if (strpos($dir, $section) === 0)
 				{
-					xcache_unset($item[0]);
+					$dirs[] = $dir;
+					$list = xcache_get($dir);
+					foreach ($list as $item)
+					{
+						xcache_unset($item[0]);
+					}
+					xcache_unset($dir);
 				}
-				xcache_unset($dir);
 			}
 
 			// update the directory index
-			$index = array_diff($index, $dirs);
-			xcache_set($this->config['cache_id'].'__DIR__', $index);
+			$dirs and xcache_set($this->config['cache_id'].'__DIR__', array_diff($index, $dirs));
 		}
 	}
 
@@ -161,7 +151,7 @@ class Cache_Storage_Xcache extends \Cache_Storage_Driver
 			'created'          => $this->created,
 			'expiration'       => $this->expiration,
 			'dependencies'     => $this->dependencies,
-			'content_handler'  => $this->content_handler
+			'content_handler'  => $this->content_handler,
 		);
 		$properties = '{{'.static::PROPS_TAG.'}}'.json_encode($properties).'{{/'.static::PROPS_TAG.'}}';
 
@@ -362,7 +352,7 @@ class Cache_Storage_Xcache extends \Cache_Storage_Driver
 
 		// store the key in the index and write the index back
 		$index[$identifier] = array($key, $this->created);
-		xcache_set($this->config['cache_id'].$sections, array_merge($index, array($identifier => array($key,$this->created))));
+		xcache_set($this->config['cache_id'].$sections, array_merge($index, array($identifier => array($key, $this->created))));
 
 		// get the directory index
 		$index = xcache_get($this->config['cache_id'].'__DIR__');

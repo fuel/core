@@ -13,7 +13,6 @@ namespace Fuel\Core;
 
 abstract class Database_Query_Builder extends \Database_Query
 {
-
 	/**
 	 * Compiles an array of JOIN statements into an SQL partial.
 	 *
@@ -161,7 +160,7 @@ abstract class Database_Query_Builder extends \Database_Query
 		foreach ($values as $group)
 		{
 			// Split the set
-			list ($column, $value) = $group;
+			list($column, $value) = $group;
 
 			// Quote the column name
 			$column = $db->quote_identifier($column);
@@ -192,7 +191,7 @@ abstract class Database_Query_Builder extends \Database_Query
 
 		foreach ($columns as $group)
 		{
-			list ($column, $direction) = $group;
+			list($column, $direction) = $group;
 
 			$direction = strtoupper($direction);
 			if ( ! empty($direction))

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -22,7 +22,6 @@ namespace Fuel\Core;
  */
 class Autoloader
 {
-
 	/**
 	 * @var  array  $classes  holds all the classes and paths
 	 */
@@ -45,7 +44,7 @@ class Autoloader
 	 * @var  array  list off namespaces of which classes will be aliased to global namespace
 	 */
 	protected static $core_namespaces = array(
-		'Fuel\\Core'
+		'Fuel\\Core',
 	);
 
 	/**
@@ -62,8 +61,9 @@ class Autoloader
 	 * Adds a namespace search path.  Any class in the given namespace will be
 	 * looked for in the given path.
 	 *
-	 * @param   string  the namespace
-	 * @param   string  the path
+	 * @param   string  $namespace  the namespace
+	 * @param   string  $path       the path
+	 * @param   bool    $psr        whether this is a PSR-0 compliant class
 	 * @return  void
 	 */
 	public static function add_namespace($namespace, $path, $psr = false)
@@ -78,8 +78,8 @@ class Autoloader
 	/**
 	 * Adds an array of namespace paths. See {add_namespace}.
 	 *
-	 * @param   array  the namespaces
-	 * @param   bool   whether to prepend the namespace to the search path
+	 * @param   array  $namespaces  the namespaces
+	 * @param   bool   $prepend     whether to prepend the namespace to the search path
 	 * @return  void
 	 */
 	public static function add_namespaces(array $namespaces, $prepend = false)
@@ -126,7 +126,7 @@ class Autoloader
 	/**
 	 * Adds multiple class paths to the load path. See {@see Autoloader::add_class}.
 	 *
-	 * @param   array  the class names and paths
+	 * @param   array  $classes  the class names and paths
 	 * @return  void
 	 */
 	public static function add_classes($classes)
@@ -170,8 +170,8 @@ class Autoloader
 	/**
 	 * Returns the class with namespace prefix when available
 	 *
-	 * @param	string
-	 * @return	bool|string
+	 * @param   string       $class
+	 * @return  bool|string
 	 */
 	protected static function find_core_class($class)
 	{
@@ -191,9 +191,9 @@ class Autoloader
 	 * will be auto-aliased to the global namespace.
 	 * Prefixing the classes will overwrite core classes and previously added namespaces.
 	 *
-	 * @param	string
-	 * @param	bool
-	 * @return	void
+	 * @param  string $namespace
+	 * @param  bool   $prefix
+	 * @return void
 	 */
 	public static function add_core_namespace($namespace, $prefix = true)
 	{
@@ -224,7 +224,7 @@ class Autoloader
 
 		$loaded = false;
 		$class = ltrim($class, '\\');
-		$namespaced = ($pos = strripos($class, '\\')) !== false;
+		$pos = strripos($class, '\\');
 
 		if (empty(static::$auto_initialize))
 		{
@@ -276,7 +276,7 @@ class Autoloader
 
 			if ( ! $loaded)
 			{
-				$path = APPPATH.'classes/'.static::class_to_path($class);
+				$path = APPPATH.'classes'.DS.static::class_to_path($class);
 
 				if (is_file($path))
 				{
@@ -352,8 +352,8 @@ class Autoloader
 	 * Checks to see if the given class has a static _init() method.  If so then
 	 * it calls it.
 	 *
-	 * @param	string	the class name
-	 * @param	string	the file containing the class to include
+	 * @param string $class the class name
+	 * @param string $file  the file containing the class to include
 	 */
 	protected static function init_class($class, $file = null)
 	{

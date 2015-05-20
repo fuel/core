@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -40,9 +40,26 @@ class Log
 	);
 
 	/**
-	 * Initialize the class
+	 * create the monolog instance
 	 */
 	public static function _init()
+	{
+		static::$monolog = new \Monolog\Logger('fuelphp');
+		static::initialize();
+	}
+
+	/**
+	 * return the monolog instance
+	 */
+	public static function instance()
+	{
+		return static::$monolog;
+	}
+
+	/**
+	 * initialize the created the monolog instance
+	 */
+	public static function initialize()
 	{
 		// load the file config
 		\Config::load('file', true);
@@ -96,26 +113,11 @@ class Log
 		}
 		fclose($handle);
 
-		// create the monolog instance
-		static::$monolog = new \Monolog\Logger('fuelphp');
-
 		// create the streamhandler, and activate the handler
 		$stream = new \Monolog\Handler\StreamHandler($filename, \Monolog\Logger::DEBUG);
 		$formatter = new \Monolog\Formatter\LineFormatter("%level_name% - %datetime% --> %message%".PHP_EOL, "Y-m-d H:i:s");
 		$stream->setFormatter($formatter);
 		static::$monolog->pushHandler($stream);
-	}
-
-	/**
-	 * Return the monolog instance
-	 */
-	public static function instance()
-	{
-		// make sure we have an instance
-		static::$monolog or static::_init();
-
-		// return the created instance
-		return static::$monolog;
 	}
 
 	/**
@@ -165,7 +167,6 @@ class Log
 	{
 		return static::write(\Fuel::L_ERROR, $msg, $method);
 	}
-
 
 	/**
 	 * Write Log File

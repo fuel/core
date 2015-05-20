@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -18,7 +18,6 @@
  *
  * This will allow you to upgrade fuel without losing your custom config.
  */
-
 
 return array(
 
@@ -57,7 +56,7 @@ return array(
 	'memcached'  => array(
 		'cache_id'  => 'fuel',  // unique id to distinquish fuel cache items from others stored on the same server(s)
 		'servers'   => array(   // array of servers and portnumbers that run the memcached service
-			'default' => array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100)
+			'default' => array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
 		),
 	),
 
@@ -68,7 +67,7 @@ return array(
 
 	// specific configuration settings for the redis driver
 	'redis'  => array(
-		'database'  => 'default'  // name of the redis database to use (as configured in config/db.php)
+		'database'  => 'default',  // name of the redis database to use (as configured in config/db.php)
 	),
 
 	// specific configuration settings for the xcache driver
@@ -76,5 +75,3 @@ return array(
 		'cache_id'  => 'fuel',  // unique id to distinquish fuel cache items from others stored on the same server(s)
 	),
 );
-
-

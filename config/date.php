@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -18,7 +18,6 @@
  *
  * This will allow you to upgrade fuel without losing your custom config.
  */
-
 
 return array(
 
@@ -41,6 +40,6 @@ return array(
 		'eu_full'	 => '%H:%M, %d %B %Y',
 
 		'24h'		 => '%H:%M',
-		'12h'		 => '%I:%M %p'
-	)
+		'12h'		 => '%I:%M %p',
+	),
 );

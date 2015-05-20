@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -21,7 +21,6 @@ namespace Fuel\Core;
  */
 class Arr
 {
-
 	/**
 	 * Gets a dot-notated key from an array, with a default value if it does
 	 * not exist.
@@ -270,7 +269,7 @@ class Arr
 		{
 			$output[] = array(
 				$key_field => $key,
-				$val_field => $value
+				$val_field => $value,
 			);
 		}
 
@@ -355,7 +354,7 @@ class Arr
 			$curr_key[] = $key;
 			if (is_array($val) and ($indexed or array_values($val) !== $val))
 			{
-				static::flatten_assoc($val, $glue, false);
+				static::flatten($val, $glue, false, $indexed);
 			}
 			else
 			{
@@ -439,7 +438,7 @@ class Arr
 			{
 				if ($remove_prefix === true)
 				{
-					$key = preg_replace('/^'.$prefix.'/','',$key);
+					$key = preg_replace('/^'.$prefix.'/', '', $key);
 				}
 				$return[$key] = $val;
 			}
@@ -503,7 +502,7 @@ class Arr
 			{
 				if ($remove_suffix === true)
 				{
-					$key = preg_replace('/'.$suffix.'$/','',$key);
+					$key = preg_replace('/'.$suffix.'$/', '', $key);
 				}
 				$return[$key] = $val;
 			}
@@ -605,7 +604,7 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the key before which to insert
-	 * @param   bool         wether the input is an associative array
+	 * @param   bool         whether the input is an associative array
 	 * @return  bool         false when key isn't found in the array, otherwise true
 	 */
 	public static function insert_before_key(array &$original, $value, $key, $is_assoc = false)
@@ -628,7 +627,7 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the key after which to insert
-	 * @param   bool         wether the input is an associative array
+	 * @param   bool         whether the input is an associative array
 	 * @return  bool         false when key isn't found in the array, otherwise true
 	 */
 	public static function insert_after_key(array &$original, $value, $key, $is_assoc = false)
@@ -650,7 +649,7 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the value after which to insert
-	 * @param   bool         wether the input is an associative array
+	 * @param   bool         whether the input is an associative array
 	 * @return  bool         false when value isn't found in the array, otherwise true
 	 */
 	public static function insert_after_value(array &$original, $value, $search, $is_assoc = false)
@@ -672,7 +671,7 @@ class Arr
 	 * @param   array        the original array (by reference)
 	 * @param   array|mixed  the value(s) to insert, if you want to insert an array it needs to be in an array itself
 	 * @param   string|int   the value after which to insert
-	 * @param   bool         wether the input is an associative array
+	 * @param   bool         whether the input is an associative array
 	 * @return  bool         false when value isn't found in the array, otherwise true
 	 */
 	public static function insert_before_value(array &$original, $value, $search, $is_assoc = false)
@@ -743,7 +742,7 @@ class Arr
 	 *
 	 * @param   array  $array        collection of arrays/objects to sort
 	 * @param   array  $conditions   sorting conditions
-	 * @param   bool   @ignore_case  wether to sort case insensitive
+	 * @param   bool   @ignore_case  whether to sort case insensitive
 	 */
 	public static function multisort($array, $conditions, $ignore_case = false)
 	{
@@ -924,7 +923,7 @@ class Arr
 	 *
 	 * @param   array           $arr     the array to prepend to
 	 * @param   string|array    $key     the key or array of keys and values
-	 * @param   mixed           $valye   the value to prepend
+	 * @param   mixed           $value   the value to prepend
 	 */
 	public static function prepend(&$arr, $key, $value = null)
 	{
@@ -936,7 +935,7 @@ class Arr
 	 *
 	 * @param   mixed  $needle    what to search for
 	 * @param   array  $haystack  array to search in
-	 * @return  bool   wether the needle is found in the haystack.
+	 * @return  bool   whether the needle is found in the haystack.
 	 */
 	public static function in_array_recursive($needle, $haystack, $strict = false)
 	{

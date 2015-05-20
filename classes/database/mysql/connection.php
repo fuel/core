@@ -11,11 +11,8 @@
 
 namespace Fuel\Core;
 
-
-
 class Database_MySQL_Connection extends \Database_Connection
 {
-
 	/**
 	 * @var  array  Database in use by each connection
 	 */
@@ -140,6 +137,11 @@ class Database_MySQL_Connection extends \Database_Connection
 		static::$_current_databases[$this->_connection_id] = $database;
 	}
 
+	/**
+	 * Disconnect from the database
+	 *
+	 * @throws  \Exception  when the mysql database is not disconnected properly
+	 */
 	public function disconnect()
 	{
 		try
@@ -151,8 +153,11 @@ class Database_MySQL_Connection extends \Database_Connection
 			{
 				if ($status = mysql_close($this->_connection))
 				{
-					// Clear the connection
+					// clear the connection
 					$this->_connection = null;
+
+					// and reset the savepoint depth
+					$this->_transaction_depth = 0;
 				}
 			}
 		}
@@ -230,7 +235,7 @@ class Database_MySQL_Connection extends \Database_Connection
 					// Only log if no paths we defined, or we have a path match
 					if ($include or empty($paths))
 					{
-						$stacktrace[] = array('file' => Fuel::clean_path($page['file']), 'line' => $page['line']);
+						$stacktrace[] = array('file' => \Fuel::clean_path($page['file']), 'line' => $page['line']);
 					}
 				}
 			}
@@ -278,17 +283,18 @@ class Database_MySQL_Connection extends \Database_Connection
 				mysql_affected_rows($this->_connection),
 			);
 		}
-		else
+		elseif ($type === \DB::UPDATE or $type === \DB::DELETE)
 		{
 			// Return the number of rows affected
 			return mysql_affected_rows($this->_connection);
 		}
+
+		return $result;
 	}
 
 	public function datatype($type)
 	{
-		static $types = array
-		(
+		static $types = array(
 			'blob'                      => array('type' => 'string', 'binary' => true, 'character_maximum_length' => '65535'),
 			'bool'                      => array('type' => 'bool'),
 			'bigint unsigned'           => array('type' => 'int', 'min' => '0', 'max' => '18446744073709551615'),
@@ -328,11 +334,19 @@ class Database_MySQL_Connection extends \Database_Connection
 		$type = str_replace(' zerofill', '', $type);
 
 		if (isset($types[$type]))
+		{
 			return $types[$type];
+		}
 
 		return parent::datatype($type);
 	}
 
+	/**
+	 * List tables
+	 *
+	 * @param   string  $like  pattern of table name
+	 * @return  array   array of table name
+	 */
 	public function list_tables($like = null)
 	{
 		if (is_string($like))
@@ -355,6 +369,13 @@ class Database_MySQL_Connection extends \Database_Connection
 		return $tables;
 	}
 
+	/**
+	 * List table columns
+	 *
+	 * @param   string  $table  table name
+	 * @param   string  $like   column name pattern
+	 * @return  array   array of column structure
+	 */
 	public function list_columns($table, $like = null)
 	{
 		// Quote the table name
@@ -439,6 +460,12 @@ class Database_MySQL_Connection extends \Database_Connection
 		return $columns;
 	}
 
+	/**
+	 * Escape query for sql
+	 *
+	 * @param   mixed   $value  value of string castable
+	 * @return  string  escaped sql string
+	 */
 	public function escape($value)
 	{
 		// Make sure the database is connected
@@ -456,7 +483,7 @@ class Database_MySQL_Connection extends \Database_Connection
 	public function error_info()
 	{
 		$errno = mysql_errno($this->_connection);
-		return array($errno, empty($errno)? null : $errno, empty($errno) ? null : mysql_error($this->_connection));
+		return array($errno, empty($errno) ? null : $errno, empty($errno) ? null : mysql_error($this->_connection));
 	}
 
 	protected function driver_start_transaction()
@@ -512,5 +539,4 @@ class Database_MySQL_Connection extends \Database_Connection
 		$this->query(0, 'ROLLBACK TO SAVEPOINT LEVEL'.$name, false);
 		return true;
 	}
-
 }

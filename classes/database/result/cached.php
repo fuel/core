@@ -13,7 +13,6 @@ namespace Fuel\Core;
 
 class Database_Result_Cached extends \Database_Result
 {
-
 	/**
 	 * @param  array   $result
 	 * @param  string  $sql
@@ -61,7 +60,20 @@ class Database_Result_Cached extends \Database_Result
 	 */
 	public function current()
 	{
-		return $this->valid() ? $this->_result[$this->_current_row] : null;
+		if ($this->valid())
+		{
+			// sanitize the data if needed
+			if ( ! $this->_sanitization_enabled)
+			{
+				$result = $this->_result[$this->_current_row];
+			}
+			else
+			{
+				$result = \Security::clean($this->_result[$this->_current_row], null, 'security.output_filter');
+			}
+
+			return $result;
+		}
 	}
 
 }

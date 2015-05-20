@@ -6,13 +6,11 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
-
-
 
 /**
  * UnZip Class
@@ -35,7 +33,6 @@ namespace Fuel\Core;
  */
 class Unzip
 {
-
 	private $compressed_list = array();
 
 	// List of files in the ZIP
@@ -127,7 +124,10 @@ class Unzip
 				}
 			}
 
-			if (substr($file, -1, 1) == '/') continue;
+			if (substr($file, -1, 1) == '/')
+			{
+				continue;
+			}
 
 			$file_locations[] = $file_location = $this->_target_dir . '/' . ($preserve_filepath ? $file : basename($file));
 
@@ -609,7 +609,7 @@ class Unzip
 				'uncompressed_size' => $file['uncompressed_size'][1],
 				'extra_field' => $file['extra_field'],
 				'general_bit_flag' => str_pad(decbin($file['general_bit_flag'][1]), 8, '0', STR_PAD_LEFT),
-				'contents_start_offset' => $file['contents_start_offset']
+				'contents_start_offset' => $file['contents_start_offset'],
 			);
 
 			return $i;
@@ -618,5 +618,3 @@ class Unzip
 		return false;
 	}
 }
-
-

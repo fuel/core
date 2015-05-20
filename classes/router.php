@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -38,6 +38,7 @@ class Router
 	 * @param  string
 	 * @param  string|array|Route  either the translation for $path, an array for verb routing or an instance of Route
 	 * @param  bool                whether to prepend the route(s) to the routes array
+	 * @param  bool                whether to check case sensitive
 	 */
 	public static function add($path, $options = null, $prepend = false, $case_sensitive = null)
 	{
@@ -70,11 +71,11 @@ class Router
 
 		if ($prepend)
 		{
-			\Arr::prepend(static::$routes, $name, new \Route($path, $options, $case_sensitive, $name));
+			\Arr::prepend(static::$routes, $name, new \Route($path, $options, $case_sensitive, null, $name));
 			return;
 		}
 
-		static::$routes[$name] = new \Route($path, $options, $case_sensitive, $name);
+		static::$routes[$name] = new \Route($path, $options, $case_sensitive, null, $name);
 	}
 
 	/**
@@ -105,7 +106,7 @@ class Router
 			{
 				if (is_string($name) and ($pos = strpos($url, '(:'.$name.')')) !== false)
 				{
-					$url = substr_replace($url,$value,$pos,strlen($name)+3);
+					$url = substr_replace($url, $value, $pos, strlen($name)+3);
 				}
 			}
 
@@ -141,41 +142,53 @@ class Router
 	/**
 	 * Delete one or multiple routes
 	 *
-	 * @param  string
+	 * @param  string|array  route path, or array of route paths
+	 * @param  bool          whether to check case sensitive
 	 */
 	public static function delete($path, $case_sensitive = null)
 	{
-		$case_sensitive ?: \Config::get('routing.case_sensitive', true);
-
-		// support the usual route path placeholders
-		$path = str_replace(array(
-			':any',
-			':alnum',
-			':num',
-			':alpha',
-			':segment',
-		), array(
-			'.+',
-			'[[:alnum:]]+',
-			'[[:digit:]]+',
-			'[[:alpha:]]+',
-			'[^/]*',
-		), $path);
-
-		foreach (static::$routes as $name => $route)
+		// if multiple paths are passed, recurse
+		if (is_array($path))
 		{
-			if ($case_sensitive)
+			foreach($path as $p)
 			{
-				if (preg_match('#^'.$path.'$#uD', $name))
-				{
-					unset(static::$routes[$name]);
-				}
+				static::delete($p, $case_sensitive);
 			}
-			else
+		}
+		else
+		{
+			$case_sensitive ?: \Config::get('routing.case_sensitive', true);
+
+			// support the usual route path placeholders
+			$path = str_replace(array(
+				':any',
+				':alnum',
+				':num',
+				':alpha',
+				':segment',
+			), array(
+				'.+',
+				'[[:alnum:]]+',
+				'[[:digit:]]+',
+				'[[:alpha:]]+',
+				'[^/]*',
+			), $path);
+
+			foreach (static::$routes as $name => $route)
 			{
-				if (preg_match('#^'.$path.'$#uiD', $name))
+				if ($case_sensitive)
 				{
-					unset(static::$routes[$name]);
+					if (preg_match('#^'.$path.'$#uD', $name))
+					{
+						unset(static::$routes[$name]);
+					}
+				}
+				else
+				{
+					if (preg_match('#^'.$path.'$#uiD', $name))
+					{
+						unset(static::$routes[$name]);
+					}
 				}
 			}
 		}
@@ -184,9 +197,9 @@ class Router
 	/**
 	 * Processes the given request using the defined routes
 	 *
-	 * @param	Request		the given Request object
-	 * @param	bool		whether to use the defined routes or not
-	 * @return	mixed		the match array or false
+	 * @param   Request     the given Request object
+	 * @param   bool        whether to use the defined routes or not
+	 * @return  mixed       the match array or false
 	 */
 	public static function process(\Request $request, $route = true)
 	{
@@ -206,7 +219,7 @@ class Router
 		if ( ! $match)
 		{
 			// Since we didn't find a match, we will create a new route.
-			$match = new Route(preg_quote($request->uri->get(), '#'), $request->uri->get());
+			$match = new \Route(preg_quote($request->uri->get(), '#'), $request->uri->get());
 			$match->parse($request);
 		}
 
@@ -221,8 +234,8 @@ class Router
 	/**
 	 * Find the controller that matches the route requested
 	 *
-	 * @param	Route  $match  the given Route object
-	 * @return	mixed  the match array or false
+	 * @param   Route  $match  the given Route object
+	 * @return  mixed  the match array or false
 	 */
 	protected static function parse_match($match)
 	{
@@ -262,7 +275,7 @@ class Router
 		{
 			// determine which classes to check. First, all underscores, or all namespaced
 			$classes = array(
-				$namespace.$prefix.\Inflector::words_to_upper(implode(substr($prefix,-1,1), $temp_segments), substr($prefix,-1,1)),
+				$namespace.$prefix.\Inflector::words_to_upper(implode(substr($prefix, -1, 1), $temp_segments), substr($prefix, -1, 1)),
 			);
 
 			// if we're namespacing, check a hybrid version too
@@ -320,5 +333,3 @@ class Router
 		return static::$prefix;
 	}
 }
-
-

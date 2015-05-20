@@ -6,12 +6,11 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
-
 
 /**
  * ViewModel, alias for Presenter, for BC purposes
@@ -20,7 +19,7 @@ namespace Fuel\Core;
  * @subpackage  Core
  * @category    Core
  */
-abstract class Viewmodel extends Presenter
+abstract class Viewmodel extends \Presenter
 {
 	// namespace prefix
 	protected static $ns_prefix = 'View_';

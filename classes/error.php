@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -19,15 +19,17 @@ class PhpErrorException extends \ErrorException
 {
 	public static $count = 0;
 
+	public static $loglevel = \Fuel::L_ERROR;
+
 	/**
 	 * Allow the error handler from recovering from error types defined in the config
 	 */
 	public function recover()
 	{
 		// handle the error based on the config and the environment we're in
-		if (static::$count <= Config::get('errors.throttle', 10))
+		if (static::$count <= \Config::get('errors.throttle', 10))
 		{
-			logger(\Fuel::L_ERROR, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
+			logger(static::$loglevel, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
 
 			if (\Fuel::$env != \Fuel::PRODUCTION and ($this->code & error_reporting()) == $this->code)
 			{
@@ -50,6 +52,7 @@ class PhpErrorException extends \ErrorException
  */
 class Error
 {
+	public static $loglevel = \Fuel::L_ERROR;
 
 	public static $levels = array(
 		0                   => 'Error',
@@ -87,7 +90,7 @@ class Error
 		if ($last_error AND in_array($last_error['type'], static::$fatal_levels))
 		{
 			$severity = static::$levels[$last_error['type']];
-			logger(\Fuel::L_ERROR, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line']);
+			logger(static::$loglevel, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line']);
 
 			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
 			if (\Fuel::$env != \Fuel::PRODUCTION)
@@ -117,7 +120,7 @@ class Error
 		}
 
 		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
-		logger(\Fuel::L_ERROR, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
+		logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
 
 		if (\Fuel::$env != \Fuel::PRODUCTION)
 		{
@@ -143,7 +146,7 @@ class Error
 		// don't do anything if error reporting is disabled
 		if (error_reporting() !== 0)
 		{
-			$fatal = (bool)( ! in_array($severity, \Config::get('errors.continue_on', array())));
+			$fatal = (bool) ( ! in_array($severity, \Config::get('errors.continue_on', array())));
 
 			if ($fatal)
 			{
@@ -169,7 +172,7 @@ class Error
 	 */
 	public static function show_php_error(\Exception $e)
 	{
-		$fatal = (bool)( ! in_array($e->getCode(), \Config::get('errors.continue_on', array())));
+		$fatal = (bool) ( ! in_array($e->getCode(), \Config::get('errors.continue_on', array())));
 		$data = static::prepare_exception($e, $fatal);
 
 		if ($fatal)

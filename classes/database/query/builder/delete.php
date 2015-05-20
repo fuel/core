@@ -13,7 +13,6 @@ namespace Fuel\Core;
 
 class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 {
-
 	// DELETE FROM ...
 	protected $_table;
 
@@ -31,7 +30,7 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 		}
 
 		// Start the query with no SQL
-		return parent::__construct('', \DB::DELETE);
+		parent::__construct('', \DB::DELETE);
 	}
 
 	/**

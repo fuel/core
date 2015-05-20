@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -24,13 +24,10 @@ namespace Fuel\Core;
  * @license 	http://www.opensource.org/licenses/mit-license.php The MIT License
  */
 
-
 class Mongo_DbException extends \FuelException {}
-
 
 class Mongo_Db
 {
-
 	/**
 	 * Holds the current Mongo connection object
 	 *
@@ -254,7 +251,7 @@ class Mongo_Db
 		{
 			try
 			{
-				static::instance()->connection->{$db}->{$col}->drop();
+				static::instance($db)->db->{$col}->drop();
 				return true;
 			}
 			catch (\Exception $e)
@@ -1147,7 +1144,7 @@ class Mongo_Db
 	/**
 	 *	Returns all collection objects
 	 *
-	 *	@param	bool	$system_collections  wether or not to include system collections
+	 *	@param	bool	$system_collections  whether or not to include system collections
 	 *	@usage	$collections = $mongodb->list_collections();
 	 */
 	public function list_collections($system_collections = false)
@@ -1180,4 +1177,3 @@ class Mongo_Db
 		}
 	}
 }
-

@@ -6,17 +6,14 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
-
-
 abstract class Session_Driver
 {
-
 	/*
 	 * @var	session class configuration
 	 */
@@ -53,7 +50,6 @@ abstract class Session_Driver
 	 * @return	void
 	 */
 	abstract function create();
-
 
 	// --------------------------------------------------------------------
 	// generic driver methods
@@ -436,7 +432,10 @@ abstract class Session_Driver
 	 */
 	public function set_config($name, $value = null)
 	{
-		if (isset($this->config[$name])) $this->config[$name] = $value;
+		if (isset($this->config[$name]))
+		{
+			$this->config[$name] = $value;
+		}
 
 		return $this;
 	}
@@ -685,6 +684,7 @@ abstract class Session_Driver
 				case 'expire_on_close':
 				case 'flash_expire_after_get':
 				case 'flash_auto_expire':
+				case 'native_emulation':
 					// make sure it's a boolean
 					$item = (bool) $item;
 				break;
@@ -710,10 +710,13 @@ abstract class Session_Driver
 				break;
 
 				case 'rotation_time':
-					// make sure it's an integer
-					$item = (int) $item;
-					// invalid? set it to 5 minutes
-					$item <= 0 and $item = 300;
+					if ($item !== false)
+					{
+						// make sure it's an integer
+						$item = (int) $item;
+						// invalid? set it to 5 minutes
+						$item <= 0 and $item = 300;
+					}
 				break;
 
 				case 'flash_id':
@@ -736,5 +739,3 @@ abstract class Session_Driver
 	}
 
 }
-
-

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -14,7 +14,6 @@ namespace Fuel\Core;
 
 class Image_Imagemagick extends \Image_Driver
 {
-
 	protected $image_temp = null;
 	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
 	protected $sizes_cache = null;
@@ -193,7 +192,7 @@ class Image_Imagemagick extends \Image_Driver
 			list($width, $height) = explode(" ", $output[0]);
 			$return = (object) array(
 				'width' => $width,
-				'height' => $height
+				'height' => $height,
 			);
 
 			if ($is_loaded_file)
@@ -355,4 +354,3 @@ class Image_Imagemagick extends \Image_Driver
 		}
 	}
 }
-

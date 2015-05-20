@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -20,8 +20,6 @@ namespace Fuel\Core;
  */
 class Test_Router extends TestCase
 {
-    public function test_foo() {}
-
     /**
      * Provider for test_classnames.
      */
@@ -37,7 +35,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller_';
-                }
+                },
             ),
             array(
                 'api/app',
@@ -48,7 +46,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller\\';
-                }
+                },
             ),
             array(
                 'api/app/version',
@@ -59,7 +57,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller_';
-                }
+                },
             ),
             array(
                 'api/app/version',
@@ -69,7 +67,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller\\';
-                }
+                },
             ),
             array(
                 'api/app/version/more',
@@ -80,7 +78,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller_';
-                }
+                },
             ),
             array(
                 'api/app/version/more',
@@ -90,7 +88,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller\\';
-                }
+                },
             ),
             array(
                 'api/app/version/more/subdirs',
@@ -101,7 +99,7 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller_';
-                }
+                },
             ),
             array(
                 'api/app/version/more/subdirs',
@@ -112,8 +110,8 @@ class Test_Router extends TestCase
                 },
                 function () {
                     return 'Controller\\';
-                }
-            )
+                },
+            ),
         );
     }
 
@@ -137,4 +135,33 @@ class Test_Router extends TestCase
         $this->assertEquals($action, $match->action);
         $this->assertEquals(array(), $match->method_params);
     }
+
+	public function test_add_route_and_router_name()
+	{
+		$path = 'testing/route';
+		$options = null;
+		$prepend = false;
+		$case_sensitive = null;
+		Router::add($path, $options, $prepend, $case_sensitive);
+		
+		$this->assertEquals($path, Router::$routes[$path]->path);
+		$this->assertEquals($path, Router::$routes[$path]->name);
+		
+		Router::delete($path);
+	}
+
+	public function test_add_route_and_router_option_name()
+	{
+		$path = 'testing/route';
+		$name = 'option_name';
+		$options = array('name' => $name);
+		$prepend = false;
+		$case_sensitive = null;
+		Router::add($path, $options, $prepend, $case_sensitive);
+		
+		$this->assertEquals($path, Router::$routes[$name]->path);
+		$this->assertEquals($name, Router::$routes[$name]->name);
+		
+		Router::delete($name);
+	}
 }

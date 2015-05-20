@@ -6,25 +6,22 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
-
-
 // --------------------------------------------------------------------
 
 class Session_Redis extends \Session_Driver
 {
-
 	/**
 	 * array of driver config defaults
 	 */
 	protected static $_defaults = array(
-		'cookie_name'		=> 'fuelrid',				// name of the session cookie for redis based sessions
-		'database'			=> 'default'				// name of the redis database to use (as configured in config/db.php)
+		'cookie_name' => 'fuelrid',				// name of the session cookie for redis based sessions
+		'database'    => 'default',				// name of the redis database to use (as configured in config/db.php)
 	);
 
 	/*
@@ -73,12 +70,12 @@ class Session_Redis extends \Session_Driver
 	public function create()
 	{
 		// create a new session
-		$this->keys['session_id']	= $this->_new_session_id();
-		$this->keys['previous_id']	= $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_hash']		= md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']	= \Input::user_agent();
-		$this->keys['created'] 		= $this->time->get_timestamp();
-		$this->keys['updated'] 		= $this->keys['created'];
+		$this->keys['session_id']  = $this->_new_session_id();
+		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
+		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
+		$this->keys['user_agent']  = \Input::user_agent();
+		$this->keys['created']     = $this->time->get_timestamp();
+		$this->keys['updated']     = $this->keys['created'];
 
 		return $this;
 	}
@@ -150,9 +147,17 @@ class Session_Redis extends \Session_Driver
 			else
 			{
 				// session is valid, retrieve the rest of the payload
-				if (isset($payload[0]) and is_array($payload[0])) $this->keys  = $payload[0];
-				if (isset($payload[1]) and is_array($payload[1])) $this->data  = $payload[1];
-				if (isset($payload[2]) and is_array($payload[2])) $this->flash = $payload[2];
+				if (isset($payload[0]) and is_array($payload[0]))
+				{
+					$this->keys  = $payload[0];
+				}
+				if (isset($payload[1]) and is_array($payload[1]))
+				{
+					$this->data  = $payload[1];
+				}
+				if (isset($payload[2]) and is_array($payload[2])){
+					$this->flash = $payload[2];
+				}
 			}
 		}
 
@@ -300,5 +305,3 @@ class Session_Redis extends \Session_Driver
 	}
 
 }
-
-

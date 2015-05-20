@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -14,7 +14,6 @@ namespace Fuel\Core;
 
 class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializable, \Sanitization
 {
-
 	/**
 	 * @var  string  $_table_name  The table name (must set this in your Model)
 	 */
@@ -405,12 +404,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 */
 	public function __construct(array $data = array())
 	{
+		$this->set($data);
+
 		if (isset($this->_data[static::primary_key()]))
 		{
 			$this->is_new(false);
 		}
-
-		$this->set($data);
 	}
 
 	/**
@@ -493,7 +492,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * Saves the object to the database by either creating a new record
 	 * or updating an existing record. Sets the default values if set.
 	 *
-	 * @param   bool   $validate  wether to validate the input
+	 * @param   bool   $validate  whether to validate the input
 	 * @return  mixed  Rows affected and or insert ID
 	 */
 	public function save($validate = true)
@@ -793,9 +792,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	}
 
 	/**
-	 * Returns wether the instance will pass validation.
+	 * Returns whether the instance will pass validation.
 	 *
-	 * @return  bool  wether the instance passed validation
+	 * @return  bool  whether the instance passed validation
 	 */
 	public function validates()
 	{

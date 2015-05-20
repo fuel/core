@@ -13,6 +13,8 @@ class Config_Db implements Config_Interface
 
 	protected $vars = array();
 
+	protected $database;
+
 	protected $table;
 
 	/**
@@ -33,6 +35,7 @@ class Config_Db implements Config_Interface
 			'DOCROOT' => DOCROOT,
 		) + $vars;
 
+		$this->database = \Config::get('config.database', null);
 		$this->table = \Config::get('config.table_name', 'config');
 	}
 
@@ -49,7 +52,7 @@ class Config_Db implements Config_Interface
 		// try to retrieve the config from the database
 		try
 		{
-			$result = \DB::select('config')->from($this->table)->where('identifier', '=', $this->identifier)->execute();
+			$result = \DB::select('config')->from($this->table)->where('identifier', '=', $this->identifier)->execute($this->database);
 		}
 		catch (Database_Exception $e)
 		{
@@ -141,12 +144,12 @@ class Config_Db implements Config_Interface
 		$contents = serialize($contents);
 
 		// update the config in the database
-		$result = \DB::update($this->table)->set(array('config' => $contents, 'hash' => uniqid()))->where('identifier', '=', $this->identifier)->execute();
+		$result = \DB::update($this->table)->set(array('config' => $contents, 'hash' => uniqid()))->where('identifier', '=', $this->identifier)->execute($this->database);
 
 		// if there wasn't an update, do an insert
 		if ($result === 0)
 		{
-			list($notused, $result) = \DB::insert($this->table)->set(array('identifier' => $this->identifier, 'config' => $contents, 'hash' => uniqid()))->execute();
+			list($notused, $result) = \DB::insert($this->table)->set(array('identifier' => $this->identifier, 'config' => $contents, 'hash' => uniqid()))->execute($this->database);
 		}
 
 		return $result === 1;

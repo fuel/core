@@ -6,14 +6,21 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
+class HttpNoAccessException extends HttpException
+{
+	public function response()
+	{
+		return new \Response(\View::forge('403'), 403);
+	}
+}
 
-class HttpNotFoundException extends \HttpException
+class HttpNotFoundException extends HttpException
 {
 	public function response()
 	{
@@ -21,7 +28,7 @@ class HttpNotFoundException extends \HttpException
 	}
 }
 
-class HttpServerErrorException extends \HttpException
+class HttpServerErrorException extends HttpException
 {
 	public function response()
 	{

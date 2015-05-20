@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -26,12 +26,10 @@ class ModuleNotFoundException extends \FuelException { }
  */
 class Module
 {
-
 	/**
 	 * @var  array  $modules  Holds all the loaded module information.
 	 */
 	protected static $modules = array();
-
 
 	/**
 	 * Loads the given module.  If a path is not given, then 'module_paths' is used.
@@ -46,6 +44,7 @@ class Module
 	{
 		if (is_array($module))
 		{
+			$result = true;
 			foreach ($module as $mod => $path)
 			{
 				if (is_numeric($mod))
@@ -53,11 +52,10 @@ class Module
 					$mod = $path;
 					$path = null;
 				}
-				static::load($mod, $path);
+				$result = $result and static::load($mod, $path);
 			}
-			return false;
+			return $result;
 		}
-
 
 		if (static::loaded($module))
 		{
@@ -81,11 +79,16 @@ class Module
 			}
 
 		}
+		else
+		{
+			// make sure it's terminated properly
+			$path = rtrim($path, DS).DS;
+		}
 
 		// make sure the path exists
 		if ( ! is_dir($path))
 		{
-			throw new ModuleNotFoundException("Module '$module' could not be found at '".\Fuel::clean_path($path)."'");
+			throw new \ModuleNotFoundException("Module '$module' could not be found at '".\Fuel::clean_path($path)."'");
 		}
 
 		// determine the module namespace
@@ -109,9 +112,37 @@ class Module
 	 */
 	public static function unload($module)
 	{
-		// delete all routes for this module
-		\Router::delete($module.'/(:any)');
+		// we can only unload a loaded module
+		if (isset(static::$modules[$module]))
+		{
+			$path = static::$modules[$module];
 
+			if (is_file($path .= 'config/routes.php'))
+			{
+				// load and add the module routes
+				$module_routes = \Fuel::load($path);
+
+				$route_names = array();
+				foreach($module_routes as $name => $_route)
+				{
+					if ($name === '_root_')
+					{
+						$name = $module;
+					}
+					elseif (strpos($name, $module.'/') !== 0 and $name != $module and $name !== '_404_')
+					{
+						$name = $module.'/'.$name;
+					}
+
+					$route_names[] = $name;
+				};
+
+				// delete the defined module routes
+				\Router::delete($route_names);
+			}
+		}
+
+		// delete this module
 		unset(static::$modules[$module]);
 	}
 
@@ -147,6 +178,7 @@ class Module
 		else
 		{
 			$paths = \Config::get('module_paths', array());
+			$module = strtolower($module);
 
 			foreach ($paths as $path)
 			{

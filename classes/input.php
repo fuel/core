@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -107,7 +107,7 @@ class Input
 
 		if (\Fuel::$is_cli)
 		{
-			if ($uri = \Cli::option('uri') !== null)
+			if (($uri = \Cli::option('uri')) !== null)
 			{
 				static::$detected_uri = $uri;
 			}
@@ -199,7 +199,7 @@ class Input
 			if ( ! empty($ext))
 			{
 				// if it has a slash in it, it's a URI segment with a dot in it
-				if (strpos($ext,'/') === false)
+				if (strpos($ext, '/') === false)
 				{
 					static::$detected_ext = ltrim($ext, '.');
 
@@ -339,11 +339,11 @@ class Input
 		// if called before a request is active, fall back to the global server setting
 		if (\Config::get('security.allow_x_headers', false))
 		{
-			return \Input::server('HTTP_X_HTTP_METHOD_OVERRIDE', \Input::server('REQUEST_METHOD', $default));
+			return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', static::server('REQUEST_METHOD', $default));
 		}
 		else
 		{
-			return \Input::server('REQUEST_METHOD', $default);
+			return static::server('REQUEST_METHOD', $default);
 		}
 	}
 
@@ -513,7 +513,7 @@ class Input
 			}
 		}
 
-		return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : \Arr::get($headers, $index, $default));
+		return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : \Arr::get(array_change_key_case($headers), strtolower($index), $default));
 	}
 
 	/**
@@ -525,7 +525,7 @@ class Input
 	{
 		static::$input = array_merge($_GET, $_POST);
 
-		if (\Input::method() == 'PUT' or \Input::method() == 'PATCH' or \Input::method() == 'DELETE')
+		if (static::method() == 'PUT' or static::method() == 'PATCH' or static::method() == 'DELETE')
 		{
 			static::$php_input === null and static::$php_input = file_get_contents('php://input');
 			if (strpos(static::headers('Content-Type'), 'www-form-urlencoded') > 0 and \Config::get('security.form-double-urlencoded', false))
@@ -539,5 +539,15 @@ class Input
 		{
 			static::$put_patch_delete = array();
 		}
+	}
+
+	/**
+	 * Return's the query string
+	 *
+	 * @return  string
+	 */
+	public static function query_string($default = '')
+	{
+		return static::server('QUERY_STRING', $default);
 	}
 }

@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -23,7 +23,6 @@ namespace Fuel\Core;
  */
 class Debug
 {
-
 	public static $max_nesting_level = 5;
 
 	public static $js_toggle_open = false;
@@ -167,11 +166,11 @@ JS;
 		if (is_array($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong>";
-			$return .=  " (Array, ".count($var)." element".(count($var)!=1?"s":"").")";
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong>";
+			$return .=  " (Array, ".count($var)." element".(count($var)!=1 ? "s" : "").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
-				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open?"close":"open")."\">&crarr;</a>\n";
+				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>\n";
 			}
 			else
 			{
@@ -191,7 +190,7 @@ JS;
 				}
 				if (count($var) > 0)
 				{
-					$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open?"block":"none").";\">$sub_return</span>";
+					$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open ? "block" : "none").";\">$sub_return</span>";
 				}
 				else
 				{
@@ -202,27 +201,27 @@ JS;
 		}
 		elseif (is_string($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (String): <span style=\"color:#E00000;\">\"".\Security::htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (String): <span style=\"color:#E00000;\">\"".\Security::htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
 		}
 		elseif (is_float($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Float): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Float): {$var}\n";
 		}
 		elseif (is_long($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Integer): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Integer): {$var}\n";
 		}
 		elseif (is_null($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> : null\n";
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> : null\n";
 		}
 		elseif (is_bool($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
 		}
 		elseif (is_double($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Double): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Double): {$var}\n";
 		}
 		elseif (is_object($var))
 		{
@@ -255,7 +254,7 @@ JS;
 			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
 			if (count($vars) > 0 and static::$max_nesting_level > $level)
 			{
-				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open?"close":"open")."\">&crarr;</a>\n";
+				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>\n";
 			}
 			$return .= "\n";
 
@@ -287,7 +286,7 @@ JS;
 
 			if (count($vars) > 0)
 			{
-				$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open?"block":"none").";\">$sub_return</span>";
+				$return .= "<span id=\"$id\" style=\"display: ".(static::$js_toggle_open ? "block" : "none").";\">$sub_return</span>";
 			}
 			else
 			{
@@ -296,7 +295,7 @@ JS;
 		}
 		else
 		{
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong>: {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong>: {$var}\n";
 		}
 		return $return;
 	}
@@ -517,7 +516,7 @@ JS;
 		else
 		{
 			list($usec, $sec) = explode(" ", microtime());
-			$utime_before = ((float)$usec + (float)$sec);
+			$utime_before = ((float) $usec + (float) $sec);
 			$stime_before = 0;
 		}
 
@@ -534,14 +533,14 @@ JS;
 		else
 		{
 			list($usec, $sec) = explode(" ", microtime());
-			$utime_after = ((float)$usec + (float)$sec);
+			$utime_after = ((float) $usec + (float) $sec);
 			$stime_after = 0;
 		}
 
 		return array(
 			'user' => sprintf('%1.6f', $utime_after - $utime_before),
 			'system' => sprintf('%1.6f', $stime_after - $stime_before),
-			'result' => $result
+			'result' => $result,
 		);
 	}
 

@@ -6,16 +6,14 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
 
-
 abstract class Cache_Storage_Driver
 {
-
 	/**
 	 * @var  array  defines which class properties are gettable with get_... in the __call() method
 	 */
@@ -231,7 +229,10 @@ abstract class Cache_Storage_Driver
 		$current_expiration = $this->expiration;
 
 		// Use either the given value or the class property
-		if ( ! is_null($contents)) $this->set_contents($contents);
+		if ( ! is_null($contents))
+		{
+			$this->set_contents($contents);
+		}
 		$this->expiration	= ($expiration !== false) ? $expiration : $this->expiration;
 		$this->dependencies	= ( ! empty($dependencies)) ? $dependencies : $this->dependencies;
 

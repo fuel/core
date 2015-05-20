@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -14,7 +14,6 @@ namespace Fuel\Core;
 
 class Image
 {
-
 	protected static $_instance = null;
 
 	/**
@@ -90,9 +89,13 @@ class Image
 		if (static::$_instance === null)
 		{
 			if ($value !== null)
+			{
 				$index = array($index => $value);
+			}
 			if (is_array($index))
+			{
 				static::$_config = array_merge(static::$_config, $index);
+			}
 			static::instance();
 			return static::instance();
 		} else {

@@ -71,7 +71,13 @@ class_alias('Fuel\\Core\\Autoloader', 'Autoloader');
 require_once APPPATH.'bootstrap.php';
 
 // Set test mode
-Fuel::$is_test = true;
+\Fuel::$is_test = true;
+
+// Ad hoc fix for AspectMock error
+if (class_exists('AspectMock\Kernel'))
+{
+	class_exists('Error');
+}
 
 // Import the TestCase class
 import('testcase');

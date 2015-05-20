@@ -6,12 +6,11 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
-
 
 /**
  * Presenter
@@ -30,10 +29,40 @@ abstract class Presenter
 	 *
 	 * @param   string  Presenter classname without View_ prefix or full classname
 	 * @param   string  Method to execute
+	 * @param   bool    Auto filter the view data
+	 * @param   string  View to associate with this persenter
 	 * @return  Presenter
 	 */
 	public static function forge($presenter, $method = 'view', $auto_filter = null, $view = null)
 	{
+		// determine the presenter namespace from the current request context
+		$namespace = \Request::active() ? ucfirst(\Request::active()->module) : '';
+
+		// create the list of possible class prefixes
+		$prefixes = array(static::$ns_prefix, $namespace.'\\');
+
+		/**
+		 * Add non prefixed classnames to the list as well, for BC reasons
+		 *
+		 * @deprecated 1.6
+		 */
+		if ( ! empty($namespace))
+		{
+			array_unshift($prefixes, $namespace.'\\'.static::$ns_prefix);
+			$prefixes[] = '';
+		}
+
+		// loading from a specific namespace?
+		if (strpos($presenter, '::') !== false)
+		{
+			$split = explode('::', $presenter, 2);
+			if (isset($split[1]))
+			{
+				array_unshift($prefixes, ucfirst($split[0]).'\\'.static::$ns_prefix);
+				$presenter = $split[1];
+			}
+		}
+
 		// if no custom view is given, make it equal to the presenter name
 		is_null($view) and $view = $presenter;
 
@@ -44,24 +73,12 @@ abstract class Presenter
 			strpos($presenter, '.') === false ? $presenter : substr($presenter, 0, -strlen(strrchr($presenter, '.')))
 		));
 
-		// determine the presenter namespace from the current request context
-		$namespace = \Request::active() ? ucfirst(\Request::active()->module) : '';
-
-		// list of possible presenter classnames, start with the namespaced one
-		$classes = array($namespace.'\\'.static::$ns_prefix.$presenter);
-
-		// add the global version if needed
-		empty($namespace) or $classes[] = static::$ns_prefix.$presenter;
-
-		/**
-		 * Add non prefixed classnames to the list, for BC reasons
-		 *
-		 * @deprecated 1.6
-		 */
-		$classes[] = $namespace.'\\'.$presenter;
-
-		// and add the global version of that if needed
-		empty($namespace) or $classes[] = $presenter;
+		// create the list of possible presenter classnames, start with the namespaced one
+		$classes = array();
+		foreach ($prefixes as $prefix)
+		{
+			$classes[] = $prefix.$presenter;
+		}
 
 		// check if we can find one
 		foreach ($classes as $class)
@@ -284,7 +301,6 @@ abstract class Presenter
 		return $this->_view->auto_filter($setting);
 	}
 
-
 	/**
 	 * Add variables through method and after() and create template as a string
 	 */
@@ -292,8 +308,8 @@ abstract class Presenter
 	{
 		if (class_exists('Request', false))
 		{
-			$current_request = Request::active();
-			Request::active($this->_active_request);
+			$current_request = \Request::active();
+			\Request::active($this->_active_request);
 		}
 
 		$this->before();
@@ -304,7 +320,7 @@ abstract class Presenter
 
 		if (class_exists('Request', false))
 		{
-			Request::active($current_request);
+			\Request::active($current_request);
 		}
 
 		return $return;
@@ -327,5 +343,3 @@ abstract class Presenter
 		}
 	}
 }
-
-

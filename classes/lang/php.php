@@ -72,7 +72,7 @@ class Lang_Php extends \Lang_File
 						$identifier = substr($identifier, $pos+2);
 
 						// strip the classes directory as we need the module root
-						$file = substr($file,0, -8).'lang'.DS.$identifier;
+						$file = substr($file, 0, -8).'lang'.DS.$identifier;
 					}
 					else
 					{

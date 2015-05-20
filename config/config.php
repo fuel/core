@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -18,7 +18,6 @@
  *
  * This will allow you to upgrade fuel without losing your custom config.
  */
-
 
 return array(
 
@@ -55,7 +54,7 @@ return array(
 
 	'profiling'  => false,
 
-        /**
+	/**
 	 * profiling_paths - The paths to show in profiler.
 	 *
 	 * If you do not wish to see path set to 'NULL'
@@ -120,14 +119,14 @@ return array(
 	/**
 	 * Logging Threshold.  Can be set to any of the following:
 	 *
-	 * Fuel::L_NONE
-	 * Fuel::L_ERROR
-	 * Fuel::L_WARNING
-	 * Fuel::L_DEBUG
-	 * Fuel::L_INFO
-	 * Fuel::L_ALL
+	 * \Fuel::L_NONE
+	 * \Fuel::L_ERROR
+	 * \Fuel::L_WARNING
+	 * \Fuel::L_DEBUG
+	 * \Fuel::L_INFO
+	 * \Fuel::L_ALL
 	 */
-	'log_threshold'    => Fuel::L_WARNING,
+	'log_threshold'    => \Fuel::L_WARNING,
 
 	/**
 	 * Log file and path. If no filename is given, it will be generated.
@@ -214,7 +213,7 @@ return array(
 		'htmlentities_flags' => ENT_QUOTES,
 
 		/**
-		 * Wether to encode HTML entities as well
+		 * Whether to encode HTML entities as well
 		 */
 		'htmlentities_double_encode' => false,
 
@@ -235,6 +234,15 @@ return array(
 		 * before submitting
 		 */
 		'form-double-urlencoded' => false,
+
+		/**
+		 * clean_paths - paths to clean before outputting FQFN or paths
+		 *
+		 * If you do not wish to see path set to 'NULL'
+		 * You can also add other paths that you wish not to see
+		 */
+		'clean_paths' => array(
+		),
 	),
 
 	/**
@@ -258,7 +266,7 @@ return array(
 	 */
 	'validation' => array(
 		/**
-		 * Wether to fallback to global when a value is not found in the input array.
+		 * Whether to fallback to global when a value is not found in the input array.
 		 */
 		'global_input_fallback' => true,
 	),
@@ -278,7 +286,7 @@ return array(
 		'case_sensitive' => true,
 
 		/**
-		 *  Wether to strip the extension
+		 *  Whether to strip the extension
 		 */
 		'strip_extension' => true,
 	),
@@ -288,7 +296,7 @@ return array(
 	 */
 	'response' => array(
 		/**
-		 *  Wether to support URI wildcards when redirecting
+		 *  Whether to support URI wildcards when redirecting
 		 */
 		'redirect_with_wildcards' => true,
 	),
@@ -301,6 +309,21 @@ return array(
 		 * Name of the table used by the Config_Db driver
 		 */
 		'table_name' => 'config',
+
+		/*
+		 * Database that holds the config table
+		 */
+		'database' => null,
+
+		/*
+		 * Array of servers and portnumbers that run the memcached service for config data
+		 */
+		'memcached'	=> array(
+			'identifier' => 'config',
+			'servers' => array(
+				array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
+			),
+		),
 	),
 
 	/**
@@ -337,7 +360,6 @@ return array(
 	'package_paths' => array(
 		//PKGPATH
 	),
-
 
 	/**************************************************************************/
 	/* Always Load                                                            */

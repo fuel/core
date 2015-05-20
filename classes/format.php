@@ -6,7 +6,7 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -25,7 +25,6 @@ namespace Fuel\Core;
  */
 class Format
 {
-
 	/**
 	 * Returns an instance of the Format object.
 	 *
@@ -136,9 +135,10 @@ class Format
 	 * @param   null         $structure
 	 * @param   null|string  $basenode
 	 * @param   null|bool    whether to use CDATA in nodes
+	 * @param   mixed        if true, element values are true/false. if 1, 1/0.
 	 * @return  string
 	 */
-	public function to_xml($data = null, $structure = null, $basenode = null, $use_cdata = null)
+	public function to_xml($data = null, $structure = null, $basenode = null, $use_cdata = null, $bool_representation = null)
 	{
 		if ($data == null)
 		{
@@ -147,6 +147,7 @@ class Format
 
 		is_null($basenode) and $basenode = \Config::get('format.xml.basenode', 'xml');
 		is_null($use_cdata) and $use_cdata = \Config::get('format.xml.use_cdata', false);
+		is_null($bool_representation) and $bool_representation = \Config::get('format.xml.bool_representation', null);
 
 		// turn off compatibility mode as simple xml throws a wobbly if you don't.
 		if (ini_get('zend.ze1_compatibility_mode') == 1)
@@ -185,10 +186,21 @@ class Format
 				// recursive call if value is not empty
 				if( ! empty($value))
 				{
-					$this->to_xml($value, $node, $key, $use_cdata);
+					$this->to_xml($value, $node, $key, $use_cdata, $bool_representation);
 				}
 			}
-
+			elseif ($bool_representation and is_bool($value))
+			{
+				if ($bool_representation === true)
+				{
+					$bool = $value ? 'true' : 'false';
+				}
+				else
+				{
+					$bool = $value ? '1' : '0';
+				}
+				$structure->addChild($key, $bool);
+			}
 			else
 			{
 				// add single node.
@@ -227,7 +239,7 @@ class Format
 		$delimiter or $delimiter = \Config::get('format.csv.delimiter', \Config::get('format.csv.export.delimiter', ','));
 		$enclosure = \Config::get('format.csv.enclosure', \Config::get('format.csv.export.enclosure', '"'));
 		$escape = \Config::get('format.csv.escape', \Config::get('format.csv.export.escape', '\\'));
-		is_null($enclose_numbers) and $enclose_numbers = \Config::get('format.csv.delimit_numbers',  true);
+		is_null($enclose_numbers) and $enclose_numbers = \Config::get('format.csv.enclose_numbers', true);
 
 		// escape, delimit and enclose function
 		$escaper = function($items, $enclose_numbers) use($enclosure, $escape, $delimiter) {
@@ -288,7 +300,7 @@ class Format
 	 * To JSON conversion
 	 *
 	 * @param   mixed  $data
-	 * @param   bool   wether to make the json pretty
+	 * @param   bool   whether to make the json pretty
 	 * @return  string
 	 */
 	public function to_json($data = null, $pretty = false)
@@ -308,7 +320,7 @@ class Format
 	 * To JSONP conversion
 	 *
 	 * @param   mixed   $data
-	 * @param   bool    $pretty    wether to make the json pretty
+	 * @param   bool    $pretty    whether to make the json pretty
 	 * @param   string  $callback  JSONP callback
 	 * @return  string  formatted JSONP
 	 */
@@ -413,7 +425,7 @@ class Format
 
 		// Convert all objects SimpleXMLElement to array recursively
 		$arr = array();
-		foreach ((array)$_arr as $key => $val)
+		foreach ((array) $_arr as $key => $val)
 		{
 			$this->ignore_namespaces or $key = \Arr::get($escape_keys, $key, $key);
 			if ( ! $val instanceOf \SimpleXMLElement or $val->count() or $val->attributes())
@@ -485,7 +497,7 @@ class Format
 		foreach ($rows as $row)
 		{
 			// process the row
-			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.($incomplete?$newline:'').$row, $delimiter, $enclosure, $escape));
+			$data_fields = str_replace($escape.$enclosure, $enclosure, str_getcsv($incomplete.($incomplete ? $newline : '').$row, $delimiter, $enclosure, $escape));
 
 			// if we didn't have headers, the first row determines the number of fields
 			if ( ! isset($headcount))

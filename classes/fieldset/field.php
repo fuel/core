@@ -6,13 +6,11 @@
  * @version    1.7
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2014 Fuel Development Team
+ * @copyright  2010 - 2015 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
-
-
 
 /**
  * Fieldset Class
@@ -92,10 +90,16 @@ class Fieldset_Field
 	 * @param  array
 	 * @param  array
 	 * @param  Fieldset
+	 * @throws \RuntimeException
 	 */
 	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), $fieldset = null)
 	{
 		$this->name = (string) $name;
+
+		if ($this->name === "")
+		{
+			throw new \RuntimeException('Fieldset field name may not be empty.');
+		}
 
 		// determine the field's base name (for fields with array indices)
 		$this->basename = ($pos = strpos($this->name, '[')) ? rtrim(substr(strrchr($this->name, '['), 1), ']') : $this->name;
@@ -144,12 +148,15 @@ class Fieldset_Field
 		{
 			// remove the field from the fieldset
 			$this->fieldset->delete($this->name);
+
+			// reset the fieldset
+			$this->fieldset = null;
+
+			// add this field to the new fieldset
+			$fieldset->add($this);
 		}
 
-		// add this field to the new fieldset
-		$fieldset->add($this);
-
-		// swap fieldsets
+		// assign the new fieldset
 		$this->fieldset = $fieldset;
 
 		return $this;
