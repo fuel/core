@@ -1199,18 +1199,13 @@ class Mongo_Db
      */
     public function dump($collection_name = null, $path = null)
     {
-        //set_time_limit(0);
-
         $this->dump_folder = $path ?: APPPATH . "tmp" . date("/Y/m/d");
 
         if (!is_dir($this->dump_folder))
         {
             mkdir($this->dump_folder, 0777, true);
         }
-
-        /*
-            Backup full database
-        */
+        // Backup full database
         if ($collection_name == null)
         {
             //get all collection in current database
@@ -1220,9 +1215,7 @@ class Mongo_Db
                 $this->_write_dump($mongo_collection);
             }
         }
-        /*
-           Backup given collection`s
-       */
+        // Backup given collection`s
         else
         {
             if (is_array($collection_name))
