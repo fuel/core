@@ -1264,3 +1264,4 @@ class Mongo_Db
         }
     }
 }
+    //Restore mongoimport --db <database-name> --collection <collection-name> --file filename.json
