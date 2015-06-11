@@ -81,20 +81,20 @@ class Migrate
 			$default = true;
 
 			// fetch defined modules
-			$modules = [];
+			$modules = explode(',', $modules);
 			foreach(\Config::get('always_load.modules', []) as $module)
 			{
 				$modules[] = $module;
 			}
-			$modules = implode(',', $modules);
+			$modules = implode(',', array_unique($modules));
 
 			// fetch defined packages
-			$packages = [];
+			$packages = explode(',', $packages);
 			foreach(\Config::get('always_load.packages', []) as $name => $package)
 			{
 				$packages[] = is_numeric($name) ? $package : $name;
 			}
-			$packages = implode(',', $packages);
+			$packages = implode(',', array_unique($packages));
 		}
 
 		// if modules option set
@@ -438,6 +438,7 @@ Examples:
     php oil r migrate --modules=module1 -v=3
     php oil r migrate --all
     php oil r migrate --installed
+    php oil r migrate --installed --modules=extramodule --packages=extrapackage
     php oil r migrate --all -v
 
 HELP;
