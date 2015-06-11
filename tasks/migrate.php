@@ -62,12 +62,39 @@ class Migrate
 		$packages = \Cli::option('packages', \Cli::option('p'));
 		$default = \Cli::option('default');
 		$all = \Cli::option('all');
+		$installed = \Cli::option('installed');
+
+		if ($all and $installed)
+		{
+			\Cli::write('--all and --installed are mutually exclusive!', 'light_red');
+			exit;
+		}
 
 		if ($all)
 		{
+			$default = true;
 			$modules = true;
 			$packages = true;
+		}
+		elseif ($installed)
+		{
 			$default = true;
+
+			// fetch defined modules
+			$modules = [];
+			foreach(\Config::get('always_load.modules', []) as $module)
+			{
+				$modules[] = $module;
+			}
+			$modules = implode(',', $modules);
+
+			// fetch defined packages
+			$packages = [];
+			foreach(\Config::get('always_load.packages', []) as $name => $package)
+			{
+				$packages[] = is_numeric(name) ? $package : $name;
+			}
+			$packages = implode(',', $packages);
 		}
 
 		// if modules option set
@@ -386,6 +413,9 @@ Fuel options:
     -v, [--version]  # Migrate to a specific version ( only 1 item at a time)
                      # If no version is given, it lists all installed migrations
     --catchup        # Use if you have out-of-sequence migrations that can be safely run
+    --installed      # shortcut for --modules=<list> --packages=<list> --default, it will use
+                       your applications' "always_load" configuration to determine what to migrate
+    --all            # shortcut for --modules --packages --default
 
     # The following disable default migrations unless you add --default to the command
     --default                               # re-enables default migration
@@ -393,7 +423,6 @@ Fuel options:
     --modules=item1,item2 -m=item1,item2    # Migrates specific modules
     --packages -p                           # Migrates all packages
     --packages=item1,item2 -p=item1,item2   # Migrates specific modules
-    --all                                   # shortcut for --modules --packages --default
 
 Description:
     The migrate task can run migrations. You can go up, down or by default go to the current migration marked in the config file.
@@ -408,6 +437,7 @@ Examples:
     php oil r migrate:up --modules=module1,module2 --packages=package1
     php oil r migrate --modules=module1 -v=3
     php oil r migrate --all
+    php oil r migrate --installed
     php oil r migrate --all -v
 
 HELP;
