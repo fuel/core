@@ -92,7 +92,7 @@ class Migrate
 			$packages = [];
 			foreach(\Config::get('always_load.packages', []) as $name => $package)
 			{
-				$packages[] = is_numeric(name) ? $package : $name;
+				$packages[] = is_numeric($name) ? $package : $name;
 			}
 			$packages = implode(',', $packages);
 		}
