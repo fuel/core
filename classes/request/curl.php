@@ -152,6 +152,7 @@ class Request_Curl extends \Request_Driver
 		// Execute the request & and hide all output
 		$body = curl_exec($connection);
 		$this->response_info = curl_getinfo($connection);
+		$this->response_info['response'] = $body;
 		$mime = $this->response_info('content_type', 'text/plain');
 
 		// Was header data requested?
