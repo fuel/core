@@ -176,7 +176,7 @@ class Asset
 	 */
 	public static function css($stylesheets = array(), $attr = array(), $group = NULL, $raw = false)
 	{
-		return static::instance()->css($stylesheets, $attr, $group, $raw);
+		return static::instance()->assettype('css', $stylesheets, $attr, $group, $raw);
 	}
 
 	// --------------------------------------------------------------------
@@ -194,7 +194,7 @@ class Asset
 	 */
 	public static function js($scripts = array(), $attr = array(), $group = NULL, $raw = false)
 	{
-		return static::instance()->js($scripts, $attr, $group, $raw);
+		return static::instance()->assettype('js', $scripts, $attr, $group, $raw);
 	}
 
 	// --------------------------------------------------------------------
@@ -212,7 +212,7 @@ class Asset
 	 */
 	public static function img($images = array(), $attr = array(), $group = NULL)
 	{
-		return static::instance()->img($images, $attr, $group);
+		return static::instance()->assettype('img', $images, $attr, $group);
 	}
 
 	// --------------------------------------------------------------------
