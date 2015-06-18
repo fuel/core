@@ -300,7 +300,12 @@ class Session_File extends \Session_Driver
 		$payload = false;
 
 		$file = $this->config['path'].$this->config['cookie_name'].'_'.$session_id;
-		if (is_file($file))
+
+		// normalize the file
+		$file = realpath($file);
+
+		// make sure it exists and is in the config path
+		if (is_file($file) and strpos($file, $this->config['path']) === 0)
 		{
 			$handle = fopen($file, 'r');
 			if ($handle)
