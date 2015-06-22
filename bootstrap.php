@@ -177,6 +177,9 @@ function setup_autoloader()
         'Fuel\\Core\\Database_Mysqli_Connection'    => COREPATH.'classes/database/mysqli/connection.php',
         'Fuel\\Core\\Database_MySQLi_Result'        => COREPATH.'classes/database/mysqli/result.php',
 
+        'Fuel\\Core\\Database_Sqlsrv_Connection'    => COREPATH.'classes/database/sqlsrv/connection.php',
+        'Fuel\\Core\\Database_SQLSRV_Result'        => COREPATH.'classes/database/sqlsrv/result.php',
+
         'Fuel\\Core\\Fuel'                          => COREPATH.'classes/fuel.php',
         'Fuel\\Core\\FuelException'                 => COREPATH.'classes/fuel.php',
 
