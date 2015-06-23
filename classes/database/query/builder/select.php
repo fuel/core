@@ -411,6 +411,13 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 			$query .= 'DISTINCT ';
 		}
 
+                /* for SQL SERVER */
+		if ($this->_offset === NULL && $this->_limit !== NULL && substr($db->_db_type, 0, 6) === 'sqlsrv')
+		{
+			// Add limiting
+			$query .= ' TOP '.$this->_limit;
+		}
+
 		if (empty($this->_select))
 		{
 			// Select all columns
@@ -458,16 +465,25 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 			$query .= ' '.$this->_compile_order_by($db, $this->_order_by);
 		}
 
-		if ($this->_limit !== NULL)
-		{
-			// Add limiting
-			$query .= ' LIMIT '.$this->_limit;
-		}
+		if (substr($db->_db_type, 0, 6) === 'sqlsrv') {
+			// for SQL Server
+			if ($this->_offset !== NULL && $this->_limit !== NULL)
+			{
+				// Add limiting
+				$query .= ' OFFSET ' .$this->_offset. ' ROWS FETCH NEXT '.$this->_limit .' ROWS ONLY';
+			}
+		} else {
+			if ($this->_limit !== NULL)
+			{
+				// Add limiting
+				$query .= ' LIMIT '.$this->_limit;
+			}
 
-		if ($this->_offset !== NULL)
-		{
-			// Add offsets
-			$query .= ' OFFSET '.$this->_offset;
+			if ($this->_offset !== NULL)
+			{
+				// Add offsets
+				$query .= ' OFFSET '.$this->_offset;
+			}
 		}
 
 		return $query;
