@@ -447,6 +447,9 @@ class Asset_Instance
 				$file = $filename;
 			}
 
+			// deal with stray backslashes on Windows
+			$file = str_replace('\\', '/', $file);
+
 			// call the renderer for this type
 			if (isset($this->_renderers[$type]))
 			{
@@ -462,7 +465,7 @@ class Asset_Instance
 				}
 				else
 				{
-					throw new \OutOfBoundsException('Asset does not know how to renders files of type "'.$type.'"!');
+					throw new \OutOfBoundsException('Asset does not know how to render files of type "'.$type.'"!');
 				}
 			}
 		}
