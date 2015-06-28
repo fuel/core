@@ -82,12 +82,24 @@ class Migrate
 			->execute(static::$connection)
 			->as_array();
 
-		// convert the db migrations to match the config file structure
 		foreach($migrations as $migration)
 		{
+			// convert the db migrations to match the config file structure
 			isset(static::$migrations[$migration['type']]) or static::$migrations[$migration['type']] = array();
 			static::$migrations[$migration['type']][$migration['name']][] = $migration['migration'];
+
+			// make sure we have this in the config too
+			$config = \Config::get('migrations.version.'.$migration['type'].'.'.$migration['name'], array());
+			is_array($config) or $config = array();
+			if ( ! in_array($migration['migration'], $config))
+			{
+				$config[] = $migration['migration'];
+				sort($config);
+				\Config::set('migrations.version.'.$migration['type'].'.'.$migration['name'], $config);
+			}
 		}
+		// write the updated config
+		\Config::save(\Fuel::$env.DS.'migrations', 'migrations');
 	}
 
 	/**
