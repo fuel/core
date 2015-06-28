@@ -333,7 +333,15 @@ class Security
 	 */
 	public static function generate_token()
 	{
-		$token_base = time() . uniqid() . \Config::get('security.token_salt', '') . mt_rand(0, mt_getrandmax());
+
+		if (function_exists('random_bytes')) {
+			$token_base = \Config::get('security.token_salt', '') . random_bytes(32);
+		} else if (function_exists('openssl_random_pseudo_bytes')) {
+			$token_base = \Config::get('security.token_salt', '') . openssl_random_pseudo_bytes(32);
+		} else {
+			$token_base = time() . uniqid() . \Config::get('security.token_salt', '') . mt_rand(0, mt_getrandmax());
+		}
+
 		if (function_exists('hash_algos') and in_array('sha512', hash_algos()))
 		{
 			$token = hash('sha512', $token_base);
