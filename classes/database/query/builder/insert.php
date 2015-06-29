@@ -38,7 +38,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	{
 		if ($table)
 		{
-			// Set the inital table name
+			// Set the initial table name
 			$this->_table = $table;
 		}
 
@@ -81,8 +81,9 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	/**
 	 * Adds values. Multiple value sets can be added.
 	 *
-	 * @return  $this
 	 * @throws \FuelException
+	 * @param array $values
+	 * @return $this
 	 */
 	public function values(array $values)
 	{

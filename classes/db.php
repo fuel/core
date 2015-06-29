@@ -145,7 +145,7 @@ class DB
 	 *
 	 *     $expression = DB::expr('COUNT(users.id)');
 	 *
-	 * @param   string  expression
+	 * @param   string $string expression
 	 * @return  Database_Expression
 	 */
 	public static function expr($string)
