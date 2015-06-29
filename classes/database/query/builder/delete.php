@@ -25,7 +25,7 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 	{
 		if ($table)
 		{
-			// Set the inital table name
+			// Set the initial table name
 			$this->_table = $table;
 		}
 

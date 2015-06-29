@@ -126,7 +126,7 @@ class Database_Query
 	/**
 	 * Returns results as objects
 	 *
-	 * @param   string $class classname or true for stdClass
+	 * @param   mixed $class classname or true for stdClass
 	 *
 	 * @return  $this
 	 */

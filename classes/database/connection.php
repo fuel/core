@@ -265,7 +265,7 @@ abstract class Database_Connection
 	}
 
 	/**
-	 * Per connection cache controlle setter/getter
+	 * Per connection cache controller setter/getter
 	 *
 	 * @param   bool   $bool  whether to enable it [optional]
 	 *
@@ -838,7 +838,7 @@ abstract class Database_Connection
 	abstract protected function driver_commit();
 
 	/**
-	 * Rollsback all pending transactional queries on the driver level
+	 * Rollback all pending transactional queries on the driver level
 	 *
 	 * @return bool
 	*/

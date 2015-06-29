@@ -101,8 +101,8 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 *     // Associative array of rows, "id" => "name"
 	 *     $rows = $result->as_array('id', 'name');
 	 *
-	 * @param   string  column for associative keys
-	 * @param   string  column for values
+	 * @param   string $key   column for associative keys
+	 * @param   string $value column for values
 	 * @return  array
 	 */
 	public function as_array($key = null, $value = null)
