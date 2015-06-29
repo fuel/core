@@ -28,8 +28,8 @@ class Cache
 	/**
 	 * Creates a new cache instance.
 	 *
-	 * @param   mixed                 The identifier of the cache, can be anything but empty
-	 * @param   array|string          Either an array of settings or the storage driver to be used
+	 * @param   mixed  $identifier    The identifier of the cache, can be anything but empty
+	 * @param   array  $config        Either an array of settings or the storage driver to be used
 	 * @return  Cache_Storage_Driver  The new cache object
 	 */
 	public static function forge($identifier, $config = array())
@@ -61,14 +61,14 @@ class Cache
 	}
 
 	/**
-	 * Front for writing the cache, ensures interchangebility of storage drivers. Actual writing
+	 * Front for writing the cache, ensures interchangeability of storage drivers. Actual writing
 	 * is being done by the _set() method which needs to be extended.
 	 *
-	 * @param   mixed  The identifier of the cache, can be anything but empty
-	 * @param   mixed  The content to be cached
-	 * @param   int    The time in seconds until the cache will expire, =< 0 or null means no expiration
-	 * @param   array  Contains the identifiers of caches this one will depend on (not supported by all drivers!)
-	 * @return  Cache_Storage_Driver  The new Cache object
+	 * @param  mixed $identifier     The identifier of the cache, can be anything but empty
+	 * @param  mixed $contents       The content to be cached
+	 * @param  bool $expiration      The time in seconds until the cache will expire, =< 0 or null means no expiration
+	 * @param  array $dependencies   Contains the identifiers of caches this one will depend on (not supported by all drivers!)
+	 * @return Cache_Storage_Driver  The new Cache object
 	 */
 	public static function set($identifier, $contents = null, $expiration = false, $dependencies = array())
 	{
@@ -79,13 +79,13 @@ class Cache
 	}
 
 	/**
-	 * Does get() & set() in one call that takes a callback and it's arguements to generate the contents
+	 * Does get() & set() in one call that takes a callback and it's arguments to generate the contents
 	 *
-	 * @param   mixed         The identifier of the cache, can be anything but empty
-	 * @param   string|array  Valid PHP callback
-	 * @param   array         Arguements for the above function/method
-	 * @param   int           Cache expiration in seconds
-	 * @param   array         Contains the identifiers of caches this one will depend on (not supported by all drivers!)
+	 * @param   mixed         $identifier   The identifier of the cache, can be anything but empty
+	 * @param   string|array  $callback     Valid PHP callback
+	 * @param   array         $args         Arguments for the above function/method
+	 * @param   int           $expiration   Cache expiration in seconds
+	 * @param   array         $dependencies Contains the identifiers of caches this one will depend on (not supported by all drivers!)
 	 * @return  mixed
 	 */
 	public static function call($identifier, $callback, $args = array(), $expiration = null, $dependencies = array())
@@ -95,11 +95,11 @@ class Cache
 	}
 
 	/**
-	 * Front for reading the cache, ensures interchangebility of storage drivers. Actual reading
+	 * Front for reading the cache, ensures interchangeability of storage drivers. Actual reading
 	 * is being done by the _get() method which needs to be extended.
 	 *
-	 * @param   mixed  The identifier of the cache, can be anything but empty
-	 * @param   bool
+	 * @param   mixed  $identifier      The identifier of the cache, can be anything but empty
+	 * @param   bool   $use_expiration
 	 * @return  mixed
 	 */
 	public static function get($identifier, $use_expiration = true)
@@ -109,10 +109,10 @@ class Cache
 	}
 
 	/**
-	 * Frontend for deleting item from the cache, interchangable storage methods. Actual operation
+	 * Frontend for deleting item from the cache, interchangeable storage methods. Actual operation
 	 * handled by delete() call on storage driver class
 	 *
-	 * @param  mixed  The identifier of the cache, can be anything but empty
+	 * @param  mixed  $identifier  The identifier of the cache, can be anything but empty
 	 */
 	public static function delete($identifier)
 	{

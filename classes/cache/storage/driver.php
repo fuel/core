@@ -104,15 +104,16 @@ abstract class Cache_Storage_Driver
 	 * This is static to make it possible in the future to check dependencies from other storages then the current one,
 	 * though I don't have a clue yet how to make that possible.
 	 *
-	 * @return  bool either true or false on any failure
+	 * @param  array  $dependencies
+	 * @return bool   either true or false on any failure
 	 */
 	abstract public function check_dependencies(array $dependencies);
 
 	/**
 	 * Default constructor, any extension should either load this first or act similar
 	 *
-	 * @param  string  the identifier for this cache
-	 * @param  array   additional config values
+	 * @param  string $identifier the identifier for this cache
+	 * @param  array  $config additional config values
 	 */
 	public function __construct($identifier, $config)
 	{
@@ -171,8 +172,8 @@ abstract class Cache_Storage_Driver
 	 * Converts the identifier to a string when necessary:
 	 * A int is just converted to a string, all others are serialized and then md5'd
 	 *
-	 * @param   mixed
-	 * @return  string
+	 * @param mixed $identifier
+	 * @return string
 	 */
 	public static function stringify_identifier($identifier)
 	{
@@ -185,7 +186,7 @@ abstract class Cache_Storage_Driver
 		// In case of string or int just return it as a string
 		if (is_string($identifier) || is_int($identifier))
 		{
-			// cleanup to only allow alphanum chars, dashes, dots & underscores
+			// cleanup to only allow alphanumeric chars, dashes, dots & underscores
 			if (preg_match('/^([a-z0-9_\.\-]*)$/iuD', $identifier) === 0)
 			{
 				throw new \FuelException('Cache identifier can only contain alphanumeric characters, underscores, dashes & dots.');
@@ -217,10 +218,9 @@ abstract class Cache_Storage_Driver
 	 * Front for writing the cache, ensures interchangeability of storage engines. Actual writing
 	 * is being done by the _set() method which needs to be extended.
 	 *
-	 * @param   mixed                 The content to be cached
-	 * @param   int                   The time in seconds until the cache will expire, =< 0 or null means no expiration
-	 * @param   array                 array of names on which this cache depends for
-	 * @return  Cache_Storage_Driver  The new request
+	 * @param  mixed  $contents      The content to be cached
+	 * @param  bool   $expiration    The time in seconds until the cache will expire, =< 0 or null means no expiration
+	 * @param  array  $dependencies  array of names on which this cache depends for
 	 */
 	final public function set($contents = null, $expiration = false, $dependencies = array())
 	{
@@ -269,7 +269,7 @@ abstract class Cache_Storage_Driver
 	 * Front for reading the cache, ensures interchangeability of storage engines. Actual reading
 	 * is being done by the _get() method which needs to be extended.
 	 *
-	 * @param   bool
+	 * @param   bool  $use_expiration
 	 * @return  Cache_Storage_Driver
 	 */
 	final public function get($use_expiration = true)
@@ -301,10 +301,10 @@ abstract class Cache_Storage_Driver
 	/**
 	 * Does get() & set() in one call that takes a callback and it's arguments to generate the contents
 	 *
-	 * @param   string|array  Valid PHP callback
-	 * @param   array         Arguments for the above function/method
-	 * @param   int|null      Cache expiration in seconds
-	 * @param   array         Contains the identifiers of caches this one will depend on
+	 * @param   string|array $callback     Valid PHP callback
+	 * @param   array        $args         Arguments for the above function/method
+	 * @param   int|null     $expiration   Cache expiration in seconds
+	 * @param   array        $dependencies Contains the identifiers of caches this one will depend on
 	 * @return  mixed
 	 */
 	final public function call($callback, $args = array(), $expiration = null, $dependencies = array())
@@ -402,6 +402,7 @@ abstract class Cache_Storage_Driver
 	/**
 	 * Converts the contents the cachable format
 	 *
+	 * @param $contents
 	 * @return  string
 	 */
 	protected function handle_writing($contents)
@@ -412,6 +413,7 @@ abstract class Cache_Storage_Driver
 	/**
 	 * Converts the cachable format to the original value
 	 *
+	 * @param $contents
 	 * @return  mixed
 	 */
 	protected function handle_reading($contents)
