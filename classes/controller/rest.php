@@ -216,7 +216,9 @@ abstract class Controller_Rest extends \Controller
 			if (\Fuel::$env == \Fuel::PRODUCTION)
 			{
 				// not acceptable in production
-				$http_status = 406;
+				if ($http_status == 200)
+				{	$http_status = 406;
+				}
 				$this->response->body('The requested REST method returned an array or object, which is not compatible with the output format "'.$this->format.'"');
 			}
 			else
