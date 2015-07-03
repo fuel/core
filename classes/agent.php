@@ -247,7 +247,8 @@ class Agent
 	/**
 	 * Get any browser property
 	 *
-	 * @return	string
+	 * @param   string $property
+	 * @return	string|null
 	 */
 	public static function property($property = null)
 	{
@@ -412,7 +413,9 @@ class Agent
 	 * download and parse the browscap file
 	 *
 	 * @return	array	array with parsed download info, or empty if the download is disabled of failed
-	 */
+	 * @throws \Exception
+	 * @throws \FuelException
+     */
 	protected static function parse_browscap()
 	{
 		$cache = \Cache::forge(static::$config['cache']['identifier'].'.browscap_file', static::$config['cache']['driver']);
