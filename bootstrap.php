@@ -298,25 +298,25 @@ function setup_autoloader()
 		'Fuel\\Core\\Session_Redis'                 => COREPATH.'classes/session/redis.php',
 		'Fuel\\Core\\Session_Exception'             => COREPATH.'classes/session/exception.php',
 
-	'Fuel\\Core\\Num'                           => COREPATH.'classes/num.php',
+		'Fuel\\Core\\Num'                           => COREPATH.'classes/num.php',
 
-	'Fuel\\Core\\Str'                           => COREPATH.'classes/str.php',
+		'Fuel\\Core\\Str'                           => COREPATH.'classes/str.php',
 
-	'Fuel\\Core\\TestCase'                      => COREPATH.'classes/testcase.php',
+		'Fuel\\Core\\TestCase'                      => COREPATH.'classes/testcase.php',
 
-	'Fuel\\Core\\Theme'                         => COREPATH.'classes/theme.php',
-	'Fuel\\Core\\ThemeException'                => COREPATH.'classes/theme.php',
+		'Fuel\\Core\\Theme'                         => COREPATH.'classes/theme.php',
+		'Fuel\\Core\\ThemeException'                => COREPATH.'classes/theme.php',
 
-	'Fuel\\Core\\Uri'                           => COREPATH.'classes/uri.php',
+		'Fuel\\Core\\Uri'                           => COREPATH.'classes/uri.php',
 
-	'Fuel\\Core\\Unzip'                         => COREPATH.'classes/unzip.php',
+		'Fuel\\Core\\Unzip'                         => COREPATH.'classes/unzip.php',
 
-	'Fuel\\Core\\Upload'                        => COREPATH.'classes/upload.php',
+		'Fuel\\Core\\Upload'                        => COREPATH.'classes/upload.php',
 
-	'Fuel\\Core\\Validation'                    => COREPATH.'classes/validation.php',
-	'Fuel\\Core\\Validation_Error'              => COREPATH.'classes/validation/error.php',
+		'Fuel\\Core\\Validation'                    => COREPATH.'classes/validation.php',
+		'Fuel\\Core\\Validation_Error'              => COREPATH.'classes/validation/error.php',
 
-	'Fuel\\Core\\View'                          => COREPATH.'classes/view.php',
-	'Fuel\\Core\\Viewmodel'                     => COREPATH.'classes/viewmodel.php',
+		'Fuel\\Core\\View'                          => COREPATH.'classes/view.php',
+		'Fuel\\Core\\Viewmodel'                     => COREPATH.'classes/viewmodel.php',
 	));
 };
