@@ -223,6 +223,11 @@ return array(
 		'auto_filter_output'  => true,
 
 		/**
+		 * Whether to filter closures as well
+		 */
+		'filter_closures'  => true,
+
+		/**
 		 * With output encoding switched on all objects passed will be converted to strings or
 		 * throw exceptions unless they are instances of the classes in this array.
 		 */

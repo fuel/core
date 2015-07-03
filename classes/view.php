@@ -46,6 +46,11 @@ class View
 	protected $auto_filter = true;
 
 	/**
+	 * @var  bool  Whether to filter closures
+	 */
+	protected $filter_closures = true;
+
+	/**
 	 * @var  array  Holds a list of specific filter rules for local variables
 	 */
 	protected $local_filter = array();
@@ -112,6 +117,8 @@ class View
 		}
 
 		$this->auto_filter = is_null($filter) ? \Config::get('security.auto_filter_output', true) : $filter;
+
+		$this->filter_closures = \Config::get('filter_closures', true);
 
 		if ($file !== null)
 		{
@@ -270,12 +277,14 @@ class View
 				$filter = array_key_exists($key, $rules) ? $rules[$key] : null;
 				$filter = is_null($filter) ? $auto_filter : $filter;
 
-				if ($value instanceOf \Closure)
+				if ($filter)
 				{
-					$value = $value();
+					if ($this->filter_closures and $value instanceOf \Closure)
+					{
+						$value = $value();
+					}
+					$value = \Security::clean($value, null, 'security.output_filter');
 				}
-
-				$value = $filter ? \Security::clean($value, null, 'security.output_filter') : $value;
 			}
 
 			return $data;
