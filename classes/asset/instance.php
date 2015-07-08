@@ -367,7 +367,7 @@ class Asset_Instance
 		is_array($group) or $group = array();
 
 		// storage for the result
-		$result = [];
+		$result = array();
 
 		// pre-define known types so the order is correct
 		foreach($this->_path_folders as $type => $unused)
