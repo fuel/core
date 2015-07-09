@@ -270,7 +270,8 @@ class View
 	 */
 	protected function get_data($scope = 'all')
 	{
-		$clean_it = function ($data, $rules, $auto_filter)
+		$filter_closures = $this->filter_closures;
+		$clean_it = function ($data, $rules, $auto_filter) use ($filter_closures)
 		{
 			foreach ($data as $key => &$value)
 			{
@@ -279,7 +280,7 @@ class View
 
 				if ($filter)
 				{
-					if ($this->filter_closures and $value instanceOf \Closure)
+					if ($filter_closures and $value instanceOf \Closure)
 					{
 						$value = $value();
 					}
