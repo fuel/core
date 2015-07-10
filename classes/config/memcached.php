@@ -17,16 +17,15 @@ class Config_Memcached implements Config_Interface
 		),
 	);
 
-	/*
-	 * @var	storage for the memcached object
+	/**
+	 * @var \Memcached	storage for the memcached object
 	 */
 	protected static $memcached = false;
 
 	/**
 	 * driver initialisation
 	 *
-	 * @access	public
-	 * @return	void
+	 * @throws \FuelException
 	 */
 	public static function _init()
 	{
@@ -70,9 +69,8 @@ class Config_Memcached implements Config_Interface
 	/**
 	 * Sets up the file to be parsed and variables
 	 *
-	 * @param   string  $file  Config identifier name
-	 * @param   array   $vars  Variables to parse in the data retrieved
-	 * @return  void
+	 * @param   string  $identifier  Config identifier name
+	 * @param   array   $vars        Variables to parse in the data retrieved
 	 */
 	public function __construct($identifier = null, $vars = array())
 	{
@@ -90,6 +88,7 @@ class Config_Memcached implements Config_Interface
 	 * Loads the config file(s).
 	 *
 	 * @param   bool  $overwrite  Whether to overwrite existing values
+	 * @param   bool  $cache      This parameter will ignore in this implement.
 	 * @return  array  the config array
 	 */
 	public function load($overwrite = false, $cache = true)
@@ -162,7 +161,7 @@ class Config_Memcached implements Config_Interface
 	 * Formats the output and saved it to disc.
 	 *
 	 * @param   $contents  $contents    config array to save
-	 * @return  bool       DB result
+	 * @throws  \FuelException
 	 */
 	public function save($contents)
 	{
