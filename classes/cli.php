@@ -143,7 +143,7 @@ class Cli
 	 * Named options must be in the following formats:
 	 * php index.php user -v --v -name=John --name=John
 	 *
-	 * @param	string|int	$name	the name of the option (int if unnamed)
+	 * @param	string|int	$prefix	the name of the option (int if unnamed)
 	 * @return	string
 	 */
 	public static function input($prefix = '')
@@ -277,7 +277,10 @@ class Cli
 	 * Outputs a string to the cli.	 If you send an array it will implode them
 	 * with a line break.
 	 *
-	 * @param	string|array	$text	the text to output, or array of lines
+	 * @param string|array	$text		the text to output, or array of lines
+	 * @param string		$foreground	the foreground color
+	 * @param string		$background	the foreground color
+	 * @throws \FuelException
 	 */
 	public static function write($text = '', $foreground = null, $background = null)
 	{
@@ -297,7 +300,10 @@ class Cli
 	/**
 	 * Outputs an error to the CLI using STDERR instead of STDOUT
 	 *
-	 * @param	string|array	$text	the text to output, or array of errors
+	 * @param string|array	$text		the text to output, or array of errors
+	 * @param string		$foreground	the foreground color
+	 * @param string		$background	the foreground color
+	 * @throws \FuelException
 	 */
 	public static function error($text = '', $foreground = 'light_red', $background = null)
 	{
@@ -408,6 +414,7 @@ class Cli
 	 * @param	string	$background the background color
 	 * @param	string	$format		other formatting to apply. Currently only 'underline' is understood
 	 * @return	string	the color coded string
+	 * @throws \FuelException
 	 */
 	public static function color($text, $foreground, $background = null, $format=null)
 	{
@@ -449,13 +456,14 @@ class Cli
 	}
 
 	/**
-	* Spawn Background Process
-	*
-	* Launches a background process (note, provides no security itself, $call must be sanitised prior to use)
-	* @param string $call the system call to make
-	* @return void
-	* @author raccettura
-	* @link http://robert.accettura.com/blog/2006/09/14/asynchronous-processing-with-php/
+	 * Spawn Background Process
+	 *
+	 * Launches a background process (note, provides no security itself, $call must be sanitised prior to use)
+	 * @param string $call the system call to make
+	 * @param string $output
+	 * @return void
+	 * @author raccettura
+	 * @link http://robert.accettura.com/blog/2006/09/14/asynchronous-processing-with-php/
 	*/
 	public static function spawn($call, $output = '/dev/null')
 	{
