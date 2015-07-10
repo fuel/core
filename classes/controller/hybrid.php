@@ -52,8 +52,10 @@ abstract class Controller_Hybrid extends \Controller_Rest
 	 * this router will call action methods for normal requests,
 	 * and REST methods for RESTful calls
 	 *
-	 * @param  string
-	 * @param  array
+	 * @param  string  $resource
+	 * @param  array   $arguments
+	 * @return mixed
+	 * @throws \HttpNotFoundException
 	 */
 	public function router($resource, $arguments)
 	{

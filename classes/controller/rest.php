@@ -96,8 +96,9 @@ abstract class Controller_Rest extends \Controller
 	 * Requests are not made to methods directly The request will be for an "object".
 	 * this simply maps the object and method to the correct Controller method.
 	 *
-	 * @param  string
-	 * @param  array
+	 * @param  string $resource
+	 * @param  array $arguments
+	 * @return bool|mixed
 	 */
 	public function router($resource, $arguments)
 	{
