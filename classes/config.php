@@ -44,6 +44,7 @@ class Config
 	 * @param    bool     $reload       true to force a reload even if the file is already loaded
 	 * @param    bool     $overwrite    true for array_merge, false for \Arr::merge
 	 * @return   array                  the (loaded) config array
+	 * @throws  \FuelException
 	 */
 	public static function load($file, $group = null, $reload = false, $overwrite = false)
 	{
@@ -136,6 +137,7 @@ class Config
 	 * @param   string          $file      desired file name
 	 * @param   string|array    $config    master config array key or config array
 	 * @return  bool                       false when config is empty or invalid else \File::update result
+	 * @throws  \FuelException
 	 */
 	public static function save($file, $config)
 	{
@@ -211,21 +213,20 @@ class Config
 	/**
 	 * Sets a (dot notated) config item
 	 *
-	 * @param    string    a (dot notated) config key
-	 * @param    mixed     the config value
-	 * @return   void      the \Arr::set result
+	 * @param    string   $item   a (dot notated) config key
+	 * @param    mixed    $value  the config value
 	 */
 	public static function set($item, $value)
 	{
 		strpos($item, '.') === false or static::$itemcache[$item] = $value;
-		return \Arr::set(static::$items, $item, \Fuel::value($value));
+		\Arr::set(static::$items, $item, \Fuel::value($value));
 	}
 
 	/**
 	 * Deletes a (dot notated) config item
 	 *
-	 * @param    string       a (dot notated) config key
-	 * @return   array|bool   the \Arr::delete result, success boolean or array of success booleans
+	 * @param    string       $item  a (dot notated) config key
+	 * @return   array|bool          the \Arr::delete result, success boolean or array of success booleans
 	 */
 	public static function delete($item)
 	{

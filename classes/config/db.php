@@ -20,9 +20,8 @@ class Config_Db implements Config_Interface
 	/**
 	 * Sets up the file to be parsed and variables
 	 *
-	 * @param   string  $file  Config identifier name
+	 * @param   string  $identifier  Config identifier name
 	 * @param   array   $vars  Variables to parse in the data retrieved
-	 * @return  void
 	 */
 	public function __construct($identifier = null, $vars = array())
 	{
@@ -43,7 +42,9 @@ class Config_Db implements Config_Interface
 	 * Loads the config file(s).
 	 *
 	 * @param   bool  $overwrite  Whether to overwrite existing values
-	 * @return  array  the config array
+	 * @param   bool  $cache      This parameter will ignore in this implement.
+	 * @return  array the config array
+	 * @throws  \Database_Exception
 	 */
 	public function load($overwrite = false, $cache = true)
 	{

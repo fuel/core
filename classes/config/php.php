@@ -90,7 +90,7 @@ class Config_Php extends \Config_File
 	/**
 	 * Returns the formatted config file contents.
 	 *
-	 * @param   array   $content  config array
+	 * @param   array   $contents  config array
 	 * @return  string  formatted config file contents
 	 */
 	protected function export_format($contents)
