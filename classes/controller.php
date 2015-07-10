@@ -27,7 +27,7 @@ abstract class Controller
 	/**
 	 * Sets the controller request object.
 	 *
-	 * @param   Request   The current request object
+	 * @param   \Request $request  The current request object
 	 */
 	public function __construct(\Request $request)
 	{
@@ -41,6 +41,8 @@ abstract class Controller
 
 	/**
 	 * This method gets called after the action is called
+	 * @param \Response|string $response
+	 * @return \Response
 	 */
 	public function after($response)
 	{
