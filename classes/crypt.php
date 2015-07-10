@@ -36,9 +36,6 @@ class Crypt
 	 */
 	public static function _init()
 	{
-		$crypter = new Crypt_AES();
-		$hasher = new Crypt_Hash('sha256');
-
 		// load the config
 		\Config::load('crypt', true);
 		static::$defaults = \Config::get('crypt', array());
@@ -82,7 +79,9 @@ class Crypt
 	 *
 	 * create a new named instance
 	 *
-	 * @param	array	optional runtime configuration
+	 * @param	string	$name	instance name
+	 * @param	array	$config	optional runtime configuration
+	 * @return  \Crypt
 	 */
 	public static function forge($name = '__default__', array $config = array())
 	{
@@ -97,7 +96,7 @@ class Crypt
 	/**
 	 * Return a specific named instance
 	 *
-	 * @param   string  instance name
+	 * @param	string  $name	instance name
 	 * @return  mixed   Crypt if the instance exists, false if not
 	 */
 	public static function instance($name = '__default__')
@@ -112,6 +111,10 @@ class Crypt
 
 	/**
 	 * capture static calls to methods
+	 *
+	 * @param	mixed	$method
+	 * @param	array	$args	The arguments will passed to $method.
+	 * @return	mixed	return value of $method.
 	 */
 	public static function __callstatic($method, $args)
 	{
@@ -123,6 +126,9 @@ class Crypt
 
 	/**
 	 * generate a URI safe base64 encoded string
+	 *
+	 * @param	string	$value
+	 * @return	string
 	 */
 	protected static function safe_b64encode($value)
 	{
@@ -133,6 +139,9 @@ class Crypt
 
 	/**
 	 * decode a URI safe base64 encoded string
+	 *
+	 * @param	string	$value
+	 * @return	string
 	 */
 	protected static function safe_b64decode($value)
 	{
@@ -147,6 +156,10 @@ class Crypt
 
 	/**
 	 * compare two strings in a timing-insensitive way to prevent time-based attacks
+	 *
+	 * @param	string	$a
+	 * @param	string	$b
+	 * @return	bool
 	 */
 	protected static function secure_compare($a, $b)
 	{
@@ -190,6 +203,8 @@ class Crypt
 
 	/**
 	 * Class constructor
+	 *
+	 * @param	array    $config
 	 */
 	public function __construct(array $config = array())
 	{
@@ -205,10 +220,9 @@ class Crypt
 	/**
 	 * encrypt a string value, optionally with a custom key
 	 *
-	 * @param	string	value to encrypt
-	 * @param	string	optional custom key to be used for this encryption
-	 * @param	int	optional key length
-	 * @access	public
+	 * @param	string		$value		value to encrypt
+	 * @param	string|bool	$key		optional custom key to be used for this encryption
+	 * @param	int|bool	$keylength	optional key length
 	 * @return	string	encrypted value
 	 */
 	protected function encode($value, $key = false, $keylength = false)
@@ -237,6 +251,11 @@ class Crypt
 
 	/**
 	 * capture calls to normal methods
+	 *
+	 * @param	mixed	$method
+	 * @param	array	$args	The arguments will passed to $method.
+	 * @return	mixed	return value of $method.
+	 * @throws	\ErrorException
 	 */
 	public function __call($method, $args)
 	{
@@ -246,16 +265,16 @@ class Crypt
 			throw new \ErrorException('Call to undefined method '.__CLASS__.'::'.$method.'()', E_ERROR, 0, __FILE__, __LINE__);
 		}
 
-		// static method calls are called on the defaukt instance
+		// static method calls are called on the default instance
 		return call_user_func_array(array($this, $method), $args);
 	}
 
 	/**
 	 * decrypt a string value, optionally with a custom key
 	 *
-	 * @param	string	value to decrypt
-	 * @param	string	optional custom key to be used for this encryption
-	 * @param	int	optional key length
+	 * @param	string		$value		value to decrypt
+	 * @param	string|bool	$key		optional custom key to be used for this encryption
+	 * @param	int|bool	$keylength	optional key length
 	 * @access	public
 	 * @return	string	encrypted value
 	 */
