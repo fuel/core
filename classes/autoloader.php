@@ -97,7 +97,7 @@ class Autoloader
 	/**
 	 * Returns the namespace's path or false when it doesn't exist.
 	 *
-	 * @param   string      the namespace to get the path for
+	 * @param   string      $namespace  the namespace to get the path for
 	 * @return  array|bool  the namespace path or false
 	 */
 	public static function namespace_path($namespace)
@@ -114,8 +114,8 @@ class Autoloader
 	 * Adds a classes load path.  Any class added here will not be searched for
 	 * but explicitly loaded from the path.
 	 *
-	 * @param   string  the class name
-	 * @param   string  the path to the class file
+	 * @param   string  $class  the class name
+	 * @param   string  $path   the path to the class file
 	 * @return  void
 	 */
 	public static function add_class($class, $path)
@@ -354,6 +354,8 @@ class Autoloader
 	 *
 	 * @param string $class the class name
 	 * @param string $file  the file containing the class to include
+	 * @throws \Exception
+	 * @throws \FuelException
 	 */
 	protected static function init_class($class, $file = null)
 	{
