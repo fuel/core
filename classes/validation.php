@@ -1045,7 +1045,7 @@ class Validation
 		{
 			if ($format)
 			{
-				return date($format, mktime($parsed['hour'], $parsed['minute'], $parsed['second'], $parsed['month'], $parsed['day'], $parsed['year']));
+				return date($format, mktime($parsed['hour'], $parsed['minute'], $parsed['second'], $parsed['month'] ?: 1, $parsed['day'] ?: 1, $parsed['year']));
 			}
 			else
 			{
