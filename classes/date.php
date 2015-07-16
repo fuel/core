@@ -119,8 +119,8 @@ class Date
 	/**
 	 * Create Date object from timestamp, timezone is optional
 	 *
-	 * @param   int     UNIX timestamp from current server
-	 * @param   string  valid PHP timezone from www.php.net/timezones
+	 * @param   int     $timestamp  UNIX timestamp from current server
+	 * @param   string  $timezone   valid PHP timezone from www.php.net/timezones
 	 * @return  Date
 	 */
 	public static function forge($timestamp = null, $timezone = null)
@@ -131,6 +131,7 @@ class Date
 	/**
 	 * Returns the current time with offset
 	 *
+	 * @param   string  $timezone   valid PHP timezone from www.php.net/timezones
 	 * @return  Date
 	 */
 	public static function time($timezone = null)
@@ -141,6 +142,7 @@ class Date
 	/**
 	 * Returns the current time with offset
 	 *
+	 * @param   string  $timezone   valid PHP timezone from www.php.net/timezones
 	 * @return  string
 	 */
 	public static function display_timezone($timezone = null)
@@ -153,8 +155,8 @@ class Date
 	/**
 	 * Uses the date config file to translate string input to timestamp
 	 *
-	 * @param   string  date/time input
-	 * @param   string  key name of pattern in config file
+	 * @param   string  $input        date/time input
+	 * @param   string  $pattern_key  key name of pattern in config file
 	 * @return  Date
 	 */
 	public static function create_from_string($input, $pattern_key = 'local')
@@ -185,9 +187,9 @@ class Date
 	/**
 	 * Fetches an array of Date objects per interval within a range
 	 *
-	 * @param   int|Date    start of the range
-	 * @param   int|Date    end of the range
-	 * @param   int|string  Length of the interval in seconds or valid strtotime time difference
+	 * @param   int|Date    $start     start of the range
+	 * @param   int|Date    $end       end of the range
+	 * @param   int|string  $interval  Length of the interval in seconds or valid strtotime time difference
 	 * @return   array      array of Date objects
 	 */
 	public static function range_to_array($start, $end, $interval = '+1 Day')
@@ -217,8 +219,8 @@ class Date
 	/**
 	 * Returns the number of days in the requested month
 	 *
-	 * @param   int  month as a number (1-12)
-	 * @param   int  the year, leave empty for current
+	 * @param   int  $month  month as a number (1-12)
+	 * @param   int  $year   the year, leave empty for current
 	 * @return  int  the number of days in the month
 	 */
 	public static function days_in_month($month, $year = null)
@@ -245,9 +247,9 @@ class Date
 	/**
 	 * Returns the time ago
 	 *
-	 * @param	int		UNIX timestamp from current server
-	 * @param	int		UNIX timestamp to compare against. Default to the current time
-	 * @param	string	Unit to return the result in
+	 * @param	int		$timestamp       UNIX timestamp from current server
+	 * @param	int		$from_timestamp  UNIX timestamp to compare against. Default to the current time
+	 * @param	string	$unit            Unit to return the result in
 	 * @return	string	Time ago
 	 */
 	public static function time_ago($timestamp, $from_timestamp = null, $unit = null)
@@ -308,8 +310,8 @@ class Date
 	/**
 	 * Returns the date formatted according to the current locale
 	 *
-	 * @param   string	either a named pattern from date config file or a pattern, defaults to 'local'
-	 * @param   mixed 	vald timezone, or if true, output the time in local time instead of system time
+	 * @param   string	$pattern_key  either a named pattern from date config file or a pattern, defaults to 'local'
+	 * @param   mixed 	$timezone     vald timezone, or if true, output the time in local time instead of system time
 	 * @return  string
 	 */
 	public function format($pattern_key = 'local', $timezone = null)
@@ -363,6 +365,8 @@ class Date
 	/**
 	 * Returns the internal timezone or the display timezone abbreviation
 	 *
+	 * @param boolean $display_timezone
+	 *
 	 * @return  string
 	 */
 	public function get_timezone_abbr($display_timezone = false)
@@ -392,7 +396,7 @@ class Date
 	/**
 	 * Change the timezone
 	 *
-	 * @param   string  timezone from www.php.net/timezones
+	 * @param   string  $timezone  timezone from www.php.net/timezones
 	 * @return  Date
 	 */
 	public function set_timezone($timezone)
