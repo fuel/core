@@ -125,10 +125,10 @@ class Finder
 	 *   (-1):    Prepend to the start of the search path
 	 *   (index): The path will get inserted AFTER the given index
 	 *
-	 * @param   string|array  $path  The path to add
-	 * @param   int     $pos   The position to add the path
+	 * @param   string|array  $paths  The path to add
+	 * @param   int           $pos    The position to add the path
 	 * @return  $this
-	 * @throws  OutOfBoundsException
+	 * @throws  \OutOfBoundsException
 	 */
 	public function add_path($paths, $pos = null)
 	{
@@ -256,8 +256,8 @@ class Finder
 	 * loaded search paths (e.g. the cascading file system).  This is useful
 	 * for things like finding all the config files in all the search paths.
 	 *
-	 * @param   string  The directory to look in
-	 * @param   string  The file filter
+	 * @param   string  $directory  The directory to look in
+	 * @param   string  $filter     The file filter
 	 * @return  array   the array of files
 	 */
 	public function list_files($directory = null, $filter = '*.php')
@@ -462,9 +462,10 @@ class Finder
 	 *
 	 * This method is from KohanaPHP's Kohana class.
 	 *
-	 * @param  string  the cache name
-	 * @param  array   the data to cache (if non given it returns)
-	 * @param  int     the number of seconds for the cache too live
+	 * @param  string  $name      the cache name
+	 * @param  array   $data      the data to cache (if non given it returns)
+	 * @param  int     $lifetime  the number of seconds for the cache too live
+	 * @return bool|null
 	 */
 	protected function cache($name, $data = null, $lifetime = null)
 	{
