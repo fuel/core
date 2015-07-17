@@ -37,8 +37,8 @@ class Fieldset
 	/**
 	 * Create Fieldset object
 	 *
-	 * @param   string    Identifier for this fieldset
-	 * @param   array     Configuration array
+	 * @param   string    $name    Identifier for this fieldset
+	 * @param   array     $config  Configuration array
 	 * @return  Fieldset
 	 */
 	public static function forge($name = 'default', array $config = array())
@@ -62,7 +62,7 @@ class Fieldset
 	/**
 	 * Return a specific instance, or the default instance (is created if necessary)
 	 *
-	 * @param   string  driver id
+	 * @param   Fieldset  $instance
 	 * @return  Fieldset
 	 */
 	public static function instance($instance = null)
@@ -173,7 +173,7 @@ class Fieldset
 	/**
 	 * Get related Validation instance or create it
 	 *
-	 * @param   bool|Validation
+	 * @param   bool|Validation  $instance
 	 * @return  Validation
 	 */
 	public function validation($instance = true)
@@ -195,7 +195,7 @@ class Fieldset
 	/**
 	 * Get related Form instance or create it
 	 *
-	 * @param   bool|Form
+	 * @param   bool|Form  $instance
 	 * @return  Form
 	 */
 	public function form($instance = true)
@@ -230,7 +230,7 @@ class Fieldset
 	/**
 	 * Set the parent Fieldset instance
 	 *
-	 * @param   Fieldset  parent fieldset to which this belongs
+	 * @param   Fieldset  $fieldset  parent fieldset to which this belongs
 	 * @return  Fieldset
 	 */
 	public function set_parent(Fieldset $fieldset)
@@ -400,9 +400,9 @@ class Fieldset
 	/**
 	 * Get Field instance
 	 *
-	 * @param   string|null           field name or null to fetch an array of all
-	 * @param   bool                  whether to get the fields array or flattened array
-	 * @param   bool                  whether to include tabular form fields in the flattened array
+	 * @param   string|null           $name          field name or null to fetch an array of all
+	 * @param   bool                  $flatten       whether to get the fields array or flattened array
+	 * @param   bool                  $tabular_form  whether to include tabular form fields in the flattened array
 	 * @return  Fieldset_Field|false  returns false when field wasn't found
 	 */
 	public function field($name = null, $flatten = false, $tabular_form = true)
@@ -448,9 +448,9 @@ class Fieldset
 	 * The model must have a method "set_form_fields" that takes this Fieldset instance
 	 * and adds fields to it.
 	 *
-	 * @param   string|Object  either a full classname (including full namespace) or object instance
-	 * @param   array|Object   array or object that has the exactly same named properties to populate the fields
-	 * @param   string         method name to call on model for field fetching
+	 * @param   string|Object  $class     either a full classname (including full namespace) or object instance
+	 * @param   array|Object   $instance  array or object that has the exactly same named properties to populate the fields
+	 * @param   string         $method    method name to call on model for field fetching
 	 * @return  Fieldset       this, to allow chaining
 	 */
 	public function add_model($class, $instance = null, $method = 'set_form_fields')
@@ -470,8 +470,8 @@ class Fieldset
 	/**
 	 * Sets a config value on the fieldset
 	 *
-	 * @param   string
-	 * @param   mixed
+	 * @param   string  $config
+	 * @param   mixed   $value
 	 * @return  Fieldset  this, to allow chaining
 	 */
 	public function set_config($config, $value = null)
@@ -495,8 +495,8 @@ class Fieldset
 	/**
 	 * Get a single or multiple config values by key
 	 *
-	 * @param   string|array  a single key or multiple in an array, empty to fetch all
-	 * @param   mixed         default output when config wasn't set
+	 * @param   string|array  $key      a single key or multiple in an array, empty to fetch all
+	 * @param   mixed         $default  default output when config wasn't set
 	 * @return  mixed|array   a single config value or multiple in an array when $key input was an array
 	 */
 	public function get_config($key = null, $default = null)
@@ -529,8 +529,8 @@ class Fieldset
 	/**
 	 * Populate the form's values using an input array or object
 	 *
-	 * @param   array|object
-	 * @param   bool
+	 * @param   array|object  $input
+	 * @param   bool          $repopulate
 	 * @return  Fieldset  this, to allow chaining
 	 */
 	public function populate($input, $repopulate = false)
@@ -591,6 +591,7 @@ class Fieldset
 	/**
 	 * Build the fieldset HTML
 	 *
+     * @param   mixed  $action
 	 * @return  string
 	 */
 	public function build($action = null)
@@ -652,6 +653,7 @@ class Fieldset
 	/**
 	 * Enable a disabled field from being build
 	 *
+	 * @param   mixed  $name
 	 * @return  Fieldset      this, to allow chaining
 	 */
 	public function enable($name = null)
@@ -673,6 +675,7 @@ class Fieldset
 	/**
 	 * Disable a field from being build
 	 *
+	 * @param   mixed  $name
 	 * @return  Fieldset      this, to allow chaining
 	 */
 	public function disable($name = null)
@@ -721,6 +724,7 @@ class Fieldset
 	/**
 	 * Alias for $this->validation()->input()
 	 *
+	 * @param   string  $field
 	 * @return  mixed
 	 */
 	public function input($field = null)
@@ -731,6 +735,7 @@ class Fieldset
 	/**
 	 * Alias for $this->validation()->validated()
 	 *
+	 * @param   string  $field
 	 * @return  mixed
 	 */
 	public function validated($field = null)
@@ -741,6 +746,7 @@ class Fieldset
 	/**
 	 * Alias for $this->validation()->error()
 	 *
+	 * @param   string  $field
 	 * @return  Validation_Error|array
 	 */
 	public function error($field = null)
@@ -751,6 +757,7 @@ class Fieldset
 	/**
 	 * Alias for $this->validation()->show_errors()
 	 *
+	 * @param   array  $config
 	 * @return  string
 	 */
 	public function show_errors(array $config = array())
@@ -771,10 +778,10 @@ class Fieldset
 	/**
 	 * Enable or disable the tabular form feature of this fieldset
 	 *
-	 * @param  string  Model on which to define the tabular form
-	 * @param  string  Relation of the Model on the tabular form is modeled
-	 * @param  array  Collection of Model objects from a many relation
-	 * @param  int  Number of empty rows to generate
+	 * @param  string  $model     Model on which to define the tabular form
+	 * @param  string  $relation  Relation of the Model on the tabular form is modeled
+	 * @param  array   $parent    Collection of Model objects from a many relation
+	 * @param  int     $blanks    Number of empty rows to generate
 	 *
 	 * @return  Fieldset  this, to allow chaining
 	 */

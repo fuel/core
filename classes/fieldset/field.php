@@ -85,11 +85,11 @@ class Fieldset_Field
 	/**
 	 * Constructor
 	 *
-	 * @param  string
-	 * @param  string
-	 * @param  array
-	 * @param  array
-	 * @param  Fieldset
+	 * @param  string    $name
+	 * @param  string    $label
+	 * @param  array     $attributes
+	 * @param  array     $rules
+	 * @param  Fieldset  $fieldset
 	 * @throws \RuntimeException
 	 */
 	public function __construct($name, $label = '', array $attributes = array(), array $rules = array(), $fieldset = null)
@@ -137,7 +137,7 @@ class Fieldset_Field
 	}
 
 	/**
-	 * @param   Fieldset  Fieldset to assign the field to
+	 * @param   Fieldset        $fieldset  Fieldset to assign the field to
 	 * @return  Fieldset_Field
 	 * @throws  \RuntimeException
 	 */
@@ -165,7 +165,7 @@ class Fieldset_Field
 	/**
 	 * Change the field label
 	 *
-	 * @param   string
+	 * @param   string  $label
 	 * @return  Fieldset_Field  this, to allow chaining
 	 */
 	public function set_label($label)
@@ -179,7 +179,7 @@ class Fieldset_Field
 	/**
 	 * Change the field type for form generation
 	 *
-	 * @param   string
+	 * @param   string  $type
 	 * @return  Fieldset_Field  this, to allow chaining
 	 */
 	public function set_type($type)
@@ -193,8 +193,8 @@ class Fieldset_Field
 	/**
 	 * Change the field's current or default value
 	 *
-	 * @param   string
-	 * @param   bool
+	 * @param   string  $value
+	 * @param   bool    $repopulate
 	 * @return  Fieldset_Field  this, to allow chaining
 	 */
 	public function set_value($value, $repopulate = false)
@@ -222,7 +222,7 @@ class Fieldset_Field
 	/**
 	 * Change the field description
 	 *
-	 * @param   string
+	 * @param   string          $description
 	 * @return  Fieldset_Field  this, to allow chaining
 	 */
 	public function set_description($description)
@@ -235,7 +235,7 @@ class Fieldset_Field
 	/**
 	 * Template the output
 	 *
-	 * @param   string
+	 * @param   string          $template
 	 * @return  Fieldset_Field  this, to allow chaining
 	 */
 	public function set_template($template = null)
