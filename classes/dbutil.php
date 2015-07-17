@@ -170,7 +170,7 @@ class DBUtil
 	 * @throws  Fuel\Database_Exception
 	 * @param   string  $table   the table name
 	 * @param   array   $fields  the modified fields
-     * @param   string  $db      the database connection to use
+	 * @param   string  $db      the database connection to use
 	 * @return  int     the number of affected
 	 */
 	public static function modify_fields($table, $fields, $db = null)
