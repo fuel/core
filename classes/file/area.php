@@ -69,10 +69,12 @@ class File_Area
 	/**
 	 * Handler factory for given path
 	 *
-	 * @param	string				path to file or directory
-	 * @param	array				optional config
+	 * @param	string				$path		path to file or directory
+	 * @param	array				$config		optional config
+	 * @param	array				$content
 	 * @return	File_Handler_File
-	 * @throws	FileAccessException		when outside basedir restriction or disallowed file extension
+	 * @throws	\FileAccessException			when outside basedir restriction or disallowed file extension
+	 * @throws  \OutsideAreaException
 	 */
 	public function get_handler($path, array $config = array(), $content = array())
 	{
@@ -132,9 +134,10 @@ class File_Area
 	/**
 	 * Translate relative path to real path, throws error when operation is not allowed
 	 *
-	 * @param	string
+	 * @param	string	$path
 	 * @return	string
-	 * @throws	FileAccessException	when outside basedir restriction or disallowed file extension
+	 * @throws	\FileAccessException	when outside basedir restriction or disallowed file extension
+	 * @throws	\OutsideAreaException
 	 */
 	public function get_path($path)
 	{
@@ -175,7 +178,7 @@ class File_Area
 	 *
 	 * @param	string
 	 * @return	string
-	 * @throws	LogicException	when no url is set or no basedir is set and file is outside DOCROOT
+	 * @throws	\LogicException	when no url is set or no basedir is set and file is outside DOCROOT
 	 */
 	public function get_url($path)
 	{

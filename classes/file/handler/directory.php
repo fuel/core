@@ -55,8 +55,8 @@ class File_Handler_Directory
 	/**
 	 * Read directory
 	 *
-	 * @param	$dept		whether or not to read recursive
-	 * @param	$filters	whether or not to read recursive
+	 * @param	int		$depth		whether or not to read recursive
+	 * @param	array	$filters	array of partial regexps or non-array for default
 	 * @return	array
 	 */
 	public function read($depth = 0, $filters = null)
@@ -67,7 +67,7 @@ class File_Handler_Directory
 	/**
 	 * Rename file, only within current directory
 	 *
-	 * @param	string	new directory name
+	 * @param	string	$new_name	new directory name
 	 * @return	bool
 	 */
 	public function rename($new_name)
@@ -87,7 +87,7 @@ class File_Handler_Directory
 	/**
 	 * Move directory to new parent directory
 	 *
-	 * @param	string	path to new parent directory, must be valid
+	 * @param	string	$new_path	path to new parent directory, must be valid
 	 * @return	bool
 	 */
 	public function move($new_path)
@@ -106,7 +106,7 @@ class File_Handler_Directory
 	/**
 	 * Copy directory
 	 *
-	 * @param	string	path to parent directory, must be valid
+	 * @param	string	$new_path	path to parent directory, must be valid
 	 * @return	bool
 	 */
 	public function copy($new_path)
@@ -122,8 +122,9 @@ class File_Handler_Directory
 	/**
 	 * Update contents
 	 *
-	 * @param	mixed	new file contents
-	 * @return	bool
+	 * This method is unavailable on this implement, that will surely cause exception.
+	 *
+	 * @throws	\BadMethodCallException
 	 */
 	public function update()
 	{
@@ -133,6 +134,8 @@ class File_Handler_Directory
 	/**
 	 * Delete directory
 	 *
+	 * @param	bool	$recursive
+	 * @param	bool	$delete_top
 	 * @return	bool
 	 */
 	public function delete($recursive = true, $delete_top = true)
@@ -144,7 +147,9 @@ class File_Handler_Directory
 	/**
 	 * Get the url.
 	 *
-	 * @return	bool
+	 * This method is unavailable on this implement, that will surely cause exception.
+	 *
+	 * @throws	\BadMethodCallException
 	 */
 	public function get_url()
 	{
@@ -175,7 +180,9 @@ class File_Handler_Directory
 	/**
 	 * Get the size.
 	 *
-	 * @return	bool
+	 * This method is unavailable on this implement, that will surely cause exception.
+	 *
+	 * @throws	\BadMethodCallException
 	 */
 	public function get_size()
 	{
