@@ -108,7 +108,7 @@ class Lang
 
 			if (class_exists($class))
 			{
-				static::$loaded_files[$language.'/'.$file] = true;
+				static::$loaded_files[$language.'/'.$file] = func_get_args();
 				$file = new $class($file, $languages);
 			}
 			else
@@ -250,5 +250,41 @@ class Lang
 		($language === null) and $language = static::get_lang();
 
 		return isset(static::$lines[$language]) ? \Arr::delete(static::$lines[$language], $item) : false;
+	}
+
+	/**
+	 * Sets the current language, and optionally reloads all language files loaded in another language
+	 *
+	 * @param    string      $language  name of the language to activate
+	 * @param    bool        $reload    true to force a reload of already loaded language files
+	 * @return   bool                   success boolean, false if no language or the current was passed, true otherwise
+	 */
+	public static function set_lang($language, $reload = false)
+	{
+		// check if a language was passedd
+		if ( ! empty($language) and $language != static::get_lang())
+		{
+			// set it
+			\Config::set('language', $language);
+
+			// do we need to reload?
+			if ($reload)
+			{
+				foreach (static::$loaded_files as $file => $args)
+				{
+					// reload with exactly the same arguments
+					if (strpos($file, $language.'/') !== 0)
+					{
+						call_user_func_array('Lang::load', $args);
+					}
+				}
+			}
+
+			// return success
+			return true;
+		}
+
+		// no language or the current language was passed
+		return false;
 	}
 }
