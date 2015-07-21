@@ -62,7 +62,8 @@ abstract class Event
 	 *
 	 * @param   string  $func  method name
 	 * @param   array   $args  passed arguments
-	 * @return
+	 * @return  mixed
+	 * @throws  \BadMethodCallException
 	 */
 	public static function __callStatic($func, $args)
 	{
