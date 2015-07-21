@@ -203,7 +203,7 @@ class Event_Instance
 				return json_encode($calls);
 				break;
 			case 'none':
-				return false;
+				return null;
 			case 'serialized':
 				return serialize($calls);
 				break;
