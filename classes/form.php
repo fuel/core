@@ -72,7 +72,8 @@ class Form
 	/**
 	 * Create a form open tag
 	 *
-	 * @param   string|array  action string or array with more tag attribute settings
+	 * @param   string|array  $attributes  action string or array with more tag attribute settings
+	 * @param   array         $hidden
 	 * @return  string
 	 */
 	public static function open($attributes = array(), array $hidden = array())
@@ -93,8 +94,8 @@ class Form
 	/**
 	 * Create a fieldset open tag
 	 *
-	 * @param   array   array with tag attribute settings
-	 * @param   string  string for the fieldset legend
+	 * @param   array   $attributes  array with tag attribute settings
+	 * @param   string  $legend  string for the fieldset legend
 	 * @return  string
 	 */
 	public static function fieldset_open($attributes = array(), $legend = null)
@@ -115,9 +116,9 @@ class Form
 	/**
 	 * Create a form input
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function input($field, $value = null, array $attributes = array())
@@ -128,9 +129,9 @@ class Form
 	/**
 	 * Create a hidden field
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function hidden($field, $value = null, array $attributes = array())
@@ -151,9 +152,9 @@ class Form
 	/**
 	 * Create a password input field
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function password($field, $value = null, array $attributes = array())
@@ -164,10 +165,10 @@ class Form
 	/**
 	 * Create a radio button
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   mixed         either attributes (array) or bool/string to set checked status
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   mixed         $checked     either attributes (array) or bool/string to set checked status
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function radio($field, $value = null, $checked = null, array $attributes = array())
@@ -178,10 +179,10 @@ class Form
 	/**
 	 * Create a checkbox
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   mixed         either attributes (array) or bool/string to set checked status
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   mixed         $checked     either attributes (array) or bool/string to set checked status
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function checkbox($field, $value = null, $checked = null, array $attributes = array())
@@ -192,8 +193,8 @@ class Form
 	/**
 	 * Create a file upload input field
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function file($field, array $attributes = array())
@@ -204,9 +205,9 @@ class Form
 	/**
 	 * Create a button
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function button($field, $value = null, array $attributes = array())
@@ -217,9 +218,9 @@ class Form
 	/**
 	 * Create a reset button
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function reset($field = 'reset', $value = 'Reset', array $attributes = array())
@@ -230,9 +231,9 @@ class Form
 	/**
 	 * Create a submit button
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function submit($field = 'submit', $value = 'Submit', array $attributes = array())
@@ -243,9 +244,9 @@ class Form
 	/**
 	 * Create a textarea field
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $value
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function textarea($field, $value = null, array $attributes = array())
@@ -258,10 +259,10 @@ class Form
 	 *
 	 * Generates a html select element based on the given parameters
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string  selected value(s)
-	 * @param   array   array of options and option groups
-	 * @param   array
+	 * @param   string|array  $field       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $values      selected value(s)
+	 * @param   array         $options     array of options and option groups
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function select($field, $values = null, array $options = array(), array $attributes = array())
@@ -272,9 +273,9 @@ class Form
 	/**
 	 * Create a label field
 	 *
-	 * @param   string|array  either fieldname or full attributes array (when array other params are ignored)
-	 * @param   string
-	 * @param   array
+	 * @param   string|array  $label       either fieldname or full attributes array (when array other params are ignored)
+	 * @param   string        $id
+	 * @param   array         $attributes
 	 * @return  string
 	 */
 	public static function label($label, $id = null, array $attributes = array())
@@ -287,7 +288,7 @@ class Form
 	 *
 	 * Prepares the value for display in the form
 	 *
-	 * @param   string
+	 * @param   string  $value
 	 * @return  string
 	 */
 	public static function prep_value($value)
