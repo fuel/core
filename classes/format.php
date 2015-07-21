@@ -30,9 +30,9 @@ class Format
 	 *
 	 *     echo Format::forge(array('foo' => 'bar'))->to_xml();
 	 *
-	 * @param   mixed  general date to be converted
-	 * @param   string  data format the file was provided in
-	 * @param   mixed  additional parameter that can be passed on to a 'from' method
+	 * @param   mixed   $data       general date to be converted
+	 * @param   string  $from_type  data format the file was provided in
+	 * @param   mixed   $param      additional parameter that can be passed on to a 'from' method
 	 * @return  Format
 	 */
 	public static function forge($data = null, $from_type = null, $param = null)
@@ -53,10 +53,10 @@ class Format
 	/**
 	 * Do not use this directly, call forge()
 	 *
-	 * @param   mixed  general date to be converted
-	 * @param   string  data format the file was provided in
-	 * @param   mixed  additional parameter that can be passed on to a 'from' method
-	 * @return  Format
+	 * @param   mixed   $data       general date to be converted
+	 * @param   string  $from_type  data format the file was provided in
+	 * @param   mixed   $param      additional parameter that can be passed on to a 'from' method
+	 * @throws \FuelException
 	 */
 	public function __construct($data = null, $from_type = null, $param = null)
 	{
@@ -134,8 +134,8 @@ class Format
 	 * @param   mixed        $data
 	 * @param   null         $structure
 	 * @param   null|string  $basenode
-	 * @param   null|bool    whether to use CDATA in nodes
-	 * @param   mixed        if true, element values are true/false. if 1, 1/0.
+	 * @param   null|bool    $use_cdata             whether to use CDATA in nodes
+	 * @param   mixed        $bool_representation  if true, element values are true/false. if 1, 1/0.
 	 * @return  string
 	 */
 	public function to_xml($data = null, $structure = null, $basenode = null, $use_cdata = null, $bool_representation = null)
@@ -229,7 +229,7 @@ class Format
 	 * @param   mixed   $data
 	 * @param   mixed   $delimiter
 	 * @param   mixed   $enclose_numbers
-	 * @param   array   $headings  Custom headings to use
+	 * @param   array   $headings         Custom headings to use
 	 * @return  string
 	 */
 	public function to_csv($data = null, $delimiter = null, $enclose_numbers = null, array $headings = array())
@@ -300,7 +300,7 @@ class Format
 	 * To JSON conversion
 	 *
 	 * @param   mixed  $data
-	 * @param   bool   whether to make the json pretty
+	 * @param   bool   $pretty  whether to make the json pretty
 	 * @return  string
 	 */
 	public function to_json($data = null, $pretty = false)
@@ -389,6 +389,7 @@ class Format
 	 * Import XML data
 	 *
 	 * @param   string  $string
+	 * @param   bool    $recursive
 	 * @return  array
 	 */
 	protected function _from_xml($string, $recursive = false)
@@ -544,9 +545,9 @@ class Format
 
 	/**
 	 * Makes json pretty the json output.
-	 * Barrowed from http://www.php.net/manual/en/function.json-encode.php#80339
+	 * Borrowed from http://www.php.net/manual/en/function.json-encode.php#80339
 	 *
-	 * @param   string  $json  json encoded array
+	 * @param   string  $data  json encoded array
 	 * @return  string|false  pretty json output or false when the input was not valid
 	 */
 	protected static function pretty_json($data)
