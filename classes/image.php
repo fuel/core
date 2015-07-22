@@ -50,8 +50,10 @@ class Image
 	/**
 	 * Creates a new instance of the image driver
 	 *
-	 * @param   array  $config
+	 * @param   array   $config
+	 * @param   string  $filename  The file to load
 	 * @return  Image_Driver
+	 * @throws \FuelException
 	 */
 	public static function forge($config = array(), $filename = null)
 	{
@@ -76,12 +78,13 @@ class Image
 	/**
 	 * Used to set configuration options.
 	 *
-	 * Sending the config options through the static reference initalizes the
+	 * Sending the config options through the static reference initializes the
 	 * instance. If you need to send a driver config through the static reference,
 	 * make sure its the first one sent! If errors arise, create a new instance using
 	 * forge().
 	 *
-	 * @param   array   $config   An array of configuration settings.
+	 * @param   array   $index  An array of configuration settings.
+	 * @param   mixed   $value
 	 * @return  Image_Driver
 	 */
 	public static function config($index = array(), $value = null)
@@ -104,11 +107,11 @@ class Image
 	}
 
 	/**
-	 * Loads the image and checks if its compatable.
+	 * Loads the image and checks if its compatible.
 	 *
-	 * @param   string  $filename							The file to load
-	 * @param   string  $return_data					Decides if it should return the images data, or just "$this".
-	 * @param   mixed		$force_extension			Whether or not to force the image extension
+	 * @param   string  $filename			The file to load
+	 * @param   string  $return_data		Decides if it should return the images data, or just "$this".
+	 * @param   mixed	$force_extension	Whether or not to force the image extension
 	 * @return  Image_Driver
 	 */
 	public static function load($filename, $return_data = false, $force_extension = false)
@@ -133,7 +136,7 @@ class Image
 	}
 
 	/**
-	 * Resizes the image. If the width or height is null, it will resize retaining the original aspect ratio.
+	 * Resize the image. If the width or height is null, it will resize retaining the original aspect ratio.
 	 *
 	 * @param   integer  $width   The new width of the image.
 	 * @param   integer  $height  The new height of the image.
@@ -147,7 +150,7 @@ class Image
 	}
 
 	/**
-	 * Resizes the image. If the width or height is null, it will resize retaining the original aspect ratio.
+	 * Resize the image. If the width or height is null, it will resize retaining the original aspect ratio.
 	 *
 	 * @param   integer  $width   The new width of the image.
 	 * @param   integer  $height  The new height of the image.
@@ -172,8 +175,7 @@ class Image
 	/**
 	 * Creates a vertical / horizontal or both mirror image.
 	 *
-	 * @access public
-	 * @param string $direction 'vertical', 'horizontal', 'both'
+	 * @param  string  $direction  'vertical', 'horizontal', 'both'
 	 * @return Image_Driver
 	 */
 	public static function flip($direction)
@@ -198,7 +200,7 @@ class Image
 	 * Adds a border to the image.
 	 *
 	 * @param   integer  $size   The side of the border, in pixels.
-	 * @param   string   $color  A hexidecimal color.
+	 * @param   string   $color  A hexadecimal color.
 	 * @return  Image_Driver
 	 */
 	public static function border($size, $color = null)
@@ -221,8 +223,8 @@ class Image
 	 * Adds rounded corners to the image.
 	 *
 	 * @param   integer  $radius
-	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" seperated by spaces, or null for all sides
-	 * @param   integer  $antialias  Sets the antialias range.
+	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" separated by spaces, or null for all sides
+	 * @param   integer  $antialias  Sets the anti-alias range.
 	 * @return  Image_Driver
 	 */
 	public static function rounded($radius, $sides = null, $antialias = null)
@@ -279,7 +281,7 @@ class Image
 	/**
 	 * Returns  sizes for the currently loaded image, or the image given in the $filename.
 	 *
-	 * @param   string  The location of the file to get sizes for.
+	 * @param   string  $filename  The location of the file to get sizes for.
 	 * @return  object  An object containing width and height variables.
 	 */
 	public static function sizes($filename = null)
