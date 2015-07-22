@@ -116,8 +116,10 @@ class Fuel
 	/**
 	 * Initializes the framework.  This can only be called once.
 	 *
-	 * @access	public
+	 * @param	mixed	$config	string file | config array | Config_Interface instance
 	 * @return	void
+	 * @throws	\FuelException
+	 * @throws	\PHPErrorException
 	 */
 	public static function init($config)
 	{
@@ -213,7 +215,6 @@ class Fuel
 	 * Cleans up Fuel execution, ends the output buffering, and outputs the
 	 * buffer contents.
 	 *
-	 * @access	public
 	 * @return	void
 	 */
 	public static function finish()
@@ -284,7 +285,7 @@ class Fuel
 	/**
 	 * Includes the given file and returns the results.
 	 *
-	 * @param   string  the path to the file
+	 * @param   string  $file	the path to the file
 	 * @return  mixed   the results of the include
 	 */
 	public static function load($file)
@@ -295,7 +296,8 @@ class Fuel
 	/**
 	 * Always load packages, modules, classes, config & language files set in always_load.php config
 	 *
-	 * @param  array  what to autoload
+	 * @param  array	$array	what to autoload
+	 * @throws \FuelException
 	 */
 	public static function always_load($array = null)
 	{
@@ -354,7 +356,7 @@ class Fuel
 	/**
 	 * Cleans a file path so that it does not contain absolute file paths.
 	 *
-	 * @param   string  the filepath
+	 * @param   string  $path  the filepath
 	 * @return  string  the clean path
 	 */
 	public static function clean_path($path)
