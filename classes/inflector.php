@@ -121,7 +121,7 @@ class Inflector
 	/**
 	 * Add order suffix to numbers ex. 1st 2nd 3rd 4th 5th
 	 *
-	 * @param   int     the number to ordinalize
+	 * @param   int     $number the number to ordinalize
 	 * @return  string  the ordinalized version of $number
 	 * @link    http://snipplr.com/view/4627/a-function-to-add-a-prefix-to-numbers-ex-1st-2nd-3rd-4th-5th/
 	 */
@@ -159,8 +159,8 @@ class Inflector
 	/**
 	 * Gets the plural version of the given word
 	 *
-	 * @param   string  the word to pluralize
-	 * @param   int     number of instances
+	 * @param   string  $word   the word to pluralize
+	 * @param   int     $count  number of instances
 	 * @return  string  the plural version of $word
 	 */
 	public static function pluralize($word, $count = 0)
@@ -194,7 +194,7 @@ class Inflector
 	/**
 	 * Gets the singular version of the given word
 	 *
-	 * @param   string  the word to singularize
+	 * @param   string  $word  the word to singularize
 	 * @return  string  the singular version of $word
 	 */
 	public static function singularize($word)
@@ -219,10 +219,10 @@ class Inflector
 	}
 
 	/**
-	 * Takes a string that has words seperated by underscores and turns it into
+	 * Takes a string that has words separated by underscores and turns it into
 	 * a CamelCased string.
 	 *
-	 * @param   string  the underscored word
+	 * @param   string  $underscored_word  the underscored word
 	 * @return  string  the CamelCased version of $underscored_word
 	 */
 	public static function camelize($underscored_word)
@@ -240,7 +240,7 @@ class Inflector
 	/**
 	 * Takes a CamelCased string and returns an underscore separated version.
 	 *
-	 * @param   string  the CamelCased word
+	 * @param   string  $camel_cased_word  the CamelCased word
 	 * @return  string  an underscore separated version of $camel_cased_word
 	 */
 	public static function underscore($camel_cased_word)
@@ -324,9 +324,9 @@ class Inflector
 	/**
 	 * Turns an underscore or dash separated word and turns it into a human looking string.
 	 *
-	 * @param   string  the word
-	 * @param   string  the separator (either _ or -)
-	 * @param   bool    lowercare string and upper case first
+	 * @param   string  $str        the word
+	 * @param   string  $sep        the separator (either _ or -)
+	 * @param   bool    $lowercase  lowercase string and upper case first
 	 * @return  string  the human version of given string
 	 */
 	public static function humanize($str, $sep = '_', $lowercase = true)
@@ -345,7 +345,7 @@ class Inflector
 	/**
 	 * Takes the class name out of a modulized string.
 	 *
-	 * @param   string  the modulized class
+	 * @param   string  $class_name_in_module  the modulized class
 	 * @return  string  the string without the class name
 	 */
 	public static function demodulize($class_name_in_module)
@@ -356,7 +356,7 @@ class Inflector
 	/**
 	 * Takes the namespace off the given class name.
 	 *
-	 * @param   string  the class name
+	 * @param   string  $class_name  the class name
 	 * @return  string  the string without the namespace
 	 */
 	public static function denamespace($class_name)
@@ -389,7 +389,7 @@ class Inflector
 	 * Takes a class name and determines the table name.  The table name is a
 	 * pluralized version of the class name.
 	 *
-	 * @param   string  the table name
+	 * @param   string  $class_name  the table name
 	 * @return  string  the table name
 	 */
 	public static function tableize($class_name)
@@ -405,8 +405,8 @@ class Inflector
 	/**
 	 * Takes an underscored classname and uppercases all letters after the underscores.
 	 *
-	 * @param   string  classname
-	 * @param   string  separator
+	 * @param   string  $class  classname
+	 * @param   string  $sep    separator
 	 * @return  string
 	 */
 	public static function words_to_upper($class, $sep = '_')
@@ -417,8 +417,8 @@ class Inflector
 	/**
 	 * Takes a table name and creates the class name.
 	 *
-	 * @param   string  the table name
-	 * @param   bool    whether to singularize the table name or not
+	 * @param   string  $name            the table name
+	 * @param   bool    $force_singular  whether to singularize the table name or not
 	 * @return  string  the class name
 	 */
 	public static function classify($name, $force_singular = true)
@@ -430,8 +430,8 @@ class Inflector
 	/**
 	 * Gets the foreign key for a given class.
 	 *
-	 * @param   string  the class name
-	 * @param   bool    $use_underscore	whether to use an underscore or not
+	 * @param   string  $class_name      the class name
+	 * @param   bool    $use_underscore	 whether to use an underscore or not
 	 * @return  string  the foreign key
 	 */
 	public static function foreign_key($class_name, $use_underscore = true)
@@ -447,7 +447,7 @@ class Inflector
 	/**
 	 * Checks if the given word has a plural version.
 	 *
-	 * @param   string  the word to check
+	 * @param   string  $word  the word to check
 	 * @return  bool    if the word is countable
 	 */
 	public static function is_countable($word)
