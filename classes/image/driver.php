@@ -75,7 +75,7 @@ abstract class Image_Driver
 	}
 
 	/**
-	 * Exectues the presets set in the config. Additional parameters replace the $1, $2, ect.
+	 * Executes the presets set in the config. Additional parameters replace the $1, $2, ect.
 	 *
 	 * @param   string  $name  The name of the preset.
 	 * @return  Image_Driver
@@ -112,9 +112,9 @@ abstract class Image_Driver
 	/**
 	 * Loads the image and checks if its compatible.
 	 *
-	 * @param   string  $filename								The file to load
-	 * @param   string  $return_data						Decides if it should return the images data, or just "$this".
-	 * @param   mixed   $force_extension				Decides if it should force the extension witht this (or false)
+	 * @param   string  $filename			The file to load
+	 * @param   string  $return_data		Decides if it should return the images data, or just "$this".
+	 * @param   mixed   $force_extension	Decides if it should force the extension with this (or false)
 	 * @return  Image_Driver
 	 */
 	public function load($filename, $return_data = false, $force_extension = false)
@@ -207,7 +207,7 @@ abstract class Image_Driver
 	}
 
 	/**
-	 * Resizes the image. If the width or height is null, it will resize retaining the original aspect ratio.
+	 * Resize the image. If the width or height is null, it will resize retaining the original aspect ratio.
 	 *
 	 * @param   integer  $width   The new width of the image.
 	 * @param   integer  $height  The new height of the image.
@@ -224,7 +224,6 @@ abstract class Image_Driver
 	/**
 	 * Creates a vertical / horizontal or both mirror image.
 	 *
-	 * @access public
 	 * @param mixed $direction 'vertical', 'horizontal', 'both'
 	 * @return Image_Driver
 	 */
@@ -551,7 +550,7 @@ abstract class Image_Driver
 	 *
 	 * @param   integer  $radius
 	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" separated by spaces, or null for all sides
-	 * @param   integer  $antialias  Sets the antialias range.
+	 * @param   integer  $antialias  Sets the anti-alias range.
 	 * @return  Image_Driver
 	 */
 	public function rounded($radius, $sides = null, $antialias = null)
@@ -567,7 +566,7 @@ abstract class Image_Driver
 	 *
 	 * @param   integer  $radius
 	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" separated by spaces, or null for all sides
-	 * @param   integer  $antialias  Sets the antialias range.
+	 * @param   integer  $antialias  Sets the anti-alias range.
 	 * @return  array    An array of variables for the specific driver.
 	 */
 	protected function _rounded($radius, $sides, $antialias)
@@ -679,6 +678,7 @@ abstract class Image_Driver
 	 *
 	 * @param   string  $filetype  The extension type to use. Ex: png, jpg, gif
 	 * @return  array
+	 * @throws \FuelException
 	 */
 	public function output($filetype = null)
 	{
@@ -774,8 +774,8 @@ abstract class Image_Driver
 	 * Checks if the extension is accepted by this library, and if its valid sets the $this->image_extension variable.
 	 *
 	 * @param   string   $filename
-	 * @param   boolean  $writevar					Decides if the extension should be written to $this->image_extension
-	 * @param   mixed		 $force_extension		Decides if the extension should be overridden with this (or false)
+	 * @param   boolean  $writevar			Decides if the extension should be written to $this->image_extension
+	 * @param   mixed    $force_extension	Decides if the extension should be overridden with this (or false)
 	 * @return  boolean
 	 */
 	protected function check_extension($filename, $writevar = true, $force_extension = false)
@@ -802,7 +802,7 @@ abstract class Image_Driver
 	 * Converts percentages, negatives, and other values to absolute integers.
 	 *
 	 * @param   string   $input
-	 * @param   boolean  $x  Determines if the number relates to the x-axis or y-axis.
+	 * @param   boolean  $x      Determines if the number relates to the x-axis or y-axis.
 	 * @return  integer  The converted number, usable with the image being edited.
 	 */
 	protected function convert_number($input, $x = null)
@@ -897,8 +897,6 @@ abstract class Image_Driver
 
 	/**
 	 * Used for debugging image output.
-	 *
-	 * @param  string  $message
 	 */
 	protected function debug()
 	{
