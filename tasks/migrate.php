@@ -50,6 +50,11 @@ class Migrate
 	protected static $rerun = false;
 
 	/**
+	 * @var  array  list of migrations executed
+	 */
+	protected static $executed = array();
+
+	/**
 	 * sets the properties by grabbing Cli options
 	 */
 	public function __construct()
@@ -182,6 +187,10 @@ class Migrate
 			// reset the rerun flag
 			static::$rerun = false;
 
+			// store and reset the current execution state
+			$state = static::$executed;
+			static::$executed = array();
+
 			// run app (default) migrations if default is true
 			if (static::$default)
 			{
@@ -214,6 +223,18 @@ class Migrate
 				else
 				{
 					static::$name($package, 'package');
+				}
+			}
+
+			// do we need to re-run?
+			if (static::$rerun)
+			{
+				// check for any progress on this run
+				if ($state == static::$executed)
+				{
+					// there wasn't any, bail out
+					static::$rerun = false;
+					\Cli::write('Migration loop detected! Check if there is a dependency that can\'t be fulfilled by the current selection!', 'light_red');
 				}
 			}
 		}
@@ -262,8 +283,21 @@ class Migrate
 			$migrations = \Migrate::latest($name, $type, \Cli::option('catchup', false));
 		}
 
-		// any migrations executed?
-		if ($migrations)
+		// were there any migrations at all?
+		if (empty($migrations))
+		{
+			if ($version !== '')
+			{
+				\Cli::write('No migrations were found for '.$type.':'.$name.'.');
+			}
+			else
+			{
+				\Cli::write('Already on the latest migration for '.$type.':'.$name.'.');
+			}
+		}
+
+		// did we run all migrations?
+		elseif ($last = end($migrations))
 		{
 			\Cli::write('Performed migrations for '.$type.':'.$name.':', 'green');
 
@@ -274,21 +308,13 @@ class Migrate
 		}
 		else
 		{
-			if ($migrations === false)
-			{
-				\Cli::write('Some migrations for '.$type.':'.$name.' are postponed due to dependencies.', 'cyan');
+			\Cli::write('Some migrations for '.$type.':'.$name.' are postponed due to dependencies.', 'cyan');
 
-				// set the rerun flag
-				static::$rerun = true;
-			}
-			elseif ($version !== '')
-			{
-				\Cli::write('No migrations were found for '.$type.':'.$name.'.');
-			}
-			else
-			{
-				\Cli::write('Already on the latest migration for '.$type.':'.$name.'.');
-			}
+			// store the ones we've executed
+			static::$executed[$type.'-'.$name] = $migrations;
+
+			// set the rerun flag
+			static::$rerun = true;
 		}
 	}
 
