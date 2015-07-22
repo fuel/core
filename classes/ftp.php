@@ -42,8 +42,8 @@ class Ftp
 	 *
 	 *     $ftp = static::forge('group');
 	 *
-	 * @param   string|array  The name of the config group to use, or a configuration array.
-	 * @param   bool          Automatically connect to this server.
+	 * @param   string|array  $config   The name of the config group to use, or a configuration array.
+	 * @param   bool          $connect  Automatically connect to this server.
 	 * @return  Ftp
 	 */
 	public static function forge($config = 'default', $connect = true)
@@ -59,9 +59,7 @@ class Ftp
 	/**
 	 * Sets the initial Ftp filename and local data.
 	 *
-	 * @param   string|array  The name of the config group to use, or a configuration array.
-	 * @param   bool          Automatically connect to this server.
-	 * @return  void
+	 * @param   string|array  $config  The name of the config group to use, or a configuration array.
 	 */
 	public function __construct($config = 'default')
 	{
@@ -99,9 +97,8 @@ class Ftp
 	/**
 	 * FTP Connect
 	 *
-	 * @access	public
-	 * @param	array	 the connection values
-	 * @return	bool
+	 * @return	\Ftp
+	 * @throws	\FtpConnectionException
 	 */
 	public function connect()
 	{
@@ -190,10 +187,9 @@ class Ftp
 	 * so we do it by trying to change to a particular directory.
 	 * Internally, this parameter is only used by the "mirror" function below.
 	 *
-	 * @access	public
-	 * @param	string
-	 * @param	bool
+	 * @param	string $path
 	 * @return	bool
+	 * @throws \FtpFileAccessException
 	 */
 	public function change_dir($path = '')
 	{
@@ -221,9 +217,10 @@ class Ftp
 	/**
 	 * Create a directory
 	 *
-	 * @access	public
-	 * @param	string
+	 * @param	string	$path
+	 * @param	string	$permissions
 	 * @return	bool
+	 * @throws \FtpFileAccessException
 	 */
 	public function mkdir($path, $permissions = null)
 	{
@@ -257,11 +254,12 @@ class Ftp
 	/**
 	 * Upload a file to the server
 	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @param	string
+	 * @param	string	$local_path
+	 * @param	string	$remote_path
+	 * @param	string	$mode
+	 * @param	string	$permissions
 	 * @return	bool
+	 * @throws	\FtpFileAccessException
 	 */
 	public function upload($local_path, $remote_path, $mode = 'auto', $permissions = null)
 	{
@@ -273,7 +271,6 @@ class Ftp
 		if ( ! is_file($local_path))
 		{
 			throw new \FtpFileAccessException('No source file');
-			return false;
 		}
 
 		// Set the mode if not specified
@@ -311,11 +308,11 @@ class Ftp
 	/**
 	 * Download a file from a remote server to the local server
 	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @param	string
+	 * @param	string	$remote_path
+	 * @param	string	$local_path
+	 * @param	string	$mode
 	 * @return	bool
+	 * @throws	\FtpFileAccessException
 	 */
 	public function download($remote_path, $local_path, $mode = 'auto')
 	{
@@ -353,11 +350,11 @@ class Ftp
 	/**
 	 * Rename (or move) a file
 	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
-	 * @param	bool
+	 * @param	$old_file	string
+	 * @param	$new_file	string
+	 * @param	$move		bool
 	 * @return	bool
+	 * @throws	\FtpFileAccessException
 	 */
 	public function rename($old_file, $new_file, $move = false)
 	{
@@ -387,9 +384,8 @@ class Ftp
 	/**
 	 * Move a file
 	 *
-	 * @access	public
-	 * @param	string
-	 * @param	string
+	 * @param	string	$old_file
+	 * @param	string	$new_file
 	 * @return	bool
 	 */
 	public function move($old_file, $new_file)
@@ -402,9 +398,9 @@ class Ftp
 	/**
 	 * Rename (or move) a file
 	 *
-	 * @access	public
-	 * @param	string
+	 * @param	string	$filepath
 	 * @return	bool
+	 * @throws	\FtpFileAccessException
 	 */
 	function delete_file($filepath)
 	{
@@ -431,11 +427,11 @@ class Ftp
 
 	/**
 	 * Delete a folder and recursively delete everything (including sub-folders)
-	 * containted within it.
+	 * contained within it.
 	 *
-	 * @access	public
-	 * @param	string
+	 * @param	string	$filepath
 	 * @return	bool
+	 * @throws	\FtpFileAccessException
 	 */
 	function delete_dir($filepath)
 	{
@@ -485,12 +481,12 @@ class Ftp
 	/**
 	 * Set file permissions
 	 *
-	 * @access	public
-	 * @param	string 	the file path
-	 * @param	string	the permissions
+	 * @param	string 	$path			the file path
+	 * @param	string	$permissions	the permissions
 	 * @return	bool
+	 * @throws	\FtpFileAccessException
 	 */
-	public function chmod($path, $perm)
+	public function chmod($path, $permissions)
 	{
 		if ( ! $this->_is_conn())
 		{
@@ -507,7 +503,7 @@ class Ftp
 			return false;
 		}
 
-		$result = @ftp_chmod($this->_conn_id, $perm, $path);
+		$result = @ftp_chmod($this->_conn_id, $permissions, $path);
 
 		if ($result === false)
 		{
@@ -526,7 +522,7 @@ class Ftp
 	/**
 	 * FTP List files in the specified directory
 	 *
-	 * @access	public
+	 * @param	string	$path
 	 * @return	array
 	 */
 	public function list_files($path = '.')
@@ -548,9 +544,8 @@ class Ftp
 	 * sub-folders) and creates a mirror via FTP based on it.  Whatever the directory structure
 	 * of the original file path will be recreated on the server.
 	 *
-	 * @access	public
-	 * @param	string	path to source with trailing slash
-	 * @param	string	path to destination - include the base folder with trailing slash
+	 * @param	string	$local_path		path to source with trailing slash
+	 * @param	string	$remote_path	path to destination - include the base folder with trailing slash
 	 * @return	bool
 	 */
 	public function mirror($local_path, $remote_path)
@@ -566,7 +561,7 @@ class Ftp
 			// Attempt to open the remote file path.
 			if ( ! $this->change_dir($remote_path, true))
 			{
-				// If it doesn't exist we'll attempt to create the direcotory
+				// If it doesn't exist we'll attempt to create the directory
 				if ( ! $this->mkdir($remote_path) or ! $this->change_dir($remote_path))
 				{
 					return false;
@@ -600,7 +595,7 @@ class Ftp
 	/**
 	 * Set the upload type
 	 *
-	 * @param	string
+	 * @param	string	$ext
 	 * @return	string
 	 */
 	protected function _settype($ext)
@@ -629,7 +624,6 @@ class Ftp
 	/**
 	 * Close the connection
 	 *
-	 * @access	public
 	 * @return	void
 	 */
 	public function close()
@@ -647,7 +641,6 @@ class Ftp
 	/**
 	 * Close the connection when the class is unset
 	 *
-	 * @access	public
 	 * @return	void
 	 */
 	public function  __destruct()
