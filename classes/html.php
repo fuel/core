@@ -125,7 +125,7 @@ class Html
 	 * @param	string	$text		the text value
 	 * @param	string	$subject	the subject
 	 * @param	array	$attr		attributes for the tag
-	 * @return	string	the javascript code contain email
+	 * @return	string	the javascript code containing email
 	 */
 	public static function mail_to_safe($email, $text = null, $subject = null, $attr = array())
 	{
