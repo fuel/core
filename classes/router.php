@@ -309,6 +309,7 @@ class Router
 				);
 			}
 		}
+
 		return false;
 	}
 
@@ -320,7 +321,19 @@ class Router
 	 */
 	protected static function check_class($class)
 	{
-		return class_exists($class);
+		try
+		{
+			return class_exists($class);
+		}
+		catch (\Exception $e)
+		{
+			// capture autoloader failures
+			if (strpos($e->getFile(),'/core/classes/autoloader.php') !== false)
+			{
+				return false;
+			}
+			throw $e;
+		}
 	}
 
 	/**
