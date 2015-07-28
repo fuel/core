@@ -173,11 +173,11 @@ class Log
 	 *
 	 * Generally this function will be called using the global log_message() function
 	 *
-	 * @access	public
-	 * @param	int|string	the error level
-	 * @param	string	the error message
-	 * @param	string	information about the method
+	 * @param	int|string	$level		the error level
+	 * @param	string		$msg		the error message
+	 * @param	string		$method		information about the method
 	 * @return	bool
+	 * @throws	\FuelException
 	 */
 	public static function write($level, $msg, $method = null)
 	{
