@@ -27,8 +27,6 @@ class Markdown
 
 	/**
 	 * Load Markdown and get it setup.
-	 *
-	 * @return  void
 	 */
 	public static function _init()
 	{
