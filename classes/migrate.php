@@ -105,12 +105,12 @@ class Migrate
 	/**
 	 * migrate to a specific version, range of versions, or all
 	 *
-	 * @param   mixed	version to migrate to (up or down!)
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
-	 * @param	bool	if true, also run out-of-sequence migrations
+	 * @param	mixed	$version	version to migrate to (up or down!)
+	 * @param	string  $name		name of the package, module or app
+	 * @param	string  $type		type of migration (package, module or app)
+	 * @param	bool	$all		if true, also run out-of-sequence migrations
 	 *
-	 * @throws	UnexpectedValueException
+	 * @throws	\UnexpectedValueException
 	 * @return	array
 	 */
 	public static function version($version = null, $name = 'default', $type = 'app', $all = false)
@@ -156,9 +156,9 @@ class Migrate
 	/**
 	 * migrate to a latest version
 	 *
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
-	 * @param	bool	if true, also run out-of-sequence migrations
+	 * @param	string	$name	name of the package, module or app
+	 * @param	string	$type	type of migration (package, module or app)
+	 * @param	bool	$all	if true, also run out-of-sequence migrations
 	 *
 	 * @return	array
 	 */
@@ -171,8 +171,8 @@ class Migrate
 	/**
 	 * migrate to the version defined in the config file
 	 *
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
+	 * @param   string	$name	name of the package, module or app
+	 * @param   string	$type	type of migration (package, module or app)
 	 *
 	 * @return	array
 	 */
@@ -199,9 +199,9 @@ class Migrate
 	/**
 	 * migrate up to the next version
 	 *
-	 * @param   mixed	version to migrate up to
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
+	 * @param	mixed	$version	version to migrate up to
+	 * @param	string  $name		name of the package, module or app
+	 * @param	string  $type		type of migration (package, module or app)
 	 *
 	 * @return	array
 	 */
@@ -233,9 +233,9 @@ class Migrate
 	/**
 	 * migrate down to the previous version
 	 *
-	 * @param   mixed	version to migrate down to
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
+	 * @param	mixed	$version	version to migrate down to
+	 * @param	string	$name		name of the package, module or app
+	 * @param	string	$type		type of migration (package, module or app)
 	 *
 	 * @return	array
 	 */
@@ -279,10 +279,10 @@ class Migrate
 	/**
 	 * run the action migrations found
 	 *
-	 * @param   array	list of files to migrate
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
-	 * @param   string  method to call on the migration
+	 * @param	array	$migrations	list of files to migrate
+	 * @param	string  $name		name of the package, module or app
+	 * @param	string  $type		type of migration (package, module or app)
+	 * @param	string  $method		method to call on the migration
 	 *
 	 * @return	array
 	 */
@@ -334,9 +334,9 @@ class Migrate
 	/**
 	 * add an installed migration to the database
 	 *
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
-	 * @param   string  name of the migration file just run
+	 * @param	string	$name	name of the package, module or app
+	 * @param	string	$type	type of migration (package, module or app)
+	 * @param	string	$file	name of the migration file just run
 	 *
 	 * @return	void
 	 */
@@ -363,9 +363,9 @@ class Migrate
 	/**
 	 * remove a reverted migration from the database
 	 *
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
-	 * @param   string  name of the migration file just run
+	 * @param	string	$name	name of the package, module or app
+	 * @param	string	$type	type of migration (package, module or app)
+	 * @param	string	$file	name of the migration file just run
 	 *
 	 * @return	void
 	 */
@@ -395,12 +395,14 @@ class Migrate
 	/**
 	 * migrate down to the previous version
 	 *
-	 * @param   string  name of the package, module or app
-	 * @param   string  type of migration (package, module or app)
-	 * @param	mixed	version to start migrations from, or null to start at the beginning
-	 * @param	mixed	version to end migrations by, or null to migrate to the end
+	 * @param	string	$name		name of the package, module or app
+	 * @param	string  $type		type of migration (package, module or app)
+	 * @param	mixed	$start		version to start migrations from, or null to start at the beginning
+	 * @param	mixed	$end		version to end migrations by, or null to migrate to the end
+	 * @param	string	$direction
 	 *
 	 * @return	array
+	 * @throws	\FuelException
 	 */
 	protected static function find_migrations($name, $type, $start = null, $end = null, $direction = 'up')
 	{
@@ -469,7 +471,7 @@ class Migrate
 				// determine the classname for this migration
 				$class_name = ucfirst(strtolower($match[1]));
 
-				// load the file and determiine the classname
+				// load the file and determine the classname
 				include_once $migration['path'];
 				$class = static::$prefix.$class_name;
 
@@ -502,9 +504,9 @@ class Migrate
 	/**
 	 * finds migrations for the given app
 	 *
-	 * @param   string	name of the app (not used at the moment)
+	 * @param	string	$name	name of the app (not used at the moment)
 	 *
-	 * @return  array
+	 * @return	array
 	 */
 	protected static function _find_app($name = null)
 	{
@@ -522,9 +524,9 @@ class Migrate
 	/**
 	 * finds migrations for the given module (or all if name is not given)
 	 *
-	 * @param   string	name of the module
+	 * @param	string	$name	name of the module
 	 *
-	 * @return  array
+	 * @return	array
 	 */
 	protected static function _find_module($name = null)
 	{
@@ -565,9 +567,9 @@ class Migrate
 	/**
 	 * finds migrations for the given package (or all if name is not given)
 	 *
-	 * @param   string	name of the package
+	 * @param	string	$name	name of the package
 	 *
-	 * @return  array
+	 * @return	array
 	 */
 	protected static function _find_package($name = null)
 	{
