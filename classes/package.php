@@ -41,7 +41,7 @@ class Package
 	 * @param   string|array  $package  The package name or array of packages.
 	 * @param   string|null   $path     The path to the package
 	 * @return  bool  True on success
-	 * @throws  PackageNotFoundException
+	 * @throws  \PackageNotFoundException
 	 */
 	public static function load($package, $path = null)
 	{
@@ -62,7 +62,7 @@ class Package
 
 		if (static::loaded($package))
 		{
-			return;
+			return false;
 		}
 
 		// if no path is given, try to locate the package
@@ -99,7 +99,7 @@ class Package
 	/**
 	 * Unloads a package from the stack.
 	 *
-	 * @param   string  $pacakge  The package name
+	 * @param   string  $package  The package name
 	 * @return  void
 	 */
 	public static function unload($package)
