@@ -40,8 +40,10 @@ class Pagination
 	/**
 	 * Static access to the default instance
 	 *
+	 * @param 	string	$name
+	 * @param 	array	$arguments
 	 * @return	mixed
-	 * @throws	BadMethodCallException if the request method does not exist
+	 * @throws	\BadMethodCallException if the request method does not exist
 	 */
 	public static function __callStatic($name, $arguments)
 	{
@@ -70,6 +72,8 @@ class Pagination
 	/**
 	 * forge a new pagination instance
 	 *
+	 * @param	string $name
+	 * @param	array $config
 	 * @return	\Pagination	a new pagination instance
 	 */
 	public static function forge($name = 'default', $config = array())
@@ -93,6 +97,7 @@ class Pagination
 	/**
 	 * retrieve an existing pagination instance
 	 *
+	 * @param	string $name
 	 * @return	\Pagination	a existing pagination instance
 	 */
 	public static function instance($name = null)
@@ -171,7 +176,7 @@ class Pagination
 	protected $raw_results = array();
 
 	/**
-	 *
+	 * @param	array $config
 	 */
 	public function __construct($config = array())
 	{
@@ -196,6 +201,8 @@ class Pagination
 
 	/**
 	 * configuration value getter
+	 * @param	$name
+	 * @return	mixed
 	 */
 	public function __get($name)
 	{
@@ -221,6 +228,9 @@ class Pagination
 
 	/**
 	 * configuration value setter
+	 *
+	 * @param	$name
+	 * @param	mixed $value
 	 */
 	public function __set($name, $value = null)
 	{
@@ -260,6 +270,7 @@ class Pagination
 	/**
 	 * Creates the pagination markup
 	 *
+	 * @param	mixed $raw
 	 * @return	mixed	HTML Markup for page number links, or an array of raw pagination data
 	 */
 	public function render($raw = false)
@@ -349,8 +360,7 @@ class Pagination
 	/**
 	 * Pagination "First" link
 	 *
-	 * @param	string $value optional text to display in the link
-	 *
+	 * @param	string	$marker optional text to display in the link
 	 * @return	string	Markup for the 'first' page number link
 	 */
 	public function first($marker = null)
@@ -387,8 +397,7 @@ class Pagination
 	/**
 	 * Pagination "Previous" link
 	 *
-	 * @param	string $value optional text to display in the link
-	 *
+	 * @param	string $marker	optional text to display in the link
 	 * @return	string	Markup for the 'previous' page number link
 	 */
 	public function previous($marker = null)
@@ -428,8 +437,7 @@ class Pagination
 	/**
 	 * Pagination "Next" link
 	 *
-	 * @param	string $value optional text to display in the link
-	 *
+	 * @param	string	$marker optional text to display in the link
 	 * @return	string	Markup for the 'next' page number link
 	 */
 	public function next($marker = null)
@@ -468,8 +476,7 @@ class Pagination
 	/**
 	 * Pagination "Last" link
 	 *
-	 * @param	string $value optional text to display in the link
-	 *
+	 * @param	string $marker optional text to display in the link
 	 * @return	string	Markup for the 'last' page number link
 	 */
 	public function last($marker = null)
@@ -624,6 +631,10 @@ class Pagination
 
 	/**
 	 * Validate the input configuration
+	 *
+	 * @param	$name
+	 * @param	$value
+	 * @return	int|mixed
 	 */
 	protected function _validate($name, $value)
 	{
