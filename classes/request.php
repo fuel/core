@@ -50,9 +50,9 @@ class Request
 	 *
 	 *     Request::forge('hello/world');
 	 *
-	 * @param   string   The URI of the request
-	 * @param   mixed    Internal: whether to use the routes; external: driver type or array with settings (driver key must be set)
-	 * @param   string   request method
+	 * @param   string  $uri      The URI of the request
+	 * @param   mixed   $options  Internal: whether to use the routes; external: driver type or array with settings (driver key must be set)
+	 * @param   string  $method   request method
 	 * @return  Request  The new request object
 	 */
 	public static function forge($uri = null, $options = true, $method = null)
@@ -101,7 +101,7 @@ class Request
 	 *
 	 *     Request::active();
 	 *
-	 * @param   Request|null|false  overwrite current request before returning, false prevents overwrite
+	 * @param   Request|null|false  $request  overwrite current request before returning, false prevents overwrite
 	 * @return  Request
 	 */
 	public static function active($request = false)
@@ -257,10 +257,10 @@ class Request
 	 *
 	 *     $request = new Request('foo/bar');
 	 *
-	 * @param   string  the uri string
-	 * @param   bool    whether or not to route the URI
-	 * @param   string  request method
-	 * @return  void
+	 * @param   string  $uri     the uri string
+	 * @param   bool    $route   whether or not to route the URI
+	 * @param   string  $method  request method
+	 * @throws  \FuelException
 	 */
 	public function __construct($uri, $route = true, $method = null)
 	{
@@ -326,8 +326,11 @@ class Request
 	 *
 	 *     $request = Request::forge('hello/world')->execute();
 	 *
-	 * @param  array|null  $method_params  An array of parameters to pass to the method being executed
+	 * @param   array|null  $method_params  An array of parameters to pass to the method being executed
 	 * @return  Request  This request object
+	 * @throws  \Exception
+	 * @throws  \FuelException
+	 * @throws  \HttpNotFoundException
 	 */
 	public function execute($method_params = null)
 	{
