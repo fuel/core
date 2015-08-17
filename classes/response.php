@@ -87,7 +87,7 @@ class Response
 	 *
 	 * @param   string  $body    The response body
 	 * @param   int     $status  The HTTP response status for this response
-	 * @param   array   $headers Array of HTTP headers for this reponse
+	 * @param   array   $headers Array of HTTP headers for this response
 	 *
 	 * @return  Response
 	 */
@@ -159,7 +159,7 @@ class Response
 	 *
 	 * @return  void
 	 *
-	 * @throws  RuntimeException  If it would redirect back to itself
+	 * @throws  \RuntimeException  If it would redirect back to itself
 	 */
 	public static function redirect_back($url = '', $method = 'location', $code = 302)
 	{
@@ -202,8 +202,9 @@ class Response
 	/**
 	 * Sets up the response with a body and a status code.
 	 *
-	 * @param  string  $body    The response body
-	 * @param  string  $status  The response status
+	 * @param  string  $body     The response body
+	 * @param  int     $status   The response status
+	 * @param  array   $headers
 	 */
 	public function __construct($body = null, $status = 200, array $headers = array())
 	{
@@ -218,7 +219,7 @@ class Response
 	/**
 	 * Sets the response status code
 	 *
-	 * @param   string  $status  The status code
+	 * @param   int  $status  The status code
 	 *
 	 * @return  Response
 	 */
@@ -231,9 +232,9 @@ class Response
 	/**
 	 * Adds a header to the queue
 	 *
-	 * @param   string  The header name
-	 * @param   string  The header value
-	 * @param   string  Whether to replace existing value for the header, will never overwrite/be overwritten when false
+	 * @param   string       $name     The header name
+	 * @param   string       $value    The header value
+	 * @param   string|bool  $replace  Whether to replace existing value for the header, will never overwrite/be overwritten when false
 	 *
 	 * @return  Response
 	 */
@@ -254,7 +255,7 @@ class Response
 	/**
 	 * Gets header information from the queue
 	 *
-	 * @param   string  The header name, or null for all headers
+	 * @param   string  $name  The header name, or null for all headers
 	 *
 	 * @return  mixed
 	 */
@@ -273,7 +274,7 @@ class Response
 	/**
 	 * Sets (or returns) the body for the response
 	 *
-	 * @param   string  The response content
+	 * @param   string|bool  $value  The response content
 	 *
 	 * @return  Response|string
 	 */
