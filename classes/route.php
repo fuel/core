@@ -126,8 +126,7 @@ class Route
 	/**
 	 * Attempts to find the correct route for the given URI
 	 *
-	 * @access	public
-	 * @param	object	The URI object
+	 * @param	\Request	$request  The URI object
 	 * @return	array
 	 */
 	public function parse(\Request $request)
@@ -153,7 +152,6 @@ class Route
 	/**
 	 * Parses a route match and returns the controller, action and params.
 	 *
-	 * @access  public
 	 * @param   string  $uri           The matched route
 	 * @param   array   $named_params  Named parameters
 	 * @return  object  $this
@@ -206,9 +204,9 @@ class Route
 	/**
 	 * Parses an actual route - extracted out of parse() to make it recursive.
 	 *
-	 * @param   string  The URI object
-	 * @param   object  route object
-	 * @param   string  request method
+	 * @param   string  $uri     The URI object
+	 * @param   object  $route   route object
+	 * @param   string  $method  request method
 	 * @return  array|boolean
 	 */
 	protected function _parse_search($uri, $route = null, $method = null)
