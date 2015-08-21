@@ -81,6 +81,7 @@ class Security
 	 *
 	 * @param  string  $uri     uri to clean
 	 * @param  bool    $strict  whether to remove relative directories
+	 * @return array|mixed
 	 */
 	public static function clean_uri($uri, $strict = false)
 	{
@@ -104,6 +105,11 @@ class Security
 
 	/**
 	 * Generic variable clean method
+	 *
+	 * @param  mixed   $var
+	 * @param  mixed   $filters
+	 * @param  string  $type
+	 * @return array|mixed
 	 */
 	public static function clean($var, $filters = null, $type = 'security.input_filter')
 	{
@@ -293,7 +299,7 @@ class Security
 	/**
 	 * Check CSRF Token
 	 *
-	 * @param   string  CSRF token to be checked, checks post when empty
+	 * @param   string  $value  CSRF token to be checked, checks post when empty
 	 * @return  bool
 	 */
 	public static function check_token($value = null)
