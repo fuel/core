@@ -20,7 +20,7 @@ abstract class Session_Driver
 	protected $config = array();
 
 	/*
-	 * @var	session indentification keys
+	 * @var	session identification keys
 	 */
 	protected $keys = array();
 
@@ -58,8 +58,7 @@ abstract class Session_Driver
 	/**
 	 * destroy the current session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Driver
+	 * @return	\Session_Driver
 	 */
 	public function destroy()
 	{
@@ -75,8 +74,7 @@ abstract class Session_Driver
 	/**
 	 * read the session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Driver
+	 * @return	\Session_Driver
 	 */
 	public function read()
 	{
@@ -104,8 +102,7 @@ abstract class Session_Driver
 	/**
 	 * write the session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Driver
+	 * @return	\Session_Driver
 	 */
 	public function write()
 	{
@@ -122,7 +119,6 @@ abstract class Session_Driver
 	/**
 	 * generic driver initialisation
 	 *
-	 * @access	public
 	 * @return	void
 	 */
 	public function init()
@@ -136,10 +132,9 @@ abstract class Session_Driver
 	/**
 	 * set session variables
 	 *
-	 * @param	string|array	name of the variable to set or array of values, array(name => value)
-	 * @param	mixed			value
-	 * @access	public
-	 * @return	Fuel\Core\Session_Driver
+	 * @param	string|array	$name	name of the variable to set or array of values, array(name => value)
+	 * @param	mixed			$value	value
+	 * @return	\Session_Driver
 	 */
 	public function set($name, $value = null)
 	{
@@ -153,9 +148,8 @@ abstract class Session_Driver
 	/**
 	 * get session variables
 	 *
-	 * @access	public
-	 * @param	string	name of the variable to get
-	 * @param	mixed	default value to return if the variable does not exist
+	 * @param	string	$name		name of the variable to get
+	 * @param	mixed	$default	default value to return if the variable does not exist
 	 * @return	mixed
 	 */
 	public function get($name, $default = null)
@@ -172,8 +166,7 @@ abstract class Session_Driver
 	/**
 	 * get session key variables
 	 *
-	 * @access	public
-	 * @param	string	name of the variable to get, default is 'session_id'
+	 * @param	string	$name	name of the variable to get, default is 'session_id'
 	 * @return	mixed	contents of the requested variable, or false if not found
 	 */
 	public function key($name = 'session_id')
@@ -186,10 +179,8 @@ abstract class Session_Driver
 	/**
 	 * delete session variables
 	 *
-	 * @param	string	name of the variable to delete
-	 * @param	mixed	value
-	 * @access	public
-	 * @return	Fuel\Core\Session_Driver
+	 * @param	string	$name	name of the variable to delete
+	 * @return	\Session_Driver
 	 */
 	public function delete($name)
 	{
@@ -203,9 +194,8 @@ abstract class Session_Driver
 	/**
 	 * force a session_id rotation
 	 *
-	 * @access	public
-	 * @param	boolean, if true, force a session id rotation
-	 * @return  Fuel\Core\Session_Driver
+	 * @param	bool	$force	if true, force a session id rotation
+	 * @return	\Session_Driver
 	 */
 	public function rotate($force = true)
 	{
@@ -231,10 +221,9 @@ abstract class Session_Driver
 	/**
 	 * set session flash variables
 	 *
-	 * @param	string	name of the variable to set
-	 * @param	mixed	value
-	 * @access	public
-	 * @return	Fuel\Core\Session_Driver
+	 * @param	string	$name	name of the variable to set
+	 * @param	mixed	$value	value
+	 * @return	\Session_Driver
 	 */
 	public function set_flash($name, $value)
 	{
@@ -273,10 +262,9 @@ abstract class Session_Driver
 	/**
 	 * get session flash variables
 	 *
-	 * @access	public
-	 * @param	string	name of the variable to get
-	 * @param	mixed	default value to return if the variable does not exist
-	 * @param	bool	true if the flash variable needs to expire immediately, false to use "flash_auto_expire"
+	 * @param	string	$name		name of the variable to get
+	 * @param	mixed	$default	default value to return if the variable does not exist
+	 * @param	bool	$expire		true if the flash variable needs to expire immediately, false to use "flash_auto_expire"
 	 * @return	mixed
 	 */
 	public function get_flash($name, $default = null, $expire = null)
@@ -333,9 +321,8 @@ abstract class Session_Driver
 	/**
 	 * keep session flash variables
 	 *
-	 * @access	public
-	 * @param	string	name of the variable to keep
-	 * @return	Fuel\Core\Session_Driver
+	 * @param	string	$name	name of the variable to keep
+	 * @return	\Session_Driver
 	 */
 	public function keep_flash($name)
 	{
@@ -359,10 +346,8 @@ abstract class Session_Driver
 	/**
 	 * delete session flash variables
 	 *
-	 * @param	string	name of the variable to delete
-	 * @param	mixed	value
-	 * @access	public
-	 * @return	Fuel\Core\Session_Driver
+	 * @param	string	$name	name of the variable to delete
+	 * @return	\Session_Driver
 	 */
 	public function delete_flash($name)
 	{
@@ -383,9 +368,8 @@ abstract class Session_Driver
 	/**
 	 * set the session flash id
 	 *
-	 * @param	string	name of the id to set
-	 * @access	public
-	 * @return	Fuel\Core\Session_Driver
+	 * @param	string	$name	name of the id to set
+	 * @return	\Session_Driver
 	 */
 	public function set_flash_id($name)
 	{
@@ -399,7 +383,6 @@ abstract class Session_Driver
 	/**
 	 * get the current session flash id
 	 *
-	 * @access	public
 	 * @return	string	name of the flash id
 	 */
 	public function get_flash_id()
@@ -412,9 +395,8 @@ abstract class Session_Driver
 	/**
 	 * get a runtime config value
 	 *
-	 * @param	string	name of the config variable to get
-	 * @access	public
-	 * @return  mixed
+	 * @param	string	$name	name of the config variable to get
+	 * @return 	mixed
 	 */
 	public function get_config($name)
 	{
@@ -426,9 +408,9 @@ abstract class Session_Driver
 	/**
 	 * set a runtime config value
 	 *
-	 * @param	string	name of the config variable to set
-	 * @access	public
-	 * @return  Fuel\Core\Session_Driver
+	 * @param	string	$name	name of the config variable to set
+	 * @param	mixed	$value
+	 * @return	\Session_Driver
 	 */
 	public function set_config($name, $value = null)
 	{
@@ -445,8 +427,7 @@ abstract class Session_Driver
 	/**
 	 * removes flash variables marked as old
 	 *
-	 * @access	private
-	 * @return  void
+	 * @return	void
 	 */
 	protected function _cleanup_flash()
 	{
@@ -464,8 +445,7 @@ abstract class Session_Driver
 	/**
 	 * generate a new session id
 	 *
-	 * @access	private
-	 * @return  void
+	 * @return	string
 	 */
 	protected function _new_session_id()
 	{
@@ -482,9 +462,9 @@ abstract class Session_Driver
 	/**
 	 * write a cookie
 	 *
-	 * @access	private
-	 * @param	array, cookie payload
-	 * @return  void
+	 * @param	array	$payload cookie payload
+	 * @return	mixed
+	 * @throws	\FuelException
 	 */
 	 protected function _set_cookie($payload = array())
 	 {
@@ -518,8 +498,7 @@ abstract class Session_Driver
 	/**
 	 * read a cookie
 	 *
-	 * @access	private
-	 * @return  void
+	 * @return	mixed
 	 */
 	 protected function _get_cookie()
 	 {
@@ -589,8 +568,7 @@ abstract class Session_Driver
 	 * This function first converts any slashes found in the array to a temporary
 	 * marker, so when it gets unserialized the slashes will be preserved
 	 *
-	 * @access	private
-	 * @param	array
+	 * @param	array	$data
 	 * @return	string
 	 */
 	protected function _serialize($data)
@@ -624,8 +602,7 @@ abstract class Session_Driver
 	 * This function unserializes a data string, then converts any
 	 * temporary slash markers back to actual slashes
 	 *
-	 * @access	private
-	 * @param	array
+	 * @param	array	$input
 	 * @return	string
 	 */
 	protected function _unserialize($input)
@@ -660,8 +637,7 @@ abstract class Session_Driver
 	 *
 	 * This function validates all global (driver independent) configuration values
 	 *
-	 * @access	private
-	 * @param	array
+	 * @param	array	$config
 	 * @return	array
 	 */
 	protected function _validate_config($config)

@@ -44,7 +44,6 @@ class Session_Redis extends \Session_Driver
 	/**
 	 * driver initialisation
 	 *
-	 * @access	public
 	 * @return	void
 	 */
 	public function init()
@@ -64,8 +63,7 @@ class Session_Redis extends \Session_Driver
 	/**
 	 * create a new session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Redis
+	 * @return	$this
 	 */
 	public function create()
 	{
@@ -85,9 +83,9 @@ class Session_Redis extends \Session_Driver
 	/**
 	 * read the session
 	 *
-	 * @access	public
-	 * @param	boolean, set to true if we want to force a new session to be created
-	 * @return	Fuel\Core\Session_Driver
+	 * @param	bool	$force	set to true if we want to force a new session to be created
+	 * @return	\Session_Driver
+	 * @throws	\FuelException
 	 */
 	public function read($force = false)
 	{
@@ -169,8 +167,7 @@ class Session_Redis extends \Session_Driver
 	/**
 	 * write the session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Redis
+	 * @return	\Session_Redis
 	 */
 	public function write()
 	{
@@ -210,8 +207,7 @@ class Session_Redis extends \Session_Driver
 	/**
 	 * destroy the current session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Redis
+	 * @return	\Session_Redis
 	 */
 	public function destroy()
 	{
@@ -232,8 +228,9 @@ class Session_Redis extends \Session_Driver
 	/**
 	 * Writes the redis entry
 	 *
-	 * @access	private
-	 * @return  boolean, true if it was an existing session, false if not
+	 * @param	$session_id
+	 * @param	$payload
+	 * @return	boolean, true if it was an existing session, false if not
 	 */
 	protected function _write_redis($session_id, $payload)
 	{
@@ -247,8 +244,8 @@ class Session_Redis extends \Session_Driver
 	/**
 	 * Reads the redis entry
 	 *
-	 * @access	private
-	 * @return  mixed, the payload if the file exists, or false if not
+	 * @param	$session_id
+	 * @return	mixed, the payload if the file exists, or false if not
 	 */
 	protected function _read_redis($session_id)
 	{
@@ -262,8 +259,7 @@ class Session_Redis extends \Session_Driver
 	 * validate a driver config value
 	 *
 	 * @param	array	array with configuration values
-	 * @access	public
-	 * @return  array	validated and consolidated config
+	 * @return 	array	validated and consolidated config
 	 */
 	public function _validate_config($config)
 	{

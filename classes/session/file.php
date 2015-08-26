@@ -40,8 +40,7 @@ class Session_File extends \Session_Driver
 	/**
 	 * create a new session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_File
+	 * @return	\Session_File
 	 */
 	public function create()
 	{
@@ -61,9 +60,8 @@ class Session_File extends \Session_Driver
 	/**
 	 * read the session
 	 *
-	 * @access	public
 	 * @param	boolean, set to true if we want to force a new session to be created
-	 * @return	Fuel\Core\Session_Driver
+	 * @return	\Session_Driver
 	 */
 	public function read($force = false)
 	{
@@ -148,8 +146,7 @@ class Session_File extends \Session_Driver
 	/**
 	 * write the session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_File
+	 * @return	\Session_File
 	 */
 	public function write()
 	{
@@ -193,8 +190,7 @@ class Session_File extends \Session_Driver
 	/**
 	 * destroy the current session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_File
+	 * @return	\Session_File
 	 */
 	public function destroy()
 	{
@@ -219,7 +215,6 @@ class Session_File extends \Session_Driver
 	/**
 	 * Garbage Collector
 	 *
-	 * @access	public
 	 * @return	bool
 	 */
 	public function gc()
@@ -253,8 +248,10 @@ class Session_File extends \Session_Driver
 	/**
 	 * Writes the session file
 	 *
-	 * @access	private
-	 * @return  boolean, true if it was an existing session, false if not
+	 * @param	$session_id
+	 * @param	$payload
+	 * @return	boolean, true if it was an existing session, false if not
+	 * @throws	\FuelException
 	 */
 	protected function _write_file($session_id, $payload)
 	{
@@ -292,8 +289,8 @@ class Session_File extends \Session_Driver
 	/**
 	 * Reads the session file
 	 *
-	 * @access	private
-	 * @return  mixed, the payload if the file exists, or false if not
+	 * @param	$session_id
+	 * @return	mixed, the payload if the file exists, or false if not
 	 */
 	protected function _read_file($session_id)
 	{
@@ -335,9 +332,9 @@ class Session_File extends \Session_Driver
 	/**
 	 * validate a driver config value
 	 *
-	 * @param	array	array with configuration values
-	 * @access	public
-	 * @return  array	validated and consolidated config
+	 * @param	array	$config		array with configuration values
+	 * @return	array	validated and consolidated config
+	 * @throws	\FuelException
 	 */
 	public function _validate_config($config)
 	{

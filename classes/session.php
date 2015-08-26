@@ -115,7 +115,10 @@ class Session
 	 *
 	 * Produces fully configured session driver instances
 	 *
-	 * @param	array|string	full driver config or just driver type
+	 * @param	array|string	$custom	full driver config or just driver type
+	 * @return	mixed
+	 * @throws	\FuelException
+	 * @throws	\Session_Exception
 	 */
 	public static function forge($custom = array())
 	{
@@ -174,8 +177,6 @@ class Session
 	 * class constructor
 	 *
 	 * @param	void
-	 * @access	private
-	 * @return	void
 	 */
 	final private function __construct() {}
 
@@ -185,8 +186,7 @@ class Session
 	 * create or return the driver instance
 	 *
 	 * @param	void
-	 * @access	public
-	 * @return	Session_Driver object
+	 * @return	\Session_Driver object
 	 */
 	public static function instance($instance = null)
 	{
@@ -213,10 +213,9 @@ class Session
 	/**
 	 * set session variables
 	 *
-	 * @param	string|array	name of the variable to set or array of values, array(name => value)
-	 * @param	mixed			value
-	 * @access	public
-	 * @return	void
+	 * @param	string|array	$name	name of the variable to set or array of values, array(name => value)
+	 * @param	mixed			$value	value
+	 * @return	\Session_Driver
 	 */
 	public static function set($name, $value = null)
 	{
@@ -228,9 +227,8 @@ class Session
 	/**
 	 * get session variables
 	 *
-	 * @access	public
-	 * @param	string	name of the variable to get
-	 * @param	mixed	default value to return if the variable does not exist
+	 * @param	string	$name		name of the variable to get
+	 * @param	mixed	$default	default value to return if the variable does not exist
 	 * @return	mixed
 	 */
 	public static function get($name = null, $default = null)
@@ -243,10 +241,8 @@ class Session
 	/**
 	 * delete a session variable
 	 *
-	 * @param	string	name of the variable to delete
-	 * @param	mixed	value
-	 * @access	public
-	 * @return	void
+	 * @param	string	$name	name of the variable to delete
+	 * @return	Session_Driver
 	 */
 	public static function delete($name)
 	{
@@ -258,8 +254,7 @@ class Session
 	/**
 	 * get session key variables
 	 *
-	 * @access	public
-	 * @param	string	name of the variable to get, default is 'session_id'
+	 * @param	string	$name	name of the variable to get, default is 'session_id'
 	 * @return	mixed
 	 */
 	public static function key($name = 'session_id')
@@ -272,9 +267,8 @@ class Session
 	/**
 	 * set session flash variables
 	 *
-	 * @param	string	name of the variable to set
-	 * @param	mixed	value
-	 * @access	public
+	 * @param	string	$name	name of the variable to set
+	 * @param	mixed	$value	value
 	 * @return	void
 	 */
 	public static function set_flash($name, $value = null)
@@ -287,10 +281,9 @@ class Session
 	/**
 	 * get session flash variables
 	 *
-	 * @access	public
-	 * @param	string	name of the variable to get
-	 * @param	mixed	default value to return if the variable does not exist
-	 * @param	bool	true if the flash variable needs to expire immediately
+	 * @param	string	$name		name of the variable to get
+	 * @param	mixed	$default	default value to return if the variable does not exist
+	 * @param	bool	$expire		true if the flash variable needs to expire immediately
 	 * @return	mixed
 	 */
 	public static function get_flash($name = null, $default = null, $expire = null)
@@ -303,9 +296,8 @@ class Session
 	/**
 	 * keep session flash variables
 	 *
-	 * @access	public
-	 * @param	string	name of the variable to keep
-	 * @return	void
+	 * @param	string	$name	name of the variable to keep
+	 * @return	\Session_Driver
 	 */
 	public static function keep_flash($name = null)
 	{
@@ -317,10 +309,8 @@ class Session
 	/**
 	 * delete session flash variables
 	 *
-	 * @param	string	name of the variable to delete
-	 * @param	mixed	value
-	 * @access	public
-	 * @return	void
+	 * @param	string	$name	name of the variable to delete
+	 * @return	\Session_Driver
 	 */
 	public static function delete_flash($name = null)
 	{
@@ -332,7 +322,6 @@ class Session
 	/**
 	 * create a new session
 	 *
-	 * @access	public
 	 * @return	void
 	 */
 	public static function create()
@@ -345,8 +334,7 @@ class Session
 	/**
 	 * read the session
 	 *
-	 * @access	public
-	 * @return	void
+	 * @return	\Session_Driver
 	 */
 	public static function read()
 	{
@@ -358,8 +346,7 @@ class Session
 	/**
 	 * write the session
 	 *
-	 * @access	public
-	 * @return	void
+	 * @return	\Session_Driver
 	 */
 	public static function write()
 	{
@@ -371,8 +358,7 @@ class Session
 	/**
 	 * rotate the session id
 	 *
-	 * @access	public
-	 * @return	void
+	 * @return	\Session_Driver
 	 */
 	public static function rotate()
 	{
@@ -384,8 +370,7 @@ class Session
 	/**
 	 * destroy the current session
 	 *
-	 * @access	public
-	 * @return	void
+	 * @return	\Session_Driver
 	 */
 	public static function destroy()
 	{

@@ -45,8 +45,7 @@ class Session_Db extends \Session_Driver
 	/**
 	 * create a new session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Db
+	 * @return	\Session_Db
 	 */
 	public function create($payload = '')
 	{
@@ -69,9 +68,8 @@ class Session_Db extends \Session_Driver
 	/**
 	 * read the session
 	 *
-	 * @access	public
 	 * @param	boolean, set to true if we want to force a new session to be created
-	 * @return	Fuel\Core\Session_Driver
+	 * @return	\Session_Driver
 	 */
 	public function read($force = false)
 	{
@@ -155,8 +153,9 @@ class Session_Db extends \Session_Driver
 	/**
 	 * write the current session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Db
+	 * @return	$this
+	 * @throws	\Database_Exception
+	 * @throws	\FuelException
 	 */
 	public function write()
 	{
@@ -248,7 +247,6 @@ class Session_Db extends \Session_Driver
 	/**
 	 * Garbage Collector
 	 *
-	 * @access	public
 	 * @return	bool
 	 */
 	public function gc()
@@ -267,8 +265,7 @@ class Session_Db extends \Session_Driver
 	/**
 	 * destroy the current session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Db
+	 * @return	\Session_Db
 	 */
 	public function destroy()
 	{
@@ -292,9 +289,9 @@ class Session_Db extends \Session_Driver
 	/**
 	 * validate a driver config value
 	 *
-	 * @param	array	array with configuration values
-	 * @access	public
-	 * @return  array	validated and consolidated config
+	 * @param	array	$config	array with configuration values
+	 * @return	array	validated and consolidated config
+	 * @throws	\FuelException
 	 */
 	public function _validate_config($config)
 	{
