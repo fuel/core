@@ -49,8 +49,7 @@ class Session_Memcached extends \Session_Driver
 	/**
 	 * driver initialisation
 	 *
-	 * @access	public
-	 * @return	void
+	 * @throws	\FuelException
 	 */
 	public function init()
 	{
@@ -89,8 +88,7 @@ class Session_Memcached extends \Session_Driver
 	/**
 	 * create a new session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Memcached
+	 * @return	\Session_Memcached
 	 */
 	public function create()
 	{
@@ -110,9 +108,8 @@ class Session_Memcached extends \Session_Driver
 	/**
 	 * read the session
 	 *
-	 * @access	public
-	 * @param	boolean, set to true if we want to force a new session to be created
-	 * @return	Fuel\Core\Session_Driver
+	 * @param	bool	$force	set to true if we want to force a new session to be created
+	 * @return	\Session_Driver
 	 */
 	public function read($force = false)
 	{
@@ -197,8 +194,7 @@ class Session_Memcached extends \Session_Driver
 	/**
 	 * write the session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Memcached
+	 * @return	\Session_Memcached
 	 */
 	public function write()
 	{
@@ -238,8 +234,8 @@ class Session_Memcached extends \Session_Driver
 	/**
 	 * destroy the current session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Memcached
+	 * @return	$this
+	 * @throws	\FuelException
 	 */
 	public function destroy()
 	{
@@ -263,8 +259,9 @@ class Session_Memcached extends \Session_Driver
 	/**
 	 * Writes the memcached entry
 	 *
-	 * @access	private
-	 * @return  boolean, true if it was an existing session, false if not
+	 * @param	$session_id
+	 * @param	$payload
+	 * @throws	\FuelException
 	 */
 	protected function _write_memcached($session_id, $payload)
 	{
@@ -280,8 +277,8 @@ class Session_Memcached extends \Session_Driver
 	/**
 	 * Reads the memcached entry
 	 *
-	 * @access	private
-	 * @return  mixed, the payload if the file exists, or false if not
+	 * @param	$session_id
+	 * @return	mixed	the payload if the file exists, or false if not
 	 */
 	protected function _read_memcached($session_id)
 	{
@@ -294,9 +291,9 @@ class Session_Memcached extends \Session_Driver
 	/**
 	 * validate a driver config value
 	 *
-	 * @param	array	array with configuration values
-	 * @access	public
-	 * @return  array	validated and consolidated config
+	 * @param	array	$config		array with configuration values
+	 * @return	array	validated and consolidated config
+	 * @throws	\FuelException
 	 */
 	public function _validate_config($config)
 	{

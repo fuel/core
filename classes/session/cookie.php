@@ -38,8 +38,7 @@ class Session_Cookie extends \Session_Driver
 	/**
 	 * create a new session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Cookie
+	 * @return	\Session_Cookie
 	 */
 	public function create()
 	{
@@ -59,9 +58,8 @@ class Session_Cookie extends \Session_Driver
 	/**
 	 * read the session
 	 *
-	 * @access	public
 	 * @param	boolean, set to true if we want to force a new session to be created
-	 * @return	Fuel\Core\Session_Driver
+	 * @return	\Session_Driver
 	 */
 	public function read($force = false)
 	{
@@ -123,8 +121,7 @@ class Session_Cookie extends \Session_Driver
 	/**
 	 * write the current session
 	 *
-	 * @access	public
-	 * @return	Fuel\Core\Session_Cookie
+	 * @return	\Session_Cookie
 	 */
 	public function write()
 	{
@@ -152,8 +149,7 @@ class Session_Cookie extends \Session_Driver
 	 * validate a driver config value
 	 *
 	 * @param	array	array with configuration values
-	 * @access	public
-	 * @return  array	validated and consolidated config
+	 * @return	array	validated and consolidated config
 	 */
 	public function _validate_config($config)
 	{
