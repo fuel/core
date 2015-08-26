@@ -326,7 +326,7 @@ class Session
 	 */
 	public static function create()
 	{
-		static::instance()->create();
+		return static::instance()->create();
 	}
 
 	// --------------------------------------------------------------------
