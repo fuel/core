@@ -856,8 +856,8 @@ class File
 
 		$info['size'] = static::get_size($info['realpath'], $area);
 		$info['permissions'] = static::get_permissions($info['realpath'], $area);
-		$info['time_created'] = static::get_time($info['realpath'], $type = 'created', $area);
-		$info['time_modified'] = static::get_time($info['realpath'], $type = 'modified', $area);
+		$info['time_created'] = static::get_time($info['realpath'], 'created', $area);
+		$info['time_modified'] = static::get_time($info['realpath'], 'modified', $area);
 
 		return $info;
 	}
