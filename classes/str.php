@@ -230,7 +230,7 @@ class Str
 	 *
 	 * @param   string $str       required
 	 * @param   string $encoding  default UTF-8
-	 * @return   string
+	 * @return  string
 	 */
 	public static function ucfirst($str, $encoding = null)
 	{
@@ -266,8 +266,8 @@ class Str
 	/**
 	  * Creates a random string of characters
 	  *
-	  * @param   string  the type of string
-	  * @param   int     the number of characters
+	  * @param   string  $type    the type of string
+	  * @param   int     $length  the number of characters
 	  * @return  string  the random string
 	  */
 	public static function random($type = 'alnum', $length = 16)
@@ -364,8 +364,8 @@ class Str
 	/**
 	 * Parse the params from a string using strtr()
 	 *
-	 * @param   string  string to parse
-	 * @param   array   params to str_replace
+	 * @param   string  $string  string to parse
+	 * @param   array   $array   params to str_replace
 	 * @return  string
 	 */
 	public static function tr($string, $array = array())
@@ -404,8 +404,9 @@ class Str
 	/**
 	 * Check if a string is a valid XML
 	 *
-	 * @param  string $string string to check
+	 * @param  string  $string  string to check
 	 * @return bool
+	 * @throws \FuelException
 	 */
 	public static function is_xml($string)
 	{
@@ -425,7 +426,7 @@ class Str
 	/**
 	 * Check if a string is serialized
 	 *
-	 * @param  string $string string to check
+	 * @param  string  $string  string to check
 	 * @return bool
 	 */
 	public static function is_serialized($string)
