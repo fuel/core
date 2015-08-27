@@ -87,7 +87,7 @@ class Migrate
 
 			// fetch defined modules
 			$modules = explode(',', $modules);
-			foreach(\Config::get('always_load.modules', []) as $module)
+			foreach(\Config::get('always_load.modules', array()) as $module)
 			{
 				$modules[] = $module;
 			}
@@ -95,7 +95,7 @@ class Migrate
 
 			// fetch defined packages
 			$packages = explode(',', $packages);
-			foreach(\Config::get('always_load.packages', []) as $name => $package)
+			foreach(\Config::get('always_load.packages', array()) as $name => $package)
 			{
 				$packages[] = is_numeric($name) ? $package : $name;
 			}
