@@ -13,26 +13,20 @@
 define('DS', DIRECTORY_SEPARATOR);
 define('CRLF', chr(13).chr(10));
 
-setup_autoloader();
-
-// Load the base functions
-require COREPATH.'base.php';
-
 /**
  * Do we have access to mbstring?
  * We need this in order to work with UTF-8 strings
  */
 define('MBSTRING', function_exists('mb_get_info'));
 
-/**
- * Load the Composer autoloader if present
- */
-defined('VENDORPATH') or define('VENDORPATH', realpath(COREPATH.'..'.DS.'vendor').DS);
-if ( ! is_file(VENDORPATH.'autoload.php'))
-{
-	die('Composer is not installed. Please run "php composer.phar update" in the root to install Composer');
-}
-require VENDORPATH.'autoload.php';
+// load the base functions
+require COREPATH.'base.php';
+
+// define the core classes to the autoloader
+setup_autoloader();
+
+// setup the composer autoloader
+get_composer();
 
 /**
  * Register all the error/shutdown handlers
@@ -320,3 +314,23 @@ function setup_autoloader()
 		'Fuel\\Core\\Viewmodel'                     => COREPATH.'classes/viewmodel.php',
 	));
 };
+
+function get_composer()
+{
+	// storage for the composer autoloader
+	static $composer;
+
+	// load composer
+	if ( ! $composer)
+	{
+	 // load the Composer autoloader if present
+		defined('VENDORPATH') or define('VENDORPATH', realpath(COREPATH.'..'.DS.'vendor').DS);
+		if ( ! is_file(VENDORPATH.'autoload.php'))
+		{
+			die('Composer is not installed. Please run "php composer.phar update" in the root to install Composer');
+		}
+		$composer = require(VENDORPATH.'autoload.php');
+	}
+
+	return $composer;
+}
