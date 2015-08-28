@@ -30,8 +30,8 @@ class Theme
 	 * Acts as a Multiton.  Will return the requested instance, or will create
 	 * a new named one if it does not exist.
 	 *
-	 * @param   string    $name  The instance name
-	 *
+	 * @param   string  $name    The instance name
+	 * @param   array   $config
 	 * @return  Theme
 	 */
 	public static function instance($name = '_default_', array $config = array())
@@ -126,7 +126,6 @@ class Theme
 	 * file.
 	 *
 	 * @param   array  $config  Optional config override
-	 * @return  void
 	 */
 	public function __construct(array $config = array())
 	{
@@ -205,6 +204,7 @@ class Theme
 	 * @param   array   $data         View data
 	 * @param   bool    $auto_filter  Auto filter the view data
 	 * @return  View    New View object
+	 * @throws  \ThemeException
 	 */
 	public function view($view, $data = array(), $auto_filter = null)
 	{
@@ -220,8 +220,8 @@ class Theme
 	 * Loads a viewmodel, and have it use the view from the currently active theme,
 	 * the fallback theme, or the standard FuelPHP cascading file system
 	 *
-	 * @param   string  ViewModel classname without View_ prefix or full classname
-	 * @param   string  Method to execute
+	 * @param   string  $view         ViewModel classname without View_ prefix or full classname
+	 * @param   string  $method       Method to execute
 	 * @param   bool    $auto_filter  Auto filter the view data
 	 * @return  View    New View object
 	 *
@@ -236,10 +236,10 @@ class Theme
 	 * Loads a presenter, and have it use the view from the currently active theme,
 	 * the fallback theme, or the standard FuelPHP cascading file system
 	 *
-	 * @param   string  Presenter classname without View_ prefix or full classname
-	 * @param   string  Method to execute
-	 * @param   bool    Auto filter the view data
-	 * @param   string  Custom View to associate with this persenter
+	 * @param   string  $presenter    Presenter classname without View_ prefix or full classname
+	 * @param   string  $method       Method to execute
+	 * @param   bool    $auto_filter  Auto filter the view data
+	 * @param   string  $view         Custom View to associate with this persenter
 	 * @return  Presenter
 	 */
 	public function presenter($presenter, $method = 'view', $auto_filter = null, $view = null)
@@ -271,6 +271,7 @@ class Theme
 	 *
 	 * @param   string  $path  Relative path to the asset
 	 * @return  string  Full asset URL or path if outside docroot
+	 * @throws  \ThemeException
 	 */
 	public function asset_path($path)
 	{
@@ -332,7 +333,8 @@ class Theme
 	/**
 	 * Define a custom order for a partial section
 	 *
-	 * @var  string  name of the partial section
+	 * @param   string  $section  name of the partial section
+	 * @param   mixed   $order
 	 * @throws  \ThemeException
 	 */
 	public function set_order($section, $order)
@@ -494,7 +496,7 @@ class Theme
 	 *
 	 * @param   string  						$section	Name of the partial section in the template
 	 * @param   string|View|ViewModel|Presenter	$view   	chrome View, or name of the view
-	 * @param   string  						$var		Name of the variable in the chome that will output the partial
+	 * @param   string  						$var		Name of the variable in the chrome that will output the partial
 	 *
 	 * @return  View|ViewModel|Presenter, the view partial
 	 */
@@ -515,10 +517,8 @@ class Theme
 	 * Get a set chrome view
 	 *
 	 * @param   string  						$section	Name of the partial section in the template
-	 * @param   string|View|ViewModel|Presenter	$view   	chrome View, or name of the view
-	 * @param   string  						$var		Name of the variable in the chome that will output the partial
-	 *
-	 * @return  void
+	 * @return mixed
+	 * @throws \ThemeException
 	 */
 	public function get_chrome($section)
 	{
@@ -597,7 +597,11 @@ class Theme
 	/**
 	 * Get a value from the info array
 	 *
+	 * @param   mixed  $var
+	 * @param   mixed  $default
+	 * @param   mixed  $theme
 	 * @return  mixed
+	 * @throws  \ThemeException
 	 */
 	public function get_info($var = null, $default = null, $theme = null)
 	{
@@ -662,6 +666,7 @@ class Theme
 	 *
 	 * @param   string  $theme  Name of the theme (null for active)
 	 * @return  array   Theme info array
+	 * @throws \ThemeException
 	 */
 	public function load_info($theme = null)
 	{
@@ -710,6 +715,7 @@ class Theme
 	 *
 	 * @param   string  $type  Name of the theme (null for active)
 	 * @return  array   Theme info array
+	 * @throws  \ThemeException
 	 */
 	public function save_info($type = 'active')
 	{
