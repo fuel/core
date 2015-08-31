@@ -66,9 +66,11 @@ class Unzip
 	/**
 	 * Unzip all files in archive.
 	 *
-	 * @access    Public
-	 * @param     none
-	 * @return    none
+	 * @param  string  $zip_file
+	 * @param  string  $target_dir
+	 * @param  string  $preserve_filepath
+	 * @return array
+	 * @throws \FuelException
 	 */
 	public function extract($zip_file, $target_dir = NULL, $preserve_filepath = TRUE)
 	{
@@ -78,7 +80,6 @@ class Unzip
 		if ( ! $files = $this->_list_files())
 		{
 			throw new \FuelException('ZIP folder was empty.');
-			return false;
 		}
 
 		$file_locations = array();
@@ -115,7 +116,6 @@ class Unzip
 						if ( ! @mkdir($this->_target_dir . '/' . $str))
 						{
 							throw new \FuelException('Desitnation path is not writable.');
-							return false;
 						}
 
 						// Apply chmod if configured to do so
@@ -142,9 +142,7 @@ class Unzip
 	/**
 	 * What extensions do we want out of this ZIP
 	 *
-	 * @access    Public
-	 * @param     none
-	 * @return    none
+	 * @param  string $ext
 	 */
 	public function allow($ext = NULL)
 	{
@@ -156,9 +154,9 @@ class Unzip
 	/**
 	 * Show error messages
 	 *
-	 * @access    public
-	 * @param    string
-	 * @return    string
+	 * @param  string $open
+	 * @param  string $close
+	 * @return string
 	 */
 	public function error_string($open = '<p>', $close = '</p>')
 	{
@@ -170,9 +168,9 @@ class Unzip
 	/**
 	 * Show debug messages
 	 *
-	 * @access    public
-	 * @param    string
-	 * @return    string
+	 * @param  string $open
+	 * @param  string $close
+	 * @return string
 	 */
 	public function debug_string($open = '<p>', $close = '</p>')
 	{
@@ -184,9 +182,7 @@ class Unzip
 	/**
 	 * Save errors
 	 *
-	 * @access    Private
-	 * @param    string
-	 * @return    none
+	 * @param $string
 	 */
 	function set_error($string)
 	{
@@ -198,9 +194,7 @@ class Unzip
 	/**
 	 * Save debug data
 	 *
-	 * @access    Private
-	 * @param    string
-	 * @return    none
+	 * @param $string
 	 */
 	function set_debug($string)
 	{
@@ -212,9 +206,9 @@ class Unzip
 	/**
 	 * List all files in archive.
 	 *
-	 * @access    Public
-	 * @param     boolean
-	 * @return    mixed
+	 * @param   bool $stop_on_file
+	 * @return  array
+	 * @throws  \FuelException
 	 */
 	private function _list_files($stop_on_file = false)
 	{
@@ -231,7 +225,6 @@ class Unzip
 		if ( ! $fh)
 		{
 			throw new \FuelException('Failed to load file: ' . $this->_zip_file);
-			return false;
 		}
 
 		$this->set_debug('Loading list from "End of Central Dir" index list...');
@@ -244,8 +237,6 @@ class Unzip
 			{
 				$this->set_debug('Failed! Could not find any valid header.');
 				throw new \FuelException('ZIP File is corrupted or empty');
-
-				return false;
 			}
 		}
 
@@ -257,9 +248,10 @@ class Unzip
 	/**
 	 * Unzip file in archive.
 	 *
-	 * @access    Public
-	 * @param     string, boolean
-	 * @return    Unziped file.
+	 * @param  string      $compressed_file_name
+	 * @param  string      $target_file_name
+	 * @return int|string|bool
+	 * @throws \FuelException
 	 */
 	private function _extract_file($compressed_file_name, $target_file_name = false)
 	{
@@ -274,13 +266,11 @@ class Unzip
 		if ( ! isset($this->compressed_list[$compressed_file_name]))
 		{
 			throw new \FuelException('File "<strong>' . $compressed_file_name . '</strong>" is not compressed in the zip.');
-			return false;
 		}
 
 		if (substr($compressed_file_name, -1) == '/')
 		{
 			throw new \FuelException('Trying to unzip a folder name "<strong>' . $compressed_file_name . '</strong>".');
-			return false;
 		}
 
 		if ( ! $fdetails['uncompressed_size'])
@@ -310,10 +300,6 @@ class Unzip
 
 	/**
 	 * Free the file resource.
-	 *
-	 * @access    Public
-	 * @param     none
-	 * @return    none
 	 */
 	public function close()
 	{
@@ -328,10 +314,6 @@ class Unzip
 
 	/**
 	 * Free the file resource Automatic destroy.
-	 *
-	 * @access    Public
-	 * @param     none
-	 * @return    none
 	 */
 	public function __destroy()
 	{
@@ -343,9 +325,12 @@ class Unzip
 	/**
 	 * Uncompress file. And save it to the targetFile.
 	 *
-	 * @access    Private
-	 * @param     Filecontent, int, int, boolean
-	 * @return    none
+	 * @param  mixed   $content
+	 * @param  int     $mode
+	 * @param  int     $uncompressed_size
+	 * @param  string  $target_file_name
+	 * @return int|string|bool
+	 * @throws \FuelException
 	 */
 	private function _uncompress($content, $mode, $uncompressed_size, $target_file_name = false)
 	{
@@ -355,19 +340,15 @@ class Unzip
 				return $target_file_name ? file_put_contents($target_file_name, $content) : $content;
 			case 1:
 				throw new \FuelException('Shrunk mode is not supported... yet?');
-				return false;
 			case 2:
 			case 3:
 			case 4:
 			case 5:
 				throw new \FuelException('Compression factor ' . ($mode - 1) . ' is not supported... yet?');
-				return false;
 			case 6:
 				throw new \FuelException('Implode is not supported... yet?');
-				return false;
 			case 7:
 				throw new \FuelException('Tokenizing compression algorithm is not supported... yet?');
-				return false;
 			case 8:
 				// Deflate
 				return $target_file_name ?
@@ -375,10 +356,8 @@ class Unzip
 						gzinflate($content, $uncompressed_size);
 			case 9:
 				throw new \FuelException('Enhanced Deflating is not supported... yet?');
-				return false;
 			case 10:
 				throw new \FuelException('PKWARE Date Compression Library Impoloding is not supported... yet?');
-				return false;
 			case 12:
 				// Bzip2
 				return $target_file_name ?
@@ -386,10 +365,8 @@ class Unzip
 						bzdecompress($content);
 			case 18:
 				throw new \FuelException('IBM TERSE is not supported... yet?');
-				return false;
 			default:
 				throw new \FuelException('Unknown uncompress method: $mode');
-				return false;
 		}
 	}
 
