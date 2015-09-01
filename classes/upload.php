@@ -68,8 +68,6 @@ class Upload
 
 	/**
 	 * class initialisation, load the config and process $_FILES if needed
-	 *
-	 * @return	void
 	 */
 	public static function _init()
 	{
@@ -114,7 +112,7 @@ class Upload
 	/**
 	 * return the Upload instance
 	 *
-	 * @return	\FuelPHP\Upload\Upload
+	 * @return	\Upload
 	 */
 	public static function instance()
 	{
@@ -141,8 +139,8 @@ class Upload
 	 * Move callback function, custom method to move an uploaded file. In Fuel 1.x
 	 * this method is used for FTP uploads only
 	 *
-	 * @param  string  $file  The FQFN of the file to move
-	 * @param  string  $file  The FQFN of the file destination
+	 * @param  string  $from  The FQFN of the file to move
+	 * @param  string  $to    The FQFN of the file destination
 	 *
 	 * @return  bool  Result of the move operation
 	 */
@@ -173,6 +171,7 @@ class Upload
 	/**
 	 * Get the list of validated files
 	 *
+	 * @param	mixed	$index
 	 * @return	array	list of uploaded files that are validated
 	 */
 	public static function get_files($index = null)
@@ -218,6 +217,7 @@ class Upload
 	/**
 	 * Get the list of non-validated files
 	 *
+	 * @param	mixed	$index
 	 * @return	array	list of uploaded files that failed to validate
 	 */
 	public static function get_errors($index = null)
@@ -270,8 +270,8 @@ class Upload
 	 *
 	 * Registers a Callback for a given event
 	 *
-	 * @param	string	The name of the event
-	 * @param	mixed	callback information
+	 * @param	string	$event		The name of the event
+	 * @param	mixed	$callback	callback information
 	 *
 	 * @return	void
 	 */
@@ -288,6 +288,7 @@ class Upload
 	/**
 	 * Process the uploaded files, and run the validation
 	 *
+	 * @param	array	$config
 	 * @return	void
 	 */
 	public static function process($config = array())
@@ -304,8 +305,8 @@ class Upload
 	/**
 	 * Upload files with FTP
 	 *
-	 * @param   string|array  The name of the config group to use, or a configuration array.
-	 * @param   bool          Automatically connect to this server.
+	 * @param   string|array  $config	The name of the config group to use, or a configuration array.
+	 * @param   bool          $connect	Automatically connect to this server.
 	 */
 	public static function with_ftp($config = 'default', $connect = true)
 	{
@@ -326,8 +327,6 @@ class Upload
 	/**
 	 * save uploaded file(s)
 	 *
-	 * @param	mixed	if int, $files element to move. if array, list of elements to move, if none, move all elements
-	 * @param	string	path to move to
 	 * @return	void
 	 */
 	public static function save()
