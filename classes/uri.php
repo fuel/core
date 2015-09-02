@@ -113,7 +113,7 @@ class Uri
 	 * Converts the current URI segments to an associative array.  If
 	 * the URI has an odd number of segments, an empty value will be added.
 	 *
-	 * @param  int  segment number to start from. default value is the first segment
+	 * @param   int    $start  segment number to start from. default value is the first segment
 	 * @return  array  the assoc array
 	 */
 	public static function to_assoc($start = 1)
@@ -309,8 +309,7 @@ class Uri
 	 * Construct takes a URI or detects it if none is given and generates
 	 * the segments.
 	 *
-	 * @param   string  The URI
-	 * @return  void
+	 * @param   string  $uri  The URI
 	 */
 	public function __construct($uri = null)
 	{
