@@ -86,8 +86,9 @@ class View
 	 *
 	 *     $view = View::forge($file);
 	 *
-	 * @param   string  view filename
-	 * @param   array   array of values
+	 * @param   string  $file         view filename
+	 * @param   object  $data         array of values
+	 * @param   bool    $auto_filter
 	 * @return  View
 	 */
 	public static function forge($file = null, $data = null, $auto_filter = null)
@@ -100,9 +101,9 @@ class View
 	 *
 	 *     $view = new View($file);
 	 *
-	 * @param   string  view filename
-	 * @param   array   array of values
-	 * @return  void
+	 * @param   string  $file    view filename
+	 * @param   object  $data    array of values
+	 * @param   bool    $filter
 	 * @uses    View::set_filename
 	 */
 	public function __construct($file = null, $data = null, $filter = null)
@@ -148,9 +149,9 @@ class View
 	 *
 	 *     $value = $view->foo;
 	 *
-	 * @param   string  variable name
+	 * @param   string  $key  variable name
 	 * @return  mixed
-	 * @throws  OutOfBoundsException
+	 * @throws  \OutOfBoundsException
 	 */
 	public function & __get($key)
 	{
@@ -162,8 +163,8 @@ class View
 	 *
 	 *     $view->foo = 'something';
 	 *
-	 * @param   string  variable name
-	 * @param   mixed   value
+	 * @param   string  $key    variable name
+	 * @param   mixed   $value  value
 	 * @return  void
 	 */
 	public function __set($key, $value)
@@ -178,7 +179,7 @@ class View
 	 *
 	 * [!!] `null` variables are not considered to be set by [isset](http://php.net/isset).
 	 *
-	 * @param   string  variable name
+	 * @param   string  $key  variable name
 	 * @return  boolean
 	 */
 	public function __isset($key)
@@ -191,7 +192,7 @@ class View
 	 *
 	 *     unset($view->foo);
 	 *
-	 * @param   string  variable name
+	 * @param   string  $key  variable name
 	 * @return  void
 	 */
 	public function __unset($key)
@@ -226,8 +227,7 @@ class View
 	 *
 	 *     $output = $this->process_file();
 	 *
-	 * @param   string  File override
-	 * @param   array   variables
+	 * @param   bool  $file_override  File override
 	 * @return  string
 	 */
 	protected function process_file($file_override = false)
@@ -312,9 +312,9 @@ class View
 	 *
 	 *     View::set_global($name, $value);
 	 *
-	 * @param   string  variable name or an array of variables
-	 * @param   mixed   value
-	 * @param   bool    whether to filter the data or not
+	 * @param   string  $key     variable name or an array of variables
+	 * @param   mixed   $value   value
+	 * @param   bool    $filter  whether to filter the data or not
 	 * @return  void
 	 */
 	public static function set_global($key, $value = null, $filter = null)
@@ -346,9 +346,9 @@ class View
 	 *
 	 *     View::bind_global($key, $value);
 	 *
-	 * @param   string  variable name
-	 * @param   mixed   referenced variable
-	 * @param   bool    whether to filter the data or not
+	 * @param   string  $key     variable name
+	 * @param   mixed   $value   referenced variable
+	 * @param   bool    $filter  whether to filter the data or not
 	 * @return  void
 	 */
 	public static function bind_global($key, &$value, $filter = null)
@@ -365,7 +365,7 @@ class View
 	 *
 	 *     $view->auto_filter(false);
 	 *
-	 * @param   bool  whether to auto filter or not
+	 * @param   bool  $filter  whether to auto filter or not
 	 * @return  View
 	 */
 	public function auto_filter($filter = true)
@@ -385,9 +385,9 @@ class View
 	 *
 	 *     $view->set_filename($file);
 	 *
-	 * @param   string  view filename
+	 * @param   string  $file  view filename
 	 * @return  View
-	 * @throws  FuelException
+	 * @throws  \FuelException
 	 */
 	public function set_filename($file)
 	{
@@ -425,10 +425,10 @@ class View
 	 * If a default parameter is not given and the variable does not
 	 * exist, it will throw an OutOfBoundsException.
 	 *
-	 * @param   string  The variable name
-	 * @param   mixed   The default value to return
+	 * @param   string  $key      The variable name
+	 * @param   mixed   $default  The default value to return
 	 * @return  mixed
-	 * @throws  OutOfBoundsException
+	 * @throws  \OutOfBoundsException
 	 */
 	public function &get($key = null, $default = null)
 	{
@@ -479,9 +479,9 @@ class View
 	 *     // Create the values $food and $beverage in the view
 	 *     $view->set(array('food' => 'bread', 'beverage' => 'water'));
 	 *
-	 * @param   string   variable name or an array of variables
-	 * @param   mixed    value
-	 * @param   bool     whether to filter the data or not
+	 * @param   string   $key     variable name or an array of variables
+	 * @param   mixed    $value   value
+	 * @param   bool     $filter  whether to filter the data or not
 	 * @return  $this
 	 */
 	public function set($key, $value = null, $filter = null)
@@ -519,8 +519,8 @@ class View
 	 *
 	 *     $view->set_safe('foo', 'bar');
 	 *
-	 * @param   string   variable name or an array of variables
-	 * @param   mixed    value
+	 * @param   string   $key    variable name or an array of variables
+	 * @param   mixed    $value  value
 	 * @return  $this
 	 */
 	public function set_safe($key, $value = null)
@@ -537,9 +537,9 @@ class View
 	 *     // This reference can be accessed as $ref within the view
 	 *     $view->bind('ref', $bar);
 	 *
-	 * @param   string   variable name
-	 * @param   mixed    referenced variable
-	 * @param   bool     Whether to filter the var on output
+	 * @param   string   $key     variable name
+	 * @param   mixed    $value   referenced variable
+	 * @param   bool     $filter  Whether to filter the var on output
 	 * @return  $this
 	 */
 	public function bind($key, &$value, $filter = null)
@@ -562,9 +562,9 @@ class View
 	 * [!!] Global variables with the same key name as local variables will be
 	 * overwritten by the local variable.
 	 *
-	 * @param    string  view filename
+	 * @param    $file  string  view filename
 	 * @return   string
-	 * @throws   FuelException
+	 * @throws   \FuelException
 	 * @uses     static::capture
 	 */
 	public function render($file = null)
