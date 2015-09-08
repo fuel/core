@@ -78,8 +78,7 @@ class Request_Curl extends \Request_Driver
 	/**
 	 * Overwrites driver method to set options driver specifically
 	 *
-	 * @param   int|string  $code
-	 * @param   mixed       $value
+	 * @param   array  $options
 	 * @return  Request_Curl
 	 */
 	public function set_options(array $options)
@@ -219,8 +218,6 @@ class Request_Curl extends \Request_Driver
 	/**
 	 * GET request
 	 *
-	 * @param   array  $params
-	 * @param   array  $options
 	 * @return  void
 	 */
 	protected function method_get()
@@ -232,7 +229,6 @@ class Request_Curl extends \Request_Driver
 	/**
 	 * HEAD request
 	 *
-	 * @param   array  $params
 	 * @return  void
 	 */
 	protected function method_head()
@@ -247,7 +243,6 @@ class Request_Curl extends \Request_Driver
 	/**
 	 * POST request
 	 *
-	 * @param   array  $params
 	 * @return  void
 	 */
 	protected function method_post()
@@ -261,7 +256,6 @@ class Request_Curl extends \Request_Driver
 	/**
 	 * PUT request
 	 *
-	 * @param   array  $params
 	 * @return  void
 	 */
 	protected function method_put()
@@ -277,7 +271,6 @@ class Request_Curl extends \Request_Driver
 	/**
 	 * DELETE request
 	 *
-	 * @param   array  $params
 	 * @return  void
 	 */
 	protected function method_delete()
