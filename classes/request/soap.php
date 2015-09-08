@@ -35,7 +35,8 @@ class Request_Soap extends \Request_Driver
 	 *
 	 * @param   string  $resource
 	 * @param   array   $options
-	 * @throws  \RuntimeException
+	 * @throws  \FuelException
+	 * @throws  \RequestException
 	 */
 	public function __construct($resource, array $options)
 	{
