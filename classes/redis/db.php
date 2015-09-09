@@ -36,6 +36,10 @@ class Redis_Db
 
 	/**
 	 * Get an instance of the Redis class
+	 *
+	 * @param   string  $name
+	 * @return  mixed
+	 * @throws  \RedisException
 	 */
 	public static function instance($name = 'default')
 	{
@@ -51,6 +55,11 @@ class Redis_Db
 
 	/**
 	 * create an instance of the Redis class
+	 *
+	 * @param   string  $name
+	 * @param   array   $config
+	 * @return  mixed
+	 * @throws  \RedisException
 	 */
 	public static function forge($name = 'default', $config = array())
 	{
@@ -88,6 +97,9 @@ class Redis_Db
 
 	/**
 	 * Create a new Redis instance using the configuration values supplied
+	 *
+	 * @param   array  $config
+	 * @throws  \RedisException
 	 */
 	public function  __construct(array $config = array())
 	{
@@ -176,10 +188,9 @@ class Redis_Db
 	 * Alias for the redis PSUBSCRIBE command. It allows you to listen, and
 	 * have the callback called for every response.
 	 *
-	 * @params  string    pattern to subscribe to
-	 * @params  callable  callback, to process the responses
-	 *
-	 * @throws  RedisException  if writing the command failed
+	 * @param   string    $pattern   pattern to subscribe to
+	 * @param   callable  $callback  callback, to process the responses
+	 * @throws  \RedisException  if writing the command failed
 	 */
     public function psubscribe($pattern, $callback)
     {
@@ -213,6 +224,10 @@ class Redis_Db
     }
 
 	/**
+	 * @param   $name
+	 * @param   $args
+	 * @return  $this|array
+	 * @throws  \RedisException
 	 */
 	public function __call($name, $args)
 	{
