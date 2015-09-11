@@ -24,7 +24,7 @@ class Lang_Json extends \Lang_File
 	/**
 	 * Returns the formatted language file contents.
 	 *
-	 * @param   array   $content  config array
+	 * @param   array   $contents  config array
 	 * @return  string  formatted config file contents
 	 */
 	protected function export_format($contents)

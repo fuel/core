@@ -24,8 +24,9 @@ class Lang_Ini extends \Lang_File
 	/**
 	 * Returns the formatted language file contents.
 	 *
-	 * @param   array   $content  language array
+	 * @param   array   $contents  language array
 	 * @return  string  formatted language file contents
+	 * @throws  \LangException
 	 */
 	protected function export_format($contents)
 	{
