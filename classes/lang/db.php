@@ -23,7 +23,6 @@ class Lang_Db implements Lang_Interface
 	 * @param   string  $identifier  Lang identifier name
 	 * @param   array   $languages  Languages to scan for the lang file
 	 * @param   array   $vars  Variables to parse in the data retrieved
-	 * @return  void
 	 */
 	public function __construct($identifier = null, $languages = array(), $vars = array())
 	{
@@ -47,6 +46,7 @@ class Lang_Db implements Lang_Interface
 	 *
 	 * @param   bool  $overwrite  Whether to overwrite existing values
 	 * @return  array  the language array
+	 * @throws  \Database_Exception
 	 */
 	public function load($overwrite = false)
 	{

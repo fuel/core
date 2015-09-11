@@ -19,7 +19,6 @@ abstract class Lang_File implements Lang_Interface
 	 * @param   string  $file       Lang file name
 	 * @param   array   $languages  Languages to scan for the lang file
 	 * @param   array   $vars       Variables to parse in the file
-	 * @return  void
 	 */
 	public function __construct($file = null, $languages = array(), $vars = array())
 	{
@@ -118,8 +117,8 @@ abstract class Lang_File implements Lang_Interface
 	/**
 	 * Finds the given language files
 	 *
-	 * @param   bool  $multiple  Whether to load multiple files or not
 	 * @return  array
+	 * @throws  \LangException
 	 */
 	protected function find_file()
 	{
@@ -195,6 +194,9 @@ abstract class Lang_File implements Lang_Interface
 
 	/**
 	 * Must be implemented by child class. Gets called for each file to load.
+	 *
+	 * @param   string  $file  File to load
+	 * @return  array
 	 */
 	abstract protected function load_file($file);
 
