@@ -114,7 +114,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	/**
 	 * Purge all caches
 	 *
-	 * @param   limit purge to subsection
+	 * @param   string  $section  limit purge to subsection
 	 * @return  bool
 	 */
 	public function delete_all($section)
@@ -207,7 +207,7 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	 * Remove the prepended cache properties and save them in class properties
 	 *
 	 * @param   string
-	 * @throws  UnexpectedValueException
+	 * @throws \UnexpectedValueException
 	 */
 	protected function unprep_contents($payload)
 	{
@@ -354,8 +354,8 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	/**
 	 * validate a driver config value
 	 *
-	 * @param   string  name of the config variable to validate
-	 * @param   mixed   value
+	 * @param   string  $name  name of the config variable to validate
+	 * @param   mixed   $value
 	 * @return  mixed
 	 */
 	protected function _validate_config($name, $value)

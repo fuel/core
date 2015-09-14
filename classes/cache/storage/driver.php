@@ -172,8 +172,9 @@ abstract class Cache_Storage_Driver
 	 * Converts the identifier to a string when necessary:
 	 * A int is just converted to a string, all others are serialized and then md5'd
 	 *
-	 * @param mixed $identifier
-	 * @return string
+	 * @param   mixed  $identifier
+	 * @return  string
+	 * @throws  \FuelException
 	 */
 	public static function stringify_identifier($identifier)
 	{
@@ -271,6 +272,8 @@ abstract class Cache_Storage_Driver
 	 *
 	 * @param   bool  $use_expiration
 	 * @return  Cache_Storage_Driver
+	 * @throws \CacheExpiredException
+	 * @throws \CacheNotFoundException
 	 */
 	final public function get($use_expiration = true)
 	{

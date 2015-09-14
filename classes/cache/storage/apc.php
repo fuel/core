@@ -105,7 +105,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 	/**
 	 * Purge all caches
 	 *
-	 * @param   limit purge to subsection
+	 * @param   string  $section  limit purge to subsection
 	 * @return  bool
 	 */
 	public function delete_all($section)
