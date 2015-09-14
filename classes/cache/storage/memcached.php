@@ -140,7 +140,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 	/**
 	 * Purge all caches
 	 *
-	 * @param   limit purge to subsection
+	 * @param   string  $section  limit purge to subsection
 	 * @return  bool
 	 */
 	public function delete_all($section)
@@ -204,7 +204,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 	 * Remove the prepended cache properties and save them in class properties
 	 *
 	 * @param   string
-	 * @throws  UnexpectedValueException
+	 * @throws \UnexpectedValueException
 	 */
 	protected function unprep_contents($payload)
 	{
@@ -232,6 +232,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 	 * Save a cache, this does the generic pre-processing
 	 *
 	 * @return  bool  success
+	 * @throws \FuelException
 	 */
 	protected function _set()
 	{
@@ -286,9 +287,10 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 	/**
 	 * validate a driver config value
 	 *
-	 * @param   string  name of the config variable to validate
-	 * @param   mixed   value
+	 * @param   string  $name  name of the config variable to validate
+	 * @param   mixed   $value
 	 * @return  mixed
+	 * @throws \FuelException
 	 */
 	protected function _validate_config($name, $value)
 	{
@@ -347,7 +349,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 	/**
 	 * Get's the memcached key belonging to the cache identifier
 	 *
-	 * @param   bool  if true, remove the key retrieved from the index
+	 * @param   bool  $remove  if true, remove the key retrieved from the index
 	 * @return  string
 	 */
 	protected function _get_key($remove = false)
