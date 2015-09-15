@@ -87,7 +87,7 @@ class Asset_Instance
 	/**
 	 * Parse the config and initialize the object instance
 	 *
-	 * @return  void
+	 * @param	array $config
 	 */
 	public function __construct(Array $config)
 	{
@@ -129,7 +129,10 @@ class Asset_Instance
 	/**
 	 * Provide backward compatibility for old type methods
 	 *
-	 * @return  void
+	 * @param	$method
+	 * @param	$args
+	 * @return	mixed
+	 * @throws	\ErrorException
 	 */
 	public function __call($method, $args)
 	{
@@ -149,9 +152,9 @@ class Asset_Instance
 	/**
 	 * Adds a new asset type to the list so we can load files of this type
 	 *
-	 * @param   string   new path type
-	 * @param   string   optional default path
-	 * @param	Closure  function to custom render this type
+	 * @param	string   $type      new path type
+	 * @param	string   $path      optional default path
+	 * @param	Closure  $renderer  function to custom render this type
 	 *
 	 * @return  object   current instance
 	 */
@@ -183,9 +186,9 @@ class Asset_Instance
 	 * Adds the given path to the front of the asset paths array.  It adds paths
 	 * in a way so that asset paths are used First in Last Out.
 	 *
-	 * @param   string  the path to add
-	 * @param   string  optional path type (js, css or img)
-	 * @return  object  current instance
+	 * @param	string	$path  the path to add
+	 * @param	string	$type  optional path type (js, css or img)
+	 * @return	object	current instance
 	 */
 	public function add_path($path, $type = null)
 	{
@@ -219,9 +222,9 @@ class Asset_Instance
 	/**
 	 * Removes the given path from the asset paths array
 	 *
-	 * @param   string  the path to remove
-	 * @param   string  optional path type (js, css or img)
-	 * @return  object  current instance
+	 * @param	string	$path  the path to remove
+	 * @param	string	$type  optional path type (js, css or img)
+	 * @return	object	current instance
 	 */
 	public function remove_path($path, $type = null)
 	{
@@ -258,12 +261,11 @@ class Asset_Instance
 	 *
 	 * Either adds the asset to the group, or directly return the tag.
 	 *
-	 * @access	public
-	 * @param	string	       The asset type
-	 * @param	mixed	       The file name, or an array files.
-	 * @param	array	       An array of extra attributes
-	 * @param	string	       The asset group name
-	 * @param	boolean	       whether to return the raw file or not when group is not set (optional)
+	 * @param	string	       $type   The asset type
+	 * @param	mixed	       $files  The file name, or an array files.
+	 * @param	array	       $attr   An array of extra attributes
+	 * @param	string	       $group  The asset group name
+	 * @param	boolean	       $raw    whether to return the raw file or not when group is not set (optional)
 	 * @return	string|object  Rendered asset or current instance when adding to group
 	 */
 	public function assettype($type, $files = array(), $attr = array(), $group = null, $raw = false)
@@ -297,10 +299,9 @@ class Asset_Instance
 	 *
 	 * Locates a file in all the asset paths.
 	 *
-	 * @access	public
-	 * @param	string	The filename to locate
-	 * @param	string	The type of asset file to search
-	 * @param	string	The sub-folder to look in (optional)
+	 * @param	string	$file    The filename to locate
+	 * @param	string	$type    The type of asset file to search
+	 * @param	string	$folder  The sub-folder to look in (optional)
 	 * @return	mixed	Either the path to the file or false if not found
 	 */
 	public function find_file($file, $type, $folder = '')
@@ -326,10 +327,9 @@ class Asset_Instance
 	 *
 	 * Locates a file in all the asset paths, and return it relative to the docroot
 	 *
-	 * @access	public
-	 * @param	string	The filename to locate
-	 * @param	string	The type of asset file
-	 * @param	string	The sub-folder to look in (optional)
+	 * @param	string	$file    The filename to locate
+	 * @param	string	$type    The type of asset file
+	 * @param	string	$folder  The sub-folder to look in (optional)
 	 * @return	mixed	Either the path to the file or false if not found
 	 */
 	public function get_file($file, $type, $folder = '')
@@ -350,9 +350,10 @@ class Asset_Instance
 	 * all CSS and JS files in the group will be read and the contents included
 	 * in the returning value.
 	 *
-	 * @param   mixed   the group to render
-	 * @param   bool    whether to return the raw file or not
-	 * @return  string  the group's output
+	 * @param	mixed	$group  the group to render
+	 * @param	bool	$raw    whether to return the raw file or not
+	 * @return	string	the group's output
+	 * @throws	\FuelException
 	 */
 	public function render($group = null, $raw = false)
 	{
@@ -478,6 +479,11 @@ class Asset_Instance
 
 	/**
 	 * CSS tag renderer
+	 *
+	 * @param	$file
+	 * @param	$attr
+	 * @param	$inline
+	 * @return	string
 	 */
 	protected function render_css($file, $attr, $inline)
 	{
@@ -511,6 +517,11 @@ class Asset_Instance
 
 	/**
 	 * JS tag renderer
+	 *
+	 * @param	$file
+	 * @param	$attr
+	 * @param	$inline
+	 * @return	string
 	 */
 	protected function render_js($file, $attr, $inline)
 	{
@@ -538,6 +549,11 @@ class Asset_Instance
 
 	/**
 	 * IMG tag renderer
+	 *
+	 * @param	$file
+	 * @param	$attr
+	 * @param	$inline
+	 * @return	string
 	 */
 	protected function render_img($file, $attr, $inline)
 	{
@@ -561,11 +577,11 @@ class Asset_Instance
 	 *
 	 * Pareses the assets and adds them to the group
 	 *
-	 * @access	private
-	 * @param	string	The asset type
-	 * @param	mixed	The file name, or an array files.
-	 * @param	array	An array of extra attributes
-	 * @param	string	The asset group name
+	 * @param	string	$type    The asset type
+	 * @param	mixed	$assets  The file name, or an array files.
+	 * @param	array	$attr    An array of extra attributes
+	 * @param	string	$group   The asset group name
+	 * @param	bool	$raw
 	 * @return	string
 	 */
 	protected function _parse_assets($type, $assets, $attr, $group, $raw = false)
@@ -601,10 +617,9 @@ class Asset_Instance
 	 * platform used, is terminated with a directory separator, and all
 	 * relative path references are removed
 	 *
-	 * @access	private
-	 * @param	string	The path
-	 * @param	mixed	Optional directory separator
-	 * @param	boolean	Optional whether to add trailing directory separator
+	 * @param	string	$path      The path
+	 * @param	mixed	$ds        Optional directory separator
+	 * @param	boolean	$trailing  Optional whether to add trailing directory separator
 	 * @return	string
 	 */
 	protected function _unify_path($path, $ds = null, $trailing = true)
