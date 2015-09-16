@@ -276,11 +276,11 @@ class Html
 		{
 			if ( ! is_array($val))
 			{
-				$out .= $indent."\t".html_tag('li', null, $val).PHP_EOL;
+				$out .= $indent."\t".html_tag('li', array(), $val).PHP_EOL;
 			}
 			else
 			{
-				$out .= $indent."\t".html_tag('li', null, $key.PHP_EOL.static::build_list($type, $val, '', $indent."\t\t").$indent."\t").PHP_EOL;
+				$out .= $indent."\t".html_tag('li', array(), $key.PHP_EOL.static::build_list($type, $val, '', $indent."\t\t").$indent."\t").PHP_EOL;
 			}
 		}
 		$result = $indent.html_tag($type, $attr, PHP_EOL.$out.$indent).PHP_EOL;
