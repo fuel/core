@@ -31,10 +31,10 @@ class Html
 	/**
 	 * Creates an html link
 	 *
-	 * @param	string	the url
-	 * @param	string	the text value
-	 * @param	array	the attributes array
-	 * @param	bool	true to force https, false to force http
+	 * @param	string	$href	the url
+	 * @param	string	$text	the text value
+	 * @param	array	$attr	the attributes array
+	 * @param	bool	$secure	true to force https, false to force http
 	 * @return	string	the html link
 	 */
 	public static function anchor($href, $text = null, $attr = array(), $secure = null)
@@ -63,10 +63,10 @@ class Html
 	/**
 	 * Creates an html image tag
 	 *
-	 * Sets the alt atribute to filename of it is not supplied.
+	 * Sets the alt attribute to filename of it is not supplied.
 	 *
-	 * @param	string	the source
-	 * @param	array	the attributes array
+	 * @param	string	$src	the source
+	 * @param	array	$attr	the attributes array
 	 * @return	string	the image tag
 	 */
 	public static function img($src, $attr = array())
@@ -83,8 +83,8 @@ class Html
 	/**
 	 * Adds the given schema to the given URL if it is not already there.
 	 *
-	 * @param	string	the url
-	 * @param	string	the schema
+	 * @param	string	$url	the url
+	 * @param	string	$schema	the schema
 	 * @return	string	url with schema
 	 */
 	public static function prep_url($url, $schema = 'http')
@@ -100,9 +100,10 @@ class Html
 	/**
 	 * Creates a mailto link.
 	 *
-	 * @param	string	The email address
-	 * @param	string	The text value
-	 * @param	string	The subject
+	 * @param	string	$email		The email address
+	 * @param	string	$text		The text value
+	 * @param	string	$subject	The subject
+	 * @param	array	$attr		attributes for the tag
 	 * @return	string	The mailto link
 	 */
 	public static function mail_to($email, $text = null, $subject = null, $attr = array())
@@ -120,11 +121,11 @@ class Html
 	 * Creates a mailto link with Javascript to prevent bots from picking up the
 	 * email address.
 	 *
-	 * @param	string	the email address
-	 * @param	string	the text value
-	 * @param	string	the subject
-	 * @param	array	attributes for the tag
-	 * @return	string	the javascript code containg email
+	 * @param	string	$email		the email address
+	 * @param	string	$text		the text value
+	 * @param	string	$subject	the subject
+	 * @param	array	$attr		attributes for the tag
+	 * @return	string	the javascript code containing email
 	 */
 	public static function mail_to_safe($email, $text = null, $subject = null, $attr = array())
 	{
@@ -151,9 +152,9 @@ class Html
 	/**
 	 * Generates a html meta tag
 	 *
-	 * @param	string|array	multiple inputs or name/http-equiv value
-	 * @param	string			content value
-	 * @param	string			name or http-equiv
+	 * @param	string|array	$name		multiple inputs or name/http-equiv value
+	 * @param	string			$content	content value
+	 * @param	string			$type		name or http-equiv
 	 * @return	string
 	 */
 	public static function meta($name = '', $content = '', $type = 'name')
@@ -177,7 +178,7 @@ class Html
 	/**
 	 * Generates a html doctype tag
 	 *
-	 * @param	string	doctype declaration key from doctypes config
+	 * @param	string	$type	doctype declaration key from doctypes config
 	 * @return	string
 	 */
 	public static function doctype($type = 'xhtml1-trans')
@@ -206,8 +207,8 @@ class Html
 	 * Generates a html5 audio tag
 	 * It is required that you set html5 as the doctype to use this method
 	 *
-	 * @param	string|array	one or multiple audio sources
-	 * @param	array			tag attributes
+	 * @param	string|array	$src	one or multiple audio sources
+	 * @param	array			$attr	tag attributes
 	 * @return	string
 	 */
 	public static function audio($src = '', $attr = false)
@@ -233,8 +234,8 @@ class Html
 	/**
 	 * Generates a html un-ordered list tag
 	 *
-	 * @param	array			list items, may be nested
-	 * @param	array|string	outer list attributes
+	 * @param	array			$list	list items, may be nested
+	 * @param	array|string	$attr	outer list attributes
 	 * @return	string
 	 */
 	public static function ul(array $list = array(), $attr = false)
@@ -245,8 +246,8 @@ class Html
 	/**
 	 * Generates a html ordered list tag
 	 *
-	 * @param	array			list items, may be nested
-	 * @param	array|string	outer list attributes
+	 * @param	array			$list	list items, may be nested
+	 * @param	array|string	$attr	outer list attributes
 	 * @return	string
 	 */
 	public static function ol(array $list = array(), $attr = false)
@@ -257,10 +258,10 @@ class Html
 	/**
 	 * Generates the html for the list methods
 	 *
-	 * @param	string	list type (ol or ul)
-	 * @param	array	list items, may be nested
-	 * @param	array	tag attributes
-	 * @param	string	indentation
+	 * @param	string	$type	list type (ol or ul)
+	 * @param	array	$list	list items, may be nested
+	 * @param	array	$attr	tag attributes
+	 * @param	string	$indent	indentation
 	 * @return	string
 	 */
 	protected static function build_list($type = 'ul', array $list = array(), $attr = false, $indent = '')
@@ -275,11 +276,11 @@ class Html
 		{
 			if ( ! is_array($val))
 			{
-				$out .= $indent."\t".html_tag('li', false, $val).PHP_EOL;
+				$out .= $indent."\t".html_tag('li', array(), $val).PHP_EOL;
 			}
 			else
 			{
-				$out .= $indent."\t".html_tag('li', false, $key.PHP_EOL.static::build_list($type, $val, '', $indent."\t\t").$indent."\t").PHP_EOL;
+				$out .= $indent."\t".html_tag('li', array(), $key.PHP_EOL.static::build_list($type, $val, '', $indent."\t\t").$indent."\t").PHP_EOL;
 			}
 		}
 		$result = $indent.html_tag($type, $attr, PHP_EOL.$out.$indent).PHP_EOL;
