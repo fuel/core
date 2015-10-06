@@ -5,9 +5,6 @@ namespace Fuel\Core;
 import('phpquickprofiler/console', 'vendor');
 import('phpquickprofiler/phpquickprofiler', 'vendor');
 
-use \Console;
-use \PhpQuickProfiler;
-
 class Profiler
 {
 	protected static $profiler = null;
@@ -28,17 +25,17 @@ class Profiler
 
 	public static function mark($label)
 	{
-		static::$profiler and Console::logSpeed($label);
+		static::$profiler and \Console::logSpeed($label);
 	}
 
 	public static function mark_memory($var = false, $name = 'PHP')
 	{
-		static::$profiler and Console::logMemory($var, $name);
+		static::$profiler and \Console::logMemory($var, $name);
 	}
 
 	public static function console($text)
 	{
-		static::$profiler and Console::log($text);
+		static::$profiler and \Console::log($text);
 	}
 
 	public static function output()
