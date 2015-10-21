@@ -76,7 +76,7 @@ require_once APPPATH.'bootstrap.php';
 // Ad hoc fix for AspectMock error
 if (class_exists('AspectMock\Kernel'))
 {
-	class_exists('Error');
+	class_exists('Errorhandler');
 }
 
 // Import the TestCase class

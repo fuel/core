@@ -23,7 +23,7 @@ abstract class HttpException extends \FuelException
 
 	/**
 	 * When this type of exception isn't caught this method is called by
-	 * Error::exception_handler() to deal with the problem.
+	 * Errorhandler::exception_handler() to deal with the problem.
 	 */
 	public function handle()
 	{

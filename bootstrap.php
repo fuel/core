@@ -68,7 +68,7 @@ register_shutdown_function(function ()
 			logger(\Fuel::L_ERROR, 'shutdown - ' . $e->getMessage()." in ".$e->getFile()." on ".$e->getLine());
 		}
 	}
-	return \Error::shutdown_handler();
+	return \Errorhandler::shutdown_handler();
 });
 
 set_exception_handler(function (\Exception $e)
@@ -77,14 +77,14 @@ set_exception_handler(function (\Exception $e)
 	\Autoloader::_reset();
 
 	// deal with PHP bugs #42098/#54054
-	if ( ! class_exists('Error'))
+	if ( ! class_exists('Errorhandler'))
 	{
-		include COREPATH.'classes/error.php';
-		class_alias('\Fuel\Core\Error', 'Error');
+		include COREPATH.'classes/errorhandler.php';
+		class_alias('\Fuel\Core\Errorhandler', 'Errorhandler');
 		class_alias('\Fuel\Core\PhpErrorException', 'PhpErrorException');
 	}
 
-	return \Error::exception_handler($e);
+	return \Errorhandler::exception_handler($e);
 });
 
 set_error_handler(function ($severity, $message, $filepath, $line)
@@ -93,14 +93,14 @@ set_error_handler(function ($severity, $message, $filepath, $line)
 	\Autoloader::_reset();
 
 	// deal with PHP bugs #42098/#54054
-	if ( ! class_exists('Error'))
+	if ( ! class_exists('Errorhandler'))
 	{
-		include COREPATH.'classes/error.php';
-		class_alias('\Fuel\Core\Error', 'Error');
+		include COREPATH.'classes/errorhandler.php';
+		class_alias('\Fuel\Core\Errorhandler', 'Errorhandler');
 		class_alias('\Fuel\Core\PhpErrorException', 'PhpErrorException');
 	}
 
-	return \Error::error_handler($severity, $message, $filepath, $line);
+	return \Errorhandler::error_handler($severity, $message, $filepath, $line);
 });
 
 function setup_autoloader()
@@ -187,8 +187,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Event'                         => COREPATH.'classes/event.php',
 		'Fuel\\Core\\Event_Instance'                => COREPATH.'classes/event/instance.php',
 
-		'Fuel\\Core\\Error'                         => COREPATH.'classes/error.php',
-		'Fuel\\Core\\PhpErrorException'             => COREPATH.'classes/error.php',
+		'Fuel\\Core\\Errorhandler'                  => COREPATH.'classes/errorhandler.php',
+		'Fuel\\Core\\PhpErrorException'             => COREPATH.'classes/errorhandler.php',
 
 		'Fuel\\Core\\Format'                        => COREPATH.'classes/format.php',
 

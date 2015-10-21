@@ -109,7 +109,7 @@ class Asset
 	{
 		if ($exists = static::instance($name))
 		{
-			\Error::notice('Asset with this name exists already, cannot be overwritten.');
+			\Errorhandler::notice('Asset with this name exists already, cannot be overwritten.');
 			return $exists;
 		}
 

@@ -198,6 +198,20 @@ class Fuel
 		// like it was in versions before 1.7
 		class_exists('Redis', false) or class_alias('Redis_Db', 'Redis');
 
+		// BC FIX FOR PHP < 7.0 to make the error class available
+		if (PHP_VERSION_ID < 70000)
+		{
+			// alias the error class to the new errorhandler
+			class_alias('\Fuel\Core\Errorhandler', '\Fuel\Core\Error');
+
+			// does the app have an overloaded Error class?
+			if (class_exists('Error'))
+			{
+				// then alias that too
+				class_alias('Error', 'Errorhandler');
+			}
+		}
+
 		static::$initialized = true;
 
 		// fire any app created events

@@ -567,7 +567,7 @@ class Arr
 	{
 		if (count($original) < abs($pos))
 		{
-			\Error::notice('Position larger than number of elements in array in which to insert.');
+			\Errorhandler::notice('Position larger than number of elements in array in which to insert.');
 			return false;
 		}
 
@@ -613,7 +613,7 @@ class Arr
 
 		if ($pos === false)
 		{
-			\Error::notice('Unknown key before which to insert the new value into the array.');
+			\Errorhandler::notice('Unknown key before which to insert the new value into the array.');
 			return false;
 		}
 
@@ -636,7 +636,7 @@ class Arr
 
 		if ($pos === false)
 		{
-			\Error::notice('Unknown key after which to insert the new value into the array.');
+			\Errorhandler::notice('Unknown key after which to insert the new value into the array.');
 			return false;
 		}
 
@@ -658,7 +658,7 @@ class Arr
 
 		if ($key === false)
 		{
-			\Error::notice('Unknown value after which to insert the new value into the array.');
+			\Errorhandler::notice('Unknown value after which to insert the new value into the array.');
 			return false;
 		}
 
@@ -680,7 +680,7 @@ class Arr
 
 		if ($key === false)
 		{
-			\Error::notice('Unknown value before which to insert the new value into the array.');
+			\Errorhandler::notice('Unknown value before which to insert the new value into the array.');
 			return false;
 		}
 
