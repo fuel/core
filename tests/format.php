@@ -122,7 +122,7 @@ line 2","Value 3"',
 					array('field1' => 'Value 1', 'field2' => 35, 'field3' => true, 'field4' => false),
 				),
 				'<?xml version="1.0" encoding="utf-8"?>
-<xml><item><field1>Value 1</field1><field2>35</field2><field3>1</field3><field4/></item></xml>
+<xml><item><field1>Value 1</field1><field2>35</field2><field3>1</field3><field4></field4></item></xml>
 ',
 				'<?xml version="1.0" encoding="utf-8"?>
 <xml><item><field1>Value 1</field1><field2>35</field2><field3>true</field3><field4>false</field4></item></xml>
