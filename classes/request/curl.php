@@ -85,9 +85,9 @@ class Request_Curl extends \Request_Driver
 	{
 		foreach ($options as $key => $val)
 		{
-			if (is_string($key) && ! is_numeric($key))
+			if (is_string($key) and ! is_numeric($key))
 			{
-				$key = constant('CURLOPT_' . strtoupper($key));
+				$key = constant(defined($key) ? $key : 'CURLOPT_' . strtoupper($key));
 			}
 
 			$this->options[$key] = $val;
