@@ -39,7 +39,7 @@ class Str
 			// Handle special characters.
 			preg_match_all('/&[a-z]+;/i', strip_tags($string), $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 			// fix preg_match_all broken multibyte support
-			if (strlen($string !== mb_strlen($string)))
+			if (MBSTRING and strlen($string !== mb_strlen($string)))
 			{
 				$correction = 0;
 				foreach ($matches as $index => $match)
@@ -60,7 +60,7 @@ class Str
 			// Handle all the html tags.
 			preg_match_all('/<[^>]+>([^<]*)/', $string, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 			// fix preg_match_all broken multibyte support
-			if (strlen($string !== mb_strlen($string)))
+			if (MBSTRING and strlen($string !== mb_strlen($string)))
 			{
 				$correction = 0;
 				foreach ($matches as $index => $match)
@@ -149,9 +149,9 @@ class Str
 		$encoding or $encoding = \Fuel::$encoding;
 
 		// substr functions don't parse null correctly
-		$length = is_null($length) ? (function_exists('mb_substr') ? mb_strlen($str, $encoding) : strlen($str)) - $start : $length;
+		$length = is_null($length) ? (MBSTRING ? mb_strlen($str, $encoding) : strlen($str)) - $start : $length;
 
-		return function_exists('mb_substr')
+		return MBSTRING
 			? mb_substr($str, $start, $length, $encoding)
 			: substr($str, $start, $length);
 	}
@@ -167,7 +167,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return function_exists('mb_strlen')
+		return MBSTRING
 			? mb_strlen($str, $encoding)
 			: strlen($str);
 	}
@@ -183,7 +183,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return function_exists('mb_strtolower')
+		return MBSTRING
 			? mb_strtolower($str, $encoding)
 			: strtolower($str);
 	}
@@ -199,7 +199,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return function_exists('mb_strtoupper')
+		return MBSTRING
 			? mb_strtoupper($str, $encoding)
 			: strtoupper($str);
 	}
@@ -217,7 +217,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return function_exists('mb_strtolower')
+		return MBSTRING
 			? mb_strtolower(mb_substr($str, 0, 1, $encoding), $encoding).
 				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
 			: lcfirst($str);
@@ -236,7 +236,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return function_exists('mb_strtoupper')
+		return MBSTRING
 			? mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding).
 				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
 			: ucfirst($str);
@@ -258,7 +258,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return function_exists('mb_convert_case')
+		return MBSTRING
 			? mb_convert_case($str, MB_CASE_TITLE, $encoding)
 			: ucwords(strtolower($str));
 	}
