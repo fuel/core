@@ -222,8 +222,7 @@ class View
 
 	/**
 	 * Captures the output that is generated when a view is included.
-	 * The view data will be extracted to make local variables. This method
-	 * is static to prevent object scope resolution.
+	 * The view data will be extracted to make local variables.
 	 *
 	 *     $output = $this->process_file();
 	 *
