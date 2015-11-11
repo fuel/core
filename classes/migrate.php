@@ -532,13 +532,12 @@ class Migrate
 
 				if ($method == 'up')
 				{
-					$result = call_user_func(array($class, 'down'));
+					call_user_func(array($class, 'down'));
 				}
 				else
 				{
-					$result = call_user_func(array($class, 'up'));
+					call_user_func(array($class, 'up'));
 				}
-
 				return false;
 			}
 		}
