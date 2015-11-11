@@ -58,7 +58,14 @@ class Security
 			$check_token_methods = \Config::get('security.csrf_autoload_methods', array('post', 'put', 'delete'));
 			if (in_array(strtolower(\Input::method()), $check_token_methods) and ! static::check_token())
 			{
-				throw new \SecurityException('CSRF validation failed, Possible hacking attempt detected!');
+				if (\Config::get('security.csrf_bad_request_on_fail', false))
+				{
+					throw new \HttpBadRequestException('CSRF validation failed, Possible hacking attempt detected!');
+				}
+				else
+				{
+					throw new \SecurityException('CSRF validation failed, Possible hacking attempt detected!');
+				}
 			}
 		}
 

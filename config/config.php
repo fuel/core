@@ -150,24 +150,30 @@ return array(
 		 * will be checked for a CSRF token. If not present or not valid, a
 		 * security exception will be thrown.
 		 */
-		'csrf_autoload'         => false,
-		'csrf_autoload_methods' => array('post', 'put', 'delete'),
+		'csrf_autoload'            => false,
+		'csrf_autoload_methods'    => array('post', 'put', 'delete'),
+
+		/**
+		 * If true, a HttpBadRequestException will be thrown. If false, a generic
+		 * SecurityException will be thrown. It is false by default for B/C reasons
+		 */
+		'csrf_bad_request_on_fail' => false,
 
 		/**
 		 * Name of the form field that holds the CSRF token.
 		 */
-		'csrf_token_key'        => 'fuel_csrf_token',
+		'csrf_token_key'           => 'fuel_csrf_token',
 
 		/**
 		 * Expiry of the token in seconds. If zero, the token remains the same
 		 * for the entire user session.
 		 */
-		'csrf_expiration'       => 0,
+		'csrf_expiration'           => 0,
 
 		/**
 		 * A salt to make sure the generated security tokens are not predictable
 		 */
-		'token_salt'            => 'put your salt value here to make the token more secure',
+		'token_salt'                => 'put your salt value here to make the token more secure',
 
 		/**
 		 * Allow the Input class to use X headers when present
@@ -175,7 +181,7 @@ return array(
 		 * Examples of these are HTTP_X_FORWARDED_FOR and HTTP_X_FORWARDED_PROTO, which
 		 * can be faked which could have security implications
 		 */
-		'allow_x_headers'       => false,
+		'allow_x_headers'            => false,
 
 		/**
 		 * This input filter can be any normal PHP function as well as 'xss_clean'
@@ -185,7 +191,7 @@ return array(
 		 *
 		 * Note: MUST BE DEFINED IN THE APP CONFIG FILE!
 		 */
-		//'uri_filter'       => array(),
+		//'uri_filter'               => array(),
 
 		/**
 		 * This input filter can be any normal PHP function as well as 'xss_clean'
@@ -195,7 +201,7 @@ return array(
 		 *
 		 * Note: MUST BE DEFINED IN THE APP CONFIG FILE!
 		 */
-		//'input_filter'  => array(),
+		//'input_filter'             => array(),
 
 		/**
 		 * This output filter can be any normal PHP function as well as 'xss_clean'
@@ -205,7 +211,7 @@ return array(
 		 *
 		 * Note: MUST BE DEFINED IN THE APP CONFIG FILE!
 		 */
-		//'output_filter'  => array(),
+		//'output_filter'            => array(),
 
 		/**
 		 * Encoding mechanism to use on htmlentities()

@@ -12,6 +12,14 @@
 
 namespace Fuel\Core;
 
+class HttpBadRequestException extends HttpException
+{
+	public function response()
+	{
+		return new \Response(\View::forge('400'), 400);
+	}
+}
+
 class HttpNoAccessException extends HttpException
 {
 	public function response()
