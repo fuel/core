@@ -311,7 +311,7 @@ class Migrate
 		foreach ($migrations as $ver => $migration)
 		{
 			logger(\Fuel::L_INFO, 'Migrating to version: '.$ver);
-			$result = call_user_func(array(new $migration['class'], $method));
+			$result = static::_run($migration['class'], $method);
 			if ($result === false)
 			{
 				logger(\Fuel::L_INFO, 'Skipped migration to '.$ver.'.');
@@ -499,6 +499,51 @@ class Migrate
 		uksort($migrations, 'strnatcasecmp');
 
 		return $migrations;
+	}
+
+	/**
+	 * run the actual migration, and it's before and after methods if present
+	 *
+	 */
+	protected static function _run($class, $method)
+	{
+		// create an instance of the migration class
+		$class = new $class;
+
+		// if it has a before method, call that first
+		if (method_exists($class, 'before'))
+		{
+			if (false === call_user_func(array($class, 'before')))
+			{
+				return false;
+			}
+		}
+
+		// run the actual migration
+		$result = call_user_func(array($class, $method));
+
+		// if it has a after method, call that if the migration has run
+		if ($result !== false and method_exists($class, 'after'))
+		{
+			if (false === call_user_func(array($class, 'after')))
+			{
+				// revert the migration
+				logger(\Fuel::L_INFO, 'Migration is reverted due to failure of the after method.');
+
+				if ($method == 'up')
+				{
+					$result = call_user_func(array($class, 'down'));
+				}
+				else
+				{
+					$result = call_user_func(array($class, 'up'));
+				}
+
+				return false;
+			}
+		}
+
+		return $result;
 	}
 
 	/**
