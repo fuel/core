@@ -249,6 +249,12 @@ abstract class Database_Connection
 				$sql = preg_replace('/\sOFFSET\s+\d+/i', '', $sql);
 			}
 
+			if (stripos($sql, 'ORDER BY') !== false)
+			{
+				// Remove ORDER BY clauses from the SQL to improve count query performance
+				$sql = preg_replace('/ ORDER BY [^,\s)]*(?:ASC|DESC)?(?:\s*(?:ASC|DESC)?,\s*(?:ASC|DESC)?[^,\s)]+\s*(?:ASC|DESC)?)*/mi', '', $sql);
+			}
+
 			// Get the total rows from the last query executed
 			$result = $this->query(
 				\DB::SELECT,
