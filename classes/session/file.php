@@ -262,7 +262,7 @@ class Session_File extends \Session_Driver
 		if ($handle)
 		{
 			// wait for a lock
-			while(!flock($handle, LOCK_EX));
+			while( ! flock($handle, LOCK_EX));
 
 			// erase existing contents
 			ftruncate($handle, 0);
@@ -270,7 +270,10 @@ class Session_File extends \Session_Driver
 			// write the session data
 			fwrite($handle, $payload);
 
-			//release the lock
+			// flush any pending output
+			fflush($handle);
+
+			// release the lock
 			flock($handle, LOCK_UN);
 
 			// close the file
@@ -308,13 +311,10 @@ class Session_File extends \Session_Driver
 			if ($handle)
 			{
 				// wait for a lock
-				while(!flock($handle, LOCK_SH));
+				while( ! flock($handle, LOCK_SH));
 
 				// read the session data
-				if ($size = filesize($file))
-				{
-					$payload = fread($handle, $size);
-				}
+				$payload = file_get_contents($file);
 
 				//release the lock
 				flock($handle, LOCK_UN);
@@ -324,7 +324,9 @@ class Session_File extends \Session_Driver
 
 			}
 		}
-		return $payload;
+
+		// only return the payload if it looks like a serialized array
+		return strpos($payload, 'a:') === 0 ? $payload : false;
 	}
 
 	// --------------------------------------------------------------------
