@@ -253,6 +253,25 @@ class Response
 	}
 
 	/**
+	 * Adds multiple headers to the queue
+	 *
+	 * @param   array        $headers  Assoc array with header name / value combinations
+	 * @param   string|bool  $replace  Whether to replace existing value for the header, will never overwrite/be overwritten when false
+	 *
+	 * @return  Response
+	 */
+	public function set_headers($headers, $replace = true)
+	{
+		foreach ($headers as $key => $value)
+		{
+			$this->set_header($key, $value, $replace);
+		}
+
+		return $this;
+	}
+
+
+	/**
 	 * Gets header information from the queue
 	 *
 	 * @param   string  $name  The header name, or null for all headers
