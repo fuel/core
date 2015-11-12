@@ -10,8 +10,6 @@
  * @link       http://fuelphp.com
  */
 
-define('PHP56', version_compare(PHP_VERSION, '5.6.0', '>='));
-
 /**
  * Loads in a core class and optionally an app class override if it exists.
  *
@@ -451,7 +449,7 @@ if ( ! function_exists('call_fuel_func_array'))
 			list($instance, $method) = $callback;
 
 			// If php is 5.6 or higher then use variadic
-			if (PHP56)
+			if (PHP_VERSION_ID >= 50600)
 			{
 				return $instance->{$method}(...$args);
 			}
@@ -482,7 +480,7 @@ if ( ! function_exists('call_fuel_func_array'))
 			$class = '\\'.ltrim($class, '\\');
 
 			// If php is 5.6 or higher then use variadic
-			if (PHP56)
+			if (PHP_VERSION_ID >= 50600)
 			{
 				return $class::{$method}(...$args);
 			}
@@ -513,7 +511,7 @@ if ( ! function_exists('call_fuel_func_array'))
 			is_string($callback) and $callback = ltrim($callback, '\\');
 
 			// If php is 5.6 or higher then use variadic
-			if (PHP56)
+			if (PHP_VERSION_ID >= 50600)
 			{
 				return $callback(...$args);
 			}
