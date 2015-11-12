@@ -795,11 +795,15 @@ class Theme
 
 		foreach ($themes as $theme)
 		{
-			$ext   = pathinfo($view, PATHINFO_EXTENSION) ?
-				'.'.pathinfo($view, PATHINFO_EXTENSION) : $this->config['view_ext'];
-			$file  = (pathinfo($view, PATHINFO_DIRNAME) ?
-					str_replace(array('/', DS), DS, pathinfo($view, PATHINFO_DIRNAME)).DS : '').
-				pathinfo($view, PATHINFO_FILENAME);
+			$ext = pathinfo($view, PATHINFO_EXTENSION)
+				? '.'.pathinfo($view, PATHINFO_EXTENSION)
+				: $this->config['view_ext'];
+
+			$file = (pathinfo($view, PATHINFO_DIRNAME)
+				? str_replace(array('/', DS), DS, pathinfo($view, PATHINFO_DIRNAME)).DS
+				: '';
+			$file .= pathinfo($view, PATHINFO_FILENAME);
+
 			if (empty($theme['find_file']))
 			{
 				if ($module_path and ! empty($theme['name']) and is_file($path = $module_path.$theme['name'].DS.$file.$ext))
@@ -916,8 +920,15 @@ class Theme
 			$theme['asset_path'] = DOCROOT.$theme['asset_base'];
 		}
 
-		// always uses forward slashes (DS is a backslash on Windows)
+		// always uses forward slashes for the asset base and path
 		$theme['asset_base'] = str_replace(DS, '/', $theme['asset_base']);
+		$theme['asset_path'] = str_replace(DS, '/', $theme['asset_path']);
+
+		// but if on windows, file paths require a backslash
+		if (strpos($theme['asset_base'], '://') === false and DS !== '/')
+		{
+			$theme['asset_path'] = str_replace('/', DS, $theme['asset_path']);
+		}
 
 		return $theme;
 	}
