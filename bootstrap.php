@@ -107,8 +107,6 @@ function setup_autoloader()
 {
 	\Autoloader::add_namespace('Fuel\\Core', COREPATH.'classes/');
 
-	\Autoloader::add_namespace('PHPSecLib', COREPATH.'vendor'.DS.'phpseclib'.DS, true);
-
 	\Autoloader::add_classes(array(
 		'Fuel\\Core\\Agent'                         => COREPATH.'classes/agent.php',
 

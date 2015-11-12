@@ -12,8 +12,8 @@
 
 namespace Fuel\Core;
 
-use \PHPSecLib\Crypt_AES;
-use \PHPSecLib\Crypt_Hash;
+use \phpseclib\Crypt\AES;
+use \phpseclib\Crypt\Hash;
 
 class Crypt
 {
@@ -210,8 +210,8 @@ class Crypt
 	{
 		$this->config = array_merge(static::$defaults, $config);
 
-		$this->crypter = new Crypt_AES();
-		$this->hasher = new Crypt_Hash('sha256');
+		$this->crypter = new AES();
+		$this->hasher = new Hash('sha256');
 
 		$this->crypter->enableContinuousBuffer();
 		$this->hasher->setKey(static::safe_b64decode($this->config['crypto_hmac']));
