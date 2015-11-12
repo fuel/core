@@ -449,12 +449,7 @@ abstract class Session_Driver
 	 */
 	protected function _new_session_id()
 	{
-		$session_id = '';
-		while (strlen($session_id) < 32)
-		{
-			$session_id .= mt_rand(0, mt_getrandmax());
-		}
-		return md5(uniqid($session_id, TRUE));
+		return \Str::random('alnum', 32);
 	}
 
 	// --------------------------------------------------------------------
