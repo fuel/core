@@ -146,6 +146,13 @@ class File_Area
 		// make sure we have a dirname to work with
 		isset($pathinfo['dirname']) or $pathinfo['dirname'] = '';
 
+		//Make sure dirname path is realpath (symlink?)
+		$dirname_realpath = realpath($pathinfo['dirname']);
+		if ( $dirnameRealpath != $pathinfo['dirname'] )
+		{
+			$pathinfo['dirname'] = $dirnameRealpath;
+		}
+
 		// do we have a basedir, and is the path already prefixed by the basedir? then just deal with the double dots...
 		if ( ! empty($this->basedir) && substr($pathinfo['dirname'], 0, strlen($this->basedir)) == $this->basedir)
 		{
