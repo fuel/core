@@ -248,6 +248,12 @@ abstract class Database_Connection
 				// Remove OFFSET from the SQL
 				$sql = preg_replace('/\sOFFSET\s+\d+/i', '', $sql);
 			}
+			
+			if (stripos($sql, 'ORDER BY') !== false)
+			{
+				// Remove ORDER BY from the SQL to improve performacnce
+				$sql = preg_replace('/ORDER BY [^,\s)]*(?:\s*,\s*[^,\s)]+)*/mi', '', $sql);
+			}
 
 			if (stripos($sql, 'ORDER BY') !== false)
 			{
