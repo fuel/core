@@ -796,11 +796,11 @@ class Theme
 		foreach ($themes as $theme)
 		{
 			$ext = pathinfo($view, PATHINFO_EXTENSION)
-				? '.'.pathinfo($view, PATHINFO_EXTENSION)
+				? ('.'.pathinfo($view, PATHINFO_EXTENSION))
 				: $this->config['view_ext'];
 
-			$file = (pathinfo($view, PATHINFO_DIRNAME)
-				? str_replace(array('/', DS), DS, pathinfo($view, PATHINFO_DIRNAME)).DS
+			$file = pathinfo($view, PATHINFO_DIRNAME)
+				? (str_replace(array('/', DS), DS, pathinfo($view, PATHINFO_DIRNAME)).DS)
 				: '';
 			$file .= pathinfo($view, PATHINFO_FILENAME);
 
