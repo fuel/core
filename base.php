@@ -10,6 +10,12 @@
  * @link       http://fuelphp.com
  */
 
+// load PHP 5.6+ specific code
+if (PHP_VERSION_ID >= 50600)
+{
+	include "base56.php";
+}
+
 /**
  * Loads in a core class and optionally an app class override if it exists.
  *
@@ -448,12 +454,6 @@ if ( ! function_exists('call_fuel_func_array'))
 
 			list($instance, $method) = $callback;
 
-			// If php is 5.6 or higher then use variadic
-			if (PHP_VERSION_ID >= 50600)
-			{
-				return $instance->{$method}(...$args);
-			}
-
 			// calling the method directly is faster then call_user_func_array() !
 			switch ($count)
 			{
@@ -479,12 +479,6 @@ if ( ! function_exists('call_fuel_func_array'))
 			list($class, $method) = $callback;
 			$class = '\\'.ltrim($class, '\\');
 
-			// If php is 5.6 or higher then use variadic
-			if (PHP_VERSION_ID >= 50600)
-			{
-				return $class::{$method}(...$args);
-			}
-
 			// calling the method directly is faster then call_user_func_array() !
 			switch (count($args))
 			{
@@ -509,12 +503,6 @@ if ( ! function_exists('call_fuel_func_array'))
 		elseif (is_string($callback) or $callback instanceOf \Closure)
 		{
 			is_string($callback) and $callback = ltrim($callback, '\\');
-
-			// If php is 5.6 or higher then use variadic
-			if (PHP_VERSION_ID >= 50600)
-			{
-				return $callback(...$args);
-			}
 
 			// calling the method directly is faster then call_user_func_array() !
 			switch (count($args))
