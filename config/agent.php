@@ -52,6 +52,41 @@ return array(
 		 'method' => 'wrapper',
 
 		/**
+		 * Optional http proxy configuration, will be used for both the 'wrapper' and 'curl' methods
+		 */
+		 'proxy' => array(
+
+			/**
+			 * hostname or IP address of your proxy
+			 *
+			 * Note: so "proxy.example.org" or "1.2.3.4", and not "http://proxy.example.org" !!!
+			 */
+			'host' => null,
+
+			/**
+			 * TCP port number the proxy listens at
+			 */
+			'port' => null,
+
+			/**
+			 * Authentication type to use
+			 *
+			 * 	Default: 'none'
+			 *
+			 * possible values are: 'none', 'basic', 'ntlm'
+			 *
+			 * Note that the 'wrapper' method only supports 'basic', all others are evaluated as 'none'!
+			 */
+			'auth' => 'none',
+
+			/**
+			 * If your proxy requires authentication, specify a username and password
+			 */
+			'username' => null,
+			'password' => null,
+		 ),
+
+		/**
 		 * Filename for the local browscap.ini file (for method 'local').
 		 *
 		 * 	Default: ''
