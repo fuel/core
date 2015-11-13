@@ -69,7 +69,7 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 				$server = $server['host'].':'.$server['port'];
 				if ( ! isset($added[$server]) or $added[$server]['pid'] == -1)
 				{
-					throw new \FuelException('Memcached sessions are configured, but there is no connection possible. Check your configuration.');
+					throw new \FuelException('Memcached cache is configured, but there is no connection possible. Check your configuration.');
 				}
 			}
 		}

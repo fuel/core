@@ -285,7 +285,7 @@ class Cache_Storage_Redis extends \Cache_Storage_Driver
 		// get the key for the cache identifier
 		$key = $this->_get_key();
 
-		// fetch the session data from the redis server
+		// fetch the cache data from the redis server
 		$payload = static::$redis->get($key);
 		try
 		{
