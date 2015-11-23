@@ -59,7 +59,7 @@ class Test_Debug extends TestCase
 
   	public function test_debug_dump_by_call_fuel_func_array()
  	{
-		$expected = '<div class="fuelphp-dump" style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;"><h1 style="border-bottom: 1px solid #CCC; padding: 0 0 5px 0; margin: 0 0 5px 0; font: bold 120% sans-serif;">COREPATH/base.php @ line: 485</h1><pre style="overflow:auto;font-size:100%;"><strong>Variable #1:</strong>
+		$expected = '<div class="fuelphp-dump" style="font-size: 13px;background: #EEE !important; border:1px solid #666; color: #000 !important; padding:10px;"><h1 style="border-bottom: 1px solid #CCC; padding: 0 0 5px 0; margin: 0 0 5px 0; font: bold 120% sans-serif;">COREPATH/base.php @ line: %d</h1><pre style="overflow:auto;font-size:100%;"><strong>Variable #1:</strong>
 <i></i> <strong></strong> (Integer): 1
 
 
@@ -78,6 +78,6 @@ class Test_Debug extends TestCase
  		$output = ob_get_contents();
  		ob_end_clean();
 
-		$this->assertEquals($expected, $output);
+		$this->assertStringMatchesFormat($expected, $output);
  	}
 }
