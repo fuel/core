@@ -108,12 +108,14 @@ class Route
 
 		$search = str_replace(array(
 			':any',
+			':everything',
 			':alnum',
 			':num',
 			':alpha',
 			':segment',
 		), array(
 			'.+',
+			'.*',
 			'[[:alnum:]]+',
 			'[[:digit:]]+',
 			'[[:alpha:]]+',

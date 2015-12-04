@@ -162,12 +162,14 @@ class Router
 			// support the usual route path placeholders
 			$path = str_replace(array(
 				':any',
+				':everything',
 				':alnum',
 				':num',
 				':alpha',
 				':segment',
 			), array(
 				'.+',
+				'.*',
 				'[[:alnum:]]+',
 				'[[:digit:]]+',
 				'[[:alpha:]]+',
