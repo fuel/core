@@ -463,25 +463,37 @@ class Agent
 				}
 
 				// authentication set?
-				if ( ! empty(static::$config['browscap']['proxy']['auth']))
+				switch (static::$config['browscap']['proxy']['auth'])
 				{
-					if (static::$config['browscap']['proxy']['auth'] == 'basic')
-					{
+					case 'basic':
 						curl_setopt($curl, CURLOPT_PROXYAUTH, CURLAUTH_BASIC);
-					}
-					elseif (static::$config['browscap']['proxy']['auth'] == 'ntlm')
-					{
-						curl_setopt($curl, CURLOPT_PROXYAUTH, CURLAUTH_NTLM);
-					}
+						break;
 
-					if ( ! empty(static::$config['browscap']['proxy']['username']) and ! empty(static::$config['browscap']['proxy']['password']))
-					{
-						curl_setopt($curl, CURLOPT_PROXYUSERPWD, static::$config['browscap']['proxy']['username'].':'.static::$config['browscap']['proxy']['password']);
-					}
-					else
-					{
-						logger(\Fuel::L_ERROR, 'Failed to set a proxy for Agent, cURL auth configured but no username or password configured');
-					}
+					case 'ntlm':
+						curl_setopt($curl, CURLOPT_PROXYAUTH, CURLAUTH_NTLM);
+						break;
+
+					default:
+						// no action
+				}
+
+				// do we need to pass credentials?
+				switch (static::$config['browscap']['proxy']['auth'])
+				{
+					case 'basic':
+					case 'ntlm':
+						if (empty(static::$config['browscap']['proxy']['username']) or empty(static::$config['browscap']['proxy']['password']))
+						{
+							logger(\Fuel::L_ERROR, 'Failed to set a proxy for Agent, cURL auth configured but no username or password configured');
+						}
+						else
+						{
+							curl_setopt($curl, CURLOPT_PROXYUSERPWD, static::$config['browscap']['proxy']['username'].':'.static::$config['browscap']['proxy']['password']);
+						}
+						break;
+
+					default:
+						// no action
 				}
 
 				// execute the request
