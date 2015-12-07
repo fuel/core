@@ -322,9 +322,7 @@ abstract class Controller_Rest extends \Controller
 			foreach ($acceptable as $pattern => $quality)
 			{
 				// The Accept header can contain wildcards in the format
-				$find = array('*', '/');
-				$replace = array('.*', '\/');
-				$pattern = '/^' . str_replace($find, $replace, $pattern) . '$/';
+				$pattern = '/^' . str_replace('\*', '.*', preg_quote($pattern)) . '$/';
 				foreach ($this->_supported_formats as $format => $mime)
 				{
 					if (preg_match($pattern, $mime))
