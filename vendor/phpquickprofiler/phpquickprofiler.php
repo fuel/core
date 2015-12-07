@@ -223,7 +223,10 @@ class PhpQuickProfiler {
 		$this->gatherQueryData();
 		$this->gatherSpeedData();
 		require_once('display.php');
-		return displayPqp($this->output);
+		if (function_exists('displayPqp'))
+		{
+			return displayPqp($this->output);
+		}
 	}
 
 }
