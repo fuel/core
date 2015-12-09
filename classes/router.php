@@ -258,6 +258,7 @@ class Router
 		if ($info = static::parse_segments($segments, $namespace, $module))
 		{
 			$match->controller = $info['controller'];
+			$match->controller_path = $info['controller_path'];
 			$match->action = $info['action'];
 			$match->method_params = $info['method_params'];
 			return $match;
@@ -290,9 +291,10 @@ class Router
 				if (static::check_class($class))
 				{
 					return array(
-						'controller'    => $class,
-						'action'        => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
-						'method_params' => array_slice($segments, $key + 2),
+						'controller'       => $class,
+						'controller_path'  => implode('/', array_slice($segments, 0, $key + 1)),
+						'action'           => isset($segments[$key + 1]) ? $segments[$key + 1] : null,
+						'method_params'    => array_slice($segments, $key + 2),
 					);
 				}
 			}
@@ -305,9 +307,10 @@ class Router
 			if (static::check_class($class))
 			{
 				return array(
-					'controller'    => $class,
-					'action'        => isset($segments[0]) ? $segments[0] : null,
-					'method_params' => array_slice($segments, 1),
+					'controller'       => $class,
+					'controller_path'  => implode('/', array_slice($segments, 0, $key + 1)),
+					'action'           => isset($segments[0]) ? $segments[0] : null,
+					'method_params'    => array_slice($segments, 1),
 				);
 			}
 		}

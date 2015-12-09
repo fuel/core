@@ -65,6 +65,10 @@ class Route
 	public $controller = null;
 
 	/**
+	 * @var  string  controller path
+	 */
+	public $controller_path = null;
+	/**
 	 * @var  string  default controller action
 	 */
 	public $action = 'index';
