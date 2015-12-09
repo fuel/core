@@ -319,10 +319,12 @@ abstract class Controller_Rest extends \Controller
 			});
 
 			// Check each of the acceptable formats against the supported formats
+			$find = array('*', '/');
+			$replace = array('.*', '\/');
 			foreach ($acceptable as $pattern => $quality)
 			{
 				// The Accept header can contain wildcards in the format
-				$pattern = '/^' . str_replace('\*', '.*', preg_quote($pattern)) . '$/';
+				$pattern = '/^' . str_replace($find, $replace, preg_quote($pattern)) . '$/';
 				foreach ($this->_supported_formats as $format => $mime)
 				{
 					if (preg_match($pattern, $mime))
