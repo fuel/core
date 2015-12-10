@@ -319,7 +319,7 @@ abstract class Controller_Rest extends \Controller
 			});
 
 			// Check each of the acceptable formats against the supported formats
-			$find = array('*', '/');
+			$find = array('\*', '/');
 			$replace = array('.*', '\/');
 			foreach ($acceptable as $pattern => $quality)
 			{
