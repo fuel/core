@@ -73,6 +73,11 @@ class Test_Debug extends TestCase
 
 </pre></div>';
 
+		if (PHP_VERSION_ID >= 50600)
+		{
+			$expected = str_replace('base.php', 'base56.php', $expected);
+		}
+
 		ob_start();
  		call_fuel_func_array('\\Debug::dump', array(1, 2, 3));
  		$output = ob_get_contents();
