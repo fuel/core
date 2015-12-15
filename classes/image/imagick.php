@@ -120,50 +120,30 @@ class Image_Imagick extends \Image_Driver
 		$sizes->width_half = $sizes->width / 2;
 		$sizes->height_half = $sizes->height / 2;
 
-		if ( ! $tl)
-		{
-			$tlimage = $this->imagick->clone();
-			$tlimage->cropImage($sizes->width_half, $sizes->height_half, 0, 0);
+		$list = array();
+		if (!$tl) {
+			$list = array('x' => 0, 'y' => 0);
+		}
+		if (!$tr) {
+			$list = array('x' => $sizes->width_half, 'y' => 0);
+		}
+		if (!$bl) {
+			$list = array('x' => 0, 'y' => $sizes->height_half);
+		}
+		if (!$br) {
+			$list = array('x' => $sizes->width_half, 'y' => $sizes->height_half);
 		}
 
-		if ( ! $tr)
-		{
-			$trimage = $this->imagick->clone();
-			$trimage->cropImage($sizes->width_half, $sizes->height_half, $sizes->width_half, 0);
-		}
-
-		if ( ! $bl)
-		{
-			$blimage = $this->imagick->clone();
-			$blimage->cropImage($sizes->width_half, $sizes->height_half, 0, $sizes->height_half);
-		}
-
-		if ( ! $br)
-		{
-			$brimage = $this->imagick->clone();
-			$brimage->cropImage($sizes->width_half, $sizes->height_half, $sizes->width_half, $sizes->height_half);
+		foreach($list as $index => $element) {
+			$image = $this->imagick->clone();
+			$image->cropImage($sizes->width_half, $sizes->height_half, $element['x'], $element['y']);
+			$list[$index]['image'] = $image;
 		}
 
 		$this->imagick->roundCorners($radius, $radius);
 
-		if ( ! $tl)
-		{
-			$this->imagick->compositeImage($tlimage, \Imagick::COMPOSITE_DEFAULT, 0, 0);
-		}
-
-		if ( ! $tr)
-		{
-			$this->imagick->compositeImage($trimage, \Imagick::COMPOSITE_DEFAULT, $sizes->width_half, 0);
-		}
-
-		if ( ! $bl)
-		{
-			$this->imagick->compositeImage($blimage, \Imagick::COMPOSITE_DEFAULT, 0, $sizes->height_half);
-		}
-
-		if ( ! $br)
-		{
-			$this->imagick->compositeImage($brimage, \Imagick::COMPOSITE_DEFAULT, $sizes->width_half, $sizes->height_half);
+		foreach($list as $element) {
+			$this->imagick->compositeImage($element['image'], \Imagick::COMPOSITE_DEFAULT, $element['x'], $element['y']);
 		}
 	}
 
