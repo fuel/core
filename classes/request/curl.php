@@ -295,7 +295,7 @@ class Request_Curl extends \Request_Driver
 		$content_type = isset($this->headers['Content-Type']) ? $this->headers['Content-Type'] : $this->response_info('content_type', 'text/plain');
 
 		// Get the correct format for the current content type
-		$format = \Arr::key_exists(static::$auto_detect_formats, $content_type) ? static::$auto_detect_formats[$content_type] : null;
+		$format = isset(static::$auto_detect_formats[$content_type]) ? static::$auto_detect_formats[$content_type] : null;
 
 		switch($format)
 		{

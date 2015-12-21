@@ -10,8 +10,11 @@
  * @link       http://fuelphp.com
  */
 
-define('DS', DIRECTORY_SEPARATOR);
-define('CRLF', chr(13).chr(10));
+if (!defined('DS'))
+	define('DS', DIRECTORY_SEPARATOR);
+
+if (!defined('CRLF'))
+	define('CRLF', chr(13).chr(10));
 
 /**
  * Do we have access to mbstring?

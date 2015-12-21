@@ -69,6 +69,9 @@ class Database_MySQLi_Connection extends \Database_Connection
 			'compress'	 => true,
 		));
 
+		// Prevent this information from showing up in traces
+		unset($this->_config['connection']['username'], $this->_config['connection']['password']);
+
 		try
 		{
 			if ($socket != '')
@@ -105,6 +108,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 				if ($compress)
 				{
 					$mysqli = mysqli_init();
+					mysqli_options($this->_connection, MYSQLI_OPT_CONNECT_TIMEOUT, 10);
 					$mysqli->real_connect($hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
 
 					$this->_connection = $mysqli;
@@ -117,7 +121,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			if ($this->_connection->error)
 			{
 				// Unable to connect, select database, etc
-				throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $this->_connection->error), $this->_connection->errno);
+				throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
 			}
 		}
 		catch (\ErrorException $e)
@@ -125,8 +129,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			// No connection exists
 			$this->_connection = null;
 
-			$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
-			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $error_code, $e);
+			throw new \Database_Exception('No MySQLi Connection error: ' . $e->getMessage(), 0);
 		}
 
 		// \xFF is a better delimiter, but the PHP driver uses underscore
@@ -269,7 +272,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 				}
 			}
 
-			$benchmark = \Profiler::start($this->_instance, $sql, $stacktrace);
+			$benchmark = \Profiler::start("Database ({$this->_instance})", $sql, $stacktrace);
 		}
 
 		if ( ! empty($this->_config['connection']['persistent']) and $this->_config['connection']['database'] !== static::$_current_databases[$this->_connection_id])

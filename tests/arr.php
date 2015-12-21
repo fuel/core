@@ -396,6 +396,49 @@ class Test_Arr extends TestCase
 	}
 
 	/**
+	 * Tests Arr::flatten_assoc() with recursive arrays
+	 *
+	 * @test
+	 */
+	public function test_flatten_recursive_index()
+	{
+		$people = array(
+			array(
+				"name" => "Jack",
+				"age" => 21,
+				"children" => array(
+					array(
+						"name" => "Johnny",
+						"age" => 4,
+					),
+					array(
+						"name" => "Jimmy",
+						"age" => 3,
+					)
+				)
+			),
+			array(
+				"name" => "Jill",
+				"age" => 23
+			)
+		);
+
+		$expected = array(
+			"0:name" => "Jack",
+			"0:age" => 21,
+			"0:children:0:name" => "Johnny",
+			"0:children:0:age" => 4,
+			"0:children:1:name" => "Jimmy",
+			"0:children:1:age" => 3,
+			"1:name" => "Jill",
+			"1:age" => 23
+		);
+
+		$output = Arr::flatten($people, ':');
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
 	 * Tests Arr::merge_assoc()
 	 *
 	 * @test
