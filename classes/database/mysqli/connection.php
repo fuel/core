@@ -147,6 +147,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			$this->set_charset($this->_config['charset']);
 		}
 
+		mysqli_options($this->_connection, MYSQLI_OPT_CONNECT_TIMEOUT, 10);
 		static::$_current_databases[$this->_connection_id] = $database;
 	}
 
