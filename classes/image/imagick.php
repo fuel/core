@@ -44,6 +44,17 @@ class Image_Imagick extends \Image_Driver
 		$this->imagick->setImagePage(0, 0, 0, 0);
 	}
 
+	protected function _crop_dim($x, $y, $w, $h){
+		extract(parent::_crop_dim($x, $y, $w, $h));
+		$width = $w;
+		$height = $h;
+		$this->debug("Cropping image ".$width."x".$height."+$x+$y based on coords ($x, $y), ($w, $h)");
+		$image = $this->create_transparent_image($width, $height);
+
+		imagecopy($image, $this->image_data, 0, 0, $x, $y, $width, $height);
+		$this->image_data = $image;
+	}
+	
 	protected function _resize($width, $height = null, $keepar = true, $pad = true)
 	{
 		extract(parent::_resize($width, $height, $keepar, $pad));
