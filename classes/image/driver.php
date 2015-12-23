@@ -75,7 +75,7 @@ abstract class Image_Driver
 	}
 
 	/**
-	 * Executes the presets set in the config. Additional parameters replace the $1, $2, ect.
+	 * Exectues the presets set in the config. Additional parameters replace the $1, $2, ect.
 	 *
 	 * @param   string  $name  The name of the preset.
 	 * @return  Image_Driver
@@ -112,9 +112,9 @@ abstract class Image_Driver
 	/**
 	 * Loads the image and checks if its compatible.
 	 *
-	 * @param   string  $filename			The file to load
-	 * @param   string  $return_data		Decides if it should return the images data, or just "$this".
-	 * @param   mixed   $force_extension	Decides if it should force the extension with this (or false)
+	 * @param   string  $filename								The file to load
+	 * @param   string  $return_data						Decides if it should return the images data, or just "$this".
+	 * @param   mixed   $force_extension				Decides if it should force the extension witht this (or false)
 	 * @return  Image_Driver
 	 */
 	public function load($filename, $return_data = false, $force_extension = false)
@@ -177,6 +177,24 @@ abstract class Image_Driver
 	}
 
 	/**
+	 * Crops the image using coordinates or percentages.
+	 *
+	 * Positive whole numbers or percentages are coordinates from the top left.
+	 *
+	 * Negative whole numbers or percentages are coordinates from the bottom right.
+	 *
+	 * @param   integer  $x1  X-Coordinate for first set.
+	 * @param   integer  $y1  Y-Coordinate for first set.
+	 * @param   integer  $w   W-Width for cropping.
+	 * @param   integer  $h   H-Height for cropping.
+	 * @return  Image_Driver
+	 */
+	public function crop_dim($x, $y, $w, $h)
+	{
+		$this->queue('crop_dim', $x, $y, $w, $h);
+		return $this;
+	}
+	/**
 	 * Executes the crop event when the queue is ran.
 	 *
 	 * Formats the crop method input for use with driver specific methods
@@ -205,9 +223,62 @@ abstract class Image_Driver
 			'y2' => $y2,
 		);
 	}
-
 	/**
-	 * Resize the image. If the width or height is null, it will resize retaining the original aspect ratio.
+	 * Executes the crop event when the queue is ran.
+	 *
+	 * Formats the crop method input for use with driver specific methods
+	 *
+	 * @param   integer  $x1  X-Coordinate for first set.
+	 * @param   integer  $y1  Y-Coordinate for first set.
+	 * @param   integer  $w   W-Width for cropping.
+	 * @param   integer  $h   H-Height for cropping.
+	 * @return  array    An array of variables for the specific driver.
+	 */
+	protected function _crop_dim($x, $y, $w, $h){
+		$y === null and $y = $x;
+		$w === null  and $w = $h;
+		$h === null  and $h = $w;
+		$x1 = $this->convert_number($x, true);
+		$y1 = $this->convert_number($y, false);
+		$w  = $this->convert_number($w, true);
+		$h  = $this->convert_number($h, false);
+		return array(
+			'x1' => $x,
+			'y1' => $y,
+			'w' => $w,
+			'h' => $h,
+		);
+	}
+	/**
+	 * Executes the crop event when the queue is ran.
+	 *
+	 * Formats the crop method input for use with driver specific methods
+	 *
+	 * @param   integer  $x1  X-Coordinate for first set.
+	 * @param   integer  $y1  Y-Coordinate for first set.
+	 * @param   integer  $w   W-Width for cropping.
+	 * @param   integer  $h   H-Height for cropping.
+	 * @return  array    An array of variables for the specific driver.
+	 */
+	protected function _crop_dim($x, $y, $w, $h){
+		$y === null and $y = $x;
+		$w === null  and $w = $h;
+		$h === null  and $h = $w;
+
+		$x1 = $this->convert_number($x, true);
+		$y1 = $this->convert_number($y, false);
+		$w  = $this->convert_number($w, true);
+		$h  = $this->convert_number($h, false);
+
+		return array(
+			'x1' => $x,
+			'y1' => $y,
+			'w' => $w,
+			'h' => $h,
+		);
+	}
+	/**
+	 * Resizes the image. If the width or height is null, it will resize retaining the original aspect ratio.
 	 *
 	 * @param   integer  $width   The new width of the image.
 	 * @param   integer  $height  The new height of the image.
@@ -224,6 +295,7 @@ abstract class Image_Driver
 	/**
 	 * Creates a vertical / horizontal or both mirror image.
 	 *
+	 * @access public
 	 * @param mixed $direction 'vertical', 'horizontal', 'both'
 	 * @return Image_Driver
 	 */
@@ -550,7 +622,7 @@ abstract class Image_Driver
 	 *
 	 * @param   integer  $radius
 	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" separated by spaces, or null for all sides
-	 * @param   integer  $antialias  Sets the anti-alias range.
+	 * @param   integer  $antialias  Sets the antialias range.
 	 * @return  Image_Driver
 	 */
 	public function rounded($radius, $sides = null, $antialias = null)
@@ -566,7 +638,7 @@ abstract class Image_Driver
 	 *
 	 * @param   integer  $radius
 	 * @param   integer  $sides      Accepts any combination of "tl tr bl br" separated by spaces, or null for all sides
-	 * @param   integer  $antialias  Sets the anti-alias range.
+	 * @param   integer  $antialias  Sets the antialias range.
 	 * @return  array    An array of variables for the specific driver.
 	 */
 	protected function _rounded($radius, $sides, $antialias)
@@ -678,7 +750,6 @@ abstract class Image_Driver
 	 *
 	 * @param   string  $filetype  The extension type to use. Ex: png, jpg, gif
 	 * @return  array
-	 * @throws \FuelException
 	 */
 	public function output($filetype = null)
 	{
@@ -774,8 +845,8 @@ abstract class Image_Driver
 	 * Checks if the extension is accepted by this library, and if its valid sets the $this->image_extension variable.
 	 *
 	 * @param   string   $filename
-	 * @param   boolean  $writevar			Decides if the extension should be written to $this->image_extension
-	 * @param   mixed    $force_extension	Decides if the extension should be overridden with this (or false)
+	 * @param   boolean  $writevar					Decides if the extension should be written to $this->image_extension
+	 * @param   mixed		 $force_extension		Decides if the extension should be overridden with this (or false)
 	 * @return  boolean
 	 */
 	protected function check_extension($filename, $writevar = true, $force_extension = false)
@@ -802,7 +873,7 @@ abstract class Image_Driver
 	 * Converts percentages, negatives, and other values to absolute integers.
 	 *
 	 * @param   string   $input
-	 * @param   boolean  $x      Determines if the number relates to the x-axis or y-axis.
+	 * @param   boolean  $x  Determines if the number relates to the x-axis or y-axis.
 	 * @return  integer  The converted number, usable with the image being edited.
 	 */
 	protected function convert_number($input, $x = null)
@@ -897,6 +968,8 @@ abstract class Image_Driver
 
 	/**
 	 * Used for debugging image output.
+	 *
+	 * @param  string  $message
 	 */
 	protected function debug()
 	{
