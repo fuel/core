@@ -58,7 +58,18 @@ class Image_Imagemagick extends \Image_Driver
 		$this->exec('convert', $image.' -crop '.($x2 - $x1).'x'.($y2 - $y1).'+'.$x1.'+'.$y1.' +repage '.$image);
 		$this->clear_sizes();
 	}
+	
+	protected function _crop_dim($x, $y, $w, $h){
+		extract(parent::_crop_dim($x, $y, $w, $h));
+		$width = $w;
+		$height = $h;
+		$this->debug("Cropping image ".$width."x".$height."+$x+$y based on coords ($x, $y), ($w, $h)");
+		$image = $this->create_transparent_image($width, $height);
 
+		imagecopy($image, $this->image_data, 0, 0, $x, $y, $width, $height);
+		$this->image_data = $image;
+	}
+	
 	protected function _resize($width, $height = null, $keepar = true, $pad = true)
 	{
 		extract(parent::_resize($width, $height, $keepar, $pad));
