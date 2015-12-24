@@ -313,8 +313,8 @@ JS;
 	 */
 	public static function file_lines($filepath, $line_num, $highlight = true, $padding = 5)
 	{
-		// deal with eval'd code
-		if (strpos($filepath, 'eval()\'d code') !== false)
+		// deal with eval'd code and runtime-created function
+		if (strpos($filepath, 'eval()\'d code') !== false or strpos($filepath, 'runtime-created function') !== false)
 		{
 			return '';
 		}
