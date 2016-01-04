@@ -308,7 +308,7 @@ class Router
 			{
 				return array(
 					'controller'       => $class,
-					'controller_path'  => implode('/', array_slice($segments, 0, $key + 1)),
+					'controller_path'  => isset($key) ? implode('/', array_slice($segments, 0, $key + 1)) : '',
 					'action'           => isset($segments[0]) ? $segments[0] : null,
 					'method_params'    => array_slice($segments, 1),
 				);
