@@ -199,7 +199,7 @@ class Config
 			static::$itemcache[$item] = $val;
 		}
 
-		return static::$itemcache[$item];
+		return \Fuel::value(static::$itemcache[$item]);
 	}
 
 	/**
