@@ -27,11 +27,6 @@ class Config
 	public static $items = array();
 
 	/**
-	 * @var    string    $default_check_value          random value used as a not-found check in get()
-	 */
-	public static $default_check_value;
-
-	/**
 	 * @var    array    $itemcache       the dot-notated item cache
 	 */
 	protected static $itemcache = array();
@@ -184,25 +179,21 @@ class Config
 	 */
 	public static function get($item, $default = null)
 	{
-		is_null(static::$default_check_value) and static::$default_check_value = pack('H*', 'DEADBEEFCAFE');
-
 		if (isset(static::$items[$item]))
 		{
 			return static::$items[$item];
 		}
 		elseif ( ! isset(static::$itemcache[$item]))
 		{
-			$raw_val = \Arr::get(static::$items, $item, static::$default_check_value);
-			$val = \Fuel::value($raw_val);
+			// cook up something unique
+			$miss = new \stdClass();
 
-			if ($raw_val === static::$default_check_value)
+			$val = \Arr::get(static::$items, $item, $miss);
+
+			// so we can detect a miss here...
+			if ($val === $miss)
 			{
 				return $default;
-			}
-
-			if ( ! is_scalar($raw_val))
-			{
-				return $val;
 			}
 
 			static::$itemcache[$item] = $val;
