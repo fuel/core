@@ -192,14 +192,15 @@ class Config
 		}
 		elseif ( ! isset(static::$itemcache[$item]))
 		{
-			$val = \Fuel::value(\Arr::get(static::$items, $item, static::$default_check_value));
+			$raw_val = \Arr::get(static::$items, $item, static::$default_check_value);
+			$val = \Fuel::value($raw_val);
 
-			if ($val === static::$default_check_value)
+			if ($raw_val === static::$default_check_value)
 			{
 				return $default;
 			}
 
-			if ( ! is_scalar($val))
+			if ( ! is_scalar($raw_val))
 			{
 				return $val;
 			}
