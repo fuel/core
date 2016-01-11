@@ -179,11 +179,11 @@ class Config
 	 */
 	public static function get($item, $default = null)
 	{
-		if (isset(static::$items[$item]))
+		if (array_key_exists($item, static::$items))
 		{
 			return static::$items[$item];
 		}
-		elseif ( ! isset(static::$itemcache[$item]))
+		elseif ( ! array_key_exists($item, static::$itemcache))
 		{
 			// cook up something unique
 			$miss = new \stdClass();
@@ -199,7 +199,7 @@ class Config
 			static::$itemcache[$item] = $val;
 		}
 
-		return static::$itemcache[$item];
+		return \Fuel::value(static::$itemcache[$item]);
 	}
 
 	/**
