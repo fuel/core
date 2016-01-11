@@ -211,7 +211,7 @@ class Config
 	public static function set($item, $value)
 	{
 		strpos($item, '.') === false or static::$itemcache[$item] = $value;
-		\Arr::set(static::$items, $item, \Fuel::value($value));
+		\Arr::set(static::$items, $item, $value);
 	}
 
 	/**
