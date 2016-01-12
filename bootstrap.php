@@ -71,7 +71,7 @@ register_shutdown_function(function ()
 	return \Errorhandler::shutdown_handler();
 });
 
-set_exception_handler(function (\Exception $e)
+set_exception_handler(function ($e)
 {
 	// reset the autoloader
 	\Autoloader::_reset();

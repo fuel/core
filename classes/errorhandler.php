@@ -112,24 +112,34 @@ class Errorhandler
 	 * @param   Exception  $e  the exception
 	 * @return  bool
 	 */
-	public static function exception_handler(\Exception $e)
+	public static function exception_handler($e)
 	{
-		if (method_exists($e, 'handle'))
+		// make sure we've got something useful passed
+		if ($e instanceOf \Exception or (PHP_VERSION_ID >= 70000 and $e instanceOf \Error))
 		{
-			return $e->handle();
-		}
+			if (method_exists($e, 'handle'))
+			{
+				return $e->handle();
+			}
 
-		$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
-		logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
+			$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
+			logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
 
-		if (\Fuel::$env != \Fuel::PRODUCTION)
-		{
-			static::show_php_error($e);
+			if (\Fuel::$env != \Fuel::PRODUCTION)
+			{
+				static::show_php_error($e);
+			}
+			else
+			{
+				static::show_production_error($e);
+			}
 		}
 		else
 		{
-			static::show_production_error($e);
+			die('Something was passed to the Exception handler that was neither an Error or an Exception !!!');
 		}
+
+		return true;
 	}
 
 	/**
@@ -164,13 +174,40 @@ class Errorhandler
 	}
 
 	/**
+	 * Shows a small notice error, only when not in production or when forced.
+	 * This is used by several libraries to notify the developer of certain things.
+	 *
+	 * @param   string  $msg          the message to display
+	 * @param   bool    $always_show  whether to force display the notice or not
+	 * @return  void
+	 */
+	public static function notice($msg, $always_show = false)
+	{
+		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::get(debug_backtrace(), 1));
+		logger(\Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
+
+		if (\Fuel::$is_test or ( ! $always_show and (\Fuel::$env == \Fuel::PRODUCTION or \Config::get('errors.notices', true) === false)))
+		{
+			return;
+		}
+
+		$data['message']	= $msg;
+		$data['type']		= 'Notice';
+		$data['filepath']	= \Fuel::clean_path($trace['file']);
+		$data['line']		= $trace['line'];
+		$data['function']	= $trace['function'];
+
+		echo \View::forge('errors'.DS.'php_short', $data, false);
+	}
+
+	/**
 	 * Shows an error.  It will stop script execution if the error code is not
 	 * in the errors.continue_on whitelist.
 	 *
 	 * @param   Exception  $e  the exception to show
 	 * @return  void
 	 */
-	public static function show_php_error(\Exception $e)
+	protected static function show_php_error($e)
 	{
 		$fatal = (bool) ( ! in_array($e->getCode(), \Config::get('errors.continue_on', array())));
 		$data = static::prepare_exception($e, $fatal);
@@ -231,39 +268,12 @@ class Errorhandler
 	}
 
 	/**
-	 * Shows a small notice error, only when not in production or when forced.
-	 * This is used by several libraries to notify the developer of certain things.
-	 *
-	 * @param   string  $msg          the message to display
-	 * @param   bool    $always_show  whether to force display the notice or not
-	 * @return  void
-	 */
-	public static function notice($msg, $always_show = false)
-	{
-		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::get(debug_backtrace(), 1));
-		logger(\Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
-
-		if (\Fuel::$is_test or ( ! $always_show and (\Fuel::$env == \Fuel::PRODUCTION or \Config::get('errors.notices', true) === false)))
-		{
-			return;
-		}
-
-		$data['message']	= $msg;
-		$data['type']		= 'Notice';
-		$data['filepath']	= \Fuel::clean_path($trace['file']);
-		$data['line']		= $trace['line'];
-		$data['function']	= $trace['function'];
-
-		echo \View::forge('errors'.DS.'php_short', $data, false);
-	}
-
-	/**
 	 * Shows the errors/production view and exits.  This only gets
 	 * called when an error occurs in production mode.
 	 *
 	 * @return  void
 	 */
-	public static function show_production_error(\Exception $e)
+	protected static function show_production_error($e)
 	{
 		// when we're on CLI, always show the php error
 		if (\Fuel::$is_cli)
@@ -279,7 +289,7 @@ class Errorhandler
 		exit(\View::forge('errors'.DS.'production'));
 	}
 
-	protected static function prepare_exception(\Exception $e, $fatal = true)
+	protected static function prepare_exception($e, $fatal = true)
 	{
 		$data = array();
 		$data['type']		= get_class($e);
