@@ -95,7 +95,7 @@ class Security
 		$filters = \Config::get('security.uri_filter', array());
 		$filters = is_array($filters) ? $filters : array($filters);
 
-		$strict and $uri = preg_replace(array("/\.+\//", '/\/+/'), '/', $uri);
+		$strict and $uri = str_replace(array('//', '../'), '/', $uri);
 
 		return static::clean($uri, $filters);
 	}
