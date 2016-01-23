@@ -6,7 +6,7 @@
  * @category   Query/Result
  * @author     Kohana Team
  * @copyright  (c) 2008-2009 Kohana Team
- * @copyright  (c) 2010-2015 Fuel Development Team
+ * @copyright  (c) 2010 - 2016 Fuel Development Team
  * @license    http://kohanaphp.com/license
  */
 

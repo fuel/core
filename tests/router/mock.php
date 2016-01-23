@@ -1,17 +1,21 @@
 <?php
 /**
- * Mock for Router. Static functions are not fun to unit test.
- * PHPUnit 4 removes staticExpects, this mock class is a workaround.
+ * Part of the Fuel framework.
  *
  * @package    Fuel
- * @version    1.7
+ * @version    1.8
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2015 Fuel Development Team
+ * @copyright  2010 - 2016 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
+
+/**
+ * Mock for Router. Static functions are not fun to unit test.
+ * PHPUnit 4 removes staticExpects, this mock class is a workaround.
+ */
 
 class Test_Router_Mock extends Router
 {
@@ -26,7 +30,7 @@ class Test_Router_Mock extends Router
 	protected static function check_class($class)
 	{
 		$callback =  static::$check_class;
-		
+
 		return $callback($class);
 	}
 
