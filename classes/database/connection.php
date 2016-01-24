@@ -220,6 +220,68 @@ abstract class Database_Connection
 	abstract public function query($type, $sql, $as_object);
 
 	/**
+	 * Create a new [Database_Query_Builder_Select]. Each argument will be
+	 * treated as a column. To generate a `foo AS bar` alias, use an array.
+	 *
+	 *     // SELECT id, username
+	 *     $query = DB::select('id', 'username');
+	 *
+	 *     // SELECT id AS user_id
+	 *     $query = DB::select(array('id', 'user_id'));
+	 *
+	 * @param   mixed   column name or array($column, $alias) or object
+	 * @param   ...
+	 * @return  Database_Query_Builder_Select
+	 */
+	public function select(array $args = null)
+	{
+		return new Database_Query_Builder_Select($args);
+	}
+
+	/**
+	 * Create a new [Database_Query_Builder_Insert].
+	 *
+	 *     // INSERT INTO users (id, username)
+	 *     $query = DB::insert('users', array('id', 'username'));
+	 *
+	 * @param   string  table to insert into
+	 * @param   array   list of column names or array($column, $alias) or object
+	 * @return  Database_Query_Builder_Insert
+	 */
+	public function insert($table = null, array $columns = null)
+	{
+		return new Database_Query_Builder_Insert($table, $columns);
+	}
+
+	/**
+	 * Create a new [Database_Query_Builder_Update].
+	 *
+	 *     // UPDATE users
+	 *     $query = DB::update('users');
+	 *
+	 * @param   string  table to update
+	 * @return  Database_Query_Builder_Update
+	 */
+	public static function update($table = null)
+	{
+		return new Database_Query_Builder_Update($table);
+	}
+
+	/**
+	 * Create a new [Database_Query_Builder_Delete].
+	 *
+	 *     // DELETE FROM users
+	 *     $query = DB::delete('users');
+	 *
+	 * @param   string  table to delete from
+	 * @return  Database_Query_Builder_Delete
+	 */
+	public static function delete($table = null)
+	{
+		return new Database_Query_Builder_Delete($table);
+	}
+
+	/**
 	 * Count the number of records in the last query, without LIMIT or OFFSET applied.
 	 *
 	 *     // Get the total number of records that match the last query

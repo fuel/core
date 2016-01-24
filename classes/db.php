@@ -77,9 +77,17 @@ class DB
 	 * @param   ...
 	 * @return  Database_Query_Builder_Select
 	 */
-	public static function select($columns = NULL)
+	public static function select($args = null)
 	{
-		return new \Database_Query_Builder_Select(func_get_args());
+		// last in the list may be the optional db connection
+		$db = null;
+		if ($args = func_get_args() and isset($args[func_num_args()]) and $args[func_num_args()] instanceOf \Database_Connection)
+		{
+			$db = $args[func_num_args()];
+			array_pop($args);
+		}
+
+		return \Database_Connection::instance($db)->select($args);
 	}
 
 	/**
@@ -91,9 +99,9 @@ class DB
 	 * @param   array   columns to select
 	 * @return  Database_Query_Builder_Select
 	 */
-	public static function select_array(array $columns = NULL)
+	public static function select_array(array $columns = null, $db = null)
 	{
-		return new \Database_Query_Builder_Select($columns);
+		return \Database_Connection::instance($db)->select($columns);
 	}
 
 	/**
@@ -106,9 +114,9 @@ class DB
 	 * @param   array   list of column names or array($column, $alias) or object
 	 * @return  Database_Query_Builder_Insert
 	 */
-	public static function insert($table = NULL, array $columns = NULL)
+	public static function insert($table = null, array $columns = null, $db = null)
 	{
-		return new \Database_Query_Builder_Insert($table, $columns);
+		return \Database_Connection::instance($db)->insert($table, $columns);
 	}
 
 	/**
@@ -120,9 +128,9 @@ class DB
 	 * @param   string  table to update
 	 * @return  Database_Query_Builder_Update
 	 */
-	public static function update($table = NULL)
+	public static function update($table = null, $db = null)
 	{
-		return new \Database_Query_Builder_Update($table);
+		return \Database_Connection::instance($db)->update($table);
 	}
 
 	/**
@@ -134,9 +142,9 @@ class DB
 	 * @param   string  table to delete from
 	 * @return  Database_Query_Builder_Delete
 	 */
-	public static function delete($table = NULL)
+	public static function delete($table = null, $db = null)
 	{
-		return new \Database_Query_Builder_Delete($table);
+		return \Database_Connection::instance($db)->delete($table);
 	}
 
 	/**
