@@ -79,15 +79,7 @@ class DB
 	 */
 	public static function select($args = null)
 	{
-		// last in the list may be the optional db connection
-		$db = null;
-		if ($args = func_get_args() and isset($args[func_num_args()]) and $args[func_num_args()] instanceOf \Database_Connection)
-		{
-			$db = $args[func_num_args()];
-			array_pop($args);
-		}
-
-		return \Database_Connection::instance($db)->select($args);
+		return \Database_Connection::instance()->select(func_get_args());
 	}
 
 	/**
@@ -99,9 +91,9 @@ class DB
 	 * @param   array   columns to select
 	 * @return  Database_Query_Builder_Select
 	 */
-	public static function select_array(array $columns = null, $db = null)
+	public static function select_array(array $columns = null)
 	{
-		return \Database_Connection::instance($db)->select($columns);
+		return \Database_Connection::instance()->select($columns);
 	}
 
 	/**
@@ -114,9 +106,9 @@ class DB
 	 * @param   array   list of column names or array($column, $alias) or object
 	 * @return  Database_Query_Builder_Insert
 	 */
-	public static function insert($table = null, array $columns = null, $db = null)
+	public static function insert($table = null, array $columns = null)
 	{
-		return \Database_Connection::instance($db)->insert($table, $columns);
+		return \Database_Connection::instance()->insert($table, $columns);
 	}
 
 	/**
@@ -128,9 +120,9 @@ class DB
 	 * @param   string  table to update
 	 * @return  Database_Query_Builder_Update
 	 */
-	public static function update($table = null, $db = null)
+	public static function update($table = null)
 	{
-		return \Database_Connection::instance($db)->update($table);
+		return \Database_Connection::instance()->update($table);
 	}
 
 	/**
@@ -142,9 +134,9 @@ class DB
 	 * @param   string  table to delete from
 	 * @return  Database_Query_Builder_Delete
 	 */
-	public static function delete($table = null, $db = null)
+	public static function delete($table = null)
 	{
-		return \Database_Connection::instance($db)->delete($table);
+		return \Database_Connection::instance()->delete($table);
 	}
 
 	/**
