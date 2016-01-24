@@ -63,6 +63,16 @@ class DB
 		return \Database_Connection::instance($db)->error_info();
 	}
 
+	/*
+	 * Returns a database instance
+	 *
+	 * @return	Database_Connection
+	 */
+	public static function instance($db = null)
+	{
+		return \Database_Connection::instance($db);
+	}
+
 	/**
 	 * Create a new [Database_Query_Builder_Select]. Each argument will be
 	 * treated as a column. To generate a `foo AS bar` alias, use an array.
