@@ -34,8 +34,8 @@ class DB
 	 * `DB::INSERT` queries will return the insert id and number of rows.
 	 * For all other queries, the number of affected rows is returned.
 	 *
-	 * @param   integer  type: DB::SELECT, DB::UPDATE, etc
 	 * @param   string   SQL statement
+	 * @param   integer  type: DB::SELECT, DB::UPDATE, etc
 	 * @return  Database_Query
 	 */
 	public static function query($sql, $type = null)
