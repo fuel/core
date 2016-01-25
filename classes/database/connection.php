@@ -74,10 +74,11 @@ abstract class Database_Connection
 			}
 
 			// Set the driver class name
-			$driver = '\\Database_' . ucfirst($config['type']) . '_Connection';
+			$type = ucfirst($config['type']);
+			$driver = '\\Database_' . $type . '_Connection';
 
 			// Create the database connection instance
-			new $driver($name, $config);
+			new $driver($name, $config, $type);
 		}
 
 		return static::$instances[$name];
@@ -122,6 +123,11 @@ abstract class Database_Connection
 	protected $_config;
 
 	/**
+	 * @var  Database_Schema  Instance of the database schema class
+	 */
+	protected $_schema;
+
+	/**
 	 * Stores the database configuration locally and name the instance.
 	 *
 	 * [!!] This method cannot be accessed directly, you must use [static::instance].
@@ -136,6 +142,12 @@ abstract class Database_Connection
 
 		// Store the config locally
 		$this->_config = $config;
+
+		// Set up a generic schema processor if needed
+		if ( ! $this->_schema)
+		{
+			$this->_schema = new \Database_Schema($name, $this);
+		}
 
 		// Store the database instance
 		static::$instances[$name] = $this;
@@ -224,10 +236,10 @@ abstract class Database_Connection
 	 * treated as a column. To generate a `foo AS bar` alias, use an array.
 	 *
 	 *     // SELECT id, username
-	 *     $query = DB::select('id', 'username');
+	 *     $query = $db->select('id', 'username');
 	 *
 	 *     // SELECT id AS user_id
-	 *     $query = DB::select(array('id', 'user_id'));
+	 *     $query = $db->select(array('id', 'user_id'));
 	 *
 	 * @param   mixed   column name or array($column, $alias) or object
 	 * @param   ...
@@ -242,7 +254,7 @@ abstract class Database_Connection
 	 * Create a new [Database_Query_Builder_Insert].
 	 *
 	 *     // INSERT INTO users (id, username)
-	 *     $query = DB::insert('users', array('id', 'username'));
+	 *     $query = $db->insert('users', array('id', 'username'));
 	 *
 	 * @param   string  table to insert into
 	 * @param   array   list of column names or array($column, $alias) or object
@@ -257,12 +269,12 @@ abstract class Database_Connection
 	 * Create a new [Database_Query_Builder_Update].
 	 *
 	 *     // UPDATE users
-	 *     $query = DB::update('users');
+	 *     $query = $db->update('users');
 	 *
 	 * @param   string  table to update
 	 * @return  Database_Query_Builder_Update
 	 */
-	public static function update($table = null)
+	public function update($table = null)
 	{
 		return new Database_Query_Builder_Update($table);
 	}
@@ -271,14 +283,28 @@ abstract class Database_Connection
 	 * Create a new [Database_Query_Builder_Delete].
 	 *
 	 *     // DELETE FROM users
-	 *     $query = DB::delete('users');
+	 *     $query = $db->delete('users');
 	 *
 	 * @param   string  table to delete from
 	 * @return  Database_Query_Builder_Delete
 	 */
-	public static function delete($table = null)
+	public function delete($table = null)
 	{
 		return new Database_Query_Builder_Delete($table);
+	}
+
+	/**
+	 * Database schema operations
+	 *
+	 *     // CREATE DATABASE database CHARACTER SET utf-8 DEFAULT utf-8
+	 *     $query = $db->schema('create_database', array('database', 'utf-8'));
+
+	 * @param   string  table to delete from
+	 * @return  Database_Query_Builder_Delete
+	 */
+	public function schema($operation, array $params = array())
+	{
+		return call_user_func_array(array($this->_schema, $operation), $parms);
 	}
 
 	/**

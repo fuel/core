@@ -32,15 +32,20 @@ class Database_PDO_Connection extends \Database_Connection
 	 * @param string $name
 	 * @param array  $config
 	 */
-	protected function __construct($name, array $config)
+	protected function __construct($name, array $config, $type)
 	{
-		parent::__construct($name, $config);
-
-		if (isset($this->_config['identifier']))
+		if (isset($config['identifier']))
 		{
 			// Allow the identifier to be overloaded per-connection
 			$this->_identifier = (string) $this->_config['identifier'];
 		}
+
+		// construct a custom schema driver
+//		$schema = '\\Database_' . $type . '_Schema';
+//		$this->_schema = new $schema($name, $this);
+
+		// call the parent consructor
+		parent::__construct($name, $config);
 	}
 
 	/**

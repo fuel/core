@@ -164,10 +164,11 @@ function setup_autoloader()
 		'Fuel\\Core\\Database_Query_Builder_Join'   => COREPATH.'classes/database/query/builder/join.php',
 		'Fuel\\Core\\Database_Result'               => COREPATH.'classes/database/result.php',
 		'Fuel\\Core\\Database_Result_Cached'        => COREPATH.'classes/database/result/cached.php',
-		'Fuel\\Core\\Database_Mysql_Connection'     => COREPATH.'classes/database/mysql/connection.php',
+		'Fuel\\Core\\Database_MySQL_Connection'     => COREPATH.'classes/database/mysql/connection.php',
 		'Fuel\\Core\\Database_MySQL_Result'         => COREPATH.'classes/database/mysql/result.php',
-		'Fuel\\Core\\Database_Mysqli_Connection'    => COREPATH.'classes/database/mysqli/connection.php',
+		'Fuel\\Core\\Database_MySQLi_Connection'    => COREPATH.'classes/database/mysqli/connection.php',
 		'Fuel\\Core\\Database_MySQLi_Result'        => COREPATH.'classes/database/mysqli/result.php',
+		'Fuel\\Core\\Database_Schema'               => COREPATH.'classes/database/schema.php',
 
 		'Fuel\\Core\\Fuel'                          => COREPATH.'classes/fuel.php',
 		'Fuel\\Core\\FuelException'                 => COREPATH.'classes/fuel.php',
