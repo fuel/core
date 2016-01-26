@@ -44,16 +44,15 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	 */
 	public function list_tables($like = null)
 	{
+		$query = "SELECT name FROM sys.objects WHERE type = 'U' AND name != 'sysdiagrams'";
+
 		if (is_string($like))
 		{
-			// Search for table names
-			$result = $this->query(\DB::SELECT, "SELECT name FROM sys.objects WHERE type = 'U' AND name LIKE ".$this->quote($like), false);
+			$query .= " AND name LIKE ".$this->quote($like);
 		}
-		else
-		{
-			// Find all table names
-			$result = $this->query(\DB::SELECT, "SELECT name FROM sys.objects WHERE type = 'U'", false);
-		}
+
+		// Find all table names
+		$result = $this->query(\DB::SELECT, $query, false);
 
 		$tables = array();
 		foreach ($result as $row)
@@ -73,18 +72,14 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	 */
 	public function list_columns($table, $like = null)
 	{
-		// Quote the table name
-		$table = $this->quote_table($table);
+		$query = "SELECT * FROM Sys.Columns WHERE id = object_id('" . $this->quote_table($table) . "')";
+
 		if (is_string($like))
 		{
 			// Search for column names
-			$result = $this->query(\DB::SELECT, "SELECT * FROM Sys.Columns WHERE id = object_id('" . $table . "') AND name LIKE ".$this->quote($like), false);
+			$query .= " AND name LIKE ".$this->quote($like);
 		}
-		else
-		{
-			// Find all column names
-			$result = $this->query(\DB::SELECT, "SELECT * FROM Sys.Columns WHERE id = object_id('" . $table . "')", false);
-		}
+
 		$count = 0;
 		$columns = array();
 		foreach ($result as $row)
