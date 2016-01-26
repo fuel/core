@@ -304,7 +304,7 @@ abstract class Database_Connection
 	 */
 	public function schema($operation, array $params = array())
 	{
-		return call_user_func_array(array($this->_schema, $operation), $parms);
+		return call_user_func_array(array($this->_schema, $operation), $params);
 	}
 
 	/**
