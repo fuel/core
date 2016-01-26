@@ -151,9 +151,11 @@ function setup_autoloader()
 		'Fuel\\Core\\DBUtil'                        => COREPATH.'classes/dbutil.php',
 
 		'Fuel\\Core\\Database_Connection'           => COREPATH.'classes/database/connection.php',
+		'Fuel\\Core\\Database_Result'               => COREPATH.'classes/database/result.php',
+		'Fuel\\Core\\Database_Result_Cached'        => COREPATH.'classes/database/result/cached.php',
+		'Fuel\\Core\\Database_Schema'               => COREPATH.'classes/database/schema.php',
 		'Fuel\\Core\\Database_Exception'            => COREPATH.'classes/database/exception.php',
 		'Fuel\\Core\\Database_Expression'           => COREPATH.'classes/database/expression.php',
-		'Fuel\\Core\\Database_Pdo_Connection'       => COREPATH.'classes/database/pdo/connection.php',
 		'Fuel\\Core\\Database_Query'                => COREPATH.'classes/database/query.php',
 		'Fuel\\Core\\Database_Query_Builder'        => COREPATH.'classes/database/query/builder.php',
 		'Fuel\\Core\\Database_Query_Builder_Insert' => COREPATH.'classes/database/query/builder/insert.php',
@@ -162,13 +164,15 @@ function setup_autoloader()
 		'Fuel\\Core\\Database_Query_Builder_Select' => COREPATH.'classes/database/query/builder/select.php',
 		'Fuel\\Core\\Database_Query_Builder_Where'  => COREPATH.'classes/database/query/builder/where.php',
 		'Fuel\\Core\\Database_Query_Builder_Join'   => COREPATH.'classes/database/query/builder/join.php',
-		'Fuel\\Core\\Database_Result'               => COREPATH.'classes/database/result.php',
-		'Fuel\\Core\\Database_Result_Cached'        => COREPATH.'classes/database/result/cached.php',
+		// PDO drivers
+		'Fuel\\Core\\Database_Pdo_Connection'       => COREPATH.'classes/database/pdo/connection.php',
 		'Fuel\\Core\\Database_MySQL_Connection'     => COREPATH.'classes/database/mysql/connection.php',
-		'Fuel\\Core\\Database_MySQL_Result'         => COREPATH.'classes/database/mysql/result.php',
+		'Fuel\\Core\\Database_SQLite_Connection'    => COREPATH.'classes/database/sqlite/connection.php',
+		'Fuel\\Core\\Database_Sqlsrv_Connection'    => COREPATH.'classes/database/sqlsrv/connection.php',
+		'Fuel\\Core\\Database_Dblib_Connection'     => COREPATH.'classes/database/dblib/connection.php',
+		// Legacy drivers
 		'Fuel\\Core\\Database_MySQLi_Connection'    => COREPATH.'classes/database/mysqli/connection.php',
 		'Fuel\\Core\\Database_MySQLi_Result'        => COREPATH.'classes/database/mysqli/result.php',
-		'Fuel\\Core\\Database_Schema'               => COREPATH.'classes/database/schema.php',
 
 		'Fuel\\Core\\Fuel'                          => COREPATH.'classes/fuel.php',
 		'Fuel\\Core\\FuelException'                 => COREPATH.'classes/fuel.php',
