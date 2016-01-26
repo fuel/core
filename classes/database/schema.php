@@ -203,7 +203,7 @@ class Database_Schema
 		}
 
 		$sql  = 'SELECT ';
-		$sql .= implode(', ', array_unique(array_map(array($this->_connection, 'quote_identifier'), $colunms)));
+		$sql .= implode(', ', array_unique(array_map(array($this->_connection, 'quote_identifier'), $columns)));
 		$sql .= ' FROM ';
 		$sql .= $this->_connection->quote_identifier($this->_connection->table_prefix($table));
 		$sql .= ' LIMIT 1';
