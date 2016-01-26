@@ -5,6 +5,7 @@
  * @package    Fuel
  * @version    1.8
  * @author     Fuel Development Team
+ * @author     cocteau666@gmail.com
  * @license    MIT License
  * @copyright  2010 - 2016 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
@@ -43,18 +44,16 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	 */
 	public function list_tables($like = null)
 	{
-		$query = 'SELECT name FROM sys.databases db WHERE db.state = 0';
-
 		if (is_string($like))
 		{
-			$query .= ' AND name LIKE ' . $this->quote($like);
+			// Search for table names
+			$result = $this->query(\DB::SELECT, "SELECT name FROM sys.objects WHERE type = 'U' AND name LIKE ".$this->quote($like), false);
 		}
-
-		$query .= ' ORDER BY name';
-
-		$q = $this->_connection->prepare($query);
-		$q->execute();
-		$result = $q->fetchAll();
+		else
+		{
+			// Find all table names
+			$result = $this->query(\DB::SELECT, "SELECT name FROM sys.objects WHERE type = 'U'", false);
+		}
 
 		$tables = array();
 		foreach ($result as $row)
@@ -63,6 +62,85 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 		}
 
 		return $tables;
+	}
+
+	/**
+	 * List table columns
+	 *
+	 * @param   string  $table  table name
+	 * @param   string  $like   column name pattern
+	 * @return  array   array of column structure
+	 */
+	public function list_columns($table, $like = null)
+	{
+		// Quote the table name
+		$table = $this->quote_table($table);
+		if (is_string($like))
+		{
+			// Search for column names
+			$result = $this->query(\DB::SELECT, "SELECT * FROM Sys.Columns WHERE id = object_id('" . $table . "') AND name LIKE ".$this->quote($like), false);
+		}
+		else
+		{
+			// Find all column names
+			$result = $this->query(\DB::SELECT, "SELECT * FROM Sys.Columns WHERE id = object_id('" . $table . "')", false);
+		}
+		$count = 0;
+		$columns = array();
+		foreach ($result as $row)
+		{
+			list($type, $length) = $this->_parse_type($row['Type']);
+			$column = $this->datatype($type);
+			$column['name']             = $row['Field'];
+			$column['default']          = $row['Default'];
+			$column['data_type']        = $type;
+			$column['null']             = ($row['Null'] == 'YES');
+			$column['ordinal_position'] = ++$count;
+			switch ($column['type'])
+			{
+				case 'float':
+					if (isset($length))
+					{
+						list($column['numeric_precision'], $column['numeric_scale']) = explode(',', $length);
+					}
+				break;
+				case 'int':
+					if (isset($length))
+					{
+						$column['display'] = $length;
+					}
+				break;
+				case 'string':
+					switch ($column['data_type'])
+					{
+						case 'binary':
+						case 'varbinary':
+							$column['character_maximum_length'] = $length;
+						break;
+						case 'char':
+						case 'varchar':
+							$column['character_maximum_length'] = $length;
+						case 'text':
+						case 'tinytext':
+						case 'mediumtext':
+						case 'longtext':
+							$column['collation_name'] = $row['Collation'];
+						break;
+						case 'enum':
+						case 'set':
+							$column['collation_name'] = $row['Collation'];
+							$column['options'] = explode('\',\'', substr($length, 1, -1));
+						break;
+					}
+				break;
+			}
+			$column['comment']      = $row['Comment'];
+			$column['extra']        = $row['Extra'];
+			$column['key']          = $row['Key'];
+			$column['privileges']   = $row['Privileges'];
+			$columns[$row['Field']] = $column;
+		}
+		return $columns;
 	}
 
 	/**
