@@ -9,6 +9,7 @@
  * @copyright  2010 - 2016 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
+ *
  */
 
 namespace Fuel\Core;
@@ -438,7 +439,10 @@ class Database_PDO_Connection extends \Database_Connection
 		// poor-mans workaround for the fact that not all drivers implement quote()
 		if (empty($result))
 		{
-			$result = "'".str_replace("'", "''", $value)."'";
+			if ( ! is_numeric($value))
+			{
+				$result = "'".str_replace("'", "''", $value)."'";
+			}
 		}
 		return $result;
 	}
