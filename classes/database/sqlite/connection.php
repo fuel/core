@@ -49,6 +49,42 @@ class Database_SQLite_Connection extends \Database_PDO_Connection
 	}
 
 	/**
+	 * List table columns
+	 *
+	 * @param   string  $table  table name
+	 * @param   string  $like   column name pattern
+	 * @return  array   array of column structure
+	 */
+	public function list_columns($table, $like = null)
+	{
+		$query = "PRAGMA table_info('" . $this->quote_table($table) . "')";
+		$q = $this->_connection->prepare($query);
+		$q->execute();
+		$result = $q->fetchAll();
+
+		$count = 0;
+		$columns = array();
+		foreach ($result as $row)
+		{
+			$column = $this->datatype($row['type']);
+
+			$column['name']             = $row['name'];
+			$column['default']          = $row['dflt_value'];
+			$column['data_type']        = $row['type'];
+			$column['null']             = $row['notnull'];
+			$column['ordinal_position'] = ++$count;
+			$column['comment']          = '';
+			$column['extra']            = $row['cid'];
+			$column['key']              = $row['pk'];
+			$column['privileges']       = '';
+
+			$columns[$row['name']] = $column;
+		}
+
+		return $columns;
+	}
+
+	/**
 	 * Set the charset
 	 *
 	 * @param string $charset
