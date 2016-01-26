@@ -150,8 +150,26 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	 */
 	public function set_charset($charset)
 	{
-		// Always use system encoding for a SQL Server connection
-		$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_SYSTEM);
+		if ($charset == 'utf8' or $charset = 'utf-8')
+		{
+			// use utf8 encoding
+			$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_UTF8);
+		}
+		elseif ($charset == 'system')
+		{
+			// use system encoding
+			$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_SYSTEM);
+		}
+		elseif (is_numeric($charset))
+		{
+			// charset code passed directly
+			$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, $charset);
+		}
+		else
+		{
+			// unknown charset, use the default encoding
+			$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_DEFAULT);
+		}
 	}
 
 }
