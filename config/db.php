@@ -33,6 +33,11 @@ return array(
 	'default' => array(
 		'type'        => 'pdo',
 		'connection'  => array(
+			'dsn'        => '',
+			'hostname'   => '',
+			'username'   => null,
+			'password'   => null,
+			'database'   => '',
 			'persistent' => false,
 			'compress'   => false,
 		),
@@ -52,11 +57,13 @@ return array(
 	'default' => array(
 		'type'        => 'mysqli',
 		'connection'  => array(
+			'dsn'        => '',
 			'hostname'   => '',
-			'username'   => '',
-			'password'   => '',
+			'username'   => null,
+			'password'   => null,
 			'database'   => '',
 			'persistent' => false,
+			'compress'   => false,
 		),
 		'identifier'   => '`',
 		'table_prefix' => '',

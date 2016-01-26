@@ -1,15 +1,14 @@
 <?php
 /**
- * Database connection wrapper. All database object instances are referenced
- * by a name. Queries are typically handled by [Database_Query], rather than
- * using the database object directly.
+ * Part of the Fuel framework.
  *
- * @package    Fuel/Database
- * @category   Base
- * @author     Kohana Team
- * @author     Nested transactions - Sergey Ogarkov, sogarkov@gmail.com
- * @copyright  (c) 2008-2010 Kohana Team
- * @license    http://kohanaphp.com/license
+ * @package    Fuel
+ * @version    1.8
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2008 - 2009 Kohana Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
@@ -74,11 +73,10 @@ abstract class Database_Connection
 			}
 
 			// Set the driver class name
-			$type = ucfirst($config['type']);
-			$driver = '\\Database_' . $type . '_Connection';
+			$driver = '\\Database_' . ucfirst($config['type']) . '_Connection';
 
 			// Create the database connection instance
-			new $driver($name, $config, $type);
+			new $driver($name, $config);
 		}
 
 		return static::$instances[$name];
