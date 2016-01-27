@@ -128,7 +128,10 @@ class Database_Schema
 		$sql .= $this->process_fields($fields, '');
 		if ( ! empty($primary_keys))
 		{
-			$primary_keys = $this->_connection->quote_identifier($primary_keys);
+			foreach ($primary_keys as $index => $primary_key)
+			{
+				$primary_keys[$index] = $this->_connection->quote_identifier($primary_keys);
+			}
 			$sql .= ",\n\tPRIMARY KEY (".implode(', ', $primary_keys).')';
 		}
 
