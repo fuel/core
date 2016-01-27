@@ -16,6 +16,34 @@ namespace Fuel\Core;
 class Database_SQLite_Connection extends \Database_PDO_Connection
 {
 	/**
+	 * Create a new [Database_Query_Builder_Update].
+	 *
+	 *     // UPDATE users
+	 *     $query = $db->update('users');
+	 *
+	 * @param   string  table to update
+	 * @return  Database_Query_Builder_Update
+	 */
+	public function update($table = null)
+	{
+		return new Database_SQLite_Builder_Update($table);
+	}
+
+	/**
+	 * Create a new [Database_Query_Builder_Delete].
+	 *
+	 *     // DELETE FROM users
+	 *     $query = $db->delete('users');
+	 *
+	 * @param   string  table to delete from
+	 * @return  Database_Query_Builder_Delete
+	 */
+	public function delete($table = null)
+	{
+		return new Database_SQLite_Builder_Delete($table);
+	}
+
+	/**
 	 * List tables
 	 *
 	 * @param string $like

@@ -79,7 +79,7 @@ class Database_Query_Builder_Delete extends \Database_Query_Builder_Where
 			$query .= ' '.$this->_compile_order_by($db, $this->_order_by);
 		}
 
-		if ($this->_limit !== NULL && substr($db->_db_type, 0, 6) !== 'sqlite')
+		if ($this->_limit !== null)
 		{
 			// Add limiting
 			$query .= ' LIMIT '.$this->_limit;
