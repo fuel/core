@@ -32,17 +32,17 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	protected function __construct($name, array $config)
 	{
-		if (isset($config['identifier']))
-		{
-			// Allow the identifier to be overloaded per-connection
-			$this->_identifier = (string) $this->_config['identifier'];
-		}
-
 		// construct a custom schema driver
 //		$this->_schema = new \Database_Drivername_Schema($name, $this);
 
 		// call the parent consructor
 		parent::__construct($name, $config);
+
+		if (isset($config['identifier']))
+		{
+			// Allow the identifier to be overloaded per-connection
+			$this->_identifier = (string) $this->_config['identifier'];
+		}
 	}
 
 	/**
@@ -58,29 +58,41 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 
 		// make sure we have all connection parameters
-		$this->_config['connection'] = array_merge(array(
-			'dsn'        => '',
-			'hostname'   => '',
-			'username'   => null,
-			'password'   => null,
-			'database'   => '',
-			'persistent' => false,
-			'compress'   => false,
-		), $this->_config['connection']);
+		$this->_config = array_merge(array(
+			'connection'  => array(
+				'dsn'        => '',
+				'hostname'   => '',
+				'username'   => null,
+				'password'   => null,
+				'database'   => '',
+				'persistent' => false,
+				'compress'   => false,
+			),
+			'identifier'   => '`',
+			'table_prefix' => '',
+			'charset'      => 'utf8',
+			'collation'    => false,
+			'enable_cache' => true,
+			'profiling'    => false,
+			'readonly'     => false,
+			'attrs'        => array(),
+		), $this->_config);
 
 		// Force PDO to use exceptions for all errors
-		$attrs = array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION);
+		$this->_config['attrs'] = array(
+			\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
+		);
 
-		if ( ! empty($persistent))
+		if ( ! empty($this->_config['connection']['persistent']))
 		{
 			// Make the connection persistent
-			$attrs[\PDO::ATTR_PERSISTENT] = true;
+			$this->_config['attrs'][\PDO::ATTR_PERSISTENT] = true;
 		}
 
 		try
 		{
 			// Create a new PDO connection
-			$this->_connect($this->_config['connection'], $attrs);
+			$this->_connect();
 		}
 		catch (\PDOException $e)
 		{
@@ -97,7 +109,7 @@ class Database_PDO_Connection extends \Database_Connection
 					$error_code = 0;
 				}
 			}
-			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $error_code, $e);
+			throw new \Database_Exception(str_replace($this->_config['connection']['password'], str_repeat('*', 10), $e->getMessage()), $error_code, $e);
 		}
 	}
 
@@ -460,16 +472,19 @@ class Database_PDO_Connection extends \Database_Connection
 	/**
 	 * Create a new PDO instance
 	 *
-	 * @param   array  array of PDO connection information
-	 * @param   array  array of PDO attributes
 	 * @return  PDO
 	 */
-	protected function _connect(array $config, array $attrs)
+	protected function _connect()
 	{
-		$this->_connection = new \PDO($config['dsn'], $config['username'], $config['password'], $attrs);
+		$this->_connection = new \PDO(
+			$this->_config['connection']['dsn'],
+			$this->_config['connection']['username'],
+			$this->_config['connection']['password'],
+			$this->_config['attrs']
+		);
 
 		// set the DB charset if needed
-		$this->set_charset($config['charset']);
+		$this->set_charset($this->_config['charset']);
 	}
 
 	/**

@@ -46,27 +46,25 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 	/**
 	 * Create a new PDO instance
 	 *
-	 * @param   array  array of PDO connection information
-	 * @param   array  array of PDO attributes
 	 * @return  PDO
 	 */
-	protected function _connect(array $config,  array $attrs = array())
+	protected function _connect()
 	{
 		// enable compression if needed
-		if ($config['compress'])
+		if ($this->_config['connection']['compress'])
 		{
 			// use client compression with mysql or mysqli (doesn't work with mysqlnd)
-			$config['attrs'][\PDO::MYSQL_ATTR_COMPRESS] = true;
+			$this->_config['attrs'][\PDO::MYSQL_ATTR_COMPRESS] = true;
 		}
 
 		// add the charset to the DSN if needed
-		if ($config['charset'] and strpos($config['dsn'], ';charset=') === false)
+		if ($this->_config['charset'] and strpos($this->_config['connection']['dsn'], ';charset=') === false)
 		{
-			$config['dsn'] .= ';charset='.$config['charset'];
+			$config['dsn'] .= ';charset='.$this->_config['charset'];
 		}
 
 		// create the PDO instance
-		parent::_connect($config, $attrs);
+		parent::_connect();
 	}
 
 }
