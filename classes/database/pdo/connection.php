@@ -80,7 +80,7 @@ class Database_PDO_Connection extends \Database_Connection
 		try
 		{
 			// Create a new PDO connection
-			$this->_connect($this->_config['connection']);
+			$this->_connect($this->_config['connection'], $attrs);
 		}
 		catch (\PDOException $e)
 		{
@@ -461,11 +461,12 @@ class Database_PDO_Connection extends \Database_Connection
 	 * Create a new PDO instance
 	 *
 	 * @param   array  array of PDO connection information
+	 * @param   array  array of PDO attributes
 	 * @return  PDO
 	 */
-	protected function _connect(array $config)
+	protected function _connect(array $config, array $attrs)
 	{
-		$this->_connection = new \PDO($config['dsn'], $config['username'], $config['password'], $config['attrs']);
+		$this->_connection = new \PDO($config['dsn'], $config['username'], $config['password'], $attrs);
 
 		// set the DB charset if needed
 		$this->set_charset($config['charset']);

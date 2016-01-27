@@ -47,9 +47,10 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 	 * Create a new PDO instance
 	 *
 	 * @param   array  array of PDO connection information
+	 * @param   array  array of PDO attributes
 	 * @return  PDO
 	 */
-	protected function _connect(array $config)
+	protected function _connect(array $config,  array $attrs = array())
 	{
 		// enable compression if needed
 		if ($config['compress'])
@@ -65,7 +66,7 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 		}
 
 		// create the PDO instance
-		parent::_connect($config);
+		parent::_connect($config, $attrs);
 	}
 
 }
