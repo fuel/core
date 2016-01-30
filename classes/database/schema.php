@@ -130,7 +130,7 @@ class Database_Schema
 		{
 			foreach ($primary_keys as $index => $primary_key)
 			{
-				$primary_keys[$index] = $this->_connection->quote_identifier($primary_keys);
+				$primary_keys[$index] = $this->_connection->quote_identifier($primary_key);
 			}
 			$sql .= ",\n\tPRIMARY KEY (".implode(', ', $primary_keys).')';
 		}
