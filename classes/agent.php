@@ -199,7 +199,7 @@ class Agent
 		if (static::$user_agent)
 		{
 			// try the build in get_browser() method
-			if (ini_get('browscap') == '' or false === $browser = get_browser(static::$user_agent, true))
+			if (static::$config['browscap']['method'] == 'local' or ini_get('browscap') == '' or false === $browser = get_browser(static::$user_agent, true))
 			{
 				// if it fails, emulate get_browser()
 				$browser = static::get_from_browscap();
