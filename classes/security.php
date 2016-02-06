@@ -120,77 +120,50 @@ class Security
 	 */
 	public static function clean($var, $filters = null, $type = 'security.input_filter')
 	{
-		is_null($filters) and $filters = \Config::get($type, array());
-		$filters = is_array($filters) ? $filters : array($filters);
-
-		foreach ($filters as $filter)
+		// deal with objects that can be sanitized
+		if ($var instanceOf \Sanitization)
 		{
-			// is this filter a callable local function?
-			if (is_string($filter) and is_callable('static::'.$filter))
-			{
-				$var = static::$filter($var);
-			}
+			$var->sanitize();
+		}
 
-			// is this filter a callable function?
-			elseif (is_callable($filter))
+		// deal with array's or array emulating objects
+		elseif (is_array($var) or ($var instanceOf \Traversable and $var instanceOf \ArrayAccess))
+		{
+			// recurse on array values
+			foreach($var as $key => $value)
 			{
-				if (is_array($var))
+				$var[$key] = static::clean($value, $filters, $type);
+			}
+		}
+
+		// deal with all other variable types
+		else
+		{
+			is_null($filters) and $filters = \Config::get($type, array());
+			$filters = is_array($filters) ? $filters : array($filters);
+
+			foreach ($filters as $filter)
+			{
+				// is this filter a callable local function?
+				if (is_string($filter) and is_callable('static::'.$filter))
 				{
-					foreach($var as $key => $value)
-					{
-						if ($value instanceOf \Sanitization)
-						{
-							$value->sanitize();
-						}
-						else
-						{
-							$var[$key] = call_user_func($filter, $value);
-						}
-					}
+					$var = static::$filter($var);
 				}
+
+				// is this filter a callable function?
+				elseif (is_callable($filter))
+				{
+					$var = call_user_func($filter, $var);
+				}
+
+				// assume it's a regex of characters to filter
 				else
 				{
-					if ($var instanceOf \Sanitization)
-					{
-						$var->sanitize();
-					}
-					else
-					{
-						$var = call_user_func($filter, $var);
-					}
-				}
-			}
-
-			// assume it's a regex of characters to filter
-			else
-			{
-				if (is_array($var))
-				{
-					foreach($var as $key => $value)
-					{
-						if ($value instanceOf \Sanitization)
-						{
-							$value->sanitize();
-						}
-						else
-						{
-							$var[$key] = preg_replace('#['.$filter.']#ui', '', $value);
-						}
-					}
-				}
-				else
-				{
-					if ($var instanceOf \Sanitization)
-					{
-						$var->sanitize();
-					}
-					else
-					{
-						$var = preg_replace('#['.$filter.']#ui', '', $var);
-					}
+					$var = preg_replace('#['.$filter.']#ui', '', $var);
 				}
 			}
 		}
+
 		return $var;
 	}
 
