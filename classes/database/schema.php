@@ -444,6 +444,75 @@ class Database_Schema
 	}
 
 	/**
+	 *
+	 */
+	public function alter_fields($type, $table, $fields)
+	{
+		$sql = 'ALTER TABLE '.$this->_connection->quote_identifier($this->_connection->table_prefix($table)).' ';
+
+		if ($type === 'DROP')
+		{
+			if ( ! is_array($fields))
+			{
+				$fields = array($fields);
+			}
+
+			$drop_fields = array();
+			foreach ($fields as $field)
+			{
+				$drop_fields[] = 'DROP '.$this->_connection->quote_identifier($field);
+			}
+			$sql .= implode(', ', $drop_fields);
+		}
+		else
+		{
+			$use_brackets = ! in_array($type, array('ADD', 'CHANGE', 'MODIFY'));
+			$use_brackets and $sql .= $type.' ';
+			$use_brackets and $sql .= '(';
+			$sql .= $this->process_fields($fields, (( ! $use_brackets) ? $type.' ' : ''));
+			$use_brackets and $sql .= ')';
+		}
+
+		return $this->_connection->query(0, $sql, false);
+	}
+
+	/*
+	 * Executes table maintenance. Will throw FuelException when the operation is not supported.
+	 *
+	 * @throws  FuelException
+	 * @param   string  $table  the table name
+	 * @return  bool    whether the operation has succeeded
+	 */
+	public function table_maintenance($operation, $table)
+	{
+		$sql = $operation.' '.$this->_connection->quote_identifier($this->_connection->table_prefix($table));
+		$result = $this->_connection->query(\DB::SELECT, $sql, false);
+
+		$type = $result->get('Msg_type');
+		$message = $result->get('Msg_text');
+		$table = $result->get('Table');
+
+		if ($type === 'status' and in_array(strtolower($message), array('ok', 'table is already up to date')))
+		{
+			return true;
+		}
+
+		// make sure we have a type logger can handle
+		if (in_array($type, array('info', 'warning', 'error')))
+		{
+			$type = strtoupper($type);
+		}
+		else
+		{
+			$type = \Fuel::L_INFO;
+		}
+
+		logger($type, 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
+
+		return false;
+	}
+
+	/**
 	 * Formats the default charset.
 	 *
 	 * @param    string    $charset       the character set
@@ -573,75 +642,6 @@ class Database_Schema
 		}
 
 		return implode(',', $sql_fields);
-	}
-
-	/**
-	 *
-	 */
-	protected function alter_fields($type, $table, $fields)
-	{
-		$sql = 'ALTER TABLE '.$this->_connection->quote_identifier($this->_connection->table_prefix($table)).' ';
-
-		if ($type === 'DROP')
-		{
-			if ( ! is_array($fields))
-			{
-				$fields = array($fields);
-			}
-
-			$drop_fields = array();
-			foreach ($fields as $field)
-			{
-				$drop_fields[] = 'DROP '.$this->_connection->quote_identifier($field);
-			}
-			$sql .= implode(', ', $drop_fields);
-		}
-		else
-		{
-			$use_brackets = ! in_array($type, array('ADD', 'CHANGE', 'MODIFY'));
-			$use_brackets and $sql .= $type.' ';
-			$use_brackets and $sql .= '(';
-			$sql .= $this->process_fields($fields, (( ! $use_brackets) ? $type.' ' : ''));
-			$use_brackets and $sql .= ')';
-		}
-
-		return $this->_connection->query(0, $sql, false);
-	}
-
-	/*
-	 * Executes table maintenance. Will throw FuelException when the operation is not supported.
-	 *
-	 * @throws  FuelException
-	 * @param   string  $table  the table name
-	 * @return  bool    whether the operation has succeeded
-	 */
-	protected function table_maintenance($operation, $table)
-	{
-		$sql = $operation.' '.$this->_connection->quote_identifier($this->_connection->table_prefix($table));
-		$result = $this->_connection->query(\DB::SELECT, $sql, false);
-
-		$type = $result->get('Msg_type');
-		$message = $result->get('Msg_text');
-		$table = $result->get('Table');
-
-		if ($type === 'status' and in_array(strtolower($message), array('ok', 'table is already up to date')))
-		{
-			return true;
-		}
-
-		// make sure we have a type logger can handle
-		if (in_array($type, array('info', 'warning', 'error')))
-		{
-			$type = strtoupper($type);
-		}
-		else
-		{
-			$type = \Fuel::L_INFO;
-		}
-
-		logger($type, 'Table: '.$table.', Operation: '.$operation.', Message: '.$result->get('Msg_text'), 'DBUtil::table_maintenance');
-
-		return false;
 	}
 
 }
