@@ -255,7 +255,15 @@ class View
 			// Get the captured output and close the buffer
 			return ob_get_clean();
 		};
-		return $clean_room($file_override ?: $this->file_name, $this->get_data());
+
+		// import and process the view file
+		$result = $clean_room($file_override ?: $this->file_name, $data = $this->get_data());
+
+		// disable sanitization on objects that support it
+		$this->unsanitize($data);
+
+		// return the result
+		return $result;
 	}
 
 	/**
@@ -303,6 +311,31 @@ class View
 		}
 
 		return $data;
+	}
+
+	/**
+	 * disable sanitation on any objects in the data that support it
+	 *
+	 * @param   mixed
+	 * @return  mixed
+	 */
+	protected function unsanitize($var)
+	{
+		// deal with objects that can be sanitized
+		if ($var instanceOf \Sanitization)
+		{
+			$var->unsanitize();
+		}
+
+		// deal with array's or array emulating objects
+		elseif (is_array($var) or ($var instanceOf \Traversable and $var instanceOf \ArrayAccess))
+		{
+			// recurse on array values
+			foreach($var as $key => $value)
+			{
+				$var[$key] = $this->unsanitize($value);
+			}
+		}
 	}
 
 	/**
