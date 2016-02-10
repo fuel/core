@@ -140,6 +140,12 @@ class Form_Instance
 			$form .= PHP_EOL.$this->hidden($field, $value);
 		}
 
+		// Add CSRF token automatically
+		if (Config::get('security.csrf_auto_token', false))
+		{
+			$form .= PHP_EOL.\Form::csrf();
+		}
+
 		return $form;
 	}
 
