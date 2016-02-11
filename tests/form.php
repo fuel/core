@@ -20,6 +20,19 @@ namespace Fuel\Core;
  */
 class Test_Form extends TestCase
 {
+	private static $config_security;
+
+	public static function setUpBeforeClass()
+	{
+		Config::load('security');
+		static::$config_security = Config::get('security');
+	}
+
+	public static function tearDownAfterClass()
+	{
+		Config::set('security', static::$config_security);
+	}
+
 	protected function setUp()
 	{
 		Config::load('form');
@@ -37,6 +50,9 @@ class Test_Form extends TestCase
 			'inline_errors'         => false,
 			'error_class'           => 'validation_error',
 		));
+
+		Config::set('security.csrf_auto_token', false);
+		Config::set('security.csrf_token_key', 'fuel_csrf_token');
 	}
 
 	/**
@@ -297,7 +313,6 @@ class Test_Form extends TestCase
 	*/
 	public function test_open_auto_csrf_token()
 	{
-		$config = \Config::get('security.csrf_auto_token');
 		\Config::set('security.csrf_auto_token', true);
 
 		$form = \Form::forge(__METHOD__);
@@ -305,8 +320,6 @@ class Test_Form extends TestCase
 		$output = $form->open('uri/to/form');
 		$expected = '<form action="uri/to/form" accept-charset="utf-8" method="post">'.PHP_EOL.'<input name="fuel_csrf_token" value="%s" type="hidden" id="form_fuel_csrf_token" />';
 		$this->assertStringMatchesFormat($expected, $output);
-
-		\Config::set('security.csrf_auto_token', $config);
 	}
 
 	/**
@@ -328,13 +341,10 @@ class Test_Form extends TestCase
 	*/
 	public function test_open_auto_csrf_token_static()
 	{
-		$config = \Config::get('security.csrf_auto_token');
 		\Config::set('security.csrf_auto_token', true);
 
 		$output = Form::open('uri/to/form');
 		$expected = '<form action="uri/to/form" accept-charset="utf-8" method="post">'.PHP_EOL.'<input name="fuel_csrf_token" value="%s" type="hidden" id="form_fuel_csrf_token" />';
 		$this->assertStringMatchesFormat($expected, $output);
-
-		\Config::set('security.csrf_auto_token', $config);
 	}
 }
