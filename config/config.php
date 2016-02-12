@@ -160,6 +160,11 @@ return array(
 		'csrf_bad_request_on_fail' => false,
 
 		/**
+		 * If true, Form::open() adds CSRF token hidden field automatically.
+		 */
+		'csrf_auto_token'          => false,
+
+		/**
 		 * Name of the form field that holds the CSRF token.
 		 */
 		'csrf_token_key'           => 'fuel_csrf_token',
