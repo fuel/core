@@ -53,7 +53,7 @@ class Security
 		static::$csrf_old_token = \Input::cookie(static::$csrf_token_key, false);
 
 		// if csrf automatic checking is enabled, and it fails validation, bail out!
-		if (\Config::get('security.csrf_autoload', true))
+		if (\Config::get('security.csrf_autoload', false))
 		{
 			$check_token_methods = \Config::get('security.csrf_autoload_methods', array('post', 'put', 'delete'));
 			if (in_array(strtolower(\Input::method()), $check_token_methods) and ! static::check_token())
