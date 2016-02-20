@@ -194,23 +194,34 @@ class Date
 	 */
 	public static function range_to_array($start, $end, $interval = '+1 Day')
 	{
+		// make sure start and end are date objects
 		$start = ( ! $start instanceof Date) ? static::forge($start) : $start;
 		$end   = ( ! $end instanceof Date) ? static::forge($end) : $end;
 
-		is_int($interval) or $interval = strtotime($interval, $start->get_timestamp()) - $start->get_timestamp();
+		$range = array();
 
-		if ($interval <= 0)
+		// if end > start, the range is empty
+		if ($end->get_timestamp() >= $start->get_timestamp())
 		{
-			throw new \UnexpectedValueException('Input was not recognized by pattern.');
-		}
+			$current = $start;
+			$increment = $interval;
 
-		$range   = array();
-		$current = $start;
+			do
+			{
+				$range[] = $current;
 
-		while ($current->get_timestamp() <= $end->get_timestamp())
-		{
-			$range[] = $current;
-			$current = static::forge($current->get_timestamp() + $interval);
+				if ( ! is_int($interval))
+				{
+					$increment = strtotime($interval, $current->get_timestamp()) - $current->get_timestamp();
+					if ($increment <= 0)
+					{
+						throw new \UnexpectedValueException('Input was not recognized by pattern.');
+					}
+				}
+
+				$current = static::forge($current->get_timestamp() + $increment);
+			}
+			while ($current->get_timestamp() <= $end->get_timestamp());
 		}
 
 		return $range;

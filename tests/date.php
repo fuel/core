@@ -164,4 +164,80 @@ class Test_Date extends TestCase
 
 		$this->assertEquals('2 months ago', $output);
 	}
+
+	/**
+	 * Test for Date::range_to_array()
+	 *
+	 * @test
+	 */
+	public function test_range_to_array()
+	{
+		$start = Date::create_from_string('2015-10-01', '%Y-%m-%d');
+		$end   = Date::create_from_string('2016-03-01', '%Y-%m-%d');
+		$range = Date::range_to_array($start, $end, "+1 month");
+
+		$expected = array('2015-10-01', '2015-11-01', '2015-12-01', '2016-01-01', '2016-02-01', '2016-03-01');
+		$output = array();
+		foreach ($range as $r)
+		{
+			$output[] = $r->format('%Y-%m-%d');
+		}
+
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Test for Date::range_to_array()
+	 *
+	 * @test
+	 */
+	public function test_range_to_array_empty()
+	{
+		$start = Date::create_from_string('2016-03-01', '%Y-%m-%d');
+		$end   = Date::create_from_string('2015-10-01', '%Y-%m-%d');
+		$range = Date::range_to_array($start, $end, "+1 month");
+
+		$expected = array();
+		$output = array();
+		foreach ($range as $r)
+		{
+			$output[] = $r->format('%Y-%m-%d');
+		}
+
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Test for Date::range_to_array()
+	 *
+	 * @test
+	 */
+	public function test_range_to_array_days()
+	{
+		$start = Date::create_from_string('2015-10-01', '%Y-%m-%d');
+		$end   = Date::create_from_string('2015-10-05', '%Y-%m-%d');
+		$range = Date::range_to_array($start, $end, "+4 days");
+
+		$expected = array('2015-10-01', '2015-10-05');
+		$output = array();
+		foreach ($range as $r)
+		{
+			$output[] = $r->format('%Y-%m-%d');
+		}
+
+		$this->assertEquals($expected, $output);
+	}
+
+	/**
+	 * Test for Date::range_to_array()
+	 * @expectedException UnexpectedValueException
+	 *
+	 * @test
+	 */
+	public function test_range_to_array_invalid()
+	{
+		$start = Date::create_from_string('2015-10-01', '%Y-%m-%d');
+		$end   = Date::create_from_string('2015-10-02', '%Y-%m-%d');
+		$range = Date::range_to_array($start, $end, "-2 days");
+	}
 }
