@@ -290,19 +290,13 @@ class Inflector
 		// Decode all entities to their simpler forms
 		$str = html_entity_decode($str, ENT_QUOTES, 'UTF-8');
 
-		// Replace apostrophes.
-		$str = preg_replace("#[\’]#", '-', $str);
-
-		// Remove all quotes.
-		$str = preg_replace("#[\"\']#", '', $str);
-
 		// Only allow 7bit characters
 		$str = static::ascii($str, $allow_non_ascii);
 
 		if ($allow_non_ascii)
 		{
-			// Strip regular special chars.
-			$str = preg_replace("#[\.;:'\"\]\}\[\{\+\)\(\*&\^\$\#@\!±`%~']#iu", '', $str);
+			// Strip regular special chars
+			$str = preg_replace("#[\.;:\]\}\[\{\+\)\(\*&\^\$\#@\!±`%~']#iu", '', $str);
 		}
 		else
 		{
@@ -310,9 +304,19 @@ class Inflector
 			$str = preg_replace("#[^a-z0-9]#i", $sep, $str);
 		}
 
+		// Remove all quotes
+		$str = preg_replace("#[\"\']#", '', $str);
+
+		// Replace apostrophes by separators
+		$str = preg_replace("#[\’]#", '-', $str);
+
+		// Replace repeating characters
 		$str = preg_replace("#[/_|+ -]+#u", $sep, $str);
+
+		// Remove separators from both ends
 		$str = trim($str, $sep);
 
+		// And convert to lowercase if needed
 		if ($lowercase === true)
 		{
 			$str = \Str::lower($str);
