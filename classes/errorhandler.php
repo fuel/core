@@ -34,7 +34,7 @@ class PhpErrorException extends \ErrorException
 			if (\Fuel::$env != \Fuel::PRODUCTION and ($this->code & error_reporting()) == $this->code)
 			{
 				static::$count++;
-				\Errorhandler::show_php_error(new \ErrorException($this->message, $this->code, 0, $this->file, $this->line));
+				\Errorhandler::exception_handler(new \ErrorException($this->message, $this->code, 0, $this->file, $this->line));
 			}
 		}
 		elseif (\Fuel::$env != \Fuel::PRODUCTION
