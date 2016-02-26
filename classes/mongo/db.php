@@ -98,6 +98,13 @@ class Mongo_Db
 	 */
 	protected static $instances = array();
 
+    /**
+     * Dump folder
+     *
+     * @var  String
+     */
+    protected $dump_folder = null;
+
 	/**
 	 *	Acts as a Multiton.  Will return the requested instance, or will create
 	 *	a new one if it does not exist.
@@ -1301,4 +1308,78 @@ class Mongo_Db
 			$this->wheres[ $param ] = array();
 		}
 	}
+
+    /**
+     * Dump database or collection
+     *
+     * @param mixed  $collection_name The collection name
+     * @param string $path            Path to the dump
+     *
+     * @usage $mongodb->dump();
+     * @usage $mongodb->dump(test, APPPATH . "tmp");
+     * @usage $mongodb->dump(["test", "test2"], APPPATH . "tmp");
+     *
+     *
+     * @return bool
+     */
+    public function dump($collection_name = null, $path = null)
+    {
+        $this->dump_folder = $path ?: APPPATH . "tmp" . date("/Y/m/d");
+
+        if (!is_dir($this->dump_folder))
+        {
+            mkdir($this->dump_folder, 0777, true);
+        }
+        // Backup full database
+        if ($collection_name == null)
+        {
+            //get all collection in current database
+            $mongo_collections = $this->list_collections();
+            foreach ($mongo_collections as $mongo_collection)
+            {
+                $this->_write_dump($mongo_collection);
+            }
+        }
+        // Backup given collection`s
+        else
+        {
+            if (is_array($collection_name))
+            {
+                foreach ($collection_name as $name)
+                {
+                    $mongo_collection = $this->get_collection($name);
+                    $this->_write_dump($mongo_collection);
+                }
+            }
+            else
+            {
+                $mongo_collection = $this->get_collection($collection_name);
+                $this->_write_dump($mongo_collection);
+            }
+
+        }
+
+        return true;
+    }
+
+    /**
+     * Collect and write dump
+     *
+     * @param MongoCollection $mongo_collection
+     */
+    protected function _write_dump($mongo_collection)
+    {
+        $collection_name = $mongo_collection->getName();
+        if (!\File::exists($this->dump_folder . '/' . $collection_name))
+        {
+            // get all documents in current collection
+            $documents = $mongo_collection->find();
+            // collect data
+            $array_data = iterator_to_array($documents);
+            $json_data = \Format::forge($array_data)->to_json();
+            // write data
+            \File::create($this->dump_folder, $collection_name, $json_data);
+        }
+    }
 }
+    //Restore mongoimport --db <database-name> --collection <collection-name> --file filename.json
