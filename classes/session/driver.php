@@ -449,7 +449,7 @@ abstract class Session_Driver
 	 */
 	protected function _new_session_id()
 	{
-		return \Str::random('alnum', 32);
+		return substr(\Security::generate_token(), 0, 32);
 	}
 
 	// --------------------------------------------------------------------
