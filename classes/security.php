@@ -319,17 +319,34 @@ class Security
 	 */
 	public static function generate_token()
 	{
-		$token_base = time() . uniqid() . \Config::get('security.token_salt', '') . mt_rand(0, mt_getrandmax());
-		if (function_exists('hash_algos') and in_array('sha512', hash_algos()))
+		// generate a random token base
+		if (function_exists('random_bytes'))
 		{
-			$token = hash('sha512', $token_base);
+			$token_base = \Config::get('security.token_salt', '') .random_bytes(64);
+		}
+		elseif (function_exists('openssl_random_pseudo_bytes'))
+		{
+			$token_base = \Config::get('security.token_salt', '') . openssl_random_pseudo_bytes(64);
 		}
 		else
 		{
-			$token = md5($token_base);
+			$token_base = time() . uniqid() . \Config::get('security.token_salt', '') . mt_rand(0, mt_getrandmax());
 		}
 
-		return $token;
+		// return the hashed token
+		if (function_exists('hash_algos'))
+		{
+			foreach (array('sha512', 'sha384', 'sha256', 'sha224', 'sha1', 'md5') as $hash)
+			{
+				if (in_array($hash, hash_algos()))
+				{
+					return hash($hash, $token_base);
+				}
+			}
+		}
+
+		// if all else fails
+		return md5($token_base);
 	}
 
 	protected static function set_token($reset = false)
