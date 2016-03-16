@@ -270,12 +270,17 @@ class Database_Query
 		// make sure we have a SQL type to work with
 		if (is_null($this->_type))
 		{
-			switch(strtoupper(substr(ltrim($sql, '('), 0, 6)))
+			switch(strtoupper(strtok($sql, ' ')))
 			{
+				case 'DESCRIBE':
+				case 'EXECUTE':
+				case 'EXPLAIN':
 				case 'SELECT':
+				case 'SHOW':
 					$this->_type = \DB::SELECT;
 					break;
 				case 'INSERT':
+				case 'REPLACE':
 					$this->_type = \DB::INSERT;
 					break;
 				case 'UPDATE':
