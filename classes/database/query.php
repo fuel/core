@@ -270,7 +270,7 @@ class Database_Query
 		// make sure we have a SQL type to work with
 		if (is_null($this->_type))
 		{
-			switch(strtoupper(strtok($sql, ' ')))
+			switch(strtoupper(strstr($sql, ' ', true)))
 			{
 				case 'DESCRIBE':
 				case 'EXECUTE':
