@@ -270,7 +270,9 @@ class Database_Query
 		// make sure we have a SQL type to work with
 		if (is_null($this->_type))
 		{
-			switch(strtoupper(strstr($sql, ' ', true)))
+			// get the SQL statement type without having to duplicate the entire statement
+			$stmt = preg_split("/[\s]+/", substr($sql, 0, 10), 2);
+			switch(strtoupper(reset($stmt)))
 			{
 				case 'DESCRIBE':
 				case 'EXECUTE':
