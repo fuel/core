@@ -128,6 +128,7 @@ class Image_Gd extends \Image_Driver
 				$x = $x < 0 ? 0 : $x;
 				$y = $y < 0 ? 0 : $y;
 			}
+
 			// Used as a workaround for lack of alpha support in imagecopymerge.
 			$this->debug("Coords for watermark are $x , $y");
 			$this->image_merge($this->image_data, $watermark, $x, $y, $this->config['watermark_alpha']);
@@ -546,12 +547,28 @@ class Image_Gd extends \Image_Driver
 	 */
 	protected function image_merge(&$image, $watermark, $x, $y, $alpha)
 	{
+		// get the watermark dimensions
 		$wsizes = $this->sizes($watermark);
+
+		// creating a cut resource
 		$tmpimage = $this->create_transparent_image($wsizes->width, $wsizes->height);
+
+		// copying relevant section from background to the cut resource
 		imagecopy($tmpimage, $image, 0, 0, $x, $y, $wsizes->width, $wsizes->height);
+
+		// copying relevant section from watermark to the cut resource
 		imagecopy($tmpimage, $watermark, 0, 0, 0, 0, $wsizes->width, $wsizes->height);
-		imagealphablending($image, false);
-		imagecopymerge($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height, $alpha);
-		imagealphablending($image, true);
+
+		// insert cut resource to destination image
+		if (imagecolortransparent($watermark) == -1)
+		{
+			imagealphablending($image, false);
+			imagecopymerge($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height, $alpha);
+			imagealphablending($image, true);
+		}
+		else
+		{
+			imagecopy($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height);
+		}
 	}
 }
