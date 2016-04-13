@@ -89,7 +89,7 @@ class Image_Gd extends \Image_Driver
 		$this->image_data = imagerotate($this->image_data, $degrees, $color, false);
 	}
 
-	protected function _watermark($filename, $position, $padding = 5)
+	protected function _watermark($filename, $position, $padding = array(5,5))
 	{
 		$values = parent::_watermark($filename, $position, $padding);
 		if ($values == false)
