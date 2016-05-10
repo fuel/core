@@ -368,7 +368,7 @@ class Session_File extends \Session_Driver
 							throw new \FuelException('The webserver doesn\'t have write access to the path to store the session data files.');
 						}
 						// update the path, unify the slashes, and add the trailing slash
-						$item = realpath(str_replace($item, array('/', '\\'), DS)).DS;
+						$item = realpath(str_replace(array('/', '\\'), DS, $item)).DS;
 					break;
 
 					case 'gc_probability':
