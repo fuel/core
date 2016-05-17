@@ -186,9 +186,6 @@ class Fuel
 		\Config::load('routes', true);
 		\Router::add(\Config::get('routes'));
 
-		// Run Input Filtering
-		\Security::clean_input();
-
 		\Event::register('fuel-shutdown', 'Fuel::finish');
 
 		// Always load classes, config & language set in always_load.php config
@@ -213,6 +210,9 @@ class Fuel
 		}
 
 		static::$initialized = true;
+
+		// Run Input Filtering
+		\Security::clean_input();
 
 		// fire any app created events
 		\Event::instance()->has_events('app_created') and \Event::instance()->trigger('app_created', '', 'none');
