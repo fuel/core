@@ -527,7 +527,7 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	protected function set_savepoint($name)
 	{
-		$result = $this->_connection->exec('SAVEPOINT '.$name);
+		$result = $this->_connection->exec('SAVEPOINT DEPTH'.$name);
 		return $result !== false;
 	}
 
@@ -541,7 +541,7 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	protected function release_savepoint($name)
 	{
-		$result = $this->_connection->exec('RELEASE SAVEPOINT '.$name);
+		$result = $this->_connection->exec('RELEASE SAVEPOINT DEPTH'.$name);
 		return $result !== false;
 	}
 
@@ -555,7 +555,7 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	protected function rollback_savepoint($name)
 	{
-		$result = $this->_connection->exec('ROLLBACK TO SAVEPOINT '.$name);
+		$result = $this->_connection->exec('ROLLBACK TO SAVEPOINT DEPTH'.$name);
 		return $result !== false;
 	}
 
