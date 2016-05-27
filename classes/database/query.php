@@ -271,7 +271,7 @@ class Database_Query
 		if (is_null($this->_type))
 		{
 			// get the SQL statement type without having to duplicate the entire statement
-			$stmt = preg_split("/[\s]+/", substr($sql, 0, 10), 2);
+			$stmt = preg_split('/[\s]+/', ltrim(substr($sql, 0, 11), '('), 2);
 			switch(strtoupper(reset($stmt)))
 			{
 				case 'DESCRIBE':
