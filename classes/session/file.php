@@ -350,7 +350,7 @@ class Session_File extends \Session_Driver
 				switch ($name)
 				{
 					case 'cookie_name':
-						if ( empty($item) OR ! is_string($item))
+						if ( empty($item) or ! is_string($item))
 						{
 							$item = 'fuelfid';
 						}
@@ -358,7 +358,7 @@ class Session_File extends \Session_Driver
 
 					case 'path':
 						// do we have a path?
-						if ( empty($item) OR ! is_dir($item))
+						if ( empty($item) or ! is_dir($item))
 						{
 							throw new \FuelException('You have specify a valid path to store the session data files.');
 						}
@@ -367,13 +367,13 @@ class Session_File extends \Session_Driver
 						{
 							throw new \FuelException('The webserver doesn\'t have write access to the path to store the session data files.');
 						}
-						// update the path, and add the trailing slash
-						$item = realpath($item).'/';
+						// update the path, unify the slashes, and add the trailing slash
+						$item = realpath(str_replace(array('/', '\\'), DS, $item)).DS;
 					break;
 
 					case 'gc_probability':
 						// do we have a path?
-						if ( ! is_numeric($item) OR $item < 0 OR $item > 100)
+						if ( ! is_numeric($item) or $item < 0 or $item > 100)
 						{
 							// default value: 5%
 							$item = 5;

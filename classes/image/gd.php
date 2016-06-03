@@ -89,7 +89,7 @@ class Image_Gd extends \Image_Driver
 		$this->image_data = imagerotate($this->image_data, $degrees, $color, false);
 	}
 
-	protected function _watermark($filename, $position, $padding = 5)
+	protected function _watermark($filename, $position, $padding = array(5,5))
 	{
 		$values = parent::_watermark($filename, $position, $padding);
 		if ($values == false)
@@ -128,6 +128,7 @@ class Image_Gd extends \Image_Driver
 				$x = $x < 0 ? 0 : $x;
 				$y = $y < 0 ? 0 : $y;
 			}
+
 			// Used as a workaround for lack of alpha support in imagecopymerge.
 			$this->debug("Coords for watermark are $x , $y");
 			$this->image_merge($this->image_data, $watermark, $x, $y, $this->config['watermark_alpha']);
@@ -386,14 +387,18 @@ class Image_Gd extends \Image_Driver
 	/**
 	 * Creates a new color usable by GD.
 	 *
-	 * @param   resource  $image  The image to create the color from
-	 * @param   string    $hex    The hex code of the color
-	 * @param   integer   $alpha  The alpha of the color, 0 (trans) to 100 (opaque)
+	 * @param   resource  $image     The image to create the color from
+	 * @param   string    $hex       The hex code of the color
+	 * @param   integer   $newalpha  The alpha of the color, 0 (trans) to 100 (opaque)
 	 * @return  integer   The color
 	 */
-	protected function create_color(&$image, $hex, $alpha)
+	protected function create_color(&$image, $hex, $newalpha = null)
 	{
+		// Convert hex to rgba
 		extract($this->create_hex_color($hex));
+
+		// If a custom alpha was passed, use that
+		isset($newalpha) and $alpha = $newalpha;
 
 		// Handling alpha is different among drivers
 		if ($hex == null)
@@ -435,8 +440,10 @@ class Image_Gd extends \Image_Driver
 	protected function create_transparent_image($width, $height, $resource = null)
 	{
 		$image = imagecreatetruecolor($width, $height);
+
 		$bgcolor = $this->config['bgcolor'] == null ? '#000' : $this->config['bgcolor'];
 		$color = $this->create_color($image, $bgcolor, 0);
+
 		imagesavealpha($image, true);
 		if ($this->image_extension == 'gif' || $this->image_extension == 'png')
 		{
@@ -540,12 +547,28 @@ class Image_Gd extends \Image_Driver
 	 */
 	protected function image_merge(&$image, $watermark, $x, $y, $alpha)
 	{
+		// get the watermark dimensions
 		$wsizes = $this->sizes($watermark);
+
+		// creating a cut resource
 		$tmpimage = $this->create_transparent_image($wsizes->width, $wsizes->height);
+
+		// copying relevant section from background to the cut resource
 		imagecopy($tmpimage, $image, 0, 0, $x, $y, $wsizes->width, $wsizes->height);
+
+		// copying relevant section from watermark to the cut resource
 		imagecopy($tmpimage, $watermark, 0, 0, 0, 0, $wsizes->width, $wsizes->height);
-		imagealphablending($image, false);
-		imagecopymerge($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height, $alpha);
-		imagealphablending($image, true);
+
+		// insert cut resource to destination image
+		if (imagecolortransparent($watermark) == -1)
+		{
+			imagealphablending($image, false);
+			imagecopymerge($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height, $alpha);
+			imagealphablending($image, true);
+		}
+		else
+		{
+			imagecopy($image, $tmpimage, $x, $y, 0, 0, $wsizes->width, $wsizes->height);
+		}
 	}
 }

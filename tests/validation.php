@@ -556,6 +556,48 @@ class Test_Validation extends TestCase
 	}
 
 	/**
+	 * Validation:  valid_ip
+	 * Expecting:   success
+	 */
+	public function test_validation_valid_ip_v6_only_success()
+	{
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('ipv6', 'IPv6 address', 'valid_ip[ipv6]');
+
+		$output = $val->run(array('ipv6' => '2001:0db8:85a3:08d3:1319:8a2e:0370:7334'));
+
+		$this->assertTrue($output);
+	}
+
+	/**
+	 * Validation:  valid_ip
+	 * Expecting:   failure
+	 */
+	public function test_validation_valid_ip_v6_only_failure()
+	{
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('ipv6', 'IPv6 address', 'valid_ip[ipv6]');
+
+		$output = $val->run(array('ipv6' => '192.168.0.1'));
+
+		$this->assertFalse($output);
+	}
+
+	/**
+	 * Validation:  valid_ip
+	 * Expecting:   failure
+	 */
+	public function test_validation_valid_ip_v4_only_failure()
+	{
+		$val = Validation::forge(__FUNCTION__);
+		$val->add_field('ipv4', 'IPv4 address', 'valid_ip[ipv4]');
+
+		$output = $val->run(array('ipv4' => '2001:0db8:85a3:08d3:1319:8a2e:0370:7334'));
+
+		$this->assertFalse($output);
+	}
+
+	/**
 	 * Validation:  numeric_min
 	 * Expecting:   success
 	 *

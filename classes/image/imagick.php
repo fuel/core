@@ -66,7 +66,7 @@ class Image_Imagick extends \Image_Driver
 		$this->imagick->rotateImage($this->create_color('#000', 0), $degrees);
 	}
 
-	protected function _watermark($filename, $position, $padding = 5)
+	protected function _watermark($filename, $position, $padding = array(5,5))
 	{
 		extract(parent::_watermark($filename, $position, $padding));
 		$wmimage = new \Imagick();

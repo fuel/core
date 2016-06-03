@@ -417,31 +417,65 @@ class View
 	 *
 	 *     $view->set_filename($file);
 	 *
-	 * @param   string  $file  view filename
+	 * @param   string  $file    view filename
+	 * @param   bool    $prefix  whether or not to reverse the search
 	 * @return  View
 	 * @throws  \FuelException
 	 */
-	public function set_filename($file)
+	public function set_filename($file, $reverse = false)
 	{
-		// strip the extension from it
-		$pathinfo = pathinfo($file);
-		if ( ! empty($pathinfo['extension']))
+		// reset the filename
+		$this->file_name = null;
+
+		// define the list of files to search
+		$searches = array(
+			array('file' => $file, 'extension' => $this->extension),
+		);
+
+		// if the file contains a dot, is it an extension of a part of the filename?
+		if (strpos($file, '.') !== false)
 		{
-			$this->extension = $pathinfo['extension'];
-			$file = substr($file, 0, strlen($this->extension)*-1 - 1);
+			// strip the extension from it
+			$pathinfo = pathinfo($file);
+
+			// add the result to the search list
+			if ($reverse)
+			{
+				array_unshift($searches, array(
+					'file' => substr($file, 0, strlen($pathinfo['extension'])*-1 - 1),
+					 'extension' => $pathinfo['extension'],
+				));
+			}
+			else
+			{
+				$searches[] = array(
+					'file' => substr($file, 0, strlen($pathinfo['extension'])*-1 - 1),
+					 'extension' => $pathinfo['extension'],
+				);
+			}
 		}
 
 		// set find_file's one-time-only search paths
 		\Finder::instance()->flash($this->request_paths);
 
 		// locate the view file
-		if (($path = \Finder::search('views', $file, '.'.$this->extension, false, false)) === false)
+		foreach ($searches as $search)
 		{
-			throw new \FuelException('The requested view could not be found: '.\Fuel::clean_path($file).'.'.$this->extension);
+			if ($path = \Finder::search('views', $search['file'], '.'.$search['extension'], false, false))
+			{
+				// store the file info locally
+				$this->file_name = $path;
+				$this->extension = $search['extension'];
+
+				break;
+			}
 		}
 
-		// Store the file path locally
-		$this->file_name = $path;
+		// did we find it?
+		if ( ! $this->file_name)
+		{
+			throw new \FuelException('The requested view could not be found: '.\Fuel::clean_path($search['file']).'.'.$search['extension']);
+		}
 
 		return $this;
 	}

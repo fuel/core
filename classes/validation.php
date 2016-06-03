@@ -884,11 +884,22 @@ class Validation
 	 * Validate IP using PHP's filter_var()
 	 *
 	 * @param   string  $val
+	 * @param   string  ipv4|ipv6
 	 * @return  bool
 	 */
-	public function _validation_valid_ip($val)
+	public function _validation_valid_ip($val, $flag = null)
 	{
-		return $this->_empty($val) || filter_var($val, FILTER_VALIDATE_IP);
+		switch (strtolower($flag))
+		{
+			case 'ipv4':
+				$flag = FILTER_FLAG_IPV4;
+				break;
+			case 'ipv6':
+				$flag = FILTER_FLAG_IPV6;
+				break;
+		}
+
+		return $this->_empty($val) || filter_var($val, FILTER_VALIDATE_IP, $flag);
 	}
 
 	/**

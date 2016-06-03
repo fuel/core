@@ -443,39 +443,68 @@ abstract class Image_Driver
 		$return = false;
 		if (is_file($filename) and $this->check_extension($filename, false))
 		{
-			$x = 0;
-			$y = 0;
+			$x = $y = 0;
 			$wsizes = $this->sizes($filename);
 			$sizes  = $this->sizes();
+
 			// Get the x and y  positions.
 			list($ypos, $xpos) = explode(' ', $position);
+
+			// Get the x and y padding
+			if (is_numeric($padding))
+			{
+				$xpad = $ypad = (int) $padding;
+			}
+			elseif (is_array($padding) and isset($padding[0]) and isset($padding[1]))
+			{
+				$xpad = $padding[0];
+				$ypad = $padding[1];
+			}
+			else
+			{
+				$xpad = $ypad = 0;
+			}
+
+			// Determine the position
 			switch ($xpos)
 			{
 				case 'left':
-					$x = $padding;
+					$x = $xpad;
 				break;
 				case 'middle':
 				case 'center':
 					$x = ($sizes->width / 2) - ($wsizes->width / 2);
 				break;
 				case 'right':
-					$x = $sizes->width - $wsizes->width - $padding;
+					$x = $sizes->width - $wsizes->width - $xpad;
 				break;
+				default:
+					if (is_numeric($xpos) and $xpos >= 0)
+					{
+						$x = (int) $xpos;
+					}
 			}
 			switch ($ypos)
 			{
 				case 'top':
-					$y = $padding;
+					$y = $ypad;
 				break;
 				case 'middle':
 				case 'center':
 					$y = ($sizes->height / 2) - ($wsizes->height / 2);
 				break;
 				case 'bottom':
-					$y = $sizes->height - $wsizes->height - $padding;
+					$y = $sizes->height - $wsizes->height - $ypad;
 				break;
+				default:
+					if (is_numeric($ypos) and $ypos >= 0)
+					{
+						$y = (int) $ypos;
+					}
 			}
+
 			$this->debug("Watermark being placed at $x,$y");
+
 			$return = array(
 				'filename' => $filename,
 				'x' => $x,

@@ -233,7 +233,7 @@ JS;
 			ob_end_clean();
 
 			// process it based on the xdebug presence and configuration
-			if (extension_loaded('xdebug') and ini_get('xdebug.overload_var_dump') === '1')
+			if (extension_loaded('xdebug') and ini_get('xdebug.overload_var_dump'))
 			{
 				if (ini_get('html_errors'))
 				{

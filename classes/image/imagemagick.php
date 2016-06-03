@@ -104,7 +104,7 @@ class Image_Imagemagick extends \Image_Driver
 		$this->exec('convert', $image.' '.$arg.' '.$image);
 	}
 
-	protected function _watermark($filename, $position, $padding = 5)
+	protected function _watermark($filename, $position, $padding = array(5,5))
 	{
 		$values = parent::_watermark($filename, $position, $padding);
 		if ($values == false)

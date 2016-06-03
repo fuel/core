@@ -155,6 +155,11 @@ class Mongo_Db
 		{
 			$options['replicaSet'] = $config['replicaset'];
 		}
+		
+		if ( ! empty($config['readPreference']))
+		{
+			$options['readPreference'] = $config['readPreference'];
+		}
 
 		$connection_string = "mongodb://";
 
