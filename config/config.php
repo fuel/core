@@ -302,7 +302,8 @@ return array(
 		'case_sensitive' => true,
 
 		/**
-		 *  Whether to strip the extension
+		 * whether to strip the extension (true/false, or an array with
+		 * a list of extensions, including the dot! p.e. array('.html', '.php')
 		 */
 		'strip_extension' => true,
 	),
