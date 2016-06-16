@@ -204,10 +204,8 @@ class Fuel
 			// alias the error class to the new errorhandler
 			class_alias('\Fuel\Core\Errorhandler', '\Fuel\Core\Error');
 
-			// does the app have an overloaded Error class?
-			if (class_exists('Error'))
-			{
-				// then alias that too
+			$errorReflectionClass = new \ReflectionClass('Error');
+			if ($errorReflectionClass->hasMethod('shutdown_handler')) {
 				class_alias('Error', 'Errorhandler');
 			}
 		}
