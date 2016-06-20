@@ -208,7 +208,8 @@ class Input
 				{
 					static::$detected_ext = ltrim($ext, '.');
 
-					if (\Config::get('routing.strip_extension', true))
+					$strip = \Config::get('routing.strip_extension', true);
+					if ($strip === true or (is_array($strip) and in_array($ext, $strip)))
 					{
 						$uri = $path;
 					}

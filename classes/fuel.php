@@ -205,7 +205,7 @@ class Fuel
 			class_alias('\Fuel\Core\Errorhandler', '\Fuel\Core\Error');
 
 			// does the app have an overloaded Error class?
-			if (class_exists('Error'))
+			if (class_exists('Error') and is_subclass_of('Error', '\Fuel\Core\Error'))
 			{
 				// then alias that too
 				class_alias('Error', 'Errorhandler');

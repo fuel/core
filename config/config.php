@@ -302,7 +302,8 @@ return array(
 		'case_sensitive' => true,
 
 		/**
-		 *  Whether to strip the extension
+		 * whether to strip the extension (true/false, or an array with
+		 * a list of extensions, including the dot! p.e. array('.html', '.php')
 		 */
 		'strip_extension' => true,
 	),
@@ -322,14 +323,14 @@ return array(
 	 */
 	'config' => array(
 		/*
-		 * Name of the table used by the Config_Db driver
-		 */
-		'table_name' => 'config',
-
-		/*
 		 * Database that holds the config table
 		 */
 		'database' => null,
+
+		/*
+		 * Name of the table used by the Config_Db driver
+		 */
+		'table_name' => 'config',
 
 		/*
 		 * Array of servers and portnumbers that run the memcached service for config data
@@ -346,6 +347,11 @@ return array(
 	 * Lang settings
 	 */
 	'lang' => array(
+		/*
+		 * Database that holds the lang table
+		 */
+		'database' => null,
+
 		/*
 		 * Name of the table used by the Lang_Db driver
 		 */

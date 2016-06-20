@@ -15,6 +15,8 @@ class Lang_Db implements Lang_Interface
 
 	protected $vars = array();
 
+	protected $database;
+
 	protected $table;
 
 	/**
@@ -38,6 +40,7 @@ class Lang_Db implements Lang_Interface
 			'DOCROOT' => DOCROOT,
 		) + $vars;
 
+		$this->database = \Config::get('lang.database', null);
 		$this->table = \Config::get('lang.table_name', 'lang');
 	}
 
@@ -57,7 +60,7 @@ class Lang_Db implements Lang_Interface
 			// try to retrieve the config from the database
 			try
 			{
-				$result = \DB::select('lang')->from($this->table)->where('identifier', '=', $this->identifier)->where('language', '=', $language)->execute();
+				$result = \DB::select('lang')->from($this->table)->where('identifier', '=', $this->identifier)->where('language', '=', $language)->execute($this->database);
 			}
 			catch (Database_Exception $e)
 			{
@@ -160,12 +163,12 @@ class Lang_Db implements Lang_Interface
 		$contents = serialize($contents);
 
 		// update the config in the database
-		$result = \DB::update($this->table)->set(array('lang' => $contents, 'hash' => uniqid()))->where('identifier', '=', $identifier)->where('language', '=', $language)->execute();
+		$result = \DB::update($this->table)->set(array('lang' => $contents, 'hash' => uniqid()))->where('identifier', '=', $identifier)->where('language', '=', $language)->execute($this->database);
 
 		// if there wasn't an update, do an insert
 		if ($result === 0)
 		{
-			list($notused, $result) = \DB::insert($this->table)->set(array('identifier' => $identifier, 'language' => $language, 'lang' => $contents, 'hash' => uniqid()))->execute();
+			list($notused, $result) = \DB::insert($this->table)->set(array('identifier' => $identifier, 'language' => $language, 'lang' => $contents, 'hash' => uniqid()))->execute($this->database);
 		}
 
 		return $result === 1;
