@@ -26,7 +26,7 @@ class Database_SQLite_Connection extends \Database_PDO_Connection
 	 */
 	public function update($table = null)
 	{
-		return new Database_SQLite_Builder_Update($table)->set_connection($this);
+		return (new Database_SQLite_Builder_Update($table))->set_connection($this);
 	}
 
 	/**
@@ -40,7 +40,7 @@ class Database_SQLite_Connection extends \Database_PDO_Connection
 	 */
 	public function delete($table = null)
 	{
-		return new Database_SQLite_Builder_Delete($table)->set_connection($this);
+		return (new Database_SQLite_Builder_Delete($table))->set_connection($this);
 	}
 
 	/**
