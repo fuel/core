@@ -245,7 +245,7 @@ abstract class Database_Connection
 	 */
 	public function select(array $args = null)
 	{
-		return new \Database_Query_Builder_Select($args);
+		return new \Database_Query_Builder_Select($args)->set_connection($this);
 	}
 
 	/**
@@ -260,7 +260,7 @@ abstract class Database_Connection
 	 */
 	public function insert($table = null, array $columns = null)
 	{
-		return new \Database_Query_Builder_Insert($table, $columns);
+		return new \Database_Query_Builder_Insert($table, $columns)->set_connection($this);
 	}
 
 	/**
@@ -274,7 +274,7 @@ abstract class Database_Connection
 	 */
 	public function update($table = null)
 	{
-		return new \Database_Query_Builder_Update($table);
+		return new \Database_Query_Builder_Update($table)->set_connection($this);
 	}
 
 	/**
@@ -288,7 +288,7 @@ abstract class Database_Connection
 	 */
 	public function delete($table = null)
 	{
-		return new \Database_Query_Builder_Delete($table);
+		return new \Database_Query_Builder_Delete($table)->set_connection($this);
 	}
 
 	/**
