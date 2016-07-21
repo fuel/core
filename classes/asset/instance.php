@@ -392,7 +392,7 @@ class Asset_Instance
 			}
 
 			// only do a file search if the asset is not a URI
-			if ($this->_always_resolve or ! preg_match('|^(\w+:)?//|', $filename))
+			if ( ! preg_match('|^(\w+:)?//|', $filename))
 			{
 				// and only if the asset is local to the applications base_url
 				if ($this->_always_resolve or ! preg_match('|^(\w+:)?//|', $this->_asset_url) or strpos($this->_asset_url, \Config::get('base_url')) === 0)
