@@ -60,6 +60,7 @@ class Test_Request extends TestCase
 			['application/json', '["x",1,2]', 'application/*', ['x', 1, 2]],
 			['application/json', '[]', 'application/json', []],
 			['application/json', '[1, 2, 3]', 'application/csv', null],
+			['application/json; charset=utf8', '[1, 2, 3]', 'application/json', [1, 2, 3]],
 		];
 	}
 
