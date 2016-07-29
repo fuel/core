@@ -355,6 +355,9 @@ abstract class Request_Driver
 	 */
 	public function set_response($body, $status, $mime = null, $headers = array(), $accept_header = null)
 	{
+		// Strip attribs from mime type to avoid over-specific matching
+		$mime = strstr($mime, ';', true) ?: $mime;
+
 		// did we use an accept header? If so, validate the returned mimetype
 		if ( ! $this->mime_in_header($mime, $accept_header))
 		{
