@@ -108,10 +108,24 @@ class View
 	 */
 	public function __construct($file = null, $data = null, $filter = null)
 	{
-		if (is_object($data) === true)
+		// if data passed is contained in another view
+		if ($data instanceOf View)
 		{
+			// extract it
+			$this->local_filter =& $data->local_filter;
+			is_null($filter) and $filter = $data->auto_filter;
+			$this->data =& $data->data;
+			$data = null;
+		}
+
+		// for any other object
+		elseif (is_object($data) === true)
+		{
+			// see if we get can to the object properties
 			$data = get_object_vars($data);
 		}
+
+		// else it better by and array !
 		elseif ($data and ! is_array($data))
 		{
 			throw new \InvalidArgumentException('The data parameter only accepts objects and arrays.');
@@ -284,7 +298,6 @@ class View
 			{
 				$filter = array_key_exists($key, $rules) ? $rules[$key] : null;
 				$filter = is_null($filter) ? $auto_filter : $filter;
-
 				if ($filter)
 				{
 					if ($filter_closures and $value instanceOf \Closure)
