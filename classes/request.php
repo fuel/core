@@ -280,28 +280,7 @@ class Request
 				// load and add the module routes
 				$module_routes = \Fuel::load($module_path);
 
-				$reserve_routes = array(
-					'_root_' => $module,
-					'_403_'  => '_403_',
-					'_404_'  => '_404_',
-					'_500_'  => '_500_',
-					$module  => $module,
-				);
-
-				$prepped_routes = array();
-				foreach($module_routes as $name => $_route)
-				{
-					if (isset($reserve_routes[$name]))
-					{
-						$name = $reserve_routes[$name];
-					}
-					elseif (strpos($name, $module.'/') !== 0)
-					{
-						$name = $module.'/'.$name;
-					}
-
-					$prepped_routes[$name] = $_route;
-				};
+				$prepped_routes = \Router::parse_module_routes($module_routes, $module);
 
 				// update the loaded list of routes
 				\Router::add($prepped_routes, null, true);
