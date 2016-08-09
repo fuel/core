@@ -211,7 +211,11 @@ class File
 				}
 				catch (\PHPErrorException $e)
 				{
-					return false;
+					if ( ! is_dir($path))
+					{
+						return false;
+					}
+					chmod($path, $chmod);
 				}
 			}
 		}
