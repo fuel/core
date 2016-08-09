@@ -67,38 +67,27 @@ class Log
 		// make sure the log directories exist
 		try
 		{
+			// get the required folder permissions
+			$permission = \Config::get('file.chmod.folders', 0777);
+
 			// determine the name and location of the logfile
 			$path     = \Config::get('log_path', APPPATH.'logs'.DS);
 			$filename = \Config::get('log_file', null);
 
 			if(empty($filename))
 			{
-				$rootpath = $path.date('Y').DS;
-				$filepath = $path.date('Y/m').DS;
-				$filename = $filepath.date('d').'.php';
-			}
-			else
-			{
-				$rootpath = $path;
-				$filepath = $path;
-				$filename = $path.$filename;
+				$path = $path.date('Y').DS.date('Y/m').DS;
+				$filename = date('d').'.php';
 			}
 
-			// get the required folder permissions
-			$permission = \Config::get('file.chmod.folders', 0777);
-
-			if ( ! is_dir($rootpath))
+			// make sure the path exists
+			if ( ! is_dir($path))
 			{
-				mkdir($rootpath, 0777, true);
-				chmod($rootpath, $permission);
-			}
-			if ( ! is_dir($filepath))
-			{
-				mkdir($filepath, 0777, true);
-				chmod($filepath, $permission);
+				\File::create_dir($path, $filename, $permission);
 			}
 
-			$handle = fopen($filename, 'a');
+			// open the file
+			$handle = fopen($path.$filename, 'a');
 		}
 		catch (\Exception $e)
 		{
