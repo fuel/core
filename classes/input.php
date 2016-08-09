@@ -25,214 +25,46 @@ namespace Fuel\Core;
 class Input
 {
 	/**
-	 * @var  $detected_uri  The URI that was detected automatically
+	 * global static input instance
 	 */
-	protected static $detected_uri = null;
+	protected static $instance;
 
 	/**
-	 * @var  $detected_ext  The URI extension that was detected automatically
-	 */
-	protected static $detected_ext = null;
-
-	/**
-	 * @var  array  $input  All of the input (GET, POST, PUT, DELETE, PATCH)
-	 */
-	protected static $input = null;
-
-	/**
-	 * @var  array  $put_patch_delete  All of the put or delete vars
-	 */
-	protected static $put_patch_delete = null;
-
-	/**
-	 * @var  $php_input  Cache for the php://input stream
-	 */
-	protected static $php_input = null;
-
-	/**
-	 * @var  $json  parsed request body as json
-	 */
-	protected static $json = null;
-
-	/**
-	 * @var  $xml  parsed request body as xml
-	 */
-	protected static $xml = null;
-
-	/**
-	 * Get the request body interpreted as JSON.
+	 * Return the current input instance
 	 *
-	 * @param   mixed  $index
-	 * @param   mixed  $default
-	 * @return  array  parsed request body content.
+	 * @return  Input_Instance
 	 */
-	public static function json($index = null, $default = null)
+	public static function instance()
 	{
-		static::$json === null and static::hydrate_raw_input('json');
-		return (func_num_args() === 0) ? static::$json : \Arr::get(static::$json, $index, $default);
+		if ($request = \Request::active())
+		{
+			return $request->input();
+		}
+
+		return static::main();
 	}
 
 	/**
-	 * Get the request body interpreted as XML.
+	 * Return the main input instance
 	 *
-	 * @param   mixed  $index
-	 * @param   mixed  $default
-	 * @return  array  parsed request body content.
+	 * @return  Input_Instance
 	 */
-	public static function xml($index = null, $default = null)
+	public static function main()
 	{
-		static::$xml === null and static::hydrate_raw_input('xml');
-		return (func_num_args() === 0) ? static::$xml : \Arr::get(static::$xml, $index, $default);
+		if ( ! static::$instance)
+		{
+			static::$instance = new \Input_Instance;
+		}
+
+		return static::$instance;
 	}
 
 	/**
-	 * Hydration from raw request (xml/json requests)
-	 *
-	 * @param  string  $type  input type
+	 * Static calls to the current input instance
 	 */
-	protected static function hydrate_raw_input($type)
+	public static function __callStatic($method, $arguments)
 	{
-		static::$php_input === null and static::$php_input = file_get_contents('php://input');
-		static::$$type = \Security::clean(\Format::forge(static::$php_input, $type)->to_array());
-	}
-
-	/**
-	 * Detects and returns the current URI based on a number of different server
-	 * variables.
-	 *
-	 * @throws \FuelException
-	 * @return  string
-	 */
-	public static function uri()
-	{
-		if (static::$detected_uri !== null)
-		{
-			return static::$detected_uri;
-		}
-
-		if (\Fuel::$is_cli)
-		{
-			if (($uri = \Cli::option('uri')) !== null)
-			{
-				static::$detected_uri = $uri;
-			}
-			else
-			{
-				static::$detected_uri = \Cli::option(1);
-			}
-
-			return static::$detected_uri;
-		}
-
-		// We want to use PATH_INFO if we can.
-		if ( ! empty($_SERVER['PATH_INFO']))
-		{
-			$uri = $_SERVER['PATH_INFO'];
-		}
-		// Only use ORIG_PATH_INFO if it contains the path
-		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
-		{
-			$uri = $path;
-		}
-		else
-		{
-			// Fall back to parsing the REQUEST URI
-			if (isset($_SERVER['REQUEST_URI']))
-			{
-				$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
-			}
-			else
-			{
-				throw new \FuelException('Unable to detect the URI.');
-			}
-
-			// Remove the base URL from the URI
-			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
-			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
-			{
-				$uri = substr($uri, strlen($base_url) - 1);
-			}
-
-			// If we are using an index file (not mod_rewrite) then remove it
-			$index_file = \Config::get('index_file');
-			if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
-			{
-				$uri = substr($uri, strlen($index_file));
-			}
-
-			// When index.php? is used and the config is set wrong, lets just
-			// be nice and help them out.
-			if ($index_file and strncmp($uri, '?/', 2) === 0)
-			{
-				$uri = substr($uri, 1);
-			}
-
-			// decode the uri, and put any + back (does not mean a space in the url path)
-			$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
-
-			// Lets split the URI up in case it contains a ?.  This would
-			// indicate the server requires 'index.php?' and that mod_rewrite
-			// is not being used.
-			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
-
-			// If there are matches then lets set set everything correctly
-			if ( ! empty($matches))
-			{
-				$uri = $matches[1];
-
-				// only reconstruct $_GET if we didn't have a query string
-				if (empty($_SERVER['QUERY_STRING']))
-				{
-					$_SERVER['QUERY_STRING'] = $matches[2];
-					parse_str($matches[2], $_GET);
-					$_GET = \Security::clean($_GET);
-				}
-			}
-		}
-
-		// Deal with any trailing dots
-		$uri = rtrim($uri, '.');
-
-		// Do we have a URI and does it not end on a slash?
-		if ($uri and substr($uri, -1) !== '/')
-		{
-			// Strip the defined url suffix from the uri if needed
-			$ext = strrchr($uri, '.');
-			$path = $ext === false ? $uri : substr($uri, 0, -strlen($ext));
-
-			// Did we detect something that looks like an extension?
-			if ( ! empty($ext))
-			{
-				// if it has a slash in it, it's a URI segment with a dot in it
-				if (strpos($ext, '/') === false)
-				{
-					static::$detected_ext = ltrim($ext, '.');
-
-					$strip = \Config::get('routing.strip_extension', true);
-					if ($strip === true or (is_array($strip) and in_array($ext, $strip)))
-					{
-						$uri = $path;
-					}
-				}
-			}
-		}
-
-		// Do some final clean up of the uri
-		static::$detected_uri = \Security::clean_uri($uri, true);
-
-		return static::$detected_uri;
-	}
-
-	/**
-	 * Detects and returns the current URI extension
-	 *
-	 * @return  string
-	 */
-	public static function extension()
-	{
-		static::$detected_ext === null and static::uri();
-
-		return static::$detected_ext;
+		return call_fuel_func_array(array(static::instance(), $method), $arguments);
 	}
 
 	/**
@@ -332,31 +164,6 @@ class Input
 	}
 
 	/**
-	 * Return's the input method used (GET, POST, DELETE, etc.)
-	 *
-	 * @param   string $default
-	 * @return  string
-	 */
-	public static function method($default = 'GET')
-	{
-		// get the method from the current active request
-		if ($request = \Request::active() and $method = $request->get_method())
-		{
-			return $method;
-		}
-
-		// if called before a request is active, fall back to the global server setting
-		if (\Config::get('security.allow_x_headers', false))
-		{
-			return static::server('HTTP_X_HTTP_METHOD_OVERRIDE', static::server('REQUEST_METHOD', $default));
-		}
-		else
-		{
-			return static::server('REQUEST_METHOD', $default);
-		}
-	}
-
-	/**
 	 * Return's the user agent
 	 *
 	 * @param   $default
@@ -365,80 +172,6 @@ class Input
 	public static function user_agent($default = '')
 	{
 		return static::server('HTTP_USER_AGENT', $default);
-	}
-
-	/**
-	 * Returns all of the GET, POST, PUT and DELETE variables.
-	 *
-	 * @return  array
-	 */
-	public static function all()
-	{
-		static::$input === null and static::hydrate();
-		return static::$input;
-	}
-
-	/**
-	 * Gets the specified GET variable.
-	 *
-	 * @param   string  $index    The index to get
-	 * @param   string  $default  The default value
-	 * @return  string|array
-	 */
-	public static function get($index = null, $default = null)
-	{
-		return (func_num_args() === 0) ? $_GET : \Arr::get($_GET, $index, $default);
-	}
-
-	/**
-	 * Fetch an item from the POST array
-	 *
-	 * @param   string  $index    The index key
-	 * @param   mixed   $default  The default value
-	 * @return  string|array
-	 */
-	public static function post($index = null, $default = null)
-	{
-		return (func_num_args() === 0) ? $_POST : \Arr::get($_POST, $index, $default);
-	}
-
-	/**
-	 * Fetch an item from the php://input for put arguments
-	 *
-	 * @param   string  $index    The index key
-	 * @param   mixed   $default  The default value
-	 * @return  string|array
-	 */
-	public static function put($index = null, $default = null)
-	{
-		static::$put_patch_delete === null and static::hydrate();
-		return (func_num_args() === 0) ? static::$put_patch_delete : \Arr::get(static::$put_patch_delete, $index, $default);
-	}
-
-	/**
-	 * Fetch an item from the php://input for patch arguments
-	 *
-	 * @param   string  $index    The index key
-	 * @param   mixed   $default  The default value
-	 * @return  string|array
-	 */
-	public static function patch($index = null, $default = null)
-	{
-		static::$put_patch_delete === null and static::hydrate();
-		return (func_num_args() === 0) ? static::$put_patch_delete : \Arr::get(static::$put_patch_delete, $index, $default);
-	}
-
-	/**
-	 * Fetch an item from the php://input for delete arguments
-	 *
-	 * @param   string  $index    The index key
-	 * @param   mixed   $default  The default value
-	 * @return  string|array
-	 */
-	public static function delete($index = null, $default = null)
-	{
-		static::$put_patch_delete === null and static::hydrate();
-		return (is_null($index) and func_num_args() === 0) ? static::$put_patch_delete : \Arr::get(static::$put_patch_delete, $index, $default);
 	}
 
 	/**
@@ -451,19 +184,6 @@ class Input
 	public static function file($index = null, $default = null)
 	{
 		return (func_num_args() === 0) ? $_FILES : \Arr::get($_FILES, $index, $default);
-	}
-
-	/**
-	 * Fetch an item from either the GET, POST, PUT, PATCH or DELETE array
-	 *
-	 * @param   string  $index    The index key
-	 * @param   mixed   $default  The default value
-	 * @return  string|array
-	 */
-	public static function param($index = null, $default = null)
-	{
-		static::$input === null and static::hydrate();
-		return \Arr::get(static::$input, $index, $default);
 	}
 
 	/**
@@ -526,31 +246,6 @@ class Input
 		}
 
 		return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : \Arr::get(array_change_key_case($headers), strtolower($index), $default));
-	}
-
-	/**
-	 * Hydrates the input array
-	 *
-	 * @return  void
-	 */
-	protected static function hydrate()
-	{
-		static::$input = array_merge($_GET, $_POST);
-
-		if (static::method() == 'PUT' or static::method() == 'PATCH' or static::method() == 'DELETE')
-		{
-			static::$php_input === null and static::$php_input = file_get_contents('php://input');
-			if (strpos(static::headers('Content-Type'), 'www-form-urlencoded') > 0 and \Config::get('security.form-double-urlencoded', false))
-			{
-				static::$php_input = urldecode(static::$php_input);
-			}
-			parse_str(static::$php_input, static::$put_patch_delete);
-			static::$input = array_merge(static::$input, static::$put_patch_delete);
-		}
-		else
-		{
-			static::$put_patch_delete = array();
-		}
 	}
 
 	/**

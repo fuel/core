@@ -237,6 +237,7 @@ function setup_autoloader()
 		'Fuel\\Core\\Inflector'                        => COREPATH.'classes/inflector.php',
 
 		'Fuel\\Core\\Input'                            => COREPATH.'classes/input.php',
+		'Fuel\\Core\\Input_Instance'                   => COREPATH.'classes/input/instance.php',
 
 		'Fuel\\Core\\Lang'                             => COREPATH.'classes/lang.php',
 		'Fuel\\Core\\LangException'                    => COREPATH.'classes/lang.php',
