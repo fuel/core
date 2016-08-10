@@ -31,17 +31,22 @@ class Input
 
 	/**
 	 * Forge a new instance
+	 *
+	 * @param  $new     Request         New request instance this input instance is tied to
+	 * @param  $active  Input_Instance  Currently active input instance
+	 *
+	 * @return Input_Instance
 	 */
-	public static function forge(Request $request = null)
+	public static function forge(Request $new = null, Input_Instance $input = null)
 	{
-		if ($request)
+		if ($new)
 		{
-			return new \Input_Instance($request);
+			return new \Input_Instance($new, $input);
 		}
 
 		if ( ! static::$instance)
 		{
-			static::$instance = new \Input_Instance;
+			static::$instance = new \Input_Instance();
 		}
 
 		return static::$instance;

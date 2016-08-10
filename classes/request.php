@@ -276,7 +276,7 @@ class Request
 		if (static::$active)
 		{
 			// hmvc request, forge a new instance
-			$this->input = \Input::forge($this);
+			$this->input = \Input::forge($this, static::$active->input());
 		}
 		else
 		{

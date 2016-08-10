@@ -77,23 +77,22 @@ class Input_Instance
 	/**
 	 *
 	 */
-	public function __construct(\Request $request = null)
+	public function __construct(Request $new = null, Input_Instance $input = null)
 	{
 		// store the associated request
-		$this->request = $request;
+		$this->request = $new;
 
-		// fetch the current active request
-		if ($request = \Request::active())
+		// was an input instance passed?
+		if ($input)
 		{
 			// fetch parent request input data
-			$this->input_get = $request->input()->get();
-			$this->input_post = $request->input()->post();
-			$this->input_put = $request->input()->put();
-			$this->input_patch = $request->input()->patch();
-			$this->input_delete = $request->input()->delete();
-			$this->input_get = $request->input()->get();
-			$this->input_json = $request->input()->json();
-			$this->input_xml = $request->input()->xml();
+			$this->input_get = $input->input_get;
+			$this->input_post = $input->input_post;
+			$this->input_put = $input->input_put;
+			$this->input_patch = $input->input_patch;
+			$this->input_delete = $input->input_delete;
+			$this->input_json = $input->input_json;
+			$this->input_xml = $input->input_xml;
 		}
 		else
 		{
