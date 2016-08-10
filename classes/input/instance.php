@@ -67,12 +67,12 @@ class Input_Instance
 	/**
 	 * @var  $json  parsed request body as json
 	 */
-	protected $input_json = null;
+	protected $input_json = array();
 
 	/**
 	 * @var  $xml  parsed request body as xml
 	 */
-	protected $input_xml = null;
+	protected $input_xml = array();
 
 	/**
 	 *
