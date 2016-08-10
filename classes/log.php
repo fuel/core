@@ -112,7 +112,7 @@ class Log
 		fclose($handle);
 
 		// create the streamhandler, and activate the handler
-		$stream = new \Monolog\Handler\StreamHandler($filename, \Monolog\Logger::DEBUG);
+		$stream = new \Monolog\Handler\StreamHandler($path.$filename, \Monolog\Logger::DEBUG);
 		$formatter = new \Monolog\Formatter\LineFormatter("%level_name% - %datetime% --> %message%".PHP_EOL, "Y-m-d H:i:s");
 		$stream->setFormatter($formatter);
 		static::$monolog->pushHandler($stream);
