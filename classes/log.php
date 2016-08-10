@@ -64,26 +64,35 @@ class Log
 		// load the file config
 		\Config::load('file', true);
 
+		// get the required folder permissions
+		$permission = \Config::get('file.chmod.folders', 0777);
+
+		// determine the name and location of the logfile
+		$path = \Config::get('log_path', APPPATH.'logs'.DS);
+
+		// and make sure it exsts
+		if ( ! is_dir($path) or ! is_writable($path))
+		{
+			\Config::set('log_threshold', \Fuel::L_NONE);
+			throw new \FuelException('Unable to create the log file. The configured log path "'.$path.'" does not exist.');
+		}
+
+		// determine the name of the logfile
+		$filename = \Config::get('log_file', null);
+		if (empty($filename))
+		{
+			$filename = date('Y').DS.date('m').DS.date('d').'.php';
+		}
+
+		$fullpath = dirname($filename);
+
 		// make sure the log directories exist
 		try
 		{
-			// get the required folder permissions
-			$permission = \Config::get('file.chmod.folders', 0777);
-
-			// determine the name and location of the logfile
-			$path     = \Config::get('log_path', APPPATH.'logs'.DS);
-			$filename = \Config::get('log_file', null);
-
-			if(empty($filename))
+			// make sure the full path exists
+			if ( ! is_dir($path.$fullpath))
 			{
-				$path = $path.date('Y').DS.date('Y/m').DS;
-				$filename = date('d').'.php';
-			}
-
-			// make sure the path exists
-			if ( ! is_dir($path))
-			{
-				\File::create_dir($path, $filename, $permission);
+				\File::create_dir($path, $fullpath, $permission);
 			}
 
 			// open the file
@@ -92,13 +101,13 @@ class Log
 		catch (\Exception $e)
 		{
 			\Config::set('log_threshold', \Fuel::L_NONE);
-			throw new \FuelException('Unable to create or write to the log file. Please check the permissions on '.\Config::get('log_path').'. ('.$e->getMessage().')');
+			throw new \FuelException('Unable to access the log file. Please check the permissions on '.\Config::get('log_path').'. ('.$e->getMessage().')');
 		}
 
-		if ( ! filesize($filename))
+		if ( ! filesize($path.$filename))
 		{
 			fwrite($handle, "<?php defined('COREPATH') or exit('No direct script access allowed'); ?>".PHP_EOL.PHP_EOL);
-			chmod($filename, \Config::get('file.chmod.files', 0666));
+			chmod($path.$filename, \Config::get('file.chmod.files', 0666));
 		}
 		fclose($handle);
 
