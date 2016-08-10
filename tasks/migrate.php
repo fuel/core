@@ -305,6 +305,12 @@ class Migrate
 			{
 				\Cli::write($migration);
 			}
+
+			// flush all cache after running the migrations if needed
+			if (\Config::get('migrations.flush_cache', false))
+			{
+				\Cache::delete_all();
+			}
 		}
 		else
 		{
