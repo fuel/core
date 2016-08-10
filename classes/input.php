@@ -30,6 +30,24 @@ class Input
 	protected static $instance;
 
 	/**
+	 * Forge a new instance
+	 */
+	public static function forge(Request $request = null)
+	{
+		if ($request)
+		{
+			return new \Input_Instance($request);
+		}
+
+		if ( ! static::$instance)
+		{
+			static::$instance = new \Input_Instance;
+		}
+
+		return static::$instance;
+	}
+
+	/**
 	 * Return the current input instance
 	 *
 	 * @return  Input_Instance
@@ -41,22 +59,7 @@ class Input
 			return $request->input();
 		}
 
-		return static::main();
-	}
-
-	/**
-	 * Return the main input instance
-	 *
-	 * @return  Input_Instance
-	 */
-	public static function main()
-	{
-		if ( ! static::$instance)
-		{
-			static::$instance = new \Input_Instance;
-		}
-
-		return static::$instance;
+		return static::forge();
 	}
 
 	/**

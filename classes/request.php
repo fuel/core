@@ -275,10 +275,12 @@ class Request
 
 		if (static::$active)
 		{
-			$this->input = new \Input_Instance($this);
+			// hmvc request, forge a new instance
+			$this->input = \Input::forge($this);
 		}
 		else
 		{
+			// main request, get the global instance
 			$this->input = \Input::instance();
 		}
 
