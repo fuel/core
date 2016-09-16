@@ -72,15 +72,18 @@ class Session
 			session_set_save_handler(
 				// open
 				function ($savePath, $sessionName) {
+					return true;
 				},
 				// close
 				function () {
+					return true;
 				},
 				// read
 				function ($sessionId) {
 					// copy all existing session vars into the PHP session store
 					$_SESSION = \Session::get();
 					$_SESSION['__org'] = $_SESSION;
+					return '';
 				},
 				// write
 				function ($sessionId, $data) {
@@ -96,13 +99,16 @@ class Session
 
 					// add or update the remainder
 					empty($_SESSION) or \Session::set($_SESSION);
+					return true;
 				},
 				// destroy
 				function ($sessionId) {
 					\Session::destroy();
+					return true;
 				},
 				// gc
 				function ($lifetime) {
+					return true;
 				}
 			);
 		}
