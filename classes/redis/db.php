@@ -156,7 +156,7 @@ class Redis_Db
 			for ($written = 0; $written < strlen($command); $written += $fwrite)
 			{
 				$fwrite = fwrite($this->connection, substr($command, $written));
-				if ($fwrite === false)
+				if ($fwrite === false || $fwrite <= 0)
 				{
 					throw new \RedisException('Failed to write entire command to stream');
 				}
