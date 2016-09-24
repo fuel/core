@@ -474,15 +474,18 @@ class Input_Instance
 			$this->input_xml = $php_input = \Security::clean(\Format::forge($php_input, 'xml')->to_array());
 		}
 
-		// handle raw formats
-		else
+		// unknown input format
+		elseif ($php_input and ! is_array($php_input))
 		{
+			// don't know how to handle it
+			throw new \DomainException('Don\'t know how to parse input of type: '.$content_type);
 		}
 
 		// store it as other input data as well
-		if ($this->method() == 'PUT' or $this->method() == 'PATCH' or $this->method() == 'DELETE')
+		$method = strtolower($this->method());
+		if ($method == 'put' or $method == 'patch' or $method == 'delete')
 		{
-			$this->{'input_'.strtolower($this->method())} = $php_input;
+			$this->{'input_'.$method} = $php_input;
 		}
 	}
 }
