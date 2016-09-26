@@ -409,8 +409,11 @@ class Input_Instance
 		$this->input_post = $_POST;
 
 		// get the content type from the header, strip optional parameters
-		$content_type = explode(';', \Input::headers('Content-Type'));
-		$content_type = trim(reset($content_type));
+		$content_header = \Input::headers('Content-Type');
+		if (($content_type = strstr($content_header, ';', true)) === false)
+		{
+			$content_type = $content_header;
+		}
 
 		// get php raw input
 		$php_input = file_get_contents('php://input');
@@ -427,10 +430,10 @@ class Input_Instance
 		}
 
 		// handle multipart/form-data input
-		elseif (strpos($content_type, 'multipart/form-data') === 0)
+		elseif ($content_type == 'multipart/form-data')
 		{
 			// grab multipart boundary from content type header
-			preg_match('/boundary=(.*)$/', $content_type, $matches);
+			preg_match('/boundary=(.*)$/', $content_header, $matches);
 			$boundary = $matches[1];
 
 			// split content by boundary and get rid of last -- element
