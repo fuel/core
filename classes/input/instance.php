@@ -408,8 +408,9 @@ class Input_Instance
 		$this->input_get = $_GET;
 		$this->input_post = $_POST;
 
-		// get the content type from the header
-		$content_type = \Input::headers('Content-Type');
+		// get the content type from the header, strip optional parameters
+		$content_type = explode(';', \Input::headers('Content-Type'));
+		$content_type = trim(reset($content_type));
 
 		// get php raw input
 		$php_input = file_get_contents('php://input');
