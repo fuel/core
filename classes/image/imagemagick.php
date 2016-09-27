@@ -315,7 +315,7 @@ class Image_Imagemagick extends \Image_Driver
 		}
 		if ( ! $this->im_path)
 		{
-			throw new \RuntimeException("imagemagick executables not found in ".$this->config['imagemagick_dir']);
+			throw new \RuntimeException("Imagemagick executables not found in ".$this->config['imagemagick_dir']);
 		}
 
 		$command = $this->im_path." ".$params;
@@ -327,7 +327,7 @@ class Image_Imagemagick extends \Image_Driver
 
 		if ($code != 0)
 		{
-			throw new \FuelException("imagemagick failed to edit the image. Returned with $code.<br /><br />Command:\n <code>$command</code>");
+			throw new \FuelException("Imagemagick failed to manipulate the image. Return code = $code. Command: $command");
 		}
 
 		return $output;
