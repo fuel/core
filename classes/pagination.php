@@ -522,7 +522,7 @@ class Pagination
 		}
 		else
 		{
-			if (is_string($this->config['uri_segment']))
+			if ( ! ctype_digit((string) $this->config['uri_segment']))
 			{
 				$this->config['calculated_page'] = \Input::get($this->config['uri_segment'], 1);
 			}
@@ -537,20 +537,13 @@ class Pagination
 		{
 			// calculate the number of pages
 			$this->config['total_pages'] = (int) ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
-
-			// make sure the current page is within bounds
-			if ($this->config['calculated_page'] > $this->config['total_pages'])
-			{
-				$this->config['calculated_page'] = $this->config['total_pages'];
-			}
-			elseif ($this->config['calculated_page'] < 1)
-			{
-				$this->config['calculated_page'] = 1;
-			}
 		}
 
-		// the current page must be zero based so that the offset for page 1 is 0.
-		$this->config['offset'] = ($this->config['calculated_page'] - 1) * $this->config['per_page'];
+		// make sure the current page is within bounds
+		$this->config['calculated_page'] = min(max(1, $this->config['calculated_page']), $this->config['total_pages']);
+
+		// the current page offset must be zero based (the offset for page 1 is 0), and my not be negative
+		$this->config['offset'] = max(0, ($this->config['calculated_page'] - 1) * $this->config['per_page']);
 	}
 
 	/**

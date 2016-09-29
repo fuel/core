@@ -408,25 +408,88 @@ class Input_Instance
 		$this->input_get = $_GET;
 		$this->input_post = $_POST;
 
+		// get the content type from the header, strip optional parameters
+		$content_header = \Input::headers('Content-Type');
+		if (($content_type = strstr($content_header, ';', true)) === false)
+		{
+			$content_type = $content_header;
+		}
+
 		// get php raw input
 		$php_input = file_get_contents('php://input');
-		if (strpos(\Input::headers('Content-Type'), 'www-form-urlencoded') > 0 and \Config::get('security.form-double-urlencoded', false))
-		{
-			$php_input = urldecode($php_input);
-		}
 
-		// convert it to xml and json if needed
-		if (is_array($php_input))
+		// handle form-urlencoded input
+		if ($content_type == 'application/x-www-form-urlencoded')
 		{
-			$this->input_xml = \Security::clean(\Format::forge($php_input, 'xml')->to_array());
-			$this->input_json = \Security::clean(\Format::forge($php_input, 'json')->to_array());
-		}
-
-		// store other input data as well
-		if ($this->method() == 'PUT' or $this->method() == 'PATCH' or $this->method() == 'DELETE')
-		{
+			// urldecode it if needed
+			if (\Config::get('security.form-double-urlencoded', false))
+			{
+				$php_input = urldecode($php_input);
+			}
 			parse_str($php_input, $php_input);
-			$this->{'input_'.$this->method()} = $php_input;
+		}
+
+		// handle multipart/form-data input
+		elseif ($content_type == 'multipart/form-data')
+		{
+			// grab multipart boundary from content type header
+			preg_match('/boundary=(.*)$/', $content_header, $matches);
+			$boundary = $matches[1];
+
+			// split content by boundary and get rid of last -- element
+			$blocks = preg_split('/-+'.$boundary.'/', $php_input);
+			array_pop($blocks);
+
+			// loop data blocks
+			$php_input = array();
+			foreach ($blocks as $id => $block)
+			{
+				// skip empty blocks
+				if ( ! empty($block))
+				{
+					// parse uploaded files
+					if (strpos($block, 'application/octet-stream') !== FALSE)
+					{
+						// match "name", then everything after "stream" (optional) except for prepending newlines
+						preg_match("/name=\"([^\"]*)\".*stream[\n|\r]+([^\n\r].*)?$/s", $block, $matches);
+					}
+					// parse all other fields
+					else
+					{
+						// match "name" and optional value in between newline sequences
+						preg_match('/name=\"([^\"]*)\"[\n|\r]+([^\n\r].*)?\r$/s', $block, $matches);
+					}
+
+					// store the result, if any
+					$php_input[$matches[1]] = isset($matches[2]) ? $matches[2] : '';
+				}
+			}
+		}
+
+		// handle json input
+		elseif ($content_type == 'application/json')
+		{
+			$this->input_json = $php_input = \Security::clean(\Format::forge($php_input, 'json')->to_array());
+		}
+
+		// handle xml input
+		elseif ($content_type == 'application/xml' or $content_type == 'text/xml')
+		{
+			$this->input_xml = $php_input = \Security::clean(\Format::forge($php_input, 'xml')->to_array());
+		}
+
+		// unknown input format
+		elseif ($php_input and ! is_array($php_input))
+		{
+			// don't know how to handle it
+			throw new \DomainException('Don\'t know how to parse input of type: '.$content_type);
+		}
+
+		// store it as other input data as well
+		$method = strtolower($this->method());
+		if ($method == 'put' or $method == 'patch' or $method == 'delete')
+		{
+			$this->{'input_'.$method} = $php_input;
 		}
 	}
 }
