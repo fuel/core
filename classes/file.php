@@ -579,7 +579,13 @@ class File
 		{
 			throw new \FileAccessException('Cannot copy file: new path: "'.$new_path.'" already exists.');
 		}
-		return copy($path, $new_path);
+
+		if (copy($path, $new_path))
+		{
+			return chmod($new_path, fileperms($path));
+		}
+
+		return false;
 	}
 
 	/**
