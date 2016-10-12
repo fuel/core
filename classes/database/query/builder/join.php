@@ -119,8 +119,21 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			$sql = 'JOIN';
 		}
 
-		// Quote the table name that is being joined
-		$sql .= ' '.$db->quote_table($this->_table);
+		if ($this->_table instanceof \Database_Query_Builder_Select)
+		{
+			// Compile the subquery and add it
+			$sql .= ' ('.$this->_table->compile().')';
+		}
+		elseif ($this->_table instanceof \Database_Expression)
+		{
+			// Compile the expression and add its value
+			$sql .= ' ('.trim($this->_table->value(), ' ()').')';
+		}
+		else
+		{
+			// Quote the table name that is being joined
+			$sql .= ' '.$db->quote_table($this->_table);
+		}
 
 		$conditions = array();
 
