@@ -18,12 +18,17 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	/**
 	 * @var string  $_type  join type
 	 */
-	protected $_type;
+	protected $_type = null;
 
 	/**
 	 * @var string  $_table  join table
 	 */
-	protected $_table;
+	protected $_table = null;
+
+	/**
+	 * @var string  $_alias  join table alias
+	 */
+	protected $_alias = null;
 
 	/**
 	 * @var array  $_on  ON clauses
@@ -39,8 +44,17 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	 */
 	public function __construct($table, $type = null)
 	{
-		// Set the table to JOIN on
-		$this->_table = $table;
+		// Set the table and alias to JOIN on
+		if (is_array($table))
+		{
+			$this->_table = array_shift($table);
+			$this->_alias = array_shift($table);
+		}
+		else
+		{
+			$this->_table = $table;
+			$this->_alias = null;
+		}
 
 		if ($type !== null)
 		{
@@ -135,6 +149,12 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			$sql .= ' '.$db->quote_table($this->_table);
 		}
 
+		// Add the alias if needed
+		if ($this->_alias)
+		{
+			$sql .= ' AS '.$this->quote_identifier($this->_alias);
+		}
+
 		$conditions = array();
 
 		foreach ($this->_on as $condition)
@@ -171,8 +191,9 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	 */
 	public function reset()
 	{
-		$this->_type =
-		$this->_table = NULL;
+		$this->_type = null;
+		$this->_table = null;
+		$this->_alias = null;
 		$this->_on = array();
 	}
 }
