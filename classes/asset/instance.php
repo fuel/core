@@ -528,8 +528,10 @@ class Asset_Instance
 		// storage for the result
 		$result = '';
 
+		// make sure we have a type
+                isset($attr['type']) or $attr['type'] = 'text/javascript';
+
 		// render inline. or not
-		$attr['type'] = 'text/javascript';
 		if ($inline)
 		{
 			$result = html_tag('script', $attr, PHP_EOL.$file.PHP_EOL).PHP_EOL;
