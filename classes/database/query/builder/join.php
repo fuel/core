@@ -152,7 +152,7 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 		// Add the alias if needed
 		if ($this->_alias)
 		{
-			$sql .= ' AS '.$db->quote_identifier($this->_alias);
+			$sql .= ' AS '.$db->quote_table($this->_alias);
 		}
 
 		$conditions = array();
