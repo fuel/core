@@ -69,6 +69,7 @@ function displayPqp($output) {
 .pQp .pqp-main td b {float:right;font-weight:normal;color:#e6f387}
 .pQp .pqp-main td:hover {background:#2e2e2e}
 .pQp .pqp-side {float:left;width:20%;background:#000;color:#fff;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px;border-bottom-left-radius:30px;text-align:center}
+.pQp .pqp-side tr {background-color: #000;}
 .pQp .pqp-side td {padding:10px 0 5px 0;background-color: #000; text-align: center !important}
 .pQp .pqp-side var {color:#fff;font-size:15px}
 .pQp .pqp-side h4 {font-weight:normal;color:#f4fcca;font-size:11px;background-color:transparent;}
