@@ -53,7 +53,10 @@ class PhpQuickProfiler {
 
 	public function gatherPathData()
 	{
-		$this->output['paths'] = \Finder::instance()->paths();
+		foreach (\Finder::instance()->paths() as $path)
+		{
+			$this->output['paths'][] = \Fuel::clean_path($path);
+		}
 		$this->output['pathTotals'] = array(
 			'count' => count($this->output['paths']),
 		);
@@ -75,7 +78,7 @@ class PhpQuickProfiler {
 		foreach($files as $key => $file) {
 			$size = filesize($file);
 			$fileList[] = array(
-					'name' => $file,
+					'name' => \Fuel::clean_path($file),
 					'size' => $this->getReadableFileSize($size)
 				);
 			$fileTotals['size'] += $size;
