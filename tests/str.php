@@ -24,6 +24,7 @@ class Test_Str extends TestCase
 	{
 		return array(
 			array(15, 'Lorem ipsum dolor sit amet, Пиочинаючюи adipiscing elit.'),
+			array(1, '<p><a href="https://example.org/image.jpg"><img src="https://example.org/image.jpg"></a></p><p>other text</p>'),
 		);
 	}
 
@@ -35,8 +36,9 @@ class Test_Str extends TestCase
 	 */
 	public function test_truncate_plain($limit, $string)
 	{
+		$expected = $limit === 1? '<...' : 'Lorem ipsum dol...';
+
 		$output = Str::truncate($string, $limit);
-		$expected = 'Lorem ipsum dol...';
 		$this->assertEquals($expected, $output);
 	}
 
@@ -48,8 +50,9 @@ class Test_Str extends TestCase
 	 */
 	public function test_truncate_custom_continuation($limit, $string)
 	{
+		$expected = $limit === 1? '<..' : 'Lorem ipsum dol..';
+
 		$output = Str::truncate($string, $limit, '..');
-		$expected = 'Lorem ipsum dol..';
 		$this->assertEquals($expected, $output);
 	}
 
@@ -61,10 +64,9 @@ class Test_Str extends TestCase
 	 */
 	public function test_truncate_not_html($limit, $string)
 	{
-		$string = '<h1>'.$string.'</h1>';
+		$expected = $limit === 1? '<...' : 'Lorem ipsum dol...';
 
 		$output = Str::truncate($string, $limit, '...', false);
-		$expected = '<h1>Lorem ipsum...';
 		$this->assertEquals($expected, $output);
 	}
 
@@ -76,10 +78,9 @@ class Test_Str extends TestCase
 	 */
 	public function test_truncate_is_html($limit, $string)
 	{
-		$string = '<h1>'.$string.'</h1>';
+		$expected = $limit === 1? '<p><a href="https://example.org/image.jpg"><img src="https://example.org/image.jpg"></a></p><p>o...</p>' : 'Lorem ipsum dol...';
 
 		$output = Str::truncate($string, $limit, '...', true);
-		$expected = '<h1>Lorem ipsum dol...</h1>';
 		$this->assertEquals($expected, $output);
 	}
 
