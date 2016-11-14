@@ -529,7 +529,7 @@ class Asset_Instance
 		$result = '';
 
 		// make sure we have a type
-                isset($attr['type']) or $attr['type'] = 'text/javascript';
+		isset($attr['type']) or $attr['type'] = 'text/javascript';
 
 		// render inline. or not
 		if ($inline)
