@@ -40,6 +40,16 @@ class Log
 	);
 
 	/**
+	 * log file path
+	 */
+	protected static $path = null;
+
+	/**
+	 * log file filename
+	 */
+	protected static $filename = null;
+
+	/**
 	 * create the monolog instance
 	 */
 	public static function _init()
@@ -104,6 +114,9 @@ class Log
 			throw new \FuelException('Unable to access the log file. Please check the permissions on '.\Config::get('log_path').'. ('.$e->getMessage().')');
 		}
 
+		static::$path = $path;
+		static::$filename = $filename;
+
 		if ( ! filesize($path.$filename))
 		{
 			fwrite($handle, "<?php defined('COREPATH') or exit('No direct script access allowed'); ?>".PHP_EOL.PHP_EOL);
@@ -116,6 +129,17 @@ class Log
 		$formatter = new \Monolog\Formatter\LineFormatter("%level_name% - %datetime% --> %message%".PHP_EOL, \Config::get('log_date_format', 'Y-m-d H:i:s'));
 		$stream->setFormatter($formatter);
 		static::$monolog->pushHandler($stream);
+	}
+
+	/**
+	 * Get the current log filename, optionally with a prefix or suffix.
+	 */
+	public static function logfile($prefix = '', $suffix = '')
+	{
+		$ext = pathinfo(static::$filename, PATHINFO_EXTENSION);
+		$path = dirname(static::$filename);
+		$file = pathinfo(static::$filename, PATHINFO_FILENAME);
+		return static::$path.$path.DS.$prefix.$file.$suffix.($ext?('.'.$ext):'');
 	}
 
 	/**

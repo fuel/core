@@ -13,7 +13,7 @@ class Profiler
 
 	public static function init()
 	{
-		if ( ! \Fuel::$is_cli and ! \Input::is_ajax() and ! static::$profiler)
+		if ( ! static::$profiler)
 		{
 			static::$profiler = new \PhpQuickProfiler(FUEL_START_TIME);
 			static::$profiler->queries = array();
@@ -38,9 +38,9 @@ class Profiler
 		static::$profiler and \Console::log($text);
 	}
 
-	public static function output()
+	public static function output($return = false)
 	{
-		return static::$profiler ? static::$profiler->display(static::$profiler) : '';
+		return static::$profiler ? static::$profiler->display(static::$profiler, $return) : '';
 	}
 
 	public static function start($dbname, $sql, $stacktrace = array())

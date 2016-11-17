@@ -217,7 +217,8 @@ class PhpQuickProfiler {
 	     DISPLAY TO THE SCREEN -- CALL WHEN CODE TERMINATING
 	-----------------------------------------------------------*/
 
-	public function display($db = '') {
+	public function display($db = '', $return = false)
+	{
 		$this->db = $db;
 		$this->gatherConsoleData();
 		$this->gatherPathData();
@@ -225,6 +226,12 @@ class PhpQuickProfiler {
 		$this->gatherMemoryData();
 		$this->gatherQueryData();
 		$this->gatherSpeedData();
+
+		if ($return)
+		{
+			return $this->output;
+		}
+
 		require_once('display.php');
 		if (function_exists('displayPqp'))
 		{

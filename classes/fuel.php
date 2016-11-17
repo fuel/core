@@ -147,8 +147,12 @@ class Fuel
 			\Finder::instance()->read_cache('FuelFileFinder');
 		}
 
+		// Enable profiling if needed
 		static::$profiling = \Config::get('profiling', false);
-		static::$profiling and \Profiler::init();
+		if (static::$profiling or \Config::get('log_profile_data', false))
+		{
+			\Profiler::init();
+		}
 
 		// set a default timezone if one is defined
 		try
@@ -232,44 +236,70 @@ class Fuel
 	 */
 	public static function finish()
 	{
+		// caching enabled? then save the finder cache
 		if (\Config::get('caching', false))
 		{
 			\Finder::instance()->write_cache('FuelFileFinder');
 		}
 
-		if (static::$profiling and ! static::$is_cli and ! \Input::is_ajax())
+		// profiling enabled?
+		if (static::$profiling)
 		{
-			// Grab the output buffer and flush it, we will rebuffer later
-			$output = ob_get_clean();
+			\Profiler::mark('End of Fuel Execution');
 
-			$headers = headers_list();
-			$show = true;
-
-			foreach ($headers as $header)
+			// write profile data to a logfile if configured
+			if (\Config::get('log_profile_data', false))
 			{
-				if (stripos($header, 'content-type') === 0 and stripos($header, 'text/html') === false)
+				$file = \Log::logfile('', '-profiler-'.date('YmdHis'));
+				if ($handle = @fopen($file, 'w'))
 				{
-					$show = false;
+					if (\Input::is_ajax())
+					{
+						$content = \Format::forge()->to_json(\Profiler::output(true), true);
+					}
+					else
+					{
+						$content = 'return '.var_export(\Profiler::output(true), true);
+					}
+					fwrite($handle, $content);
+					fclose($handle);
 				}
 			}
 
-			if ($show)
+			// for interactive sessions, check if we need to output profiler data
+			if ( ! \Fuel::$is_cli)
 			{
-				\Profiler::mark('End of Fuel Execution');
-				if (preg_match("|</body>.*?</html>|is", $output))
+				$headers = headers_list();
+				$show = true;
+
+				foreach ($headers as $header)
 				{
-					$output  = preg_replace("|</body>.*?</html>|is", '', $output);
-					$output .= \Profiler::output();
-					$output .= '</body></html>';
+					if (stripos($header, 'content-type') === 0 and stripos($header, 'text/html') === false)
+					{
+						$show = false;
+					}
 				}
-				else
+
+				if ($show)
 				{
-					$output .= \Profiler::output();
+					$output = ob_get_clean();
+
+					if (preg_match("|</body>.*?</html>|is", $output))
+					{
+						$output  = preg_replace("|</body>.*?</html>|is", '', $output);
+						$output .= \Profiler::output();
+						$output .= '</body></html>';
+					}
+					else
+					{
+						$output .= \Profiler::output();
+					}
+
+					// restart the output buffer and send the new output
+					ob_start(\Config::get('ob_callback'));
+					echo $output;
 				}
 			}
-			// Restart the output buffer and send the new output
-			ob_start(\Config::get('ob_callback'));
-			echo $output;
 		}
 	}
 
