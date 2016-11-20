@@ -170,7 +170,7 @@ class Database_PDO_Connection extends \Database_Connection
 		// Make sure the database is connected
 		$this->_connection or $this->connect();
 
-		if ( ! empty($this->_config['profiling']))
+		if (\Fuel::$profiling and ! empty($this->_config['profiling']))
 		{
 			// Get the paths defined in config
 			$paths = \Config::get('profiling_paths');
