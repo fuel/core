@@ -234,7 +234,13 @@ class Errorhandler
 				\Cli::write('Stack trace:');
 				\Cli::write(\Debug::backtrace($e->getTrace()));
 			}
-			return;
+
+			if ( ! $fatal)
+			{
+				return;
+			}
+
+			exit(1);
 		}
 
 		if ($fatal)
