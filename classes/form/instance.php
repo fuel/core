@@ -105,7 +105,8 @@ class Form_Instance
 	 */
 	public function open($attributes = array(), array $hidden = array())
 	{
-		$attributes = ! is_array($attributes) ? array('action' => $attributes) : $attributes;
+		$attributes = is_array($attributes) ? $attributes : array('action' => $attributes);
+		$attributes += ($this->get_config('form_attributes') ?: array());
 
 		// If there is still no action set, Form-post
 		if( ! array_key_exists('action', $attributes) or empty($attributes['action']))
