@@ -545,7 +545,7 @@ class Validation
 			return $this->validated;
 		}
 
-		return array_key_exists($field, $this->validated) ? $this->validated[$field] : $default;
+		return \Arr::get($this->validated, $field, $default);
 	}
 
 	/**

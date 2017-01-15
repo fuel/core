@@ -391,8 +391,8 @@ class Asset_Instance
 				$result[$type] = '';
 			}
 
-			// only do a file search if the asset is not a URI
-			if ($this->_always_resolve or ! preg_match('|^(\w+:)?//|', $filename))
+			// only do a file search if the asset is not a URL
+			if ( ! preg_match('|^(\w+:)?//|', $filename))
 			{
 				// and only if the asset is local to the applications base_url
 				if ($this->_always_resolve or ! preg_match('|^(\w+:)?//|', $this->_asset_url) or strpos($this->_asset_url, \Config::get('base_url')) === 0)
@@ -528,8 +528,10 @@ class Asset_Instance
 		// storage for the result
 		$result = '';
 
+		// make sure we have a type
+		isset($attr['type']) or $attr['type'] = 'text/javascript';
+
 		// render inline. or not
-		$attr['type'] = 'text/javascript';
 		if ($inline)
 		{
 			$result = html_tag('script', $attr, PHP_EOL.$file.PHP_EOL).PHP_EOL;

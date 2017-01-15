@@ -32,6 +32,12 @@ class Str
 	 */
 	public static function truncate($string, $limit, $continuation = '...', $is_html = false)
 	{
+		static $self_closing_tags = array(
+			'area', 'base', 'br', 'col', 'command', 'embed'
+			, 'hr', 'img', 'input', 'keygen', 'link', 'meta'
+			, 'param', 'source', 'track', 'wbr'
+		);
+
 		$offset = 0;
 		$tags = array();
 		if ($is_html)
@@ -70,16 +76,21 @@ class Str
 					$correction += (strlen($match[0][0]) - mb_strlen($match[0][0]));
 				}
 			}
+
 			foreach ($matches as $match)
 			{
 				if($match[0][1] - $offset >= $limit)
 				{
 					break;
 				}
+
 				$tag = static::sub(strtok($match[0][0], " \t\n\r\0\x0B>"), 1);
-				if($tag[0] != '/')
+				if ($tag[0] != '/')
 				{
-					$tags[] = $tag;
+					if ( ! in_array($tag, $self_closing_tags))
+					{
+						$tags[] = $tag;
+					}
 				}
 				elseif (end($tags) == static::sub($tag, 1))
 				{
@@ -88,6 +99,7 @@ class Str
 				$offset += $match[1][1] - $match[0][1];
 			}
 		}
+
 		$new_string = static::sub($string, 0, $limit = min(static::length($string),  $limit + $offset));
 		$new_string .= (static::length($string) > $limit ? $continuation : '');
 		$new_string .= (count($tags = array_reverse($tags)) ? '</'.implode('></', $tags).'>' : '');

@@ -57,7 +57,7 @@ class Database_PDO_Connection extends \Database_Connection
 			return;
 		}
 
-		// make sure we have all connection parameters
+		// make sure we have all connection parameters, add defaults for those missing
 		$this->_config = array_merge(array(
 			'connection'  => array(
 				'dsn'        => '',
@@ -75,13 +75,10 @@ class Database_PDO_Connection extends \Database_Connection
 			'enable_cache' => true,
 			'profiling'    => false,
 			'readonly'     => false,
-			'attrs'        => array(),
+			'attrs'        => array(
+				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+			),
 		), $this->_config);
-
-		// Force PDO to use exceptions for all errors
-		$this->_config['attrs'] = array(
-			\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION
-		);
 
 		if ( ! empty($this->_config['connection']['persistent']))
 		{
@@ -173,7 +170,7 @@ class Database_PDO_Connection extends \Database_Connection
 		// Make sure the database is connected
 		$this->_connection or $this->connect();
 
-		if ( ! empty($this->_config['profiling']))
+		if (\Fuel::$profiling and ! empty($this->_config['profiling']))
 		{
 			// Get the paths defined in config
 			$paths = \Config::get('profiling_paths');

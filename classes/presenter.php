@@ -143,9 +143,21 @@ abstract class Presenter
 	/**
 	 * Construct the View object
 	 */
-	protected function set_view()
+	public function set_view($view = null)
 	{
-		$this->_view instanceOf View or $this->_view = \View::forge($this->_view);
+		// construct a view object if needed
+		if (is_null($view))
+		{
+			$view = $this->_view;
+			$this->_view = null;
+		}
+		if ( ! $view instanceOf View)
+		{
+			$view = \View::forge($view, $this->_view);
+		}
+
+		// store the constructed object
+		$this->_view = $view;
 	}
 
 	/**
@@ -225,7 +237,6 @@ abstract class Presenter
 	{
 		is_null($filter) and $filter = $this->_auto_filter;
 		$this->_view->set($key, $value, $filter);
-
 		return $this;
 	}
 

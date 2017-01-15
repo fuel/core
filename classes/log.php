@@ -40,6 +40,16 @@ class Log
 	);
 
 	/**
+	 * log file path
+	 */
+	protected static $path = null;
+
+	/**
+	 * log file filename
+	 */
+	protected static $filename = null;
+
+	/**
 	 * create the monolog instance
 	 */
 	public static function _init()
@@ -64,60 +74,72 @@ class Log
 		// load the file config
 		\Config::load('file', true);
 
+		// get the required folder permissions
+		$permission = \Config::get('file.chmod.folders', 0777);
+
+		// determine the name and location of the logfile
+		$path = \Config::get('log_path', APPPATH.'logs'.DS);
+
+		// and make sure it exsts
+		if ( ! is_dir($path) or ! is_writable($path))
+		{
+			\Config::set('log_threshold', \Fuel::L_NONE);
+			throw new \FuelException('Unable to create the log file. The configured log path "'.$path.'" does not exist.');
+		}
+
+		// determine the name of the logfile
+		$filename = \Config::get('log_file', null);
+		if (empty($filename))
+		{
+			$filename = date('Y').DS.date('m').DS.date('d').'.php';
+		}
+
+		$fullpath = dirname($filename);
+
 		// make sure the log directories exist
 		try
 		{
-			// determine the name and location of the logfile
-			$path     = \Config::get('log_path', APPPATH.'logs'.DS);
-			$filename = \Config::get('log_file', null);
-
-			if(empty($filename))
+			// make sure the full path exists
+			if ( ! is_dir($path.$fullpath))
 			{
-				$rootpath = $path.date('Y').DS;
-				$filepath = $path.date('Y/m').DS;
-				$filename = $filepath.date('d').'.php';
-			}
-			else
-			{
-				$rootpath = $path;
-				$filepath = $path;
-				$filename = $path.$filename;
+				\File::create_dir($path, $fullpath, $permission);
 			}
 
-			// get the required folder permissions
-			$permission = \Config::get('file.chmod.folders', 0777);
-
-			if ( ! is_dir($rootpath))
-			{
-				mkdir($rootpath, 0777, true);
-				chmod($rootpath, $permission);
-			}
-			if ( ! is_dir($filepath))
-			{
-				mkdir($filepath, 0777, true);
-				chmod($filepath, $permission);
-			}
-
-			$handle = fopen($filename, 'a');
+			// open the file
+			$handle = fopen($path.$filename, 'a');
 		}
 		catch (\Exception $e)
 		{
 			\Config::set('log_threshold', \Fuel::L_NONE);
-			throw new \FuelException('Unable to create or write to the log file. Please check the permissions on '.\Config::get('log_path').'. ('.$e->getMessage().')');
+			throw new \FuelException('Unable to access the log file. Please check the permissions on '.\Config::get('log_path').'. ('.$e->getMessage().')');
 		}
 
-		if ( ! filesize($filename))
+		static::$path = $path;
+		static::$filename = $filename;
+
+		if ( ! filesize($path.$filename))
 		{
 			fwrite($handle, "<?php defined('COREPATH') or exit('No direct script access allowed'); ?>".PHP_EOL.PHP_EOL);
-			chmod($filename, \Config::get('file.chmod.files', 0666));
+			chmod($path.$filename, \Config::get('file.chmod.files', 0666));
 		}
 		fclose($handle);
 
 		// create the streamhandler, and activate the handler
-		$stream = new \Monolog\Handler\StreamHandler($filename, \Monolog\Logger::DEBUG);
-		$formatter = new \Monolog\Formatter\LineFormatter("%level_name% - %datetime% --> %message%".PHP_EOL, "Y-m-d H:i:s");
+		$stream = new \Monolog\Handler\StreamHandler($path.$filename, \Monolog\Logger::DEBUG);
+		$formatter = new \Monolog\Formatter\LineFormatter("%level_name% - %datetime% --> %message%".PHP_EOL, \Config::get('log_date_format', 'Y-m-d H:i:s'));
 		$stream->setFormatter($formatter);
 		static::$monolog->pushHandler($stream);
+	}
+
+	/**
+	 * Get the current log filename, optionally with a prefix or suffix.
+	 */
+	public static function logfile($prefix = '', $suffix = '')
+	{
+		$ext = pathinfo(static::$filename, PATHINFO_EXTENSION);
+		$path = dirname(static::$filename);
+		$file = pathinfo(static::$filename, PATHINFO_FILENAME);
+		return static::$path.$path.DS.$prefix.$file.$suffix.($ext?('.'.$ext):'');
 	}
 
 	/**

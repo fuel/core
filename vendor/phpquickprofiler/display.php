@@ -69,6 +69,7 @@ function displayPqp($output) {
 .pQp .pqp-main td b {float:right;font-weight:normal;color:#e6f387}
 .pQp .pqp-main td:hover {background:#2e2e2e}
 .pQp .pqp-side {float:left;width:20%;background:#000;color:#fff;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px;border-bottom-left-radius:30px;text-align:center}
+.pQp .pqp-side tr {background-color: #000;}
 .pQp .pqp-side td {padding:10px 0 5px 0;background-color: #000; text-align: center !important}
 .pQp .pqp-side var {color:#fff;font-size:15px}
 .pQp .pqp-side h4 {font-weight:normal;color:#f4fcca;font-size:11px;background-color:transparent;}
@@ -126,8 +127,10 @@ CSS
 	$return_output .=<<<JAVASCRIPT
 <!-- JavaScript -->
 <script type="text/javascript">
-	var PQP_DETAILS = true;
-	var PQP_HEIGHT = "tall";
+	var PQP_SHOWONLOAD = (typeof PQP_SHOWONLOAD != "undefined" && PQP_SHOWONLOAD) ? "open" : "closed";
+	var PQP_HEIGHT = (typeof PQP_HEIGHT != "undefined" && PQP_HEIGHT == "tall") ? "tall" : "short";
+	var PQP_DETAILS = (typeof PQP_DETAILS != "undefined" && PQP_DETAILS) ? true : false;
+	var PQP_BOTTOM = (typeof PQP_BOTTOM == "undefined" || PQP_BOTTOM == true) ? true : false;
 
 	addEvent(window, 'load', loadCSS);
 
@@ -261,7 +264,7 @@ CSS
 	  e.returnValue = false;
 	}
 
-	window.onload = function(){
+	window.onload = function() {
 		document.getElementById('pqp-console').onmousewheel = function(e){
 		  document.getElementById('pqp-console').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
@@ -298,7 +301,26 @@ CSS
 		  document.getElementById('pqp-post').scrollTop -= e.wheelDeltaY;
 		  preventDefault(e);
 		}
-		toggleBottom();
+		if (PQP_BOTTOM)
+		{
+			toggleBottom();
+		}
+		if (PQP_SHOWONLOAD == 'open')
+		{
+			setTimeout(function() {
+				openProfiler();
+				if (PQP_HEIGHT == 'short')
+				{
+					PQP_HEIGHT = 'tall';
+					toggleHeight();
+				}
+				if (PQP_DETAILS == false)
+				{
+					PQP_DETAILS = true;
+					toggleDetails();
+				}
+			});
+		}
 	}
 </script>
 JAVASCRIPT;

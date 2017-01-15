@@ -60,7 +60,7 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 		// add the charset to the DSN if needed
 		if ($this->_config['charset'] and strpos($this->_config['connection']['dsn'], ';charset=') === false)
 		{
-			$config['dsn'] .= ';charset='.$this->_config['charset'];
+			$this->_config['connection']['dsn'] .= ';charset='.$this->_config['charset'];
 		}
 
 		// create the PDO instance

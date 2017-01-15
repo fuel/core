@@ -156,7 +156,7 @@ class Redis_Db
 			for ($written = 0; $written < strlen($command); $written += $fwrite)
 			{
 				$fwrite = fwrite($this->connection, substr($command, $written));
-				if ($fwrite === false)
+				if ($fwrite === false || $fwrite <= 0)
 				{
 					throw new \RedisException('Failed to write entire command to stream');
 				}
@@ -234,9 +234,10 @@ class Redis_Db
 		// build the Redis unified protocol command
 		array_unshift($args, strtoupper($name));
 
-		$command = sprintf('*%d%s%s%s', count($args), CRLF, implode(array_map(function($arg) {
-			return sprintf('$%d%s%s', strlen($arg), CRLF, $arg);
-		}, $args), CRLF), CRLF);
+		$command = '*' . count($args) . CRLF;
+		foreach ($args as $arg) {
+			$command .= '$' . strlen($arg) . CRLF . $arg . CRLF;
+		}
 
 		// add it to the pipeline queue
 		$this->queue[] = $command;

@@ -185,12 +185,12 @@ class File
 		}
 
 		// unify the path separators, and get the part we need to add to the basepath
-		$new_dir = str_replace(array('\\', '/'), DS, $new_dir);
+		$segments = explode(DS, str_replace(array('\\', '/'), DS, $new_dir));
 
 		// recursively create the directory. we can't use mkdir permissions or recursive
 		// due to the fact that mkdir is restricted by the current users umask
-		$path = '';
-		foreach (explode(DS, $new_dir) as $dir)
+		$path = array_shift($segments);
+		foreach ($segments as $dir)
 		{
 			// some security checking
 			if ($dir == '.' or $dir == '..')
@@ -211,7 +211,11 @@ class File
 				}
 				catch (\PHPErrorException $e)
 				{
-					return false;
+					if ( ! is_dir($path))
+					{
+						return false;
+					}
+					chmod($path, $chmod);
 				}
 			}
 		}
@@ -575,7 +579,13 @@ class File
 		{
 			throw new \FileAccessException('Cannot copy file: new path: "'.$new_path.'" already exists.');
 		}
-		return copy($path, $new_path);
+
+		if (copy($path, $new_path))
+		{
+			return chmod($new_path, fileperms($path));
+		}
+
+		return false;
 	}
 
 	/**

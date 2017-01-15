@@ -175,6 +175,13 @@ class Request
 	public $route = null;
 
 	/**
+	 * The Request's INPUT object.
+	 *
+	 * @var  Input_Instance
+	 */
+	protected $input = null;
+
+	/**
 	 * @var  string  $method  request method
 	 */
 	protected $method = null;
@@ -265,7 +272,19 @@ class Request
 	public function __construct($uri, $route = true, $method = null)
 	{
 		$this->uri = new \Uri($uri);
-		$this->method = $method ?: \Input::method();
+
+		if (static::$active)
+		{
+			// hmvc request, forge a new instance
+			$this->input = \Input::forge($this, static::$active->input());
+		}
+		else
+		{
+			// main request, get the global instance
+			$this->input = \Input::instance();
+		}
+
+		$this->method = $method ?: $this->input->method();
 
 		logger(\Fuel::L_INFO, 'Creating a new '.(static::$main==null ? 'main' : 'HMVC').' Request with URI = "'.$this->uri->get().'"', __METHOD__);
 
@@ -544,6 +563,118 @@ class Request
 	public function parent()
 	{
 		return $this->parent;
+	}
+
+	/**
+	 * Returns this Requests Input object
+	 *
+	 * @return  Input
+	 */
+	public function input()
+	{
+		return $this->input;
+	}
+
+	/**
+	 * set additional GET input variables
+	 *
+	 * @return  Input
+	 */
+	public function set_get($var, $value)
+	{
+		if ( ! is_array($var))
+		{
+			$var = array($var => $value);
+		}
+
+		$this->input->_set('get', $var);
+
+		return $this;
+	}
+
+	/**
+	 * set additional POST input variables
+	 *
+	 * @return  Input
+	 */
+	public function set_post($var, $value)
+	{
+		if ( ! is_array($var))
+		{
+			$var = array($var => $value);
+		}
+
+		$this->input->_set('post', $var);
+
+		return $this;
+	}
+
+	/**
+	 * set additional JSON input variables
+	 *
+	 * @return  Input
+	 */
+	public function set_json($var, $value)
+	{
+		if ( ! is_array($var))
+		{
+			$var = array($var => $value);
+		}
+
+		$this->input->_set('json', $var);
+
+		return $this;
+	}
+
+	/**
+	 * set additional PUT input variables
+	 *
+	 * @return  Input
+	 */
+	public function set_put($var, $value)
+	{
+		if ( ! is_array($var))
+		{
+			$var = array($var => $value);
+		}
+
+		$this->input->_set('put', $var);
+
+		return $this;
+	}
+
+	/**
+	 * set additional PATCH input variables
+	 *
+	 * @return  Input
+	 */
+	public function set_patch($var, $value)
+	{
+		if ( ! is_array($var))
+		{
+			$var = array($var => $value);
+		}
+
+		$this->input->_set('patch', $var);
+
+		return $this;
+	}
+
+	/**
+	 * set additional DELETE input variables
+	 *
+	 * @return  Input
+	 */
+	public function set_delete($var, $value)
+	{
+		if ( ! is_array($var))
+		{
+			$var = array($var => $value);
+		}
+
+		$this->input->_set('delete', $var);
+
+		return $this;
 	}
 
 	/**

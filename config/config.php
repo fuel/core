@@ -52,7 +52,12 @@ return array(
 	 */
 	'index_file' => false,
 
-	'profiling'  => false,
+	/**
+	 * application profiling
+	 */
+	'profiling'        => false,
+
+	'log_profile_data' => false,
 
 	/**
 	 * profiling_paths - The paths to show in profiler.

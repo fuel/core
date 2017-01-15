@@ -144,7 +144,7 @@ class Test_Uri extends TestCase
 		Config::set('base_url', 'http://example.com/test');
 		Config::set('index_file', null);
 		Config::set('url_suffix', '');
-		$_GET = array('one' => 1, 'two' => 2);
+		Input::instance()->_set('get', array('one' => 1, 'two' => 2));
 
 		$output = Uri::update_query_string(array('three' => 3));
 		$expected = 'http://example.com/test?one=1&two=2&three=3';
