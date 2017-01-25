@@ -198,6 +198,30 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	}
 
 	/**
+	 * Adds an opening bracket the last created JOIN statement.
+	 *
+	 * @return  $this
+	 */
+	public function on_open()
+	{
+		$this->_last_join->on_open();
+
+		return $this;
+	}
+
+	/**
+	 * Adds a closing bracket for the last created JOIN statement.
+	 *
+	 * @return  $this
+	 */
+	public function on_close()
+	{
+		$this->_last_join->on_close();
+
+		return $this;
+	}
+
+	/**
 	 * Creates a "GROUP BY ..." filter.
 	 *
 	 * @param   mixed  $columns  column name or array($column, $column) or object

@@ -110,6 +110,30 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	}
 
 	/**
+	 * Adds a opening bracket.
+	 *
+	 * @return  $this
+	 */
+	public function on_open()
+	{
+		$this->_on[] = array('', '', '', '(');
+
+		return $this;
+	}
+
+	/**
+	 * Adds a closing bracket.
+	 *
+	 * @return  $this
+	 */
+	public function on_close()
+	{
+		$this->_on[] = array('', '', '', ')');
+
+		return $this;
+	}
+
+	/**
 	 * Compile the SQL partial for a JOIN statement and return it.
 	 *
 	 * @param   mixed  $db  Database_Connection instance or instance name
@@ -162,17 +186,35 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			// Split the condition
 			list($c1, $op, $c2, $chaining) = $condition;
 
-			// Add chain type
-			$conditions[] = ' '.$chaining.' ';
 
-			if ($op)
+			// Just a chaining character?
+			if (empty($c1.$op.$c2))
 			{
-				// Make the operator uppercase and spaced
-				$op = ' '.strtoupper($op);
+				$conditions[] = $chaining;
 			}
+			else
+			{
+				// Check if we have a pending bracket open
+				if (end($conditions) == '(')
+				{
+					// Update the chain type
+					$conditions[key($conditions)] = ' '.$chaining.' (';
+				}
+				else
+				{
+					// Just add chain type
+					$conditions[] = ' '.$chaining.' ';
+				}
 
-			// Quote each of the identifiers used for the condition
-			$conditions[] = $db->quote_identifier($c1).$op.' '.(is_null($c2) ? 'NULL' : $db->quote_identifier($c2));
+				if ($op)
+				{
+					// Make the operator uppercase and spaced
+					$op = ' '.strtoupper($op);
+				}
+
+				// Quote each of the identifiers used for the condition
+				$conditions[] = $db->quote_identifier($c1).$op.' '.(is_null($c2) ? 'NULL' : $db->quote_identifier($c2));
+			}
 		}
 
 		// remove the first chain type
