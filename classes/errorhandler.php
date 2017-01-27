@@ -90,9 +90,9 @@ class Errorhandler
 		if ($last_error AND in_array($last_error['type'], static::$fatal_levels))
 		{
 			$severity = static::$levels[$last_error['type']];
-			logger(static::$loglevel, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line']);
-
 			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
+			logger(static::$loglevel, $error, $severity);
+
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
 				static::show_php_error($error);
@@ -123,7 +123,7 @@ class Errorhandler
 			}
 
 			$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
-			logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
+			logger(static::$loglevel, $e, $severity);
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{

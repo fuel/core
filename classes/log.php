@@ -220,21 +220,22 @@ class Log
 			return false;
 		}
 
-		// if it's not an array, assume it's an "up to" level
-		if ( ! is_array($loglabels))
+		// construct the log message string
+		if ($msg instanceOf \Exception or $msg instanceOf \Throwable)
 		{
-			$a = array();
-			foreach (static::$levels as $l => $label)
-			{
-				$l >= $loglabels and $a[] = $l;
-			}
-			$loglabels = $a;
+			// exceptions provide additional info
+			$message = (empty($method) ? '' : $method.' - ').$msg->getCode().' - '.$msg->getMessage().' in '.$msg->getFile().' on line '.$msg->getLine();
+		}
+		else
+		{
+			// just the message string passed
+			$message = (empty($method) ? '' : $method.' - ').$msg;
 		}
 
-		// if profiling is active log the message to the profile
+		// if profiling is active log the message to the profiler
 		if (\Config::get('profiling'))
 		{
-			\Console::log($method.' - '.$msg);
+			\Console::log($message);
 		}
 
 		// convert the level to monolog standards if needed
@@ -246,14 +247,26 @@ class Log
 		{
 			if ( ! $level = array_search($level, static::$levels))
 			{
-				$level = 250;	// can't map it, convert it to a NOTICE
+				// can't map it, convert it to a NOTICE
+				$level = 250;
 			}
 		}
 
 		// make sure $level has the correct value
 		if ((is_int($level) and ! isset(static::$levels[$level])) or (is_string($level) and ! array_search(strtoupper($level), static::$levels)))
 		{
-			throw new \FuelException('Invalid level "'.$level.'" passed to logger()');
+			throw new \FuelException('Invalid log level "'.$level.'" passed to Log::write()');
+		}
+
+		// if it's not an array, assume it's an "up to" level
+		if ( ! is_array($loglabels))
+		{
+			$a = array();
+			foreach (static::$levels as $l => $label)
+			{
+				$l >= $loglabels and $a[] = $l;
+			}
+			$loglabels = $a;
 		}
 
 		// do we need to log the message with this level?
@@ -262,8 +275,17 @@ class Log
 			return false;
 		}
 
-		// log the message
-		static::instance()->log($level, (empty($method) ? '' : $method.' - ').$msg);
+		// log it
+		if ($msg instanceOf \Exception or $msg instanceOf \Throwable)
+		{
+			// pass the object to Monolog
+			static::instance()->log($level, $msg);
+		}
+		else
+		{
+			// pass the message string to Monolog
+			static::instance()->log($level, $message);
+		}
 
 		return true;
 	}
