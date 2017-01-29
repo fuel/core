@@ -201,7 +201,7 @@ class Log
 	 * @return	bool
 	 * @throws	\FuelException
 	 */
-	public static function write($level, $msg, $method = null)
+	public static function write($level, $msg, $method = 'INFO')
 	{
 		// defined default error labels
 		static $oldlabels = array(
@@ -224,12 +224,12 @@ class Log
 		if ($msg instanceOf \Exception or $msg instanceOf \Throwable)
 		{
 			// exceptions provide additional info
-			$message = (empty($method) ? '' : $method.' - ').$msg->getCode().' - '.$msg->getMessage().' in '.$msg->getFile().' on line '.$msg->getLine();
+			$message = $method.', code '.$msg->getCode().' --> '.$msg->getMessage().' in '.$msg->getFile().' on line '.$msg->getLine();
 		}
 		else
 		{
 			// just the message string passed
-			$message = (empty($method) ? '' : $method.' - ').$msg;
+			$message = $method.' --> '.$msg;
 		}
 
 		// if profiling is active log the message to the profiler
@@ -276,16 +276,7 @@ class Log
 		}
 
 		// log it
-		if ($msg instanceOf \Exception or $msg instanceOf \Throwable)
-		{
-			// pass the object to Monolog
-			static::instance()->log($level, $msg);
-		}
-		else
-		{
-			// pass the message string to Monolog
-			static::instance()->log($level, $message);
-		}
+		static::instance()->log($level, $message, array($method => $msg));
 
 		return true;
 	}
