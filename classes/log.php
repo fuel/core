@@ -198,10 +198,11 @@ class Log
 	 * @param	int|string	$level		the error level
 	 * @param	string		$msg		the error message
 	 * @param	string		$method		information about the method
+	 * @param	array		$context	additional monolog context
 	 * @return	bool
 	 * @throws	\FuelException
 	 */
-	public static function write($level, $msg, $method = null)
+	public static function write($level, $msg, $method = null, $context = array())
 	{
 		// defined default error labels
 		static $oldlabels = array(
@@ -279,12 +280,13 @@ class Log
 		if ($msg instanceOf \Exception or $msg instanceOf \Throwable)
 		{
 			// pass the object to Monolog
-			static::instance()->log($level, $msg);
+			$context['exception'] = $msg;
+			static::instance()->log($level, $msg, $context);
 		}
 		else
 		{
 			// pass the message string to Monolog
-			static::instance()->log($level, $message);
+			static::instance()->log($level, $message, $context);
 		}
 
 		return true;
