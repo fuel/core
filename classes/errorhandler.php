@@ -29,13 +29,13 @@ class PhpErrorException extends \ErrorException
 		// handle the error based on the config and the environment we're in
 		if (static::$count <= \Config::get('errors.throttle', 10))
 		{
+			logger(static::$loglevel, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
+
 			if (\Fuel::$env != \Fuel::PRODUCTION and ($this->code & error_reporting()) == $this->code)
 			{
 				static::$count++;
 				\Errorhandler::exception_handler(new \ErrorException($this->message, $this->code, 0, $this->file, $this->line));
 			}
-
-			logger(static::$loglevel, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line, get_class($this));
 		}
 		elseif (\Fuel::$env != \Fuel::PRODUCTION
 				and static::$count == (\Config::get('errors.throttle', 10) + 1)
@@ -91,7 +91,7 @@ class Errorhandler
 		{
 			$severity = static::$levels[$last_error['type']];
 			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
-			logger(static::$loglevel, $error, get_class($error));
+			logger(static::$loglevel, $error, $severity);
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
@@ -123,7 +123,7 @@ class Errorhandler
 			}
 
 			$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
-			logger(static::$loglevel, $e, get_class($e));
+			logger(static::$loglevel, $e, $severity);
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
@@ -184,7 +184,7 @@ class Errorhandler
 	public static function notice($msg, $always_show = false)
 	{
 		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::get(debug_backtrace(), 1));
-		logger(\Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line'], 'Notice');
+		logger(\Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
 
 		if (\Fuel::$is_test or ( ! $always_show and (\Fuel::$env == \Fuel::PRODUCTION or \Config::get('errors.notices', true) === false)))
 		{
