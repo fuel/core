@@ -44,17 +44,16 @@ if ( ! function_exists('import'))
 /**
  * Shortcut for writing to the Log
  *
- * @param	int|string	the error level
- * @param	string	the error message
- * @param	string	information about the method
- * @return	bool
+ * @param   int|string    the error level
+ * @param   string        the error message
+ * @param   string|array  message context information
+ * @return  bool
  */
 if ( ! function_exists('logger'))
 {
-	function logger($level, $msg, $method = null)
+	function logger($level, $msg, $context = null)
 	{
-		// write it to the log
-		return \Log::write($level, $msg, $method);
+		return \Log::write($level, $msg, $context);
 	}
 }
 

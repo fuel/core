@@ -32,10 +32,12 @@ class PhpErrorException extends \ErrorException
 			if (\Fuel::$env != \Fuel::PRODUCTION and ($this->code & error_reporting()) == $this->code)
 			{
 				static::$count++;
-				\Errorhandler::exception_handler(new \ErrorException($this->message, $this->code, 0, $this->file, $this->line));
+				\Errorhandler::exception_handler($this);
 			}
-
-			logger(static::$loglevel, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line, get_class($this));
+			else
+			{
+				logger(static::$loglevel, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
+			}
 		}
 		elseif (\Fuel::$env != \Fuel::PRODUCTION
 				and static::$count == (\Config::get('errors.throttle', 10) + 1)
@@ -91,7 +93,7 @@ class Errorhandler
 		{
 			$severity = static::$levels[$last_error['type']];
 			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
-			logger(static::$loglevel, $error, get_class($error));
+			logger(static::$loglevel, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line'], array('error' => $error));
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
@@ -123,7 +125,14 @@ class Errorhandler
 			}
 
 			$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
-			logger(static::$loglevel, $e, get_class($e));
+			if ($e instanceOf PhpErrorException)
+			{
+				logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), array('error' => $e));
+			}
+			else
+			{
+				logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), array('exception' => $e));
+			}
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
@@ -184,7 +193,7 @@ class Errorhandler
 	public static function notice($msg, $always_show = false)
 	{
 		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::get(debug_backtrace(), 1));
-		logger(\Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line'], 'Notice');
+		logger(\Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
 
 		if (\Fuel::$is_test or ( ! $always_show and (\Fuel::$env == \Fuel::PRODUCTION or \Config::get('errors.notices', true) === false)))
 		{
