@@ -541,7 +541,7 @@ class Database_Schema
 
 		if ($is_default)
 		{
-			$charset = 'DEFAULT '.$charset;
+			$charset = ' DEFAULT '.$charset;
 		}
 
 		if ( ! empty($collation))
