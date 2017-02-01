@@ -93,7 +93,7 @@ class Errorhandler
 		{
 			$severity = static::$levels[$last_error['type']];
 			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
-			logger(static::$loglevel, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line'], array('error' => $error));
+			logger(static::$loglevel, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line'], array('exception' => $error));
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
@@ -125,14 +125,7 @@ class Errorhandler
 			}
 
 			$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
-			if ($e instanceOf PhpErrorException)
-			{
-				logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), array('error' => $e));
-			}
-			else
-			{
-				logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), array('exception' => $e));
-			}
+			logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), array('exception' => $e));
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
