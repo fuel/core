@@ -406,9 +406,9 @@ class Fuel
 		// framework default paths
 		static $paths = array(
 			'APPPATH/' => APPPATH,
-			'DOCROOT/' => DOCROOT,
 			'COREPATH/' => COREPATH,
 			'PKGPATH/' => PKGPATH,
+			'DOCROOT/' => DOCROOT,
 			'VENDORPATH/' => VENDORPATH,
 		);
 
