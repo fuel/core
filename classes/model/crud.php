@@ -263,9 +263,18 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		$connection = static::get_connection();
 
 		// Get the columns
-		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
-			\Database_Connection::instance($connection)->quote_identifier($select).
-			') AS count_result');
+		if ($connection instanceof \Database_Connection)
+		{
+			$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
+				$connection->quote_identifier($select).
+				') AS count_result');
+		}
+		else
+		{
+			$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
+				\Database_Connection::instance($connection)->quote_identifier($select).
+				') AS count_result');
+		}
 
 		// Remove the current select and
 		$query = \DB::select($columns);
@@ -331,7 +340,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * Get the connection to use for reading or writing
 	 *
 	 * @param  boolean  $writable Get a writable connection
-	 * @return Database_Connection
+	 * @return mixed    Database profile name (string) or Database_Connection (object)
 	 */
 	protected static function get_connection($writable = false)
 	{
