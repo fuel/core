@@ -463,10 +463,10 @@ abstract class Controller_Rest extends \Controller
 		}
 
 		// We need to retrieve authentication informations from the $digest_string variable
-		$digest_params = explode(', ', $digest_string);
+		$digest_params = explode(',', $digest_string);
 		foreach ($digest_params as $digest_param)
 		{
-			$digest_param = explode('=', $digest_param, 2);
+			$digest_param = explode('=', trim($digest_param), 2);
 			if (isset($digest_param[1]))
 			{
 				$digest[$digest_param[0]] = trim($digest_param[1], '"');
