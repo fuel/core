@@ -219,7 +219,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 	 * @throws  \Database_Exception
 	 *
 	 * @return  mixed  when SELECT then return an iterator of results,<br>
-	 *                 when UPDATE then return a list of insert id and rows created,<br>
+	 *                 when INSERT then return a list of insert id and rows created,<br>
 	 *                 in other case return the number of rows affected
 	 */
 	public function query($type, $sql, $as_object)
