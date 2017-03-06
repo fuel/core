@@ -269,7 +269,7 @@ class Migrate
 		elseif ($version !== '')
 		{
 			// if version has a value, make sure only 1 item was passed
-			if (static::$default + static::$module_count + static::$package_count > 1)
+			if ((int) static::$default + static::$module_count + static::$package_count > 1)
 			{
 				\Cli::write('Migration: version only accepts 1 item.');
 				return;
@@ -367,7 +367,7 @@ class Migrate
 		$version = \Cli::option('v', \Cli::option('version', null));
 
 		// if version has a value, make sure only 1 item was passed
-		if ($version and (static::$default + static::$module_count + static::$package_count > 1))
+		if ($version and ((int) static::$default + static::$module_count + static::$package_count > 1))
 		{
 			\Cli::write('Migration: version only accepts 1 item.');
 			return;
@@ -402,7 +402,7 @@ class Migrate
 		$version = \Cli::option('v', \Cli::option('version', null));
 
 		// if version has a value, make sure only 1 item was passed
-		if ($version and (static::$default + static::$module_count + static::$package_count > 1))
+		if ($version and ((int) static::$default + static::$module_count + static::$package_count > 1))
 		{
 			\Cli::write('Migration: version only accepts 1 item.');
 			return;
