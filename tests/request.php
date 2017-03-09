@@ -74,7 +74,7 @@ class Test_Request extends TestCase
 
 		if ($parsed_data === null)
 		{
-			$this->setExpectedException('\OutOfRangeException');
+			$this->expectException('\OutOfRangeException');
 		}
 		$req->set_response($response_data, 200, $response_mime, [], $accept_header);
 		$this->assertEquals($parsed_data, $req->response()->body());

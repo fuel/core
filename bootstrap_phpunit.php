@@ -80,4 +80,11 @@ if (class_exists('AspectMock\Kernel'))
 }
 
 // Import the TestCase class
-import('testcase');
+if (class_exists('\PHPUnit\Framework\TestCase'))
+{
+	import('testcase_ns');
+}
+else
+{
+	import('testcase');
+}

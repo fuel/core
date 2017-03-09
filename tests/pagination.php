@@ -153,7 +153,7 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		// not enough segments in the URI to add the page number
-		$this->setExpectedException('RunTimeException');
+		$this->expectException('RunTimeException');
 
 		$test = $_make_link->invoke($pagination, 1);
 	}
