@@ -24,6 +24,9 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 	 */
 	public function list_tables($like = null)
 	{
+		// Make sure the database is connected
+		$this->_connection or $this->connect();
+
 		$query = 'SHOW TABLES';
 
 		if (is_string($like))
