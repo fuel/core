@@ -340,7 +340,7 @@ class Database_PDO_Connection extends \Database_Connection
 	public function list_columns($table, $like = null)
 	{
 		$this->_connection or $this->connect();
-		$q = $this->_connection->prepare("DESCRIBE ".$table);
+		$q = $this->_connection->prepare("DESCRIBE ".$this->quote_table($table));
 		$q->execute();
 		$result  = $q->fetchAll();
 		$count   = 0;
@@ -413,6 +413,18 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 
 		return $columns;
+	}
+
+	/**
+	 * List indexes
+	 *
+	 * @param string $like
+	 *
+	 * @throws \FuelException
+	 */
+	public function list_indexes($table, $like = null)
+	{
+		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
 	}
 
 	/**

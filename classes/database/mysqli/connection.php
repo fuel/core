@@ -500,6 +500,50 @@ class Database_MySQLi_Connection extends \Database_Connection
 	}
 
 	/**
+	 * List indexes
+	 *
+	 * @param string $like
+	 *
+	 * @throws \FuelException
+	 */
+	public function list_indexes($table, $like = null)
+	{
+		// Quote the table name
+		$table = $this->quote_table($table);
+
+		if (is_string($like))
+		{
+			// Search for index names
+			$result = $this->query(\DB::SELECT, 'SHOW INDEX FROM '.$table.' WHERE '.$this->quote_identifier('Key_name').' LIKE '.$this->quote($like), false);
+		}
+		else
+		{
+			// Find all index names
+			$result = $this->query(\DB::SELECT, 'SHOW INDEX FROM '.$table, false);
+		}
+
+		// unify the result
+		$indexes = array();
+		foreach ($result as $row)
+		{
+			$index = array(
+				'name' => $row['Key_name'],
+				'column' => $row['Column_name'],
+				'order' => $row['Seq_in_index'],
+				'type' => $row['Index_type'],
+				'primary' => $row['Key_name'] == 'PRIMARY' ? true : false,
+				'unique' => $row['Non_unique'] == 0 ? true : false,
+				'null' => $row['Null'] == 'YES' ? true : false,
+				'ascending' => $row['Collation'] == 'A' ? true : false,
+			);
+
+			$indexes[] = $index;
+		}
+
+		return $indexes;
+	}
+
+	/**
 	 * Escape query for sql
 	 *
 	 * @param   mixed   $value  value of string castable

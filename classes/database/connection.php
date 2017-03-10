@@ -502,6 +502,23 @@ abstract class Database_Connection
 	abstract public function list_columns($table, $like = null);
 
 	/**
+	 * Lists all of the indexes in a table. Optionally, a LIKE string can be
+	 * used to search for specific indexes by name.
+	 *
+	 *     // Get all indexes from the "users" table
+	 *     $indexes = $db->list_indexes('users');
+	 *
+	 *     // Get all name-related columns
+	 *     $indexes = $db->list_indexes('users', '%name%');
+	 *
+	 * @param   string $table table to get indexes from
+	 * @param   string $like  index names to search for
+	 *
+	 * @return  array
+	 */
+	abstract public function list_indexes($table, $like = null);
+
+	/**
 	 * Extracts the text between parentheses, if any.
 	 *
 	 *     // Returns: array('CHAR', '6')

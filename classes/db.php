@@ -264,6 +264,26 @@ class DB
 	}
 
 	/**
+	 * Lists all of the indexes in a table. Optionally, a LIKE string can be
+	 * used to search for specific indexes by name.
+	 *
+	 *     // Get all indexes from the "users" table
+	 *     $indexes = $db->list_indexes('users');
+	 *
+	 *     // Get all name-related columns
+	 *     $indexes = $db->list_indexes('users', '%name%');
+	 *
+	 * @param   string $table table to get indexes from
+	 * @param   string $like  index names to search for
+	 * @param   string  the database connection to use
+	 * @return  array
+	 */
+	public static function list_indexes($table, $like = null, $db = null)
+	{
+		return \Database_Connection::instance($db)->list_indexes($table, $like);
+	}
+
+	/**
 	 * Lists all of the columns in a table. Optionally, a LIKE string can be
 	 * used to search for specific fields.
 	 *
