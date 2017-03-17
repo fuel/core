@@ -171,13 +171,13 @@ class File
 	 */
 	public static function create_dir($basepath, $name, $chmod = null, $area = null)
 	{
-		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
-		$new_dir	= static::instance($area)->get_path($basepath.trim($name, '\\/'));
+		$path	 = rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
+		$new_dir = static::instance($area)->get_path($path.trim($name, '\\/'));
 		is_null($chmod) and $chmod = \Config::get('file.chmod.folders', 0777);
 
-		if ( ! is_dir($basepath) or ! is_writable($basepath))
+		if ( ! is_dir($path) or ! is_writable($path))
 		{
-			throw new \InvalidPathException('Invalid basepath: "'.$basepath.'", cannot create directory at this location.');
+			throw new \InvalidPathException('Invalid basepath: "'.$path.'", cannot create directory at this location.');
 		}
 		elseif (is_dir($new_dir))
 		{
@@ -185,11 +185,10 @@ class File
 		}
 
 		// unify the path separators, and get the part we need to add to the basepath
-		$segments = explode(DS, str_replace(array('\\', '/'), DS, $new_dir));
+		$segments = explode(DS, str_replace(array('\\', '/'), DS, substr($new_dir, strlen($path))));
 
 		// recursively create the directory. we can't use mkdir permissions or recursive
 		// due to the fact that mkdir is restricted by the current users umask
-		$path = array_shift($segments);
 		foreach ($segments as $dir)
 		{
 			// some security checking
