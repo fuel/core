@@ -173,6 +173,7 @@ class File
 	{
 		$basepath	= rtrim(static::instance($area)->get_path($basepath), '\\/').DS;
 		$new_dir	= static::instance($area)->get_path($basepath.trim($name, '\\/'));
+		$actual_base_path = static::instance($area)->get_path($basepath);
 		is_null($chmod) and $chmod = \Config::get('file.chmod.folders', 0777);
 
 		if ( ! is_dir($basepath) or ! is_writable($basepath))
@@ -184,12 +185,16 @@ class File
 			throw new \FileAccessException('Directory: "'.$new_dir.'" exists already, cannot be created.');
 		}
 
+		// Only try to create directories underneath the already verified basepath
+		$new_segment = ltrim(Str::sub($new_dir, Str::length($actual_base_path)), "\\/");
+
 		// unify the path separators, and get the part we need to add to the basepath
-		$segments = explode(DS, str_replace(array('\\', '/'), DS, $new_dir));
+		$segments = explode(DS, str_replace(array('\\', '/'), DS, $new_segment));
 
 		// recursively create the directory. we can't use mkdir permissions or recursive
 		// due to the fact that mkdir is restricted by the current users umask
-		$path = array_shift($segments);
+		$path = rtrim($actual_base_path, "\\/");
+
 		foreach ($segments as $dir)
 		{
 			// some security checking
