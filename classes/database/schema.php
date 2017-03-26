@@ -537,7 +537,7 @@ class Database_Schema
 			$charset = substr($charset, 0, $pos);
 		}
 
-		$charset = 'CHARACTER SET '.$charset;
+		$charset = ' CHARACTER SET '.$charset;
 
 		if ($is_default)
 		{
