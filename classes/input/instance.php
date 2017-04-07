@@ -182,7 +182,8 @@ class Input_Instance
 
 			// Lets split the URI up in case it contains a ?.  This would
 			// indicate the server requires 'index.php?' and that mod_rewrite
-			// is not being used.
+			// is not being used, or that an incorrect rewrite caused the URI
+			// to include the query string
 			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
 
 			// If there are matches then lets set set everything correctly
@@ -190,8 +191,9 @@ class Input_Instance
 			{
 				$uri = $matches[1];
 
-				// only reconstruct $_GET if we didn't have a query string
-				if (empty($_SERVER['QUERY_STRING']))
+				// only reconstruct $_GET if we didn't have a query string, or
+				// it contains the URI path as well as the actual query string
+				if (empty($_SERVER['QUERY_STRING']) or strpos($_SERVER['QUERY_STRING'], '/') == 0)
 				{
 					$_SERVER['QUERY_STRING'] = $matches[2];
 					parse_str($matches[2], $_GET);
