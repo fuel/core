@@ -180,21 +180,27 @@ class Input_Instance
 			// decode the uri, and put any + back (does not mean a space in the url path)
 			$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
 
-			// Lets split the URI up in case it contains a ?.  This would
-			// indicate the server requires 'index.php?' and that mod_rewrite
-			// is not being used, or that an incorrect rewrite caused the URI
-			// to include the query string
-			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
-
-			// If there are matches then lets set set everything correctly
-			if ( ! empty($matches))
+			// in case of incorrect rewrites, we may need to cleanup and
+			// recreate the QUERY_STRING and $_GET
+			if (strpos($_SERVER['QUERY_STRING'], '/') == 0)
 			{
-				$uri = $matches[1];
+				// log this issue
+				\Log::write(\Fuel::L_DEBUG, 'Your rewrite rules are incorrect, change "index.php?/$1 [QSA,L]" to "index.php/$1 [L]"!');
 
-				// only reconstruct $_GET if we didn't have a query string, or
-				// it contains the URI path as well as the actual query string
-				if (empty($_SERVER['QUERY_STRING']) or strpos($_SERVER['QUERY_STRING'], '/') == 0)
+				// reset $_GET
+				$_GET = array();
+
+				// lets split the URI up in case it contains a ?.  This would
+				// indicate the server requires 'index.php?'
+				preg_match('#(.*?)\?(.*)#i', $uri, $matches);
+
+				// If there are matches then lets set everything correctly
+				if ( ! empty($matches))
 				{
+					// first bit is the real uri
+					$uri = $matches[1];
+
+					// second bit is the real query string
 					$_SERVER['QUERY_STRING'] = $matches[2];
 					parse_str($matches[2], $_GET);
 					$_GET = \Security::clean($_GET);
