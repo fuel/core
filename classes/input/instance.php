@@ -182,7 +182,7 @@ class Input_Instance
 
 			// in case of incorrect rewrites, we may need to cleanup and
 			// recreate the QUERY_STRING and $_GET
-			if (strpos($_SERVER['QUERY_STRING'], '/') == 0)
+			if (strpos($uri, '?') !== false)
 			{
 				// log this issue
 				\Log::write(\Fuel::L_DEBUG, 'Your rewrite rules are incorrect, change "index.php?/$1 [QSA,L]" to "index.php/$1 [L]"!');
