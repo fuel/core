@@ -434,7 +434,6 @@ class Input_Instance
 			{
 				$php_input = urldecode($php_input);
 			}
-			parse_str($php_input, $php_input);
 		}
 
 		// handle multipart/form-data input
@@ -497,6 +496,10 @@ class Input_Instance
 		$method = strtolower($this->method());
 		if ($method == 'put' or $method == 'patch' or $method == 'delete')
 		{
+			if ($content_type == 'application/x-www-form-urlencoded')
+			{
+				parse_str($php_input, $php_input);
+			}
 			$this->{'input_'.$method} = $php_input;
 		}
 	}
