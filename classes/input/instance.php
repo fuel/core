@@ -412,9 +412,8 @@ class Input_Instance
 	 */
 	protected function hydrate()
 	{
-		// get GET and POST input
-		$this->input_get = $_GET;
-		$this->input_post = $_POST;
+		// get the input method and unify it
+		$method = strtolower($this->method());
 
 		// get the content type from the header, strip optional parameters
 		$content_header = \Input::headers('Content-Type');
@@ -429,10 +428,36 @@ class Input_Instance
 		// handle form-urlencoded input
 		if ($content_type == 'application/x-www-form-urlencoded')
 		{
-			// urldecode it if needed
-			if (\Config::get('security.form-double-urlencoded', false))
+			// double-check if max_input_vars is not exceeded,
+			// it doesn't always give an E_WARNING it seems...
+			if ($method == 'get' or $method == 'post')
 			{
-				$php_input = urldecode($php_input);
+				if ($php_input and ($amps = substr_count($php_input, '&')) > ini_get('max_input_vars'))
+				{
+					throw new \PhpErrorException(
+						'Input truncated by PHP. Number of variables exceeded '.ini_get('max_input_vars').'. To increase the limit to at least the '.$amps.' needed for this HTTP request, change the value of "max_input_vars" in php.ini.',
+						1,
+						E_WARNING,
+						__FILE__,
+						__LINE__ + 7 // note: error points to accessing $_POST above!
+					);
+
+				}
+
+				// get GET and POST input, no need to parse them
+				$this->input_get = $_GET;
+				$this->input_post = $_POST;
+			}
+			else
+			{
+				// urldecode it if needed
+				if (\Config::get('security.form-double-urlencoded', false))
+				{
+					$php_input = urldecode($php_input);
+				}
+
+				// other methods than GET and POST need to be parsed manually
+				parse_str($php_input, $php_input);
 			}
 		}
 
@@ -493,13 +518,8 @@ class Input_Instance
 		}
 
 		// store it as other input data as well
-		$method = strtolower($this->method());
 		if ($method == 'put' or $method == 'patch' or $method == 'delete')
 		{
-			if ($content_type == 'application/x-www-form-urlencoded')
-			{
-				parse_str($php_input, $php_input);
-			}
 			$this->{'input_'.$method} = $php_input;
 		}
 	}
