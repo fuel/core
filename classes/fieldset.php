@@ -620,11 +620,18 @@ class Fieldset
 				{
 					continue;
 				}
-				if (isset($settings['form']['type']) and ($settings['form']['type'] === false or $settings['form']['type'] === 'hidden'))
+				elseif (isset($settings['form']['type']) and ($settings['form']['type'] === false))
 				{
 					continue;
 				}
-				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label']) ? \Lang::get($settings['label'], array(), $settings['label']) : '').'</th>'.PHP_EOL;
+				elseif (isset($settings['form']['type']) and ($settings['form']['type'] === false or $settings['form']['type'] === 'hidden'))
+				{
+					$fields_output .= "\t".'<th></th>'.PHP_EOL;
+				}
+				else
+				{
+					$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label']) ? \Lang::get($settings['label'], array(), $settings['label']) : '').'</th>'.PHP_EOL;
+				}
 			}
 			$fields_output .= "\t".'<th>'.\Config::get('form.tabular_delete_label', 'Delete?').'</th>'.PHP_EOL;
 
@@ -778,10 +785,10 @@ class Fieldset
 	/**
 	 * Enable or disable the tabular form feature of this fieldset
 	 *
-	 * @param  string  $model     Model on which to define the tabular form
-	 * @param  string  $relation  Relation of the Model on the tabular form is modeled
-	 * @param  array   $parent    Collection of Model objects from a many relation
-	 * @param  int     $blanks    Number of empty rows to generate
+	 * @param  string  $model      Model on which to define the tabular form
+	 * @param  string  $relation   Relation of the Model on the tabular form is modeled
+	 * @param  array   $parent     Collection of Model objects from a many relation
+	 * @param  int     $blanks     Number of empty rows to generate
 	 *
 	 * @return  Fieldset  this, to allow chaining
 	 */
