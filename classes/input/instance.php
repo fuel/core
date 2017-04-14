@@ -443,10 +443,6 @@ class Input_Instance
 					);
 
 				}
-
-				// get GET and POST input, no need to parse them
-				$this->input_get = $_GET;
-				$this->input_post = $_POST;
 			}
 			else
 			{
@@ -517,7 +513,11 @@ class Input_Instance
 			throw new \DomainException('Don\'t know how to parse input of type: '.$content_type);
 		}
 
-		// store it as other input data as well
+		// GET and POST input, were not parsed
+		$this->input_get = $_GET;
+		$this->input_post = $_POST;
+
+		// store the parsed data based on the request method
 		if ($method == 'put' or $method == 'patch' or $method == 'delete')
 		{
 			$this->{'input_'.$method} = $php_input;
