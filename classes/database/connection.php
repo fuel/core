@@ -774,6 +774,11 @@ abstract class Database_Connection
 		{
 			return $value;
 		}
+		
+		if (preg_match('/[A-Z]+\(([a-zA-Z_]+)\)/m', $value))
+	        {
+	            	return preg_replace('/([A-Z]+\()([a-zA-Z_]+)(\))/m', '$1`$2`$3', $value);
+	        }
 
 		if (strpos($value, '.') !== false)
 		{
