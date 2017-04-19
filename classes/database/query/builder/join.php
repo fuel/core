@@ -186,9 +186,10 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			// Split the condition
 			list($c1, $op, $c2, $chaining) = $condition;
 
+			$c_string = $c1 . $op . $c2;
 
 			// Just a chaining character?
-			if (empty($c1.$op.$c2))
+			if (empty($c_string))
 			{
 				$conditions[] = $chaining;
 			}
