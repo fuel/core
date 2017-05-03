@@ -27,7 +27,7 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	protected function __construct($name, array $config)
 	{
 		// this driver only works on Windows
-		if (php_uname('s') !== 'Windows')
+		if ( ! is_windows())
 		{
 			throw new \Database_Exception('The "SQLSRV" database driver works only on Windows. On *nix, use the "DBLib" driver instead.');
 		}

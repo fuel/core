@@ -17,6 +17,17 @@ if (PHP_VERSION_ID >= 50600)
 }
 
 /**
+ * Check if we're running on a Windows platform
+ */
+if ( ! function_exists('is_windows'))
+{
+ 	function is_windows()
+ 	{
+ 		return strpos(strtolower(php_uname("s")), 'windows') === 0;
+ 	}
+}
+
+/**
  * Loads in a core class and optionally an app class override if it exists.
  *
  * @param   string  $path

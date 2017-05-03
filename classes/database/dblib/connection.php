@@ -26,8 +26,8 @@ class Database_Dblib_Connection extends \Database_PDO_Connection
 	 */
 	protected function __construct($name, array $config)
 	{
-		// this driver only works on Windows
-		if (php_uname('s') === 'Windows')
+		// this driver doen't work on Windows
+		if (is_windows())
 		{
 			throw new \Database_Exception('The "Dblib" database driver does not work well on Windows. Use the "Sqlsrv" driver instead.');
 		}
