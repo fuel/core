@@ -372,7 +372,7 @@ class Cli
  	public static function is_windows()
  	{
 		// for BC, function moved to base.php
- 		return is_windows()
+ 		return is_windows();
  	}
 
 	/**
