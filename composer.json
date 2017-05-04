@@ -1,5 +1,5 @@
 {
-	"name": "fuel/core",
+	"name": "synergitech/fuel-core",
 	"description" : "FuelPHP 1.x Core",
 	"type": "fuel-package",
 	"homepage": "https://github.com/fuel/core",
