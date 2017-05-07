@@ -73,7 +73,7 @@ return array(
 	'create_path'		=> true,
 
 	// permissions to be set on the path after creation
-	'path_chmod'		=> 0777,
+	'path_chmod'		=> 0775,
 
 	// permissions to be set on the uploaded file after being saved
 	'file_chmod'		=> 0666,
