@@ -961,9 +961,26 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	{
 		$data = unserialize($data);
 
-		foreach ($data as $key => $value)
+		if (isset($data['_is_new']))
 		{
-			$this->__set($key, $value);
+			$this->is_new = $data['_is_new'];
+			unset($data['_is_new']);
 		}
+		else
+		{
+			$this->_is_new = true;
+		}
+
+		if (isset($data['_is_frozen']))
+		{
+			$this->_is_frozen = $data['_is_frozen'];
+			unset($data['_is_frozen']);
+		}
+		else
+		{
+			$this->_is_frozen = false;
+		}
+
+		$this->_data = $data;
 	}
 }
