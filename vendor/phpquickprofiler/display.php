@@ -127,12 +127,13 @@ CSS
 	$return_output .=<<<JAVASCRIPT
 <!-- JavaScript -->
 <script type="text/javascript">
-	var PQP_SHOWONLOAD = (typeof PQP_SHOWONLOAD != "undefined" && PQP_SHOWONLOAD) ? "open" : "closed";
+	var PQP_SHOWONLOAD = ((typeof PQP_SHOWONLOAD != "undefined" && PQP_SHOWONLOAD) || isSticked() == true) ? "open" : "closed";
 	var PQP_HEIGHT = (typeof PQP_HEIGHT != "undefined" && PQP_HEIGHT == "tall") ? "tall" : "short";
 	var PQP_DETAILS = (typeof PQP_DETAILS != "undefined" && PQP_DETAILS) ? true : false;
 	var PQP_BOTTOM = (typeof PQP_BOTTOM == "undefined" || PQP_BOTTOM == true) ? true : false;
 
 	addEvent(window, 'load', loadCSS);
+	addEvent(window, 'load', textStick);
 
 	function changeTab(tab) {
 		var pQp = document.getElementById('pQp');
@@ -186,6 +187,50 @@ CSS
 		else
 		{
 			container.style.position="inherit";
+		}
+	}
+
+	//http://www.w3schools.com/js/js_cookies.asp
+	function setCookie(cname, cvalue, exdays) {
+	    var d = new Date();
+	    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+	    var expires = "expires="+d.toUTCString();
+	    document.cookie = cname + "=" + cvalue + "; " + expires;
+	}
+	//http://www.w3schools.com/js/js_cookies.asp
+	function getCookie(cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i = 0; i < ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) == ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) == 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return "";
+	}
+	function toggleStick() {
+		if (isSticked()) {
+			setCookie('pqp-stick', "");
+		} else {
+			setCookie('pqp-stick', 1, 365);
+		}
+		textStick();
+	}
+	function isSticked() {
+		return getCookie('pqp-stick') != "";
+	}
+	function textStick() {
+		var stickToggle = document.getElementsByClassName('pqp-stickToggle')[0];
+		if (isSticked()) {
+			stickToggle.innerHTML = 'Unstick';
+			stickToggle.setAttribute("title", "Unstick");
+		} else {
+			stickToggle.innerHTML = 'Stick';
+			stickToggle.setAttribute("title", "Stick");
 		}
 	}
 
@@ -697,6 +742,7 @@ $return_output .=<<<FOOTER
 				<a class="pqp-closeProfiler" href="#" onclick="closeProfiler();return false" title="Close Code Profiler">Close</a>
 				<a class="pqp-heightToggle" href="#" onclick="toggleHeight();return false" title="Toggle Height">Height</a>
 				<a class="pqp-bottomToggle" href="#" onclick="toggleBottom();return false" title="Toggle Bottom">Bottom</a>
+				<a class="pqp-stickToggle" href="#" onclick="toggleStick();return false" title="Stick">Stick</a>
 			</td>
 		</tr>
 	</table>
