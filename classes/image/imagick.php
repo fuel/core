@@ -254,12 +254,17 @@ class Image_Imagick extends \Image_Driver
 	 * Creates a new color usable by Imagick.
 	 *
 	 * @param  string   $hex    The hex code of the color
-	 * @param  integer  $alpha  The alpha of the color, 0 (trans) to 100 (opaque)
+	 * @param  integer  $newalpha  The alpha of the color, 0 (trans) to 100 (opaque)
 	 * @return string   rgba representation of the hex and alpha values.
 	 */
-	protected function create_color($hex, $alpha)
+	protected function create_color($hex, $newalpha = null)
 	{
+		// Convert hex to rgba
 		extract($this->create_hex_color($hex));
+
+		// If a custom alpha was passed, use that
+		isset($newalpha) and $alpha = $newalpha;
+
 		return new \ImagickPixel('rgba('.$red.', '.$green.', '.$blue.', '.round($alpha / 100, 2).')');
 	}
 }
