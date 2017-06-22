@@ -76,7 +76,7 @@ abstract class Database_Connection
 			$driver = '\\Database_' . ucfirst($config['type']) . '_Connection';
 
 			// Create the database connection instance
-			new $driver($name, $config);
+			static::$instances[$name] = new $driver($name, $config);
 		}
 
 		return static::$instances[$name];
