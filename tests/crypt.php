@@ -21,11 +21,11 @@ namespace Fuel\Core;
 class Test_Crypt extends TestCase
 {
 	private static $config_backup;
-	
+
 	public static function setUpBeforeClass()
 	{
 		\Config::load('crypt', true);
-		static::$config_backup = \Config::get('crypt');
+		static::$config_backup = \Config::get('crypt', array());
 		\Config::set('crypt.crypto_key', 'H9Eq4sGEwi7slEcWikRWE8xU');
 		\Config::set('crypt.crypto_iv', 'tzcPXg2LEnB8vysdKw_Tsjo4');
 		\Config::set('crypt.crypto_hmac', 'jX4p30_hYm7U-a85vov_M0P4');
