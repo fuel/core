@@ -349,6 +349,8 @@ class View
 				$var[$key] = $this->unsanitize($value);
 			}
 		}
+
+		return $var;
 	}
 
 	/**
