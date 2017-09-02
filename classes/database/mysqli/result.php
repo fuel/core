@@ -60,20 +60,28 @@ class Database_MySQLi_Result extends \Database_Result
 
 		if ($this->_as_object === true)
 		{
-			// Return an stdClass
-			return $this->_result->fetch_object();
+			// Return as an stdClass
+			$result = $this->_result->fetch_object();
 		}
 		elseif (is_string($this->_as_object))
 		{
-			// Return an object of given class name
+			// Return as an object of given class name
 			//! TODO: add the $params parameter
-			return $this->_result->fetch_object($this->_as_object);
+			$result = $this->_result->fetch_object($this->_as_object);
 		}
 		else
 		{
-			// Return an array of the row
-			return $this->_result->fetch_assoc();
+			// Return as an array of the row
+			$result = $this->_result->fetch_assoc();
 		}
+
+		// sanitize the data if needed
+		if ( $this->_sanitization_enabled)
+		{
+			$result = \Security::clean($result, null, 'security.output_filter');
+		}
+
+		return $result;
 	}
 
 }
