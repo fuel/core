@@ -283,7 +283,7 @@ abstract class Controller_Rest extends \Controller
 			}
 
 			// Split the Accept header and build an array of quality scores for each format
-			$fragments = new \CachingIterator(new \ArrayIterator(preg_split('/[,;]/', \Input::server('HTTP_ACCEPT'))));
+			$fragments = new \CachingIterator(new \ArrayIterator(preg_split('/[,;]/', $acceptable)));
 			$acceptable = array();
 			$next_is_quality = false;
 			foreach ($fragments as $fragment)
