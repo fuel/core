@@ -69,7 +69,7 @@ return array(
 		'table_prefix' => '',
 		'charset'      => 'utf8',
 		'collation'    => false,
-		'enable_cache' => true,
+		'enable_cache' => false,
 		'profiling'    => false,
 		'readonly'     => false,
 	),

@@ -45,6 +45,28 @@ class Database_MySQLi_Connection extends \Database_Connection
 	 */
 	public $_db_type = 'mysql';
 
+	/**
+	 * @param string $name
+	 * @param array  $config
+	 */
+	protected function __construct($name, array $config)
+	{
+		// construct a custom schema driver
+//		$this->_schema = new \Database_Drivername_Schema($name, $this);
+
+		// call the parent consructor
+		parent::__construct($name, $config);
+
+		// make sure we have all connection parameters, add defaults for those missing
+		$this->_config = \Arr::merge(array(
+			'connection'  => array(
+				'socket'     => '',
+				'port'       => '',
+			),
+			'cached'       => false,
+		), $this->_config);
+	}
+
 	public function connect()
 	{
 		if ($this->_connection)
@@ -60,16 +82,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 
 		// Extract the connection parameters, adding required variables
-		extract($this->_config['connection'] + array(
-			'database'   => '',
-			'hostname'   => '',
-			'port'       => '',
-			'socket'     => '',
-			'username'   => '',
-			'password'   => '',
-			'persistent' => false,
-			'compress'	 => true,
-		));
+		extract($this->_config['connection']);
 
 		try
 		{
@@ -311,8 +324,16 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 		if ($type === \DB::SELECT)
 		{
-			// Return an iterator of results
-			return new \Database_MySQLi_Result($result, $sql, $as_object);
+			if ($this->_config['enable_cache'])
+			{
+				// Return an iterator of results
+				return new \Database_MySQLi_Cached($result, $sql, $as_object);
+			}
+			else
+			{
+				// Return an iterator of results
+				return new \Database_MySQLi_Result($result, $sql, $as_object);
+			}
 		}
 		elseif ($type === \DB::INSERT)
 		{

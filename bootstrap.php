@@ -172,6 +172,8 @@ function setup_autoloader()
 		'Fuel\\Core\\Database_SQLite_Builder_Update'   => COREPATH.'classes/database/sqlite/builder/update.php',
 		// Generic PDO driver
 		'Fuel\\Core\\Database_Pdo_Connection'          => COREPATH.'classes/database/pdo/connection.php',
+		'Fuel\\Core\\Database_Pdo_Result'              => COREPATH.'classes/database/pdo/result.php',
+		'Fuel\\Core\\Database_Pdo_Cached'              => COREPATH.'classes/database/pdo/cached.php',
 		// Specific PDO drivers
 		'Fuel\\Core\\Database_MySQL_Connection'        => COREPATH.'classes/database/mysql/connection.php',
 		'Fuel\\Core\\Database_SQLite_Connection'       => COREPATH.'classes/database/sqlite/connection.php',
@@ -180,6 +182,7 @@ function setup_autoloader()
 		// Legacy drivers
 		'Fuel\\Core\\Database_MySQLi_Connection'       => COREPATH.'classes/database/mysqli/connection.php',
 		'Fuel\\Core\\Database_MySQLi_Result'           => COREPATH.'classes/database/mysqli/result.php',
+		'Fuel\\Core\\Database_MySQLi_Cached'           => COREPATH.'classes/database/mysqli/cached.php',
 
 		'Fuel\\Core\\Fuel'                             => COREPATH.'classes/fuel.php',
 		'Fuel\\Core\\FuelException'                    => COREPATH.'classes/fuel.php',

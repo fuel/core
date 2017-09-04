@@ -32,16 +32,25 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	protected function __construct($name, array $config)
 	{
-		// construct a custom schema driver
-//		$this->_schema = new \Database_Drivername_Schema($name, $this);
+		// example of constructing a custom schema driver
+		# $this->_schema = new \Database_<drivername>_Schema($name, $this);
 
 		// call the parent consructor
 		parent::__construct($name, $config);
 
-		if (isset($config['identifier']))
+		// add default attributes and config values for those missing
+		$this->_config = \Arr::merge(array(
+			'attrs'        => array(
+				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+			),
+			'cached'       => false,
+		), $this->_config);
+
+		// convert generic config values to specific attributes
+		if ( ! empty($this->_config['connection']['persistent']))
 		{
-			// Allow the identifier to be overloaded per-connection
-			$this->_identifier = (string) $this->_config['identifier'];
+			// Make the connection persistent
+			$this->_config['attrs'][\PDO::ATTR_PERSISTENT] = true;
 		}
 	}
 
@@ -55,35 +64,6 @@ class Database_PDO_Connection extends \Database_Connection
 		if ($this->_connection)
 		{
 			return;
-		}
-
-		// make sure we have all connection parameters, add defaults for those missing
-		$this->_config = array_merge(array(
-			'connection'  => array(
-				'dsn'        => '',
-				'hostname'   => '',
-				'username'   => null,
-				'password'   => null,
-				'database'   => '',
-				'persistent' => false,
-				'compress'   => false,
-			),
-			'identifier'   => '`',
-			'table_prefix' => '',
-			'charset'      => 'utf8',
-			'collation'    => false,
-			'enable_cache' => true,
-			'profiling'    => false,
-			'readonly'     => false,
-			'attrs'        => array(
-				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-			),
-		), $this->_config);
-
-		if ( ! empty($this->_config['connection']['persistent']))
-		{
-			// Make the connection persistent
-			$this->_config['attrs'][\PDO::ATTR_PERSISTENT] = true;
 		}
 
 		try
@@ -283,22 +263,16 @@ class Database_PDO_Connection extends \Database_Connection
 
 		if ($type === \DB::SELECT)
 		{
-			// Convert the result into an array, as PDOStatement::rowCount is not reliable
-			if ($as_object === false)
+			if ($this->_config['enable_cache'])
 			{
-				$result = $result->fetchAll(\PDO::FETCH_ASSOC);
-			}
-			elseif (is_string($as_object))
-			{
-				$result = $result->fetchAll(\PDO::FETCH_CLASS, $as_object);
+				// Return an iterator of results
+				return new \Database_PDO_Cached($result, $sql, $as_object);
 			}
 			else
 			{
-				$result = $result->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
+				// Return an iterator of results
+				return new \Database_PDO_Result($result, $sql, $as_object);
 			}
-
-			// Return an iterator of results
-			return new \Database_Result_Cached($result, $sql, $as_object);
 		}
 		elseif ($type === \DB::INSERT)
 		{

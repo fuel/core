@@ -90,7 +90,7 @@ abstract class Database_Connection
 	/**
 	 * @var  string  Character that is used to quote identifiers
 	 */
-	protected $_identifier = '"';
+	protected $_identifier = '';
 
 	/**
 	 * @var  string  Instance name
@@ -138,14 +138,34 @@ abstract class Database_Connection
 		// Set the instance name
 		$this->_instance = $name;
 
-		// Store the config locally
-		$this->_config = $config;
+		// make sure we have all connection parameters, add defaults for those missing
+		$this->_config = array_merge(array(
+			'connection'  => array(
+				'dsn'        => '',
+				'hostname'   => '',
+				'username'   => null,
+				'password'   => null,
+				'database'   => '',
+				'persistent' => false,
+				'compress'   => false,
+			),
+			'identifier'   => '',
+			'table_prefix' => '',
+			'charset'      => 'utf8',
+			'collation'    => false,
+			'enable_cache' => true,
+			'profiling'    => false,
+			'readonly'     => false,
+		), $config);
 
 		// Set up a generic schema processor if needed
 		if ( ! $this->_schema)
 		{
 			$this->_schema = new \Database_Schema($name, $this);
 		}
+
+		// Allow the identifier to be overloaded per-connection
+		$this->_identifier = (string) $this->_config['identifier'];
 
 		// Store the database instance
 		static::$instances[$name] = $this;

@@ -13,7 +13,7 @@
 
 namespace Fuel\Core;
 
-abstract class Database_Result implements \Countable, \Iterator, \SeekableIterator, \ArrayAccess, \Sanitization
+abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 {
 	/**
 	 * @var  string Executed SQL for this result
@@ -52,10 +52,10 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 * @param  string  $sql        SQL query
 	 * @param  mixed   $as_object  object
 	 */
-	public function __construct($result, $sql, $as_object)
+	public function __construct($result, $sql, $as_object = null)
 	{
 		// Store the result locally
-		$this->_result = $result;
+		$this->result = $result;
 
 		// Store the SQL locally
 		$this->_query = $sql;
@@ -82,13 +82,10 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	 *
 	 *     $cachable = serialize($result->cached());
 	 *
-	 * @return  Database_Result_Cached
+	 * @return  Database_Result cache class
 	 * @since   3.0.5
 	 */
-	public function cached()
-	{
-		return new \Database_Result_Cached($this->as_array(), $this->_query, $this->_as_object);
-	}
+	abstract public function cached();
 
 	/**
 	 * Return all of the rows in the result as an array.
@@ -236,152 +233,6 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	}
 
 	/**
-	 * Implements [Countable::count], returns the total number of rows.
-	 *
-	 *     echo count($result);
-	 *
-	 * @return  integer
-	 */
-	public function count()
-	{
-		return $this->_total_rows;
-	}
-
-	/**
-	 * Implements [ArrayAccess::offsetExists], determines if row exists.
-	 *
-	 *     if (isset($result[10]))
-	 *     {
-	 *         // Row 10 exists
-	 *     }
-	 *
-	 * @param integer $offset
-	 *
-	 * @return boolean
-	 */
-	public function offsetExists($offset)
-	{
-		return ($offset >= 0 and $offset < $this->_total_rows);
-	}
-
-	/**
-	 * Implements [ArrayAccess::offsetGet], gets a given row.
-	 *
-	 *     $row = $result[10];
-	 *
-	 * @param integer $offset
-	 *
-	 * @return  mixed
-	 */
-	public function offsetGet($offset)
-	{
-		if ( ! $this->seek($offset))
-		{
-			return null;
-		}
-
-		$result = $this->current();
-
-		// sanitize the data if needed
-		if ($this->_sanitization_enabled)
-		{
-			$result = \Security::clean($result, null, 'security.output_filter');
-		}
-
-		return $result;
-	}
-
-	/**
-	 * Implements [ArrayAccess::offsetSet], throws an error.
-	 * [!!] You cannot modify a database result.
-	 *
-	 * @param integer $offset
-	 * @param mixed   $value
-	 *
-	 * @throws  \FuelException
-	 */
-	final public function offsetSet($offset, $value)
-	{
-		throw new \FuelException('Database results are read-only');
-	}
-
-	/**
-	 * Implements [ArrayAccess::offsetUnset], throws an error.
-	 * [!!] You cannot modify a database result.
-	 *
-	 * @param integer $offset
-	 *
-	 * @throws  \FuelException
-	 */
-	final public function offsetUnset($offset)
-	{
-		throw new \FuelException('Database results are read-only');
-	}
-
-	/**
-	 * Implements [Iterator::key], returns the current row number.
-	 *
-	 *     echo key($result);
-	 *
-	 * @return  integer
-	 */
-	public function key()
-	{
-		return $this->_current_row;
-	}
-
-	/**
-	 * Implements [Iterator::next], moves to the next row.
-	 *
-	 *     next($result);
-	 *
-	 * @return  $this
-	 */
-	public function next()
-	{
-		++$this->_current_row;
-		return $this;
-	}
-
-	/**
-	 * Implements [Iterator::prev], moves to the previous row.
-	 *
-	 *     prev($result);
-	 *
-	 * @return  $this
-	 */
-	public function prev()
-	{
-		--$this->_current_row;
-		return $this;
-	}
-
-	/**
-	 * Implements [Iterator::rewind], sets the current row to zero.
-	 *
-	 *     rewind($result);
-	 *
-	 * @return  $this
-	 */
-	public function rewind()
-	{
-		$this->_current_row = 0;
-		return $this;
-	}
-
-	/**
-	 * Implements [Iterator::valid], checks if the current row exists.
-	 *
-	 * [!!] This method is only used internally.
-	 *
-	 * @return  boolean
-	 */
-	public function valid()
-	{
-		return $this->offsetExists($this->_current_row);
-	}
-
-	/**
 	 * Enable sanitization mode in the object
 	 *
 	 * @return  $this
@@ -413,5 +264,85 @@ abstract class Database_Result implements \Countable, \Iterator, \SeekableIterat
 	public function sanitized()
 	{
 		return $this->_sanitization_enabled;
+	}
+
+	/**************************
+	 * Countable methods
+	 *************************/
+
+	/**
+	 * Implements [Countable::count], returns the total number of rows.
+	 *
+	 *     echo count($result);
+	 *
+	 * @return  integer
+	 */
+	public function count()
+	{
+		return $this->_total_rows;
+	}
+
+	/**************************
+	 * Iterable methods
+	 *************************/
+
+	/**
+	 * Implements [Iterator::current], returns the current row.
+	 *
+	 * @return  mixed
+	 */
+	abstract function current();
+
+	/**
+	 * Implements [Iterator::key], returns the current row number.
+	 *
+	 * @return  integer
+	 */
+	public function key()
+	{
+		return $this->_current_row;
+	}
+
+	/**
+	 * Implements [Iterator::next], moves to the next row.
+	 *
+	 * @return  $this
+	 */
+	public function next()
+	{
+		++$this->_current_row;
+		return $this;
+	}
+
+	/**
+	 * Implements [Iterator::prev], moves to the previous row.
+	 *
+	 * @return  $this
+	 */
+	public function prev()
+	{
+		--$this->_current_row;
+		return $this;
+	}
+
+	/**
+	 * Implements [Iterator::rewind], sets the current row to zero.
+	 *
+	 * @return  $this
+	 */
+	public function rewind()
+	{
+		$this->_current_row = 0;
+		return $this;
+	}
+
+	/**
+	 * Implements [Iterator::valid], checks if the current row exists.
+	 *
+	 * @return  boolean
+	 */
+	public function valid()
+	{
+		return $this->_current_row < $this->_total_rows;
 	}
 }
