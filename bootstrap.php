@@ -152,7 +152,6 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Database_Connection'              => COREPATH.'classes/database/connection.php',
 		'Fuel\\Core\\Database_Result'                  => COREPATH.'classes/database/result.php',
-		'Fuel\\Core\\Database_Result_Cached'           => COREPATH.'classes/database/result/cached.php',
 		'Fuel\\Core\\Database_Exception'               => COREPATH.'classes/database/exception.php',
 		'Fuel\\Core\\Database_Expression'              => COREPATH.'classes/database/expression.php',
 		// Generic Schema builder
@@ -174,12 +173,12 @@ function setup_autoloader()
 		'Fuel\\Core\\Database_Pdo_Connection'          => COREPATH.'classes/database/pdo/connection.php',
 		'Fuel\\Core\\Database_Pdo_Result'              => COREPATH.'classes/database/pdo/result.php',
 		'Fuel\\Core\\Database_Pdo_Cached'              => COREPATH.'classes/database/pdo/cached.php',
-		// Specific PDO drivers
+		// Platform specific PDO drivers
 		'Fuel\\Core\\Database_MySQL_Connection'        => COREPATH.'classes/database/mysql/connection.php',
 		'Fuel\\Core\\Database_SQLite_Connection'       => COREPATH.'classes/database/sqlite/connection.php',
 		'Fuel\\Core\\Database_Sqlsrv_Connection'       => COREPATH.'classes/database/sqlsrv/connection.php',
 		'Fuel\\Core\\Database_Dblib_Connection'        => COREPATH.'classes/database/dblib/connection.php',
-		// Legacy drivers
+		// Legacy MySQL driver
 		'Fuel\\Core\\Database_MySQLi_Connection'       => COREPATH.'classes/database/mysqli/connection.php',
 		'Fuel\\Core\\Database_MySQLi_Result'           => COREPATH.'classes/database/mysqli/result.php',
 		'Fuel\\Core\\Database_MySQLi_Cached'           => COREPATH.'classes/database/mysqli/cached.php',
