@@ -15,8 +15,6 @@ namespace Fuel\Core;
 
 class Database_MySQLi_Result extends \Database_Result
 {
-	protected $_internal_row = 0;
-
 	/**
 	 * Sets the total number of rows and stores the result locally.
 	 *
@@ -29,7 +27,7 @@ class Database_MySQLi_Result extends \Database_Result
 		parent::__construct($result, $sql, $as_object);
 
 		// Find the number of rows in the result
-		$this->_total_rows = $result->num_rows;
+		$this->_total_rows = $result->num_rows - 1;
 	}
 
 	/**
@@ -62,20 +60,12 @@ class Database_MySQLi_Result extends \Database_Result
 	 *************************/
 
 	/**
-	 * Implements [Iterator::current], returns the current row.
+	 * Implements [Iterator::current], returns the next row.
 	 *
 	 * @return  mixed
 	 */
 	public function current()
 	{
-		if ($this->_current_row !== $this->_internal_row and ! $this->seek($this->_current_row))
-		{
-			return false;
-		}
-
-		// Increment internal row for optimization assuming rows are fetched in order
-		$this->_internal_row++;
-
 		// Convert the result into an array, as PDOStatement::rowCount is not reliable
 		if ($this->_as_object === false)
 		{

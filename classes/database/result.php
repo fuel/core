@@ -28,12 +28,12 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	/**
 	 * @var  int  $_total_rows total number of rows
 	 */
-	protected $_total_rows  = 0;
+	protected $_total_rows  = -1;
 
 	/**
 	 * @var  int  $_current_row  current row number
 	 */
-	protected $_current_row = 0;
+	protected $_current_row = -1;
 
 	/**
 	 * @var  bool  $_as_object  return rows as an object or associative array
@@ -279,7 +279,7 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	 */
 	public function count()
 	{
-		return $this->_total_rows;
+		return $this->_total_rows + 1;
 	}
 
 	/**************************
@@ -305,35 +305,19 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 
 	/**
 	 * Implements [Iterator::next], moves to the next row.
-	 *
-	 * @return  $this
 	 */
 	public function next()
 	{
 		++$this->_current_row;
-		return $this;
-	}
-
-	/**
-	 * Implements [Iterator::prev], moves to the previous row.
-	 *
-	 * @return  $this
-	 */
-	public function prev()
-	{
-		--$this->_current_row;
-		return $this;
 	}
 
 	/**
 	 * Implements [Iterator::rewind], sets the current row to zero.
-	 *
-	 * @return  $this
 	 */
 	public function rewind()
 	{
-		$this->_current_row = 0;
-		return $this;
+		// first row is zero, not one!
+		$this->_current_row = -1;
 	}
 
 	/**
