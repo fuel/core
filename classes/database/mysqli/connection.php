@@ -63,7 +63,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 				'socket'     => '',
 				'port'       => '',
 			),
-			'cached'       => false,
+			'enable_cached'  => true,
 		), $this->_config);
 	}
 
@@ -294,7 +294,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 
 		// Execute the query
-		if (($result = $this->_connection->query($sql)) === false)
+		if (($result = $this->_connection->query($sql, $this->_config['enable_cache'] ? MYSQLI_STORE_RESULT :MYSQLI_USE_RESULT)) === false)
 		{
 			if (isset($benchmark))
 			{
