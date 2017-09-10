@@ -63,7 +63,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 				'socket'     => '',
 				'port'       => '',
 			),
-			'enable_cached'  => true,
+			'enable_cache'   => true,
 		), $this->_config);
 	}
 
@@ -99,36 +99,22 @@ class Database_MySQLi_Connection extends \Database_Connection
 				$socket = null;
 				$port   = null;
 			}
-			if ($persistent)
-			{
-				// Create a persistent connection
-				if ($compress)
-				{
-					$mysqli = mysqli_init();
-					$mysqli->real_connect('p:'.$hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
 
-					$this->_connection = $mysqli;
-				}
-				else
-				{
-					$this->_connection = new \MySQLi('p:'.$hostname, $username, $password, $database, $port, $socket);
-				}
-			}
-			else
-			{
-				// Create a connection and force it to be a new link
-				if ($compress)
-				{
-					$mysqli = mysqli_init();
-					$mysqli->real_connect($hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
+            $host = ($persistent) ? 'p:'.$hostname : $hostname;
 
-					$this->_connection = $mysqli;
-				}
-				else
-				{
-					$this->_connection = new \MySQLi($hostname, $username, $password, $database, $port, $socket);
-				}
-			}
+            // Create a connection and force it to be a new link
+            if ($compress)
+            {
+                $mysqli = mysqli_init();
+                $mysqli->real_connect($host, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
+
+                $this->_connection = $mysqli;
+            }
+            else
+            {
+                $this->_connection = new \MySQLi($host, $username, $password, $database, $port, $socket);
+            }
+
 			if ($this->_connection->error)
 			{
 				// Unable to connect, select database, etc
