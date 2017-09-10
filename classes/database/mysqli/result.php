@@ -27,7 +27,7 @@ class Database_MySQLi_Result extends \Database_Result
 		parent::__construct($result, $sql, $as_object);
 
 		// Find the number of rows in the result
-		$this->_total_rows = $result->num_rows - 1;
+		$this->_total_rows = $result->num_rows;
 	}
 
 	/**

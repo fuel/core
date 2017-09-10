@@ -78,6 +78,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 		}
 
 		$this->_current_row = $offset;
+
 		return true;
 	}
 
@@ -94,14 +95,12 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	{
 		if ($this->valid())
 		{
+			$result = $this->_result[$this->_current_row];
+
 			// sanitize the data if needed
-			if ( ! $this->_sanitization_enabled)
+			if ($this->_sanitization_enabled)
 			{
-				$result = $this->_result[$this->_current_row];
-			}
-			else
-			{
-				$result = \Security::clean($this->_result[$this->_current_row], null, 'security.output_filter');
+				$result = \Security::clean($result, null, 'security.output_filter');
 			}
 
 			return $result;
@@ -126,7 +125,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 */
 	public function offsetExists($offset)
 	{
-		return ($offset >= 0 and $offset < $this->_total_rows);
+		return isset($this->_result[$offset]);
 	}
 
 	/**
@@ -140,12 +139,13 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 */
 	public function offsetGet($offset)
 	{
-		if ( ! $this->seek($offset))
+		if ( ! $this->offsetExists($offset))
 		{
-			return null;
+			return false;
 		}
+		else
 
-		$result = $this->current();
+		$result = $this->_result[$offset];
 
 		// sanitize the data if needed
 		if ($this->_sanitization_enabled)
