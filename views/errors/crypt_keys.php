@@ -28,7 +28,7 @@
 		<p class="intro">No write access to APPPATH/config/crypt.php.</p>
 
 		<p>
-			The FuelPHP crypto functions require a set of unique and truelly random crypto keys.
+			The FuelPHP crypto functions require a set of unique and truly random crypto keys.
 			These keys are automatically generated and written to the crypto configuration
 			file the first time the application accesses a crypto function.
 		</p>
