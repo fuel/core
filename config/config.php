@@ -181,6 +181,11 @@ return array(
 		'csrf_expiration'           => 0,
 
 		/**
+		 * Always rotate the csrf token after a succesful check.
+		 */
+		'csrf_rotate'               => true,
+
+		/**
 		 * A salt to make sure the generated security tokens are not predictable
 		 */
 		'token_salt'                => 'put your salt value here to make the token more secure',

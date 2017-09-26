@@ -289,7 +289,7 @@ class Security
 		// always reset token once it's been checked and still the same
 		if (static::fetch_token() == static::$csrf_old_token and ! empty($value))
 		{
-			static::set_token(true);
+			static::set_token(\Config::get('security.csrf_rotate', true));
 		}
 
 		return $value === static::$csrf_old_token;
@@ -349,10 +349,15 @@ class Security
 		return md5($token_base);
 	}
 
-	protected static function set_token($reset = false)
+	/**
+	 * Setup the next token to be used.
+	 *
+	 * @param   $rotate   bool   if true, generate a new token, even if the current token is still valid
+	 */
+	protected static function set_token($rotate = false)
 	{
 		// re-use old token when found (= not expired) and expiration is used (otherwise always reset)
-		if ( ! $reset and static::$csrf_old_token and \Config::get('security.csrf_expiration', 0) > 0)
+		if ($rotate or static::$csrf_old_token !== false)
 		{
 			static::$csrf_token = static::$csrf_old_token;
 		}
