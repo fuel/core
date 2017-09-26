@@ -307,7 +307,7 @@ class Security
 			return static::$csrf_token;
 		}
 
-		static::set_token();
+		static::set_token(false);
 
 		return static::$csrf_token;
 	}
@@ -354,7 +354,7 @@ class Security
 	 *
 	 * @param   $rotate   bool   if true, generate a new token, even if the current token is still valid
 	 */
-	public static function set_token($rotate = false)
+	public static function set_token($rotate = true)
 	{
 		// re-use old token when found (= not expired) and expiration is used (otherwise always reset)
 		if ($rotate or static::$csrf_old_token !== false)
