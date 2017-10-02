@@ -299,7 +299,7 @@ class Input_Instance
 	 */
 	public function all()
 	{
-		return array_merge($this->input_get, $this->input_post, $this->input_put, $this->input_patch, $this->input_delete);
+		return array_merge((array)$this->input_get, (array)$this->input_post, (array)$this->input_put, (array)$this->input_patch, (array)$this->input_delete);
 	}
 
 	/**
