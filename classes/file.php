@@ -782,7 +782,18 @@ class File
 		}
 
 		// Accept valid lock constant or set to LOCK_EX
-		$lock = in_array($lock, array(LOCK_SH, LOCK_EX, LOCK_NB)) ? $lock : LOCK_EX;
+		if ($lock === true)
+		{
+			$lock = LOCK_EX;
+		}
+		elseif ($lock === false)
+		{
+			$lock = LOCK_UN;
+		}
+		else
+		{
+			$lock = in_array($lock, array(LOCK_SH, LOCK_EX, LOCK_NB, LOCK_SH | LOCK_NB, LOCK_EX | LOCK_NB)) ? $lock : LOCK_EX;
+		}
 
 		// Try to get a lock, timeout after 5 seconds
 		$lock_mtime = microtime(true);
