@@ -48,7 +48,7 @@ class Database_PDO_Result extends \Database_Result
 	 */
 	public function cached()
 	{
-		return new \Database_Result_Cached($this->result, $this->_query, $this->_as_object);
+		return new \Database_PDO_Cached($this->result, $this->_query, $this->_as_object);
 	}
 
 	/**************************

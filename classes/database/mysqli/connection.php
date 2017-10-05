@@ -338,6 +338,29 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return $result;
 	}
 
+	/**
+	 * Returns a database cache object
+	 *
+	 *     $db->cache($result, $sql);
+	 *
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
+	 *
+	 * @return  Database_Cached
+	 */
+	public function cache($result, $sql, $as_object = null)
+	{
+		return new \Database_MySQLi_Cached($result, $sql, $as_object);
+	}
+
+	/**
+	 * Resolve a datatype
+	 *
+	 * @param integer $type
+	 *
+	 * @return array
+	 */
 	public function datatype($type)
 	{
 		static $types = array(

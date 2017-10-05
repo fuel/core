@@ -231,6 +231,19 @@ abstract class Database_Connection
 	abstract public function set_charset($charset);
 
 	/**
+	 * Returns a database cache object
+	 *
+	 *     $db->cache($result, $sql);
+	 *
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
+	 *
+	 * @return  Database_Cached
+	 */
+	abstract public function cache($result, $sql, $as_object = null);
+
+	/**
 	 * Perform an SQL query of the given type.
 	 *
 	 *     // Make a SELECT query and use objects for results

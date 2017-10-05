@@ -402,6 +402,20 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
+	 * Returns a database cache object
+	 *
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
+	 *
+	 * @return  Database_Cached
+	 */
+	public function cache($result, $sql, $as_object = null)
+	{
+		return new \Database_PDO_Cached($result, $sql, $as_object);
+	}
+
+	/**
 	 * Resolve a datatype
 	 *
 	 * @param integer $type

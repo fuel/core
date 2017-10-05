@@ -303,8 +303,7 @@ class Database_Query
 			$cache = \Cache::forge($cache_key);
 			try
 			{
-				$result = $cache->get();
-				return new \Database_Result_Cached($result, $sql, $this->_as_object);
+				return $db->cache($cache->get(), $sql, $this->_as_object);
 			}
 			catch (\CacheNotFoundException $e) {}
 		}
