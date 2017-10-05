@@ -790,9 +790,9 @@ class File
 		{
 			$lock = LOCK_UN;
 		}
-		else
+		elseif ( ! in_array($lock, array(LOCK_SH, LOCK_UN, LOCK_EX, LOCK_SH | LOCK_NB, LOCK_EX | LOCK_NB)))
 		{
-			$lock = in_array($lock, array(LOCK_SH, LOCK_EX, LOCK_NB, LOCK_SH | LOCK_NB, LOCK_EX | LOCK_NB)) ? $lock : LOCK_EX;
+			throw new \FileAccessException('Incorrect lock value passed.');
 		}
 
 		// Try to get a lock, timeout after 5 seconds
