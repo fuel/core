@@ -116,102 +116,106 @@ class Input_Instance
 			return $this->detected_uri;
 		}
 
+		// process the Request URI if we have one
+		if ($this->request and is_string($this->request->uri))
+		{
+			$uri =  '/'.$this->request->uri;
+		}
+
+		// We want to use PATH_INFO if we can.
+		elseif ( ! empty($_SERVER['PATH_INFO']))
+		{
+			$uri = $_SERVER['PATH_INFO'];
+		}
+
+		// Only use ORIG_PATH_INFO if it contains the path
+		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
+		{
+			$uri = $path;
+		}
+
+		// Fall back to parsing the REQUEST URI
+		elseif (isset($_SERVER['REQUEST_URI']))
+		{
+			$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
+		}
+
 		// deal with CLI requests
-		if (\Fuel::$is_cli)
+		elseif (\Fuel::$is_cli)
 		{
 			if (($uri = \Cli::option('uri')) !== null)
 			{
 				$this->detected_uri = $uri;
 			}
+			elseif ($uri = \Cli::option(1) and strpos($uri, '/') === 0)
+			{
+				$this->detected_uri = $uri;
+			}
 			else
 			{
-				$this->detected_uri = \Cli::option(1);
+				$this->detected_uri = '';
 			}
 
 			return $this->detected_uri;
 		}
-
-		// process the Request URI if we have one
-		if ($this->request and $this->request->uri)
-		{
-			$uri =  '/'.$this->request->uri;
-		}
 		else
 		{
-			// We want to use PATH_INFO if we can.
-			if ( ! empty($_SERVER['PATH_INFO']))
+			throw new \FuelException('Unable to detect the URI.');
+		}
+
+		// Remove the base URL from the URI
+		$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
+		if ($uri !== '' and $base_url !== '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
+		{
+			$uri = substr($uri, strlen($base_url) - 1);
+		}
+
+		// If we are using an index file (not mod_rewrite) then remove it
+		$index_file = \Config::get('index_file');
+		if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
+		{
+			$uri = substr($uri, strlen($index_file));
+		}
+
+		// When index.php? is used and the config is set wrong, lets just
+		// be nice and help them out.
+		if ($index_file and strncmp($uri, '?/', 2) === 0)
+		{
+			$uri = substr($uri, 1);
+		}
+
+		// decode the uri, and put any + back (does not mean a space in the url path)
+		$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
+
+		// in case of incorrect rewrites, we may need to cleanup and
+		// recreate the QUERY_STRING and $_GET
+		if (strpos($uri, '?') !== false)
+		{
+			// log this issue
+			\Log::write(\Fuel::L_DEBUG, 'Your rewrite rules are incorrect, change "index.php?/$1 [QSA,L]" to "index.php/$1 [L]"!');
+
+			// reset $_GET
+			$_GET = array();
+
+			// lets split the URI up in case it contains a ?.  This would
+			// indicate the server requires 'index.php?'
+			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
+
+			// If there are matches then lets set everything correctly
+			if ( ! empty($matches))
 			{
-				$uri = $_SERVER['PATH_INFO'];
+				// first bit is the real uri
+				$uri = $matches[1];
+
+				// second bit is the real query string
+				$_SERVER['QUERY_STRING'] = $matches[2];
+				parse_str($matches[2], $_GET);
+
+				// update GET variables
+				$_GET = \Security::clean($_GET);
+				$this->input_get = $_GET;
 			}
 
-			// Only use ORIG_PATH_INFO if it contains the path
-			elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
-			{
-				$uri = $path;
-			}
-			else
-			{
-				// Fall back to parsing the REQUEST URI
-				if (isset($_SERVER['REQUEST_URI']))
-				{
-					$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
-				}
-				else
-				{
-					throw new \FuelException('Unable to detect the URI.');
-				}
-
-				// Remove the base URL from the URI
-				$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
-				if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
-				{
-					$uri = substr($uri, strlen($base_url) - 1);
-				}
-
-				// If we are using an index file (not mod_rewrite) then remove it
-				$index_file = \Config::get('index_file');
-				if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
-				{
-					$uri = substr($uri, strlen($index_file));
-				}
-
-				// When index.php? is used and the config is set wrong, lets just
-				// be nice and help them out.
-				if ($index_file and strncmp($uri, '?/', 2) === 0)
-				{
-					$uri = substr($uri, 1);
-				}
-
-				// decode the uri, and put any + back (does not mean a space in the url path)
-				$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
-
-				// in case of incorrect rewrites, we may need to cleanup and
-				// recreate the QUERY_STRING and $_GET
-				if (strpos($uri, '?') !== false)
-				{
-					// log this issue
-					\Log::write(\Fuel::L_DEBUG, 'Your rewrite rules are incorrect, change "index.php?/$1 [QSA,L]" to "index.php/$1 [L]"!');
-
-					// reset $_GET
-					$_GET = array();
-
-					// lets split the URI up in case it contains a ?.  This would
-					// indicate the server requires 'index.php?'
-					preg_match('#(.*?)\?(.*)#i', $uri, $matches);
-
-					// If there are matches then lets set everything correctly
-					if ( ! empty($matches))
-					{
-						// first bit is the real uri
-						$uri = $matches[1];
-
-						// second bit is the real query string
-						$_SERVER['QUERY_STRING'] = $matches[2];
-						parse_str($matches[2], $_GET);
-						$_GET = \Security::clean($_GET);
-					}
-				}
-			}
 		}
 
 		// Deal with any trailing dots
