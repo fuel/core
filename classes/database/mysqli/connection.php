@@ -62,6 +62,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			'connection'  => array(
 				'socket'     => '',
 				'port'       => '',
+				'compress'   => false,
 			),
 			'enable_cache'   => true,
 		), $this->_config);
