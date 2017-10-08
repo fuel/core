@@ -324,6 +324,9 @@ class Uri
 		// if no uri is passed, get it from input
 		is_null($uri) and $uri = \Input::uri();
 
+		// store the uri
+		$this->uri = trim($uri, '/');
+
 		// determine the uri segment list
 		if (empty($uri))
 		{
@@ -331,11 +334,8 @@ class Uri
 		}
 		else
 		{
-			$this->segments = explode('/', trim($uri, '/'));
+			$this->segments = explode('/', $this->uri);
 		}
-
-		// store the uri
-		$this->uri = $uri;
 
 		if (\Fuel::$profiling)
 		{
