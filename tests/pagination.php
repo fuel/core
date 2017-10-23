@@ -702,11 +702,11 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		$test = $_make_link->invoke($pagination, 1);
-		$expected = 'welcome/index/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=1';
+		$expected = 'welcome/index?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=1';
 		$this->assertEquals($expected, $test);
 
 		$test = $_make_link->invoke($pagination, 99);
-		$expected = 'welcome/index/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=99';
+		$expected = 'welcome/index?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=99';
 		$this->assertEquals($expected, $test);
 	}
 
