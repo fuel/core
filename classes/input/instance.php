@@ -40,6 +40,11 @@ class Input_Instance
 	protected $detected_ext = null;
 
 	/**
+	 * @var  string  $raw  raw PHP input
+	 */
+	protected $raw_input = null;
+
+	/**
 	 * @var  array  $get  All GET input
 	 */
 	protected $input_get = array();
@@ -81,6 +86,9 @@ class Input_Instance
 	{
 		// store the associated request
 		$this->request = $new;
+
+		// get php raw input
+		$this->raw_input = file_get_contents('php://input');
 
 		// was an input instance passed?
 		if ($input)
@@ -312,6 +320,16 @@ class Input_Instance
 	}
 
 	/**
+	 * Returns PHP's raw input
+	 *
+	 * @return  array
+	 */
+	public function raw()
+	{
+		return $this->raw_input;
+	}
+
+	/**
 	 * Returns all of the GET, POST, PUT, PATCH or DELETE array's
 	 *
 	 * @return  array
@@ -433,8 +451,8 @@ class Input_Instance
 			$content_type = $content_header;
 		}
 
-		// get php raw input
-		$php_input = file_get_contents('php://input');
+		// fetch the raw input data
+		$php_input = $this->raw();
 
 		// handle form-urlencoded input
 		if ($content_type == 'application/x-www-form-urlencoded')
@@ -520,8 +538,9 @@ class Input_Instance
 		// unknown input format
 		elseif ($php_input and ! is_array($php_input))
 		{
-			// don't know how to handle it
-			throw new \DomainException('Don\'t know how to parse input of type: '.$content_type);
+			// don't know how to handle it, allow the application to handle it
+			// reset the method to avoid having it stored below!
+			$method = null;
 		}
 
 		// GET and POST input, were not parsed
