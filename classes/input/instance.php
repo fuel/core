@@ -40,6 +40,11 @@ class Input_Instance
 	protected $detected_ext = null;
 
 	/**
+	 * @var  string  $raw  raw PHP input
+	 */
+	protected $raw_input = null;
+
+	/**
 	 * @var  array  $get  All GET input
 	 */
 	protected $input_get = array();
@@ -82,6 +87,9 @@ class Input_Instance
 		// store the associated request
 		$this->request = $new;
 
+		// get php raw input
+		$this->raw_input = file_get_contents('php://input');
+
 		// was an input instance passed?
 		if ($input)
 		{
@@ -110,102 +118,112 @@ class Input_Instance
 	 */
 	public function uri()
 	{
-		if ($this->request)
-		{
-			return '/'.$this->request->uri->get();
-		}
-
+		// don't run URI detection twice
 		if ($this->detected_uri !== null)
 		{
 			return $this->detected_uri;
 		}
 
-		if (\Fuel::$is_cli)
+		// process the Request URI if we have one
+		if ($this->request and is_string($this->request->uri))
 		{
-			if (($uri = \Cli::option('uri')) !== null)
-			{
-				$this->detected_uri = $uri;
-			}
-			else
-			{
-				$this->detected_uri = \Cli::option(1);
-			}
-
-			return $this->detected_uri;
+			$uri =  '/'.$this->request->uri;
 		}
 
 		// We want to use PATH_INFO if we can.
-		if ( ! empty($_SERVER['PATH_INFO']))
+		elseif ( ! empty($_SERVER['PATH_INFO']))
 		{
 			$uri = $_SERVER['PATH_INFO'];
 		}
+
 		// Only use ORIG_PATH_INFO if it contains the path
 		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
 		{
 			$uri = $path;
 		}
-		else
+
+		// Fall back to parsing the REQUEST URI
+		elseif (isset($_SERVER['REQUEST_URI']))
 		{
-			// Fall back to parsing the REQUEST URI
-			if (isset($_SERVER['REQUEST_URI']))
+			$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
+		}
+
+		// deal with CLI requests
+		elseif (\Fuel::$is_cli)
+		{
+			if (($uri = \Cli::option('uri')) !== null)
 			{
-				$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
+				$this->detected_uri = $uri;
+			}
+			elseif ($uri = \Cli::option(1) and strpos($uri, '/') === 0)
+			{
+				$this->detected_uri = $uri;
 			}
 			else
 			{
-				throw new \FuelException('Unable to detect the URI.');
+				$this->detected_uri = '';
 			}
 
-			// Remove the base URL from the URI
-			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
-			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
+			return $this->detected_uri;
+		}
+		else
+		{
+			throw new \FuelException('Unable to detect the URI.');
+		}
+
+		// Remove the base URL from the URI
+		$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
+		if ($uri !== '' and $base_url !== '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
+		{
+			$uri = substr($uri, strlen($base_url) - 1);
+		}
+
+		// If we are using an index file (not mod_rewrite) then remove it
+		$index_file = \Config::get('index_file');
+		if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
+		{
+			$uri = substr($uri, strlen($index_file));
+		}
+
+		// When index.php? is used and the config is set wrong, lets just
+		// be nice and help them out.
+		if ($index_file and strncmp($uri, '?/', 2) === 0)
+		{
+			$uri = substr($uri, 1);
+		}
+
+		// decode the uri, and put any + back (does not mean a space in the url path)
+		$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
+
+		// in case of incorrect rewrites, we may need to cleanup and
+		// recreate the QUERY_STRING and $_GET
+		if (strpos($uri, '?') !== false)
+		{
+			// log this issue
+			\Log::write(\Fuel::L_DEBUG, 'Your rewrite rules are incorrect, change "index.php?/$1 [QSA,L]" to "index.php/$1 [L]"!');
+
+			// reset $_GET
+			$_GET = array();
+
+			// lets split the URI up in case it contains a ?.  This would
+			// indicate the server requires 'index.php?'
+			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
+
+			// If there are matches then lets set everything correctly
+			if ( ! empty($matches))
 			{
-				$uri = substr($uri, strlen($base_url) - 1);
+				// first bit is the real uri
+				$uri = $matches[1];
+
+				// second bit is the real query string
+				$_SERVER['QUERY_STRING'] = $matches[2];
+				parse_str($matches[2], $_GET);
+
+				// update GET variables
+				$_GET = \Security::clean($_GET);
+				$this->input_get = $_GET;
 			}
 
-			// If we are using an index file (not mod_rewrite) then remove it
-			$index_file = \Config::get('index_file');
-			if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
-			{
-				$uri = substr($uri, strlen($index_file));
-			}
-
-			// When index.php? is used and the config is set wrong, lets just
-			// be nice and help them out.
-			if ($index_file and strncmp($uri, '?/', 2) === 0)
-			{
-				$uri = substr($uri, 1);
-			}
-
-			// decode the uri, and put any + back (does not mean a space in the url path)
-			$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
-
-			// in case of incorrect rewrites, we may need to cleanup and
-			// recreate the QUERY_STRING and $_GET
-			if (strpos($uri, '?') !== false)
-			{
-				// log this issue
-				\Log::write(\Fuel::L_DEBUG, 'Your rewrite rules are incorrect, change "index.php?/$1 [QSA,L]" to "index.php/$1 [L]"!');
-
-				// reset $_GET
-				$_GET = array();
-
-				// lets split the URI up in case it contains a ?.  This would
-				// indicate the server requires 'index.php?'
-				preg_match('#(.*?)\?(.*)#i', $uri, $matches);
-
-				// If there are matches then lets set everything correctly
-				if ( ! empty($matches))
-				{
-					// first bit is the real uri
-					$uri = $matches[1];
-
-					// second bit is the real query string
-					$_SERVER['QUERY_STRING'] = $matches[2];
-					parse_str($matches[2], $_GET);
-					$_GET = \Security::clean($_GET);
-				}
-			}
 		}
 
 		// Deal with any trailing dots
@@ -238,6 +256,7 @@ class Input_Instance
 		// Do some final clean up of the uri
 		$this->detected_uri = \Security::clean_uri($uri, true);
 
+		// And return it
 		return $this->detected_uri;
 	}
 
@@ -298,6 +317,16 @@ class Input_Instance
 		}
 
 		return \Input::server('REQUEST_METHOD', $default);
+	}
+
+	/**
+	 * Returns PHP's raw input
+	 *
+	 * @return  array
+	 */
+	public function raw()
+	{
+		return $this->raw_input;
 	}
 
 	/**
@@ -422,8 +451,8 @@ class Input_Instance
 			$content_type = $content_header;
 		}
 
-		// get php raw input
-		$php_input = file_get_contents('php://input');
+		// fetch the raw input data
+		$php_input = $this->raw();
 
 		// handle form-urlencoded input
 		if ($content_type == 'application/x-www-form-urlencoded')
@@ -509,8 +538,9 @@ class Input_Instance
 		// unknown input format
 		elseif ($php_input and ! is_array($php_input))
 		{
-			// don't know how to handle it
-			throw new \DomainException('Don\'t know how to parse input of type: '.$content_type);
+			// don't know how to handle it, allow the application to handle it
+			// reset the method to avoid having it stored below!
+			$method = null;
 		}
 
 		// GET and POST input, were not parsed

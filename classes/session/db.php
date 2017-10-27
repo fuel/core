@@ -34,6 +34,8 @@ class Session_Db extends \Session_Driver
 
 	public function __construct($config = array())
 	{
+		parent::__construct($config);
+
 		// merge the driver config with the global config
 		$this->config = array_merge($config, is_array($config['db']) ? $config['db'] : static::$_defaults);
 
@@ -43,22 +45,41 @@ class Session_Db extends \Session_Driver
 	// --------------------------------------------------------------------
 
 	/**
-	 * create a new session
+	 * Garbage Collector
+	 *
+	 * @return	bool
+	 */
+	public function gc()
+	{
+		if (mt_rand(0, 100) < $this->config['gc_probability'])
+		{
+			$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
+			$result = \DB::delete($this->config['table'])->where('updated', '<', $expired)->execute($this->config['database']);
+		}
+
+		return true;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * destroy the current session
 	 *
 	 * @return	\Session_Db
 	 */
-	public function create($payload = '')
+	public function destroy()
 	{
-		// create a new session
-		$this->keys['session_id']  = $this->_new_session_id();
-		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']  = \Input::user_agent();
-		$this->keys['created']     = $this->time->get_timestamp();
-		$this->keys['updated']     = $this->keys['created'];
+		// do we have something to destroy?
+		if ( ! empty($this->keys) and ! empty($this->record))
+		{
+			// delete the session record
+			$result = \DB::delete($this->config['table'])->where('session_id', '=', $this->keys['session_id'])->execute($this->config['database']);
+		}
 
-		// add the payload
-		$this->keys['payload'] = $payload;
+		// reset the stored session data
+		$this->record = null;
+
+		parent::destroy();
 
 		return $this;
 	}
@@ -71,12 +92,9 @@ class Session_Db extends \Session_Driver
 	 * @param	boolean, set to true if we want to force a new session to be created
 	 * @return	\Session_Driver
 	 */
-	public function read($force = false)
+	protected function read($force = false)
 	{
 		// initialize the session
-		$this->data = array();
-		$this->keys = array();
-		$this->flash = array();
 		$this->record = null;
 
 		// get the session cookie
@@ -145,7 +163,7 @@ class Session_Db extends \Session_Driver
 			}
 		}
 
-		return parent::read();
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -157,13 +175,11 @@ class Session_Db extends \Session_Driver
 	 * @throws	\Database_Exception
 	 * @throws	\FuelException
 	 */
-	public function write()
+	protected function write()
 	{
 		// do we have something to write?
 		if ( ! empty($this->keys) or ! empty($this->data) or ! empty($this->flash))
 		{
-			parent::write();
-
 			// rotate the session id if needed
 			$this->rotate(false);
 
@@ -226,7 +242,7 @@ class Session_Db extends \Session_Driver
 				}
 
 				// Run garbage collector
-				$this->gc();
+				$this->_change_state('gc');
 			}
 			catch (Database_Exception $e)
 			{
@@ -238,48 +254,6 @@ class Session_Db extends \Session_Driver
 				throw new \Database_Exception($msg);
 			}
 		}
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Garbage Collector
-	 *
-	 * @return	bool
-	 */
-	public function gc()
-	{
-		if (mt_rand(0, 100) < $this->config['gc_probability'])
-		{
-			$expired = $this->time->get_timestamp() - $this->config['expiration_time'];
-			$result = \DB::delete($this->config['table'])->where('updated', '<', $expired)->execute($this->config['database']);
-		}
-
-		return true;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * destroy the current session
-	 *
-	 * @return	\Session_Db
-	 */
-	public function destroy()
-	{
-		// do we have something to destroy?
-		if ( ! empty($this->keys) and ! empty($this->record))
-		{
-			// delete the session record
-			$result = \DB::delete($this->config['table'])->where('session_id', '=', $this->keys['session_id'])->execute($this->config['database']);
-		}
-
-		// reset the stored session data
-		$this->record = null;
-
-		parent::destroy();
 
 		return $this;
 	}

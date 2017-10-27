@@ -734,6 +734,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 
 	public function current()
 	{
+		if ($this->_sanitization_enabled)
+		{
+			return \Security::clean(current($this->_data), null, 'security.output_filter');
+		}
 		return current($this->_data);
 	}
 
@@ -744,6 +748,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 
 	public function next()
 	{
+		if ($this->_sanitization_enabled)
+		{
+			return \Security::clean(next($this->_data), null, 'security.output_filter');
+		}
 		return next($this->_data);
 	}
 
@@ -796,6 +804,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	{
 		if (array_key_exists($offset, $this->_data))
 		{
+			if ($this->_sanitization_enabled)
+			{
+				return \Security::clean($this->_data[$offset], null, 'security.output_filter');
+			}
 			return $this->_data[$offset];
 		}
 
@@ -961,9 +973,26 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	{
 		$data = unserialize($data);
 
-		foreach ($data as $key => $value)
+		if (isset($data['_is_new']))
 		{
-			$this->__set($key, $value);
+			$this->is_new = $data['_is_new'];
+			unset($data['_is_new']);
 		}
+		else
+		{
+			$this->_is_new = true;
+		}
+
+		if (isset($data['_is_frozen']))
+		{
+			$this->_is_frozen = $data['_is_frozen'];
+			unset($data['_is_frozen']);
+		}
+		else
+		{
+			$this->_is_frozen = false;
+		}
+
+		$this->_data = $data;
 	}
 }

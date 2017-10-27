@@ -89,7 +89,7 @@ class DB
 	 */
 	public static function select($args = null)
 	{
-		return \Database_Connection::instance()->select(func_get_args());
+		return \Database_Connection::instance(null, null, false)->select(func_get_args());
 	}
 
 	/**
@@ -103,7 +103,7 @@ class DB
 	 */
 	public static function select_array(array $columns = null)
 	{
-		return \Database_Connection::instance()->select($columns);
+		return \Database_Connection::instance(null, null, false)->select($columns);
 	}
 
 	/**
@@ -280,7 +280,7 @@ class DB
 	 */
 	public static function list_indexes($table, $like = null, $db = null)
 	{
-		return \Database_Connection::instance($db)->list_indexes($table, $like);
+		return \Database_Connection::instance($db, null, false)->list_indexes($table, $like);
 	}
 
 	/**
@@ -300,7 +300,7 @@ class DB
 	 */
 	public static function list_columns($table = null, $like = null, $db = null)
 	{
-		return \Database_Connection::instance($db)->list_columns($table, $like);
+		return \Database_Connection::instance($db, null, false)->list_columns($table, $like);
 	}
 
 	/**
@@ -313,7 +313,7 @@ class DB
 	 */
 	public static function list_tables($like = null, $db = null)
 	{
-		return \Database_Connection::instance($db)->list_tables($like);
+		return \Database_Connection::instance($db, null, false)->list_tables($like);
 	}
 
 	/**
@@ -327,7 +327,7 @@ class DB
 	 */
 	public static function datatype($type, $db = null)
 	{
-		return \Database_Connection::instance($db)->datatype($type);
+		return \Database_Connection::instance($db, null, false)->datatype($type);
 	}
 
 		/**
@@ -342,7 +342,7 @@ class DB
 	 */
 	public static function count_records($table, $db = null)
 	{
-		return \Database_Connection::instance($db)->count_records($table);
+		return \Database_Connection::instance($db, null, false)->count_records($table);
 	}
 
 	/**
@@ -356,7 +356,7 @@ class DB
 	 */
 	public static function count_last_query($db = null)
 	{
-		return \Database_Connection::instance($db)->count_last_query();
+		return \Database_Connection::instance($db, null, false)->count_last_query();
 	}
 
 	/**

@@ -45,6 +45,29 @@ class Database_MySQLi_Connection extends \Database_Connection
 	 */
 	public $_db_type = 'mysql';
 
+	/**
+	 * @param string $name
+	 * @param array  $config
+	 */
+	protected function __construct($name, array $config)
+	{
+		// construct a custom schema driver
+//		$this->_schema = new \Database_Drivername_Schema($name, $this);
+
+		// call the parent consructor
+		parent::__construct($name, $config);
+
+		// make sure we have all connection parameters, add defaults for those missing
+		$this->_config = \Arr::merge(array(
+			'connection'  => array(
+				'socket'     => '',
+				'port'       => '',
+				'compress'   => false,
+			),
+			'enable_cache'   => true,
+		), $this->_config);
+	}
+
 	public function connect()
 	{
 		if ($this->_connection)
@@ -60,16 +83,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 
 		// Extract the connection parameters, adding required variables
-		extract($this->_config['connection'] + array(
-			'database'   => '',
-			'hostname'   => '',
-			'port'       => '',
-			'socket'     => '',
-			'username'   => '',
-			'password'   => '',
-			'persistent' => false,
-			'compress'	 => true,
-		));
+		extract($this->_config['connection']);
 
 		try
 		{
@@ -86,36 +100,22 @@ class Database_MySQLi_Connection extends \Database_Connection
 				$socket = null;
 				$port   = null;
 			}
-			if ($persistent)
-			{
-				// Create a persistent connection
-				if ($compress)
-				{
-					$mysqli = mysqli_init();
-					$mysqli->real_connect('p:'.$hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
 
-					$this->_connection = $mysqli;
-				}
-				else
-				{
-					$this->_connection = new \MySQLi('p:'.$hostname, $username, $password, $database, $port, $socket);
-				}
-			}
-			else
-			{
-				// Create a connection and force it to be a new link
-				if ($compress)
-				{
-					$mysqli = mysqli_init();
-					$mysqli->real_connect($hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
+            $host = ($persistent) ? 'p:'.$hostname : $hostname;
 
-					$this->_connection = $mysqli;
-				}
-				else
-				{
-					$this->_connection = new \MySQLi($hostname, $username, $password, $database, $port, $socket);
-				}
-			}
+            // Create a connection and force it to be a new link
+            if ($compress)
+            {
+                $mysqli = mysqli_init();
+                $mysqli->real_connect($host, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
+
+                $this->_connection = $mysqli;
+            }
+            else
+            {
+                $this->_connection = new \MySQLi($host, $username, $password, $database, $port, $socket);
+            }
+
 			if ($this->_connection->error)
 			{
 				// Unable to connect, select database, etc
@@ -281,7 +281,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 
 		// Execute the query
-		if (($result = $this->_connection->query($sql)) === false)
+		if (($result = $this->_connection->query($sql, $this->_config['enable_cache'] ? MYSQLI_STORE_RESULT :MYSQLI_USE_RESULT)) === false)
 		{
 			if (isset($benchmark))
 			{
@@ -311,8 +311,16 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 		if ($type === \DB::SELECT)
 		{
-			// Return an iterator of results
-			return new \Database_MySQLi_Result($result, $sql, $as_object);
+			if ($this->_config['enable_cache'])
+			{
+				// Return an iterator of results
+				return new \Database_MySQLi_Cached($result, $sql, $as_object);
+			}
+			else
+			{
+				// Return an iterator of results
+				return new \Database_MySQLi_Result($result, $sql, $as_object);
+			}
 		}
 		elseif ($type === \DB::INSERT)
 		{
@@ -331,6 +339,29 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return $result;
 	}
 
+	/**
+	 * Returns a database cache object
+	 *
+	 *     $db->cache($result, $sql);
+	 *
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
+	 *
+	 * @return  Database_Cached
+	 */
+	public function cache($result, $sql, $as_object = null)
+	{
+		return new \Database_MySQLi_Cached($result, $sql, $as_object);
+	}
+
+	/**
+	 * Resolve a datatype
+	 *
+	 * @param integer $type
+	 *
+	 * @return array
+	 */
 	public function datatype($type)
 	{
 		static $types = array(

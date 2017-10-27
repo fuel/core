@@ -13,21 +13,20 @@
 
 namespace Fuel\Core;
 
-class Database_MySQLi_Result extends \Database_Result
+class Database_PDO_Result extends \Database_Result
 {
 	/**
-	 * Sets the total number of rows and stores the result locally.
-	 *
-	 * @param  mixed   $result     query result
-	 * @param  string  $sql        SQL query
-	 * @param  mixed   $as_object  object
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
 	 */
-	public function __construct($result, $sql, $as_object)
+	public function __construct($result, $sql, $as_object = null)
 	{
+		// go the generic construction processing
 		parent::__construct($result, $sql, $as_object);
 
 		// Find the number of rows in the result
-		$this->_total_rows = $result->num_rows;
+		$this->_total_rows = $this->result->rowCount();
 	}
 
 	/**
@@ -37,10 +36,7 @@ class Database_MySQLi_Result extends \Database_Result
 	 */
 	public function __destruct()
 	{
-		if ($this->_result instanceof \MySQLi_Result)
-		{
-			$this->_result->free();
-		}
+		// Cached results do not use driver resources
 	}
 
 	/**
@@ -52,7 +48,7 @@ class Database_MySQLi_Result extends \Database_Result
 	 */
 	public function cached()
 	{
-		return new \Database_MySQLi_Cached($this->result, $this->_query, $this->_as_object);
+		return new \Database_PDO_Cached($this->result, $this->_query, $this->_as_object);
 	}
 
 	/**************************
@@ -69,15 +65,15 @@ class Database_MySQLi_Result extends \Database_Result
 		// Convert the result into an array, as PDOStatement::rowCount is not reliable
 		if ($this->_as_object === false)
 		{
-			$result = $this->result->fetch_array(MYSQLI_ASSOC);
+			$result = $this->result->fetch(\PDO::FETCH_ASSOC);
 		}
 		elseif (is_string($this->_as_object))
 		{
-			$result = $this->result->fetch_object($this->_as_object);
+			$result = $this->result->fetchObject($this->_as_object);
 		}
 		else
 		{
-			$result = $this->result->fetch_object();
+			$result = $this->result->fetchObject();
 		}
 
 		// sanitize the data if needed
@@ -88,5 +84,4 @@ class Database_MySQLi_Result extends \Database_Result
 
 		return $result;
 	}
-
 }

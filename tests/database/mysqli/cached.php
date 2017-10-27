@@ -13,12 +13,12 @@
 namespace Fuel\Core;
 
 /**
- * Database_Result class tests
+ * Database_Mysqli_Cached class tests
  *
  * @group Core
  * @group Database
  */
-class Test_Database_Result extends TestCase
+class Test_Database_Mysqli_Cached extends TestCase
 {
  	public function test_foo() {}
 }

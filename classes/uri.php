@@ -321,9 +321,14 @@ class Uri
 		// if the route is a closure, an object will be passed here
 		is_object($uri) and $uri = null;
 
-		$this->uri = trim($uri ?: \Input::uri(), '/');
+		// if no uri is passed, get it from input
+		is_null($uri) and $uri = \Input::uri();
 
-		if (empty($this->uri))
+		// store the uri
+		$this->uri = trim($uri, '/');
+
+		// determine the uri segment list
+		if (empty($uri))
 		{
 			$this->segments = array();
 		}

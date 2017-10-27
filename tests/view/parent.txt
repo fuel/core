@@ -1,0 +1,2 @@
+<?php echo $child1; ?>
+<?php echo $child2; ?>
