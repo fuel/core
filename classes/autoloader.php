@@ -411,7 +411,7 @@ class Autoloader
 	 */
 	protected static function lower($str)
 	{
-		$encoding = class_exists('Fuel', false) ? \Fuel::$encoding : 'utf8';
+		$encoding = class_exists('Fuel', false) ? \Fuel::$encoding : 'UTF-8';
 
 		return MBSTRING
 			? mb_strtolower($str, $encoding)
