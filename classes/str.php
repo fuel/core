@@ -344,7 +344,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_strlen($str, $encoding)
 			: strlen($str);
 	}
@@ -366,7 +366,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_strpos($haystack, $needle, $offset, $encoding)
 			: strpos($haystack, $needle, $offset);
 	}
@@ -386,7 +386,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_strrpos($haystack, $needle, $offset, $encoding)
 			: strrpos($haystack, $needle, $offset);
 	}
@@ -413,7 +413,7 @@ class Str
 			? (MBSTRING ? mb_strlen($str, $encoding)
 			: strlen($str)) - $start : $length;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_substr($str, $start, $length, $encoding)
 			: substr($str, $start, $length);
 	}
@@ -430,7 +430,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_strtolower($str, $encoding)
 			: strtolower($str);
 	}
@@ -447,7 +447,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_strtoupper($str, $encoding)
 			: strtoupper($str);
 	}
@@ -469,7 +469,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_stripos($haystack, $needle, $offset, $encoding)
 			: stripos($haystack, $needle, $offset);
 	}
@@ -489,7 +489,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_strripos($haystack, $needle, $offset, $encoding)
 			: strripos($haystack, $needle, $offset);
 	}
@@ -508,7 +508,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_strstr($haystack, $needle, $before_needle, $encoding)
 			: strstr($haystack, $needle, $before_needle);
 	}
@@ -527,7 +527,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_stristr($haystack, $needle, $before_needle, $encoding)
 			: stristr($haystack, $needle, $before_needle);
 	}
@@ -546,7 +546,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_strrchr($haystack, $needle, $part, $encoding)
 			: strrchr($haystack, $needle, $part);
 	}
@@ -565,7 +565,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING and $encoding
+		return (MBSTRING and $encoding)
 			? mb_substr_count($haystack, $needle, $offset, $encoding)
 			: substr_count($haystack, $needle, $offset);
 	}
@@ -583,7 +583,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING
+		return (MBSTRING and $encoding)
 			? mb_strtolower(mb_substr($str, 0, 1, $encoding), $encoding).
 				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
 			: lcfirst($str);
@@ -602,7 +602,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING
+		return (MBSTRING and $encoding)
 			? mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding).
 				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
 			: ucfirst($str);
@@ -624,7 +624,7 @@ class Str
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
-		return MBSTRING
+		return (MBSTRING and $encoding)
 			? mb_convert_case($str, MB_CASE_TITLE, $encoding)
 			: ucwords(strtolower($str));
 	}
