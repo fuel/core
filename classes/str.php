@@ -340,7 +340,7 @@ class Str
 	 *
 	 * @return int                The length of the string on success, and 0 if the string is empty.
 	 */
-	public function strlen($str, $encoding = null)
+	public static function strlen($str, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -362,7 +362,7 @@ class Str
 	 *                            positions start at 0, and not 1.
 	 *                            Returns FALSE if the needle was not found.
 	 */
-	public function strpos($haystack, $needle, $offset = 0, $encoding = null)
+	public static function strpos($haystack, $needle, $offset = 0, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -382,7 +382,7 @@ class Str
 	 * @return mixed              Returns the numeric position of the last occurrence of needle in the
 	 *                            haystack string. If needle is not found, it returns FALSE.
 	 */
-	public function strrpos($haystack, $needle, $offset = 0, $encoding = null)
+	public static function strrpos($haystack, $needle, $offset = 0, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -404,7 +404,7 @@ class Str
 	 *
 	 * @return mixed             Returns the extracted part of string; or FALSE on failure, or an empty string.
 	 */
-	public function substr($str, $start, $length = null, $encoding = null)
+	public static function substr($str, $start, $length = null, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -465,7 +465,7 @@ class Str
 	 *                            positions start at 0, and not 1.
 	 *                            Returns FALSE if the needle was not found.
 	 */
-	public function stripos($haystack, $needle, $offset = 0, $encoding = null)
+	public static function stripos($haystack, $needle, $offset = 0, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -485,7 +485,7 @@ class Str
 	 * @return mixed              Returns the numeric position of the last occurrence of needle in the
 	 *                            haystack string. If needle is not found, it returns FALSE.
 	 */
-	public function strripos($haystack, $needle, $offset = 0, $encoding = null)
+	public static function strripos($haystack, $needle, $offset = 0, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -504,7 +504,7 @@ class Str
 	 *
 	 * @return mixed                  The portion of haystack, or FALSE if needle is not found
 	 */
-	public function strstr($haystack, $needle, $before_needle = false, $encoding = null)
+	public static function strstr($haystack, $needle, $before_needle = false, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -523,7 +523,7 @@ class Str
 	 *
 	 * @return mixed                  The portion of haystack, or FALSE if needle is not found
 	 */
-	public function stristr($haystack, $needle, $before_needle = false, $encoding = null)
+	public static function stristr($haystack, $needle, $before_needle = false, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -542,7 +542,7 @@ class Str
 	 *
 	 * @return mixed              The portion of haystack, or FALSE if needle is not found
 	 */
-	public function strrchr($haystack, $needle, $before_needle = false, $encoding = null)
+	public static function strrchr($haystack, $needle, $before_needle = false, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
@@ -561,7 +561,7 @@ class Str
 	 *
 	 * @return int                The number of occurences found
 	 */
-	public function substr_count($haystack, $needle, $offset = 0, $encoding = null)
+	public static function substr_count($haystack, $needle, $offset = 0, $encoding = null)
 	{
 		$encoding or $encoding = \Fuel::$encoding;
 
