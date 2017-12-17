@@ -99,6 +99,13 @@ class Module
 			$ns  => $path.'classes'.DS,
 		), true);
 
+		// load module routes if required
+		if (\Config::get('routing.module_routes', false) and $routes = Config::load($module.'::routes', 'routes'))
+		{
+			\Router::add($routes);
+		}
+
+		// mark the module as loaded
 		static::$modules[$module] = $path;
 
 		return true;
