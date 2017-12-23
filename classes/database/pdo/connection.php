@@ -73,20 +73,17 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 		catch (\PDOException $e)
 		{
-			// and convert the exception in a database exception
-			if ( ! is_numeric($error_code = $e->getCode()))
+			if ($this->_connection)
 			{
-				if ($this->_connection)
-				{
-					$error_code = $this->_connection->errorinfo();
-					$error_code = $error_code[1];
-				}
-				else
-				{
-					$error_code = 0;
-				}
+				$error_code = $this->_connection->errorinfo();
+				$error_code = $error_code[1];
 			}
-			throw new \Database_Exception(str_replace($this->_config['connection']['password'], str_repeat('*', 10), $e->getMessage()), $error_code, $e);
+			else
+			{
+				$error_code = 0;
+			}
+
+			throw new \Database_Exception(str_replace($this->_config['connection']['password'], str_repeat('*', 10), $e->getMessage()), $e->getCode(), $e, $error_code);
 		}
 	}
 
@@ -213,30 +210,6 @@ class Database_PDO_Connection extends \Database_Connection
 						// other database error, cleanup the profiler
 						isset($benchmark) and  \Profiler::delete($benchmark);
 
-						// and convert the exception in a database exception
-						if ( ! is_numeric($error_code = $e->getCode()))
-						{
-							if ($this->_connection)
-							{
-								$error_code = $this->_connection->errorinfo();
-								$error_code = $error_code[1];
-							}
-							else
-							{
-								$error_code = 0;
-							}
-						}
-
-						throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $error_code, $e);
-					}
-				}
-
-				// no more attempts left, bail out
-				else
-				{
-					// and convert the exception in a database exception
-					if ( ! is_numeric($error_code = $e->getCode()))
-					{
 						if ($this->_connection)
 						{
 							$error_code = $this->_connection->errorinfo();
@@ -246,8 +219,25 @@ class Database_PDO_Connection extends \Database_Connection
 						{
 							$error_code = 0;
 						}
+
+						throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $e->getCode(), $e, $error_code);
 					}
-					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $error_code, $e);
+				}
+
+				// no more attempts left, bail out
+				else
+				{
+					if ($this->_connection)
+					{
+						$error_code = $this->_connection->errorinfo();
+						$error_code = $error_code[1];
+					}
+					else
+					{
+						$error_code = 0;
+					}
+
+					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $e->getCode(), $e, $error_code);
 				}
 			}
 		}

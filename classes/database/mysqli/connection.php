@@ -119,7 +119,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			if ($this->_connection->error)
 			{
 				// Unable to connect, select database, etc
-				throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $this->_connection->error), $this->_connection->errno);
+				throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $this->_connection->error), $this->_connection->errno, null, $this->_connection->errno);
 			}
 		}
 		catch (\ErrorException $e)
@@ -127,8 +127,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			// No connection exists
 			$this->_connection = null;
 
-			$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
-			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $error_code, $e);
+			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $e->getCode(), $e, $e->getCode());
 		}
 
 		// \xFF is a better delimiter, but the PHP driver uses underscore
@@ -156,7 +155,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			if ($this->_connection->select_db($database) !== true)
 			{
 				// Unable to select database
-				throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+				throw new \Database_Exception($this->_connection->error, $this->_connection->errno, null, $this->_connection->errno);
 			}
 		}
 
@@ -205,7 +204,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 		if ($status === false)
 		{
-			throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+			throw new \Database_Exception($this->_connection->error, $this->_connection->errno, null, $this->_connection->errno);
 		}
 	}
 
@@ -230,7 +229,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			// Make sure the connection is still alive
 			if ( ! $this->_connection->ping())
 			{
-				throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno);
+				throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno, null, $this->_connection->errno);
 			}
 		}
 		else
@@ -289,7 +288,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 				\Profiler::delete($benchmark);
 			}
 
-			throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno);
+			throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno, null, $this->_connection->errno);
 		}
 
 		// check for multiresults, we don't support those at the moment
@@ -587,7 +586,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 		if (($value = $this->_connection->real_escape_string((string) $value)) === false)
 		{
-			throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+			throw new \Database_Exception($this->_connection->error, $this->_connection->errno, null, $this->_connection->errno);
 		}
 
 		// SQL standard is to use single-quotes for all values
