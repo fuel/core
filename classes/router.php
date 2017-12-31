@@ -115,10 +115,10 @@ class Router
 			{
 				if (count($matches) == 2)
 				{
+					$replace = '';
 					$indexed_group_count = 0;
 					foreach($matches[0] as $index => $target)
 					{
-						$replace = '';
 						if (array_key_exists($key = $matches[1][$index], $named_params) ||
 						    array_key_exists($key = '$'.($index + 1), $named_params) ||
 						    array_key_exists($key = $indexed_group_count++, $named_params))
