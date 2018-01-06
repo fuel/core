@@ -238,7 +238,7 @@ class Security
 				$value[$k] = static::htmlentities($v, $flags, $encoding, $double_encode);
 			}
 		}
-		elseif ($value instanceof \Iterator or get_class($value) == 'stdClass')
+		elseif ($value and ($value instanceof \Iterator or get_class($value) == 'stdClass'))
 		{
 			// Add to $already_cleaned variable
 			$already_cleaned[] = $value;
