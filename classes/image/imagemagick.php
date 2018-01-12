@@ -28,7 +28,7 @@ class Image_Imagemagick extends \Image_Driver
 		{
 			do
 			{
-				$this->image_temp = $this->config['temp_dir'].substr($this->config['temp_append'].md5(time() * microtime()), 0, 32).'.png';
+				$this->image_temp = $this->config['temp_dir'].substr($this->config['temp_append'].\Str::random('unique'), 0, 32).'.png';
 			}
 			while (is_file($this->image_temp));
 		}
