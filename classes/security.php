@@ -213,7 +213,7 @@ class Security
 		is_null($double_encode) and $double_encode = \Config::get('security.htmlentities_double_encode', false);
 
 		// Nothing to escape for non-string scalars, or for already processed values
-		if (is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned, true))
+		if (is_null($value) or is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned, true))
 		{
 			return $value;
 		}
@@ -238,7 +238,7 @@ class Security
 				$value[$k] = static::htmlentities($v, $flags, $encoding, $double_encode);
 			}
 		}
-		elseif ($value and ($value instanceof \Iterator or get_class($value) == 'stdClass'))
+		elseif (($value instanceof \Iterator or get_class($value) == 'stdClass'))
 		{
 			// Add to $already_cleaned variable
 			$already_cleaned[] = $value;
