@@ -172,6 +172,9 @@ class Date
 			throw new \UnexpectedValueException('Input was not recognized by pattern.');
 		}
 
+		// make sure we don't go before the epoch, as that causes weird things to happen
+		$time['tm_year'] <= 0 and $time['tm_year'] = 100;
+
 		// convert it into a timestamp
 		$timestamp = mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],
 						$time['tm_mon'] + 1, $time['tm_mday'], $time['tm_year'] + 1900);
