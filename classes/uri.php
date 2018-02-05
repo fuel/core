@@ -151,7 +151,14 @@ class Uri
 	public static function create($uri = null, $variables = array(), $get_variables = array(), $secure = null)
 	{
 		$url = '';
-		is_null($uri) and $uri = static::string();
+		if (is_null($uri))
+		{
+			$uri = static::string();
+			if (substr(\Input::uri(),-1) == '/')
+			{
+				$uri = rtrim($uri, '/') . '/';
+			}
+		}
 
 		// If the given uri is not a full URL
 		if( ! preg_match("#^(http|https|ftp)://#i", $uri))
