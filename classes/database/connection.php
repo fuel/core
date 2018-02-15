@@ -157,6 +157,7 @@ abstract class Database_Connection
 			'profiling'    => false,
 			'readonly'     => false,
 		), $config);
+		$this->_config['enable_cache'] = true;
 
 		// Set up a generic schema processor if needed
 		if ( ! $this->_schema)
