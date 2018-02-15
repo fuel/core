@@ -251,7 +251,7 @@ class Session_Db extends \Session_Driver
 				$msg = substr($msg, 0, strlen($msg)  - strlen(strrchr($msg, ':')));
 
 				// and rethrow it
-				throw new \Database_Exception($msg);
+				throw new \Database_Exception($msg, $e->getCode(), $e, $e->GetDbCode());
 			}
 		}
 

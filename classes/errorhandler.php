@@ -306,6 +306,10 @@ class Errorhandler
 		$data['filepath']	= $e->getFile();
 		$data['error_line']	= $e->getLine();
 		$data['backtrace']	= $e->getTrace();
+		if ($e instanceof \Database_Exception and $e->getDbCode())
+		{
+			$data['severity'] .= ' ('.$e->getDbCode().')';
+		}
 
 		$data['severity'] = ( ! isset(static::$levels[$data['severity']])) ? $data['severity'] : static::$levels[$data['severity']];
 

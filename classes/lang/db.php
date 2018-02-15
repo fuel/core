@@ -69,7 +69,7 @@ class Lang_Db implements Lang_Interface
 				$msg = substr($msg, 0, strlen($msg)  - strlen(strrchr($msg, ':')));
 
 				// and rethrow it
-				throw new \Database_Exception($msg);
+				throw new \Database_Exception($msg, $e->getCode(), $e, $e->getDbCode());
 			}
 
 			// did we succeed?

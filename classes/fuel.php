@@ -167,7 +167,7 @@ class Fuel
 		}
 
 		static::$encoding = \Config::get('encoding', static::$encoding);
-		MBSTRING and mb_internal_encoding(static::$encoding);
+		MBSTRING and static::$encoding and mb_internal_encoding(static::$encoding);
 
 		static::$locale = \Config::get('locale', static::$locale);
 

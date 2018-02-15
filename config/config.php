@@ -316,6 +316,11 @@ return array(
 		 * a list of extensions, including the dot! p.e. array('.html', '.php')
 		 */
 		'strip_extension' => true,
+
+		/**
+		 * Whether or not module routes should be loaded when loading a module
+		 */
+		'module_routes' => false,
 	),
 
 	/**

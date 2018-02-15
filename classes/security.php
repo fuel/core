@@ -213,7 +213,7 @@ class Security
 		is_null($double_encode) and $double_encode = \Config::get('security.htmlentities_double_encode', false);
 
 		// Nothing to escape for non-string scalars, or for already processed values
-		if (is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned, true))
+		if (is_null($value) or is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned, true))
 		{
 			return $value;
 		}
@@ -286,10 +286,10 @@ class Security
 	{
 		$value = $value ?: \Input::param(static::$csrf_token_key, \Input::json(static::$csrf_token_key, 'fail'));
 
-		// always reset token once it's been checked and still the same
-		if (static::fetch_token() == static::$csrf_old_token and ! empty($value))
+		// always reset token once it's been checked and still the same, and we've configured we want to rotate
+		if (static::fetch_token() == static::$csrf_old_token and ! empty($value) and \Config::get('security.csrf_rotate', true))
 		{
-			static::set_token(\Config::get('security.csrf_rotate', true));
+			static::set_token(true);
 		}
 
 		return $value === static::$csrf_old_token;
@@ -307,7 +307,7 @@ class Security
 			return static::$csrf_token;
 		}
 
-		static::set_token(false);
+		static::set_token(true);
 
 		return static::$csrf_token;
 	}
@@ -357,7 +357,7 @@ class Security
 	public static function set_token($rotate = true)
 	{
 		// re-use old token when found (= not expired) and expiration is used (otherwise always reset)
-		if ($rotate or static::$csrf_old_token !== false)
+		if ($rotate === false and static::$csrf_old_token !== false)
 		{
 			static::$csrf_token = static::$csrf_old_token;
 		}
