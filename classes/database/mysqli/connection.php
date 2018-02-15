@@ -281,7 +281,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 
 		// Execute the query
-		if (($result = $this->_connection->query($sql, $this->_config['enable_cache'] ? MYSQLI_STORE_RESULT :MYSQLI_USE_RESULT)) === false)
+		if (($result = $this->_connection->query($sql, $this->_config['enable_cache'] ? MYSQLI_STORE_RESULT : MYSQLI_USE_RESULT)) === false)
 		{
 			if (isset($benchmark))
 			{

@@ -153,10 +153,10 @@ abstract class Database_Connection
 			'table_prefix' => '',
 			'charset'      => 'utf8',
 			'collation'    => false,
-			'enable_cache' => true,
 			'profiling'    => false,
 			'readonly'     => false,
 		), $config);
+		$this->_config['enable_cache'] = true;
 
 		// Set up a generic schema processor if needed
 		if ( ! $this->_schema)
