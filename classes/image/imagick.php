@@ -28,6 +28,23 @@ class Image_Imagick extends \Image_Driver
 
 		$this->imagick->readImage($filename);
 
+		// deal with exif autorotation
+		$orientation = $this->imagick->getImageOrientation();
+		switch($orientation)
+		{
+			case \Imagick::ORIENTATION_BOTTOMRIGHT:
+				$this->imagick->rotateimage("#000", 180); // rotate 180 degrees
+			break;
+
+			case \Imagick::ORIENTATION_RIGHTTOP:
+				$this->imagick->rotateimage("#000", 90); // rotate 90 degrees CW
+			break;
+
+			case \Imagick::ORIENTATION_LEFTBOTTOM:
+				$this->imagick->rotateimage("#000", -90); // rotate 90 degrees CCW
+			break;
+		}
+
 		return $this;
 	}
 
