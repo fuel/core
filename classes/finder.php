@@ -277,8 +277,7 @@ class Finder
 		$found = array();
 		foreach ($paths as $path)
 		{
-			$files = new \GlobIterator(rtrim($path.$directory, DS).DS.$filter);
-			foreach($files as $file)
+			foreach(new \GlobIterator(rtrim($path.$directory, DS).DS.$filter) as $file)
 			{
 				$found[] = $file->getPathname();
 			}

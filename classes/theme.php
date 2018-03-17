@@ -583,8 +583,7 @@ class Theme
 		$themes = array();
 		foreach ($this->paths as $path)
 		{
-			$iterator = new \GlobIterator($path.'*');
-			foreach($iterator as $theme)
+			foreach(new \GlobIterator($path.'*') as $theme)
 			{
 				$themes[] = $theme->getFilename();
 			}
