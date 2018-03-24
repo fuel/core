@@ -176,7 +176,7 @@ class Request_Curl extends \Request_Driver
 		$this->set_response($body, $this->response_info('http_code', 200), $mime, $headers, isset($this->headers['Accept']) ? $this->headers['Accept'] : null);
 
 		// Request failed
-		if ($body === false)
+		if ($this->response_info['response'] === false)
 		{
 			$this->set_defaults();
 			throw new \RequestException(curl_error($connection), curl_errno($connection));
