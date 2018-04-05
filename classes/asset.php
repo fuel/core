@@ -165,6 +165,27 @@ class Asset
 	// --------------------------------------------------------------------
 
 	/**
+	 * Static call forwarder
+	 *
+	 * This can be used when new asset types have been dynamically added
+	 *
+	 * @param   string  $method  method name
+	 * @param   array   $args    passed arguments
+	 * @return  mixed
+	 * @throws  \BadMethodCallException
+	 */
+	public static function __callStatic($method, $args)
+	{
+		// get the default instance
+		$instance = static::instance();
+
+		// call the reqiested method
+		return call_user_func_array(array($instance, $method), $args);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * CSS
 	 *
 	 * Either adds the stylesheet to the group, or returns the CSS tag.

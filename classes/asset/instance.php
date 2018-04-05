@@ -132,14 +132,14 @@ class Asset_Instance
 	 * @param	$method
 	 * @param	$args
 	 * @return	mixed
-	 * @throws	\ErrorException
+	 * @throws	\BadMethodCallException
 	 */
 	public function __call($method, $args)
 	{
 		// check if we can render this type
 		if ( ! isset($this->_path_folders[$method]))
 		{
-			throw new \ErrorException('Call to undefined method Fuel\Core\Asset_Instance::'.$method.'()');
+			throw new \BadMethodCallException('Call to undefined method Fuel\Core\Asset_Instance::'.$method.'()');
 		}
 
 		// add the type to the arguments
