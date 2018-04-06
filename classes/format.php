@@ -514,7 +514,7 @@ class Format
 			}
 			else
 			{
-				$incomplete = $row;
+				$incomplete = $incomplete . $row;
 			}
 		}
 
