@@ -32,23 +32,29 @@ if ( ! function_exists('is_windows'))
  *
  * @param   string  $path
  * @param   string  $folder
- * @return  void
+ * @return  bool
  */
 if ( ! function_exists('import'))
 {
 	function import($path, $folder = 'classes')
 	{
+		// unify the path
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-		// load it ffrom the core if it exists
-		if (is_file(COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php'))
+
+		foreach (array('.php', '.phar', '') as $ext)
 		{
-			require_once COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
+			foreach (array(COREPATH, APPPATH) as $loc)
+			{
+				// check if the file exist
+				if (is_file($file = $loc.$folder.DIRECTORY_SEPARATOR.$path.$ext))
+				{
+					require_once $file;
+					return true;
+				}
+			}
 		}
-		// if the app has an override (or a non-core file), load that too
-		if (is_file(APPPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php'))
-		{
-			require_once APPPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
-		}
+
+		return false;
 	}
 }
 
