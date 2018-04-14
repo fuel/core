@@ -23,7 +23,7 @@ if ( ! function_exists('is_windows'))
 {
  	function is_windows()
  	{
- 		return strpos(strtolower(php_uname("s")), 'windows') === 0;
+ 		return DIRECTORY_SEPARATOR === '/';
  	}
 }
 
