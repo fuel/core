@@ -28,7 +28,7 @@
 		<p class="intro">No write access to APPPATH/config/crypt.php.</p>
 
 		<p>
-			The FuelPHP crypto functions require a set of unique and truly random crypto keys.
+			The FuelPHP crypto functions require unique and truly random crypto keys.
 			These keys are automatically generated and written to the crypto configuration
 			file the first time the application accesses a crypto function.
 		</p>
@@ -46,13 +46,16 @@
  * @link       http://fuelphp.com
  */
 
-return array (
-	'crypto_key' => '<?php echo $keys['crypto_key']; ?>',
-	'crypto_iv' => '<?php echo $keys['crypto_iv']; ?>',
-	'crypto_hmac' => '<?php echo $keys['crypto_hmac']; ?>',
+return array (<?php if ( ! empty($keys['legacy'])):?>
+	'legacy' => array (
+		'crypto_key' => '<?php echo empty($keys['legacy']['crypto_key']) ? '' : $keys['legacy']['crypto_key']; ?>',
+		'crypto_iv' => '<?php echo empty($keys['legacy']['crypto_iv']) ? '' : $keys['legacy']['crypto_iv']; ?>',
+		'crypto_hmac' => '<?php echo empty($keys['legacy']['crypto_hmac']) ? '' : $keys['legacy']['crypto_hmac']; ?>',
+	), <?php endif; ?>
+	'sodium' => array (
+		'cipherkey' => '<?php echo $keys['sodium']['cipherkey']; ?>',
+	),
 );
-
-
 
 		<p class="footer">
 			<a href="http://fuelphp.com">FuelPHP</a> is released under the MIT license.
