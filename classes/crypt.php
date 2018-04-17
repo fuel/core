@@ -433,11 +433,14 @@ class Crypt
 		$this->config = array_merge(static::$defaults, $config);
 
 		// in case we need to decode legacy encrypted strings
-		$this->legacy_crypter = new AES();
-		$this->legacy_hasher = new Hash('sha256');
+		if ( ! empty($this->config['legacy']))
+		{
+			$this->legacy_crypter = new AES();
+			$this->legacy_hasher = new Hash('sha256');
 
-		$this->legacy_crypter->enableContinuousBuffer();
-		$this->legacy_hasher->setKey(static::safe_b64decode($this->config['legacy']['crypto_hmac']));
+			$this->legacy_crypter->enableContinuousBuffer();
+			$this->legacy_hasher->setKey(static::safe_b64decode($this->config['legacy']['crypto_hmac']));
+		}
 	}
 
 	/**
@@ -584,6 +587,12 @@ class Crypt
 	 */
 	protected function legacy_decode($value, $key = false, $keylength = false)
 	{
+		// make sure we have legacy keys
+		if (empty($this->config['legacy']['crypto_key']))
+		{
+			throw new \FuelException('Can not decode this string, no legacy crypt keys defined');
+		}
+
 		if ( ! $key)
 		{
 			$key = static::safe_b64decode($this->config['legacy']['crypto_key']);
