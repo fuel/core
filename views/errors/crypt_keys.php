@@ -36,10 +36,10 @@
 		<p>Please copy the following code and paste it into the <strong>APPPATH/config/crypt.php</strong> file manually:</p>
 		<pre><code>&lt;?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8.1
+ * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team

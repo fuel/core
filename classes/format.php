@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2017 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -16,12 +16,6 @@ namespace Fuel\Core;
  * Format class
  *
  * Help convert between various formats such as XML, JSON, CSV, etc.
- *
- * @package    Fuel
- * @category   Core
- * @author     Fuel Development Team
- * @copyright  2010 - 2012 Fuel Development Team
- * @link       http://docs.fuelphp.com/classes/format.html
  */
 class Format
 {

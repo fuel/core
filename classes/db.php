@@ -1,11 +1,13 @@
 <?php
 /**
- * Database object creation helper methods.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
- * @package    Fuel\Database
- * @author     Kohana Team
- * @copyright  (c) 2009 Kohana Team
- * @license    http://kohanaphp.com/license
+ * @package    Fuel
+ * @version    1.9-dev
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2018 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
