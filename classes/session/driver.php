@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -39,59 +39,57 @@ abstract class Session_Driver
 	 */
 	protected $time = null;
 
-	// --------------------------------------------------------------------
-	// abstract methods
-	// --------------------------------------------------------------------
+	/*
+	 * @var	session state
+	 *
+	 * posssible values:
+	 * 'created' => active, either created or read
+	 * 'closed' => session closed, no more updates possible
+	 * 'destroyed' => no session exists, new one has to be created
+	 */
+	protected $state = 'init';
 
 	/**
-	 * create a new session
 	 *
-	 * @access	public
-	 * @return	void
 	 */
-	abstract function create();
+	public function __construct($config = array())
+	{
+		// get a time object
+		$this->time = \Date::time();
+	}
 
 	// --------------------------------------------------------------------
 	// generic driver methods
 	// --------------------------------------------------------------------
 
 	/**
-	 * destroy the current session
+	 * start the session
 	 *
 	 * @return	\Session_Driver
 	 */
-	public function destroy()
+	public function start()
 	{
-		// delete the session cookie
-		\Cookie::delete($this->config['cookie_name'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
-
-		// reset the stored session data
-		$this->keys = $this->flash = $this->data = array();
+		// change the state to started
+		$this->_change_state('started');
 
 		return $this;
 	}
 
 	/**
-	 * read the session
+	 * close the session
 	 *
+	 * @param	bool	$save	if true, save the session on close
 	 * @return	\Session_Driver
 	 */
-	public function read()
+	public function close($save = true)
 	{
-		// do we need to create a new session?
-		empty($this->keys) and $this->create();
+		// change the state to closed
+		$this->_change_state('closed');
 
-		// mark the loaded flash data, auto-expire if configured
-		foreach($this->flash as $key => $value)
+		// write the session
+		if ($save !== false)
 		{
-			if ($this->config['flash_auto_expire'] === true)
-			{
-				$this->flash[$key]['state'] = 'expire';
-			}
-			else
-			{
-				$this->flash[$key]['state'] = 'loaded';
-			}
+			$this->write();
 		}
 
 		return $this;
@@ -100,31 +98,40 @@ abstract class Session_Driver
 	// --------------------------------------------------------------------
 
 	/**
-	 * write the session
+	 * reset the session
 	 *
 	 * @return	\Session_Driver
 	 */
-	public function write()
+	public function reset()
 	{
-		// create the session if it doesn't exist
-		empty($this->keys) and $this->create();
-
-		$this->_cleanup_flash();
+		$this->init();
 
 		return $this;
 	}
 
-	// --------------------------------------------------------------------
+	/**
+	 * destroy the current session
+	 *
+	 * @return	\Session_Driver
+	 */
+	public function destroy()
+	{
+		// change the state to destroyed
+		$this->_change_state('destroyed');
+
+		// reset the session object
+		$this->reset();
+
+		return $this;
+	}
 
 	/**
-	 * generic driver initialisation
+	 * Garbage Collector
 	 *
-	 * @return	void
+	 * @return	bool
 	 */
-	public function init()
+	public function gc()
 	{
-		// get a time object
-		$this->time = \Date::time();
 	}
 
 	// --------------------------------------------------------------------
@@ -417,6 +424,149 @@ abstract class Session_Driver
 		if (isset($this->config[$name]))
 		{
 			$this->config[$name] = $value;
+		}
+
+		return $this;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * generic driver initialisation
+	 *
+	 * @return	void
+	 */
+	protected function init()
+	{
+		// reset the  state
+		$this->_change_state('init');
+	}
+
+	/**
+	 * create a new session
+	 *
+	 * @return	\Session_Driver
+	 */
+	protected function create()
+	{
+		// create a new session
+		$this->keys['session_id']  = $this->_new_session_id();
+		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
+		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
+		$this->keys['user_agent']  = \Input::user_agent();
+		$this->keys['created']     = $this->time->get_timestamp();
+		$this->keys['updated']     = $this->keys['created'];
+		$this->keys['payload']     = '';
+
+		return $this;
+	}
+
+	/**
+	 * changes the state of the session object, bail out when an impossible
+	 * combination occurs
+	 *
+	 * @param	string	$newstate	state to change to
+	 * @return	\Session_Driver
+	 */
+	protected function _change_state($newstate)
+	{
+		// log this request so we can trace the flow
+		logger(\Fuel::L_DEBUG, sprintf('Session state for "%s" transitioning from "%s" to "%s".', $this->get_config('cookie_name'), $this->state, $newstate), __METHOD__);
+
+		// init can always be called
+		if ($newstate === 'init')
+		{
+			// get a time object
+			$this->time = \Date::time();
+
+			// initialize the session storage
+			$this->data = array();
+			$this->keys = array();
+			$this->flash = array();
+		}
+
+		// init -> started
+		elseif ($newstate === 'started' and $this->state === 'init')
+		{
+			// read the session
+			$this->read();
+
+			// expire old flash data
+			$this->_expire_flash();
+
+			// if no session is present
+			if (empty($this->keys))
+			{
+				// create a new one
+				$this->create();
+			}
+
+			// register a shutdown event to close the session on termination
+			\Event::register('fuel-shutdown', array($this, 'close'));
+		}
+
+		// started -> closed
+		elseif ($newstate === 'closed' and $this->state === 'started')
+		{
+			// unregister a shutdown event, we've closed the session
+			\Event::unregister('fuel-shutdown', array($this, 'close'));
+
+			// remove stale flash
+			$this->_cleanup_flash();
+		}
+
+		// started -> destroyed
+		elseif ($newstate === 'destroyed' and $this->state === 'started')
+		{
+			// unregister a shutdown event, we've closed the session
+			\Event::unregister('fuel-shutdown', array($this, 'close'));
+
+			// delete the session cookie
+			\Cookie::delete($this->config['cookie_name'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+		}
+
+		// closed -> destroyed
+		elseif ($newstate === 'destroyed' and $this->state === 'closed')
+		{
+			// delete the session cookie
+			\Cookie::delete($this->config['cookie_name'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+		}
+
+		// gc, can always be run
+		elseif ($newstate === 'gc')
+		{
+			// run garbage collection. don't change state
+			return $this->gc();
+		}
+
+		else
+		{
+			throw new \FuelException(sprintf('Session state failure transitioning from "%s" to "%s".', $this->state, $newstate));
+		}
+
+		$this->state = $newstate;
+
+		return $this;
+	}
+
+	/**
+	 * auto expire flash variables if configured
+	 *
+	 * @return	\Session_Driver
+	 */
+	protected function _expire_flash()
+	{
+		// mark the loaded flash data, auto-expire if configured
+		foreach($this->flash as $key => $value)
+		{
+			if ($this->config['flash_auto_expire'] === true)
+			{
+				$this->flash[$key]['state'] = 'expire';
+			}
+			else
+			{
+				$this->flash[$key]['state'] = 'loaded';
+			}
 		}
 
 		return $this;

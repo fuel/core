@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -23,7 +23,7 @@ namespace Fuel\Core;
 class Session
 {
 	/**
-	 * loaded session driver instance
+	 * default session driver instance
 	 */
 	protected static $_instance = null;
 
@@ -63,7 +63,14 @@ class Session
 
 		if (\Config::get('session.auto_initialize', true))
 		{
-			static::instance();
+			// create the default instance if required
+			static::$_instance = static::forge();
+
+			// and start it if it wasn't auto-started
+			if ( ! \Config::get('session.auto_start', true))
+			{
+				static::$_instance->start();
+			}
 		}
 
 		if (\Config::get('session.native_emulation', false))
@@ -82,14 +89,14 @@ class Session
 				function ($sessionId) {
 					// copy all existing session vars into the PHP session store
 					$_SESSION = \Session::get();
-					$_SESSION['__org'] = $_SESSION;
+					$_SESSION['__org__'] = $_SESSION;
 					return '';
 				},
 				// write
 				function ($sessionId, $data) {
 					// get the original data
-					$org = isset($_SESSION['__org']) ? $_SESSION['__org'] : array();
-					unset($_SESSION['__org']);
+					$org = isset($_SESSION['__org__']) ? $_SESSION['__org__'] : array();
+					unset($_SESSION['__org__']);
 
 					// do we need to remove stuff?
 					if ($remove = array_diff_key($org, $_SESSION))
@@ -155,26 +162,26 @@ class Session
 		if (isset(static::$_instances[$cookie]))
 		{
 			// if so, they must be using the same driver class!
-			$class_instance = 'Fuel\\Core\\'.$class;
-			if (static::$_instances[$cookie] instanceof $class_instance)
+			$class_instance = 'Fuel\\Core'.$class;
+			if ( ! static::$_instances[$cookie] instanceof $class_instance)
 			{
 				throw new \FuelException('You can not instantiate two different sessions using the same cookie name "'.$cookie.'"');
 			}
 		}
 		else
 		{
-			// register a shutdown event to update the session
-			\Event::register('fuel-shutdown', array($driver, 'write'));
-
-			// init the session
-			$driver->init();
-			$driver->read();
-
 			// store this instance
 			static::$_instances[$cookie] =& $driver;
+
+			// start the session if needed
+			if (\Config::get('session.auto_start', true))
+			{
+				$driver->start();
+			}
 		}
 
-		return static::$_instances[$cookie];
+		// return the session instance
+		return static::instance($cookie);
 	}
 
 	// --------------------------------------------------------------------
@@ -196,8 +203,10 @@ class Session
 	 */
 	public static function instance($instance = null)
 	{
+		// if a named instance is requested
 		if ($instance !== null)
 		{
+			// return it if it exists
 			if ( ! array_key_exists($instance, static::$_instances))
 			{
 				return false;
@@ -206,12 +215,8 @@ class Session
 			return static::$_instances[$instance];
 		}
 
-		if (static::$_instance === null)
-		{
-			static::$_instance = static::forge();
-		}
-
-		return static::$_instance;
+		// return the default instance
+		return static::forge();
 	}
 
 	// --------------------------------------------------------------------
@@ -326,25 +331,13 @@ class Session
 	// --------------------------------------------------------------------
 
 	/**
-	 * create a new session
-	 *
-	 * @return	void
-	 */
-	public static function create()
-	{
-		return static::instance()->create();
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * read the session
+	 * start the session
 	 *
 	 * @return	\Session_Driver
 	 */
-	public static function read()
+	public static function start()
 	{
-		return static::instance()->read();
+		return static::instance()->start();
 	}
 
 	// --------------------------------------------------------------------
@@ -352,11 +345,25 @@ class Session
 	/**
 	 * write the session
 	 *
+	 * @param	bool	$save	if true, save the session on close
+	 *
 	 * @return	\Session_Driver
 	 */
-	public static function write()
+	public static function close($save = true)
 	{
-		return static::instance()->write();
+		return static::instance()->close($save);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * reset the session
+	 *
+	 * @return	\Session_Driver
+	 */
+	public static function reset()
+	{
+		return static::instance()->reset();
 	}
 
 	// --------------------------------------------------------------------

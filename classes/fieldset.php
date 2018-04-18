@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -139,6 +139,11 @@ class Fieldset
 	 * @var  string  name of the relation of the parent object this tabular form is modeled on
 	 */
 	protected $tabular_form_relation = null;
+
+	/**
+	 * @var  Pagination  optional pagination object to paginate the rows in the tabular form
+	 */
+	protected $tabular_form_pagination = null;
 
 	/**
 	 * Object constructor
@@ -620,11 +625,14 @@ class Fieldset
 				{
 					continue;
 				}
-				if (isset($settings['form']['type']) and ($settings['form']['type'] === false or $settings['form']['type'] === 'hidden'))
+				elseif (isset($settings['form']['type']) and ($settings['form']['type'] === false or $settings['form']['type'] === 'hidden'))
 				{
 					continue;
 				}
-				$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label']) ? \Lang::get($settings['label'], array(), $settings['label']) : '').'</th>'.PHP_EOL;
+				else
+				{
+					$fields_output .= "\t".'<th class="'.$this->tabular_form_relation.'_col_'.$field.'">'.(isset($settings['label']) ? \Lang::get($settings['label'], array(), $settings['label']) : '').'</th>'.PHP_EOL;
+				}
 			}
 			$fields_output .= "\t".'<th>'.\Config::get('form.tabular_delete_label', 'Delete?').'</th>'.PHP_EOL;
 
@@ -646,6 +654,11 @@ class Fieldset
 		$template = str_replace(array('{form_open}', '{open}', '{fields}', '{form_close}', '{close}'),
 			array($open, $open, $fields_output, $close, $close),
 			$template);
+
+		if ($this->tabular_form_pagination)
+		{
+			$template .= $this->tabular_form_pagination->render();
+		}
 
 		return $template;
 	}
@@ -778,14 +791,15 @@ class Fieldset
 	/**
 	 * Enable or disable the tabular form feature of this fieldset
 	 *
-	 * @param  string  $model     Model on which to define the tabular form
-	 * @param  string  $relation  Relation of the Model on the tabular form is modeled
-	 * @param  array   $parent    Collection of Model objects from a many relation
-	 * @param  int     $blanks    Number of empty rows to generate
+	 * @param  string     $model       Model on which to define the tabular form
+	 * @param  string     $relation    Relation of the Model on the tabular form is modeled
+	 * @param  array      $parent      Collection of Model objects from a many relation
+	 * @param  int        $blanks      Number of empty rows to generate
+	 * @param  Pagination $pagination  If the tabular form must be paginated, a pagination object
 	 *
 	 * @return  Fieldset  this, to allow chaining
 	 */
-	public function set_tabular_form($model, $relation, $parent, $blanks = 1)
+	public function set_tabular_form($model, $relation, $parent, $blanks = 1, $pagination = null)
 	{
 		// make sure our parent is an ORM model instance
 		if ( ! $parent instanceOf \Orm\Model)
@@ -804,13 +818,13 @@ class Fieldset
 		// check for compound primary keys
 		try
 		{
-			// fetch the relations of the parent model
+			// fetch the primary key of the parent model
 			$primary_key = call_user_func($model.'::primary_key');
 
 			// we don't support compound primary keys
 			if (count($primary_key) !== 1)
 			{
-			throw new \RuntimeException('set_tabular_form() does not supports models with compound primary keys.');
+			throw new \RuntimeException('set_tabular_form() does not yet support models with compound primary keys.');
 			}
 
 			// store the primary key name, we need that later
@@ -821,11 +835,20 @@ class Fieldset
 			throw new \RuntimeException('Unable to fetch the models primary key information.');
 		}
 
+		// validate the number of blank lines passed
+		if ( ! is_numeric($blanks) or $blanks < 0)
+		{
+			$blanks = 0;
+		}
+
 		// store the tabular form class name
 		$this->tabular_form_model = $model;
 
-		// and the relation on which we model the rows
+		// the relation on which we model the rows
 		$this->tabular_form_relation = $relation;
+
+		// and the the optional row pagination object
+		$this->tabular_form_pagination = $pagination;
 
 		// load the form config if not loaded yet
 		\Config::load('form', true);
@@ -836,9 +859,38 @@ class Fieldset
 			'field_template' => \Config::get('form.tabular_field_template', "{field}"),
 		));
 
+		// update the pagination count
+		$min_row = 0;
+		$max_row = count($parent->{$relation});
+		if ($pagination)
+		{
+			// add the total line count to the pagination object
+			$this->tabular_form_pagination->total_items = $max_row + $blanks;
+
+			// calculate offset and limit
+			$min_row =  $this->tabular_form_pagination->offset;
+			$max_row = $min_row + $this->tabular_form_pagination->per_page;
+
+			// add only blanks to the last page
+			if ($this->tabular_form_pagination->current_page != $this->tabular_form_pagination->total_pages)
+			{
+				$blanks = 0;
+			}
+		}
+
 		// add the rows to the tabular form fieldset
+		$linecount = 0;
 		foreach ($parent->{$relation} as $row)
 		{
+			// increment the linecounter
+			$linecount++;
+
+			// make sure the rows added are within bounds
+			if ($linecount <= $min_row or $linecount > $max_row)
+			{
+				continue;
+			}
+
 			// add the row fieldset to the tabular form fieldset
 			$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_row_'.$row->{$primary_key}));
 
@@ -852,10 +904,6 @@ class Fieldset
 		}
 
 		// and finish with zero or more empty rows so we can add new data
-		if ( ! is_numeric($blanks) or $blanks < 0)
-		{
-			$blanks = 1;
-		}
 		for ($i = 0; $i < $blanks; $i++)
 		{
 			$this->add($fieldset = \Fieldset::forge($this->tabular_form_relation.'_new_'.$i));

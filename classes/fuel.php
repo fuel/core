@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -28,7 +28,7 @@ class Fuel
 	/**
 	 * @var  string  The version of Fuel
 	 */
-	const VERSION = '1.8';
+	const VERSION = '1.8.1';
 
 	/**
 	 * @var  string  constant used for when in testing mode
@@ -167,7 +167,7 @@ class Fuel
 		}
 
 		static::$encoding = \Config::get('encoding', static::$encoding);
-		MBSTRING and mb_internal_encoding(static::$encoding);
+		MBSTRING and static::$encoding and mb_internal_encoding(static::$encoding);
 
 		static::$locale = \Config::get('locale', static::$locale);
 
@@ -406,9 +406,9 @@ class Fuel
 		// framework default paths
 		static $paths = array(
 			'APPPATH/' => APPPATH,
-			'DOCROOT/' => DOCROOT,
 			'COREPATH/' => COREPATH,
 			'PKGPATH/' => PKGPATH,
+			'DOCROOT/' => DOCROOT,
 			'VENDORPATH/' => VENDORPATH,
 		);
 

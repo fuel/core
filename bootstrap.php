@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -17,7 +17,16 @@ define('CRLF', chr(13).chr(10));
  * Do we have access to mbstring?
  * We need this in order to work with UTF-8 strings
  */
-define('MBSTRING', function_exists('mb_get_info'));
+if ( ! defined('MBSTRING'))
+{
+	// we do not support mb function overloading
+	if (ini_get('mbstring.func_overload'))
+	{
+		die('Your PHP installation is configured to overload mbstring functions. This is not supported in FuelPHP!');
+	}
+
+	define('MBSTRING', function_exists('mb_get_info'));
+}
 
 // load the base functions
 require COREPATH.'base.php';
@@ -152,7 +161,6 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Database_Connection'              => COREPATH.'classes/database/connection.php',
 		'Fuel\\Core\\Database_Result'                  => COREPATH.'classes/database/result.php',
-		'Fuel\\Core\\Database_Result_Cached'           => COREPATH.'classes/database/result/cached.php',
 		'Fuel\\Core\\Database_Exception'               => COREPATH.'classes/database/exception.php',
 		'Fuel\\Core\\Database_Expression'              => COREPATH.'classes/database/expression.php',
 		// Generic Schema builder
@@ -172,14 +180,17 @@ function setup_autoloader()
 		'Fuel\\Core\\Database_SQLite_Builder_Update'   => COREPATH.'classes/database/sqlite/builder/update.php',
 		// Generic PDO driver
 		'Fuel\\Core\\Database_Pdo_Connection'          => COREPATH.'classes/database/pdo/connection.php',
-		// Specific PDO drivers
+		'Fuel\\Core\\Database_Pdo_Result'              => COREPATH.'classes/database/pdo/result.php',
+		'Fuel\\Core\\Database_Pdo_Cached'              => COREPATH.'classes/database/pdo/cached.php',
+		// Platform specific PDO drivers
 		'Fuel\\Core\\Database_MySQL_Connection'        => COREPATH.'classes/database/mysql/connection.php',
 		'Fuel\\Core\\Database_SQLite_Connection'       => COREPATH.'classes/database/sqlite/connection.php',
 		'Fuel\\Core\\Database_Sqlsrv_Connection'       => COREPATH.'classes/database/sqlsrv/connection.php',
 		'Fuel\\Core\\Database_Dblib_Connection'        => COREPATH.'classes/database/dblib/connection.php',
-		// Legacy drivers
+		// Legacy MySQL driver
 		'Fuel\\Core\\Database_MySQLi_Connection'       => COREPATH.'classes/database/mysqli/connection.php',
 		'Fuel\\Core\\Database_MySQLi_Result'           => COREPATH.'classes/database/mysqli/result.php',
+		'Fuel\\Core\\Database_MySQLi_Cached'           => COREPATH.'classes/database/mysqli/cached.php',
 
 		'Fuel\\Core\\Fuel'                             => COREPATH.'classes/fuel.php',
 		'Fuel\\Core\\FuelException'                    => COREPATH.'classes/fuel.php',

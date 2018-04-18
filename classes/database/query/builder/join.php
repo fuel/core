@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  */
@@ -110,6 +110,30 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 	}
 
 	/**
+	 * Adds a opening bracket.
+	 *
+	 * @return  $this
+	 */
+	public function on_open()
+	{
+		$this->_on[] = array('', '', '', '(');
+
+		return $this;
+	}
+
+	/**
+	 * Adds a closing bracket.
+	 *
+	 * @return  $this
+	 */
+	public function on_close()
+	{
+		$this->_on[] = array('', '', '', ')');
+
+		return $this;
+	}
+
+	/**
 	 * Compile the SQL partial for a JOIN statement and return it.
 	 *
 	 * @param   mixed  $db  Database_Connection instance or instance name
@@ -162,17 +186,36 @@ class Database_Query_Builder_Join extends \Database_Query_Builder
 			// Split the condition
 			list($c1, $op, $c2, $chaining) = $condition;
 
-			// Add chain type
-			$conditions[] = ' '.$chaining.' ';
+			$c_string = $c1 . $op . $c2;
 
-			if ($op)
+			// Just a chaining character?
+			if (empty($c_string))
 			{
-				// Make the operator uppercase and spaced
-				$op = ' '.strtoupper($op);
+				$conditions[] = $chaining;
 			}
+			else
+			{
+				// Check if we have a pending bracket open
+				if (end($conditions) == '(')
+				{
+					// Update the chain type
+					$conditions[key($conditions)] = ' '.$chaining.' (';
+				}
+				else
+				{
+					// Just add chain type
+					$conditions[] = ' '.$chaining.' ';
+				}
 
-			// Quote each of the identifiers used for the condition
-			$conditions[] = $db->quote_identifier($c1).$op.' '.(is_null($c2) ? 'NULL' : $db->quote_identifier($c2));
+				if ($op)
+				{
+					// Make the operator uppercase and spaced
+					$op = ' '.strtoupper($op);
+				}
+
+				// Quote each of the identifiers used for the condition
+				$conditions[] = $db->quote_identifier($c1).$op.' '.(is_null($c2) ? 'NULL' : $db->quote_identifier($c2));
+			}
 		}
 
 		// remove the first chain type

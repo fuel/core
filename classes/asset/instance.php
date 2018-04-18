@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -132,14 +132,14 @@ class Asset_Instance
 	 * @param	$method
 	 * @param	$args
 	 * @return	mixed
-	 * @throws	\ErrorException
+	 * @throws	\BadMethodCallException
 	 */
 	public function __call($method, $args)
 	{
 		// check if we can render this type
 		if ( ! isset($this->_path_folders[$method]))
 		{
-			throw new \ErrorException('Call to undefined method Fuel\Core\Asset_Instance::'.$method.'()');
+			throw new \BadMethodCallException('Call to undefined method Fuel\Core\Asset_Instance::'.$method.'()');
 		}
 
 		// add the type to the arguments

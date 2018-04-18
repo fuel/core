@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  */
@@ -15,8 +15,13 @@ namespace Fuel\Core;
 
 class Database_MySQLi_Result extends \Database_Result
 {
-	protected $_internal_row = 0;
-
+	/**
+	 * Sets the total number of rows and stores the result locally.
+	 *
+	 * @param  mixed   $result     query result
+	 * @param  string  $sql        SQL query
+	 * @param  mixed   $as_object  object
+	 */
 	public function __construct($result, $sql, $as_object)
 	{
 		parent::__construct($result, $sql, $as_object);
@@ -25,6 +30,11 @@ class Database_MySQLi_Result extends \Database_Result
 		$this->_total_rows = $result->num_rows;
 	}
 
+	/**
+	 * Result destruction cleans up all open result sets.
+	 *
+	 * @return  void
+	 */
 	public function __destruct()
 	{
 		if ($this->_result instanceof \MySQLi_Result)
@@ -33,47 +43,50 @@ class Database_MySQLi_Result extends \Database_Result
 		}
 	}
 
-	public function seek($offset)
+	/**
+	 * Get a cached database result from the current result iterator.
+	 *
+	 *     $cachable = serialize($result->cached());
+	 *
+	 * @return  Database_PDO_Cached
+	 */
+	public function cached()
 	{
-		if ($this->offsetExists($offset) and $this->_result->data_seek($offset))
-		{
-			// Set the current row to the offset
-			$this->_current_row = $this->_internal_row = $offset;
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return new \Database_MySQLi_Cached($this->result, $this->_query, $this->_as_object);
 	}
 
+	/**************************
+	 * Iterable methods
+	 *************************/
+
+	/**
+	 * Implements [Iterator::current], returns the next row.
+	 *
+	 * @return  mixed
+	 */
 	public function current()
 	{
-		if ($this->_current_row !== $this->_internal_row and ! $this->seek($this->_current_row))
+		// Convert the result into an array, as PDOStatement::rowCount is not reliable
+		if ($this->_as_object === false)
 		{
-			return false;
-		}
-
-		// Increment internal row for optimization assuming rows are fetched in order
-		$this->_internal_row++;
-
-		if ($this->_as_object === true)
-		{
-			// Return an stdClass
-			return $this->_result->fetch_object();
+			$result = $this->result->fetch_array(MYSQLI_ASSOC);
 		}
 		elseif (is_string($this->_as_object))
 		{
-			// Return an object of given class name
-			//! TODO: add the $params parameter
-			return $this->_result->fetch_object($this->_as_object);
+			$result = $this->result->fetch_object($this->_as_object);
 		}
 		else
 		{
-			// Return an array of the row
-			return $this->_result->fetch_assoc();
+			$result = $this->result->fetch_object();
 		}
+
+		// sanitize the data if needed
+		if ($this->_sanitization_enabled)
+		{
+			$result = \Security::clean($result, null, 'security.output_filter');
+		}
+
+		return $result;
 	}
 
 }

@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -556,8 +556,7 @@ class Migrate
 	{
 		$found = array();
 
-		$files = new \GlobIterator(APPPATH.\Config::get('migrations.folder').'*_*.php');
-		foreach($files as $file)
+		foreach(new \GlobIterator(APPPATH.\Config::get('migrations.folder').'*_*.php') as $file)
 		{
 			$found[] = $file->getPathname();
 		}
@@ -574,34 +573,21 @@ class Migrate
 	 */
 	protected static function _find_module($name = null)
 	{
+		is_null($name) and $name = '*';
+
 		$files = array();
 
-		if ($name)
+		foreach (\Config::get('module_paths') as $m)
 		{
-			// find a module
-			foreach (\Config::get('module_paths') as $m)
+			foreach(new \GlobIterator($m.$name.DS.\Config::get('migrations.folder').'*_*.php') as $file)
 			{
-				$found = new \GlobIterator($m.$name.DS.\Config::get('migrations.folder').'*_*.php');
-				if (count($found))
-				{
-					foreach($found as $file)
-					{
-						$files[] = $file->getPathname();
-					}
-					break;
-				}
+				$files[] = $file->getPathname();
 			}
-		}
-		else
-		{
-			// find all modules
-			foreach (\Config::get('module_paths') as $m)
+
+			// if we were looking for a specific module, bail out when we've found it
+			if ($name !== '*' and ! empty($files))
 			{
-				$found = new \GlobIterator($m.'*'.DS.\Config::get('migrations.folder').'*_*.php');
-				foreach($found as $file)
-				{
-					$files[] = $file->getPathname();
-				}
+				break;
 			}
 		}
 
@@ -617,34 +603,22 @@ class Migrate
 	 */
 	protected static function _find_package($name = null)
 	{
+		is_null($name) and $name = '*';
+
 		$files = array();
 
-		if ($name)
+		// find a package
+		foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
 		{
-			// find a package
-			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
+			foreach(new \GlobIterator($p.$name.DS.\Config::get('migrations.folder').'*_*.php') as $file)
 			{
-				$found = new \GlobIterator($p.$name.DS.\Config::get('migrations.folder').'*_*.php');
-				if (count($found))
-				{
-					foreach($found as $file)
-					{
-						$files[] = $file->getPathname();
-					}
-					break;
-				}
+				$files[] = $file->getPathname();
 			}
-		}
-		else
-		{
-			// find all packages
-			foreach (\Config::get('package_paths', array(PKGPATH)) as $p)
+
+			// if we were looking for a specific package, bail out when we've found it
+			if ($name !== '*' and ! empty($files))
 			{
-				$found = new \GlobIterator($p.'*'.DS.\Config::get('migrations.folder').'*_*.php');
-				foreach($found as $file)
-				{
-					$files[] = $file->getPathname();
-				}
+				break;
 			}
 		}
 

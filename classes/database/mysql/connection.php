@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  */
@@ -24,6 +24,9 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 	 */
 	public function list_tables($like = null)
 	{
+		// Make sure the database is connected
+		$this->_connection or $this->connect();
+
 		$query = 'SHOW TABLES';
 
 		if (is_string($like))
@@ -43,6 +46,51 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 
 		return $tables;
 	}
+
+	/**
+	 * List indexes
+	 *
+	 * @param string $like
+	 *
+	 * @throws \FuelException
+	 */
+	public function list_indexes($table, $like = null)
+	{
+		// Make sure the database is connected
+		$this->_connection or $this->connect();
+
+		$query = 'SHOW INDEX FROM '.$this->quote_table($table);
+
+		if (is_string($like))
+		{
+			$query .= ' WHERE '.$this->quote_identifier('Key_name').' LIKE ' . $this->quote($like);
+		}
+
+		$q = $this->_connection->prepare($query);
+		$q->execute();
+		$result = $q->fetchAll(\PDO::FETCH_ASSOC);
+
+		// unify the result
+		$indexes = array();
+		foreach ($result as $row)
+		{
+			$index = array(
+				'name' => $row['Key_name'],
+				'column' => $row['Column_name'],
+				'order' => $row['Seq_in_index'],
+				'type' => $row['Index_type'],
+				'primary' => $row['Key_name'] == 'PRIMARY' ? true : false,
+				'unique' => $row['Non_unique'] == 0 ? true : false,
+				'null' => $row['Null'] == 'YES' ? true : false,
+				'ascending' => $row['Collation'] == 'A' ? true : false,
+			);
+
+			$indexes[] = $index;
+		}
+
+		return $indexes;
+	}
+
 	/**
 	 * Create a new PDO instance
 	 *

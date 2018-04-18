@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -271,22 +271,33 @@ class Request
 	 */
 	public function __construct($uri, $route = true, $method = null)
 	{
-		$this->uri = new \Uri($uri);
+		// store the raw request uri so input can access it
+		$this->uri = $uri;
 
-		if (static::$active)
+		// forge a new input instance for this request
+		$this->input = \Input::forge($this, static::$active ? static::$active->input() : null);
+
+		// fetch the processed uri from Input so we have something to execute
+		$this->uri = new \Uri($this->input->uri());
+
+		// fetch the reuqest method for this request
+		$this->method = $method ?: $this->input->method();
+
+		// First request called is also the main request
+		if ( ! static::$main)
 		{
-			// hmvc request, forge a new instance
-			$this->input = \Input::forge($this, static::$active->input());
+			static::$main = $this;
+			logger(\Fuel::L_INFO, 'Creating a new Request with URI = "'.$this->uri->get().'"', __METHOD__);
 		}
 		else
 		{
-			// main request, get the global instance
-			$this->input = \Input::instance();
+			logger(\Fuel::L_INFO, 'Creating HMVC Request with URI = "'.$this->uri->get().'"', __METHOD__);
 		}
 
-		$this->method = $method ?: $this->input->method();
-
-		logger(\Fuel::L_INFO, 'Creating a new '.(static::$main==null ? 'main' : 'HMVC').' Request with URI = "'.$this->uri->get().'"', __METHOD__);
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' Start route lookup');
+		}
 
 		// check if a module was requested
 		if (count($this->uri->get_segments()) and $module_path = \Module::exists($this->uri->get_segment(1)))
@@ -328,6 +339,11 @@ class Request
 		}
 
 		$this->route = \Router::process($this, $route);
+
+		if (\Fuel::$profiling)
+		{
+			\Profiler::mark(__METHOD__.' End route lookup');
+		}
 
 		if ( ! $this->route)
 		{
@@ -374,13 +390,6 @@ class Request
 		// Make the current request active
 		static::$active = $this;
 
-		// First request called is also the main request
-		if ( ! static::$main)
-		{
-			logger(\Fuel::L_INFO, 'Setting main Request', __METHOD__);
-			static::$main = $this;
-		}
-
 		if ( ! $this->route)
 		{
 			static::reset_request();
@@ -421,6 +430,7 @@ class Request
 				// Load the controller using reflection
 				$class = new \ReflectionClass($class);
 
+				// Abstract controller classes can't be called
 				if ($class->isAbstract())
 				{
 					throw new \HttpNotFoundException();

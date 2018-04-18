@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  *
@@ -32,16 +32,25 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	protected function __construct($name, array $config)
 	{
-		// construct a custom schema driver
-//		$this->_schema = new \Database_Drivername_Schema($name, $this);
+		// example of constructing a custom schema driver
+		# $this->_schema = new \Database_<drivername>_Schema($name, $this);
 
 		// call the parent consructor
 		parent::__construct($name, $config);
 
-		if (isset($config['identifier']))
+		// add default attributes and config values for those missing
+		$this->_config = \Arr::merge(array(
+			'attrs'        => array(
+				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+			),
+			'cached'       => false,
+		), $this->_config);
+
+		// convert generic config values to specific attributes
+		if ( ! empty($this->_config['connection']['persistent']))
 		{
-			// Allow the identifier to be overloaded per-connection
-			$this->_identifier = (string) $this->_config['identifier'];
+			// Make the connection persistent
+			$this->_config['attrs'][\PDO::ATTR_PERSISTENT] = true;
 		}
 	}
 
@@ -57,35 +66,6 @@ class Database_PDO_Connection extends \Database_Connection
 			return;
 		}
 
-		// make sure we have all connection parameters, add defaults for those missing
-		$this->_config = array_merge(array(
-			'connection'  => array(
-				'dsn'        => '',
-				'hostname'   => '',
-				'username'   => null,
-				'password'   => null,
-				'database'   => '',
-				'persistent' => false,
-				'compress'   => false,
-			),
-			'identifier'   => '`',
-			'table_prefix' => '',
-			'charset'      => 'utf8',
-			'collation'    => false,
-			'enable_cache' => true,
-			'profiling'    => false,
-			'readonly'     => false,
-			'attrs'        => array(
-				\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-			),
-		), $this->_config);
-
-		if ( ! empty($this->_config['connection']['persistent']))
-		{
-			// Make the connection persistent
-			$this->_config['attrs'][\PDO::ATTR_PERSISTENT] = true;
-		}
-
 		try
 		{
 			// Create a new PDO connection
@@ -93,20 +73,17 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 		catch (\PDOException $e)
 		{
-			// and convert the exception in a database exception
-			if ( ! is_numeric($error_code = $e->getCode()))
+			if ($this->_connection)
 			{
-				if ($this->_connection)
-				{
-					$error_code = $this->_connection->errorinfo();
-					$error_code = $error_code[1];
-				}
-				else
-				{
-					$error_code = 0;
-				}
+				$error_code = $this->_connection->errorinfo();
+				$error_code = $error_code[1];
 			}
-			throw new \Database_Exception(str_replace($this->_config['connection']['password'], str_repeat('*', 10), $e->getMessage()), $error_code, $e);
+			else
+			{
+				$error_code = 0;
+			}
+
+			throw new \Database_Exception(str_replace($this->_config['connection']['password'], str_repeat('*', 10), $e->getMessage()), $e->getCode(), $e, $error_code);
 		}
 	}
 
@@ -233,30 +210,6 @@ class Database_PDO_Connection extends \Database_Connection
 						// other database error, cleanup the profiler
 						isset($benchmark) and  \Profiler::delete($benchmark);
 
-						// and convert the exception in a database exception
-						if ( ! is_numeric($error_code = $e->getCode()))
-						{
-							if ($this->_connection)
-							{
-								$error_code = $this->_connection->errorinfo();
-								$error_code = $error_code[1];
-							}
-							else
-							{
-								$error_code = 0;
-							}
-						}
-
-						throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $error_code, $e);
-					}
-				}
-
-				// no more attempts left, bail out
-				else
-				{
-					// and convert the exception in a database exception
-					if ( ! is_numeric($error_code = $e->getCode()))
-					{
 						if ($this->_connection)
 						{
 							$error_code = $this->_connection->errorinfo();
@@ -266,8 +219,25 @@ class Database_PDO_Connection extends \Database_Connection
 						{
 							$error_code = 0;
 						}
+
+						throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $e->getCode(), $e, $error_code);
 					}
-					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $error_code, $e);
+				}
+
+				// no more attempts left, bail out
+				else
+				{
+					if ($this->_connection)
+					{
+						$error_code = $this->_connection->errorinfo();
+						$error_code = $error_code[1];
+					}
+					else
+					{
+						$error_code = 0;
+					}
+
+					throw new \Database_Exception($e->getMessage().' with query: "'.$sql.'"', $e->getCode(), $e, $error_code);
 				}
 			}
 		}
@@ -283,22 +253,16 @@ class Database_PDO_Connection extends \Database_Connection
 
 		if ($type === \DB::SELECT)
 		{
-			// Convert the result into an array, as PDOStatement::rowCount is not reliable
-			if ($as_object === false)
+			if ($this->_config['enable_cache'])
 			{
-				$result = $result->fetchAll(\PDO::FETCH_ASSOC);
-			}
-			elseif (is_string($as_object))
-			{
-				$result = $result->fetchAll(\PDO::FETCH_CLASS, $as_object);
+				// Return an iterator of results
+				return new \Database_PDO_Cached($result, $sql, $as_object);
 			}
 			else
 			{
-				$result = $result->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
+				// Return an iterator of results
+				return new \Database_PDO_Result($result, $sql, $as_object);
 			}
-
-			// Return an iterator of results
-			return new \Database_Result_Cached($result, $sql, $as_object);
 		}
 		elseif ($type === \DB::INSERT)
 		{
@@ -340,7 +304,7 @@ class Database_PDO_Connection extends \Database_Connection
 	public function list_columns($table, $like = null)
 	{
 		$this->_connection or $this->connect();
-		$q = $this->_connection->prepare("DESCRIBE ".$table);
+		$q = $this->_connection->prepare("DESCRIBE ".$this->quote_table($table));
 		$q->execute();
 		$result  = $q->fetchAll();
 		$count   = 0;
@@ -413,6 +377,32 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 
 		return $columns;
+	}
+
+	/**
+	 * List indexes
+	 *
+	 * @param string $like
+	 *
+	 * @throws \FuelException
+	 */
+	public function list_indexes($table, $like = null)
+	{
+		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
+	}
+
+	/**
+	 * Returns a database cache object
+	 *
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
+	 *
+	 * @return  Database_Cached
+	 */
+	public function cache($result, $sql, $as_object = null)
+	{
+		return new \Database_PDO_Cached($result, $sql, $as_object);
 	}
 
 	/**

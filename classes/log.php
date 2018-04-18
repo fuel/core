@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -24,20 +24,6 @@ class Log
 	 * container for the Monolog instance
 	 */
 	protected static $monolog = null;
-
-	/**
-	 * Copy of the Monolog log levels
-	 */
-	protected static $levels = array(
-		100 => 'DEBUG',
-		200 => 'INFO',
-		250 => 'NOTICE',
-		300 => 'WARNING',
-		400 => 'ERROR',
-		500 => 'CRITICAL',
-		550 => 'ALERT',
-		600 => 'EMERGENCY',
-	);
 
 	/**
 	 * log file path
@@ -145,49 +131,78 @@ class Log
 	/**
 	 * Logs a message with the Info Log Level
 	 *
-	 * @param   string  $msg     The log message
-	 * @param   string  $method  The method that logged
+	 * @param   string  $msg      The log message
+	 * @param   string  $context  The message context
 	 * @return  bool    If it was successfully logged
 	 */
-	public static function info($msg, $method = null)
+	public static function info($msg, $context = null)
 	{
-		return static::write(\Fuel::L_INFO, $msg, $method);
+		return static::write(\Fuel::L_INFO, $msg, $context);
 	}
 
 	/**
 	 * Logs a message with the Debug Log Level
 	 *
-	 * @param   string  $msg     The log message
-	 * @param   string  $method  The method that logged
+	 * @param   string  $msg      The log message
+	 * @param   string  $context  The message context
 	 * @return  bool    If it was successfully logged
 	 */
-	public static function debug($msg, $method = null)
+	public static function debug($msg, $context = null)
 	{
-		return static::write(\Fuel::L_DEBUG, $msg, $method);
+		return static::write(\Fuel::L_DEBUG, $msg, $context);
 	}
 
 	/**
 	 * Logs a message with the Warning Log Level
 	 *
-	 * @param   string  $msg     The log message
-	 * @param   string  $method  The method that logged
+	 * @param   string  $msg      The log message
+	 * @param   string  $context  The message context
 	 * @return  bool    If it was successfully logged
 	 */
-	public static function warning($msg, $method = null)
+	public static function warning($msg, $context = null)
 	{
-		return static::write(\Fuel::L_WARNING, $msg, $method);
+		return static::write(\Fuel::L_WARNING, $msg, $context);
 	}
 
 	/**
 	 * Logs a message with the Error Log Level
 	 *
-	 * @param   string  $msg     The log message
-	 * @param   string  $method  The method that logged
+	 * @param   string  $msg      The log message
+	 * @param   string  $context  The message context
 	 * @return  bool    If it was successfully logged
 	 */
-	public static function error($msg, $method = null)
+	public static function error($msg, $context = null)
 	{
-		return static::write(\Fuel::L_ERROR, $msg, $method);
+		return static::write(\Fuel::L_ERROR, $msg, $context);
+	}
+
+	/**
+	 * Write a log entry to Monolog
+	 *
+	 * @param	int|string    $level     the log level
+	 * @param	string        $msg      the log message
+	 * @param	array         $context  message context
+	 * @return	bool
+	 * @throws	\FuelException
+	 */
+	public static function log($level, $msg, array $context = array())
+	{
+		// bail out if we don't need logging at all
+		if ( ! static::need_logging($level))
+		{
+			return false;
+		}
+
+		// if profiling is active log the message to the profile
+		if (\Config::get('profiling'))
+		{
+			\Console::log($msg);
+		}
+
+		// log the message
+		static::instance()->log($level, $msg, $context);
+
+		return true;
 	}
 
 	/**
@@ -195,15 +210,60 @@ class Log
 	 *
 	 * Generally this function will be called using the global log_message() function
 	 *
-	 * @param	int|string	$level		the error level
-	 * @param	string		$msg		the error message
-	 * @param	string		$method		information about the method
+	 * @param	int|string    $level     the log level
+	 * @param	string        $msg      the log message
+	 * @param	string|array  $context  message context
 	 * @return	bool
 	 * @throws	\FuelException
 	 */
-	public static function write($level, $msg, $method = null)
+	public static function write($level, $msg, $context = null)
+	{
+		// bail out if we don't need logging at all
+		if ( ! static::need_logging($level))
+		{
+			return false;
+		}
+
+		// for compatibility with Monolog contexts
+		if (is_array($context))
+		{
+			return static::log($level, $msg, $context);
+		}
+
+		// if profiling is active log the message to the profile
+		if (\Config::get('profiling'))
+		{
+			empty($context) ? \Console::log($msg) : \Console::log($context.' - '.$msg);
+		}
+
+		// log the message
+		empty($context) ? static::instance()->log($level, $msg) : static::instance()->log($level, $context.' - '.$msg);
+
+		return true;
+	}
+
+	/**
+	 * Check if a message with this log level needs logging
+	 *
+	 * @param	int|string    $level     the log level
+	 * @return	bool
+	 * @throws	\FuelException
+	 */
+	protected static function need_logging($level)
 	{
 		// defined default error labels
+		static $levels = array(
+			100 => 'DEBUG',
+			200 => 'INFO',
+			250 => 'NOTICE',
+			300 => 'WARNING',
+			400 => 'ERROR',
+			500 => 'CRITICAL',
+			550 => 'ALERT',
+			600 => 'EMERGENCY',
+		);
+
+		// defined old default error labels
 		static $oldlabels = array(
 			1  => 'Error',
 			2  => 'Warning',
@@ -217,6 +277,7 @@ class Log
 		// bail out if we don't need logging at all
 		if ($loglabels == \Fuel::L_NONE)
 		{
+			// this entry should not be logged
 			return false;
 		}
 
@@ -224,17 +285,11 @@ class Log
 		if ( ! is_array($loglabels))
 		{
 			$a = array();
-			foreach (static::$levels as $l => $label)
+			foreach ($levels as $l => $label)
 			{
 				$l >= $loglabels and $a[] = $l;
 			}
 			$loglabels = $a;
-		}
-
-		// if profiling is active log the message to the profile
-		if (\Config::get('profiling'))
-		{
-			\Console::log($method.' - '.$msg);
 		}
 
 		// convert the level to monolog standards if needed
@@ -244,14 +299,14 @@ class Log
 		}
 		if (is_string($level))
 		{
-			if ( ! $level = array_search($level, static::$levels))
+			if ( ! $level = array_search($level, $levels))
 			{
 				$level = 250;	// can't map it, convert it to a NOTICE
 			}
 		}
 
 		// make sure $level has the correct value
-		if ((is_int($level) and ! isset(static::$levels[$level])) or (is_string($level) and ! array_search(strtoupper($level), static::$levels)))
+		if ((is_int($level) and ! isset($levels[$level])) or (is_string($level) and ! array_search(strtoupper($level), $levels)))
 		{
 			throw new \FuelException('Invalid level "'.$level.'" passed to logger()');
 		}
@@ -259,12 +314,11 @@ class Log
 		// do we need to log the message with this level?
 		if ( ! in_array($level, $loglabels))
 		{
+			// this entry should not be logged
 			return false;
 		}
 
-		// log the message
-		static::instance()->log($level, (empty($method) ? '' : $method.' - ').$msg);
-
+		// this entry should be logged
 		return true;
 	}
 

@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -74,7 +74,7 @@ return array(
 	/**
 	 * Default location for the file cache
 	 */
-	'cache_dir'       => APPPATH.'cache/',
+	'cache_dir'       => APPPATH.'cache'.DS,
 
 	/**
 	 * Settings for the file finder cache (the Cache class has it's own config!)
@@ -137,7 +137,7 @@ return array(
 	 * Log file and path. If no filename is given, it will be generated.
 	 */
 	'log_file'         => null,
-	'log_path'         => APPPATH.'logs/',
+	'log_path'         => APPPATH.'logs'.DS,
 
 	'log_date_format'  => 'Y-m-d H:i:s',
 
@@ -179,6 +179,11 @@ return array(
 		 * for the entire user session.
 		 */
 		'csrf_expiration'           => 0,
+
+		/**
+		 * Always rotate the csrf token after a succesful check.
+		 */
+		'csrf_rotate'               => true,
 
 		/**
 		 * A salt to make sure the generated security tokens are not predictable
@@ -311,6 +316,11 @@ return array(
 		 * a list of extensions, including the dot! p.e. array('.html', '.php')
 		 */
 		'strip_extension' => true,
+
+		/**
+		 * Whether or not module routes should be loaded when loading a module
+		 */
+		'module_routes' => false,
 	),
 
 	/**

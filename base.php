@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -17,95 +17,60 @@ if (PHP_VERSION_ID >= 50600)
 }
 
 /**
+ * Check if we're running on a Windows platform
+ */
+if ( ! function_exists('is_windows'))
+{
+ 	function is_windows()
+ 	{
+ 		return DIRECTORY_SEPARATOR === '/';
+ 	}
+}
+
+/**
  * Loads in a core class and optionally an app class override if it exists.
  *
  * @param   string  $path
  * @param   string  $folder
- * @return  void
+ * @return  bool
  */
 if ( ! function_exists('import'))
 {
 	function import($path, $folder = 'classes')
 	{
+		// unify the path
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-		// load it ffrom the core if it exists
-		if (is_file(COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php'))
+
+		foreach (array('.php', '.phar', '') as $ext)
 		{
-			require_once COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
+			foreach (array(COREPATH, APPPATH) as $loc)
+			{
+				// check if the file exist
+				if (is_file($file = $loc.$folder.DIRECTORY_SEPARATOR.$path.$ext))
+				{
+					require_once $file;
+					return true;
+				}
+			}
 		}
-		// if the app has an override (or a non-core file), load that too
-		if (is_file(APPPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php'))
-		{
-			require_once APPPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
-		}
+
+		return false;
 	}
 }
 
 /**
  * Shortcut for writing to the Log
  *
- * @param	int|string	the error level
- * @param	string	the error message
- * @param	string	information about the method
- * @return	bool
+ * @param   int|string    the error level
+ * @param   string        the error message
+ * @param   string|array  message context information
+ * @return  bool
  */
 if ( ! function_exists('logger'))
 {
-	function logger($level, $msg, $method = null)
+	function logger($level, $msg, $context = null)
 	{
-		static $labels = array(
-			100 => 'DEBUG',
-			200 => 'INFO',
-			250 => 'NOTICE',
-			300 => 'WARNING',
-			400 => 'ERROR',
-			500 => 'CRITICAL',
-			550 => 'ALERT',
-			600 => 'EMERGENCY',
-			700 => 'ALL',
-		);
-
-		// make sure $level has the correct value
-		if ((is_int($level) and ! isset($labels[$level])) or (is_string($level) and ! array_search(strtoupper($level), $labels)))
-		{
-			throw new \FuelException('Invalid level "'.$level.'" passed to logger()');
-		}
-
-		if(is_string($level))	$level = array_search(strtoupper($level), $labels);
-
-		// get the levels defined to be logged
-		$loglabels = \Config::get('log_threshold');
-
-		// bail out if we don't need logging at all
-		if ($loglabels == \Fuel::L_NONE)
-		{
-			return false;
-		}
-
-		// if profiling is active log the message to the profile
-		if (\Config::get('profiling'))
-		{
-			\Console::log($method.' - '.$msg);
-		}
-
-		// if it's not an array, assume it's an "up to" level
-		if ( ! is_array($loglabels))
-		{
-			$a = array();
-			foreach ($labels as $l => $label)
-			{
-				$l >= $loglabels and $a[] = $l;
-			}
-			$loglabels = $a;
-		}
-
-		// do we need to log the message with this level?
-		if ( ! in_array($level, $loglabels))
-		{
-			return false;
-		}
-
-		return \Log::instance()->log($level, (empty($method) ? '' : $method.' - ').$msg);
+		return \Log::write($level, $msg, $context);
 	}
 }
 

@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -29,12 +29,14 @@ class PhpErrorException extends \ErrorException
 		// handle the error based on the config and the environment we're in
 		if (static::$count <= \Config::get('errors.throttle', 10))
 		{
-			logger(static::$loglevel, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
-
 			if (\Fuel::$env != \Fuel::PRODUCTION and ($this->code & error_reporting()) == $this->code)
 			{
 				static::$count++;
-				\Errorhandler::exception_handler(new \ErrorException($this->message, $this->code, 0, $this->file, $this->line));
+				\Errorhandler::exception_handler($this);
+			}
+			else
+			{
+				logger(static::$loglevel, $this->code.' - '.$this->message.' in '.$this->file.' on line '.$this->line);
 			}
 		}
 		elseif (\Fuel::$env != \Fuel::PRODUCTION
@@ -90,9 +92,9 @@ class Errorhandler
 		if ($last_error AND in_array($last_error['type'], static::$fatal_levels))
 		{
 			$severity = static::$levels[$last_error['type']];
-			logger(static::$loglevel, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line']);
-
 			$error = new \ErrorException($last_error['message'], $last_error['type'], 0, $last_error['file'], $last_error['line']);
+			logger(static::$loglevel, $severity.' - '.$last_error['message'].' in '.$last_error['file'].' on line '.$last_error['line'], array('exception' => $error));
+
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
 				static::show_php_error($error);
@@ -123,7 +125,7 @@ class Errorhandler
 			}
 
 			$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
-			logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine());
+			logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), array('exception' => $e));
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
 			{
@@ -304,6 +306,10 @@ class Errorhandler
 		$data['filepath']	= $e->getFile();
 		$data['error_line']	= $e->getLine();
 		$data['backtrace']	= $e->getTrace();
+		if ($e instanceof \Database_Exception and $e->getDbCode())
+		{
+			$data['severity'] .= ' ('.$e->getDbCode().')';
+		}
 
 		$data['severity'] = ( ! isset(static::$levels[$data['severity']])) ? $data['severity'] : static::$levels[$data['severity']];
 

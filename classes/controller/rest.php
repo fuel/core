@@ -1,4 +1,14 @@
 <?php
+/**
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
+ *
+ * @package    Fuel
+ * @version    1.8.1
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2018 Fuel Development Team
+ * @link       http://fuelphp.com
+ */
 
 namespace Fuel\Core;
 
@@ -283,7 +293,7 @@ abstract class Controller_Rest extends \Controller
 			}
 
 			// Split the Accept header and build an array of quality scores for each format
-			$fragments = new \CachingIterator(new \ArrayIterator(preg_split('/[,;]/', \Input::server('HTTP_ACCEPT'))));
+			$fragments = new \CachingIterator(new \ArrayIterator(preg_split('/[,;]/', $acceptable)));
 			$acceptable = array();
 			$next_is_quality = false;
 			foreach ($fragments as $fragment)
@@ -463,10 +473,10 @@ abstract class Controller_Rest extends \Controller
 		}
 
 		// We need to retrieve authentication informations from the $digest_string variable
-		$digest_params = explode(', ', $digest_string);
+		$digest_params = explode(',', $digest_string);
 		foreach ($digest_params as $digest_param)
 		{
-			$digest_param = explode('=', $digest_param, 2);
+			$digest_param = explode('=', trim($digest_param), 2);
 			if (isset($digest_param[1]))
 			{
 				$digest[$digest_param[0]] = trim($digest_param[1], '"');

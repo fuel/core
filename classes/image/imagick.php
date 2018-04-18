@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -27,6 +27,23 @@ class Image_Imagick extends \Image_Driver
 		}
 
 		$this->imagick->readImage($filename);
+
+		// deal with exif autorotation
+		$orientation = $this->imagick->getImageOrientation();
+		switch($orientation)
+		{
+			case \Imagick::ORIENTATION_BOTTOMRIGHT:
+				$this->imagick->rotateimage("#000", 180); // rotate 180 degrees
+			break;
+
+			case \Imagick::ORIENTATION_RIGHTTOP:
+				$this->imagick->rotateimage("#000", 90); // rotate 90 degrees CW
+			break;
+
+			case \Imagick::ORIENTATION_LEFTBOTTOM:
+				$this->imagick->rotateimage("#000", -90); // rotate 90 degrees CCW
+			break;
+		}
 
 		return $this;
 	}
@@ -254,12 +271,17 @@ class Image_Imagick extends \Image_Driver
 	 * Creates a new color usable by Imagick.
 	 *
 	 * @param  string   $hex    The hex code of the color
-	 * @param  integer  $alpha  The alpha of the color, 0 (trans) to 100 (opaque)
+	 * @param  integer  $newalpha  The alpha of the color, 0 (trans) to 100 (opaque)
 	 * @return string   rgba representation of the hex and alpha values.
 	 */
-	protected function create_color($hex, $alpha)
+	protected function create_color($hex, $newalpha = null)
 	{
+		// Convert hex to rgba
 		extract($this->create_hex_color($hex));
+
+		// If a custom alpha was passed, use that
+		isset($newalpha) and $alpha = $newalpha;
+
 		return new \ImagickPixel('rgba('.$red.', '.$green.', '.$blue.', '.round($alpha / 100, 2).')');
 	}
 }

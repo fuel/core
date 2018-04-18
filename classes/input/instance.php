@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -38,6 +38,11 @@ class Input_Instance
 	 * @var  $detected_ext  The URI extension that was detected automatically
 	 */
 	protected $detected_ext = null;
+
+	/**
+	 * @var  string  $raw  raw PHP input
+	 */
+	protected $raw_input = null;
 
 	/**
 	 * @var  array  $get  All GET input
@@ -82,6 +87,9 @@ class Input_Instance
 		// store the associated request
 		$this->request = $new;
 
+		// get php raw input
+		$this->raw_input = file_get_contents('php://input');
+
 		// was an input instance passed?
 		if ($input)
 		{
@@ -110,94 +118,112 @@ class Input_Instance
 	 */
 	public function uri()
 	{
-		if ($this->request)
-		{
-			return '/'.$this->request->uri->get();
-		}
-
+		// don't run URI detection twice
 		if ($this->detected_uri !== null)
 		{
 			return $this->detected_uri;
 		}
 
-		if (\Fuel::$is_cli)
+		// process the Request URI if we have one
+		if ($this->request and is_string($this->request->uri))
 		{
-			if (($uri = \Cli::option('uri')) !== null)
-			{
-				$this->detected_uri = $uri;
-			}
-			else
-			{
-				$this->detected_uri = \Cli::option(1);
-			}
-
-			return $this->detected_uri;
+			$uri =  '/'.$this->request->uri;
 		}
 
 		// We want to use PATH_INFO if we can.
-		if ( ! empty($_SERVER['PATH_INFO']))
+		elseif ( ! empty($_SERVER['PATH_INFO']))
 		{
 			$uri = $_SERVER['PATH_INFO'];
 		}
+
 		// Only use ORIG_PATH_INFO if it contains the path
 		elseif ( ! empty($_SERVER['ORIG_PATH_INFO']) and ($path = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['ORIG_PATH_INFO'])) != '')
 		{
 			$uri = $path;
 		}
-		else
+
+		// Fall back to parsing the REQUEST URI
+		elseif (isset($_SERVER['REQUEST_URI']))
 		{
-			// Fall back to parsing the REQUEST URI
-			if (isset($_SERVER['REQUEST_URI']))
+			$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
+		}
+
+		// deal with CLI requests
+		elseif (\Fuel::$is_cli)
+		{
+			if (($uri = \Cli::option('uri')) !== null)
 			{
-				$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
+				$this->detected_uri = $uri;
+			}
+			elseif ($uri = \Cli::option(1) and strpos($uri, '/') === 0)
+			{
+				$this->detected_uri = $uri;
 			}
 			else
 			{
-				throw new \FuelException('Unable to detect the URI.');
+				$this->detected_uri = '';
 			}
 
-			// Remove the base URL from the URI
-			$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
-			if ($uri != '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
-			{
-				$uri = substr($uri, strlen($base_url) - 1);
-			}
+			return $this->detected_uri;
+		}
+		else
+		{
+			throw new \FuelException('Unable to detect the URI.');
+		}
 
-			// If we are using an index file (not mod_rewrite) then remove it
-			$index_file = \Config::get('index_file');
-			if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
-			{
-				$uri = substr($uri, strlen($index_file));
-			}
+		// Remove the base URL from the URI
+		$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
+		if ($uri !== '' and $base_url !== '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
+		{
+			$uri = substr($uri, strlen($base_url) - 1);
+		}
 
-			// When index.php? is used and the config is set wrong, lets just
-			// be nice and help them out.
-			if ($index_file and strncmp($uri, '?/', 2) === 0)
-			{
-				$uri = substr($uri, 1);
-			}
+		// If we are using an index file (not mod_rewrite) then remove it
+		$index_file = \Config::get('index_file');
+		if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
+		{
+			$uri = substr($uri, strlen($index_file));
+		}
 
-			// decode the uri, and put any + back (does not mean a space in the url path)
-			$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
+		// When index.php? is used and the config is set wrong, lets just
+		// be nice and help them out.
+		if ($index_file and strncmp($uri, '?/', 2) === 0)
+		{
+			$uri = substr($uri, 1);
+		}
 
-			// Lets split the URI up in case it contains a ?.  This would
-			// indicate the server requires 'index.php?' and that mod_rewrite
-			// is not being used.
+		// decode the uri, and put any + back (does not mean a space in the url path)
+		$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
+
+		// in case of incorrect rewrites, we may need to cleanup and
+		// recreate the QUERY_STRING and $_GET
+		if (strpos($uri, '?') !== false)
+		{
+			// log this issue
+			\Log::write(\Fuel::L_DEBUG, 'Your rewrite rules are incorrect, change "index.php?/$1 [QSA,L]" to "index.php/$1 [L]"!');
+
+			// reset $_GET
+			$_GET = array();
+
+			// lets split the URI up in case it contains a ?.  This would
+			// indicate the server requires 'index.php?'
 			preg_match('#(.*?)\?(.*)#i', $uri, $matches);
 
-			// If there are matches then lets set set everything correctly
+			// If there are matches then lets set everything correctly
 			if ( ! empty($matches))
 			{
+				// first bit is the real uri
 				$uri = $matches[1];
 
-				// only reconstruct $_GET if we didn't have a query string
-				if (empty($_SERVER['QUERY_STRING']))
-				{
-					$_SERVER['QUERY_STRING'] = $matches[2];
-					parse_str($matches[2], $_GET);
-					$_GET = \Security::clean($_GET);
-				}
+				// second bit is the real query string
+				$_SERVER['QUERY_STRING'] = $matches[2];
+				parse_str($matches[2], $_GET);
+
+				// update GET variables
+				$_GET = \Security::clean($_GET);
+				$this->input_get = $_GET;
 			}
+
 		}
 
 		// Deal with any trailing dots
@@ -230,6 +256,7 @@ class Input_Instance
 		// Do some final clean up of the uri
 		$this->detected_uri = \Security::clean_uri($uri, true);
 
+		// And return it
 		return $this->detected_uri;
 	}
 
@@ -290,6 +317,16 @@ class Input_Instance
 		}
 
 		return \Input::server('REQUEST_METHOD', $default);
+	}
+
+	/**
+	 * Returns PHP's raw input
+	 *
+	 * @return  array
+	 */
+	public function raw()
+	{
+		return $this->raw_input;
 	}
 
 	/**
@@ -404,9 +441,8 @@ class Input_Instance
 	 */
 	protected function hydrate()
 	{
-		// get GET and POST input
-		$this->input_get = $_GET;
-		$this->input_post = $_POST;
+		// get the input method and unify it
+		$method = strtolower($this->method());
 
 		// get the content type from the header, strip optional parameters
 		$content_header = \Input::headers('Content-Type');
@@ -415,18 +451,39 @@ class Input_Instance
 			$content_type = $content_header;
 		}
 
-		// get php raw input
-		$php_input = file_get_contents('php://input');
+		// fetch the raw input data
+		$php_input = $this->raw();
 
 		// handle form-urlencoded input
 		if ($content_type == 'application/x-www-form-urlencoded')
 		{
-			// urldecode it if needed
-			if (\Config::get('security.form-double-urlencoded', false))
+			// double-check if max_input_vars is not exceeded,
+			// it doesn't always give an E_WARNING it seems...
+			if ($method == 'get' or $method == 'post')
 			{
-				$php_input = urldecode($php_input);
+				if ($php_input and ($amps = substr_count($php_input, '&')) > ini_get('max_input_vars'))
+				{
+					throw new \PhpErrorException(
+						'Input truncated by PHP. Number of variables exceeded '.ini_get('max_input_vars').'. To increase the limit to at least the '.$amps.' needed for this HTTP request, change the value of "max_input_vars" in php.ini.',
+						1,
+						E_WARNING,
+						__FILE__,
+						__LINE__ + 7 // note: error points to accessing $_POST above!
+					);
+
+				}
 			}
-			parse_str($php_input, $php_input);
+			else
+			{
+				// urldecode it if needed
+				if (\Config::get('security.form-double-urlencoded', false))
+				{
+					$php_input = urldecode($php_input);
+				}
+
+				// other methods than GET and POST need to be parsed manually
+				parse_str($php_input, $php_input);
+			}
 		}
 
 		// handle multipart/form-data input
@@ -481,12 +538,16 @@ class Input_Instance
 		// unknown input format
 		elseif ($php_input and ! is_array($php_input))
 		{
-			// don't know how to handle it
-			throw new \DomainException('Don\'t know how to parse input of type: '.$content_type);
+			// don't know how to handle it, allow the application to handle it
+			// reset the method to avoid having it stored below!
+			$method = null;
 		}
 
-		// store it as other input data as well
-		$method = strtolower($this->method());
+		// GET and POST input, were not parsed
+		$this->input_get = $_GET;
+		$this->input_post = $_POST;
+
+		// store the parsed data based on the request method
 		if ($method == 'put' or $method == 'patch' or $method == 'delete')
 		{
 			$this->{'input_'.$method} = $php_input;

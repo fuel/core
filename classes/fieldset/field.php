@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -576,7 +576,7 @@ class Fieldset_Field
 			break;
 		}
 
-		if (empty($build_field) or $this->type == 'hidden')
+		if (empty($build_field))
 		{
 			return $build_field;
 		}
@@ -619,18 +619,47 @@ class Fieldset_Field
 			$build_field = implode(' ', $build_field);
 		}
 
+		// check if this is a tabular form
+		$tabular_form = '';
+		$parent = $this->fieldset()->parent() and $tabular_form = $parent->get_tabular_form();
+
 		// determine the field_id, which allows us to identify the field for CSS purposes
-		$field_id = 'col_'.$this->name;
-		if ($parent = $this->fieldset()->parent())
+		if (empty($tabular_form))
 		{
-			$parent->get_tabular_form() and $field_id = $parent->get_tabular_form().'_col_'.$this->basename;
+			if ($this->type == 'hidden')
+			{
+				return $build_field;
+			}
+			$field_id = 'col_'.$this->name;
+		}
+		else
+		{
+			$field_id = $tabular_form.'_col_'.$this->basename;
 		}
 
 		$template = $this->template ?: $form->get_config('field_template', "\t\t<tr>\n\t\t\t<td class=\"{error_class}\">{label}{required}</td>\n\t\t\t<td class=\"{error_class}\">{field} {description} {error_msg}</td>\n\t\t</tr>\n");
-		$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}'),
-			array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $field_id),
-			$template);
 
+		// hidden fields need special treatment
+		if ($this->type == 'hidden')
+		{
+			$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}'),
+				array($label, '', $build_field, '', '" style="display:none;', $this->description, $field_id),
+				$template);
+
+		}
+		elseif ($this->type == 'checkbox')
+		{
+			$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}'),
+				array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $field_id.'" style="text-align:center;'),
+				$template);
+		}
+		else
+		{
+			$template = str_replace(array('{label}', '{required}', '{field}', '{error_msg}', '{error_class}', '{description}', '{field_id}'),
+				array($label, $required_mark, $build_field, $error_msg, $error_class, $this->description, $field_id),
+				$template);
+
+		}
 		return $template;
 	}
 

@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -145,134 +145,6 @@ class Str
 	public static function ends_with($str, $end, $ignore_case = false)
 	{
 		return (bool) preg_match('/'.preg_quote($end, '/').'$/m'.($ignore_case ? 'i' : ''), $str);
-	}
-
-	/**
-	 * substr
-	 *
-	 * @param   string    $str       required
-	 * @param   int       $start     required
-	 * @param   int|null  $length
-	 * @param   string    $encoding  default UTF-8
-	 * @return  string
-	 */
-	public static function sub($str, $start, $length = null, $encoding = null)
-	{
-		$encoding or $encoding = \Fuel::$encoding;
-
-		// substr functions don't parse null correctly
-		$length = is_null($length) ? (MBSTRING ? mb_strlen($str, $encoding) : strlen($str)) - $start : $length;
-
-		return MBSTRING
-			? mb_substr($str, $start, $length, $encoding)
-			: substr($str, $start, $length);
-	}
-
-	/**
-	 * strlen
-	 *
-	 * @param   string  $str       required
-	 * @param   string  $encoding  default UTF-8
-	 * @return  int
-	 */
-	public static function length($str, $encoding = null)
-	{
-		$encoding or $encoding = \Fuel::$encoding;
-
-		return MBSTRING
-			? mb_strlen($str, $encoding)
-			: strlen($str);
-	}
-
-	/**
-	 * lower
-	 *
-	 * @param   string  $str       required
-	 * @param   string  $encoding  default UTF-8
-	 * @return  string
-	 */
-	public static function lower($str, $encoding = null)
-	{
-		$encoding or $encoding = \Fuel::$encoding;
-
-		return MBSTRING
-			? mb_strtolower($str, $encoding)
-			: strtolower($str);
-	}
-
-	/**
-	 * upper
-	 *
-	 * @param   string  $str       required
-	 * @param   string  $encoding  default UTF-8
-	 * @return  string
-	 */
-	public static function upper($str, $encoding = null)
-	{
-		$encoding or $encoding = \Fuel::$encoding;
-
-		return MBSTRING
-			? mb_strtoupper($str, $encoding)
-			: strtoupper($str);
-	}
-
-	/**
-	 * lcfirst
-	 *
-	 * Does not strtoupper first
-	 *
-	 * @param   string  $str       required
-	 * @param   string  $encoding  default UTF-8
-	 * @return  string
-	 */
-	public static function lcfirst($str, $encoding = null)
-	{
-		$encoding or $encoding = \Fuel::$encoding;
-
-		return MBSTRING
-			? mb_strtolower(mb_substr($str, 0, 1, $encoding), $encoding).
-				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
-			: lcfirst($str);
-	}
-
-	/**
-	 * ucfirst
-	 *
-	 * Does not strtolower first
-	 *
-	 * @param   string $str       required
-	 * @param   string $encoding  default UTF-8
-	 * @return  string
-	 */
-	public static function ucfirst($str, $encoding = null)
-	{
-		$encoding or $encoding = \Fuel::$encoding;
-
-		return MBSTRING
-			? mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding).
-				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
-			: ucfirst($str);
-	}
-
-	/**
-	 * ucwords
-	 *
-	 * First strtolower then ucwords
-	 *
-	 * ucwords normally doesn't strtolower first
-	 * but MB_CASE_TITLE does, so ucwords now too
-	 *
-	 * @param   string   $str       required
-	 * @param   string   $encoding  default UTF-8
-	 * @return  string
-	 */
-	public static function ucwords($str, $encoding = null)
-	{
-		$encoding or $encoding = \Fuel::$encoding;
-
-		return MBSTRING
-			? mb_convert_case($str, MB_CASE_TITLE, $encoding)
-			: ucwords(strtolower($str));
 	}
 
 	/**
@@ -456,5 +328,326 @@ class Str
 	public static function is_html($string)
 	{
 		return strlen(strip_tags($string)) < strlen($string);
+	}
+
+	// multibyte functions
+
+	/**
+	 * strpos — Find the position of the first occurrence of a substring in a string
+	 *
+	 * @param  string $str        The string being measured for length.
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return int                The length of the string on success, and 0 if the string is empty.
+	 */
+	public static function strlen($str, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strlen($str, $encoding)
+			: strlen($str);
+	}
+
+	/**
+	 * strpos — Find position of first occurrence of string in a string
+	 *
+	 * @param  string $haystack   The string being checked
+	 * @param  mixed  $needle     The string to find in haystack
+	 * @param  int    $offset     The search offset
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return mixed              Returns the position of where the needle exists relative to the beginning
+	 *                            of the haystack string (independent of offset). Also note that string
+	 *                            positions start at 0, and not 1.
+	 *                            Returns FALSE if the needle was not found.
+	 */
+	public static function strpos($haystack, $needle, $offset = 0, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strpos($haystack, $needle, $offset, $encoding)
+			: strpos($haystack, $needle, $offset);
+	}
+
+	/**
+	 * strrpos — Find position of last occurrence of a string in a string
+	 *
+	 * @param  string $haystack   The string being checked
+	 * @param  mixed  $needle     The string to find in haystack
+	 * @param  int    $offset     The search offset
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return mixed              Returns the numeric position of the last occurrence of needle in the
+	 *                            haystack string. If needle is not found, it returns FALSE.
+	 */
+	public static function strrpos($haystack, $needle, $offset = 0, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strrpos($haystack, $needle, $offset, $encoding)
+			: strrpos($haystack, $needle, $offset);
+	}
+
+	/*
+	 * substr — Get part of string
+	 *
+	 * @param  string $str        The string to extract the substring from
+	 * @param  int    $start      If start is non-negative, the returned string will start at the start'th
+	 *                            position in str, counting from zero. If start is negative, the returned
+	 *                            string will start at the start'th character from the end of str.
+	 * @param  int    $length     Maximum number of characters to use from str. If omitted or NULL is passed,
+	 *                            extract all characters to the end of the string.
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return mixed             Returns the extracted part of string; or FALSE on failure, or an empty string.
+	 */
+	public static function substr($str, $start, $length = null, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		// substr functions don't parse null correctly if the string is multibyte
+		$length = is_null($length)
+			? (MBSTRING ? mb_strlen($str, $encoding)
+			: strlen($str)) - $start : $length;
+
+		return (MBSTRING and $encoding)
+			? mb_substr($str, $start, $length, $encoding)
+			: substr($str, $start, $length);
+	}
+
+	/**
+	 * strtolower — Make a string lowercase
+	 *
+	 * @param  string $str        The string to convert to lowercase
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return  string            The lowercased string
+	 */
+	public static function strtolower($str, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strtolower($str, $encoding)
+			: strtolower($str);
+	}
+
+	/**
+	 * strtoupper — Make a string uppercase
+	 *
+	 * @param  string $str        The string to convert to uppercase
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return  string            The uppercased string
+	 */
+	public static function strtoupper($str, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strtoupper($str, $encoding)
+			: strtoupper($str);
+	}
+
+	/**
+	 * stripos — Find the position of the first occurrence of a case-insensitive substring in a string
+	 *
+	 * @param  string $haystack   The string from which to get the position of the last occurrence of needle
+	 * @param  mixed  $needle     The string to find in haystack
+	 * @param  int    $offset     The search offset
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return mixed              Returns the position of where the needle exists relative to the beginning
+	 *                            of the haystack string (independent of offset). Also note that string
+	 *                            positions start at 0, and not 1.
+	 *                            Returns FALSE if the needle was not found.
+	 */
+	public static function stripos($haystack, $needle, $offset = 0, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_stripos($haystack, $needle, $offset, $encoding)
+			: stripos($haystack, $needle, $offset);
+	}
+
+	/**
+	 * strripos — Finds position of last occurrence of a string within another, case insensitive
+	 *
+	 * @param  string $haystack   The string from which to get the position of the last occurrence of needle
+	 * @param  mixed  $needle     The string to find in haystack
+	 * @param  int    $offset     The search offset
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return mixed              Returns the numeric position of the last occurrence of needle in the
+	 *                            haystack string. If needle is not found, it returns FALSE.
+	 */
+	public static function strripos($haystack, $needle, $offset = 0, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strripos($haystack, $needle, $offset, $encoding)
+			: strripos($haystack, $needle, $offset);
+	}
+
+	/**
+	 * strstr — Finds first occurrence of a string within another
+	 *
+	 * @param  string $haystack       The string from which to get the position of the last occurrence of needle
+	 * @param  mixed  $needle         The string to find in haystack
+	 * @param  int    $before_needle  Determines which portion of haystack this function returns
+	 * @param  string $encoding       Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return mixed                  The portion of haystack, or FALSE if needle is not found
+	 */
+	public static function strstr($haystack, $needle, $before_needle = false, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strstr($haystack, $needle, $before_needle, $encoding)
+			: strstr($haystack, $needle, $before_needle);
+	}
+
+	/**
+	 * stristr — Finds first occurrence of a string within another, case-insensitive
+	 *
+	 * @param  string $haystack       The string from which to get the position of the last occurrence of needle
+	 * @param  mixed  $needle         The string to find in haystack
+	 * @param  int    $before_needle  Determines which portion of haystack this function returns
+	 * @param  string $encoding       Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return mixed                  The portion of haystack, or FALSE if needle is not found
+	 */
+	public static function stristr($haystack, $needle, $before_needle = false, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_stristr($haystack, $needle, $before_needle, $encoding)
+			: stristr($haystack, $needle, $before_needle);
+	}
+
+	/**
+	 * strrchr — Finds the last occurrence of a character in a string within another
+	 *
+	 * @param  string $haystack   The string from which to get the last occurrence of needle
+	 * @param  mixed  $needle     The string to find in haystack
+	 * @param  int    $part       Determines which portion of haystack this function returns
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return mixed              The portion of haystack, or FALSE if needle is not found
+	 */
+	public static function strrchr($haystack, $needle, $before_needle = false, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strrchr($haystack, $needle, $part, $encoding)
+			: strrchr($haystack, $needle, $part);
+	}
+
+	/**
+	 * substr_count — Count the number of substring occurrences
+	 *
+	 * @param  string $haystack   The string from which to get the position of the last occurrence of needle
+	 * @param  mixed  $needle     The string to find in haystack
+	 * @param  int    $offset     The search offset
+	 * @param  string $encoding   Defaults to the setting in the config, which defaults to UTF-8
+	 *
+	 * @return int                The number of occurences found
+	 */
+	public static function substr_count($haystack, $needle, $offset = 0, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_substr_count($haystack, $needle, $offset, $encoding)
+			: substr_count($haystack, $needle, $offset);
+	}
+
+	/**
+	 * lcfirst
+	 *
+	 * Does not strtoupper first
+	 *
+	 * @param   string  $str       required
+	 * @param   string  $encoding  default UTF-8
+	 * @return  string
+	 */
+	public static function lcfirst($str, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strtolower(mb_substr($str, 0, 1, $encoding), $encoding).
+				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
+			: lcfirst($str);
+	}
+
+	/**
+	 * ucfirst
+	 *
+	 * Does not strtolower first
+	 *
+	 * @param   string $str       required
+	 * @param   string $encoding  default UTF-8
+	 * @return  string
+	 */
+	public static function ucfirst($str, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_strtoupper(mb_substr($str, 0, 1, $encoding), $encoding).
+				mb_substr($str, 1, mb_strlen($str, $encoding), $encoding)
+			: ucfirst($str);
+	}
+
+	/**
+	 * ucwords
+	 *
+	 * First strtolower then ucwords
+	 *
+	 * ucwords normally doesn't strtolower first
+	 * but MB_CASE_TITLE does, so ucwords now too
+	 *
+	 * @param   string   $str       required
+	 * @param   string   $encoding  default UTF-8
+	 * @return  string
+	 */
+	public static function ucwords($str, $encoding = null)
+	{
+		$encoding or $encoding = \Fuel::$encoding;
+
+		return (MBSTRING and $encoding)
+			? mb_convert_case($str, MB_CASE_TITLE, $encoding)
+			: ucwords(strtolower($str));
+	}
+
+	// deprecated methods
+
+	public static function length($str, $encoding = null)
+	{
+		return static::strlen($str, $encoding);
+	}
+
+	public static function sub($str, $start, $length = null, $encoding = null)
+	{
+		return static::substr($str, $start, $length, $encoding);
+	}
+
+	public static function lower($str, $encoding = null)
+	{
+		return static::strtolower($str, $encoding);
+	}
+
+	public static function upper($str, $encoding = null)
+	{
+		return static::strtoupper($str, $encoding);
 	}
 }

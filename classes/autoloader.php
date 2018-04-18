@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -120,7 +120,7 @@ class Autoloader
 	 */
 	public static function add_class($class, $path)
 	{
-		static::$classes[strtolower($class)] = $path;
+		static::$classes[static::lower($class)] = $path;
 	}
 
 	/**
@@ -133,7 +133,7 @@ class Autoloader
 	{
 		foreach ($classes as $class => $path)
 		{
-			static::$classes[strtolower($class)] = $path;
+			static::$classes[static::lower($class)] = $path;
 		}
 	}
 
@@ -177,7 +177,7 @@ class Autoloader
 	{
 		foreach (static::$core_namespaces as $ns)
 		{
-			if (array_key_exists(strtolower($ns_class = $ns.'\\'.$class), static::$classes))
+			if (array_key_exists(static::lower($ns_class = $ns.'\\'.$class), static::$classes))
 			{
 				return $ns_class;
 			}
@@ -231,16 +231,16 @@ class Autoloader
 			static::$auto_initialize = $class;
 		}
 
-		if (isset(static::$classes[strtolower($class)]))
+		if (isset(static::$classes[static::lower($class)]))
 		{
-			static::init_class($class, str_replace('/', DS, static::$classes[strtolower($class)]));
+			static::init_class($class, str_replace('/', DS, static::$classes[static::lower($class)]));
 			$loaded = true;
 		}
 		elseif ($full_class = static::find_core_class($class))
 		{
 			if ( ! class_exists($full_class, false) and ! interface_exists($full_class, false))
 			{
-				include static::prep_path(static::$classes[strtolower($full_class)]);
+				include static::prep_path(static::$classes[static::lower($full_class)]);
 			}
 			if ( ! class_exists($class, false))
 			{
@@ -331,7 +331,7 @@ class Autoloader
 
 		if ( ! $psr)
 		{
-			$file = strtolower($file);
+			$file = static::lower($file);
 		}
 
 		return $file;
@@ -400,5 +400,21 @@ class Autoloader
 		{
 			throw new \FuelException('Class "'.$class.'" is not defined');
 		}
+	}
+
+	/**
+	 * deal with multibyte strings depending on the configuration
+	 * (copy of Str::lower(), but external dependancies don't work in this class)
+	 *
+	 * @param   string  $str	string to convert to lowercase
+	 * @return  string  converted string
+	 */
+	protected static function lower($str)
+	{
+		$encoding = class_exists('Fuel', false) ? \Fuel::$encoding : 'UTF-8';
+
+		return MBSTRING
+			? mb_strtolower($str, $encoding)
+			: strtolower($str);
 	}
 }

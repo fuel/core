@@ -1,4 +1,14 @@
 <?php
+/**
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
+ *
+ * @package    Fuel
+ * @version    1.8.1
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2018 Fuel Development Team
+ * @link       http://fuelphp.com
+ */
 
 namespace Fuel\Core;
 
@@ -62,7 +72,7 @@ class Config_Db implements Config_Interface
 			$msg = substr($msg, 0, strlen($msg)  - strlen(strrchr($msg, ':')));
 
 			// and rethrow it
-			throw new \Database_Exception($msg);
+			throw new \Database_Exception($msg, $e->getCode(), $e, $e->GetDbCode());
 		}
 
 		// did we succeed?

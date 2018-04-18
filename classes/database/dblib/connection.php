@@ -1,13 +1,13 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @author     cocteau666@gmail.com
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  */
@@ -26,8 +26,8 @@ class Database_Dblib_Connection extends \Database_PDO_Connection
 	 */
 	protected function __construct($name, array $config)
 	{
-		// this driver only works on Windows
-		if (php_uname('s') === 'Windows')
+		// this driver doen't work on Windows
+		if (is_windows())
 		{
 			throw new \Database_Exception('The "Dblib" database driver does not work well on Windows. Use the "Sqlsrv" driver instead.');
 		}

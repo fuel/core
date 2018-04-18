@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -35,6 +35,8 @@ class Session_Memcached extends \Session_Driver
 
 	public function __construct($config = array())
 	{
+		parent::__construct($config);
+
 		// merge the driver config with the global config
 		$this->config = array_merge($config, is_array($config['memcached']) ? $config['memcached'] : static::$_defaults);
 
@@ -47,11 +49,36 @@ class Session_Memcached extends \Session_Driver
 	// --------------------------------------------------------------------
 
 	/**
+	 * destroy the current session
+	 *
+	 * @return	$this
+	 * @throws	\FuelException
+	 */
+	public function destroy()
+	{
+		// do we have something to destroy?
+		if ( ! empty($this->keys))
+		{
+			// delete the key from the memcached server
+			if ($this->memcached->delete($this->config['cookie_name'].'_'.$this->keys['session_id']) === false)
+			{
+				throw new \FuelException('Memcached returned error code "'.$this->memcached->getResultCode().'" on delete. Check your configuration.');
+			}
+		}
+
+		parent::destroy();
+
+		return $this;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * driver initialisation
 	 *
 	 * @throws	\FuelException
 	 */
-	public function init()
+	protected function init()
 	{
 		// generic driver initialisation
 		parent::init();
@@ -86,38 +113,13 @@ class Session_Memcached extends \Session_Driver
 	// --------------------------------------------------------------------
 
 	/**
-	 * create a new session
-	 *
-	 * @return	\Session_Memcached
-	 */
-	public function create()
-	{
-		// create a new session
-		$this->keys['session_id']  = $this->_new_session_id();
-		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']  = \Input::user_agent();
-		$this->keys['created']     = $this->time->get_timestamp();
-		$this->keys['updated']     = $this->keys['created'];
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
 	 * read the session
 	 *
 	 * @param	bool	$force	set to true if we want to force a new session to be created
 	 * @return	\Session_Driver
 	 */
-	public function read($force = false)
+	protected function read($force = false)
 	{
-		// initialize the session
-		$this->data = array();
-		$this->keys = array();
-		$this->flash = array();
-
 		// get the session cookie
 		$cookie = $this->_get_cookie();
 
@@ -186,7 +188,7 @@ class Session_Memcached extends \Session_Driver
 			}
 		}
 
-		return parent::read();
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -196,13 +198,11 @@ class Session_Memcached extends \Session_Driver
 	 *
 	 * @return	\Session_Memcached
 	 */
-	public function write()
+	protected function write()
 	{
 		// do we have something to write?
 		if ( ! empty($this->keys) or ! empty($this->data) or ! empty($this->flash))
 		{
-			parent::write();
-
 			// rotate the session id if needed
 			$this->rotate(false);
 
@@ -225,31 +225,6 @@ class Session_Memcached extends \Session_Driver
 
 			$this->_set_cookie(array($this->keys['session_id']));
 		}
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * destroy the current session
-	 *
-	 * @return	$this
-	 * @throws	\FuelException
-	 */
-	public function destroy()
-	{
-		// do we have something to destroy?
-		if ( ! empty($this->keys))
-		{
-			// delete the key from the memcached server
-			if ($this->memcached->delete($this->config['cookie_name'].'_'.$this->keys['session_id']) === false)
-			{
-				throw new \FuelException('Memcached returned error code "'.$this->memcached->getResultCode().'" on delete. Check your configuration.');
-			}
-		}
-
-		parent::destroy();
 
 		return $this;
 	}

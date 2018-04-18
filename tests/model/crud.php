@@ -1,6 +1,6 @@
 <?php
 /**
- * Part of the Fuel framework
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework
  *
  * @package   Fuel
  * @version   1.7

@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -137,6 +137,7 @@ class Pagination
 		'show_last'               => false,
 		'pagination_url'          => null,
 		'link_offset'             => 0.5,
+		'default_page'            => 'first',
 	);
 
 	/**
@@ -195,8 +196,11 @@ class Pagination
 		// update the instance default config with the data passed
 		foreach ($config as $key => $value)
 		{
-			$this->__set($key, $value);
+			$this->_set($key, $value);
 		}
+
+		// recalculate all values
+		$this->_recalculate();
 	}
 
 	/**
@@ -234,28 +238,10 @@ class Pagination
 	 */
 	public function __set($name, $value = null)
 	{
-		if (is_array($name))
-		{
-			foreach($name as $key => $value)
-			{
-				$this->__set($key, $value);
-			}
-		}
-		else
-		{
-			$value = $this->_validate($name, $value);
+		// set the config value
+		$this->_set($name, $value);
 
-			if (array_key_exists($name, $this->config))
-			{
-				$this->config[$name] = $value;
-			}
-			elseif (array_key_exists($name, $this->template))
-			{
-				$this->template[$name] = $value;
-			}
-		}
-
-		// update the page counters
+		// and update the page counters
 		$this->_recalculate();
 	}
 
@@ -524,11 +510,11 @@ class Pagination
 		{
 			if ( ! ctype_digit((string) $this->config['uri_segment']))
 			{
-				$this->config['calculated_page'] = \Input::get($this->config['uri_segment'], 1);
+				$this->config['calculated_page'] = \Input::get($this->config['uri_segment'], null);
 			}
 			else
 			{
-				$this->config['calculated_page'] = (int) \Request::main()->uri->get_segment($this->config['uri_segment'], 1);
+				$this->config['calculated_page'] = (int) \Request::main()->uri->get_segment($this->config['uri_segment'], null);
 			}
 		}
 
@@ -537,6 +523,23 @@ class Pagination
 		{
 			// calculate the number of pages
 			$this->config['total_pages'] = (int) ceil($this->config['total_items'] / $this->config['per_page']) ?: 1;
+		}
+
+		// set the default page is needed
+		if ( ! $this->config['calculated_page'])
+		{
+			if ($this->config['default_page'] == 'first')
+			{
+				$this->config['calculated_page'] = 1;
+			}
+			elseif ($this->config['default_page'] == 'last')
+			{
+				$this->config['calculated_page'] = $this->config['total_pages'];
+			}
+			elseif (is_numeric($this->config['default_page']))
+			{
+				$this->config['calculated_page'] = $this->config['default_page'];
+			}
 		}
 
 		// make sure the current page is within bounds
@@ -620,6 +623,36 @@ class Pagination
 
 		// return the page link
 		return str_replace('{page}', $page, $this->config['pagination_url']);
+	}
+
+	/**
+	 * configuration value setter
+	 *
+	 * @param	$name
+	 * @param	mixed $value
+	 */
+	protected function _set($name, $value = null)
+	{
+		if (is_array($name))
+		{
+			foreach($name as $key => $value)
+			{
+				$this->__set($key, $value);
+			}
+		}
+		else
+		{
+			$value = $this->_validate($name, $value);
+
+			if (array_key_exists($name, $this->config))
+			{
+				$this->config[$name] = $value;
+			}
+			elseif (array_key_exists($name, $this->template))
+			{
+				$this->template[$name] = $value;
+			}
+		}
 	}
 
 	/**

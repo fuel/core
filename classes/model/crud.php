@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -263,9 +263,18 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		$connection = static::get_connection();
 
 		// Get the columns
-		$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
-			\Database_Connection::instance($connection)->quote_identifier($select).
-			') AS count_result');
+		if ($connection instanceof \Database_Connection)
+		{
+			$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
+				$connection->quote_identifier($select).
+				') AS count_result');
+		}
+		else
+		{
+			$columns = \DB::expr('COUNT('.($distinct ? 'DISTINCT ' : '').
+				\Database_Connection::instance($connection)->quote_identifier($select).
+				') AS count_result');
+		}
 
 		// Remove the current select and
 		$query = \DB::select($columns);
@@ -331,7 +340,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * Get the connection to use for reading or writing
 	 *
 	 * @param  boolean  $writable Get a writable connection
-	 * @return Database_Connection
+	 * @return mixed    Database profile name (string) or Database_Connection (object)
 	 */
 	protected static function get_connection($writable = false)
 	{
@@ -725,6 +734,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 
 	public function current()
 	{
+		if ($this->_sanitization_enabled)
+		{
+			return \Security::clean(current($this->_data), null, 'security.output_filter');
+		}
 		return current($this->_data);
 	}
 
@@ -735,6 +748,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 
 	public function next()
 	{
+		if ($this->_sanitization_enabled)
+		{
+			return \Security::clean(next($this->_data), null, 'security.output_filter');
+		}
 		return next($this->_data);
 	}
 
@@ -787,6 +804,10 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	{
 		if (array_key_exists($offset, $this->_data))
 		{
+			if ($this->_sanitization_enabled)
+			{
+				return \Security::clean($this->_data[$offset], null, 'security.output_filter');
+			}
 			return $this->_data[$offset];
 		}
 
@@ -952,9 +973,26 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	{
 		$data = unserialize($data);
 
-		foreach ($data as $key => $value)
+		if (isset($data['_is_new']))
 		{
-			$this->__set($key, $value);
+			$this->is_new = $data['_is_new'];
+			unset($data['_is_new']);
 		}
+		else
+		{
+			$this->_is_new = true;
+		}
+
+		if (isset($data['_is_frozen']))
+		{
+			$this->_is_frozen = $data['_is_frozen'];
+			unset($data['_is_frozen']);
+		}
+		else
+		{
+			$this->_is_frozen = false;
+		}
+
+		$this->_data = $data;
 	}
 }

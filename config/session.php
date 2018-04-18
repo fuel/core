@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -24,9 +24,13 @@ return array(
 	 * global configuration
 	*/
 
-	// set it to false to prevent the static session from auto-initializing, know that it might make your session
-	// expire sooner because it's not updated when it's not used. note that auto-initializing always loads the default driver
+	// set it to false to prevent the default session from being automatically created and started when accessing the
+	// Session class. Note that if you no, your session may expire prematurely as it is no longer automatically updated
+	// on every page load when you (auto) load the Session class!
 	'auto_initialize'	=> true,
+
+	// set it to false to prevent manually created session instances from being autostarted when they are created
+	'auto_start'		=> true,
 
 	// if no session type is requested, use the default
 	'driver'			=> 'cookie',

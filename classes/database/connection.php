@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  */
@@ -76,7 +76,7 @@ abstract class Database_Connection
 			$driver = '\\Database_' . ucfirst($config['type']) . '_Connection';
 
 			// Create the database connection instance
-			new $driver($name, $config);
+			static::$instances[$name] = new $driver($name, $config);
 		}
 
 		return static::$instances[$name];
@@ -90,7 +90,7 @@ abstract class Database_Connection
 	/**
 	 * @var  string  Character that is used to quote identifiers
 	 */
-	protected $_identifier = '"';
+	protected $_identifier = '';
 
 	/**
 	 * @var  string  Instance name
@@ -138,14 +138,34 @@ abstract class Database_Connection
 		// Set the instance name
 		$this->_instance = $name;
 
-		// Store the config locally
-		$this->_config = $config;
+		// make sure we have all connection parameters, add defaults for those missing
+		$this->_config = array_merge(array(
+			'connection'  => array(
+				'dsn'        => '',
+				'hostname'   => '',
+				'username'   => null,
+				'password'   => null,
+				'database'   => '',
+				'persistent' => false,
+				'compress'   => false,
+			),
+			'identifier'   => '',
+			'table_prefix' => '',
+			'charset'      => 'utf8',
+			'collation'    => false,
+			'enable_cache' => true,
+			'profiling'    => false,
+			'readonly'     => false,
+		), $config);
 
 		// Set up a generic schema processor if needed
 		if ( ! $this->_schema)
 		{
 			$this->_schema = new \Database_Schema($name, $this);
 		}
+
+		// Allow the identifier to be overloaded per-connection
+		$this->_identifier = (string) $this->_config['identifier'];
 
 		// Store the database instance
 		static::$instances[$name] = $this;
@@ -209,6 +229,19 @@ abstract class Database_Connection
 	 * @return  void
 	 */
 	abstract public function set_charset($charset);
+
+	/**
+	 * Returns a database cache object
+	 *
+	 *     $db->cache($result, $sql);
+	 *
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
+	 *
+	 * @return  Database_Cached
+	 */
+	abstract public function cache($result, $sql, $as_object = null);
 
 	/**
 	 * Perform an SQL query of the given type.
@@ -500,6 +533,23 @@ abstract class Database_Connection
 	 * @return  array
 	 */
 	abstract public function list_columns($table, $like = null);
+
+	/**
+	 * Lists all of the indexes in a table. Optionally, a LIKE string can be
+	 * used to search for specific indexes by name.
+	 *
+	 *     // Get all indexes from the "users" table
+	 *     $indexes = $db->list_indexes('users');
+	 *
+	 *     // Get all name-related columns
+	 *     $indexes = $db->list_indexes('users', '%name%');
+	 *
+	 * @param   string $table table to get indexes from
+	 * @param   string $like  index names to search for
+	 *
+	 * @return  array
+	 */
+	abstract public function list_indexes($table, $like = null);
 
 	/**
 	 * Extracts the text between parentheses, if any.

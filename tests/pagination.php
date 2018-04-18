@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -153,7 +153,7 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		// not enough segments in the URI to add the page number
-		$this->setExpectedException('RunTimeException');
+		$this->expectException('RunTimeException');
 
 		$test = $_make_link->invoke($pagination, 1);
 	}
@@ -702,11 +702,11 @@ class Test_Pagination extends TestCase
 		$_make_link->setAccessible(true);
 
 		$test = $_make_link->invoke($pagination, 1);
-		$expected = 'welcome/index/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=1';
+		$expected = 'welcome/index?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=1';
 		$this->assertEquals($expected, $test);
 
 		$test = $_make_link->invoke($pagination, 99);
-		$expected = 'welcome/index/?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=99';
+		$expected = 'welcome/index?foo=bar&amp;fuel%5B0%5D=php1&amp;fuel%5B1%5D=php2&amp;p=99';
 		$this->assertEquals($expected, $test);
 	}
 

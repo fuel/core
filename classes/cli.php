@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -371,7 +371,8 @@ class Cli
 	 */
  	public static function is_windows()
  	{
- 		return 'win' === strtolower(substr(php_uname("s"), 0, 3));
+		// for BC, function moved to base.php
+ 		return is_windows();
  	}
 
 	/**
@@ -396,7 +397,7 @@ class Cli
 	 */
     public static function clear_screen()
     {
-		static::is_windows()
+		is_windows()
 
 			// Windows is a bit crap at this, but their terminal is tiny so shove this in
 			? static::new_line(40)
@@ -418,7 +419,7 @@ class Cli
 	 */
 	public static function color($text, $foreground, $background = null, $format=null)
 	{
-		if (static::is_windows() and ! \Input::server('ANSICON'))
+		if (is_windows() and ! \Input::server('ANSICON'))
 		{
 			return $text;
 		}
@@ -468,7 +469,7 @@ class Cli
 	public static function spawn($call, $output = '/dev/null')
 	{
 		// Windows
-		if(static::is_windows())
+		if(is_windows())
 		{
 			pclose(popen('start /b '.$call, 'r'));
 	    }

@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -29,6 +29,8 @@ class Session_File extends \Session_Driver
 
 	public function __construct($config = array())
 	{
+		parent::__construct($config);
+
 		// merge the driver config with the global config
 		$this->config = array_merge($config, is_array($config['file']) ? $config['file'] : static::$_defaults);
 
@@ -38,19 +40,57 @@ class Session_File extends \Session_Driver
 	// --------------------------------------------------------------------
 
 	/**
-	 * create a new session
+	 * Garbage Collector
+	 *
+	 * @return	bool
+	 */
+	public function gc()
+	{
+		// do some garbage collection
+		if (mt_rand(0, 100) < $this->config['gc_probability'])
+		{
+			if ($handle = opendir($this->config['path']))
+			{
+				$expire = $this->time->get_timestamp() - $this->config['expiration_time'];
+
+				while (($file = readdir($handle)) !== false)
+				{
+					if (filetype($this->config['path'] . $file) == 'file' and
+						strpos($file, $this->config['cookie_name'].'_') === 0 and
+						filemtime($this->config['path'] . $file) < $expire)
+					{
+						@unlink($this->config['path'] . $file);
+					}
+				}
+
+				closedir($handle);
+			}
+		}
+
+		return true;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * destroy the current session
 	 *
 	 * @return	\Session_File
 	 */
-	public function create()
+	public function destroy()
 	{
-		// create a new session
-		$this->keys['session_id']  = $this->_new_session_id();
-		$this->keys['previous_id'] = $this->keys['session_id'];	// prevents errors if previous_id has a unique index
-		$this->keys['ip_hash']     = md5(\Input::ip().\Input::real_ip());
-		$this->keys['user_agent']  = \Input::user_agent();
-		$this->keys['created']     = $this->time->get_timestamp();
-		$this->keys['updated']     = $this->keys['created'];
+		// do we have something to destroy?
+		if ( ! empty($this->keys))
+		{
+			// delete the session file
+			$file = $this->config['path'].$this->config['cookie_name'].'_'.$this->keys['session_id'];
+			if (is_file($file))
+			{
+				unlink($file);
+			}
+		}
+
+		parent::destroy();
 
 		return $this;
 	}
@@ -63,13 +103,8 @@ class Session_File extends \Session_Driver
 	 * @param	boolean, set to true if we want to force a new session to be created
 	 * @return	\Session_Driver
 	 */
-	public function read($force = false)
+	protected function read($force = false)
 	{
-		// initialize the session
-		$this->data = array();
-		$this->keys = array();
-		$this->flash = array();
-
 		// get the session cookie
 		$cookie = $this->_get_cookie();
 
@@ -138,7 +173,7 @@ class Session_File extends \Session_Driver
 			}
 		}
 
-		return parent::read();
+		return $this;
 	}
 
 	// --------------------------------------------------------------------
@@ -148,13 +183,11 @@ class Session_File extends \Session_Driver
 	 *
 	 * @return	\Session_File
 	 */
-	public function write()
+	protected function write()
 	{
 		// do we have something to write?
 		if ( ! empty($this->keys) or ! empty($this->data) or ! empty($this->flash))
 		{
-			parent::write();
-
 			// rotate the session id if needed
 			$this->rotate(false);
 
@@ -183,64 +216,6 @@ class Session_File extends \Session_Driver
 		}
 
 		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * destroy the current session
-	 *
-	 * @return	\Session_File
-	 */
-	public function destroy()
-	{
-		// do we have something to destroy?
-		if ( ! empty($this->keys))
-		{
-			// delete the session file
-			$file = $this->config['path'].$this->config['cookie_name'].'_'.$this->keys['session_id'];
-			if (is_file($file))
-			{
-				unlink($file);
-			}
-		}
-
-		parent::destroy();
-
-		return $this;
-	}
-
-	// --------------------------------------------------------------------
-
-	/**
-	 * Garbage Collector
-	 *
-	 * @return	bool
-	 */
-	public function gc()
-	{
-		// do some garbage collection
-		if (mt_rand(0, 100) < $this->config['gc_probability'])
-		{
-			if ($handle = opendir($this->config['path']))
-			{
-				$expire = $this->time->get_timestamp() - $this->config['expiration_time'];
-
-				while (($file = readdir($handle)) !== false)
-				{
-					if (filetype($this->config['path'] . $file) == 'file' and
-						strpos($file, $this->config['cookie_name'].'_') === 0 and
-						filemtime($this->config['path'] . $file) < $expire)
-					{
-						@unlink($this->config['path'] . $file);
-					}
-				}
-
-				closedir($handle);
-			}
-		}
-
-		return true;
 	}
 
 	// --------------------------------------------------------------------

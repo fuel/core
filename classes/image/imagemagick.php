@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -28,7 +28,7 @@ class Image_Imagemagick extends \Image_Driver
 		{
 			do
 			{
-				$this->image_temp = $this->config['temp_dir'].substr($this->config['temp_append'].md5(time() * microtime()), 0, 32).'.png';
+				$this->image_temp = $this->config['temp_dir'].substr($this->config['temp_append'].\Str::random('unique'), 0, 32).'.png';
 			}
 			while (is_file($this->image_temp));
 		}
@@ -46,7 +46,7 @@ class Image_Imagemagick extends \Image_Driver
 		{
 			throw new \RuntimeException("Could not write in the temp directory.");
 		}
-		$this->exec('convert', "'".$image_fullpath."'[0] '".$this->image_temp."'");
+		$this->exec('convert', "-auto-orient '".$image_fullpath."'[0] '".$this->image_temp."'");
 
 		return $this;
 	}
@@ -55,7 +55,7 @@ class Image_Imagemagick extends \Image_Driver
 	{
 		extract(parent::_crop($x1, $y1, $x2, $y2));
 		$image = "'".$this->image_temp."'";
-		$this->exec('convert', $image.' -crop '.($x2 - $x1).'x'.($y2 - $y1).'+'.$x1.'+'.$y1.' +repage '.$image);
+		$this->exec('convert', $image.' -auto-orient -crop '.($x2 - $x1).'x'.($y2 - $y1).'+'.$x1.'+'.$y1.' +repage '.$image);
 		$this->clear_sizes();
 	}
 
@@ -64,7 +64,7 @@ class Image_Imagemagick extends \Image_Driver
 		extract(parent::_resize($width, $height, $keepar, $pad));
 
 		$image = "'".$this->image_temp."'";
-		$this->exec('convert', "-define png:size=".$cwidth."x".$cheight." ".$image." ".
+		$this->exec('convert', "-auto-orient -define png:size=".$cwidth."x".$cheight." ".$image." ".
 			"-background none ".
 			"-resize \"".($pad ? $width : $cwidth)."x".($pad ? $height : $cheight)."!\" ".
 			"-gravity center ".
@@ -77,7 +77,7 @@ class Image_Imagemagick extends \Image_Driver
 		extract(parent::_rotate($degrees));
 
 		$image = "'".$this->image_temp."'";
-		$this->exec('convert', $image." -background none -virtual-pixel background +distort ScaleRotateTranslate ".$degrees." +repage ".$image);
+		$this->exec('convert', $image." -background none -auto-orient -virtual-pixel background +distort ScaleRotateTranslate ".$degrees." +repage ".$image);
 
 		$this->clear_sizes();
 	}
@@ -101,7 +101,7 @@ class Image_Imagemagick extends \Image_Driver
 			default: return false;
 		}
 		$image = "'".$this->image_temp."'";
-		$this->exec('convert', $image.' '.$arg.' '.$image);
+		$this->exec('convert', $image.' -auto-orient '.$arg.' '.$image);
 	}
 
 	protected function _watermark($filename, $position, $padding = array(5,5))
@@ -131,7 +131,7 @@ class Image_Imagemagick extends \Image_Driver
 
 		$image = "'".$this->image_temp."'";
 		$color = $this->create_color($color, 100);
-		$command = $image.' -compose copy -bordercolor '.$color.' -border '.$size.'x'.$size.' '.$image;
+		$command = $image.' -auto-orient -compose copy -bordercolor '.$color.' -border '.$size.'x'.$size.' '.$image;
 		$this->exec('convert', $command);
 
 		$this->clear_sizes();
@@ -143,7 +143,7 @@ class Image_Imagemagick extends \Image_Driver
 
 		$mimage = "'".$maskimage."'";
 		$image = "'".$this->image_temp."'";
-		$command = $image.' '.$mimage.' +matte  -compose copy-opacity -composite '.$image;
+		$command = $image.' '.$mimage.' +matte -auto-orient -compose copy-opacity -composite '.$image;
 		$this->exec('convert', $command);
 	}
 
@@ -165,14 +165,14 @@ class Image_Imagemagick extends \Image_Driver
 			( ! $br ? '' : "-draw \"fill black polygon 0,0 0,$r $r,0 fill white circle $r,$r $r,0\" ")."-flop ".
 			( ! $bl ? '' : "-draw \"fill black polygon 0,0 0,$r $r,0 fill white circle $r,$r $r,0\" ")."-flip ".
 			( ! $tl ? '' : "-draw \"fill black polygon 0,0 0,$r $r,0 fill white circle $r,$r $r,0\" ").
-			'\\) -alpha off -compose CopyOpacity -composite '.$image;
+			'\\) -alpha off -auto-orient -compose CopyOpacity -composite '.$image;
 		$this->exec('convert', $command);
 	}
 
 	protected function _grayscale()
 	{
 		$image = "'".$this->image_temp."'";
-		$this->exec('convert', $image." -colorspace Gray ".$image);
+		$this->exec('convert', $image." -auto-orient -colorspace Gray ".$image);
 	}
 
 	public function sizes($filename = null, $usecache = true)
@@ -223,7 +223,7 @@ class Image_Imagemagick extends \Image_Driver
 		if(($filetype == 'jpeg' or $filetype == 'jpg') and $this->config['quality'] != 100)
 		{
 			$quality = "'".$this->config['quality']."%'";
-			$this->exec('convert', $old.' -quality '.$quality.' '.$new);
+			$this->exec('convert', $old.' -auto-orient -quality '.$quality.' '.$new);
 		}
 		else
 		{
@@ -250,13 +250,13 @@ class Image_Imagemagick extends \Image_Driver
 		if(($filetype == 'jpeg' or $filetype == 'jpg') and $this->config['quality'] != 100)
 		{
 			$quality = "'".$this->config['quality']."%'";
-			$this->exec('convert', $image.' -quality '.$quality.' '.strtolower($filetype).':-', true);
+			$this->exec('convert', $image.' -auto-orient -quality '.$quality.' '.strtolower($filetype).':-', true);
 		}
 		elseif (substr($this->image_temp, -1 * strlen($filetype)) != $filetype)
 		{
 			if ( ! $this->config['debug'])
 			{
-				$this->exec('convert', $image.' '.strtolower($filetype).':-', true);
+				$this->exec('convert', $image.' -auto-orient '.strtolower($filetype).':-', true);
 			}
 		}
 		else
@@ -291,7 +291,7 @@ class Image_Imagemagick extends \Image_Driver
 			$image   = "'".$this->image_temp."'";
 			$color   = $this->create_color($bgcolor, 100);
 			$sizes   = $this->sizes();
-			$command = '-size '.$sizes->width.'x'.$sizes->height.' '.'canvas:'.$color.' '.
+			$command = '-auto-orient -size '.$sizes->width.'x'.$sizes->height.' '.'canvas:'.$color.' '.
 				$image.' -composite '.$image;
 			$this->exec('convert', $command);
 		}

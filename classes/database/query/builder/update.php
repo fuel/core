@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  */
@@ -185,15 +185,71 @@ class Database_Query_Builder_Update extends \Database_Query_Builder_Where
 	/**
 	 * Adds "ON ..." conditions for the last created JOIN statement.
 	 *
-	 * @param   mixed  $c1 column name or array($column, $alias) or object
-	 * @param   string $op logic operator
-	 * @param   mixed  $c2 column name or array($column, $alias) or object
+	 * @param   mixed   $c1  column name or array($column, $alias) or object
+	 * @param   string  $op  logic operator
+	 * @param   mixed   $c2  column name or array($column, $alias) or object
 	 *
 	 * @return  $this
 	 */
 	public function on($c1, $op, $c2)
 	{
 		$this->_last_join->on($c1, $op, $c2);
+
+		return $this;
+	}
+
+	/**
+	 * Adds "AND ON ..." conditions for the last created JOIN statement.
+	 *
+	 * @param   mixed   $c1  column name or array($column, $alias) or object
+	 * @param   string  $op  logic operator
+	 * @param   mixed   $c2  column name or array($column, $alias) or object
+	 *
+	 * @return  $this
+	 */
+	public function and_on($c1, $op, $c2)
+	{
+		$this->_last_join->and_on($c1, $op, $c2);
+
+		return $this;
+	}
+
+	/**
+	 * Adds "OR ON ..." conditions for the last created JOIN statement.
+	 *
+	 * @param   mixed   $c1  column name or array($column, $alias) or object
+	 * @param   string  $op  logic operator
+	 * @param   mixed   $c2  column name or array($column, $alias) or object
+	 *
+	 * @return  $this
+	 */
+	public function or_on($c1, $op, $c2)
+	{
+		$this->_last_join->or_on($c1, $op, $c2);
+
+		return $this;
+	}
+
+	/**
+	 * Adds an opening bracket the last created JOIN statement.
+	 *
+	 * @return  $this
+	 */
+	public function on_open()
+	{
+		$this->_last_join->on_open();
+
+		return $this;
+	}
+
+	/**
+	 * Adds a closing bracket for the last created JOIN statement.
+	 *
+	 * @return  $this
+	 */
+	public function on_close()
+	{
+		$this->_last_join->on_close();
 
 		return $this;
 	}

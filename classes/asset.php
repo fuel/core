@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -160,6 +160,27 @@ class Asset
 	public static function render($group = null, $raw = false)
 	{
 		return static::instance()->render($group, $raw);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Static call forwarder
+	 *
+	 * This can be used when new asset types have been dynamically added
+	 *
+	 * @param   string  $method  method name
+	 * @param   array   $args    passed arguments
+	 * @return  mixed
+	 * @throws  \BadMethodCallException
+	 */
+	public static function __callStatic($method, $args)
+	{
+		// get the default instance
+		$instance = static::instance();
+
+		// call the reqiested method
+		return call_user_func_array(array($instance, $method), $args);
 	}
 
 	// --------------------------------------------------------------------

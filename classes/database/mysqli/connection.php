@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  */
@@ -45,6 +45,29 @@ class Database_MySQLi_Connection extends \Database_Connection
 	 */
 	public $_db_type = 'mysql';
 
+	/**
+	 * @param string $name
+	 * @param array  $config
+	 */
+	protected function __construct($name, array $config)
+	{
+		// construct a custom schema driver
+//		$this->_schema = new \Database_Drivername_Schema($name, $this);
+
+		// call the parent consructor
+		parent::__construct($name, $config);
+
+		// make sure we have all connection parameters, add defaults for those missing
+		$this->_config = \Arr::merge(array(
+			'connection'  => array(
+				'socket'     => '',
+				'port'       => '',
+				'compress'   => false,
+			),
+			'enable_cache'   => true,
+		), $this->_config);
+	}
+
 	public function connect()
 	{
 		if ($this->_connection)
@@ -60,16 +83,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 
 		// Extract the connection parameters, adding required variables
-		extract($this->_config['connection'] + array(
-			'database'   => '',
-			'hostname'   => '',
-			'port'       => '',
-			'socket'     => '',
-			'username'   => '',
-			'password'   => '',
-			'persistent' => false,
-			'compress'	 => true,
-		));
+		extract($this->_config['connection']);
 
 		try
 		{
@@ -86,40 +100,26 @@ class Database_MySQLi_Connection extends \Database_Connection
 				$socket = null;
 				$port   = null;
 			}
-			if ($persistent)
-			{
-				// Create a persistent connection
-				if ($compress)
-				{
-					$mysqli = mysqli_init();
-					$mysqli->real_connect('p:'.$hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
 
-					$this->_connection = $mysqli;
-				}
-				else
-				{
-					$this->_connection = new \MySQLi('p:'.$hostname, $username, $password, $database, $port, $socket);
-				}
-			}
-			else
-			{
-				// Create a connection and force it to be a new link
-				if ($compress)
-				{
-					$mysqli = mysqli_init();
-					$mysqli->real_connect($hostname, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
+            $host = ($persistent) ? 'p:'.$hostname : $hostname;
 
-					$this->_connection = $mysqli;
-				}
-				else
-				{
-					$this->_connection = new \MySQLi($hostname, $username, $password, $database, $port, $socket);
-				}
-			}
+            // Create a connection and force it to be a new link
+            if ($compress)
+            {
+                $mysqli = mysqli_init();
+                $mysqli->real_connect($host, $username, $password, $database, $port, $socket, MYSQLI_CLIENT_COMPRESS);
+
+                $this->_connection = $mysqli;
+            }
+            else
+            {
+                $this->_connection = new \MySQLi($host, $username, $password, $database, $port, $socket);
+            }
+
 			if ($this->_connection->error)
 			{
 				// Unable to connect, select database, etc
-				throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $this->_connection->error), $this->_connection->errno);
+				throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $this->_connection->error), $this->_connection->errno, null, $this->_connection->errno);
 			}
 		}
 		catch (\ErrorException $e)
@@ -127,8 +127,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			// No connection exists
 			$this->_connection = null;
 
-			$error_code = is_numeric($e->getCode()) ? $e->getCode() : 0;
-			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $error_code, $e);
+			throw new \Database_Exception(str_replace($password, str_repeat('*', 10), $e->getMessage()), $e->getCode(), $e, $e->getCode());
 		}
 
 		// \xFF is a better delimiter, but the PHP driver uses underscore
@@ -156,7 +155,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			if ($this->_connection->select_db($database) !== true)
 			{
 				// Unable to select database
-				throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+				throw new \Database_Exception($this->_connection->error, $this->_connection->errno, null, $this->_connection->errno);
 			}
 		}
 
@@ -205,7 +204,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 		if ($status === false)
 		{
-			throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+			throw new \Database_Exception($this->_connection->error, $this->_connection->errno, null, $this->_connection->errno);
 		}
 	}
 
@@ -219,7 +218,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 	 * @throws  \Database_Exception
 	 *
 	 * @return  mixed  when SELECT then return an iterator of results,<br>
-	 *                 when UPDATE then return a list of insert id and rows created,<br>
+	 *                 when INSERT then return a list of insert id and rows created,<br>
 	 *                 in other case return the number of rows affected
 	 */
 	public function query($type, $sql, $as_object)
@@ -230,7 +229,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 			// Make sure the connection is still alive
 			if ( ! $this->_connection->ping())
 			{
-				throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno);
+				throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno, null, $this->_connection->errno);
 			}
 		}
 		else
@@ -281,7 +280,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 
 		// Execute the query
-		if (($result = $this->_connection->query($sql)) === false)
+		if (($result = $this->_connection->query($sql, $this->_config['enable_cache'] ? MYSQLI_STORE_RESULT :MYSQLI_USE_RESULT)) === false)
 		{
 			if (isset($benchmark))
 			{
@@ -289,7 +288,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 				\Profiler::delete($benchmark);
 			}
 
-			throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno);
+			throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno, null, $this->_connection->errno);
 		}
 
 		// check for multiresults, we don't support those at the moment
@@ -311,8 +310,16 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 		if ($type === \DB::SELECT)
 		{
-			// Return an iterator of results
-			return new \Database_MySQLi_Result($result, $sql, $as_object);
+			if ($this->_config['enable_cache'])
+			{
+				// Return an iterator of results
+				return new \Database_MySQLi_Cached($result, $sql, $as_object);
+			}
+			else
+			{
+				// Return an iterator of results
+				return new \Database_MySQLi_Result($result, $sql, $as_object);
+			}
 		}
 		elseif ($type === \DB::INSERT)
 		{
@@ -331,6 +338,29 @@ class Database_MySQLi_Connection extends \Database_Connection
 		return $result;
 	}
 
+	/**
+	 * Returns a database cache object
+	 *
+	 *     $db->cache($result, $sql);
+	 *
+	 * @param  array   $result
+	 * @param  string  $sql
+	 * @param  mixed   $as_object
+	 *
+	 * @return  Database_Cached
+	 */
+	public function cache($result, $sql, $as_object = null)
+	{
+		return new \Database_MySQLi_Cached($result, $sql, $as_object);
+	}
+
+	/**
+	 * Resolve a datatype
+	 *
+	 * @param integer $type
+	 *
+	 * @return array
+	 */
 	public function datatype($type)
 	{
 		static $types = array(
@@ -500,6 +530,50 @@ class Database_MySQLi_Connection extends \Database_Connection
 	}
 
 	/**
+	 * List indexes
+	 *
+	 * @param string $like
+	 *
+	 * @throws \FuelException
+	 */
+	public function list_indexes($table, $like = null)
+	{
+		// Quote the table name
+		$table = $this->quote_table($table);
+
+		if (is_string($like))
+		{
+			// Search for index names
+			$result = $this->query(\DB::SELECT, 'SHOW INDEX FROM '.$table.' WHERE '.$this->quote_identifier('Key_name').' LIKE '.$this->quote($like), false);
+		}
+		else
+		{
+			// Find all index names
+			$result = $this->query(\DB::SELECT, 'SHOW INDEX FROM '.$table, false);
+		}
+
+		// unify the result
+		$indexes = array();
+		foreach ($result as $row)
+		{
+			$index = array(
+				'name' => $row['Key_name'],
+				'column' => $row['Column_name'],
+				'order' => $row['Seq_in_index'],
+				'type' => $row['Index_type'],
+				'primary' => $row['Key_name'] == 'PRIMARY' ? true : false,
+				'unique' => $row['Non_unique'] == 0 ? true : false,
+				'null' => $row['Null'] == 'YES' ? true : false,
+				'ascending' => $row['Collation'] == 'A' ? true : false,
+			);
+
+			$indexes[] = $index;
+		}
+
+		return $indexes;
+	}
+
+	/**
 	 * Escape query for sql
 	 *
 	 * @param   mixed   $value  value of string castable
@@ -512,7 +586,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 
 		if (($value = $this->_connection->real_escape_string((string) $value)) === false)
 		{
-			throw new \Database_Exception($this->_connection->error, $this->_connection->errno);
+			throw new \Database_Exception($this->_connection->error, $this->_connection->errno, null, $this->_connection->errno);
 		}
 
 		// SQL standard is to use single-quotes for all values

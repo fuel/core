@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2016 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -213,7 +213,7 @@ class Security
 		is_null($double_encode) and $double_encode = \Config::get('security.htmlentities_double_encode', false);
 
 		// Nothing to escape for non-string scalars, or for already processed values
-		if (is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned, true))
+		if (is_null($value) or is_bool($value) or is_int($value) or is_float($value) or in_array($value, $already_cleaned, true))
 		{
 			return $value;
 		}
@@ -286,8 +286,8 @@ class Security
 	{
 		$value = $value ?: \Input::param(static::$csrf_token_key, \Input::json(static::$csrf_token_key, 'fail'));
 
-		// always reset token once it's been checked and still the same
-		if (static::fetch_token() == static::$csrf_old_token and ! empty($value))
+		// always reset token once it's been checked and still the same, and we've configured we want to rotate
+		if (static::fetch_token() == static::$csrf_old_token and ! empty($value) and \Config::get('security.csrf_rotate', true))
 		{
 			static::set_token(true);
 		}
@@ -307,7 +307,7 @@ class Security
 			return static::$csrf_token;
 		}
 
-		static::set_token();
+		static::set_token(true);
 
 		return static::$csrf_token;
 	}
@@ -349,10 +349,15 @@ class Security
 		return md5($token_base);
 	}
 
-	protected static function set_token($reset = false)
+	/**
+	 * Setup the next token to be used.
+	 *
+	 * @param   $rotate   bool   if true, generate a new token, even if the current token is still valid
+	 */
+	public static function set_token($rotate = true)
 	{
 		// re-use old token when found (= not expired) and expiration is used (otherwise always reset)
-		if ( ! $reset and static::$csrf_old_token and \Config::get('security.csrf_expiration', 0) > 0)
+		if ($rotate === false and static::$csrf_old_token !== false)
 		{
 			static::$csrf_token = static::$csrf_old_token;
 		}
