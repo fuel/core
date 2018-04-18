@@ -25,22 +25,37 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 		// go the generic construction processing
 		parent::__construct($result, $sql, $as_object);
 
-		// Convert the result into an array, as PDOStatement::rowCount is not reliable
-		if ($this->_as_object === false)
+		// if an array is passed, use it
+		if (is_array($result))
 		{
-			$this->_result = $this->result->fetchAll(\PDO::FETCH_ASSOC);
+			$this->_result = $result;
+			$this->_total_rows = count($result);
 		}
-		elseif (is_string($this->_as_object))
+
+		// else we're getting a mysqli object. convert the result into an array
+		elseif ($result instanceof \PDOStatement)
 		{
-			$this->_result = $this->result->fetchAll(\PDO::FETCH_CLASS, $this->_as_object);
+			// Convert the result into an array, as PDOStatement::rowCount is not reliable
+			if ($this->_as_object === false)
+			{
+				$this->_result = $this->result->fetchAll(\PDO::FETCH_ASSOC);
+			}
+			elseif (is_string($this->_as_object))
+			{
+				$this->_result = $this->result->fetchAll(\PDO::FETCH_CLASS, $this->_as_object);
+			}
+			else
+			{
+				$this->_result = $this->result->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
+			}
+
+			// Find the number of rows in the result
+			$this->_total_rows = count($this->_result);
 		}
 		else
 		{
-			$this->_result = $this->result->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
+			throw new \FuelException('Database_Cached requires database results in either an array or a database object');
 		}
-
-		// Find the number of rows in the result
-		$this->_total_rows = count($this->_result);
 	}
 
 	/**
