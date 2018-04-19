@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2017 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -27,6 +27,23 @@ class Image_Imagick extends \Image_Driver
 		}
 
 		$this->imagick->readImage($filename);
+
+		// deal with exif autorotation
+		$orientation = $this->imagick->getImageOrientation();
+		switch($orientation)
+		{
+			case \Imagick::ORIENTATION_BOTTOMRIGHT:
+				$this->imagick->rotateimage("#000", 180); // rotate 180 degrees
+			break;
+
+			case \Imagick::ORIENTATION_RIGHTTOP:
+				$this->imagick->rotateimage("#000", 90); // rotate 90 degrees CW
+			break;
+
+			case \Imagick::ORIENTATION_LEFTBOTTOM:
+				$this->imagick->rotateimage("#000", -90); // rotate 90 degrees CCW
+			break;
+		}
 
 		return $this;
 	}

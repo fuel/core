@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2017 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       http://fuelphp.com
  */
@@ -25,30 +25,44 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 		// go the generic construction processing
 		parent::__construct($result, $sql, $as_object);
 
-		// Convert the result into an array, as PDOStatement::rowCount is not reliable
-		if ($this->_as_object === false)
+		// if an array is passed, use it
+		if (is_array($result))
 		{
-			$this->_result = $this->result->fetch_all(MYSQLI_ASSOC);
+			$this->_result = $result;
+			$this->_total_rows = count($result);
 		}
-		elseif (is_string($this->_as_object))
+
+		// else we're getting a mysqli object. convert the result into an array
+		elseif ($result instanceof \MySQLi_Result)
 		{
-			$this->_result = array();
-			while ($row = $this->result->fetch_object($this->_as_object))
+			if ($this->_as_object === false)
 			{
-				$this->_result[] = $row;
+				$this->_result = $this->result->fetch_all(MYSQLI_ASSOC);
 			}
+			elseif (is_string($this->_as_object))
+			{
+				$this->_result = array();
+				while ($row = $this->result->fetch_object($this->_as_object))
+				{
+					$this->_result[] = $row;
+				}
+			}
+			else
+			{
+				$this->_result = array();
+				while ($row = $this->result->fetch_object())
+				{
+					$this->_result[] = $row;
+				}
+			}
+
+			// Find the number of rows in the result
+			$this->_total_rows = $this->result->num_rows;
 		}
 		else
 		{
-			$this->_result = array();
-			while ($row = $this->result->fetch_object())
-			{
-				$this->_result[] = $row;
-			}
+			throw new \FuelException('Database_Cached requires database results in either an array or a database object');
 		}
-
-		// Find the number of rows in the result
-		$this->_total_rows = $this->result->num_rows;
 	}
 
 	/**

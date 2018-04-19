@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2017 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -23,7 +23,7 @@ if ( ! function_exists('is_windows'))
 {
  	function is_windows()
  	{
- 		return strpos(strtolower(php_uname("s")), 'windows') === 0;
+ 		return DIRECTORY_SEPARATOR === '/';
  	}
 }
 
@@ -32,23 +32,29 @@ if ( ! function_exists('is_windows'))
  *
  * @param   string  $path
  * @param   string  $folder
- * @return  void
+ * @return  bool
  */
 if ( ! function_exists('import'))
 {
 	function import($path, $folder = 'classes')
 	{
+		// unify the path
 		$path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-		// load it ffrom the core if it exists
-		if (is_file(COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php'))
+
+		foreach (array('.php', '.phar', '') as $ext)
 		{
-			require_once COREPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
+			foreach (array(COREPATH, APPPATH) as $loc)
+			{
+				// check if the file exist
+				if (is_file($file = $loc.$folder.DIRECTORY_SEPARATOR.$path.$ext))
+				{
+					require_once $file;
+					return true;
+				}
+			}
 		}
-		// if the app has an override (or a non-core file), load that too
-		if (is_file(APPPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php'))
-		{
-			require_once APPPATH.$folder.DIRECTORY_SEPARATOR.$path.'.php';
-		}
+
+		return false;
 	}
 }
 

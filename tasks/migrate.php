@@ -1,12 +1,12 @@
 <?php
 /**
- * Part of the Fuel framework.
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
  * @package    Fuel
- * @version    1.8
+ * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2017 Fuel Development Team
+ * @copyright  2010 - 2018 Fuel Development Team
  * @link       http://fuelphp.com
  */
 
@@ -114,7 +114,7 @@ class Migrate
 					// get all modules that have files in the migration folder
 					foreach(new \GlobIterator(realpath($path).DS.'*') as $m)
 					{
-						if (count(new \GlobIterator($m->getPathname().rtrim(DS.\Config::get('migrations.folder'), '\\/').DS.'*.php')))
+						if (count(glob($m->getPathname().rtrim(DS.\Config::get('migrations.folder'), '\\/').DS.'*.php', GLOB_NOSORT)))
 						{
 							static::$modules[] = $m->getBasename();
 						}
@@ -140,7 +140,7 @@ class Migrate
 					// get all modules that have files in the migration folder
 					foreach(new \GlobIterator(realpath($path).DS.'*') as $p)
 					{
-						if (count(new \GlobIterator($p->getPathname().rtrim(DS.\Config::get('migrations.folder'), '\\/').DS.'*.php')))
+						if (count(glob($p->getPathname().rtrim(DS.\Config::get('migrations.folder'), '\\/').DS.'*.php', GLOB_NOSORT)))
 						{
 							static::$packages[] = $p->getBasename();
 						}

@@ -1,13 +1,13 @@
 <?php
 /**
- * Part of the Fuel framework
+ * Fuel is a fast, lightweight, community driven PHP 5.4+ framework.
  *
- * @package   Fuel
- * @version   1.7
- * @author    Fuel Development Team
- * @license   MIT License
- * @copyright 2010 - 2012 Fuel Development Team
- * @link      http://fuelphp.com
+ * @package    Fuel
+ * @version    1.9-dev
+ * @author     Fuel Development Team
+ * @license    MIT License
+ * @copyright  2010 - 2018 Fuel Development Team
+ * @link       http://fuelphp.com
  */
 
 namespace Fuel\Core;
