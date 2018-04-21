@@ -69,6 +69,9 @@ abstract class Session_Driver
 	 */
 	public function start()
 	{
+		// init the driver if needed
+		$this->init();
+	
 		// change the state to started
 		$this->_change_state('started');
 
