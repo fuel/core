@@ -373,7 +373,7 @@ class Crypt
 		}
 
 		$calc = sodium_crypto_generichash($message, $auth_key, SODIUM_CRYPTO_GENERICHASH_BYTES_MAX);
-		$res = hash_equals($mac, $calc);
+		$res = Binary::hashEquals($mac, $calc);
 		static::memzero($calc);
 
 		return $res;

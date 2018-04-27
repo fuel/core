@@ -96,6 +96,74 @@ abstract class Binary
 			return substr($str, $start);
 		}
 	}
+
+	/**
+	 * Evaluate whether or not two strings are equal (in constant-time)
+	 *
+	 * @param string $left
+	 * @param string $right
+	 * @return bool
+	 * @throws FuelException
+	 */
+	public static function hashEquals($left, $right)
+	{
+		if ( ! is_string($left))
+		{
+			throw new \FuelException('Argument 1 must be a string, ' . gettype($left) . ' given.');
+		}
+		if ( ! is_string($right))
+		{
+			throw new \FuelException('Argument 2 must be a string, ' . gettype($right) . ' given.');
+		}
+
+		if (is_callable('hash_equals'))
+		{
+			return hash_equals($left, $right);
+		}
+		$d = 0;
+
+		$len = self::safeStrlen($left);
+		if ($len !== self::safeStrlen($right))
+		{
+			return false;
+		}
+		for ($i = 0; $i < $len; ++$i)
+		{
+			$d |= self::chrToInt($left[$i]) ^ self::chrToInt($right[$i]);
+		}
+
+		if ($d !== 0)
+		{
+			return false;
+		}
+
+		return $left === $right;
+	}
+
+	/**
+	 * Cache-timing-safe variant of ord()
+	 *
+	 * @internal You should not use this directly from another application
+	 *
+	 * @param string $chr
+	 * @return int
+	 * @throws FuelException
+	 */
+	public static function chrToInt($chr)
+	{
+		if ( ! is_string($chr))
+		{
+			throw new \FuelException('Argument 1 must be a string, ' . gettype($chr) . ' given.');
+		}
+		if (self::safeStrlen($chr) !== 1)
+		{
+			throw new \FuelException('chrToInt() expects a string that is exactly 1 character long');
+		}
+
+		$chunk = unpack('C', $chr);
+
+		return (int) ($chunk[1]);
+	}
 }
 
 /**
