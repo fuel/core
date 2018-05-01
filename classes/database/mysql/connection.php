@@ -99,7 +99,7 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 	protected function _connect()
 	{
 		// enable compression if needed
-		if ($this->_config['connection']['compress'])
+		if (isset($this->_config['connection']['compress']) and $this->_config['connection']['compress'])
 		{
 			// use client compression with mysql or mysqli (doesn't work with mysqlnd)
 			$this->_config['attrs'][\PDO::MYSQL_ATTR_COMPRESS] = true;
