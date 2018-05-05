@@ -145,7 +145,12 @@ class Input_Instance
 		// Fall back to parsing the REQUEST URI
 		elseif (isset($_SERVER['REQUEST_URI']))
 		{
-			$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
+			$uri = '';
+
+			if ( ! empty($_SERVER['REQUEST_URI']))
+			{
+				$uri = strpos($_SERVER['SCRIPT_NAME'], $_SERVER['REQUEST_URI']) !== 0 ? $_SERVER['REQUEST_URI'] : '';
+			}
 		}
 
 		// deal with CLI requests
