@@ -60,7 +60,7 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 			throw new \FuelException('Database_Cached requires database results in either an array or a database object');
 		}
 
-		$this->_total_rows = count($this->_results);
+		$this->_total_rows = count($this->_result);
 	}
 
 	/**
@@ -123,24 +123,8 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 				$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
 			}
 		}
-		else
-		{
-			$this->rewind();
-		}
 
 		return $this->_row;
-	}
-
-	/**
-	 * Implements [Iterator::next], returns the next row.
-	 *
-	 * @return  mixed
-	 */
-	public function next()
-	{
-		parent::next();
-
-		isset($this->_results[$this->_current_row]) and $this->_row = $this->_results[$this->_current_row];
 	}
 
 	/**************************
