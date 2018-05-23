@@ -352,7 +352,7 @@ abstract class Database_Connection
 	 */
 	public function count_last_query()
 	{
-		if ($sql = $this->last_query)
+		if ($sql = $orgsql = $this->last_query)
 		{
 			$sql = trim($sql);
 			if (stripos($sql, 'SELECT') !== 0)
@@ -386,8 +386,11 @@ abstract class Database_Connection
 				true
 			);
 
+			// restore the previous query
+			$this->last_query = $orgsql;
+
 			// Return the total number of rows from the query
-			return (int) $result->current()->total_rows;
+			return (int) $result->get('total_rows');
 		}
 
 		return false;
