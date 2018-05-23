@@ -115,6 +115,10 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 				$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
 			}
 		}
+		else
+		{
+			$this->rewind();
+		}
 
 		return $this->_row;
 	}
