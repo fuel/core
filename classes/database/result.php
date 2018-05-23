@@ -338,7 +338,6 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 
 		// advance to the first record, and load it
 		$this->next();
-		$this->current();
 	}
 
 	/**

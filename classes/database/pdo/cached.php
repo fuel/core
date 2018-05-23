@@ -123,6 +123,18 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 		return $this->_row;
 	}
 
+	/**
+	 * Implements [Iterator::next], returns the next row.
+	 *
+	 * @return  mixed
+	 */
+	public function next()
+	{
+		parent::next();
+
+		isset($this->_results[$this->_current_row]) and $this->_row = $this->_results[$this->_current_row];
+	}
+
 	/**************************
 	 * ArrayAccess methods
 	 *************************/
