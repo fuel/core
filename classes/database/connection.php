@@ -663,8 +663,10 @@ abstract class Database_Connection
 		}
 		elseif (is_float($value))
 		{
-			// Convert to non-locale aware float to prevent possible commas
-			return sprintf('%F', $value);
+			$locale_info = localeconv();
+			$value = str_replace($locale_info["thousands_sep"], "", strval($value));
+			$value = str_replace($locale_info["decimal_point"], ".", $value);
+			return $value;
 		}
 
 		return $this->escape($value);
