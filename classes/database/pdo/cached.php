@@ -28,34 +28,31 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 		// if an array is passed, use it
 		if (is_array($result))
 		{
-			$this->_result = $result;
-			$this->_total_rows = count($result);
+			$this->_results = $result;
 		}
 
 		// else we're getting a mysqli object. convert the result into an array
 		elseif ($result instanceof \PDOStatement)
 		{
-			// Convert the result into an array, as PDOStatement::rowCount is not reliable
 			if ($this->_as_object === false)
 			{
-				$this->_result = $this->result->fetchAll(\PDO::FETCH_ASSOC);
+				$this->_results = $this->_result->fetchAll(\PDO::FETCH_ASSOC);
 			}
 			elseif (is_string($this->_as_object))
 			{
-				$this->_result = $this->result->fetchAll(\PDO::FETCH_CLASS, $this->_as_object);
+				$this->_results = $this->_result->fetchAll(\PDO::FETCH_CLASS, $this->_as_object);
 			}
 			else
 			{
-				$this->_result = $this->result->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
+				$this->_results = $this->_result->fetchAll(\PDO::FETCH_CLASS, 'stdClass');
 			}
-
-			// Find the number of rows in the result
-			$this->_total_rows = count($this->_result);
 		}
 		else
 		{
 			throw new \FuelException('Database_Cached requires database results in either an array or a database object');
 		}
+
+		$this->_total_rows = count($this->_results);
 	}
 
 	/**
@@ -110,16 +107,32 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	{
 		if ($this->valid())
 		{
-			$result = $this->_result[$this->_current_row];
+			$this->_row = $this->_results[$this->_current_row];
 
 			// sanitize the data if needed
 			if ($this->_sanitization_enabled)
 			{
-				$result = \Security::clean($result, null, 'security.output_filter');
+				$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
 			}
-
-			return $result;
 		}
+		else
+		{
+			$this->rewind();
+		}
+
+		return $this->_row;
+	}
+
+	/**
+	 * Implements [Iterator::next], returns the next row.
+	 *
+	 * @return  mixed
+	 */
+	public function next()
+	{
+		parent::next();
+
+		isset($this->_results[$this->_current_row]) and $this->_row = $this->_results[$this->_current_row];
 	}
 
 	/**************************
@@ -140,7 +153,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 */
 	public function offsetExists($offset)
 	{
-		return isset($this->_result[$offset]);
+		return isset($this->_results[$offset]);
 	}
 
 	/**
@@ -160,7 +173,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 		}
 		else
 
-		$result = $this->_result[$offset];
+		$result = $this->_results[$offset];
 
 		// sanitize the data if needed
 		if ($this->_sanitization_enabled)
