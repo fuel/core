@@ -60,7 +60,7 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 			throw new \FuelException('Database_Cached requires database results in either an array or a database object');
 		}
 
-		$this->_total_rows = count($this->_result);
+		$this->_total_rows = count($this->_results);
 	}
 
 	/**
