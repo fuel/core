@@ -191,11 +191,13 @@ abstract class Controller_Rest extends \Controller
 			$this->response->set_header('Content-Type', $this->_supported_formats[$this->format]);
 		}
 
-		// no data returned?
-		if ((is_array($data) and empty($data)) or ($data == ''))
-		{
-			// override the http status with the NO CONTENT status
-			$http_status = $this->no_data_status;
+		if ($http_status !== null) {
+			// no data returned?
+			if ((is_array($data) and empty($data)) or ($data == ''))
+			{
+				// override the http status with the NO CONTENT status
+				$http_status = $this->no_data_status;
+			}
 		}
 
 		// make sure we have a valid return status
@@ -228,7 +230,8 @@ abstract class Controller_Rest extends \Controller
 			{
 				// not acceptable in production
 				if ($http_status == 200)
-				{	$http_status = 406;
+				{
+					$http_status = 406;
 				}
 				$this->response->body('The requested REST method returned an array or object, which is not compatible with the output format "'.$this->format.'"');
 			}
