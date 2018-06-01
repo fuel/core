@@ -191,7 +191,7 @@ abstract class Controller_Rest extends \Controller
 			$this->response->set_header('Content-Type', $this->_supported_formats[$this->format]);
 		}
 
-		if ($http_status !== null) {
+		if ($http_status === null) {
 			// no data returned?
 			if ((is_array($data) and empty($data)) or ($data == ''))
 			{
