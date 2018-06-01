@@ -1080,4 +1080,20 @@ class Validation
 			return false;
 		}
 	}
+
+	public static function _validation_unique($val, $identifier, $strict = false)
+	{
+		list($table, $field) = explode('.', $options);
+
+		if ($strict) {
+			$query = DB::select($field)
+				->where($field, '=', $val);
+		} else {
+			$query = DB::select(DB::expr("LOWER (\"$field\")"))
+				->where($field, '=', Str::lower($val));
+		}
+		$result = $query->from(DB::quote_table($table))->execute();
+
+		return !($result->count() > 0);
+	}
 }
