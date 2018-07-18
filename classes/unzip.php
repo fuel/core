@@ -129,9 +129,16 @@ class Unzip
 				continue;
 			}
 
-			$file_locations[] = $file_location = $this->_target_dir . '/' . ($preserve_filepath ? $file : basename($file));
-
-			$this->_extract_file($file, $file_location);
+			$file_location = realpath($this->_target_dir . '/' . ($preserve_filepath ? $file : basename($file)));
+			if ($file_location and strpos($file_location, $this->_target_dir) === 0)
+			{
+				$file_locations[] = $file_location;
+				$this->_extract_file($file, $file_location);
+			}
+			else
+			{
+				throw new \FuelException('ZIP file attempted to use the zip-slip-vulnerability. Extraction aborted.');
+			}
 		}
 
 		return $file_locations;
