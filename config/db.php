@@ -7,32 +7,48 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration,
+ *  copy this file to your 'app/config' folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
-
-	/*
-	 * If you don't specify a DB configuration name when you create a connection
-	 * the configuration to be used will be determined by the 'active' value
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Active Configurations
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If you don't specify a DB configuration name when you create
+	 *  a database connection, the configuration to be used will be determined
+	 *  by the 'active' value.
+	 *
 	 */
+
 	'active' => 'default',
 
 	/**
-	 * Base PDO config
+	 * -------------------------------------------------------------------------
+	 *  PDO
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Base PDO configurations.
+	 *
 	 */
+
 	'default' => array(
-		'type'        => 'pdo',
-		'connection'  => array(
+		'type' => 'pdo',
+
+		'connection' => array(
 			'dsn'        => '',
 			'hostname'   => '',
 			'username'   => null,
@@ -41,6 +57,7 @@ return array(
 			'persistent' => false,
 			'compress'   => false,
 		),
+
 		'identifier'   => '`',
 		'table_prefix' => '',
 		'charset'      => 'utf8',
@@ -51,12 +68,18 @@ return array(
 	),
 
 	/**
-	 * Base MySQLi config
+	 * -------------------------------------------------------------------------
+	 *  MySQLi
+	 * -------------------------------------------------------------------------
 	 *
+	 *  Base MySQLi configurations.
+	 *
+	 */
 
-	'default' => array(
-		'type'        => 'mysqli',
-		'connection'  => array(
+	'mysqli' => array(
+		'type' => 'mysqli',
+
+		'connection' => array(
 			'dsn'        => '',
 			'hostname'   => '',
 			'username'   => null,
@@ -65,6 +88,7 @@ return array(
 			'persistent' => false,
 			'compress'   => false,
 		),
+
 		'identifier'   => '`',
 		'table_prefix' => '',
 		'charset'      => 'utf8',
@@ -73,18 +97,22 @@ return array(
 		'profiling'    => false,
 		'readonly'     => false,
 	),
-	 */
 
 	/**
-	 * Base Redis config
+	 * -------------------------------------------------------------------------
+	 *  Redis
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Base Redis configurations.
+	 *
 	 */
+
 	'redis' => array(
 		'default' => array(
-			'hostname'  => '127.0.0.1',
-			'port'      => 6379,
-			'timeout'	=> null,
-			'database'  => 0,
+			'hostname' => '127.0.0.1',
+			'port'     => 6379,
+			'timeout'  => null,
+			'database' => 0,
 		),
 	),
-
 );
