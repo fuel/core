@@ -7,117 +7,383 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration,
+ *  copy this file to your 'app/config' folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
 	/**
-	 * global configuration
-	*/
+	 * -------------------------------------------------------------------------
+	 *  Initialization
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Set to false to prevent the default session from being automatically
+	 *  created and started when accessing the Session class.
+	 *
+	 *  [!] WARNING:
+	 *
+	 *  If you set this to false, your session may expire prematurely as it is
+	 *  no longer automatically updated on every page load when you load
+	 *  or autoload the Session class.
+	 *
+	 */
 
-	// set it to false to prevent the default session from being automatically created and started when accessing the
-	// Session class. Note that if you no, your session may expire prematurely as it is no longer automatically updated
-	// on every page load when you (auto) load the Session class!
-	'auto_initialize'	=> true,
-
-	// set it to false to prevent manually created session instances from being autostarted when they are created
-	'auto_start'		=> true,
-
-	// if no session type is requested, use the default
-	'driver'			=> 'cookie',
-
-	// check for an IP address match after loading the cookie (optional, default = false)
-	'match_ip'			=> false,
-
-	// check for a user agent match after loading the cookie (optional, default = true)
-	'match_ua'			=> true,
-
-	// cookie domain  (optional, default = '')
-	'cookie_domain' 	=> '',
-
-	// cookie path  (optional, default = '/')
-	'cookie_path'		=> '/',
-
-	// cookie http_only flag  (optional, default = use the cookie class default)
-	'cookie_http_only'	=> null,
-
-	// whether or not to encrypt the session cookie (optional, default is true)
-	'encrypt_cookie'	=> true,
-
-	// if true, the session expires when the browser is closed (optional, default = false)
-	'expire_on_close'	=> false,
-
-	// session expiration time, <= 0 means 2 years! (optional, default = 2 hours)
-	'expiration_time'	=> 7200,
-
-	// session ID rotation time  (optional, default = 300) Set to false to disable rotation
-	'rotation_time'		=> 300,
-
-	// default ID for flash variables  (optional, default = 'flash')
-	'flash_id'			=> 'flash',
-
-	// if false, expire flash values only after it's used  (optional, default = true)
-	'flash_auto_expire'	=> true,
-
-	// if true, a get_flash() automatically expires the flash data
-	'flash_expire_after_get' => true,
-
-	// for requests that don't support cookies (i.e. flash), use this POST variable to pass the cookie to the session driver
-	'post_cookie_name'	=> '',
-
-	// for requests in which you don't want to use cookies, use an HTTP header by this name to pass the cookie to the session driver
-	'http_header_name' => 'Session-Id',
-
-	// if false, no cookie will be added to the response send back to the client
-	'enable_cookie'	=> true,
-
-	// if true, session data will be synced with PHP's native $_SESSION, to allow easier integration of third-party components
-	'native_emulation'	=> false,
+	'auto_initialize' => true,
 
 	/**
-	 * specific driver configurations. to override a global setting, just add it to the driver config with a different value
-	*/
+	 * -------------------------------------------------------------------------
+	 *  Start Options
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Set to false to prevent manually created session instances from being
+	 *  autostarted when they are created.
+	 *
+	 */
 
-	// special configuration settings for cookie based sessions
-	'cookie'			=> array(
-		'cookie_name'		=> 'fuelcid',				// name of the session cookie for cookie based sessions
-						),
+	'auto_start' => true,
 
-	// specific configuration settings for file based sessions
-	'file'				=> array(
-		'cookie_name'		=> 'fuelfid',				// name of the session cookie for file based sessions
-		'path'				=>	'/tmp',					// path where the session files should be stored
-		'gc_probability'	=>	5,						// probability % (between 0 and 100) for garbage collection
-						),
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Driver
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If no session type is requested, use 'cookie' as the default value.
+	 *
+	 */
 
-	// specific configuration settings for memcached based sessions
-	'memcached'			=> array(
-		'cookie_name'		=> 'fuelmid',				// name of the session cookie for memcached based sessions
-		'servers'			=> array(					// array of servers and portnumbers that run the memcached service
-								'default' => array('host' => '127.0.0.1', 'port' => 11211, 'weight' => 100),
-							),
-						),
+	'driver' => 'cookie',
 
-	// specific configuration settings for database based sessions
-	'db'			=> array(
-		'cookie_name'		=> 'fueldid',				// name of the session cookie for database based sessions
-		'database'			=> null,					// name of the database name (as configured in config/db.php)
-		'table'				=> 'sessions',				// name of the sessions table
-		'gc_probability'	=> 5,						// probability % (between 0 and 100) for garbage collection
-						),
+	/**
+	 * -------------------------------------------------------------------------
+	 *  IP Address Checking
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Check for an IP address match after loading the cookie.
+	 *
+	 */
+
+	'match_ip' => false,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  User Agent Checking
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Check for an User Agent match after loading the cookie.
+	 *
+	 */
+
+	'match_ua' => true,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Cookie
+	 * -------------------------------------------------------------------------
+	 *
+	 */
+
+	'cookie_domain'    => '',
+	'cookie_path'      => '/',
+	'cookie_http_only' => null,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Cookie - Security
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Whether securing the cookie with encryption or not.
+	 *
+	 */
+
+	'encrypt_cookie' => true,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Cookie - Expiration Options
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Whether the session expires when the browser is closed.
+	 *
+	 */
+
+	'expire_on_close' => false,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Cookie - Expiration Time
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Cookie expiration in seconds.
+	 *
+	 *  If 'expiration_time' less than or equal 0, it means the cookie will be
+	 *  expired in 2 years.
+	 *
+	 */
+
+	'expiration_time' => 7200,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Rotation
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Session ID rotation time.
+	 *
+	 *  Set to false to disable rotation.
+	 *
+	 */
+
+	'rotation_time' => 300,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Flash Data - ID
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Default ID for flash variables.
+	 *
+	 */
+
+	'flash_id' => 'flash',
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Flash Data - Expiration
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If false, expire flash values only after it's used.
+	 *
+	 */
+
+	'flash_auto_expire' => true,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Flash Data - Behavior
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If true, a 'get_flash()' automatically expires the flash data.
+	 *
+	 */
+
+	'flash_expire_after_get' => true,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Compatibility - Cookies Support
+	 * -------------------------------------------------------------------------
+	 *
+	 *  For requests that don't support cookies (i.e. flash), use this
+	 *  POST variable to pass the cookie to the session driver.
+	 *
+	 */
+
+	'post_cookie_name' => '',
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Compatibility - Cookies Options
+	 * -------------------------------------------------------------------------
+	 *
+	 *  For requests in which you don't want to use cookies, use an HTTP header
+	 *  by this name to pass the cookie to the session driver.
+	 *
+	 */
+
+	'http_header_name' => 'Session-Id',
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Compatibility - Response
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If false, no cookie will be added to the response to the client.
+	 *
+	 */
+
+	'enable_cookie' => true,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Compatibility - Integration
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If true, session data will be synced with PHP's native '$_SESSION',
+	 *  to allow easier integration of third-party components.
+	 *
+	 */
+
+	'native_emulation' => false,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  [!] NOTICE
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Below are specific driver configurations.
+	 *
+	 *  To override a global setting, just add it to the driver config
+	 *  with a different value.
+	 *
+	 */
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Configurations - Cookie Based
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Special configuration settings for cookie based sessions.
+	 *
+	 */
+
+	'cookie' => array(
+		'cookie_name' => 'fuelcid',
+	),
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Configurations - File Based
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Special configuration settings for file based sessions.
+	 *
+	 */
+
+	'file' => array(
+		'cookie_name' => 'fuelfid',
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Storage Path
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Path where the session files should be stored.
+		 *
+		 */
+
+		'path' => '/tmp',
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Garbage Collection
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Probability % (between 0 and 100) for garbage collection.
+		 *
+		 */
+
+		'gc_probability' => 5,
+	),
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Configurations - Memcached Based
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Special configuration settings for memcached based sessions.
+	 *
+	 */
+
+	'memcached' => array(
+		'cookie_name' => 'fuelmid',
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Server
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Servers and portnumbers that run the memcached service.
+		 *
+		 */
+
+		'servers' => array(
+			'default' => array(
+				'host'   => '127.0.0.1',
+				'port'   => 11211,
+				'weight' => 100
+			),
+		),
+	),
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Configurations - Database Based
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Special configuration settings for database based sessions.
+	 *
+	 */
+
+	'db' => array(
+		'cookie_name' => 'fueldid',
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Database Name
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Name of the database (as configured in config/db.php).
+		 *
+		 */
+
+		'database' => null,
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Table Name
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Name of the session table.
+		 *
+		 */
+
+		'table' => 'sessions',
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Garbage Collection
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Probability % (between 0 and 100) for garbage collection.
+		 *
+		 */
+
+		'gc_probability' => 5,
+	),
 
 	// specific configuration settings for redis based sessions
-	'redis'			=> array(
-		'cookie_name'		=> 'fuelrid',				// name of the session cookie for redis based sessions
-		'database'			=> 'default',				// name of the redis database to use (as configured in config/db.php)
-						),
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Configurations - Redis Based
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Special configuration settings for Redis based sessions.
+	 *
+	 */
+
+	'redis' => array(
+		'cookie_name' => 'fuelrid',
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Database Name
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Name of the Redis database to use (as configured in config/db.php).
+		 *
+		 */
+
+		'database' => 'default',
+	),
 );
