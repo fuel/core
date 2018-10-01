@@ -518,7 +518,7 @@ class Pagination
 			}
 		}
 
-		// mahe sure the calculated page number is numeric, and an integer
+		// make sure the calculated page number is numeric, and an integer
 		if ( ! ctype_digit((string) $this->config['calculated_page']))
 		{
 			$this->config['calculated_page'] = 1;
