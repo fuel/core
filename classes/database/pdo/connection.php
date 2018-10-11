@@ -243,6 +243,25 @@ class Database_PDO_Connection extends \Database_Connection
 		}
 		while ($attempts-- > 0);
 
+		// check if PDO ERROR Exceptions aren't disabled for some reason
+		if ($result === false)
+		{
+			// and if so, fetch the error and still throw the exception
+			if ($this->_connection)
+			{
+				$error_code = $this->_connection->errorinfo();
+				$message = $error_code[2];
+				$error_code = $error_code[1];
+			}
+			else
+			{
+				$error_code = 0;
+				$message = 'Unknown error';
+			}
+
+			throw new \Database_Exception($message.' with query: "'.$sql.'"', $message, null, $error_code);
+		}
+
 		if (isset($benchmark))
 		{
 			\Profiler::stop($benchmark);
