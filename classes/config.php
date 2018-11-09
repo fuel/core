@@ -171,8 +171,15 @@ class Config
 					static::$items[$name] = array();
 				}
 
-				static::$items[$name] = $overwrite ? array_merge(static::$items[$name], $config) : \Arr::merge(static::$items[$name], $config);
-				$group .= '.';
+				if ($overwrite)
+				{
+					\Arr::set(static::$items, $name, array_merge(\Arr::get(static::$items, $name, array()), $config));
+				}
+				else
+				{
+					\Arr::set(static::$items, $name, \Arr::merge(\Arr::get(static::$items, $name, array()), $config));
+				}
+
 				foreach (static::$itemcache as $key => $value)
 				{
 					if (strpos($key, $name) === 0)
