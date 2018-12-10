@@ -106,7 +106,9 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	{
 		if (is_file($file = static::$path.$this->identifier_to_path($this->identifier).'.cache'))
 		{
-			unlink($file);
+			if (file_exists($file)) {
+				unlink($file);
+			}
 			$this->reset();
 		}
 	}
