@@ -197,9 +197,6 @@ class Input_Instance
 			$uri = substr($uri, 1);
 		}
 
-		// decode the uri, and put any + back (does not mean a space in the url path)
-		$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
-
 		// in case of incorrect rewrites, we may need to cleanup and
 		// recreate the QUERY_STRING and $_GET
 		if (strpos($uri, '?') !== false)
@@ -225,7 +222,7 @@ class Input_Instance
 				parse_str($matches[2], $_GET);
 
 				// update GET variables
-				$_GET = \Security::clean(array_map('urlencode', $_GET));
+				$_GET = \Security::clean($_GET);
 				$this->input_get = $_GET;
 			}
 
