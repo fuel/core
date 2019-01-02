@@ -225,7 +225,7 @@ class Input_Instance
 				parse_str($matches[2], $_GET);
 
 				// update GET variables
-				$_GET = \Security::clean($_GET);
+				$_GET = \Security::clean(array_map('urlencode', $_GET));
 				$this->input_get = $_GET;
 			}
 
