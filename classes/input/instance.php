@@ -552,7 +552,7 @@ class Input_Instance
 		// store the parsed data based on the request method
 		if ($method == 'put' or $method == 'patch' or $method == 'delete')
 		{
-			$this->{'input_'.$method} = $php_input;
+			$this->{'input_'.$method} = (array) $php_input;
 		}
 	}
 }
