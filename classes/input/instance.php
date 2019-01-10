@@ -499,7 +499,7 @@ class Input_Instance
 			$boundary = $matches[1];
 
 			// split content by boundary and get rid of last -- element
-			$blocks = preg_split('/-+' . preg_quote($boundary, '/') . '/', $php_input);
+			$blocks = preg_split('/-+'.$boundary.'/', $php_input);
 			array_pop($blocks);
 
 			// loop data blocks
