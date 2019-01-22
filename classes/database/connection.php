@@ -375,7 +375,7 @@ abstract class Database_Connection
 			if (stripos($sql, 'ORDER BY') !== false)
 			{
 				// Remove ORDER BY clauses from the SQL to improve count query performance
-				$sql = preg_replace('/ORDER BY (.+?)(?=LIMIT|GROUP|PROCEDURE|INTO|FOR|LOCK|\)|$)/mi', '', $sql);
+				$sql = preg_replace('/ORDER BY (.+?)(?=LIMIT|GROUP BY|PROCEDURE|INTO|FOR|LOCK|\)|$)/mi', '', $sql);
 			}
 
 			// Get the total rows from the last query executed
