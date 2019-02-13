@@ -219,7 +219,7 @@ class Log
 	public static function write($level, $msg, $context = null)
 	{
 		// bail out if we don't need logging at all
-		if ( ! static::need_logging($level))
+		if (($level = static::need_logging($level)) === false)
 		{
 			return false;
 		}
@@ -319,7 +319,7 @@ class Log
 		}
 
 		// this entry should be logged
-		return true;
+		return $level;
 	}
 
 }
