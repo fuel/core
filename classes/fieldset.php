@@ -415,12 +415,12 @@ class Fieldset
 	{
 		if ( ! isset($this->fields[$name]))
 		{
-			throw new \InvalidArgumentException('Cannot copy field, field name is not defined.');
+			throw new \RuntimeException('Cannot copy field, field name is not defined.');
 		}
 
 		if (isset($this->fields[$newname]))
 		{
-			throw new \InvalidArgumentException('Cannot copy field, new field already exists.');
+			throw new \RuntimeException('Cannot copy field, new field already exists.');
 		}
 
 		// clone the fieldset field object
