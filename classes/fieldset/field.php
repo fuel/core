@@ -166,11 +166,12 @@ class Fieldset_Field
 	 * Change the field name
 	 *
 	 * @param   string  $name
+	 * @param   bool    $update
 	 * @return  Fieldset_Field  this, to allow chaining
 	 */
-	public function set_name($name)
+	public function set_name($name, $update = true)
 	{
-		if ($this->fieldset and $this->fieldset->field($name))
+		if ($update and $this->fieldset and $this->fieldset->field($name))
 		{
 			// new name already exists
 			throw new \RuntimeException('New Fieldset field name already exists in the fieldset.');
@@ -183,13 +184,13 @@ class Fieldset_Field
 		$this->name = $name;
 
 		// add this field to the fieldset
-		if ($this->fieldset)
+		if ($update and $this->fieldset)
 		{
 			$this->fieldset->add_after($this, '', array(), array(), $current);
 		}
 
 		// and delete the current one
-		if ($this->fieldset)
+		if ($update and $this->fieldset)
 		{
 			$this->fieldset->delete($current);
 		}
