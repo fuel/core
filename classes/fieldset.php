@@ -394,12 +394,10 @@ class Fieldset
 	 */
 	public function delete($name)
 	{
-		if ( ! isset($this->fields[$name]))
+		if (isset($this->fields[$name]))
 		{
-			throw new \InvalidArgumentException('Cannot delete field, field name is not defined.');
-		}
-
 		unset($this->fields[$name]);
+		}
 
 		return $this;
 	}
