@@ -178,7 +178,7 @@ class Fieldset_Field
 		}
 
 		// save the current name
-		$current  = $this->name;
+		$current = $this->name;
 
 		// update the name of this field
 		$this->name = $name;
