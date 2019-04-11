@@ -396,7 +396,7 @@ class Fieldset
 	{
 		if (isset($this->fields[$name]))
 		{
-		unset($this->fields[$name]);
+			unset($this->fields[$name]);
 		}
 
 		return $this;
