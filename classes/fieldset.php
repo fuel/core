@@ -405,6 +405,34 @@ class Fieldset
 	}
 
 	/**
+	 * Duplicate a field instance
+	 *
+	 * @param   string  field name
+	 * @param   string  field name of the copy
+	 * @return  Fieldset  this fieldset, for chaining
+	 */
+	public function duplicate($name, $newname)
+	{
+		if ( ! isset($this->fields[$name]))
+		{
+			throw new \InvalidArgumentException('Cannot copy field, field name is not defined.');
+		}
+
+		if (isset($this->fields[$newname]))
+		{
+			throw new \InvalidArgumentException('Cannot copy field, new field already exists.');
+		}
+
+		// clone the fieldset field object
+		$this->fields[$newname] = clone $this->fields[$name];
+
+		// update the new fields name
+		$this->fields[$newname]->set_name($newname, false);
+
+		return $this;
+	}
+
+	/**
 	 * Get Field instance
 	 *
 	 * @param   string|null           $name          field name or null to fetch an array of all
