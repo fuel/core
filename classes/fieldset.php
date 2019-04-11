@@ -389,15 +389,17 @@ class Fieldset
 	/**
 	 * Delete a field instance
 	 *
-	 * @param   string  field name or null to fetch an array of all
+	 * @param   string  field name
 	 * @return  Fieldset  this fieldset, for chaining
 	 */
 	public function delete($name)
 	{
-		if (isset($this->fields[$name]))
+		if ( ! isset($this->fields[$name]))
 		{
-			unset($this->fields[$name]);
+			throw new \InvalidArgumentException('Cannot delete field, field name is not defined.');
 		}
+
+		unset($this->fields[$name]);
 
 		return $this;
 	}
