@@ -132,18 +132,30 @@ class Database_PDO_Connection extends \Database_Connection
 	}
 
 	/**
-	 * Query the database
+	 * Perform an SQL query of the given type.
 	 *
-	 * @param integer $type
-	 * @param string  $sql
-	 * @param mixed   $as_object
+	 *     // Make a SELECT query and use objects for results
+	 *     $db->query(static::SELECT, 'SELECT * FROM groups', true);
 	 *
-	 * @return mixed
+	 *     // Make a SELECT query and use "Model_User" for the results
+	 *     $db->query(static::SELECT, 'SELECT * FROM users LIMIT 1', 'Model_User');
+	 *
+	 * @param   integer $type       query type (\DB::SELECT, \DB::INSERT, etc.)
+	 * @param   string  $sql        SQL string
+	 * @param   mixed   $as_object  used when query type is SELECT
+	 * @param   bool    $caching    whether or not the result should be stored in a caching iterator
+	 *
+ 	 * @return  mixed  when SELECT then return an iterator of results,<br>
+	 *                 when INSERT then return a list of insert id and rows created,<br>
+	 *                 in other case return the number of rows affected
 	 *
 	 * @throws \Database_Exception
 	 */
-	public function query($type, $sql, $as_object)
+	public function query($type, $sql, $as_object, $caching = null)
 	{
+		// If no custom caching is given, use the global setting
+		is_null($caching) and $caching = $this->_config['enable_cache'];
+
 		// Make sure the database is connected
 		$this->_connection or $this->connect();
 
@@ -272,7 +284,8 @@ class Database_PDO_Connection extends \Database_Connection
 
 		if ($type === \DB::SELECT)
 		{
-			if ($this->_config['enable_cache'])
+			// if no custom caching is given, use the global setting
+			if ($caching)
 			{
 				// Return an iterator of results
 				return new \Database_PDO_Cached($result, $sql, $as_object);

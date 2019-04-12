@@ -252,15 +252,18 @@ abstract class Database_Connection
 	 *     // Make a SELECT query and use "Model_User" for the results
 	 *     $db->query(static::SELECT, 'SELECT * FROM users LIMIT 1', 'Model_User');
 	 *
-	 * @param   integer $type      static::SELECT, static::INSERT, etc
-	 * @param   string  $sql       SQL query
-	 * @param   mixed   $as_object result object class, true for stdClass, false for assoc array
+	 * @param   integer $type       query type (\DB::SELECT, \DB::INSERT, etc.)
+	 * @param   string  $sql        SQL string
+	 * @param   mixed   $as_object  used when query type is SELECT
+	 * @param   bool    $caching    whether or not the result should be stored in a caching iterator
 	 *
-	 * @return  object   Database_Result for SELECT queries
-	 * @return  array    list (insert id, row count) for INSERT queries
-	 * @return  integer  number of affected rows for all other queries
+ 	 * @return  mixed  when SELECT then return an iterator of results,<br>
+	 *                 when INSERT then return a list of insert id and rows created,<br>
+	 *                 in other case return the number of rows affected
+	 *
+	 * @throws \Database_Exception
 	 */
-	abstract public function query($type, $sql, $as_object);
+	abstract public function query($type, $sql, $as_object, $caching);
 
 	/**
 	 * Create a new [Database_Query_Builder_Select]. Each argument will be
