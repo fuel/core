@@ -320,7 +320,7 @@ class Session_Memcached extends \Session_Driver
 
 						default:
 							// unknown property
-							continue;
+							continue 2;
 					}
 
 					$validated[$name] = $value;
