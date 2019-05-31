@@ -119,7 +119,7 @@ class Errorhandler
 		// make sure we've got something useful passed
 		if ($e instanceOf \Exception or (PHP_VERSION_ID >= 70000 and $e instanceOf \Error))
 		{
-			if (method_exists($e, 'handle'))
+			if (method_exists($e, 'handle') and $e instanceof \Fuel\Core\FuelException)
 			{
 				return $e->handle();
 			}
