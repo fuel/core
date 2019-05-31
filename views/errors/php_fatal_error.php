@@ -10,6 +10,7 @@
 		a { color: #36428D; }
 		h1 { color: #000; font-size: 55px; padding: 0 0 25px; line-height: 1em; }
 		.intro { font-size: 22px; line-height: 30px; font-family: georgia, serif; color: #555; padding: 29px 0 20px; border-top: 1px solid #CCC; }
+		.nextintro { font-size: 22px; line-height: 30px; font-family: georgia, serif; color: #555; padding: 0px 0 20px; }
 		h2 { margin: 50px 0 15px; padding: 0 0 10px; font-size: 18px; border-bottom: 1px dashed #ccc; }
 		h2.first { margin: 10px 0 15px; }
 		p { margin: 0 0 15px; line-height: 22px;}
@@ -61,6 +62,18 @@
 			</li>
 		<?php endforeach; ?>
 		</ol>
+
+<?php if ( ! empty($soap)): ?>
+		<h2>SOAP Response</h2>
+		<p class="nextintro">Faultcode: <?php echo $soap['faultcode']; ?> [ <?php echo $soap['errortype']; ?> ]:<br />Faultstring: <?php echo e($soap['faultstring']); ?></p>
+		<ol>
+		<?php foreach($soap['backtrace'] as $trace): ?>
+			<li>
+				<?php echo e(str_replace(' ', '&nbsp;', $trace)); ?>
+			</li>
+		<?php endforeach; ?>
+		</ol>
+<?php endif; ?>
 
 <?php if (count($non_fatal) > 0): ?>
 		<h2>Prior Non-Fatal Errors</h2>

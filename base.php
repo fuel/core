@@ -377,19 +377,22 @@ if ( ! function_exists('get_common_path'))
 	{
 		$lastOffset = 1;
 		$common = '/';
-		while (($index = strpos($paths[0], '/', $lastOffset)) !== false)
+		if ( ! empty($paths[0]))
 		{
-			$dirLen = $index - $lastOffset + 1;	// include /
-			$dir = substr($paths[0], $lastOffset, $dirLen);
-			foreach ($paths as $path)
+			while (($index = strpos($paths[0], '/', $lastOffset)) !== false)
 			{
-				if (substr($path, $lastOffset, $dirLen) != $dir)
+				$dirLen = $index - $lastOffset + 1;	// include /
+				$dir = substr($paths[0], $lastOffset, $dirLen);
+				foreach ($paths as $path)
 				{
-					return $common;
+					if (substr($path, $lastOffset, $dirLen) != $dir)
+					{
+						return $common;
+					}
 				}
+				$common .= $dir;
+				$lastOffset = $index + 1;
 			}
-			$common .= $dir;
-			$lastOffset = $index + 1;
 		}
 		return $common;
 	}

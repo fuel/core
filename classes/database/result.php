@@ -26,6 +26,16 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	protected $_result;
 
 	/**
+	 * @var  array  $_results cached result data
+	 */
+	protected $_results;
+
+	/**
+	 * @var  mixed  $_row current row
+	 */
+	protected $_row;
+
+	/**
 	 * @var  int  $_total_rows total number of rows
 	 */
 	protected $_total_rows  = 0;
@@ -33,7 +43,7 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	/**
 	 * @var  int  $_current_row  current row number
 	 */
-	protected $_current_row = 0;
+	protected $_current_row = -1;
 
 	/**
 	 * @var  bool  $_as_object  return rows as an object or associative array
@@ -55,7 +65,7 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	public function __construct($result, $sql, $as_object = null)
 	{
 		// Store the result locally
-		$this->result = $result;
+		$this->_result = $result;
 
 		// Store the SQL locally
 		$this->_query = $sql;
@@ -192,20 +202,24 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	 */
 	public function get($name, $default = null)
 	{
-		$row = $this->current();
+		// if out of iterator range, reset
+		if ( ! $this->valid())
+		{
+			$this->rewind();
+		}
 
 		if ($this->_as_object)
 		{
-			if (isset($row->$name))
+			if (isset($this->_row->$name))
 			{
 				// sanitize the data if needed
 				if ( ! $this->_sanitization_enabled)
 				{
-					$result = $row->$name;
+					$result = $this->_row->$name;
 				}
 				else
 				{
-					$result = \Security::clean($row->$name, null, 'security.output_filter');
+					$result = \Security::clean($this->_row->$name, null, 'security.output_filter');
 				}
 
 				return $result;
@@ -213,16 +227,16 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 		}
 		else
 		{
-			if (isset($row[$name]))
+			if (isset($this->_row[$name]))
 			{
 				// sanitize the data if needed
 				if ( ! $this->_sanitization_enabled)
 				{
-					$result = $row[$name];
+					$result = $this->_row[$name];
 				}
 				else
 				{
-					$result = \Security::clean($row[$name], null, 'security.output_filter');
+					$result = \Security::clean($this->_row[$name], null, 'security.output_filter');
 				}
 
 				return $result;
@@ -291,7 +305,10 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	 *
 	 * @return  mixed
 	 */
-	abstract function current();
+	public function current()
+	{
+		return $this->_row;
+	}
 
 	/**
 	 * Implements [Iterator::key], returns the current row number.
@@ -312,12 +329,15 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	}
 
 	/**
-	 * Implements [Iterator::rewind], sets the current row to zero.
+	 * Implements [Iterator::rewind], sets the current row to -1.
 	 */
 	public function rewind()
 	{
 		// first row is zero, not one!
-		$this->_current_row = 0;
+		$this->_current_row = -1;
+
+		// advance to the first record, and load it
+		$this->next();
 	}
 
 	/**
@@ -327,6 +347,6 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 	 */
 	public function valid()
 	{
-		return $this->_current_row < $this->_total_rows;
+		return $this->_current_row >= 0 and $this->_current_row < $this->_total_rows;
 	}
 }

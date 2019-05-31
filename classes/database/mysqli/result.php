@@ -52,7 +52,7 @@ class Database_MySQLi_Result extends \Database_Result
 	 */
 	public function cached()
 	{
-		return new \Database_MySQLi_Cached($this->result, $this->_query, $this->_as_object);
+		return new \Database_MySQLi_Cached($this->_result, $this->_query, $this->_as_object);
 	}
 
 	/**************************
@@ -60,33 +60,33 @@ class Database_MySQLi_Result extends \Database_Result
 	 *************************/
 
 	/**
-	 * Implements [Iterator::current], returns the next row.
+	 * Implements [Iterator::next], returns the next row.
 	 *
 	 * @return  mixed
 	 */
-	public function current()
+	public function next()
 	{
 		// Convert the result into an array, as PDOStatement::rowCount is not reliable
 		if ($this->_as_object === false)
 		{
-			$result = $this->result->fetch_array(MYSQLI_ASSOC);
+			$this->_row = $this->_result->fetch_array(MYSQLI_ASSOC);
 		}
 		elseif (is_string($this->_as_object))
 		{
-			$result = $this->result->fetch_object($this->_as_object);
+			$this->_row = $this->_result->fetch_object($this->_as_object);
 		}
 		else
 		{
-			$result = $this->result->fetch_object();
+			$this->_row = $this->_result->fetch_object();
 		}
 
 		// sanitize the data if needed
 		if ($this->_sanitization_enabled)
 		{
-			$result = \Security::clean($result, null, 'security.output_filter');
+			$this->_row = \Security::clean($result, null, 'security.output_filter');
 		}
 
-		return $result;
+		return $this->_row;
 	}
 
 }

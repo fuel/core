@@ -7,60 +7,80 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration,
+ *  copy this file to your 'app/config' folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
-
 	/**
-	 * An array of paths that will be searched for assets. Each path is a
-	 * RELATIVE path from the speficied url:
+	 * -------------------------------------------------------------------------
+	 *  Paths
+	 * -------------------------------------------------------------------------
 	 *
-	 * array('assets/')
+	 *  An array of paths that will be searched for assets.
 	 *
-	 * These MUST include the trailing slash ('/')
+	 *  Each path is a RELATIVE path from the speficied url:
 	 *
-	 * Paths specified here are suffixed with the sub-folder paths defined below.
+	 *      array('assets/')
+	 *
+	 *  These MUST include the trailing slash ('/')
+	 *
+	 *  Paths specified here are suffixed with sub-folder paths defined below.
+	 *
 	 */
+
 	'paths' => array('assets/'),
 
 	/**
-	 * Asset Sub-folders
+	 * -------------------------------------------------------------------------
+	 *  Sub-folders
+	 * -------------------------------------------------------------------------
 	 *
-	 * Names for the img, js and css folders (inside the asset search path).
+	 *  Names for the 'img', 'js' and 'css' folders (inside the 'assets' path).
 	 *
-	 * Examples:
+	 *  Examples:
 	 *
-	 * img/
-	 * js/
-	 * css/
+	 *      img/
+	 *      js/
+	 *      css/
 	 *
-	 * This MUST include the trailing slash ('/')
+	 *  This MUST include the trailing slash ('/')
+	 *
 	 */
+
 	'img_dir' => 'img/',
-	'js_dir' => 'js/',
+	'js_dir'  => 'js/',
 	'css_dir' => 'css/',
 
 	/**
-	 * You can also specify one or more per asset-type folders. You don't have
-	 * to specify all of them. 	 * Each folder is a RELATIVE path from the url
-	 * speficied below:
+	 * -------------------------------------------------------------------------
+	 *  Folders
+	 * -------------------------------------------------------------------------
 	 *
-	 * array('css' => 'assets/css/')
+	 *  You can also specify one or more per asset-type folders. You don't have
+	 *  to specify all of them.
 	 *
-	 * These MUST include the trailing slash ('/')
+	 *  Each folder is a RELATIVE path from the URL speficied below:
 	 *
-	 * Paths specified here are expected to contain the assets they point to
+	 *      array('css' => 'assets/css/')
+	 *
+	 *  These MUST include the trailing slash ('/')
+	 *
+	 *  Paths specified here are expected to contain the assets they point to
+	 *
 	 */
+
 	'folders' => array(
 		'css' => array(),
 		'js'  => array(),
@@ -68,50 +88,95 @@ return array(
 	),
 
 	/**
-	 * URL to your Fuel root. Typically this will be your base URL:
+	 * -------------------------------------------------------------------------
+	 *  URL
+	 * -------------------------------------------------------------------------
 	 *
-	 * \Config::get('base_url')
+	 *  URL to your Fuel root. Typically this will be your base URL:
 	 *
-	 * These MUST include the trailing slash ('/')
+	 *  Example:
+	 *
+	 *      'http://example.com/'
+	 *
+	 *  These MUST include the trailing slash ('/')
+	 *
 	 */
+
 	'url' => \Config::get('base_url'),
 
 	/**
-	 * Whether to append the assets last modified timestamp to the url.
-	 * This will aid in asset caching, and is recommended.  It will create
-	 * tags like this:
+	 * -------------------------------------------------------------------------
+	 *  Timestamp
+	 * -------------------------------------------------------------------------
 	 *
-	 *     <link type="text/css" rel="stylesheet" src="/assets/css/styles.css?1303443763" />
+	 *  Whether to append last modified timestamp to the URL.
+	 *
+	 *  This will aid in asset caching, and is recommended. The URL will looks
+	 *  like this:
+	 *
+	 *      <link ... src="/assets/css/styles.css?1303443763" />
+	 *
 	 */
+
 	'add_mtime' => true,
 
 	/**
-	 * The amount of indents to prefix to the generated asset tag(s).
+	 * -------------------------------------------------------------------------
+	 *  Indent Level
+	 * -------------------------------------------------------------------------
+	 *
+	 *  The amount of indents to prefix to the generated asset tag(s).
+	 *
 	 */
+
 	'indent_level' => 1,
 
 	/**
-	* What to use for indenting.
-	*/
+	 * -------------------------------------------------------------------------
+	 *  Indent Character
+	 * -------------------------------------------------------------------------
+	 *
+	 *  What to use for indenting.
+	 *
+	 */
+
 	'indent_with' => "\t",
 
 	/**
-	 * What to do when an asset method is called without a group name. If true, it will
-	 * return the generated asset tag. If false, it will add it to the default group.
+	 * -------------------------------------------------------------------------
+	 *  Automatic Render
+	 * -------------------------------------------------------------------------
+	 *
+	 *  What to do when an asset method is called without a group name.
+	 *
+	 *  If true, it will return the generated asset tag. If false, it will
+	 *  add it to the default group.
+	 *
 	 */
+
 	'auto_render' => true,
 
 	/**
-	 * Set to true to prevent an exception from being throw when a file is not found.
-	 * The asset will then be skipped.
+	 * -------------------------------------------------------------------------
+	 *  Error Reports
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Set to true to prevent an exception from being thrown
+	 *  when a file is not found. The asset will then be skipped.
 	 */
+
 	'fail_silently' => false,
 
 	/**
-	 * When set to true, the Asset class will always true to resolve an asset URI
-	 * to a local asset, even if the asset URL is an absolute URL, for example
-	 * one that points to another hostname.
+	 * -------------------------------------------------------------------------
+	 *  Always Resolve
+	 * -------------------------------------------------------------------------
+	 *
+	 *  When set to true, the Asset class will always true to resolve
+	 *  an asset URI to a local asset, even if the asset URL is an absolute URL,
+	 *  for example one that points to another hostname.
+	 *
 	 */
-	'always_resolve' => false,
 
+	'always_resolve' => false,
 );

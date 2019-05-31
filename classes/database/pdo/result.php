@@ -26,7 +26,7 @@ class Database_PDO_Result extends \Database_Result
 		parent::__construct($result, $sql, $as_object);
 
 		// Find the number of rows in the result
-		$this->_total_rows = $this->result->rowCount();
+		$this->_total_rows = $this->_result->rowCount();
 	}
 
 	/**
@@ -48,7 +48,7 @@ class Database_PDO_Result extends \Database_Result
 	 */
 	public function cached()
 	{
-		return new \Database_PDO_Cached($this->result, $this->_query, $this->_as_object);
+		return new \Database_PDO_Cached($this->_result, $this->_query, $this->_as_object);
 	}
 
 	/**************************
@@ -56,32 +56,33 @@ class Database_PDO_Result extends \Database_Result
 	 *************************/
 
 	/**
-	 * Implements [Iterator::current], returns the next row.
+	 * Implements [Iterator::next], returns the next row.
 	 *
 	 * @return  mixed
 	 */
-	public function current()
+	public function next()
 	{
-		// Convert the result into an array, as PDOStatement::rowCount is not reliable
+		parent::next();
+
 		if ($this->_as_object === false)
 		{
-			$result = $this->result->fetch(\PDO::FETCH_ASSOC);
+			$this->_row = $this->_result->fetch(\PDO::FETCH_ASSOC);
 		}
 		elseif (is_string($this->_as_object))
 		{
-			$result = $this->result->fetchObject($this->_as_object);
+			$this->_row = $this->_result->fetchObject($this->_as_object);
 		}
 		else
 		{
-			$result = $this->result->fetchObject();
+			$this->_row = $this->_result->fetchObject();
 		}
 
 		// sanitize the data if needed
 		if ($this->_sanitization_enabled)
 		{
-			$result = \Security::clean($result, null, 'security.output_filter');
+			$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
 		}
 
-		return $result;
+		return $this->_row;
 	}
 }

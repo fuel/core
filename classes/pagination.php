@@ -518,6 +518,16 @@ class Pagination
 			}
 		}
 
+		// make sure the calculated page number is numeric, and an integer
+		if ( ! ctype_digit((string) $this->config['calculated_page']))
+		{
+			$this->config['calculated_page'] = 1;
+		}
+		else
+		{
+			$this->config['calculated_page'] = (int) $this->config['calculated_page'];
+		}
+
 		// do we have the total number of items?
 		if ($this->config['total_items'] > 0)
 		{
