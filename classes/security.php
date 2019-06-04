@@ -176,7 +176,7 @@ class Security
 				import('htmlawed/htmlawed', 'vendor');
 			}
 
-			return htmLawed($value, array_merge(array('safe' => 1, 'balanced' => 0), $options), spec);
+			return htmLawed($value, array_merge(array('safe' => 1, 'balanced' => 0), $options), $spec);
 		}
 
 		foreach ($value as $k => $v)
