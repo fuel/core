@@ -167,7 +167,7 @@ class Security
 		return $var;
 	}
 
-	public static function xss_clean($value, array $options = array(), $spec = null)
+	public static function xss_clean($value, array $options = array(), $spec = '')
 	{
 		if ( ! is_array($value))
 		{
@@ -181,7 +181,7 @@ class Security
 
 		foreach ($value as $k => $v)
 		{
-			$value[$k] = static::xss_clean($v);
+			$value[$k] = static::xss_clean($v, $options, $spec);
 		}
 
 		return $value;
