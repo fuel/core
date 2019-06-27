@@ -42,8 +42,8 @@
  * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @copyright  2010 - 2019 Fuel Development Team
+ * @link       https://fuelphp.com
  */
 
 return array (<?php if ( ! empty($keys['legacy'])):?>
@@ -58,7 +58,7 @@ return array (<?php if ( ! empty($keys['legacy'])):?>
 );
 </code></pre>
 		<p class="footer">
-			<a href="http://fuelphp.com">FuelPHP</a> is released under the MIT license.
+			<a href="https://fuelphp.com">FuelPHP</a> is released under the MIT license.
 		</p>
 	</div>
 </body>

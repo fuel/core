@@ -6,9 +6,9 @@
  * @version    1.8.1
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2018 Fuel Development Team
+ * @copyright  2010 - 2019 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 namespace Fuel\Core;

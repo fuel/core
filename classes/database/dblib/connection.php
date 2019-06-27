@@ -7,9 +7,9 @@
  * @author     Fuel Development Team
  * @author     cocteau666@gmail.com
  * @license    MIT License
- * @copyright  2010 - 2018 Fuel Development Team
+ * @copyright  2010 - 2019 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 namespace Fuel\Core;

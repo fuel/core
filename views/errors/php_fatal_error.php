@@ -108,7 +108,7 @@
 <?php endif; ?>
 
 		<p class="footer">
-			<a href="http://fuelphp.com">FuelPHP</a> is released under the MIT license.
+			<a href="https://fuelphp.com">FuelPHP</a> is released under the MIT license.
 		</p>
 	</div>
 </body>
