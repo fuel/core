@@ -7,138 +7,386 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration, copy
+ *  this file to your app/config folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Active Template
+	 * -------------------------------------------------------------------------
+	 *
+	 *  The template to be used on pagination.
+	 *
+	 *  You can use other template provided or create your own template. If you
+	 *  want to create your own template, you MUST follow template settings
+	 *  as described in:
+	 *
+	 *      https://fuelphp.com/docs/classes/pagination.html#/templating
+	 *
+	 */
 
-	// the active pagination template
-	'active'                      => 'default',
+	'active' => 'default',
 
-	// default FuelPHP pagination template, compatible with pre-1.4 applications
-	'default'                     => array(
-		'wrapper'                 => "<div class=\"pagination\">\n\t{pagination}\n</div>\n",
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Default Template
+	 * -------------------------------------------------------------------------
+	 *
+	 *  This template is compatible with FuelPHP version 1.4 or lower.
+	 *
+	 *  This template provide basic HTML layout. You may need to add styling on
+	 *  your CSS.
+	 *
+	 */
 
-		'first'                   => "<span class=\"first\">\n\t{link}\n</span>\n",
-		'first-marker'            => "&laquo;&laquo;",
-		'first-link'              => "\t\t<a href=\"{uri}\">{page}</a>\n",
+	'default' => array(
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Wrapper
+		 * ---------------------------------------------------------------------
+		 */
 
-		'first-inactive'          => "",
-		'first-inactive-link'     => "",
+		'wrapper' => "<div class=\"pagination\">\n\t{pagination}\n</div>\n",
 
-		'previous'                => "<span class=\"previous\">\n\t{link}\n</span>\n",
-		'previous-marker'         => "&laquo;",
-		'previous-link'           => "\t\t<a href=\"{uri}\" rel=\"prev\">{page}</a>\n",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  First Page
+		 * ---------------------------------------------------------------------
+		 */
 
-		'previous-inactive'       => "<span class=\"previous-inactive\">\n\t{link}\n</span>\n",
-		'previous-inactive-link'  => "\t\t<a href=\"#\" rel=\"prev\">{page}</a>\n",
+		'first'        => "<span class=\"first\">\n\t{link}\n</span>\n",
+		'first-marker' => "&laquo;&laquo;",
+		'first-link'   => "\t\t<a href=\"{uri}\">{page}</a>\n",
 
-		'regular'                 => "<span>\n\t{link}\n</span>\n",
-		'regular-link'            => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  First Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
 
-		'active'                  => "<span class=\"active\">\n\t{link}\n</span>\n",
-		'active-link'             => "\t\t<a href=\"#\">{page}</a>\n",
+		'first-inactive'      => "",
+		'first-inactive-link' => "",
 
-		'next'                    => "<span class=\"next\">\n\t{link}\n</span>\n",
-		'next-marker'            => "&raquo;",
-		'next-link'               => "\t\t<a href=\"{uri}\" rel=\"next\">{page}</a>\n",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Previous Page
+		 * ---------------------------------------------------------------------
+		 */
 
-		'next-inactive'           => "<span class=\"next-inactive\">\n\t{link}\n</span>\n",
-		'next-inactive-link'      => "\t\t<a href=\"#\" rel=\"next\">{page}</a>\n",
+		'previous'        => "<span class=\"previous\">\n\t{link}\n</span>\n",
+		'previous-marker' => "&laquo;",
+		'previous-link'   => "\t\t<a href=\"{uri}\" rel=\"prev\">{page}</a>\n",
 
-		'last'                    => "<span class=\"last\">\n\t{link}\n</span>\n",
-		'last-marker'             => "&raquo;&raquo;",
-		'last-link'               => "\t\t<a href=\"{uri}\">{page}</a>\n",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Previous Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
 
-		'last-inactive'           => "",
-		'last-inactive-link'      => "",
+		'previous-inactive'      => "<span class=\"previous-inactive\">\n\t{link}\n</span>\n",
+		'previous-inactive-link' => "\t\t<a href=\"#\" rel=\"prev\">{page}</a>\n",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Pages
+		 * ---------------------------------------------------------------------
+		 */
+
+		'regular'      => "<span>\n\t{link}\n</span>\n",
+		'regular-link' => "\t\t<a href=\"{uri}\">{page}</a>\n",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Current Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'active'      => "<span class=\"active\">\n\t{link}\n</span>\n",
+		'active-link' => "\t\t<a href=\"#\">{page}</a>\n",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Next Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'next'        => "<span class=\"next\">\n\t{link}\n</span>\n",
+		'next-marker' => "&raquo;",
+		'next-link'   => "\t\t<a href=\"{uri}\" rel=\"next\">{page}</a>\n",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Next Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
+
+		'next-inactive'      => "<span class=\"next-inactive\">\n\t{link}\n</span>\n",
+		'next-inactive-link' => "\t\t<a href=\"#\" rel=\"next\">{page}</a>\n",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Last Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'last'        => "<span class=\"last\">\n\t{link}\n</span>\n",
+		'last-marker' => "&raquo;&raquo;",
+		'last-link'   => "\t\t<a href=\"{uri}\">{page}</a>\n",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Last Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
+
+		'last-inactive'      => "",
+		'last-inactive-link' => "",
 	),
 
-	// Twitter bootstrap 3.x template
-	'bootstrap3'                   => array(
-		'wrapper'                 => "<ul class=\"pagination\">\n\t{pagination}\n\t</ul>\n",
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Twitter Bootstrap 3.3.7 Template
+	 * -------------------------------------------------------------------------
+	 *
+	 *  This template uses Pagination layout from Bootstrap 3.3.7.
+	 *
+	 *  For more information, visit the official documentation:
+	 *
+	 *      https://getbootstrap.com/docs/3.3/components/#pagination
+	 *
+	 */
 
-		'first'                   => "\n\t\t<li>{link}</li>",
-		'first-marker'            => "&laquo;&laquo;",
-		'first-link'              => "<a href=\"{uri}\">{page}</a>",
+	'bootstrap3' => array(
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Wrapper
+		 * ---------------------------------------------------------------------
+		 */
 
-		'first-inactive'          => "",
-		'first-inactive-link'     => "",
+		'wrapper' => "<nav aria-label=\"Page navigation\">\n\t<ul class=\"pagination\">\n\t{pagination}\n\t</ul>\n\t</nav>\n",
 
-		'previous'                => "\n\t\t<li>{link}</li>",
-		'previous-marker'         => "&laquo;",
-		'previous-link'           => "<a href=\"{uri}\" rel=\"prev\">{page}</a>",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  First Page
+		 * ---------------------------------------------------------------------
+		 */
 
-		'previous-inactive'       => "\n\t\t<li class=\"disabled\">{link}</li>",
-		'previous-inactive-link'  => "<a href=\"#\" rel=\"prev\">{page}</a>",
+		'first'        => "\n\t\t<li>{link}</li>",
+		'first-marker' => "<span aria-hidden=\"true\">&laquo;&laquo;</span>",
+		'first-link'   => "<a href=\"{uri}\">{page}</a>",
 
-		'regular'                 => "\n\t\t<li>{link}</li>",
-		'regular-link'            => "<a href=\"{uri}\">{page}</a>",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  First Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
 
-		'active'                  => "\n\t\t<li class=\"active\">{link}</li>",
-		'active-link'             => "<a href=\"#\">{page} <span class=\"sr-only\"></span></a>",
+		'first-inactive'      => "",
+		'first-inactive-link' => "",
 
-		'next'                    => "\n\t\t<li>{link}</li>",
-		'next-marker'             => "&raquo;",
-		'next-link'               => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Previous Page
+		 * ---------------------------------------------------------------------
+		 */
 
-		'next-inactive'           => "\n\t\t<li class=\"disabled\">{link}</li>",
-		'next-inactive-link'      => "<a href=\"#\" rel=\"next\">{page}</a>",
+		'previous'        => "\n\t\t<li>{link}</li>",
+		'previous-marker' => "<span aria-hidden=\"true\">&laquo;</span>",
+		'previous-link'   => "<a href=\"{uri}\" aria-label=\"Previous\">{page}</a>",
 
-		'last'                    => "\n\t\t<li>{link}</li>",
-		'last-marker'             => "&raquo;&raquo;",
-		'last-link'               => "<a href=\"{uri}\">{page}</a>",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Previous Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
 
-		'last-inactive'           => "",
-		'last-inactive-link'      => "",
+		'previous-inactive'      => "\n\t\t<li class=\"disabled\">{link}</li>",
+		'previous-inactive-link' => "<a href=\"#\" aria-label=\"Previous\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Pages
+		 * ---------------------------------------------------------------------
+		 */
+
+		'regular'      => "\n\t\t<li>{link}</li>",
+		'regular-link' => "<a href=\"{uri}\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Current Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'active'      => "\n\t\t<li class=\"active\">{link}</li>",
+		'active-link' => "<a href=\"#\">{page} <span class=\"sr-only\">(current)</span></a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Next Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'next'        => "\n\t\t<li>{link}</li>",
+		'next-marker' => "<span aria-hidden=\"true\">&raquo;</span>",
+		'next-link'   => "<a href=\"{uri}\" aria-label=\"Next\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Next Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
+
+		'next-inactive'      => "\n\t\t<li class=\"disabled\">{link}</li>",
+		'next-inactive-link' => "<a href=\"#\" aria-label=\"Next\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Last Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'last'        => "\n\t\t<li>{link}</li>",
+		'last-marker' => "<span aria-hidden=\"true\">&raquo;&raquo;</span>",
+		'last-link'   => "<a href=\"{uri}\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Last Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
+
+		'last-inactive'      => "",
+		'last-inactive-link' => "",
 	),
 
-	// Twitter bootstrap 2.x template
-	'bootstrap'                   => array(
-		'wrapper'                 => "<div class=\"pagination\">\n\t<ul>{pagination}\n\t</ul>\n</div>\n",
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Twitter Bootstrap 2.3.2 pagination template
+	 * -------------------------------------------------------------------------
+	 *
+	 *  This template uses Pagination layout from Bootstrap 2.3.2
+	 *
+	 *  For more information, visit the official documentation:
+	 *
+	 *      https://getbootstrap.com/2.3.2/components.html#pagination
+	 *
+	 */
 
-		'first'                   => "\n\t\t<li>{link}</li>",
-		'first-marker'            => "&laquo;&laquo;",
-		'first-link'              => "<a href=\"{uri}\">{page}</a>",
+	'bootstrap2' => array(
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Wrapper
+		 * ---------------------------------------------------------------------
+		 */
 
-		'first-inactive'          => "",
-		'first-inactive-link'     => "",
+		'wrapper' => "<div class=\"pagination\">\n\t<ul>{pagination}\n\t</ul>\n</div>\n",
 
-		'previous'                => "\n\t\t<li>{link}</li>",
-		'previous-marker'         => "&laquo;",
-		'previous-link'           => "<a href=\"{uri}\" rel=\"prev\">{page}</a>",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  First Page
+		 * ---------------------------------------------------------------------
+		 */
 
-		'previous-inactive'       => "\n\t\t<li class=\"disabled\">{link}</li>",
-		'previous-inactive-link'  => "<a href=\"#\" rel=\"prev\">{page}</a>",
+		'first'        => "\n\t\t<li>{link}</li>",
+		'first-marker' => "&laquo;&laquo;",
+		'first-link'   => "<a href=\"{uri}\">{page}</a>",
 
-		'regular'                 => "\n\t\t<li>{link}</li>",
-		'regular-link'            => "<a href=\"{uri}\">{page}</a>",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  First Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
 
-		'active'                  => "\n\t\t<li class=\"active\">{link}</li>",
-		'active-link'             => "<a href=\"#\">{page}</a>",
+		'first-inactive'      => "",
+		'first-inactive-link' => "",
 
-		'next'                    => "\n\t\t<li>{link}</li>",
-		'next-marker'             => "&raquo;",
-		'next-link'               => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Previous Page
+		 * ---------------------------------------------------------------------
+		 */
 
-		'next-inactive'           => "\n\t\t<li class=\"disabled\">{link}</li>",
-		'next-inactive-link'      => "<a href=\"#\" rel=\"next\">{page}</a>",
+		'previous'        => "\n\t\t<li>{link}</li>",
+		'previous-marker' => "&laquo;",
+		'previous-link'   => "<a href=\"{uri}\" rel=\"prev\">{page}</a>",
 
-		'last'                    => "\n\t\t<li>{link}</li>",
-		'last-marker'             => "&raquo;&raquo;",
-		'last-link'               => "<a href=\"{uri}\">{page}</a>",
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Previous Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
 
-		'last-inactive'           => "",
-		'last-inactive-link'      => "",
+		'previous-inactive'      => "\n\t\t<li class=\"disabled\">{link}</li>",
+		'previous-inactive-link' => "<a href=\"#\" rel=\"prev\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Pages
+		 * ---------------------------------------------------------------------
+		 */
+
+		'regular'      => "\n\t\t<li>{link}</li>",
+		'regular-link' => "<a href=\"{uri}\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Current Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'active'      => "\n\t\t<li class=\"active\">{link}</li>",
+		'active-link' => "<a href=\"#\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Next Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'next'        => "\n\t\t<li>{link}</li>",
+		'next-marker' => "&raquo;",
+		'next-link'   => "<a href=\"{uri}\" rel=\"next\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Next Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
+
+		'next-inactive'      => "\n\t\t<li class=\"disabled\">{link}</li>",
+		'next-inactive-link' => "<a href=\"#\" rel=\"next\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Last Page
+		 * ---------------------------------------------------------------------
+		 */
+
+		'last'        => "\n\t\t<li>{link}</li>",
+		'last-marker' => "&raquo;&raquo;",
+		'last-link'   => "<a href=\"{uri}\">{page}</a>",
+
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Last Page - Inactive/Disabled State
+		 * ---------------------------------------------------------------------
+		 */
+
+		'last-inactive'      => "",
+		'last-inactive-link' => "",
 	),
-
 );

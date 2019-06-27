@@ -163,6 +163,45 @@ class Fieldset_Field
 	}
 
 	/**
+	 * Change the field name
+	 *
+	 * @param   string  $name
+	 * @param   bool    $update
+	 * @return  Fieldset_Field  this, to allow chaining
+	 */
+	public function set_name($name, $update = true)
+	{
+		if ($update and $this->fieldset and $this->fieldset->field($name))
+		{
+			// new name already exists
+			throw new \RuntimeException('New Fieldset field name already exists in the fieldset.');
+		}
+
+		// save the current name
+		$current = $this->name;
+
+		// update the name of this field
+		$this->name = $name;
+
+		// add this field to the fieldset
+		if ($update and $this->fieldset)
+		{
+			$this->fieldset->add_after($this, '', array(), array(), $current);
+		}
+
+		// and delete the current one
+		if ($update and $this->fieldset)
+		{
+			$this->fieldset->delete($current);
+		}
+
+		// determine the field's base name (for fields with array indices)
+		$this->basename = ($pos = strpos($this->name, '[')) ? rtrim(substr(strrchr($this->name, '['), 1), ']') : $this->name;
+
+		return $this;
+	}
+
+	/**
 	 * Change the field label
 	 *
 	 * @param   string  $label

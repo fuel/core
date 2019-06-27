@@ -7,70 +7,97 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration,
+ *  copy this file to your 'app/config' folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Return Format
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Default format of the data to be returned.
+	 *
+	 */
 
-	/*
-	| What format should the data be returned in by default?
-	|
-	|	Default: xml
-	|
-	*/
 	'default_format' => 'xml',
 
-	/*
-	| XML Basenode name
-	|
-	|	Default: xml
-	|
-	*/
+	/**
+	 * -------------------------------------------------------------------------
+	 *  XML Basenode
+	 * -------------------------------------------------------------------------
+	 *
+	 */
+
 	'xml_basenode' => 'xml',
 
-	/*
-	| Name for the password protected REST API displayed on login dialogs
-	|
-	|	E.g: My Secret REST API
-	|
-	*/
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Realm
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Name for the password protected REST API displayed on login dialogs.
+	 *
+	 */
+
 	'realm' => 'REST API',
 
-	/*
-	| Is login required and if so, which type of login?
-	|
-	|	'' = no login required,
-	| 'basic' = unsecure login,
-	| 'digest' = more secure login
-	| or define a method name in your REST controller that handles authorization
-	|
-	*/
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Authentication
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Authentication type.
+	 *
+	 *  Possible values are:
+	 *
+	 *      ''       = no login required.
+	 *      'basic'  = unsecure login.
+	 *      'digest' = more secure login.
+	 *
+	 *  Or, you can define a method name in your REST controller that handles
+	 *  authorization.
+	 *
+	 */
+
 	'auth' => '',
 
-	/*
-	| array of usernames and passwords for login
-	|
-	|	array('admin' => '1234')
-	|
-	*/
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Credentials
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Usernames and passwords for login.
+	 *
+	 *  The value is following this format:
+	 *
+	 *      array('username' => 'password')
+	 *
+	 */
+
 	'valid_logins' => array('admin' => '1234'),
 
-	/*
-	| Ignore HTTP_ACCEPT
-	|
-	| A lot of work can go into detecting incoming data,
-	| disabling this will speed up your requests if you do not use a ACCEPT header.
-	|
-	*/
-	'ignore_http_accept' => false,
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Performance
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Disabling this setting will speed up your requests if you do not use
+	 *  a 'ACCEPT' header.
+	 *
+	 */
 
+	'ignore_http_accept' => false,
 );

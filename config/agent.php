@@ -7,132 +7,218 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration,
+ *  copy this file to your 'app/config' folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
-
 	/**
-	 * Manual browscap parsing configuration.
+	 * -------------------------------------------------------------------------
+	 *  Browscap
+	 * -------------------------------------------------------------------------
 	 *
-	 * This will be used when your PHP installation has no browscap defined
-	 * in your php.ini, httpd.conf or .htaccess, and you can't configure one.
+	 *  Manual browscap parsing configuration.
+	 *
+	 *  This will be used when your PHP installation has no browscap defined
+	 *  in your php.ini, httpd.conf or .htaccess, and you can't configure one.
+	 *
 	 */
-	'browscap' => array(
 
+	'browscap' => array(
 		/**
-		 * Whether of not manual parsing is enabled.
-		 *
-		 * set to false to disable this functionality.
+		 * ---------------------------------------------------------------------
+		 *  Manual parsing
+		 * ---------------------------------------------------------------------
 		 */
+
 		'enabled' => true,
 
 		/**
-		 * Location from where the updated browscap file can be downloaded.
+		 * ---------------------------------------------------------------------
+		 *  Source address
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Location from where the updated browscap file can be downloaded.
+		 *
+		 *  For major browsers and search engines only:
+		 *
+		 *      'http://browscap.org/stream?q=Lite_PHP_BrowsCapINI'
+		 *
+		 *  For full list ( about 3x of the lite version ):
+		 *
+		 *      'http://browscap.org/stream?q=Full_PHP_BrowsCapINI'
+		 *
 		 */
-		'url' => 'http://browscap.org/stream?q=Lite_PHP_BrowsCapINI',     // only major browsers and search engines
-		//'url' => 'http://browscap.org/stream?q=Full_PHP_BrowsCapINI',   // complete file, approx. 3 times the lite version
+
+		'url' => 'http://browscap.org/stream?q=Lite_PHP_BrowsCapINI',
 
 		/**
-		 * Method used to download the updated browscap file
+		 * ---------------------------------------------------------------------
+		 *  Download method
+		 * ---------------------------------------------------------------------
 		 *
-		 * 	Default: 'wrapper'
+		 *  Method used to download the updated browscap file.
 		 *
-		 * possible values are: 'local', 'wrapper', 'curl'
+		 *  Possible values are:
+		 *
+		 *      'local', 'wrapper' or 'curl'
+		 *
 		 */
-		 'method' => 'wrapper',
+
+		'method' => 'wrapper',
 
 		/**
-		 * Optional http proxy configuration, will be used for both the 'wrapper' and 'curl' methods
+		 * ---------------------------------------------------------------------
+		 *  Proxy settings
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Optional http proxy configuration.
+		 *
+		 *  This will be used for both the 'wrapper' and 'curl' methods.
+		 *
 		 */
-		 'proxy' => array(
 
+		'proxy' => array(
 			/**
-			 * hostname or IP address of your proxy
+			 * -----------------------------------------------------------------
+			 *  Hostname or IP address of your proxy
+			 * -----------------------------------------------------------------
 			 *
-			 * Note: so "proxy.example.org" or "1.2.3.4", and not "http://proxy.example.org" !!!
+			 *  [!] This does NOT work:
+			 *
+			 *      'http://proxy.example.org'
+			 *
+			 *  Use these instead:
+			 *
+			 *      'proxy.example.org' or '1.1.1.1'
+			 *
 			 */
+
 			'host' => null,
 
 			/**
-			 * TCP port number the proxy listens at
+			 * -----------------------------------------------------------------
+			 *  TCP port number the proxy listens at
+			 * -----------------------------------------------------------------
 			 */
+
 			'port' => null,
 
 			/**
-			 * Authentication type to use
+			 * -----------------------------------------------------------------
+			 *  Authentication
+			 * -----------------------------------------------------------------
 			 *
-			 * 	Default: 'none'
+			 *  Authentication type to use.
 			 *
-			 * possible values are: 'none', 'basic', 'ntlm'
+			 *  Possible values are:
 			 *
-			 * Note that the 'wrapper' method only supports 'basic', all others are evaluated as 'none'!
+			 *      'none', 'basic' or 'ntlm'
+			 *
+			 *  [!] WARNING:
+			 *
+			 *  The 'wrapper' method only supports 'basic'. Other methods
+			 *  will be evaluated as 'none'.
+			 *
 			 */
+
 			'auth' => 'none',
 
 			/**
-			 * If your proxy requires authentication, specify a username and password
+			 * -----------------------------------------------------------------
+			 *  Credentials
+			 * -----------------------------------------------------------------
+			 *
+			 *  If your proxy requires authentication, set username and password
+			 *  here.
+			 *
 			 */
+
 			'username' => null,
 			'password' => null,
 		 ),
 
 		/**
-		 * Filename for the local browscap.ini file (for method 'local').
+		 * ---------------------------------------------------------------------
+		 *  Filename
+		 * ---------------------------------------------------------------------
 		 *
-		 * 	Default: ''
+		 *  Filename for the local browscap.ini file (for method 'local').
+		 *
+		 *  Default value is ''
+		 *
 		 */
-		 'file' => '/tmp/php_browscap.ini',
+
+		'file' => '/tmp/php_browscap.ini',
 	),
 
 	/**
-	 * Cache configuration.
+	 * -------------------------------------------------------------------------
+	 *  Cache
+	 * -------------------------------------------------------------------------
 	 *
-	 * The agent class caches all matched agent strings for future reference
-	 * so the browscap file doesn't need to be loaded, as it's quite large.
+	 *  The agent class caches all matched agent strings for future reference
+	 *  so the browscap file doesn't need to be loaded, as it's quite large.
 	 *
-	 * Also, the parsed and condensed browscap ini file is stored in cache as
-	 * well, so when a new user agent string needs to be looked up, no further
-	 * parsing is needed.
+	 *  Also, the parsed and condensed browscap ini file is stored in cache as
+	 *  well, so when a new user agent string needs to be looked up, no further
+	 *  parsing is needed.
+	 *
 	 */
-	'cache' => array(
 
+	'cache' => array(
 		/**
-		 * Storage driver to use to cache agent class entries. If not defined,
-		 * the default driver defined in config/cache.php will be used.
+		 * ---------------------------------------------------------------------
+		 *  Driver
+		 * ---------------------------------------------------------------------
 		 *
-		 * 	Default: ''
+		 *  Storage driver to use to cache agent class entries. If not defined,
+		 *  the default driver defined in 'config/cache.php' will be used.
+		 *
 		 */
+
 		'driver' => '',
 
 		/**
-		 * Cache expiry.
+		 * ---------------------------------------------------------------------
+		 *  Expiration
+		 * ---------------------------------------------------------------------
 		 *
-		 * Number of seconds after which a cached agent result expires.
+		 *  Number of seconds after which a cached agent result expires.
 		 *
-		 *	Default: 604800 (every 7 days)
+		 *	Default value is 604800 (every 7 days)
 		 *
-		 * Note that to prevent abuse of the site publishing the browsecap files,
-		 * you can not set the expiry time lower than 7200 (2 hours)
+		 *  [!] INFO:
+		 *
+		 *  To prevent abuse of the site publishing the browsecap files,
+		 *  you can not set the expiry time lower than 7200 (2 hours).
+		 *
 		 */
+
 		'expiry' => 604800,
 
 		/**
-		 * Identifier used to store agent class cache elements
+		 * ---------------------------------------------------------------------
+		 *  Identifier
+		 * ---------------------------------------------------------------------
 		 *
-		 *	Default: 'fuel.agent'
+		 *  Identifier used to store agent class cache elements
+		 *
+		 *	Default value is 'fuel.agent'
 		 *
 		 */
+
 		'identifier' => 'fuel.agent',
 	),
-
 );

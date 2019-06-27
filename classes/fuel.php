@@ -28,7 +28,7 @@ class Fuel
 	/**
 	 * @var  string  The version of Fuel
 	 */
-	const VERSION = '1.8.1';
+	const VERSION = '1.8.2';
 
 	/**
 	 * @var  string  constant used for when in testing mode
@@ -186,17 +186,14 @@ class Fuel
 			}
 		}
 
-		// Run Input Filtering
-		\Security::clean_input();
+		// Load in the routes
+		\Config::load('routes', true);
+		\Router::add(\Config::get('routes'));
 
 		\Event::register('fuel-shutdown', 'Fuel::finish');
 
 		// Always load classes, config & language set in always_load.php config
 		static::always_load();
-
-		// Load in the routes
-		\Config::load('routes', true);
-		\Router::add(\Config::get('routes'));
 
 		// BC FIX FOR APPLICATIONS <= 1.6.1, makes Redis_Db available as Redis,
 		// like it was in versions before 1.7
@@ -217,6 +214,9 @@ class Fuel
 		}
 
 		static::$initialized = true;
+
+		// Run Input Filtering
+		\Security::clean_input();
 
 		// fire any app created events
 		\Event::instance()->has_events('app_created') and \Event::instance()->trigger('app_created', '', 'none');

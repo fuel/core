@@ -7,52 +7,80 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration,
+ *  copy this file to your 'app/config' folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
-
-	/*
-	 * Which version of the schema should be considered "current"
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Version
+	 * -------------------------------------------------------------------------
 	 *
-	 * Default: 0
+	 *  Which version of the schema should be considered current.
+	 *
+	 *  Default value is 0.
+	 *
 	 */
+
 	'version' => array(
 		'app' => array(
 			'default' => 0,
 		),
+
 		'module' => array(),
+
 		'package' => array(),
 	),
 
-	/*
-	 * Folder name where migrations are stored relative to App, Module and Package Paths?
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Folder
+	 * -------------------------------------------------------------------------
 	 *
-	 * Default: 'migrations/'
+	 *  Folder name where migrations are stored relative to App, Module
+	 *  and Package paths.
+	 *
+	 *  Default path directory is 'migrations/'.
+	 *
 	 */
+
 	'folder' => 'migrations/',
 
-	/*
-	 * Table name
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Table Name
+	 * -------------------------------------------------------------------------
 	 *
-	 * Default: 'migration'
+	 *  Table name for migrations.
+	 *
+	 *  Default table name is 'migration'.
+	 *
 	 */
+
 	'table' => 'migration',
 
 	/**
-	 * Flush all cache after running migrations
+	 * -------------------------------------------------------------------------
+	 *  Cache
+	 * -------------------------------------------------------------------------
 	 *
-	 * Default: false
+	 *  Whether to flush all cache after running migrations.
+	 *
+	 *  Default value is false.
+	 *
 	 */
-	 'flush_cache' => false,
 
+	 'flush_cache' => false,
 );

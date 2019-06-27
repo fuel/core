@@ -298,4 +298,14 @@ class Image
 	{
 		return static::instance()->reload();
 	}
+
+	/**
+	 * Get the extension of the file.
+	 *
+	 * @return  string
+	 */
+	public static function extension()
+	{
+		return static::instance()->extension();
+	}
 }

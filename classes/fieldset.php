@@ -389,7 +389,7 @@ class Fieldset
 	/**
 	 * Delete a field instance
 	 *
-	 * @param   string  field name or null to fetch an array of all
+	 * @param   string  field name
 	 * @return  Fieldset  this fieldset, for chaining
 	 */
 	public function delete($name)
@@ -398,6 +398,34 @@ class Fieldset
 		{
 			unset($this->fields[$name]);
 		}
+
+		return $this;
+	}
+
+	/**
+	 * Duplicate a field instance
+	 *
+	 * @param   string  field name
+	 * @param   string  field name of the copy
+	 * @return  Fieldset  this fieldset, for chaining
+	 */
+	public function duplicate($name, $newname)
+	{
+		if ( ! isset($this->fields[$name]))
+		{
+			throw new \RuntimeException('Cannot copy field, field name is not defined.');
+		}
+
+		if (isset($this->fields[$newname]))
+		{
+			throw new \RuntimeException('Cannot copy field, new field already exists.');
+		}
+
+		// clone the fieldset field object
+		$this->fields[$newname] = clone $this->fields[$name];
+
+		// update the new fields name
+		$this->fields[$newname]->set_name($newname, false);
 
 		return $this;
 	}

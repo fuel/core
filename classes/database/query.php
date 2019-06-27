@@ -36,6 +36,11 @@ class Database_Query
 	protected $_cache_all = true;
 
 	/**
+	 * @var  boolean  To allow restore of the global caching status
+	 */
+	protected $_caching = null;
+
+	/**
 	 * @var  string  SQL statement
 	 */
 	protected $_sql;
@@ -112,6 +117,23 @@ class Database_Query
 
 		return $this;
 	}
+	/**
+	 * Per query cache controller setter/getter
+	 *
+	 * @param   bool   $bool  whether to enable it [optional]
+	 *
+	 * @return  $this
+	 */
+	public function caching($bool = null)
+	{
+		if (is_bool($bool) or is_null($bool))
+		{
+			$this->_caching = $bool;
+		}
+
+		return $this;
+	}
+
 
 	/**
 	 * Returns results as associative arrays
@@ -296,7 +318,10 @@ class Database_Query
 			}
 		}
 
-		if ($db->caching() and ! empty($this->_lifetime) and $this->_type === \DB::SELECT)
+		// fetch the result caching flag
+		$caching = $this->_caching or $db->caching();
+
+		if ($caching and ! empty($this->_lifetime) and $this->_type === \DB::SELECT)
 		{
 			$cache_key = empty($this->_cache_key) ?
 				'db.'.md5('Database_Connection::query("'.$db.'", "'.$sql.'")') : $this->_cache_key;
@@ -310,7 +335,7 @@ class Database_Query
 
 		// Execute the query
 		\DB::$query_count++;
-		$result = $db->query($this->_type, $sql, $this->_as_object);
+		$result = $db->query($this->_type, $sql, $this->_as_object, $caching);
 
 		// Cache the result if needed
 		if (isset($cache) and ($this->_cache_all or $result->count()))

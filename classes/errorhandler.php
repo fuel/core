@@ -306,12 +306,24 @@ class Errorhandler
 		$data['filepath']	= $e->getFile();
 		$data['error_line']	= $e->getLine();
 		$data['backtrace']	= $e->getTrace();
+
+		// support for additional DB info
 		if ($e instanceof \Database_Exception and $e->getDbCode())
 		{
 			$data['severity'] .= ' ('.$e->getDbCode().')';
 		}
 
 		$data['severity'] = ( ! isset(static::$levels[$data['severity']])) ? $data['severity'] : static::$levels[$data['severity']];
+
+		// support for additional SoapFault info
+		if ($e instanceof \SoapFault)
+		{
+			$data['soap']['faultcode'] = $e->faultcode;
+			$data['soap']['faultstring'] = $e->faultstring;
+			$data['soap']['errortype'] = empty($e->detail->ExceptionDetail) ? '' : $e->detail->ExceptionDetail->Type;
+			$data['soap']['backtrace'] = empty($e->detail->ExceptionDetail) ? '' : $e->detail->ExceptionDetail->StackTrace;
+			$data['soap']['backtrace'] = explode("\n", str_replace(array("\r\n","\n\r","\r"),"\n",$data['soap']['backtrace']));
+		}
 
 		foreach ($data['backtrace'] as $key => $trace)
 		{

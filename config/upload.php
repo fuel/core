@@ -7,92 +7,267 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration,
+ *  copy this file to your 'app/config' folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
 	/**
-	 * global configuration
-	*/
+	 * -------------------------------------------------------------------------
+	 *  Behavior
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If true, the '$_FILES' array will be processed when the class is loaded.
+	 *
+	 */
 
-	// if true, the $_FILES array will be processed when the class is loaded
-	'auto_process'		=> true,
-
-	/**
-	 * file validation settings
-	*/
-
-	// maximum size of the uploaded file in bytes. 0 = no maximum
-	'max_size'			=> 0,
-
-	// list of file extensions that a user is allowed to upload
-	'ext_whitelist'		=> array(),
-
-	// list of file extensions that a user is NOT allowed to upload
-	'ext_blacklist'		=> array(),
-
-	// list of file types that a user is allowed to upload
-	// ( type is the part of the mime-type, before the slash )
-	'type_whitelist'	=> array(),
-
-	// list of file types that a user is NOT allowed to upload
-	'type_blacklist'	=> array(),
-
-	// list of file mime-types that a user is allowed to upload
-	'mime_whitelist'	=> array(),
-
-	// list of file mime-types that a user is NOT allowed to upload
-	'mime_blacklist'	=> array(),
+	'auto_process' => true,
 
 	/**
-	 * file save settings
-	*/
+	 * -------------------------------------------------------------------------
+	 *  Validation - Max Size
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Maximum size of the uploaded file in bytes.
+	 *
+	 *  0 = no maximum limit.
+	 *
+	 */
 
-	// prefix given to every file when saved
-	'prefix'			=> '',
+	'max_size' => 0,
 
-	// suffix given to every file when saved
-	'suffix'			=> '',
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Validation - Extensions Whitelist
+	 * -------------------------------------------------------------------------
+	 *
+	 *  List of file extensions which are allowed to upload.
+	 *
+	 */
 
-	// replace the extension of the uploaded file by this extension
-	'extension'			=> '',
+	'ext_whitelist' => array(),
 
-	// default path the uploaded files will be saved to
-	'path'				=> '',
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Validation - Extensions Blacklist
+	 * -------------------------------------------------------------------------
+	 *
+	 *  List of file extensions which are NOT allowed to upload.
+	 *
+	 */
 
-	// create the path if it doesn't exist
-	'create_path'		=> true,
+	'ext_blacklist' => array(),
 
-	// permissions to be set on the path after creation
-	'path_chmod'		=> 0777,
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Validation - File Type Whitelist
+	 * -------------------------------------------------------------------------
+	 *
+	 *  List of file types which are allowed to upload.
+	 *
+	 *  Type is the part of the mime-type, before the slash.
+	 *
+	 *  Example:
+	 *
+	 *      If mime-type = 'image/jpeg', then type = 'image';
+	 *
+	 */
 
-	// permissions to be set on the uploaded file after being saved
-	'file_chmod'		=> 0666,
+	'type_whitelist' => array(),
 
-	// if true, add a number suffix to the file if the file already exists
-	'auto_rename'		=> true,
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Validation - File Type Blacklist
+	 * -------------------------------------------------------------------------
+	 *
+	 *  List of file types which are NOT allowed to upload.
+	 *
+	 */
 
-	// if true, overwrite the file if it already exists (only if auto_rename = false)
-	'overwrite'			=> false,
+	'type_blacklist' => array(),
 
-	// if true, generate a random filename for the file being saved
-	'randomize'			=> false,
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Validation - MIME Type Whitelist
+	 * -------------------------------------------------------------------------
+	 *
+	 *  List of MIME types which are allowed to upload.
+	 *
+	 */
 
-	// if true, normalize the filename (convert to ASCII, replace spaces by underscores)
-	'normalize'			=> false,
+	'mime_whitelist' => array(),
 
-	// valid values are 'upper', 'lower', and false. case will be changed after all other transformations
-	'change_case'		=> false,
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Validation - MIME Type Whitelist
+	 * -------------------------------------------------------------------------
+	 *
+	 *  List of MIME types which are NOT allowed to upload.
+	 *
+	 */
 
-	// maximum lengh of the filename, after all name modifications have been made. 0 = no maximum
-	'max_length'		=> 0,
+	'mime_blacklist' => array(),
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Prefix
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Prefix given to every file when saved.
+	 *
+	 */
+
+	'prefix' => '',
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Suffix
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Suffix given to every file when saved.
+	 *
+	 */
+
+	'suffix' => '',
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Extension
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Replace the extension of the uploaded file by this extension.
+	 *
+	 */
+
+	'extension' => '',
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Path
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Default path the uploaded files will be saved to.
+	 *
+	 */
+
+	'path' => '',
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Path Creation
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Create the path if it doesn't exist.
+	 *
+	 */
+
+	'create_path' => true,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Path Permission
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Permissions to be set on the path after creation.
+	 *
+	 */
+
+	'path_chmod' => 0777,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - File Permission
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Permissions to be set on the uploaded file after being saved.
+	 *
+	 */
+
+	'file_chmod' => 0666,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - File Naming
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If true, add a number suffix to the file if the file already exists.
+	 *
+	 */
+
+	'auto_rename' => true,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - File Overwriting
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If true, overwrite the file if it already exists
+	 *  (only if 'auto_rename' is false).
+	 *
+	 */
+
+	'overwrite' => false,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - File Random Naming
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If true, generate a random filename for the file being saved.
+	 *
+	 */
+
+	'randomize' => false,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Normalize File Naming
+	 * -------------------------------------------------------------------------
+	 *
+	 *  If true, normalize the filename (convert to ASCII, replace spaces
+	 *  with underscores).
+	 *
+	 */
+
+	'normalize' => false,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Style for File Naming
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Change case of file name.
+	 *
+	 *  Case will be changed after all other transformations.
+	 *
+	 *  Valid values are 'upper', 'lower', and false.
+	 *
+	 */
+
+	'change_case' => false,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Saving - Size for File Naming
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Maximum length of the filename after all name modifications
+	 *  have been made.
+	 *
+	 *  0 = no maximum limit.
+	 *
+	 */
+
+	'max_length' => 0,
 );

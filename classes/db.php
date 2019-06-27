@@ -7,7 +7,6 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @copyright  (c) 2009 Kohana Team
  * @link       http://fuelphp.com
  */
 

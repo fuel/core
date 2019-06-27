@@ -7,27 +7,29 @@
  * @author     Fuel Development Team
  * @license    MIT License
  * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @link       https://fuelphp.com
  */
 
 /**
- * NOTICE:
+ * -----------------------------------------------------------------------------
+ *  [!] NOTICE
+ * -----------------------------------------------------------------------------
  *
- * If you need to make modifications to the default configuration, copy
- * this file to your app/config folder, and make them in there.
+ *  If you need to make modifications to the default configuration,
+ *  copy this file to your 'app/config' folder, and make them in there.
  *
- * This will allow you to upgrade fuel without losing your custom config.
+ *  This will allow you to upgrade FuelPHP without losing your custom config.
+ *
  */
 
 return array(
-
 	'default' => array(
-		'hostname'		=>		'localhost',
-		'username'		=>		'',
-		'password'		=>		'',
-		'port'			=>		21,
-		'passive'		=>		true,
-		'ssl_mode'		=>		false,
-		'debug'			=>		false,
+		'hostname' => 'localhost',
+		'username' => '',
+		'password' => '',
+		'port'     => 21,
+		'passive'  => true,
+		'ssl_mode' => false,
+		'debug'    => false,
 	),
 );

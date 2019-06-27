@@ -197,9 +197,6 @@ class Input_Instance
 			$uri = substr($uri, 1);
 		}
 
-		// decode the uri, and put any + back (does not mean a space in the url path)
-		$uri = str_replace("\r", '+', urldecode(str_replace('+', "\r", $uri)));
-
 		// in case of incorrect rewrites, we may need to cleanup and
 		// recreate the QUERY_STRING and $_GET
 		if (strpos($uri, '?') !== false)
@@ -464,7 +461,7 @@ class Input_Instance
 		{
 			// double-check if max_input_vars is not exceeded,
 			// it doesn't always give an E_WARNING it seems...
-			if ($method == 'get' or $method == 'post')
+			if ($method === 'get' or $method === 'post')
 			{
 				if ($php_input and ($amps = substr_count($php_input, '&')) > ini_get('max_input_vars'))
 				{
@@ -499,7 +496,7 @@ class Input_Instance
 			$boundary = $matches[1];
 
 			// split content by boundary and get rid of last -- element
-			$blocks = preg_split('/-+'.$boundary.'/', $php_input);
+			$blocks = preg_split('/-+' . preg_quote($boundary, '/') . '/', $php_input);
 			array_pop($blocks);
 
 			// loop data blocks
@@ -540,22 +537,18 @@ class Input_Instance
 			$this->input_xml = $php_input = \Security::clean(\Format::forge($php_input, 'xml')->to_array());
 		}
 
-		// unknown input format
-		elseif ($php_input and ! is_array($php_input))
-		{
-			// don't know how to handle it, allow the application to handle it
-			// reset the method to avoid having it stored below!
-			$method = null;
-		}
-
-		// GET and POST input, were not parsed
+		// GET and POST input were parsed by PHP
 		$this->input_get = $_GET;
 		$this->input_post = $_POST;
 
-		// store the parsed data based on the request method
-		if ($method == 'put' or $method == 'patch' or $method == 'delete')
+		// for other methods, we need valid input
+		if ($php_input and is_array($php_input))
 		{
-			$this->{'input_'.$method} = $php_input;
+			// store the parsed data based on the request method
+			if ($method === 'put' or $method === 'patch' or $method === 'delete')
+			{
+				$this->{'input_'.$method} = $php_input;
+			}
 		}
 	}
 }
