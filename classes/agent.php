@@ -6,8 +6,8 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2018 Fuel Development Team
- * @link       http://fuelphp.com
+ * @copyright  2010 - 2019 Fuel Development Team
+ * @link       https://fuelphp.com
  */
 
 namespace Fuel\Core;
@@ -452,7 +452,7 @@ class Agent
 				curl_setopt($curl, CURLOPT_MAXREDIRS, 5);
 				curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 				curl_setopt($curl, CURLOPT_HEADER, 0);
-				curl_setopt($curl, CURLOPT_USERAGENT, 'Fuel PHP framework - Agent class (http://fuelphp.com)');
+				curl_setopt($curl, CURLOPT_USERAGENT, 'Fuel PHP framework - Agent class (https://fuelphp.com)');
 				curl_setopt($curl, CURLOPT_URL, static::$config['browscap']['url']);
 
 				// add a proxy configuration if needed
@@ -512,7 +512,7 @@ class Agent
 
 			case 'wrapper':
 				// set our custom user agent
-				ini_set('user_agent', 'Fuel PHP framework - Agent class (http://fuelphp.com)');
+				ini_set('user_agent', 'Fuel PHP framework - Agent class (https://fuelphp.com)');
 
 				// create a stream context if needed
 				$context = null;
