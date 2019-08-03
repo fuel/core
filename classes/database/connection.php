@@ -156,6 +156,7 @@ abstract class Database_Connection
 			'enable_cache' => true,
 			'profiling'    => false,
 			'readonly'     => false,
+			'command'      => '',
 		), $config);
 
 		// Set up a generic schema processor if needed

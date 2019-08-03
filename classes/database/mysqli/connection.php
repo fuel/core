@@ -139,6 +139,12 @@ class Database_MySQLi_Connection extends \Database_Connection
 			$this->set_charset($this->_config['charset']);
 		}
 
+		// any post-connect commands defined?
+		if ( ! empty($this->_config['command']))
+		{
+			$this->_connection->query($this->_config['command']);
+		}
+
 		static::$_current_databases[$this->_connection_id] = $database;
 	}
 
