@@ -221,8 +221,7 @@ class File_Area
 
 	public function read_dir($path, $depth = 0, $filter = null)
 	{
-		$content = \File::read_dir($path, $depth, $filter, $this);
-		return $this->get_handler($path, array(), $content);
+		return \File::read_dir($path, $depth, $filter, $this);
 	}
 
 	public function rename($path, $new_path)
