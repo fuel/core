@@ -303,6 +303,19 @@ class Date
 	}
 
 	/**
+	 * validate datetime according to a given pattern
+	 *
+	 * @param	string	$datetime        String containing some date/datetime/time
+	 * @param	int		$format          Format to check against (see https://www.php.net/manual/en/datetime.createfromformat.php)
+	 * @return	bool
+	 */
+	public static function is_valid($datetime, $format = 'Y-m-d H:i:s')
+	{
+		$d = \DateTime::createFromFormat($format, $datetime);
+		return $d and $d->format($format) == $datetime;
+	}
+
+	/**
 	 * @var  int  instance timestamp
 	 */
 	protected $timestamp;
