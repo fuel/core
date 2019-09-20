@@ -23,7 +23,7 @@ if ( ! function_exists('is_windows'))
 {
  	function is_windows()
  	{
- 		return DIRECTORY_SEPARATOR === '/';
+ 		return DIRECTORY_SEPARATOR === '\\';
  	}
 }
 
