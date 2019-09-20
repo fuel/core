@@ -87,9 +87,6 @@ class Input_Instance
 		// store the associated request
 		$this->request = $new;
 
-		// get php raw input
-		$this->raw_input = file_get_contents('php://input');
-
 		// was an input instance passed?
 		if ($input)
 		{
@@ -328,6 +325,12 @@ class Input_Instance
 	 */
 	public function raw()
 	{
+		if ($this->raw_input === null)
+		{
+			// get php raw input
+			$this->raw_input = file_get_contents('php://input');
+		}
+		
 		return $this->raw_input;
 	}
 
