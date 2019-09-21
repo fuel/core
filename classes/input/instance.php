@@ -42,7 +42,7 @@ class Input_Instance
 	/**
 	 * @var  string  $raw  raw PHP input
 	 */
-	protected $raw_input = null;
+	protected static $raw_input = null;
 
 	/**
 	 * @var  array  $get  All GET input
@@ -325,13 +325,13 @@ class Input_Instance
 	 */
 	public function raw()
 	{
-		if ($this->raw_input === null)
+		if (static::$raw_input === null)
 		{
 			// get php raw input
-			$this->raw_input = file_get_contents('php://input');
+			static::$raw_input = file_get_contents('php://input');
 		}
 		
-		return $this->raw_input;
+		return static::$raw_input;
 	}
 
 	/**
