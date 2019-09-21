@@ -83,7 +83,7 @@ class Database_MySQLi_Result extends \Database_Result
 		// sanitize the data if needed
 		if ($this->_sanitization_enabled)
 		{
-			$this->_row = \Security::clean($result, null, 'security.output_filter');
+			$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
 		}
 
 		return $this->_row;
