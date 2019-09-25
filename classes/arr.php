@@ -749,6 +749,8 @@ class Arr
 			break;
 		}
 
+		$c = array();
+		
 		foreach ($b as $key => $val)
 		{
 			$c[] = $array[$key];
