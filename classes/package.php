@@ -55,7 +55,7 @@ class Package
 					$pkg = $path;
 					$path = null;
 				}
-				$result = $result and static::load($pkg, $path);
+				$result = $result && static::load($pkg, $path);
 			}
 			return $result;
 		}
