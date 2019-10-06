@@ -449,7 +449,7 @@ class Asset_Instance
 			}
 
 			// deal with stray backslashes on Windows
-			$file = str_replace('\\', '/', $file);
+			$inline or ( $file = str_replace('\\', '/', $file) );
 
 			// call the renderer for this type
 			if (isset($this->_renderers[$type]))
