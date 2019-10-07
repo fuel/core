@@ -118,7 +118,7 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 			$this->_row = $this->_results[$this->_current_row];
 
 			// sanitize the data if needed
-			if ($this->_sanitization_enabled)
+			if ( ($this->_row !== null) and $this->_sanitization_enabled)
 			{
 				$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
 			}
@@ -140,7 +140,17 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 	{
 		parent::next();
 
+		$this->_row = null;
+		
 		isset($this->_results[$this->_current_row]) and $this->_row = $this->_results[$this->_current_row];
+
+		// sanitize the data if needed
+		if ( ($this->_row !== null) and $this->_sanitization_enabled)
+		{
+			$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
+		}
+		
+		return $this->_row;
 	}
 
 	/**************************
