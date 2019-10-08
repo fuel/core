@@ -118,13 +118,11 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 			$this->_row = $this->_results[$this->_current_row];
 
 			// sanitize the data if needed
-			if ( ($this->_row !== null) and $this->_sanitization_enabled)
-			{
-				$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
-			}
+			$this->_sanitizate();
 		}
 		else
 		{
+			// auto sanitized row in rewind()->next()
 			$this->rewind();
 		}
 
@@ -145,10 +143,7 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 		isset($this->_results[$this->_current_row]) and $this->_row = $this->_results[$this->_current_row];
 
 		// sanitize the data if needed
-		if ( ($this->_row !== null) and $this->_sanitization_enabled)
-		{
-			$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
-		}
+		$this->_sanitizate();
 		
 		return $this->_row;
 	}
@@ -194,10 +189,7 @@ class Database_MySQLi_Cached extends \Database_Result implements \SeekableIterat
 		$result = $this->_results[$offset];
 
 		// sanitize the data if needed
-		if ($this->_sanitization_enabled)
-		{
-			$result = \Security::clean($result, null, 'security.output_filter');
-		}
+		$this->_sanitizate();
 
 		return $result;
 	}
