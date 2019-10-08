@@ -280,6 +280,17 @@ abstract class Database_Result implements \Countable, \Iterator, \Sanitization
 		return $this->_sanitization_enabled;
 	}
 
+	/**
+	 *  sanitizates the current row
+	 */
+	protected function _sanitizate()
+	{
+		if ( ($this->_row !== null) and $this->_sanitization_enabled)
+		{
+			$this->_row = \Security::clean($this->_row, null, 'security.output_filter');
+		}
+	}
+	
 	/**************************
 	 * Countable methods
 	 *************************/
