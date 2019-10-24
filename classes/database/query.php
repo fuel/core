@@ -319,7 +319,7 @@ class Database_Query
 		}
 
 		// fetch the result caching flag
-		$caching = $this->_caching or $db->caching();
+		$caching = isset($this->_caching) ? $this->_caching : $db->caching();
 
 		if ($caching and ! empty($this->_lifetime) and $this->_type === \DB::SELECT)
 		{
