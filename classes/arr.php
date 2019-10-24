@@ -729,6 +729,8 @@ class Arr
 			return $array;
 		}
 
+		$b = array();
+		
 		foreach ($array as $k => $v)
 		{
 			$b[$k] = static::get($v, $key);
