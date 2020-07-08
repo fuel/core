@@ -52,9 +52,19 @@ class Arr
 			return $return;
 		}
 
-		is_object($key) and $key = (string) $key;
+		if (is_object($key))
+		{
+			$key = (string) $key;
+		}
 
-		if (array_key_exists($key, $array))
+		if (is_object($array))
+		{
+			if (property_exists($array, $key))
+			{
+				return $array->$key;
+			}
+		}
+		elseif (array_key_exists($key, $array))
 		{
 			return $array[$key];
 		}
@@ -730,7 +740,7 @@ class Arr
 		}
 
 		$b = array();
-		
+
 		foreach ($array as $k => $v)
 		{
 			$b[$k] = static::get($v, $key);
@@ -752,7 +762,7 @@ class Arr
 		}
 
 		$c = array();
-		
+
 		foreach ($b as $key => $val)
 		{
 			$c[] = $array[$key];
