@@ -145,22 +145,20 @@ class Cache_Storage_Memcached extends \Cache_Storage_Driver
 	 */
 	public function delete_all($section)
 	{
-		// determine the section index name
-		$section = $this->config['cache_id'].(empty($section) ? '' : '.'.$section);
-
-		// get the directory index
 		$index = static::$memcached->get($this->config['cache_id'].'__DIR__');
 
 		if (is_array($index))
 		{
-			// limit the delete if we have a valid section
-			if ( ! empty($section))
+			if (empty($section))
 			{
-				$dirs = in_array($section, $index) ? array($section) : array();
+				// delete everything in the index
+				$dirs = $index;
 			}
 			else
 			{
-				$dirs = $index;
+				// delete just the section
+				$section_key = $this->config['cache_id'].(empty($section) ? '' : '.'.$section);
+				$dirs = in_array($section_key, $index) ? array($section_key) : array();
 			}
 
 			// loop through the indexes, delete all stored keys, then delete the indexes
