@@ -682,6 +682,7 @@ class File
 	public static function delete($path, $area = null)
 	{
 		$path = rtrim(static::instance($area)->get_path($path), '\\/');
+		clearstatcache(true, $path);
 
 		if ( ! is_file($path) and ! is_link($path))
 		{

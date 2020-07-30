@@ -501,6 +501,7 @@ class Finder
 					try
 					{
 						// Cache has expired
+						clearstatcache(true, $dir.$file);
 						is_file($dir.$file) and unlink($dir.$file);
 					}
 					catch (Exception $e)

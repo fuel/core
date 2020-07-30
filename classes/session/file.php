@@ -59,7 +59,11 @@ class Session_File extends \Session_Driver
 						strpos($file, $this->config['cookie_name'].'_') === 0 and
 						filemtime($this->config['path'] . $file) < $expire)
 					{
-						@unlink($this->config['path'] . $file);
+						clearstatcache(true, $this->config['path'] . $file);
+						if (is_file($this->config['path'] . $file))
+						{
+							unlink($this->config['path'] . $file);
+						}
 					}
 				}
 
@@ -84,6 +88,7 @@ class Session_File extends \Session_Driver
 		{
 			// delete the session file
 			$file = $this->config['path'].$this->config['cookie_name'].'_'.$this->keys['session_id'];
+			clearstatcache(true, $file);
 			if (is_file($file))
 			{
 				unlink($file);
