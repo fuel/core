@@ -62,7 +62,7 @@ class Session_File extends \Session_Driver
 						clearstatcache(true, $this->config['path'] . $file);
 						if (is_file($this->config['path'] . $file))
 						{
-							@unlink($this->config['path'] . $file);
+							unlink($this->config['path'] . $file);
 						}
 					}
 				}
