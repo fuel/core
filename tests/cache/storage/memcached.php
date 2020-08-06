@@ -20,5 +20,90 @@ namespace Fuel\Core;
  */
 class Test_Cache_Storage_Memcached extends TestCase
 {
- 	public function test_foo() {}
+	 public function test_foo() {}
+
+	 public function test_delete_all()
+	 {
+ 		 \Config::set('cache.memcached.cache_id', '');
+
+		 \Cache::set('section_name.item', 'value');
+		 $a = \Cache::get('section_name.item'); // 'value'
+
+
+		 \Cache::delete_all(); // expected to remove everything
+
+		 $b = 'unchanged';
+		 try{
+			 $b = \Cache::get('section_name.item');
+		 } catch(\CacheNotFoundException $e){
+			 $b = 'error';
+		 }
+
+		 $this->assertEquals($a, 'value');
+		 $this->assertEquals($b, 'error');
+	 }
+
+	 public function test_delete_all_with_cache_id()
+	 {
+ 		 \Config::set('cache.memcached.cache_id', 'test');
+
+		 \Cache::set('section_name.item', 'value');
+		 $a = \Cache::get('section_name.item'); // 'value'
+
+
+		 \Cache::delete_all(); // expected to remove everything
+
+		 $b = 'unchanged';
+		 try{
+			 $b = \Cache::get('section_name.item');
+		 } catch(\CacheNotFoundException $e){
+			 $b = 'error';
+		 }
+
+		 $this->assertEquals($a, 'value');
+		 $this->assertEquals($b, 'error');
+	 }
+
+	 public function test_delete_all_with_section()
+	 {
+ 		 \Config::set('cache.memcached.cache_id', '');
+
+		 \Cache::set('section_name.item', 'value');
+		 $a = \Cache::get('section_name.item'); // 'value'
+
+
+		 \Cache::delete_all('section_name');
+
+		 $b = 'unchanged';
+		 try{
+			 $b = \Cache::get('section_name.item');
+		 } catch(\CacheNotFoundException $e){
+			 $b = 'error';
+		 }
+
+		 $this->assertEquals($a, 'value');
+		 $this->assertEquals($b, 'error');
+	 }
+
+	 public function test_delete_all_with_section_with_cache_id()
+	 {
+
+		 \Config::set('cache.memcached.cache_id', 'test');
+
+		 \Cache::set('section_name.item', 'value');
+		 $a = \Cache::get('section_name.item'); // 'value'
+
+
+		 \Cache::delete_all('section_name');
+
+		 $b = 'unchanged';
+		 try{
+			 $b = \Cache::get('section_name.item');
+		 } catch(\CacheNotFoundException $e){
+			 $b = 'error';
+		 }
+
+		 $this->assertEquals($a, 'value');
+		 $this->assertEquals($b, 'error');
+	 }
 }
