@@ -111,7 +111,7 @@ class Cache_Storage_Apc extends \Cache_Storage_Driver
 	public function delete_all($section)
 	{
 		// determine the section index name
-		$section = $this->config['cache_id'].(empty($section) ? '' : '.'.$section);
+		$section = empty($section) ? '' : '.'.$section;
 
 		// get the directory index
 		$index = apc_fetch($this->config['cache_id'].'__DIR__');
