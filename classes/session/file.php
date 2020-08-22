@@ -55,14 +55,17 @@ class Session_File extends \Session_Driver
 
 				while (($file = readdir($handle)) !== false)
 				{
-					if (filetype($this->config['path'] . $file) == 'file' and
-						strpos($file, $this->config['cookie_name'].'_') === 0 and
-						filemtime($this->config['path'] . $file) < $expire)
+					if (file_exists($this->config['path'] . $file))
 					{
 						clearstatcache(true, $this->config['path'] . $file);
-						if (is_file($this->config['path'] . $file))
+						if (filetype($this->config['path'] . $file) == 'file' and
+							strpos($file, $this->config['cookie_name'].'_') === 0 and
+							filemtime($this->config['path'] . $file) < $expire)
 						{
-							unlink($this->config['path'] . $file);
+							if (is_file($this->config['path'] . $file))
+							{
+								unlink($this->config['path'] . $file);
+							}
 						}
 					}
 				}
