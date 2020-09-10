@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 class Image_Imagick extends \Image_Driver
 {
-	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
+	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg', 'webp');
 	protected $imagick = null;
 
 	public function load($filename, $return_data = false, $force_extension = false)

@@ -15,7 +15,7 @@ namespace Fuel\Core;
 class Image_Imagemagick extends \Image_Driver
 {
 	protected $image_temp = null;
-	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
+	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg', 'webp');
 	protected $sizes_cache = null;
 	protected $im_path = null;
 
