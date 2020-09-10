@@ -15,7 +15,7 @@ namespace Fuel\Core;
 class Image_Gd extends \Image_Driver
 {
 	protected $image_data = null;
-	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg');
+	protected $accepted_extensions = array('png', 'gif', 'jpg', 'jpeg', 'webp');
 	protected $gdresizefunc = "imagecopyresampled";
 
 	public function load($filename, $return_data = false, $force_extension = false)
