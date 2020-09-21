@@ -131,7 +131,7 @@ class Cookie
 	{
 		// Remove the cookie
 		unset($_COOKIE[$name]);
-		
+
 		// Nullify the cookie and make it expire
 		if (PHP_VERSION_ID < 70300) {
 		    return setcookie($name, null, -86400, "{$path}; samesite={$same_site}", $domain, $secure, $http_only);
