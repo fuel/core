@@ -525,14 +525,14 @@ abstract class Session_Driver
 			\Event::unregister('fuel-shutdown', array($this, 'close'));
 
 			// delete the session cookie
-			\Cookie::delete($this->config['cookie_name'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+			\Cookie::delete($this->config['cookie_name'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only'], $this->config['cookie_same_site']);
 		}
 
 		// closed -> destroyed
 		elseif ($newstate === 'destroyed' and $this->state === 'closed')
 		{
 			// delete the session cookie
-			\Cookie::delete($this->config['cookie_name'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+			\Cookie::delete($this->config['cookie_name'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only'], $this->config['cookie_same_site']);
 		}
 
 		// gc, can always be run
@@ -632,11 +632,11 @@ abstract class Session_Driver
 			// write the session cookie
 			if ($this->config['expire_on_close'])
 			{
-				return \Cookie::set($this->config['cookie_name'], $payload, 0, $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+				return \Cookie::set($this->config['cookie_name'], $payload, 0, $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only'], $this->config['cookie_same_site']);
 			}
 			else
 			{
-				return \Cookie::set($this->config['cookie_name'], $payload, $this->config['expiration_time'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only']);
+				return \Cookie::set($this->config['cookie_name'], $payload, $this->config['expiration_time'], $this->config['cookie_path'], $this->config['cookie_domain'], null, $this->config['cookie_http_only'], $this->config['cookie_same_site']);
 			}
 		}
 	}
@@ -816,6 +816,7 @@ abstract class Session_Driver
 				case 'post_cookie_name':
 				case 'http_header_name':
 				case 'cookie_domain':
+				case 'cookie_same_site':
 					// make sure it's a string
 					$item = (string) $item;
 				break;
