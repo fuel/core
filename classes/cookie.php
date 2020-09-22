@@ -101,8 +101,8 @@ class Cookie
 		$expiration = $expiration > 0 ? $expiration + time() : 0;
 		
 		if (is_null($same_site)) {
-            return setcookie($name, $value, $expiration, $path, $domain, $secure, $http_only);
-        }
+		    return setcookie($name, $value, $expiration, $path, $domain, $secure, $http_only);
+		}
 		
 		if (PHP_VERSION_ID < 70300) {
 		    return setcookie($name, $value, $expiration, "{$path}; samesite={$same_site}", $domain, $secure, $http_only);
@@ -138,8 +138,8 @@ class Cookie
 		unset($_COOKIE[$name]);
 		
 		if (is_null($same_site)) {
-            return static::set($name, null, -86400, $path, $domain, $secure, $http_only);
-        }
+		    return static::set($name, null, -86400, $path, $domain, $secure, $http_only);
+		}
 
 		// Nullify the cookie and make it expire
 		if (PHP_VERSION_ID < 70300) {
