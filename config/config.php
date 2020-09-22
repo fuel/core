@@ -596,6 +596,17 @@ return array(
 		 */
 
 		'http_only' => false,
+		
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Security - Mode
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Samesite restrictions on cookie, options include Lax, Strict or None.
+		 *
+		 */
+
+		'same_site' => null,
 	),
 
 	/**
