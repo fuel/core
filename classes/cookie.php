@@ -100,22 +100,24 @@ class Cookie
 		// add the current time so we have an offset
 		$expiration = $expiration > 0 ? $expiration + time() : 0;
 		
-		if (is_null($same_site)) {
+		if (is_null($same_site))
+		{
 		    return setcookie($name, $value, $expiration, $path, $domain, $secure, $http_only);
 		}
 		
-		if (PHP_VERSION_ID < 70300) {
+		if (PHP_VERSION_ID < 70300)
+		{
 		    return setcookie($name, $value, $expiration, "{$path}; samesite={$same_site}", $domain, $secure, $http_only);
 		}
 
-		return setcookie($name, $value, [
+		return setcookie($name, $value, array(
 		    'expires' => $expiration,
 		    'path' => $path,
 		    'domain' => $domain,
 		    'samesite' => $same_site,
 		    'secure' => $secure,
 		    'httponly' => $http_only,
-		]);
+		));
 	}
 
 	/**
@@ -137,22 +139,24 @@ class Cookie
 		// Remove the cookie
 		unset($_COOKIE[$name]);
 		
-		if (is_null($same_site)) {
+		if (is_null($same_site))
+		{
 		    return static::set($name, null, -86400, $path, $domain, $secure, $http_only);
 		}
 
 		// Nullify the cookie and make it expire
-		if (PHP_VERSION_ID < 70300) {
+		if (PHP_VERSION_ID < 70300)
+		{
 		    return setcookie($name, null, -86400, "{$path}; samesite={$same_site}", $domain, $secure, $http_only);
 		}
 
-		return setcookie($name, null, [
+		return setcookie($name, null, array(
 		    'expires' => -86400,
 		    'path' => $path,
 		    'domain' => $domain,
 		    'samesite' => $same_site,
 		    'secure' => $secure,
 		    'httponly' => $http_only,
-		]);
+		));
 	}
 }
