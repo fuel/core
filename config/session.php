@@ -96,6 +96,7 @@ return array(
 	'cookie_domain'    => '',
 	'cookie_path'      => '/',
 	'cookie_http_only' => null,
+	'cookie_same_site' => null,
 
 	/**
 	 * -------------------------------------------------------------------------

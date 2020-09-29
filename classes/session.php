@@ -42,6 +42,7 @@ class Session
 		'cookie_domain'             => '',
 		'cookie_path'               => '/',
 		'cookie_http_only'          => null,
+		'cookie_same_site'          => null,
 		'encrypt_cookie'            => true,
 		'expire_on_close'           => false,
 		'expiration_time'           => 7200,
