@@ -200,6 +200,7 @@ class Session_Db extends \Session_Driver
 				{
 					// create the new session record
 					list($notused, $result) = \DB::insert($this->config['table'], array_keys($session))->values($session)->execute($this->config['database']);
+					$this->record = \DB::select()->where('session_id', '=', $this->keys['session_id'])->from($this->config['table'])->execute($this->config['database']);
 				}
 				else
 				{
@@ -231,6 +232,10 @@ class Session_Db extends \Session_Driver
 							logger(\Fuel::L_ERROR, 'Session update failed, session record could not be recovered using the previous id');
 							$result = false;
 						}
+					}
+					else
+					{
+						$this->record = \DB::select()->where('session_id', '=', $this->keys['session_id'])->from($this->config['table'])->execute($this->config['database']);
 					}
 				}
 
