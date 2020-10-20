@@ -22,7 +22,7 @@
  *
  */
 
-return [
+return array(
 	/**
 	 * -------------------------------------------------------------------------
 	 *  Driver
@@ -167,32 +167,32 @@ return [
 	 *
 	 *  Example:
 	 *
-	 *      'example' => [
+	 *      'example' => array(
 	 *          'quality' => 100,
 	 *          'bgcolor' => null,
-	 *          'actions' => [
-	 *              ['crop_resize', 200, 200],
-	 *              ['border', 20, "#f00"],
-	 *              ['rounded', 10],
-	 *              ['output', 'png']
-	 *          ]
-	 *      ],
-	 * 		'example_multilevel' => [
-	 * 			'thumbnail' => [
+	 *          'actions' => array(
+	 *              array('crop_resize', 200, 200),
+	 *              array('border', 20, "#f00"),
+	 *              array('rounded', 10),
+	 *              array('output', 'png')
+	 *          )
+	 *      ),
+	 * 		'example_multilevel' => array(
+	 * 			'thumbnail' => array(
 	 * 				'quality' => 100,
 	 * 				'bgcolor' => null,
-	 * 				'actions' => [
-	 * 					 ['crop_resize', 175, 175]
-	 * 				]
-	 * 			],
-	 * 			'preview' => [
+	 * 				'actions' => array(
+	 * 					 array('crop_resize', 175, 175)
+	 * 				)
+	 * 			),
+	 * 			'preview' => array(
 	 * 				'quality' => 100,
 	 * 				'bgcolor' => null,
-	 * 				'actions' => [
-	 * 					 ['crop_resize', 200, 400]
-	 * 				]
-	 * 			]
-	 * 		]
+	 * 				'actions' => array(
+	 * 					 array('crop_resize', 200, 400)
+	 * 				)
+	 * 			)
+	 * 		)
 	 *
 	 *
 	 *  [!] WARNING:
@@ -202,5 +202,5 @@ return [
 	 *
 	 */
 
-	'presets' => [],
-];
+	'presets' => array(),
+);
