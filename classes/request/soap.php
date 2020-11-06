@@ -145,12 +145,30 @@ class Request_Soap extends \Request_Driver
 			$mime = $this->response_info('content_type', 'application/soap+xml');
 			$this->set_response($body, $this->response_info('http_code', 200), $mime, $headers, isset($this->headers['Accept']) ? $this->headers['Accept'] : null);
 
+			$this->set_defaults();
 			return $this;
 		}
 		catch (\SoapFault $e)
 		{
+			$this->set_defaults();
 			throw new \RequestException($e->getMessage(), $e->getCode(), $e);
 		}
+	}
+	
+	/**
+	 * Extends parent to reset headers as well
+	 *
+	 * @return  Request_Soap
+	 */
+	protected function set_defaults()
+	{
+		if (empty($this->options['trace']))
+		{
+			parent::set_defaults();
+			$this->function = '';
+		}
+
+		return $this;
 	}
 
 	/**
