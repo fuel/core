@@ -154,7 +154,7 @@ class Request_Soap extends \Request_Driver
 			throw new \RequestException($e->getMessage(), $e->getCode(), $e);
 		}
 	}
-	
+
 	/**
 	 * Extends parent to reset headers as well
 	 *
