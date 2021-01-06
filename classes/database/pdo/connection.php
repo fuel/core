@@ -430,7 +430,41 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	public function list_indexes($table, $like = null)
 	{
-		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
+	// Quote the table name
+	$table = $this->quote_table($table);
+
+	if (is_string($like))
+	{
+		// Search for index names
+		$q = $this->_connection->query('SHOW INDEX FROM '.$table.' WHERE '.$this->quote_identifier('Key_name').' LIKE '.$this->quote($like), false);
+	}
+	else
+	{
+		// Find all index names
+		$q = $this->_connection->query('SHOW INDEX FROM '.$table, false);
+	}
+	$q->execute();
+	$result  = $q->fetchAll();	
+
+	// unify the result
+	$indexes = array();
+	foreach ($result as $row)
+	{
+		$index = array(
+			'name' => $row['Key_name'],
+			'column' => $row['Column_name'],
+			'order' => $row['Seq_in_index'],
+			'type' => $row['Index_type'],
+			'primary' => $row['Key_name'] == 'PRIMARY' ? true : false,
+			'unique' => $row['Non_unique'] == 0 ? true : false,
+			'null' => $row['Null'] == 'YES' ? true : false,
+			'ascending' => $row['Collation'] == 'A' ? true : false,
+		);
+
+		$indexes[] = $index;
+	}
+
+	return $indexes;
 	}
 
 	/**
