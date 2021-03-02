@@ -55,7 +55,7 @@ class Package
 					$pkg = $path;
 					$path = null;
 				}
-				// MUST use external brackets due to prio('and') < prio('=') < prio('&&') - 
+				// MUST use external brackets due to prio('and') < prio('=') < prio('&&') -
 				// don't remove them xor replace 'and' with '&&'
 				$result = (static::load($pkg, $path) and $result);
 			}

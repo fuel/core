@@ -504,7 +504,7 @@ class Finder
 						clearstatcache(true, $dir.$file);
 						is_file($dir.$file) and unlink($dir.$file);
 					}
-					catch (Exception $e)
+					catch (\Exception $e)
 					{
 						// Cache has mostly likely already been deleted,
 						// let return happen normally.
