@@ -476,7 +476,7 @@ class Fieldset_Field
 		{
 			return $this->build();
 		}
-		catch (\Exception $e)
+		catch (\Throwable $e)
 		{
 			return $e->getMessage();
 		}
