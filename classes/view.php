@@ -226,7 +226,7 @@ class View
 		{
 			return $this->render();
 		}
-		catch (\Exception $e)
+		catch (\Throwable $e)
 		{
 			\Errorhandler::exception_handler($e);
 
@@ -257,7 +257,7 @@ class View
 				// Load the view within the current scope
 				include $__file_name;
 			}
-			catch (\Exception $e)
+			catch (\Throwable $e)
 			{
 				// Delete the output buffer
 				ob_end_clean();
