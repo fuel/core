@@ -161,7 +161,7 @@ class Theme
 		{
 			return (string) $this->render();
 		}
-		catch (\Exception $e)
+		catch (\Throwable $e)
 		{
 			\Errorhandler::exception_handler($e);
 

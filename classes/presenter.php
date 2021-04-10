@@ -351,7 +351,7 @@ abstract class Presenter
 		{
 			return $this->render();
 		}
-		catch (\Exception $e)
+		catch (\Throwable $e)
 		{
 			\Errorhandler::exception_handler($e);
 
