@@ -257,13 +257,10 @@ class View
 				// Load the view within the current scope
 				include $__file_name;
 			}
-			catch (\Throwable $e)
+			finally
 			{
 				// Delete the output buffer
 				ob_end_clean();
-
-				// Re-throw the exception
-				throw $e;
 			}
 
 			// Get the captured output and close the buffer
