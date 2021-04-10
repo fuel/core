@@ -84,7 +84,7 @@ class Database_Query
 			// Return the SQL string
 			return $this->compile();
 		}
-		catch (\Exception $e)
+		catch (\Throwable $e)
 		{
 			return $e->getMessage();
 		}
