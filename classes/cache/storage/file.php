@@ -330,22 +330,25 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 		// make sure it exists
 		if (is_file($file))
 		{
-			$handle = fopen($file, 'r');
-			if ($handle)
-			{
-				// wait for a lock
-				while( ! flock($handle, LOCK_SH));
-
-				// read the cache data
-				$payload = file_get_contents($file);
-
-				//release the lock
-				flock($handle, LOCK_UN);
-
-				// close the file
-				fclose($handle);
-
+			$handle = @fopen($file, 'r');
+			if ( ! $handle) {
+				return false;
 			}
+			
+			// wait for a lock
+			while( ! flock($handle, LOCK_SH));
+
+			// read the cache data
+			$payload = @file_get_contents($file);
+			if ( ! $payload) {
+				return false;
+			}
+
+			//release the lock
+			flock($handle, LOCK_UN);
+
+			// close the file
+			fclose($handle);			
 		}
 
 		try
