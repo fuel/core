@@ -176,7 +176,24 @@ return array(
 	 *              array('rounded', 10),
 	 *              array('output', 'png')
 	 *          )
-	 *      )
+	 *      ),
+	 * 		'example_multilevel' => array(
+	 * 			'thumbnail' => array(
+	 * 				'quality' => 100,
+	 * 				'bgcolor' => null,
+	 * 				'actions' => array(
+	 * 					 array('crop_resize', 175, 175)
+	 * 				)
+	 * 			),
+	 * 			'preview' => array(
+	 * 				'quality' => 100,
+	 * 				'bgcolor' => null,
+	 * 				'actions' => array(
+	 * 					 array('crop_resize', 200, 400)
+	 * 				)
+	 * 			)
+	 * 		)
+	 *
 	 *
 	 *  [!] WARNING:
 	 *

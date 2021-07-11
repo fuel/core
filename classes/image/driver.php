@@ -83,10 +83,10 @@ abstract class Image_Driver
 	public function preset($name)
 	{
 		$vars = func_get_args();
-		if (isset($this->config['presets'][$name]))
+		if (\Arr::get($this->config['presets'], $name))
 		{
 			$old_config   = $this->config;
-			$this->config = array_merge($this->config, $this->config['presets'][$name]);
+			$this->config = array_merge($this->config, \Arr::get($this->config['presets'], $name));
 			foreach ($this->config['actions'] AS $action)
 			{
 				$func = $action[0];
