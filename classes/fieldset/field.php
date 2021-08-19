@@ -523,6 +523,17 @@ class Fieldset_Field
 	}
 
 	/**
+	 * Alias for $this->fieldset->disable() to allow chaining
+	 *
+	 * @return Fieldset_Field
+	 */
+	public function disable()
+	{
+		$this->fieldset()->disable($this->name);
+		return $this;
+	}
+
+	/**
 	 * Build the field
 	 *
 	 * @return  string
