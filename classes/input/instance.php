@@ -450,7 +450,7 @@ class Input_Instance
 		$method = strtolower($this->method());
 
 		// get the content type from the header, strip optional parameters
-		$content_header = \Input::headers('Content-Type');
+		$content_header = \Input::headers('Content-Type', false);
 		if (($content_type = strstr($content_header, ';', true)) === false)
 		{
 			$content_type = $content_header;
