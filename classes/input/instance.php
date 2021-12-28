@@ -196,7 +196,7 @@ class Input_Instance
 
 		// in case of incorrect rewrites, we may need to cleanup and
 		// recreate the QUERY_STRING and $_GET
-		if (strpos($uri, '?') !== false)
+		if (strpos($uri, '?') !== false or array_key_exists($uri, $_GET))
 		{
 			// log this issue
 			\Log::write(\Fuel::L_DEBUG, 'Your rewrite rules are incorrect, change "index.php?/$1 [QSA,L]" to "index.php/$1 [L]"!');
@@ -330,7 +330,7 @@ class Input_Instance
 			// get php raw input
 			$this->raw_input = file_get_contents('php://input');
 		}
-		
+
 		return $this->raw_input;
 	}
 
