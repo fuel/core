@@ -82,6 +82,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 *
 	 * @return bool
 	 */
+	#[\ReturnTypeWillChange]
 	public function seek($offset)
 	{
 		if ( ! $this->offsetExists($offset))
@@ -91,6 +92,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 
 		$this->_current_row = $offset;
 
+		// since PHP 8.1: must return void
 		return true;
 	}
 
@@ -103,6 +105,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 *
 	 * @return  mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function current()
 	{
 		if ($this->valid())
@@ -126,6 +129,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 *
 	 * @return  mixed
 	 */
+	#[\ReturnTypeWillChange]
 	public function next()
 	{
 		parent::next();
@@ -137,6 +141,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 		// sanitize the data if needed
 		$this->_sanitizate();
 
+		// since PHP 8.1: must return void
 		return $this->_row;
 	}
 
