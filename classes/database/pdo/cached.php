@@ -83,7 +83,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 * @return bool
 	 */
 	#[\ReturnTypeWillChange]
-	public function seek($offset)
+	public function seek(/*int */$offset)/*: void*/
 	{
 		if ( ! $this->offsetExists($offset))
 		{
@@ -92,7 +92,6 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 
 		$this->_current_row = $offset;
 
-		// since PHP 8.1: must return void
 		return true;
 	}
 
@@ -106,7 +105,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 * @return  mixed
 	 */
 	#[\ReturnTypeWillChange]
-	public function current()
+	public function current()/*: mixed*/
 	{
 		if ($this->valid())
 		{
@@ -130,7 +129,7 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 * @return  mixed
 	 */
 	#[\ReturnTypeWillChange]
-	public function next()
+	public function next()/*: void*/
 	{
 		parent::next();
 
@@ -141,7 +140,6 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 		// sanitize the data if needed
 		$this->_sanitizate();
 
-		// since PHP 8.1: must return void
 		return $this->_row;
 	}
 
@@ -161,7 +159,8 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 *
 	 * @return boolean
 	 */
-	public function offsetExists($offset)
+	#[\ReturnTypeWillChange]
+	public function offsetExists(/*mixed */$offset)/*: bool*/
 	{
 		return isset($this->_results[$offset]);
 	}
@@ -175,7 +174,8 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 *
 	 * @return  mixed
 	 */
-	public function offsetGet($offset)
+	#[\ReturnTypeWillChange]
+	public function offsetGet(/*mixed */$offset)/*: mixed*/
 	{
 		if ( ! $this->offsetExists($offset))
 		{
@@ -200,7 +200,8 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 *
 	 * @throws  \FuelException
 	 */
-	final public function offsetSet($offset, $value)
+	#[\ReturnTypeWillChange]
+	final public function offsetSet(/*mixed */$offset, /*mixed */$value)/*: void*/
 	{
 		throw new \FuelException('Database results are read-only');
 	}
@@ -213,7 +214,8 @@ class Database_PDO_Cached extends \Database_Result implements \SeekableIterator,
 	 *
 	 * @throws  \FuelException
 	 */
-	final public function offsetUnset($offset)
+	#[\ReturnTypeWillChange]
+	final public function offsetUnset(/*mixed */$offset)/*: void*/
 	{
 		throw new \FuelException('Database results are read-only');
 	}
