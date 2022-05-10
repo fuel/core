@@ -155,7 +155,7 @@ class Mongo_Db
 		{
 			$options['replicaSet'] = $config['replicaset'];
 		}
-		
+
 		if ( ! empty($config['readPreference']))
 		{
 			$options['readPreference'] = $config['readPreference'];
@@ -557,10 +557,10 @@ class Mongo_Db
 	 */
 	public function like($field = '', $value = '', $flags = 'i', $disable_start_wildcard = false, $disable_end_wildcard = false)
 	{
-		$field = (string) trim($field);
+		$field = trim((string) $field);
 		$this->_where_init($field);
 
-		$value = (string) trim($value);
+		$value = trim((string) $value);
 		$value = quotemeta($value);
 
 		(bool) $disable_start_wildcard === false and $value = '^'.$value;

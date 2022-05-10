@@ -523,7 +523,7 @@ class Format
 	 */
 	private function _from_json($string)
 	{
-		return json_decode(trim($string));
+		return json_decode(trim((string) $string));
 	}
 
 	/**
@@ -534,7 +534,7 @@ class Format
 	 */
 	private function _from_serialize($string)
 	{
-		return unserialize(trim($string));
+		return unserialize(trim((string) $string));
 	}
 
 	/**

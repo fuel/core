@@ -249,7 +249,7 @@ class Database_Query
 		}
 
 		// Import the SQL locally
-		$sql = $this->_sql;
+		$sql = (string) $this->_sql;
 
 		if ( ! empty($this->_parameters))
 		{

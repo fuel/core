@@ -861,7 +861,7 @@ class Validation
 
 		foreach ($emails as $e)
 		{
-			if ( ! filter_var(trim($e), FILTER_VALIDATE_EMAIL))
+			if ( ! is_string($e) or ! filter_var(trim($e), FILTER_VALIDATE_EMAIL))
 			{
 				return false;
 			}

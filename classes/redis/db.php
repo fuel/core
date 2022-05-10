@@ -255,9 +255,12 @@ class Redis_Db
 	protected function readResponse()
 	{
 		//  parse the response based on the reply identifier
-		$reply = trim(fgets($this->connection, 512));
+		if (($reply = fgets($this->connection, 512) === false))
+		{
+			$reply = "";
+		}
 
-		switch (substr($reply, 0, 1))
+		switch (substr(trim($reply), 0, 1))
 		{
 			// error reply
 			case '-':
