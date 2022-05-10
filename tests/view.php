@@ -21,22 +21,26 @@ class Arraylike implements \ArrayAccess, \IteratorAggregate
 		$this->items = $items;
 	}
 
-	public function offsetExists($offset)
+	#[\ReturnTypeWillChange]
+	public function offsetExists(/*mixed */$offset)/*: bool*/
 	{
 		return isset($this->items[$offset]);
 	}
 
-	public function offsetGet($offset)
+	#[\ReturnTypeWillChange]
+	public function offsetGet(/*mixed */$offset)/*: mixed*/
 	{
 		return $this->items[$offset];
 	}
 
-	public function offsetSet($offset, $value)
+	#[\ReturnTypeWillChange]
+	public function offsetSet(/*mixed */$offset, /*mixed */$value)/*: void*/
 	{
 		$this->items[$offset] = $value;
 	}
 
-	public function offsetUnset($offset)
+	#[\ReturnTypeWillChange]
+	final public function offsetUnset(/*mixed */$offset)/*: void*/
 	{
 		unset($this->items[$offset]);
 	}

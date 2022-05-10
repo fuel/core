@@ -727,12 +727,14 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * Implementation of the Iterator interface
 	 */
 
-	public function rewind()
+	#[\ReturnTypeWillChange]
+	public function rewind()/*: void*/
 	{
 		reset($this->_data);
 	}
 
-	public function current()
+	#[\ReturnTypeWillChange]
+	public function current()/*: mixed*/
 	{
 		if ($this->_sanitization_enabled)
 		{
@@ -741,12 +743,14 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		return current($this->_data);
 	}
 
-	public function key()
+	#[\ReturnTypeWillChange]
+	public function key()/*: mixed*/
 	{
 		return key($this->_data);
 	}
 
-	public function next()
+	#[\ReturnTypeWillChange]
+	public function next()/*: void*/
 	{
 		if ($this->_sanitization_enabled)
 		{
@@ -755,7 +759,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 		return next($this->_data);
 	}
 
-	public function valid()
+	#[\ReturnTypeWillChange]
+	public function valid()/*: bool*/
 	{
 		return key($this->_data) !== null;
 	}
@@ -767,7 +772,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * @param   string  $value   value
 	 * @return  void
 	 */
-	public function offsetSet($offset, $value)
+	#[\ReturnTypeWillChange]
+	public function offsetGet(/*mixed */$offset)/*: mixed*/
 	{
 		$this->_data[$offset] = $value;
 	}
@@ -778,7 +784,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * @param   string  $offset  class property
 	 * @return  bool
 	 */
-	public function offsetExists($offset)
+	#[\ReturnTypeWillChange]
+	public function offsetExists(/*mixed */$offset)/*: bool*/
 	{
 		return array_key_exists($offset, $this->_data);
 	}
@@ -789,7 +796,9 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * @param   string  $offset  class property
 	 * @return  void
 	 */
-	public function offsetUnset($offset)
+
+	#[\ReturnTypeWillChange]
+	public function offsetUnset(/*mixed */$offset)/*: void*/
 	{
 		unset($this->_data[$offset]);
 	}
@@ -800,7 +809,8 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * @param   string  $offset  class property
 	 * @return  mixed
 	 */
-	public function offsetGet($offset)
+	#[\ReturnTypeWillChange]
+	public function offsetGet(/*mixed */$offset)/*: mixed*/
 	{
 		if (array_key_exists($offset, $this->_data))
 		{
