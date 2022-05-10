@@ -538,3 +538,34 @@ if ( ! function_exists('hash_pbkdf2'))
 		return substr($r ? $dk : bin2hex($dk), 0, $kl);
 	}
 }
+
+/**
+ * array_key_first for PHP < 7.3.0
+ */
+if ( ! function_exists('array_key_first'))
+{
+	function array_key_first(array $arr)
+	{
+		foreach ($arr as $key => $unused)
+		{
+			return $key;
+		}
+		return null;
+	}
+}
+
+/**
+ * array_key_last for PHP < 7.3.0
+ */
+if ( ! function_exists('array_key_last'))
+{
+	function array_key_last(array $array)
+	{
+		if( ! empty($array))
+		{
+			return key(array_slice($array, -1, 1, true));
+		}
+
+		return null;
+	}
+}
