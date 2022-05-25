@@ -963,6 +963,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 *
 	 * @return  array  model data
 	 */
+	#[\ReturnTypeWillChange]
+	public function __serialize()/*: array*/
+	{
+		return $this->serialize();
+	}
+
 	public function serialize()
 	{
 		$data = $this->_data;
@@ -979,6 +985,12 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * @param   string  $data
 	 * @return  array   model data
 	 */
+	#[\ReturnTypeWillChange]
+	public function __unserialize(/* array*/ $data)/*: void*/
+	{
+		$this->unserialize($data);
+	}
+
 	public function unserialize($data)
 	{
 		$data = unserialize($data);
