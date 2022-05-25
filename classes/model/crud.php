@@ -773,7 +773,7 @@ class Model_Crud extends \Model implements \Iterator, \ArrayAccess, \Serializabl
 	 * @return  void
 	 */
 	#[\ReturnTypeWillChange]
-	public function offsetSet(/*mixed */$offset)/*: mixed*/
+	public function offsetSet(/*mixed */$offset, /*mixed */$value)/*: void*/
 	{
 		$this->_data[$offset] = $value;
 	}
