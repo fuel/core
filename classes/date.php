@@ -44,6 +44,57 @@ class Date
 	protected static $server_gmt_offset = 0;
 
 	/**
+	 * Date/time translation table from PHP date() to strftime()
+	 *
+	 */
+	protected static $replacements = array(
+		'%e'  => 'j', 			// Day of the month without leading zeros
+		'%j'  => 'z', 			// Day of the year, 3 digits with leading zeros
+		'%U'  => '_', 			// Week number of the given year, starting with the first Sunday as the first week (not implemented)
+		'%h'  => 'M', 			// Abbreviated month name
+		'%C'  => '_', 			// Two digit representation of the century (year divided by 100, truncated to an integer) (not implemented)
+		'%g'  => 'y', 			// Two digit representation of the year going by ISO-8601:1988 standards (see %V)
+		'%G'  => 'Y', 			// 4 digit year
+		'%k'  => 'G', 			// Hour in 24-hour format
+		'%l'  => 'g', 			// Hour in 12-hour format
+		'%r'  => 'h:i:s A', 	// Example: 09:34:17 PM
+		'%R'  => 'G:i', 		// Example: 00:35 for 12:35 AM
+		'%T'  => 'G:i:s', 		// Example: 21:34:17 for 09:34:17 PM
+		'%X'  => 'G:i:s', 		// Preferred time representation based on locale, without the date, Example: 03:59:16 or 15:59:16
+		'%Z'  => 'T', 			// The time zone abbreviation. Example: EST for Eastern Time
+		'%c'  => 'Y-m-d H:i:s', // Preferred date and time stamp based on locale
+		'%D'  => 'm/d/y',		// Example: 02/05/09 for February 5, 2009
+		'%F'  => 'Y-m-d',		// Example: 2009-02-05 for February 5, 2009
+		'%n'  => '\\n',			// newline
+		'%t'  => '\\t',			// tab
+		'%%'  => '%', 			// literal percent
+		'%A'  => 'l', 			// Name of day, long			Monday
+		'%a'  => 'd',			// Name of day, short			Mon
+		'%B'  => 'F',			// Name of month, long			April
+		'%b'  => 'M',			// Name of month, short			Apr
+		'%-d' => 'j',			// Day without leading zeros		1
+		'%d'  => 'd',			// Day with leading zeros		01
+		'%-m' => 'n',			// Month without leading zeros		4
+		'%m'  => 'm',			// Month with leading zeros		04
+		'%y'  => 'y',			// Year 2 character			12
+		'%Y'  => 'Y',			// Year 4 character			2012
+		'%u'  => 'N',			// Day of the week (1-7)		1
+		'%w'  => 'w',			// Zero-based day of week (0-6)		0
+		'%-j' => 'z',			// Day of the year (0-365)		123
+		'%W'  => 'W',			// Week # of the year			42
+		'%V'  => 'o',			// ISO-8601 week number			42
+		'%P'  => 'a',			// am or pm				am
+		'%p'  => 'A',			// AM or PM				AM
+		'%-I' => 'g',			// 12-hour format, no leading zeros	5
+		'%I'  => 'h',			// 12-hour format, leading zeros	05
+		'%-H' => 'G',			// 24-hour format, no leading zeros	5
+		'%H'  => 'H',			// 24-hour format, leading zeros	05
+		'%M'  => 'i',			// Minutes				09
+		'%S'  => 's', 			// Seconds				59
+		'%s'  => 'U',			// Unix timestamp			123344556
+	);
+
+	/**
 	 * @var string the timezone to be used to output formatted data
 	 */
 	public static $display_timezone = null;
@@ -267,12 +318,13 @@ class Date
 
 	public static function strptime($input, $format)
 	{
+		if (version_compare(PHP_VERSION, '8.1.0', '<'))
+		{
+			return strptime($input, $format);
+		}
+
 		// convert the format string from glibc to date format (where possible)
-		$new_format = str_replace(
-			array('%a', '%A', '%d', '%e', '%j', '%u', '%w', '%U'  , '%V', '%W'  , '%b', '%B', '%h', '%m', '%C'  , '%g', '%G', '%y', '%Y', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r'     , '%R' , '%S', '%T'   , '%X'  , '%z', '%Z', '%c'  , '%D'   , '%F'   , '%s', '%x'  , '%n', '%t', '%%'),
-			array('D' , 'l' , 'd' , 'j' , 'N' , 'z' , 'w' , '[^^]', 'W' , '[^^]', 'M' , 'F' , 'M' , 'm' , '[^^]', 'Y' , 'o' , 'y' , 'Y' , 'H' , 'G' , 'h' , 'g' , 'i' , 'A' , 'a' , 'H:i:s A', 'H:i', 's' , 'H:i:s', '[^^]', 'O' , 'T ', '[^^]', 'm/d/Y', 'Y-m-d', 'U' , '[^^]', "\n", "\t", '%' ),
-			$format
-		);
+		$new_format = strtr($format, static::$replacements);
 
 		// parse the input
 		$parsed = date_parse_from_format($new_format, $input);
@@ -324,20 +376,18 @@ class Date
 	 *
 	 * @param	string	$format       Format to check against (see https://www.php.net/manual/en/datetime.createfromformat.php)
 	 * @param	int	    $timestamp    Unix timestamp
-	 * @return	bool
-	 */
+	 * @return	string
+	 * @thanks  https://gist.github.com/bohwaz/42fc223031e2b2dd2585aab159a20f30
+ 	 */
 
 	public static function strftime($format, $timestamp)
 	{
-		// convert the format string from glibc to date format (where possible)
-		$new_format = str_replace(
-			array('%a', '%A', '%d', '%e', '%j', '%u', '%w', '%U'  , '%V', '%W'  , '%b', '%B', '%h', '%m', '%C'  , '%g', '%G', '%y', '%Y', '%H', '%k', '%I', '%l', '%M', '%p', '%P', '%r'     , '%R' , '%S', '%T'   , '%X'  , '%z', '%Z', '%c'  , '%D'   , '%F'   , '%s', '%x'  , '%n', '%t', '%%'),
-			array('D' , 'l' , 'd' , 'j' , 'N' , 'z' , 'w' , '[^^]', 'W' , '[^^]', 'M' , 'F' , 'M' , 'm' , '[^^]', 'Y' , 'o' , 'y' , 'Y' , 'H' , 'G' , 'h' , 'g' , 'i' , 'A' , 'a' , 'H:i:s A', 'H:i', 's' , 'H:i:s', '[^^]', 'O' , 'T ', '[^^]', 'm/d/Y', 'Y-m-d', 'U' , '[^^]', "\n", "\t", '%' ),
-			$format
-		);
+		if (version_compare(PHP_VERSION, '8.1.0', '<'))
+		{
+			return strftime($format, $timestamp);
+		}
 
-
-		return date($new_format, $timestamp);
+		return date(strtr($format, static::$replacements), $timestamp);
 	}
 
 	/**
