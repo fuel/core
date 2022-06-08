@@ -324,7 +324,7 @@ class Date
 		}
 
 		// convert the format string from glibc to date format (where possible)
-		$new_format = strtr($format, static::$replacements);
+		$new_format = static::_strtr($format);
 
 		// parse the input
 		$parsed = date_parse_from_format($new_format, $input);
@@ -387,7 +387,37 @@ class Date
 			return strftime($format, $timestamp);
 		}
 
-		return date(strtr($format, static::$replacements), $timestamp);
+		return date(static::_strtr($format), $timestamp);
+	}
+
+	/*
+	 *
+	 */
+	protected static function _strtr($format)
+	{
+		$new_format = "";
+		while ($format != "")
+		{
+			$match = false;
+			foreach (static::$replacements as $old => $new)
+			{
+				if (strpos($format, $old) === 0)
+				{
+					$new_format .= $new;
+					$format = substr($format, strlen($old));
+					$match = true;
+					break;
+				}
+			}
+			if ( ! $match)
+			{
+				$char = substr($format, 0, 1);
+				$new_format .= ctype_alpha($char) ? "\\".$char : $char;
+				$format = substr($format, 1);
+			}
+		}
+		return $new_format;
+
 	}
 
 	/**
