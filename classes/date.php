@@ -386,7 +386,7 @@ class Date
 			return strftime($format, $timestamp);
 		}
 
-		if (is_null(timestamp))
+		if (is_null($timestamp))
 		{
 			$timestamp = new \DateTime;
 		}
