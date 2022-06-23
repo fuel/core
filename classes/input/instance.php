@@ -174,14 +174,14 @@ class Input_Instance
 		}
 
 		// Remove the base URL from the URI
-		$base_url = parse_url(\Config::get('base_url'), PHP_URL_PATH);
+		$base_url = parse_url((string) \Config::get('base_url', ''), PHP_URL_PATH);
 		if ($uri !== '' and $base_url !== '' and strncmp($uri, $base_url, strlen($base_url)) === 0)
 		{
 			$uri = substr($uri, strlen($base_url) - 1);
 		}
 
 		// If we are using an index file (not mod_rewrite) then remove it
-		$index_file = \Config::get('index_file');
+		$index_file = \Config::get('index_file', false);
 		if ($index_file and strncmp($uri, $index_file, strlen($index_file)) === 0)
 		{
 			$uri = substr($uri, strlen($index_file));

@@ -638,8 +638,8 @@ class Fieldset_Field
 	{
 		$form = $this->fieldset()->form();
 
-		$required_mark = $this->get_attribute('required', null) ? $form->get_config('required_mark', null) : null;
-		$label = $this->label ? $form->label($this->label, null, array('id' => 'label_'.$this->name, 'for' => $this->get_attribute('id', null), 'class' => $form->get_config('label_class', null))) : '';
+		$required_mark = $this->get_attribute('required', null) ? $form->get_config('required_mark', '') : '';
+		$label = $this->label ? $form->label($this->label, null, array('id' => 'label_'.$this->name, 'for' => $this->get_attribute('id', ''), 'class' => $form->get_config('label_class', ''))) : '';
 		$error_template = $form->get_config('error_template', '');
 		$error_msg = ($form->get_config('inline_errors') && $this->error()) ? str_replace('{error_msg}', $this->error(), $error_template) : '';
 		$error_class = $this->error() ? $form->get_config('error_class') : '';

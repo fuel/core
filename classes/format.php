@@ -240,7 +240,7 @@ class Format
 			return 	implode($delimiter, array_map(function($item) use($enclosure, $escape, $delimiter, $enclose_numbers) {
 				if ( ! is_numeric($item) or $enclose_numbers)
 				{
-					$item = $enclosure.str_replace($enclosure, $escape.$enclosure, $item).$enclosure;
+					$item = $enclosure.str_replace($enclosure, $escape.$enclosure, (string) $item).$enclosure;
 				}
 				return $item;
 			}, $items));

@@ -195,7 +195,7 @@ abstract class Database_Query_Builder extends \Database_Query
 		{
 			list($column, $direction) = $group;
 
-			$direction = strtoupper($direction);
+			$direction = strtoupper( (string) $direction);
 			if ( ! empty($direction))
 			{
 				// Make the direction uppercase
