@@ -52,7 +52,7 @@ class Route
 	/**
 	 * @var  string  route module
 	 */
-	public $module = null;
+	public $module = '';
 
 	/**
 	 * @var  string  route directory
