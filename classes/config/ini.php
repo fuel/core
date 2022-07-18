@@ -43,7 +43,7 @@ class Config_Ini extends \Config_File
 	 */
 	protected function export_format($contents)
 	{
-		return $this->arrayToConfig($contents);
+		return $this->buildOutputString($contents);
 	}
 
     /**
