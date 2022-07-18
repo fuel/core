@@ -43,6 +43,41 @@ class Config_Ini extends \Config_File
 	 */
 	protected function export_format($contents)
 	{
-		throw new \ConfigException('Saving config to ini is not supported at this time');
+		return $this->arrayToConfig($contents);
 	}
+
+    /**
+     * Generated the output of the ini file, suitable for echo'ing or
+     * writing back to the ini file.
+     *
+     * @param array $array array of ini data
+     *
+     * @return  string
+     */
+    protected function buildOutputString(array $array, array $parent = []): string
+    {
+        $returnValue = '';
+
+        foreach ($array as $key => $value)
+        {
+            if (is_array($value)) // Subsection case
+            {
+                // Merge all the sections into one array
+                if (is_int($key)) $key++;
+                $subSection = array_merge($parent, (array)$key);
+                // Add section information to the output
+                if (Arr::is_assoc($value))
+                {
+                    if (count($subSection) > 1) $returnValue .= PHP_EOL;
+                    $returnValue .= '[' . implode(':', $subSection) . ']' . PHP_EOL;
+                }
+                // Recursively traverse deeper
+                $returnValue .= $this->buildOutputString($value, $subSection);
+                $returnValue .= PHP_EOL;
+            }
+            elseif (isset($value)) $returnValue .= "$key=" . (is_bool($value) ? var_export($value, true) : $value) . PHP_EOL; // Plain key->value case
+        }
+
+        return count($parent) ? $returnValue : rtrim($returnValue) . PHP_EOL;
+    }
 }
