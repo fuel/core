@@ -254,8 +254,10 @@ class Redis_Db
 
 	protected function readResponse()
 	{
+		$reply = fgets($this->connection, 512);
+
 		//  parse the response based on the reply identifier
-		if (($reply = fgets($this->connection, 512) === false))
+		if ($reply === false)
 		{
 			$reply = "";
 		}
