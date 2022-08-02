@@ -62,6 +62,9 @@ class Package
 			return $result;
 		}
 
+		// unify the name
+		$package = ucfirst($package);
+
 		if (static::loaded($package))
 		{
 			return false;

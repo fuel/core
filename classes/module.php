@@ -57,6 +57,9 @@ class Module
 			return $result;
 		}
 
+		// unify the name
+		$module = ucfirst($module);
+
 		if (static::loaded($module))
 		{
 			return false;
@@ -92,7 +95,7 @@ class Module
 		}
 
 		// determine the module namespace
-		$ns = '\\'.ucfirst($module);
+		$ns = '\\'.$module;
 
 		// add the namespace to the autoloader
 		\Autoloader::add_namespaces(array(
