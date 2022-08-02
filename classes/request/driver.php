@@ -363,7 +363,7 @@ abstract class Request_Driver
 	 *
 	 * @throws  \OutOfRangeException if an accept header was specified, but the mime type isn't in it
 	 */
-	public function set_response($body, $status, $mime = null, $headers = array(), $accept_header = null)
+	public function set_response($body, $status, $mime = '', $headers = array(), $accept_header = null)
 	{
 		// Strip attribs from mime type to avoid over-specific matching
 		$mime = strstr($mime, ';', true) ?: $mime;
