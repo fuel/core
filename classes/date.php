@@ -329,6 +329,12 @@ class Date
 		// parse the input
 		$parsed = date_parse_from_format($new_format, $input);
 
+		// check for invalid dates
+		if (isset($parsed['warnings'][10]))
+		{
+			return false;
+		}
+
 		// parse succesful?
 		if (is_array($parsed) and empty($parsed['errors']))
 		{
