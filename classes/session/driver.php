@@ -755,6 +755,9 @@ abstract class Session_Driver
 	 */
 	protected function _unserialize($input)
 	{
+		// Prevent trigger php8' error with calling unserialize with null parameter 
+		$input === null and $input = '';
+
 		$data = @unserialize($input);
 
 		if (is_array($data))
