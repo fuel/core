@@ -153,6 +153,9 @@ class Uri
 		$url = '';
 		is_null($uri) and $uri = static::string();
 
+		// uri can be null at this point. Prevent it to avoid error with preg_match in php 8.1
+		is_null($uri) and $uri = '';
+
 		// If the given uri is not a full URL
 		if( ! preg_match("#^(http|https|ftp)://#i", $uri))
 		{
