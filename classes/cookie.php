@@ -86,7 +86,6 @@ class Cookie
 		{
 			return false;
 		}
-
 		$value = \Fuel::value($value);
 
 		// use the class defaults for the other parameters if not provided
@@ -99,6 +98,9 @@ class Cookie
 
 		// add the current time so we have an offset
 		$expiration = $expiration > 0 ? $expiration + time() : 0;
+
+		// Avoid php 8.1 errors with null domain
+		is_null($domain) and $domain = '';
 
 		if (is_null($same_site))
 		{
@@ -149,6 +151,9 @@ class Cookie
 		is_null($domain) and $domain = static::$config['domain'];
 		is_null($secure) and $secure = static::$config['secure'];
 		is_null($http_only) and $http_only = static::$config['http_only'];
+
+		// Avoid php 8.1 errors with null domain
+		is_null($domain) and $domain = '';
 
 		// Nullify the cookie and make it expire
 		if (PHP_VERSION_ID < 70300)
