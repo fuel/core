@@ -191,7 +191,7 @@ class Security
 	{
 		if ( ! is_array($value))
 		{
-			$value = filter_var($value, FILTER_SANITIZE_STRING);
+			$value = filter_var(strip_tags($value), FILTER_SANITIZE_FULL_SPECIAL_CHARS);
 		}
 		else
 		{
