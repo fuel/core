@@ -107,6 +107,12 @@ class Format
 			return array();
 		}
 
+		// Add support for Orm model native to_array method
+		if (\Package::loaded('orm') and $data instanceof \Orm\Model) 
+		{
+			return $data->to_array();
+		}
+
 		foreach ($data as $key => $value)
 		{
 			if (is_object($value) or is_array($value))
