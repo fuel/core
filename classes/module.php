@@ -170,7 +170,7 @@ class Module
 			return static::$modules;
 		}
 
-		return array_key_exists($module, static::$modules);
+		return array_key_exists(ucfirst($module), static::$modules);
 	}
 
 	/**
@@ -181,7 +181,7 @@ class Module
 	 */
 	public static function exists($module)
 	{
-		if (array_key_exists($module, static::$modules))
+		if (array_key_exists(ucfirst($module), static::$modules))
 		{
 			return static::$modules[$module];
 		}

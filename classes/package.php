@@ -127,7 +127,7 @@ class Package
 			return static::$packages;
 		}
 
-		return array_key_exists($package, static::$packages);
+		return array_key_exists(ucfirst($package), static::$packages);
 	}
 
 	/**
@@ -138,7 +138,7 @@ class Package
 	 */
 	public static function exists($package)
 	{
-		if (array_key_exists($package, static::$packages))
+		if (array_key_exists(ucfirst($package), static::$packages))
 		{
 			return static::$packages[$package];
 		}
