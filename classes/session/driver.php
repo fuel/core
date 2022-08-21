@@ -237,6 +237,11 @@ abstract class Session_Driver
 	 */
 	public function set_flash($name, $value)
 	{
+		if (empty($name))
+		{
+			throw new \FuelException("No flash variable name given.");
+		}
+
 		if (strpos($name, '.') !== false)
 		{
 			$keys = explode('.', $name, 2);
