@@ -122,6 +122,9 @@ class Module
 	 */
 	public static function unload($module)
 	{
+		// unify the name
+		$module = ucfirst($module);
+
 		// we can only unload a loaded module
 		if (isset(static::$modules[$module]))
 		{
@@ -170,7 +173,10 @@ class Module
 			return static::$modules;
 		}
 
-		return array_key_exists(ucfirst($module), static::$modules);
+		// unify the name
+		$module = ucfirst($module);
+
+		return array_key_exists($module, static::$modules);
 	}
 
 	/**
@@ -181,7 +187,10 @@ class Module
 	 */
 	public static function exists($module)
 	{
-		if (array_key_exists(ucfirst($module), static::$modules))
+		// unify the name
+		$module = ucfirst($module);
+
+		if (array_key_exists($module, static::$modules))
 		{
 			return static::$modules[$module];
 		}
