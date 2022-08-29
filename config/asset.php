@@ -102,7 +102,7 @@ return array(
 	 *
 	 */
 
-	'url' => \Config::get('base_url'),
+	'url' => (string) \Config::get('base_url'),
 
 	/**
 	 * -------------------------------------------------------------------------
