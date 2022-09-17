@@ -145,7 +145,7 @@ class Security
 			foreach ($filters as $filter)
 			{
 				// is this filter a callable local function?
-				if (is_string($filter) and is_callable('static::'.$filter))
+				if (is_string($filter) and is_callable(static::class.'::'.$filter))
 				{
 					$var = static::$filter($var);
 				}
