@@ -19,6 +19,10 @@ class PhpQuickProfiler {
 
 	public $output = array();
 	public $config = '';
+	public $startTime = '';
+	public $queries = array();
+	public $queryCount = 0;
+	public $db = '';
 
 	public function __construct($startTime, $config = '') {
 		$this->startTime = $startTime;
