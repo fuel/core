@@ -19,7 +19,7 @@ class PhpQuickProfiler {
 
 	public $output = array();
 	public $config = '';
-	public $startTime = '';
+	public $startTime = 0;
 	public $queries = array();
 	public $queryCount = 0;
 	public $db = '';
