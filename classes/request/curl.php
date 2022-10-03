@@ -355,7 +355,7 @@ class Request_Curl extends \Request_Driver
 					else
 					{
 						//application/x-www-form-urlencoded
-						return http_build_query($input, null, '&');
+						return http_build_query($input, '', '&');
 					}
 				break;
 		}
