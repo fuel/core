@@ -46,6 +46,13 @@ class Database_PDO_Connection extends \Database_Connection
 			'cached'       => false,
 		), $this->_config);
 
+		// enable compression if needed
+		if ($this->_config['connection']['compress'])
+		{
+			// use client compression with mysql or mysqli (doesn't work with mysqlnd)
+			$this->_config['attrs'][\PDO::MYSQL_ATTR_COMPRESS] = true;
+		}
+		
 		// convert generic config values to specific attributes
 		if ( ! empty($this->_config['connection']['persistent']))
 		{
