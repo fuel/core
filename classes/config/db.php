@@ -119,9 +119,9 @@ class Config_Db implements Config_Interface
 	 */
 	protected function prep_vars(&$array)
 	{
-		static $replacements = false;
+		static $replacements;
 
-		if ($replacements === false)
+		if (!isset($replacements))
 		{
 			foreach ($this->vars as $i => $v)
 			{
