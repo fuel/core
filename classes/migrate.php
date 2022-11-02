@@ -45,6 +45,7 @@ class Migrate
 	 * @var	array	migration table schema
 	 */
 	protected static $table_definition = array(
+		'id' => array('type' => 'int', 'auto_increment' => true),
 		'type' => array('type' => 'varchar', 'constraint' => 25),
 		'name' => array('type' => 'varchar', 'constraint' => 50),
 		'migration' => array('type' => 'varchar', 'constraint' => 100, 'null' => false, 'default' => ''),
@@ -651,10 +652,10 @@ class Migrate
 		if ( ! \DBUtil::table_exists(static::$table))
 		{
 			// create table
-			\DBUtil::create_table(static::$table, static::$table_definition);
+			\DBUtil::create_table(static::$table, static::$table_definition, array('id'));
 		}
 
-		// check if a table upgrade is needed
+		// check if a table upgrade is needed (introduction migration field)
 		elseif ( ! \DBUtil::field_exists(static::$table, array('migration')))
 		{
 			// get the current migration status
@@ -662,7 +663,7 @@ class Migrate
 
 			// drop the existing table, and recreate it in the new layout
 			\DBUtil::drop_table(static::$table);
-			\DBUtil::create_table(static::$table, static::$table_definition);
+			\DBUtil::create_table(static::$table, static::$table_definition, array('id'));
 
 			// check if we had a current migration status
 			if ( ! empty($current))
@@ -714,6 +715,27 @@ class Migrate
 
 			// delete any old migration config file that may exist
 			is_file(APPPATH.'config'.DS.'migrations.php') and unlink(APPPATH.'config'.DS.'migrations.php');
+		}
+
+		// check if a table upgrade is needed (introduction primary key)
+		elseif ( ! \DBUtil::field_exists(static::$table, array('id')))
+		{
+			// table for temporary storage
+			$tmptable = static::$table . '_'. \Str::random('alnum', 8);
+
+			// rename the migrations table
+			\DBUtil::rename_table(static::$table, $tmptable);
+
+			// create the new migrations table
+			\DBUtil::create_table(static::$table, static::$table_definition, array('id'));
+
+			// fill it using a select subquery
+			\DB::insert(static::$table, array('type', 'name', 'migration'))
+				->select(\DB::select('type', 'name', 'migration')->from($tmptable))
+				->execute();
+
+			// drop the temporary table
+			\DBUtil::drop_table($tmptable);
 		}
 
 		// set connection to default
