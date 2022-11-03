@@ -208,7 +208,7 @@ class DBUtil
 	 * @static
 	 * @param   string  $table
 	 * @param   string  $index_name
-	 * @param   string  $index_columns
+	 * @param   string|array  $index_columns
 	 * @param   string  $index (should be 'unique', 'fulltext', 'spatial' or 'nonclustered')
 	 * @param   string  $db    the database connection to use
 	 * @return  bool
