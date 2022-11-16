@@ -333,13 +333,31 @@ class Database_PDO_Connection extends \Database_Connection
 	/**
 	 * List tables
 	 *
-	 * @param string $like
-	 *
-	 * @throws \FuelException
+	 * @param   string  $like   pattern of table name
+	 * @return  array   array of table names
 	 */
 	public function list_tables($like = null)
 	{
-		throw new \FuelException('Database method '.__METHOD__.' is not supported by '.__CLASS__);
+		// Make sure the database is connected
+		$this->_connection or $this->connect();
+		if (is_string($like))
+		{
+			// Search for table names
+		    $q = $this->_connection->prepare('SHOW TABLES LIKE '.$this->quote($like));
+		}
+		else
+		{
+			// Find all table names
+		    $q = $this->_connection->prepare('SHOW TABLES');
+		}
+	    $q->execute();
+	    $result  = $q->fetchAll();
+		$tables = array();
+		foreach ($result as $row)
+		{
+			$tables[] = reset($row);
+		}
+		return $tables;
 	}
 
 	/**
