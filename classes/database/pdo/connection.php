@@ -343,15 +343,14 @@ class Database_PDO_Connection extends \Database_Connection
 		if (is_string($like))
 		{
 			// Search for table names
-		    $q = $this->_connection->prepare('SHOW TABLES LIKE '.$this->quote($like));
-		}
-		else
-		{
+			$q = $this->_connection->prepare('SHOW TABLES LIKE '.$this->quote($like));
+		}else{
 			// Find all table names
-		    $q = $this->_connection->prepare('SHOW TABLES');
+			$q = $this->_connection->prepare('SHOW TABLES');
 		}
-	    $q->execute();
-	    $result  = $q->fetchAll();
+	    	$q->execute();
+	    	$result  = $q->fetchAll();
+		
 		$tables = array();
 		foreach ($result as $row)
 		{
