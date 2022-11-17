@@ -334,6 +334,7 @@ class Database_PDO_Connection extends \Database_Connection
 	 * List tables
 	 *
 	 * @param   string  $like   pattern of table name
+	 *
 	 * @return  array   array of table names
 	 */
 	public function list_tables($like = null)
