@@ -224,6 +224,18 @@ JS;
 		{
 			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Double): {$var}\n";
 		}
+		elseif ($var instanceOf \UnitEnum)
+		{
+			// dirty hack to get the enum
+			ob_start();
+			var_dump($var);
+			$contents = ob_get_contents();
+			ob_end_clean();
+
+			preg_match('~enum\((.*?)\)~', $contents, $matches);
+
+			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Enum): {$matches[1]}\n";
+		}
 		elseif (is_object($var))
 		{
 			// dirty hack to get the object id
