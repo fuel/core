@@ -57,6 +57,10 @@ class Router
 			static::$routes[$path] = $options;
 			return;
 		}
+		elseif (is_null($path))
+		{
+			return;
+		}
 
 		$name = $path;
 		if (is_array($options) and array_key_exists('name', $options))
