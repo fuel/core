@@ -667,7 +667,7 @@ abstract class Image_Driver
 			$filename .= "." . $this->image_extension;
 		}
 		// Touch the file
-		if ( ! touch($filename))
+		if (file_put_contents($filename, '') === false)
 		{
 			throw new \RuntimeException("Do not have permission to write to \"$filename\"");
 		}
