@@ -246,7 +246,7 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->drop_collection('foo', 'bar');
 	 */
-	public static function drop_collection($db = '', $col = '')
+	public static function drop_collection($db, $col)
 	{
 		if (empty($db))
 		{
@@ -321,7 +321,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where(array('foo' => 'bar'))->get('foobar');
 	 */
-	public function where($wheres = array())
+	public function where(array $wheres = array())
 	{
 		foreach ($wheres as $wh => $val)
 		{
@@ -337,7 +337,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->or_where(array( array('foo'=>'bar', 'bar'=>'foo' ))->get('foobar');
 	 */
-	public function or_where($wheres = array())
+	public function or_where(array $wheres = array())
 	{
 		if (count($wheres) > 0)
 		{
@@ -362,7 +362,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
 	 */
-	public function where_in($field = '', $in = array())
+	public function where_in($field, array $in)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$in'] = $in;
@@ -377,7 +377,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
 	 */
-	public function where_in_all($field = '', $in = array())
+	public function where_in_all($field, array $in)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$all'] = $in;
@@ -392,7 +392,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_not_in('foo', array('bar', 'zoo', 'blah'))->get('foobar');
 	 */
-	public function where_not_in($field = '', $in = array())
+	public function where_not_in($field, array $in)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$nin'] = $in;
@@ -407,7 +407,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_gt('foo', 20);
 	 */
-	public function where_gt($field = '', $x)
+	public function where_gt($field, $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$gt'] = $x;
@@ -422,7 +422,7 @@ class Mongo_Db
 	 *	@return	Mongo_Db
 	 *	@usage	$mongodb->where_gte('foo', 20);
 	 */
-	public function where_gte($field = '', $x)
+	public function where_gte($field, $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$gte'] = $x;
@@ -437,7 +437,7 @@ class Mongo_Db
 	 *	@return	Mongo_Db
 	 *	@usage	$mongodb->where_lt('foo', 20);
 	 */
-	public function where_lt($field = '', $x)
+	public function where_lt($field, $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$lt'] = $x;
@@ -452,7 +452,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_lte('foo', 20);
 	 */
-	public function where_lte($field = '', $x)
+	public function where_lte($field, $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$lte'] = $x;
@@ -468,7 +468,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_between('foo', 20, 30);
 	 */
-	public function where_between($field = '', $x, $y)
+	public function where_between($field, $x, $y)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$gte'] = $x;
@@ -485,7 +485,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_between_ne('foo', 20, 30);
 	 */
-	public function where_between_ne($field = '', $x, $y)
+	public function where_between_ne($field, $x, $y)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$gt'] = $x;
@@ -501,7 +501,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_not_equal('foo', 1)->get('foobar');
 	 */
-	public function where_ne($field = '', $x)
+	public function where_ne($field, $x)
 	{
 		$this->_where_init($field);
 		$this->wheres[$field]['$ne'] = $x;
@@ -516,7 +516,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_near('foo', array('50','50'))->get('foobar');
 	 */
-	public function where_near($field = '', $co = array())
+	public function where_near($field, array $co)
 	{
 		$this->_where_init($field);
 		$this->where[$field]['$near'] = $co;
@@ -555,7 +555,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->like('foo', 'bar', 'im', false, true);
 	 */
-	public function like($field = '', $value = '', $flags = 'i', $disable_start_wildcard = false, $disable_end_wildcard = false)
+	public function like($field, $value, $flags = 'i', $disable_start_wildcard = false, $disable_end_wildcard = false)
 	{
 		$field = trim((string) $field);
 		$this->_where_init($field);
@@ -581,7 +581,7 @@ class Mongo_Db
 	 *	@return	$this
 	 *	@usage	$mongodb->where_between('foo', 20, 30);
 	 */
-	public function order_by($fields = array())
+	public function order_by(array $fields = array())
 	{
 		foreach ($fields as $col => $val)
 		{
@@ -642,7 +642,7 @@ class Mongo_Db
 	 *	@return	array
 	 *	@usage	$mongodb->get_where('foo', array('bar' => 'something'));
 	 */
-	public function get_where($collection = '', $where = array(), $limit = 99999)
+	public function get_where($collection, array $where, $limit = 99999)
 	{
 		return ($this->where($where)->limit($limit)->get($collection));
 	}
@@ -654,7 +654,7 @@ class Mongo_Db
 	 *	@usage	$mongodb->get_cursor('foo', array('bar' => 'something'));
 	 *	@throws	\Mongo_DbException
 	 */
-	public function get_cursor($collection = "")
+	public function get_cursor($collection)
 	{
 		if (empty($collection))
 		{
@@ -676,8 +676,13 @@ class Mongo_Db
 	 *	@return	array
 	 *	@throws	\Mongo_DbException
 	 */
-	public function get($collection = "")
+	public function get($collection)
 	{
+		if (empty($collection))
+		{
+			throw new \Mongo_DbException("In order to retrieve documents from MongoDB you must provide a collection name.");
+		}
+
 		if ($this->profiling)
 		{
 			$query = json_encode(array(
@@ -721,7 +726,7 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->get_one('foo');
 	 */
-	public function get_one($collection = "")
+	public function get_one($collection)
 	{
 		if (empty($collection))
 		{
@@ -761,7 +766,7 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->count('foo');
 	 */
-	public function count($collection = '', $foundonly = false)
+	public function count($collection, $foundonly = false)
 	{
 		if (empty($collection))
 		{
@@ -805,14 +810,14 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->insert('foo', $data = array());
 	 */
-	public function insert($collection = '', $insert = array())
+	public function insert($collection, array $insert)
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection selected to insert");
 		}
 
-		if (empty($insert) or ! is_array($insert))
+		if (empty($insert))
 		{
 			throw new \Mongo_DbException("Nothing to insert into Mongo collection or insert value is not an array");
 		}
@@ -863,14 +868,14 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->update('foo', $data = array());
 	 */
-	public function update($collection = '', $data = array(), $options = array(), $literal = false)
+	public function update($collection, array $data, array $options = array(), $literal = false)
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection selected to update");
 		}
 
-		if (empty($data) or ! is_array($data))
+		if (empty($data))
 		{
 			throw new \Mongo_DbException("Nothing to update in Mongo collection or update value is not an array");
 		}
@@ -918,14 +923,14 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->update_all('foo', $data = array());
 	 */
-	public function update_all($collection = "", $data = array(), $literal = false)
+	public function update_all($collection, array $data, $literal = false)
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection selected to update");
 		}
 
-		if (empty($data) or ! is_array($data))
+		if (empty($data))
 		{
 			throw new \Mongo_DbException("Nothing to update in Mongo collection or update value is not an array");
 		}
@@ -969,7 +974,7 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->delete('foo');
 	 */
-	public function delete($collection = '')
+	public function delete($collection)
 	{
 		if (empty($collection))
 		{
@@ -1013,7 +1018,7 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->delete_all('foo');
 	 */
-	public function delete_all($collection = '')
+	public function delete_all($collection)
 	{
 		if (empty($collection))
 		{
@@ -1058,7 +1063,7 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->command(array('geoNear'=>'buildings', 'near'=>array(53.228482, -0.547847), 'num' => 10, 'nearSphere'=>TRUE));
 	 */
-	public function command($query = array())
+	public function command(array $query = array())
 	{
 		try
 		{
@@ -1084,14 +1089,14 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->add_index($collection, array('first_name' => 'ASC', 'last_name' => -1), array('unique' => TRUE));
 	 */
-	public function add_index($collection = '', $keys = array(), $options = array())
+	public function add_index($collection, array $keys = array(), $options = array())
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection specified to add an index to");
 		}
 
-		if (empty($keys) or ! is_array($keys))
+		if (empty($keys))
 		{
 			throw new \Mongo_DbException("Index could not be created to MongoDB Collection because no keys were specified");
 		}
@@ -1130,14 +1135,14 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->remove_index($collection, array('first_name' => 'ASC', 'last_name' => -1));
 	 */
-	public function remove_index($collection = '', $keys = array())
+	public function remove_index($collection, array $keys = array())
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection specified to remove an index from");
 		}
 
-		if (empty($keys) or ! is_array($keys))
+		if (empty($keys))
 		{
 			throw new \Mongo_DbException("Index could not be removed from MongoDB Collection because no keys were specified");
 		}
@@ -1161,12 +1166,13 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->remove_all_index($collection);
 	 */
-	public function remove_all_indexes($collection = '')
+	public function remove_all_indexes($collection )
 	{
 		if (empty($collection))
 		{
 			throw new \Mongo_DbException("No Mongo collection specified to remove all indexes from");
 		}
+
 		$this->db->{$collection}->deleteIndexes();
 		$this->_clear();
 		return $this;
@@ -1180,7 +1186,7 @@ class Mongo_Db
 	 *	@throws	\Mongo_DbException
 	 *	@usage	$mongodb->list_indexes($collection);
 	 */
-	public function list_indexes($collection = '')
+	public function list_indexes($collection)
 	{
 		if (empty($collection))
 		{
@@ -1198,6 +1204,11 @@ class Mongo_Db
 	 */
 	public function get_collection($collection)
 	{
+		if (empty($collection))
+		{
+			throw new \Mongo_DbException("No Mongo collection specified to remove all indexes from");
+		}
+
 		return ($this->db->{$collection});
 	}
 
