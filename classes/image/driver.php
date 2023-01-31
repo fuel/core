@@ -666,11 +666,15 @@ abstract class Image_Driver
 		{
 			$filename .= "." . $this->image_extension;
 		}
-		// Touch the file
-		if (file_put_contents($filename, '') === false)
-		{
-			throw new \RuntimeException("Do not have permission to write to \"$filename\"");
-		}
+
+        try {
+            // Touch the file
+            // Add @ before touch() due to some stream wrappers (e.g. s3) not supporting touch().
+            @touch($filename);
+        } catch (\Exception $e) {
+            $this->debug("", "Do not have permission to write to <code>$filename</code>");
+        }
+
 
 		// Set the new permissions
 		if ($permissions != null and ! chmod($filename, $permissions))
