@@ -98,12 +98,6 @@ set_exception_handler(function ($e)
 
 set_error_handler(function ($severity, $message, $filepath, $line)
 {
-	if (!(error_reporting() & $severity)) {
-		// This error code is not included in error_reporting, so let it fall
-		// through to the standard PHP error handler
-		return false;
-	}
-
 	// reset the autoloader
 	\Autoloader::_reset();
 
