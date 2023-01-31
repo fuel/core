@@ -98,6 +98,12 @@ set_exception_handler(function ($e)
 
 set_error_handler(function ($severity, $message, $filepath, $line)
 {
+	if (!(error_reporting() & $severity)) {
+		// This error code is not included in error_reporting, so let it fall
+		// through to the standard PHP error handler
+		return false;
+	}
+
 	// reset the autoloader
 	\Autoloader::_reset();
 
@@ -274,8 +280,6 @@ function setup_autoloader()
 
 		'Fuel\\Core\\Mongo_Db'                         => COREPATH.'classes/mongo/db.php',
 		'Fuel\\Core\\Mongo_DbException'                => COREPATH.'classes/mongo/db.php',
-
-		'Fuel\\Core\\Output'                           => COREPATH.'classes/output.php',
 
 		'Fuel\\Core\\Package'                          => COREPATH.'classes/package.php',
 		'Fuel\\Core\\PackageNotFoundException'         => COREPATH.'classes/package.php',
