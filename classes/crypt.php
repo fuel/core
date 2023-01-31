@@ -417,6 +417,20 @@ class Crypt
 	protected $hasher = null;
 
 	/**
+	 * Crypto object used to encrypt/decrypt
+	 *
+	 * @var	object
+	 */
+	protected $legacy_crypter = null;
+
+	/**
+	 * Hash object used to generate hashes
+	 *
+	 * @var	object
+	 */
+	protected $legacy_hasher = null;
+
+	/**
 	 * Crypto configuration
 	 *
 	 * @var	array
