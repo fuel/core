@@ -667,13 +667,16 @@ abstract class Image_Driver
 			$filename .= "." . $this->image_extension;
 		}
 
-        try {
-            // Touch the file
-            // Add @ before touch() due to some stream wrappers (e.g. s3) not supporting touch().
-            @touch($filename);
-        } catch (\Exception $e) {
-            $this->debug("", "Do not have permission to write to <code>$filename</code>");
-        }
+		try
+		{
+			// Touch the file
+			// Add @ before touch() due to some stream wrappers (e.g. s3) not supporting touch().
+			@touch($filename);
+		}
+		catch (\Exception $e)
+		{
+			$this->debug("", "Do not have permission to write to <code>$filename</code>");
+		}
 
 
 		// Set the new permissions
