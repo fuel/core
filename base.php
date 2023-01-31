@@ -21,10 +21,10 @@ if (PHP_VERSION_ID >= 50600)
  */
 if ( ! function_exists('is_windows'))
 {
- 	function is_windows()
- 	{
- 		return DIRECTORY_SEPARATOR === '\\';
- 	}
+	function is_windows()
+	{
+		return DIRECTORY_SEPARATOR === '\\';
+	}
 }
 
 /**
@@ -502,39 +502,39 @@ if ( ! function_exists('call_fuel_func_array'))
  */
 if ( ! function_exists('hash_pbkdf2'))
 {
-    /* PBKDF2 Implementation (described in RFC 2898)
-     *
-     *  @param string a   hash algorithm to use
-     *  @param string p   password
-     *  @param string s   salt
-     *  @param int    c   iteration count (use 1000 or higher)
-     *  @param int    kl  derived key length
-     *  @param bool   r   when set to TRUE, outputs raw binary data. FALSE outputs lowercase hexits.
-     *
-     *  @return string derived key
-     */
-    function hash_pbkdf2($a, $p, $s, $c, $kl = 0, $r = false)
-    {
-        $hl = strlen(hash($a, null, true)); # Hash length
-        $kb = ceil($kl / $hl);              # Key blocks to compute
-        $dk = '';                           # Derived key
+	/* PBKDF2 Implementation (described in RFC 2898)
+	 *
+	 *  @param string a   hash algorithm to use
+	 *  @param string p   password
+	 *  @param string s   salt
+	 *  @param int    c   iteration count (use 1000 or higher)
+	 *  @param int    kl  derived key length
+	 *  @param bool   r   when set to TRUE, outputs raw binary data. FALSE outputs lowercase hexits.
+	 *
+	 *  @return string derived key
+	 */
+	function hash_pbkdf2($a, $p, $s, $c, $kl = 0, $r = false)
+	{
+		$hl = strlen(hash($a, null, true)); # Hash length
+		$kb = ceil($kl / $hl);              # Key blocks to compute
+		$dk = '';                           # Derived key
 
-        # Create key
-        for ( $block = 1; $block <= $kb; $block ++ )
-        {
-            # Initial hash for this block
-            $ib = $b = hash_hmac($a, $s . pack('N', $block), $p, true);
+		# Create key
+		for ( $block = 1; $block <= $kb; $block ++ )
+		{
+			# Initial hash for this block
+			$ib = $b = hash_hmac($a, $s . pack('N', $block), $p, true);
 
-            # Perform block iterations
-            for ( $i = 1; $i < $c; $i ++ )
-            {
-                # XOR each iterate
-                $ib ^= ($b = hash_hmac($a, $b, $p, true));
-            }
-            $dk .= $ib; # Append iterated block
-        }
+			# Perform block iterations
+			for ( $i = 1; $i < $c; $i ++ )
+			{
+				# XOR each iterate
+				$ib ^= ($b = hash_hmac($a, $b, $p, true));
+			}
+			$dk .= $ib; # Append iterated block
+		}
 
-        # Return derived key of correct length
+		# Return derived key of correct length
 		return substr($r ? $dk : bin2hex($dk), 0, $kl);
 	}
 }
