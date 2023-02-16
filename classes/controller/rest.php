@@ -15,6 +15,11 @@ namespace Fuel\Core;
 abstract class Controller_Rest extends \Controller
 {
 	/**
+	 * @var  null|Response  the response object for this controller
+	 */
+	protected $response = null;
+
+	/**
 	 * @var  null|string  Set this in a controller to use a default format
 	 */
 	protected $rest_format = null;
@@ -71,12 +76,6 @@ abstract class Controller_Rest extends \Controller
 	public function before()
 	{
 		parent::before();
-
-		// Some Methods cant have a body
-		$this->request->body = null;
-
-		// Which format should the data be returned in?
-		$this->request->lang = $this->_detect_lang();
 
 		$this->response = \Response::forge();
 	}
@@ -228,7 +227,8 @@ abstract class Controller_Rest extends \Controller
 			{
 				// not acceptable in production
 				if ($http_status == 200)
-				{	$http_status = 406;
+				{
+					$http_status = 406;
 				}
 				$this->response->body('The requested REST method returned an array or object, which is not compatible with the output format "'.$this->format.'"');
 			}
