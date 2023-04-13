@@ -992,7 +992,7 @@ class Validation
 	 */
 	public function _validation_numeric_min($val, $min_val)
 	{
-		return $this->_empty($val) || floatval($val) >= floatval($min_val);
+		return $this->_empty($val) || $this->float_val($val) >= $this->float_val($min_val);
 	}
 
 	/**
@@ -1004,7 +1004,7 @@ class Validation
 	 */
 	public function _validation_numeric_max($val, $max_val)
 	{
-		return $this->_empty($val) || floatval($val) <= floatval($max_val);
+		return $this->_empty($val) || $this->float_val($val) <= $this->float_val($max_val);
 	}
 
 	/**
@@ -1017,7 +1017,7 @@ class Validation
 	 */
 	public function _validation_numeric_between($val, $min_val, $max_val)
 	{
-		return $this->_empty($val) or (floatval($val) >= floatval($min_val) and floatval($val) <= floatval($max_val));
+		return $this->_empty($val) or ($this->float_val($val) >= $this->float_val($min_val) and $this->float_val($val) <= $this->float_val($max_val));
 	}
 
 	/**
@@ -1080,4 +1080,16 @@ class Validation
 			return false;
 		}
 	}
+
+	/**
+	 * locale-aware floatval()
+	 */
+	protected function float_val($val)
+	{
+		$locale_info = localeconv();
+		$val = str_replace($locale_info["mon_thousands_sep"] , "", $val);
+		$val = str_replace($locale_info["mon_decimal_point"] , ".", $val);
+		return floatval($val);
+	}
+
 }
