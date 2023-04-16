@@ -163,11 +163,24 @@ JS;
 	 */
 	public static function format($name, $var, $level = 0, $indent_char = '&nbsp;&nbsp;&nbsp;&nbsp;', $scope = '')
 	{
+		if ($level and is_null($name))
+		{
+			$name = '<i style="color:#888">null</i>';
+		}
+		elseif ($level and $name === "")
+		{
+			$name = '<i style="color:#888">empty</i>';
+		}
+		else
+		{
+			$name = htmlentities($name);
+		}
 		$return = str_repeat($indent_char, $level);
 		if (is_array($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong>";
+			$name = htmlentities($name);
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong>";
 			$return .=  " (Array, ".count($var)." element".(count($var)!=1 ? "s" : "").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
@@ -187,14 +200,6 @@ JS;
 				$sub_return = '';
 				foreach ($var as $key => $val)
 				{
-					if (is_null($key))
-					{
-						$key = '_null_';
-					}
-					elseif($key == '')
-					{
-						$key = '_empty_';
-					}
 					$sub_return .= static::format($key, $val, $level + 1);
 				}
 				if (count($var) > 0)
@@ -210,27 +215,27 @@ JS;
 		}
 		elseif (is_string($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (String): <span style=\"color:#E00000;\">\"".\Security::htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (String): <span style=\"color:#E00000;\">\"".\Security::htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
 		}
 		elseif (is_float($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Float): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Float): {$var}\n";
 		}
 		elseif (is_long($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Integer): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Integer): {$var}\n";
 		}
 		elseif (is_null($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> : null\n";
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong> : null\n";
 		}
 		elseif (is_bool($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
 		}
 		elseif (is_double($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Double): {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Double): {$var}\n";
 		}
 		elseif ($var instanceOf \UnitEnum)
 		{
@@ -242,7 +247,7 @@ JS;
 
 			preg_match('~enum\((.*?)\)~', $contents, $matches);
 
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong> (Enum): {$matches[1]}\n";
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Enum): {$matches[1]}\n";
 		}
 		elseif (is_object($var))
 		{
@@ -316,7 +321,7 @@ JS;
 		}
 		else
 		{
-			$return .= "<i>{$scope}</i> <strong>".htmlentities($name)."</strong>: {$var}\n";
+			$return .= "<i>{$scope}</i> <strong>".$name."</strong>: {$var}\n";
 		}
 		return $return;
 	}
