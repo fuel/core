@@ -187,6 +187,14 @@ JS;
 				$sub_return = '';
 				foreach ($var as $key => $val)
 				{
+					if (is_null($key))
+					{
+						$key = '_null_';
+					}
+					elseif($key == '')
+					{
+						$key = '_empty_';
+					}
 					$sub_return .= static::format($key, $val, $level + 1);
 				}
 				if (count($var) > 0)
