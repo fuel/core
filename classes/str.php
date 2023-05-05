@@ -131,7 +131,7 @@ class Str
 	 */
 	public static function starts_with($str, $start, $ignore_case = false)
 	{
-		return (bool) preg_match('/^'.preg_quote($start, '/').'/m'.($ignore_case ? 'i' : ''), $str);
+		return (bool) preg_match('/^'.preg_quote($start, '/').'/m'.($ignore_case ? 'i' : ''), (string) $str);
 	}
 
 	/**
