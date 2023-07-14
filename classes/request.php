@@ -382,7 +382,7 @@ class Request
 
 		if (\Fuel::$profiling)
 		{
-			\Profiler::mark(__METHOD__.': Start of '.$this->uri->get());
+			\Profiler::mark(__METHOD__.': Start of request for /'.$this->uri->get());
 		}
 
 		logger(\Fuel::L_INFO, 'Called', __METHOD__);
@@ -521,7 +521,7 @@ class Request
 
 		if (\Fuel::$profiling)
 		{
-			\Profiler::mark(__METHOD__.': End of '.$this->uri->get());
+			\Profiler::mark(__METHOD__.': End of request for /'.$this->uri->get());
 		}
 
 		static::reset_request();
