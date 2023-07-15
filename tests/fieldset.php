@@ -20,7 +20,7 @@ namespace Fuel\Core;
  */
 class Test_Fieldset extends TestCase
 {
-	public function setUp()
+	public function setUp(): void
 	{
 		// fake the uri for this request
 		isset($_SERVER['PATH_INFO']) and $this->pathinfo = $_SERVER['PATH_INFO'];
@@ -34,7 +34,7 @@ class Test_Fieldset extends TestCase
 		\Request::active($request);
 	}
 
-	public function tearDown()
+	public function tearDown(): void
 	{
 		// remove the fake uri
 		if (property_exists($this, 'pathinfo'))

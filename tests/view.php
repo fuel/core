@@ -45,6 +45,7 @@ class Arraylike implements \ArrayAccess, \IteratorAggregate
 		unset($this->items[$offset]);
 	}
 
+	#[\ReturnTypeWillChange]
 	public function getIterator()
 	{
 		return new \ArrayIterator($this->items);
