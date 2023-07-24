@@ -179,7 +179,6 @@ JS;
 		if (is_array($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			$name = htmlentities($name);
 			$return .= "<i>{$scope}</i> <strong>".$name."</strong>";
 			$return .=  " (Array, ".count($var)." element".(count($var)!=1 ? "s" : "").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
