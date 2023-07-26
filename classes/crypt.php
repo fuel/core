@@ -541,7 +541,7 @@ class Crypt
 	protected function decode($value, $key = false, $keylength = false)
 	{
 		// legacy or sodium value?
-		$value = explode('S:', $value);
+		$value = explode('S:', (string) $value);
 		if ( ! isset($value[1]))
 		{
 			// decode using the legacy method
