@@ -142,7 +142,6 @@ class Request_Curl extends \Request_Driver
 		}
 
 		$additional_params and $this->params = \Arr::merge($this->params, $additional_params);
-		$this->method and $this->options[CURLOPT_CUSTOMREQUEST] = $this->method;
 
 		if ( ! empty($this->method))
 		{
