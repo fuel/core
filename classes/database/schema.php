@@ -569,11 +569,18 @@ class Database_Schema
 			$_prefix = $prefix;
 			if(array_key_exists('NAME', $attr) and $field !== $attr['NAME'] and $_prefix === 'MODIFY ')
 			{
-				$_prefix = 'CHANGE ';
+				$_prefix = count($attr) == 1 ? 'RENAME COLUMN ' : 'CHANGE ';
 			}
 			$sql = "\n\t".$_prefix;
 			$sql .= $this->_connection->quote_identifier($field);
-			$sql .= (array_key_exists('NAME', $attr) and $attr['NAME'] !== $field) ? ' '.$this->_connection->quote_identifier($attr['NAME']).' ' : '';
+			if ($_prefix == 'CHANGE ')
+			{
+				$sql .= ' '.$this->_connection->quote_identifier($attr['NAME']).' ';
+			}
+			elseif ($_prefix == 'RENAME COLUMN ')
+			{
+				$sql .= ' TO '.$this->_connection->quote_identifier($attr['NAME']).' ';
+			}
 			$sql .= array_key_exists('TYPE', $attr) ? ' '.$attr['TYPE'] : '';
 
 			if(array_key_exists('CONSTRAINT', $attr))
@@ -609,7 +616,7 @@ class Database_Schema
 			{
 				$sql .= ' NULL';
 			}
-			else
+			elseif ($_prefix != 'RENAME COLUMN ')
 			{
 				$sql .= ' NOT NULL';
 			}
