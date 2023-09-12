@@ -62,6 +62,7 @@ class Date
 		'%T'  => 'G:i:s', 		// Example: 21:34:17 for 09:34:17 PM
 		'%X'  => 'G:i:s', 		// Preferred time representation based on locale, without the date, Example: 03:59:16 or 15:59:16
 		'%Z'  => 'T', 			// The time zone abbreviation. Example: EST for Eastern Time
+		'%z'  => 'O',
 		'%c'  => 'Y-m-d H:i:s', // Preferred date and time stamp based on locale
 		'%D'  => 'm/d/y',		// Example: 02/05/09 for February 5, 2009
 		'%F'  => 'Y-m-d',		// Example: 2009-02-05 for February 5, 2009
@@ -174,7 +175,18 @@ class Date
 			throw new \OutOfBoundsException('Input was invalid.'.(PHP_INT_SIZE == 4 ? ' A 32-bit system only supports dates between 1901 and 2038.' : ''));
 		}
 
-		return static::forge($timestamp);
+		// create the date object
+		$date = static::forge($timestamp);
+
+		// deal with timezone data
+		$date->timezone = 'UTC';
+		if (isset($time['tm_zone']))
+		{
+			$date->timestamp += $time['tm_zone'];
+		}
+
+		// return the date
+		return $date;
 	}
 
 	/**
@@ -320,7 +332,12 @@ class Date
 	{
 		if (version_compare(PHP_VERSION, '8.1.0', '<'))
 		{
-			return strptime($input, $format);
+			$result = strptime($input, $format);
+
+			// the built-in version always returns UTC
+			$result['tm_zone'] = 0;
+
+			return $result;
 		}
 
 		// convert the format string from glibc to date format (where possible)
@@ -345,6 +362,7 @@ class Date
 				'tm_hour' => $parsed['hour'] ?: 0,
 				'tm_min'  => $parsed['minute'] ?: 0,
 				'tm_sec'  => $parsed['second'] ?: 0,
+				'tm_zone' => $parsed['zone'] ?: 0,
 			);
 		}
 		else
@@ -373,6 +391,7 @@ class Date
 				"tm_mday" => isset($result['d']) ? (int) $result['d'] : 0,
 				"tm_mon"  => isset($result['m']) ? ($result['m'] ? $result['m'] - 1 : 0) : 0,
 				"tm_year" => isset($result['Y']) ? ($result['Y'] > 1900 ? $result['Y'] - 1900 : 0) : 0,
+				'tm_zone' => 0,
 			);
 		}
 	}
