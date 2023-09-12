@@ -163,7 +163,7 @@ class Date
 		}
 
 		// make sure we don't go before the epoch, as that causes weird things to happen
-		$time['tm_year'] <= 0 and $time['tm_year'] = 100;
+		$time['tm_year'] < 0 and $time['tm_year'] = 100;
 
 		// convert it into a timestamp
 		$timestamp = mktime($time['tm_hour'], $time['tm_min'], $time['tm_sec'],
