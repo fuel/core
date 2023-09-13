@@ -366,12 +366,13 @@ JS;
 
 		if ($highlight)
 		{
-			$to_replace = array('<code>', '</code>', '<span style="color: #0000BB">&lt;?php&nbsp;', "\n");
-			$replace_with = array('', '', '<span style="color: #0000BB">', '');
+			$to_replace = array('<pre>', '</pre>', '<code>', '<code style="color: #000000">', '</code>', '<span style="color: #0000BB">&lt;?php', '&lt;?php', "\n");
+			$replace_with = array('', '', '', '', '', '<span style="color: #0000BB">', '', '');
 
 			foreach ($debug_lines as & $line)
 			{
 				$line = str_replace($to_replace, $replace_with, highlight_string('<?php ' . $line, TRUE));
+				$line = preg_replace('~(?<=\s)\s~', '&nbsp;', $line);
 			}
 		}
 
