@@ -362,7 +362,7 @@ class Date
 				'tm_hour' => $parsed['hour'] ?: 0,
 				'tm_min'  => $parsed['minute'] ?: 0,
 				'tm_sec'  => $parsed['second'] ?: 0,
-				'tm_zone' => $parsed['zone'] ?: 0,
+				'tm_zone' => $parsed['is_localtime'] ? $parsed['zone'] : 0,
 			);
 		}
 		else
