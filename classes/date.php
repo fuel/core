@@ -355,6 +355,15 @@ class Date
 		// parse succesful?
 		if (is_array($parsed) and empty($parsed['errors']))
 		{
+			// if no timezone info is present, use the current timezone
+			if ( ! $parsed['is_localtime'])
+			{
+				$timezone = timezone_open(date_default_timezone_get());
+				$datetime = date_create("now", timezone_open("UTC"));
+				$parsed['is_localtime'] = 1;
+				$parsed['zone'] = timezone_offset_get($timezone, $datetime);
+			}
+
 			return array(
 				'tm_year' => $parsed['year'] - 1900,
 				'tm_mon'  => $parsed['month'] - 1,
