@@ -59,6 +59,15 @@ class Database_PDO_Connection extends \Database_Connection
 			// Make the connection persistent
 			$this->_config['attrs'][\PDO::ATTR_PERSISTENT] = true;
 		}
+		
+		// include specific attributes
+		if ( ! empty($this->_config['connection']['options']))
+		{
+		  	$this->_config['attrs'] = \Arr::merge(
+				$config['connection']['options'], 
+			  	$this->_config['attrs']
+			);
+		}		
 	}
 
 	/**
