@@ -66,6 +66,9 @@ class Database_MySQLi_Connection extends \Database_Connection
 			),
 			'enable_cache'   => true,
 		), $this->_config);
+
+		// Make error reporting compatible with the behavior prior to PHP 8.1
+		mysqli_report(MYSQLI_REPORT_OFF);
 	}
 
 	public function connect()
