@@ -216,7 +216,7 @@ class File
 				}
 				try
 				{
-					chmod($path.$chmod);
+					chmod($path, $chmod);
 				}
 				catch (\PhpErrorException $e)
 				{
