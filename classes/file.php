@@ -206,7 +206,6 @@ class File
 					{
 						return false;
 					}
-					chmod($path, $chmod);
 				}
 				catch (\PHPErrorException $e)
 				{
@@ -214,7 +213,18 @@ class File
 					{
 						return false;
 					}
-					chmod($path, $chmod);
+				}
+				try
+				{
+					chmod($path.$chmod);
+				}
+				catch (\PhpErrorException $e)
+				{
+					// if we get something else then a chmod error, bail out
+					if (substr($e->getMessage(), 0, 8) !== 'chmod():')
+					{
+						throw new $e;
+					}
 				}
 			}
 		}
@@ -581,7 +591,18 @@ class File
 
 		if (copy($path, $new_path))
 		{
-			return chmod($new_path, fileperms($path));
+			try
+			{
+				return chmod($new_path, fileperms($path));
+			}
+			catch (\PhpErrorException $e)
+			{
+				// if we get something else then a chmod error, bail out
+				if (substr($e->getMessage(), 0, 8) !== 'chmod():')
+				{
+					throw new $e;
+				}
+			}
 		}
 
 		return false;

@@ -522,7 +522,18 @@ class Finder
 			mkdir($dir, \Config::get('file.chmod.folders', 0777), true);
 
 			// Set permissions (must be manually set to fix umask issues)
-			chmod($dir, \Config::get('file.chmod.folders', 0777));
+			try
+			{
+				chmod($dir, \Config::get('file.chmod.folders', 0777));
+			}
+			catch (\PhpErrorException $e)
+			{
+				// if we get something else then a chmod error, bail out
+				if (substr($e->getMessage(), 0, 8) !== 'chmod():')
+				{
+					throw new $e;
+				}
+			}
 		}
 
 		// Force the data to be a string

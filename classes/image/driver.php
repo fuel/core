@@ -680,9 +680,20 @@ abstract class Image_Driver
 
 
 		// Set the new permissions
-		if ($permissions != null and ! chmod($filename, $permissions))
+		if ($permissions != null)
 		{
-			throw new \RuntimeException("Could not set permissions on the file.");
+			// set the correct rights on the file
+			try
+			{
+				if ( ! chmod($filename, $permissions))
+				{
+					throw new \RuntimeException("Could not set permissions on the file.");
+				}
+			}
+			catch (\PhpErrorException $e)
+			{
+				throw new \RuntimeException("Could not set permissions on the file.");
+			}
 		}
 
 		$this->debug("", "Saving image as <code>$filename</code>");

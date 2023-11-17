@@ -119,7 +119,21 @@ class Unzip
 						}
 
 						// Apply chmod if configured to do so
-						$this->apply_chmod AND chmod($this->_target_dir . '/' . $str, $this->apply_chmod);
+						if ($this->apply_chmod)
+						{
+							try
+							{
+								chmod($this->_target_dir . '/' . $str, $this->apply_chmod);
+							}
+							catch (\PhpErrorException $e)
+							{
+								// if we get something else then a chmod error, bail out
+								if (substr($e->getMessage(), 0, 8) !== 'chmod():')
+								{
+									throw new $e;
+								}
+							}
+						}
 					}
 				}
 			}
@@ -297,7 +311,18 @@ class Unzip
 
 		if ($this->apply_chmod AND $target_file_name)
 		{
-			chmod($target_file_name, 0644);
+			try
+			{
+				chmod($target_file_name, 0644);
+			}
+			catch (\PhpErrorException $e)
+			{
+				// if we get something else then a chmod error, bail out
+				if (substr($e->getMessage(), 0, 8) !== 'chmod():')
+				{
+					throw new $e;
+				}
+			}
 		}
 
 		return $ret;
