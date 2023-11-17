@@ -296,15 +296,22 @@ class Database_MySQLi_Connection extends \Database_Connection
 		}
 
 		// Execute the query
-		if (($result = $this->_connection->query($sql, $caching ? MYSQLI_STORE_RESULT :MYSQLI_USE_RESULT)) === false)
+		try
 		{
-			if (isset($benchmark))
+			if (($result = $this->_connection->query($sql, $caching ? MYSQLI_STORE_RESULT :MYSQLI_USE_RESULT)) === false)
 			{
-				// This benchmark is worthless
-				\Profiler::delete($benchmark);
-			}
+				if (isset($benchmark))
+				{
+					// This benchmark is worthless
+					\Profiler::delete($benchmark);
+				}
 
-			throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno, null, $this->_connection->errno);
+				throw new \Database_Exception($this->_connection->error.' [ '.$sql.' ]', $this->_connection->errno, null, $this->_connection->errno);
+			}
+		}
+		catch (\mysqli_sql_exception $e)
+		{
+			throw new \Database_Exception('SQLSTATE['.$e->getSqlState().']: '.$e->getMessage().' with query: "'.$sql.'"', $e->getSqlState(), $e, $e->getCode());
 		}
 
 		// check for multiresults, we don't support those at the moment
