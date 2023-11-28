@@ -124,7 +124,9 @@ class Errorhandler
 				return $e->handle();
 			}
 
-			$severity = ( ! isset(static::$levels[$e->getCode()])) ? $e->getCode() : static::$levels[$e->getCode()];
+			$severity = method_exists($e, 'getSeverity') ? ($e->getSeverity() == 0 ? $e->getCode() : $e->getSeverity()) : $e->getCode();
+			$severity = ( ! isset(static::$levels[$severity])) ? $sverity : static::$levels[$severity];
+
 			logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), array('exception' => $e));
 
 			if (\Fuel::$env != \Fuel::PRODUCTION)
@@ -188,18 +190,26 @@ class Errorhandler
 		$trace = array_merge(array('file' => '(unknown)', 'line' => '(unknown)'), \Arr::get(debug_backtrace(), 1));
 		logger(\Fuel::L_DEBUG, 'Notice - '.$msg.' in '.$trace['file'].' on line '.$trace['line']);
 
-		if (\Fuel::$is_test or ( ! $always_show and (\Fuel::$env == \Fuel::PRODUCTION or \Config::get('errors.notices', true) === false)))
+		if (\Fuel::$is_test or ( ! $always_show and (\Fuel::$env == \Fuel::PRODUCTION)))
 		{
 			return;
 		}
 
-		$data['message']	= $msg;
-		$data['type']		= 'Notice';
-		$data['filepath']	= \Fuel::clean_path($trace['file']);
-		$data['line']		= $trace['line'];
-		$data['function']	= $trace['function'];
+		if (\Config::get('errors.notices', true))
+		{
+			$data['message']	= $msg;
+			$data['type']		= 'Notice';
+			$data['filepath']	= \Fuel::clean_path($trace['file']);
+			$data['line']		= $trace['line'];
+			$data['function']	= $trace['function'];
 
-		echo \View::forge('errors'.DS.'php_short', $data, false);
+			echo \View::forge('errors'.DS.'php_short', $data, false);
+		}
+		else
+		{
+			$e = new PHPErrorException($msg, 0, E_USER_NOTICE, $trace['file'], $trace['line']);
+			$e->recover();
+		}
 	}
 
 	/**
@@ -211,7 +221,8 @@ class Errorhandler
 	 */
 	protected static function show_php_error($e)
 	{
-		$fatal = (bool) ( ! in_array($e->getCode(), \Config::get('errors.continue_on', array())));
+		$severity = method_exists($e, 'getSeverity') ? ($e->getSeverity() == 0 ? $e->getCode() : $e->getSeverity()) : $e->getCode();
+		$fatal = (bool) ( ! in_array($severity, \Config::get('errors.continue_on', array())));
 		$data = static::prepare_exception($e, $fatal);
 
 		if ($fatal)
@@ -301,7 +312,7 @@ class Errorhandler
 	{
 		$data = array();
 		$data['type']		= get_class($e);
-		$data['severity']	= $e->getCode();
+		$data['severity']	= method_exists($e, 'getSeverity') ? ($e->getSeverity() == 0 ? $e->getCode() : $e->getSeverity()) : $e->getCode();
 		$data['message']	= $e->getMessage();
 		$data['filepath']	= $e->getFile();
 		$data['error_line']	= $e->getLine();
@@ -313,7 +324,8 @@ class Errorhandler
 			$data['severity'] .= ' ('.$e->getDbCode().')';
 		}
 
-		$data['severity'] = ( ! isset(static::$levels[$data['severity']])) ? $data['severity'] : static::$levels[$data['severity']];
+		$severity = method_exists($e, 'getSeverity') ? ($e->getSeverity() == 0 ? $e->getCode() : $e->getSeverity()) : $e->getCode();
+		$data['severity'] = ( ! isset(static::$levels[$severity])) ? $sverity : static::$levels[$severity];
 
 		// support for additional SoapFault info
 		if ($e instanceof \SoapFault)
