@@ -12,8 +12,8 @@
 
 namespace Fuel\Core;
 
-use \phpseclib\Crypt\AES;
-use \phpseclib\Crypt\Hash;
+use \phpseclib3\Crypt\AES;
+use \phpseclib3\Crypt\Hash;
 
 use \ParagonIE\Fuel\Binary;
 use \ParagonIE\Fuel\Base64UrlSafe;
@@ -449,7 +449,7 @@ class Crypt
 		// in case we need to decode legacy encrypted strings
 		if ( ! empty($this->config['legacy']))
 		{
-			$this->legacy_crypter = new AES();
+			$this->legacy_crypter = new AES('cbc');
 			$this->legacy_hasher = new Hash('sha256');
 
 			$this->legacy_crypter->enableContinuousBuffer();
