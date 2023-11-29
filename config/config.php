@@ -596,7 +596,7 @@ return array(
 		 */
 
 		'http_only' => false,
-		
+
 		/**
 		 * ---------------------------------------------------------------------
 		 *  Security - Mode
@@ -644,6 +644,18 @@ return array(
 	 */
 
 	'routing' => array(
+		/**
+		 * ---------------------------------------------------------------------
+		 *  Recursive
+		 * ---------------------------------------------------------------------
+		 *
+		 *  Whether or not a matched route should be looked up again if it
+		 *  can't be resolved to a controller.
+		 *
+		 */
+
+		'recursive' => false,
+
 		/**
 		 * ---------------------------------------------------------------------
 		 *  Compatibility
