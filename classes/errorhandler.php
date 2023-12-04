@@ -125,7 +125,7 @@ class Errorhandler
 			}
 
 			$severity = method_exists($e, 'getSeverity') ? ($e->getSeverity() == 0 ? $e->getCode() : $e->getSeverity()) : $e->getCode();
-			$severity = ( ! isset(static::$levels[$severity])) ? $sverity : static::$levels[$severity];
+			$severity = ( ! isset(static::$levels[$severity])) ? $severity : static::$levels[$severity];
 
 			logger(static::$loglevel, $severity.' - '.$e->getMessage().' in '.$e->getFile().' on line '.$e->getLine(), array('exception' => $e));
 
