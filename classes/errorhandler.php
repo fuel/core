@@ -325,7 +325,7 @@ class Errorhandler
 		}
 
 		$severity = method_exists($e, 'getSeverity') ? ($e->getSeverity() == 0 ? $e->getCode() : $e->getSeverity()) : $e->getCode();
-		$data['severity'] = ( ! isset(static::$levels[$severity])) ? $sverity : static::$levels[$severity];
+		$data['severity'] = ( ! isset(static::$levels[$severity])) ? $severity : static::$levels[$severity];
 
 		// support for additional SoapFault info
 		if ($e instanceof \SoapFault)
