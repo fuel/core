@@ -347,7 +347,7 @@ class Unzip
 	/**
 	 * Free the file resource Automatic destroy.
 	 */
-	public function __destroy()
+	public function __destruct()
 	{
 		$this->close();
 	}
