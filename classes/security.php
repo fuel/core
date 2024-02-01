@@ -169,6 +169,10 @@ class Security
 
 	public static function xss_clean($value, array $options = array(), $spec = '')
 	{
+		if($value == null)
+        {
+            return null;
+        }
 		if ( ! is_array($value))
 		{
 			if ( ! function_exists('htmLawed'))
