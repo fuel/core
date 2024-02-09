@@ -20,7 +20,7 @@ namespace Fuel\Core;
  */
 class Test_Format extends TestCase
 {
-	protected function setUp()
+	protected function setUp(): void
 	{
 		Config::load('format', true);
 		Config::set('format', array(
