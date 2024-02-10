@@ -115,6 +115,7 @@ class Route
 			':everything',
 			':alnum',
 			':num',
+			':float',
 			':alpha',
 			':segment',
 		), array(
@@ -122,6 +123,7 @@ class Route
 			'.*',
 			'[[:alnum:]]+',
 			'[[:digit:]]+',
+			'[0-9\.,]+',
 			'[[:alpha:]]+',
 			'[^/]*',
 		), $this->path);
