@@ -13,7 +13,7 @@
 	"require": {
 		"composer/installers": "~1.0",
 		"phpseclib/phpseclib": "~3.0",
-		"paragonie/sodium_compat": "^1.6",
+		"paragonie/sodium_compat": "^1|^2",
 		"monolog/monolog": "^1.18|^2|^3",
 		"michelf/php-markdown": "~1.9.1"
 	}
