@@ -356,22 +356,22 @@ abstract class Image_Driver
 		{
 			if (bccomp(bcdiv($sizes->width, $width, 10), bcdiv($sizes->height, $height, 10), 10) < 1)
 			{
-				$this->_resize($width, 0, true, false);
+				$this->_resize($width, null, true, false);
 			}
 			else
 			{
-				$this->_resize(0, $height, true, false);
+				$this->_resize(null, $height, true, false);
 			}
 		}
 		else
 		{
 			if ($sizes->width / $width < $sizes->height / $height)
 			{
-				$this->_resize($width, 0, true, false);
+				$this->_resize($width, null, true, false);
 			}
 			else
 			{
-				$this->_resize(0, $height, true, false);
+				$this->_resize(null, $height, true, false);
 			}
 		}
 
