@@ -103,7 +103,7 @@ class DB
 	 * @param   array   columns to select
 	 * @return  Database_Query_Builder_Select
 	 */
-	public static function select_array($columns = null)
+	public static function select_array(?array $columns = null)
 	{
 		// columns must be a nullable array
 		if ( ! is_null($columns) and ! is_array($columns))
