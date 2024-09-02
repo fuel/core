@@ -183,7 +183,12 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	{
 		// replace dots with dashes
 		$identifier = str_replace('.', DS, $identifier);
-
+        	if (strpos($identifier, '.') !== false) {
+	            [$group, $hash] = explode('.', $identifier, 2);
+		    // creates an extra level
+	            $hash = substr_replace($hash, '.', 3, 0);
+	            $identifier = implode('.', [$group, $hash]);
+	        }
 		return $identifier;
 	}
 
