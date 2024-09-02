@@ -181,14 +181,14 @@ class Cache_Storage_File extends \Cache_Storage_Driver
 	 */
 	protected function identifier_to_path($identifier)
 	{
-		// replace dots with dashes
-		$identifier = str_replace('.', DS, $identifier);
+		// creates an extra level
         	if (strpos($identifier, '.') !== false) {
-	            [$group, $hash] = explode('.', $identifier, 2);
-		    // creates an extra level
+	            list($group, $hash) = explode('.', $identifier, 2);
 	            $hash = substr_replace($hash, '.', 3, 0);
 	            $identifier = implode('.', [$group, $hash]);
 	        }
+		// replace dots with dashes
+		$identifier = str_replace('.', DS, $identifier);
 		return $identifier;
 	}
 
