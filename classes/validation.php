@@ -887,7 +887,7 @@ class Validation
 	 * @param   string  ipv4|ipv6
 	 * @return  bool
 	 */
-	public function _validation_valid_ip($val, $flag = null)
+	public function _validation_valid_ip($val, $flag = '')
 	{
 		switch (strtolower($flag))
 		{
@@ -896,6 +896,9 @@ class Validation
 				break;
 			case 'ipv6':
 				$flag = FILTER_FLAG_IPV6;
+				break;
+			default:
+				$flag = 0;
 				break;
 		}
 
