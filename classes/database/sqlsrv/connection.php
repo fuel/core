@@ -43,7 +43,7 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	 * @param   ...
 	 * @return  Database_Query_Builder_Select
 	 */
-	public function select(array $args = null)
+	public function select($args = null)
 	{
 		$instance = new \Database_Sqlsrv_Builder_Select($args);
 		return $instance->set_connection($this);

@@ -36,7 +36,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 	 * @param   mixed $table   table name or array($table, $alias) or object
 	 * @param   array $columns column names
 	 */
-	public function __construct($table = null, array $columns = null)
+	public function __construct($table = null, $columns = null)
 	{
 		if ($table)
 		{
@@ -44,7 +44,7 @@ class Database_Query_Builder_Insert extends \Database_Query_Builder
 			$this->_table = $table;
 		}
 
-		if ($columns)
+		if (is_array($columns) and ! empty($columns))
 		{
 			// Set the column names
 			$this->_columns = $columns;

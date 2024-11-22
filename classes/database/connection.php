@@ -44,7 +44,7 @@ abstract class Database_Connection
 	 *
 	 * @throws \FuelException
 	 */
-	public static function instance($name = null, array $config = null, $writable = true)
+	public static function instance($name = null, $config = null, $writable = true)
 	{
 		\Config::load('db', true);
 		if ($name === null)
@@ -67,7 +67,7 @@ abstract class Database_Connection
 				$config = \Config::get('db.'.$name);
 			}
 
-			if ( ! isset($config['type']))
+			if ( ! is_array($config) or ! isset($config['type']))
 			{
 				throw new \FuelException('Database type not defined in "'.$name.'" configuration or "'.$name.'" configuration does not exist');
 			}
@@ -280,7 +280,7 @@ abstract class Database_Connection
 	 * @param   ...
 	 * @return  Database_Query_Builder_Select
 	 */
-	public function select(array $args = null)
+	public function select($args = null)
 	{
 		$instance = new \Database_Query_Builder_Select($args);
 		return $instance->set_connection($this);
