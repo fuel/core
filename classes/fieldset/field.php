@@ -243,7 +243,8 @@ class Fieldset_Field
 		{
 			if (($this->type == 'radio' or $this->type == 'checkbox') and empty($this->options))
 			{
-				if ($this->value == $value)
+				$this->value = $value;
+				if ($this->value)
 				{
 					$this->set_attribute('checked', 'checked');
 				}
