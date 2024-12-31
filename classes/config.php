@@ -98,7 +98,7 @@ class Config
 
 					if (class_exists($class))
 					{
-						static::$loaded_files[$file] = true;
+						$cache and static::$loaded_files[$file] = true;
 						$class = new $class($file);
 					}
 					else
