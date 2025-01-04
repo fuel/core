@@ -706,15 +706,23 @@ class Request
 	 */
 	public function add_path($path, $prefix = false)
 	{
-		if ($prefix)
+		// unify and verify the path
+		if ($realpath = realpath($path).DS)
 		{
-			// prefix the path to the paths array
-			array_unshift($this->paths, $path);
+			if ($prefix)
+			{
+				// prefix the path to the paths array
+				array_unshift($this->paths, $realpath);
+			}
+			else
+			{
+				// add the new path
+				$this->paths[] = $realpath;
+			}
 		}
 		else
 		{
-			// add the new path
-			$this->paths[] = $path;
+			throw new \FuelException(sprintf('Path "%s" does not exist', $path));
 		}
 	}
 
