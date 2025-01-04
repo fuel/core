@@ -356,7 +356,7 @@ class Request
 		$this->method_params = $this->route->method_params;
 		$this->named_params = $this->route->named_params;
 
-		if ($this->route->module !== null)
+		if ( ! empty($this->route->module))
 		{
 			$this->add_path(\Module::exists($this->module));
 		}
