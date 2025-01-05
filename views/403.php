@@ -42,7 +42,7 @@
 			<h1>403 - Forbidden!</h1>
 		</div>
 		<div id="body">
-			<p>The request was a valid request, but the server is refusing to respond to it. </p>
+			<p><?=(\Str::starts_with(\Fuel::$env, \Fuel::PRODUCTION) or empty($message)) ? 'The request was a valid request, but the server is refusing to respond to it.' : $message?></p>
 		</div>
 	</div>
 </body>
