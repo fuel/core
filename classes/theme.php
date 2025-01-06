@@ -539,7 +539,12 @@ class Theme
 	 */
 	public function add_path($path)
 	{
-		$this->paths[] = rtrim($path, DS).DS;
+		if ( ! $realpath = realpath($path))
+		{
+			throw new \FuelException(sprintf('Theme path "%s" is not a valid path!', $path));
+		}
+
+		$this->paths[] = realpath($realpath).DS;
 	}
 
 	/**
