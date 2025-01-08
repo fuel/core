@@ -454,20 +454,24 @@ class View
 			// strip the extension from it
 			$pathinfo = pathinfo($file);
 
-			// add the result to the search list
-			if ($reverse)
+			// make sure it has an extension
+			if (array_key_exists('extension', $pathinfo))
 			{
-				array_unshift($searches, array(
-					'file' => substr($file, 0, strlen($pathinfo['extension'])*-1 - 1),
-					 'extension' => $pathinfo['extension'],
-				));
-			}
-			else
-			{
-				$searches[] = array(
-					'file' => substr($file, 0, strlen($pathinfo['extension'])*-1 - 1),
-					 'extension' => $pathinfo['extension'],
-				);
+				// add the result to the search list
+				if ($reverse)
+				{
+					array_unshift($searches, array(
+						'file' => substr($file, 0, strlen($pathinfo['extension'])*-1 - 1),
+						 'extension' => $pathinfo['extension'],
+					));
+				}
+				else
+				{
+					$searches[] = array(
+						'file' => substr($file, 0, strlen($pathinfo['extension'])*-1 - 1),
+						 'extension' => $pathinfo['extension'],
+					);
+				}
 			}
 		}
 
