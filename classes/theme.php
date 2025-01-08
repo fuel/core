@@ -785,7 +785,26 @@ class Theme
 		// determine the path prefix and optionally the module path
 		$path_prefix = '';
 		$module_path = null;
-		if ($this->config['use_modules'] and class_exists('Request', false) and $request = \Request::active() and $module = $request->module)
+
+		// If a filename contains a :: then it is trying to be found in a namespace.
+		// This is sometimes used to load a view from a non-loaded module.
+		if (($pos = strripos($view, '::')) > 0)
+		{
+			// extract the module
+			$module = substr($view, 0, $pos);
+
+			// see if it is loaded
+			if (\Module::loaded($module))
+			{
+				// get the module path
+				$module_path = substr(\Autoloader::namespace_path('\\'.ucfirst($module)), 0, -8).'themes'.DS;
+
+				// strip the namespace from the view
+				$view = substr($view, $pos + 2);
+			}
+		}
+
+		elseif ($this->config['use_modules'] and class_exists('Request', false) and $request = \Request::active() and $module = $request->module)
 		{
 			// we're using module name prefixing
 			$path_prefix = $module.DS;
