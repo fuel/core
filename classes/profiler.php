@@ -82,6 +82,12 @@ class Profiler
 		static::$query = null;
 	}
 
+	public static function reset()
+	{
+		static::$profiler = false;
+		static::delete();
+	}
+
 	public static function app_total()
 	{
 		return array(
