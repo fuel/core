@@ -77,7 +77,7 @@ class Profiler
 		}
 	}
 
-	public static function delete($text)
+	public static function delete()
 	{
 		static::$query = null;
 	}
