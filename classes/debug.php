@@ -180,7 +180,14 @@ JS;
 		if (is_array($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong>";
+			if ($scope)
+			{
+				$return .= "<i>{$scope}</i> <strong>".$name."</strong>";
+			}
+			else
+			{
+				$return .= "<strong>".$name."</strong>";
+			}
 			$return .=  " (Array, ".count($var)." element".(count($var)!=1 ? "s" : "").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
@@ -277,12 +284,18 @@ JS;
 			$id = 'fuel_debug_'.mt_rand();
 			$rvar = new \ReflectionObject($var);
 			$vars = $rvar->getProperties();
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
+			if ($scope)
+			{
+				$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
+			}
+			else
+			{
+				$return .= "<strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
+			}
 			if (count($vars) > 0 and static::$max_nesting_level > $level)
 			{
 				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>\n";
 			}
-			$return .= "\n";
 
 			$sub_return = '';
 			foreach ($rvar->getProperties() as $prop)
