@@ -292,9 +292,13 @@ JS;
 			{
 				$return .= "<strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
 			}
-			if (count($vars) > 0 and static::$max_nesting_level > $level)
+			if (count($vars) > 0)
 			{
-				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>\n";
+				if (static::$max_nesting_level > $level)
+				{
+					$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>";
+				}
+				$return .= "\n";
 			}
 
 			$sub_return = '';
