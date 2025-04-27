@@ -102,6 +102,8 @@ class Date
 
 	public static function _init()
 	{
+		\Config::load('date', 'date');
+
 		static::$server_gmt_offset	= \Config::get('server_gmt_offset', 0);
 
 		static::$display_timezone = \Config::get('default_timezone') ?: date_default_timezone_get();
@@ -112,11 +114,12 @@ class Date
 	 *
 	 * @param   int     $timestamp  UNIX timestamp from current server
 	 * @param   string  $timezone   valid PHP timezone from www.php.net/timezones
+	 * @param   string  $pattern    valid strftime pattern or date config key
 	 * @return  Date
 	 */
-	public static function forge($timestamp = null, $timezone = null)
+	public static function forge($timestamp = null, $timezone = null, $pattern = null)
 	{
-		return new static($timestamp, $timezone);
+		return new static($timestamp, $timezone, $pattern);
 	}
 
 	/**
@@ -667,13 +670,27 @@ class Date
 	 */
 	protected $timezone;
 
-	public function __construct($timestamp = null, $timezone = null)
+	/**
+	 * @var  string  default format pattern
+	 */
+	protected $pattern = 'local';
+
+	/**
+	 * Create Date object from timestamp, timezone is optional
+	 *
+	 * @param   int     $timestamp  UNIX timestamp from current server
+	 * @param   string  $timezone   valid PHP timezone from www.php.net/timezones
+	 * @param   string  $pattern    valid strftime pattern or date config key
+	 */
+	public function __construct($timestamp = null, $timezone = null, $pattern = null)
 	{
 		is_null($timestamp) and $timestamp = time() + static::$server_gmt_offset;
-		! $timezone and $timezone = \Fuel::$timezone;
+		is_null($timezone) and $timezone = \Fuel::$timezone;
+		is_null($pattern) and $pattern = 'local';
 
 		$this->timestamp = $timestamp;
 		$this->set_timezone($timezone);
+		$this->set_pattern($pattern);
 	}
 
 	/**
@@ -683,10 +700,9 @@ class Date
 	 * @param   mixed 	$timezone     vald timezone, or if true, output the time in local time instead of system time
 	 * @return  string
 	 */
-	public function format($pattern_key = 'local', $timezone = null)
+	public function format($pattern_key = null, $timezone = null)
 	{
-		\Config::load('date', 'date');
-
+		is_null($pattern_key) and $pattern_key = $this->pattern;
 		$pattern = \Config::get('date.patterns.'.$pattern_key, $pattern_key);
 
 		// determine the timezone to switch to
@@ -729,6 +745,16 @@ class Date
 	}
 
 	/**
+	 * Returns the default date pattern
+	 *
+	 * @return  string
+	 */
+	public function get_pattern()
+	{
+		return $this->pattern;
+	}
+
+	/**
 	 * Returns the internal timezone or the display timezone abbreviation
 	 *
 	 * @param boolean $display_timezone
@@ -768,6 +794,21 @@ class Date
 	public function set_timezone($timezone)
 	{
 		$this->timezone = $timezone;
+
+		return $this;
+	}
+
+	/**
+	 * Change the default format pattern
+	 *
+	 * @param   string  $pattern  date format pattern, as defined in the date config
+	 * @return  Date
+	 */
+	public function set_pattern($pattern)
+	{
+		$pattern = \Config::get('date.patterns.'.$pattern, $pattern);
+
+		$this->pattern = $pattern;
 
 		return $this;
 	}
