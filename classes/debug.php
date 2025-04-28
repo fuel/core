@@ -180,14 +180,7 @@ JS;
 		if (is_array($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			if ($scope)
-			{
-				$return .= "<i>{$scope}</i> <strong>".$name."</strong>";
-			}
-			else
-			{
-				$return .= "<strong>".$name."</strong>";
-			}
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong>";
 			$return .=  " (Array, ".count($var)." element".(count($var)!=1 ? "s" : "").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
@@ -222,27 +215,27 @@ JS;
 		}
 		elseif (is_string($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (String): <span style=\"color:".$color.";\">\"".\Security::htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (String): <span style=\"color:".$color.";\">\"".\Security::htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
 		}
 		elseif (is_float($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Float): {$var}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Float): {$var}\n";
 		}
 		elseif (is_long($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Integer): {$var}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Integer): {$var}\n";
 		}
 		elseif (is_null($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> : null\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> : null\n";
 		}
 		elseif (is_bool($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
 		}
 		elseif (is_double($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Double): {$var}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Double): {$var}\n";
 		}
 		elseif ($var instanceOf \UnitEnum)
 		{
@@ -254,7 +247,7 @@ JS;
 
 			preg_match('~enum(?:<\/b>)?\((?:<i>)?(.*?)(?:<\/i>)?\)~', $contents, $matches);
 
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Enum): {$matches[1]}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Enum): {$matches[1]}\n";
 		}
 		elseif (is_object($var))
 		{
@@ -284,14 +277,7 @@ JS;
 			$id = 'fuel_debug_'.mt_rand();
 			$rvar = new \ReflectionObject($var);
 			$vars = $rvar->getProperties();
-			if ($scope)
-			{
-				$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
-			}
-			else
-			{
-				$return .= "<strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
-			}
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
 			if (count($vars) > 0)
 			{
 				if (static::$max_nesting_level > $level)
@@ -349,7 +335,7 @@ JS;
 		}
 		else
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong>: {$var}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong>: {$var}\n";
 		}
 		return $return;
 	}
