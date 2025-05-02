@@ -83,4 +83,24 @@ return array(
 	 */
 
 	 'flush_cache' => false,
+
+	/**
+	 * -------------------------------------------------------------------------
+	 *  Flag
+	 * -------------------------------------------------------------------------
+	 *
+	 *  Name of a file to be used as "in-migration" flag. If configured, it will
+	 *  be created as soon as migrations start, and removed when migrations
+	 *  are finished. This can be used by the app to block access or show a
+	 *  maintenance page.
+	 *
+	 *  Note, the file must be in a location where both the CLI and the webserver
+	 *  is able to write to. /tmp is obvious, but will usually not work due to
+	 *  systemd PrivateTmp.
+	 *
+	 *  Default value is null.
+	 *
+	 */
+
+	 'flag' => null,
 );
