@@ -1085,6 +1085,20 @@ class Validation
 	}
 
 	/**
+	 * Trim validation replacement, to be able to handle non-string values (deprecated in PHP now)
+	 *
+	 * @param   mixed   $val
+	 * @return  mixed
+	 * @throws  \Validation_Error
+	 */
+	public function _validation_trim($val)
+	{
+		is_string($val) and $val = trim($val);
+
+		return $val;
+	}
+
+	/**
 	 * locale-aware floatval()
 	 */
 	protected function float_val($val)
