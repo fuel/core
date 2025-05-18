@@ -57,6 +57,10 @@ class Log
 	 */
 	public static function initialize()
 	{
+	        if (\Config::get('log_threshold') === \Fuel::L_NONE) {
+	            return;
+	        }
+
 		// load the file config
 		\Config::load('file', true);
 
