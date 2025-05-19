@@ -57,7 +57,8 @@ class Log
 	 */
 	public static function initialize()
 	{
-	        if (\Config::get('log_threshold') === \Fuel::L_NONE) {
+	        if (\Config::get('log_threshold') === \Fuel::L_NONE) 
+		{
 	            return;
 	        }
 
