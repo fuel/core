@@ -456,6 +456,16 @@ class Fieldset_Field
 	}
 
 	/**
+	 * Magic isset method to check if properties exists and are set
+	 *
+	 * @return  bool
+	 */
+	public function __isset($property)
+	{
+		return property_exists($this, $property) and ! is_null($this->$property);
+	}
+
+	/**
 	 * Magic get method to allow getting class properties but still having them protected
 	 * to disallow writing.
 	 *
