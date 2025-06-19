@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -77,9 +77,15 @@ class Profiler
 		}
 	}
 
-	public static function delete($text)
+	public static function delete()
 	{
 		static::$query = null;
+	}
+
+	public static function reset()
+	{
+		static::$profiler = false;
+		static::delete();
 	}
 
 	public static function app_total()

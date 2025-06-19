@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -194,14 +194,14 @@ class Fuel
 			}
 		}
 
-		// Load in the routes
-		\Config::load('routes', true);
-		\Router::add(\Config::get('routes'));
-
 		\Event::register('fuel-shutdown', 'Fuel::finish');
 
 		// Always load classes, config & language set in always_load.php config
 		static::always_load();
+
+		// Load in the routes
+		\Config::load('routes', true);
+		\Router::add(\Config::get('routes'));
 
 		// BC FIX FOR APPLICATIONS <= 1.6.1, makes Redis_Db available as Redis,
 		// like it was in versions before 1.7

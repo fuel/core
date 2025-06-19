@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -16,7 +16,7 @@ class HttpBadRequestException extends HttpException
 {
 	public function response()
 	{
-		return new \Response(\View::forge('400'), 400);
+		return new \Response(\View::forge('400')->set('message', $this->getMessage()), 400);
 	}
 }
 
@@ -24,7 +24,7 @@ class HttpNoAccessException extends HttpException
 {
 	public function response()
 	{
-		return new \Response(\View::forge('403'), 403);
+		return new \Response(\View::forge('403')->set('message', $this->getMessage()), 403);
 	}
 }
 
@@ -32,7 +32,7 @@ class HttpNotFoundException extends HttpException
 {
 	public function response()
 	{
-		return new \Response(\View::forge('404'), 404);
+		return new \Response(\View::forge('404')->set('message', $this->getMessage()), 404);
 	}
 }
 
@@ -40,6 +40,6 @@ class HttpServerErrorException extends HttpException
 {
 	public function response()
 	{
-		return new \Response(\View::forge('500'), 500);
+		return new \Response(\View::forge('500')->set('message', $this->getMessage()), 500);
 	}
 }

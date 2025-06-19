@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -289,6 +289,12 @@ class Migrate
 	 */
 	protected static function run($migrations, $name, $type, $method = 'up')
 	{
+		// set a flag if configured
+		if ($flag = \Config::get('migrations.flag'))
+		{
+			touch($flag);
+		}
+
 		// storage for installed migrations
 		$done = array();
 
@@ -328,6 +334,12 @@ class Migrate
 		static::$connection === null or \DBUtil::set_connection(null);
 
 		empty($done) or logger(\Fuel::L_INFO, 'Migrated to '.$ver.' successfully.');
+
+		// remove a flag if configured
+		if ($flag)
+		{
+			unlink($flag);
+		}
 
 		return $done;
 	}

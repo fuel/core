@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -243,7 +243,8 @@ class Fieldset_Field
 		{
 			if (($this->type == 'radio' or $this->type == 'checkbox') and empty($this->options))
 			{
-				if ($this->value == $value)
+				$this->value = $value;
+				if ($this->value)
 				{
 					$this->set_attribute('checked', 'checked');
 				}
@@ -452,6 +453,16 @@ class Fieldset_Field
 		($replace_options or empty($this->options)) ? $this->options = $value : $merge($this->options, $value, $merge);
 
 		return $this;
+	}
+
+	/**
+	 * Magic isset method to check if properties exists and are set
+	 *
+	 * @return  bool
+	 */
+	public function __isset($property)
+	{
+		return property_exists($this, $property) and ! is_null($this->$property);
 	}
 
 	/**

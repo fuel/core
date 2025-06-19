@@ -58,7 +58,7 @@ function displayPqp($output) {
 .pQp var {font-size:23px;font-weight:bold;font-style:normal;margin:0 0 3px 0;display:block; margin-top: 16px !important;}
 .pQp h4 {font-size:12px;color:#fff;margin:0 0 4px 0}
 .pQp .pqp-main {width:80%; float: left;}
-.pQp .pqp-main table {width:100%;}
+.pQp .pqp-main table {width:100%;table-layout:fixed;}
 *+html .pQp .pqp-main {width:78%}
 * html .pQp .pqp-main {width:77%}
 .pQp .pqp-main td {padding:7px 15px;text-align:left;border-left:1px solid #333;border-right:1px solid #333;border-bottom:1px dotted #323232;color:#FFF;}
@@ -109,6 +109,7 @@ function displayPqp($output) {
 #pqp-post .pqp-side td.pqp-alt {background-color:#FFA46E;border-bottom:none;border-left:none;-webkit-border-bottom-left-radius:30px;-moz-border-radius-bottomleft:30px;border-bottom-left-radius:30px}
 #pqp-footer {width:100%;background:#000;font-size:11px;border-top:1px solid #ccc}
 #pqp-footer td {padding:0!important;border:none!important}
+#pqp-footer tr {background-color:#000}
 #pqp-footer strong {color:#fff}
 #pqp-footer a {color:#999;padding:5px 10px;text-decoration:none}
 #pqp-footer .pqp-credit {width:20%;text-align:left}
@@ -120,7 +121,7 @@ function displayPqp($output) {
 #openProfiler { position: fixed; bottom: 0; right: 20px; z-index:999999; }
 #openProfiler a { height:32px;text-align:center;width:100px;background-color:#222;border:2px solid #000;border-bottom:none;font-size:12px;font-family:"Lucida Grande",Tahoma,Arial,sans-serif;-webkit-border-top-left-radius:4px;-webkit-border-top-right-radius:4px;-moz-border-radius-topleft:4px;-moz-border-radius-topright:4px;;border-top-right-radius:4px;color:#999;line-height: 32px;display:block;}
 #openProfiler a:hover {color:white;text-decoration:none}
-#pqp-container {display:none;position:inherit;}
+#pqp-container {display:none;position:fixed;bottom:0%;}
 CSS
 );
 
@@ -131,7 +132,7 @@ CSS
 	var PQP_SHOWONLOAD = (typeof PQP_SHOWONLOAD != "undefined" && PQP_SHOWONLOAD) ? "open" : "closed";
 	var PQP_HEIGHT = (typeof PQP_HEIGHT != "undefined" && PQP_HEIGHT == "tall") ? "short" : "tall";
 	var PQP_DETAILS = (typeof PQP_DETAILS != "undefined" && PQP_DETAILS) ? true : false;
-	var PQP_BOTTOM = (typeof PQP_BOTTOM == "undefined" || PQP_BOTTOM == true) ? true : false;
+	var PQP_BOTTOM = (typeof PQP_BOTTOM == "undefined" || PQP_BOTTOM == true) ? false : true;
 
 	addEvent(window, 'load', loadCSS);
 
@@ -182,7 +183,7 @@ CSS
 		var container = document.getElementById('pqp-container');
 		if (container.style.position == "inherit")
 		{
-			container.style.position="";
+			container.style.position="fixed";
 		}
 		else
 		{

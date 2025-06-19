@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       https://fuelphp.com
  */
@@ -60,9 +60,9 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	 *
 	 * @param  array  $columns  column list
 	 */
-	public function __construct(array $columns = null)
+	public function __construct($columns = null)
 	{
-		if ( ! empty($columns))
+		if ( is_array($columns) and  ! empty($columns))
 		{
 			// Set the initial columns
 			$this->_select = $columns;

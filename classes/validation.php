@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -887,7 +887,7 @@ class Validation
 	 * @param   string  ipv4|ipv6
 	 * @return  bool
 	 */
-	public function _validation_valid_ip($val, $flag = null)
+	public function _validation_valid_ip($val, $flag = '')
 	{
 		switch (strtolower($flag))
 		{
@@ -896,6 +896,9 @@ class Validation
 				break;
 			case 'ipv6':
 				$flag = FILTER_FLAG_IPV6;
+				break;
+			default:
+				$flag = 0;
 				break;
 		}
 
@@ -1079,6 +1082,20 @@ class Validation
 		{
 			return false;
 		}
+	}
+
+	/**
+	 * Trim validation replacement, to be able to handle non-string values (deprecated in PHP now)
+	 *
+	 * @param   mixed   $val
+	 * @return  mixed
+	 * @throws  \Validation_Error
+	 */
+	public function _validation_trim($val)
+	{
+		is_string($val) and $val = trim($val);
+
+		return $val;
 	}
 
 	/**

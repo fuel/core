@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -102,6 +102,8 @@ class Date
 
 	public static function _init()
 	{
+		\Config::load('date', 'date');
+
 		static::$server_gmt_offset	= \Config::get('server_gmt_offset', 0);
 
 		static::$display_timezone = \Config::get('default_timezone') ?: date_default_timezone_get();
@@ -112,11 +114,12 @@ class Date
 	 *
 	 * @param   int     $timestamp  UNIX timestamp from current server
 	 * @param   string  $timezone   valid PHP timezone from www.php.net/timezones
+	 * @param   string  $pattern    valid strftime pattern or date config key
 	 * @return  Date
 	 */
-	public static function forge($timestamp = null, $timezone = null)
+	public static function forge($timestamp = null, $timezone = null, $pattern = null)
 	{
-		return new static($timestamp, $timezone);
+		return new static($timestamp, $timezone, $pattern);
 	}
 
 	/**
@@ -279,10 +282,27 @@ class Date
 		{
 			return '';
 		}
+		elseif ($timestamp instanceOf static)
+		{
+			$timestamp = $timestamp->get_timestamp();
+		}
+		elseif ( ! is_numeric($timestamp))
+		{
+			$timestamp = static::create_from_string($timestamp)->get_timestamp();
+		}
 
-		! is_numeric($timestamp) and $timestamp = static::create_from_string($timestamp)->get_timestamp();
-
-		$from_timestamp == null and $from_timestamp = time();
+		if ($from_timestamp === null)
+		{
+			$from_timestamp = time();
+		}
+		elseif ($from_timestamp instanceOf static)
+		{
+			$from_timestamp = $from_timestamp->get_timestamp();
+		}
+		elseif ( ! is_numeric($from_timestamp))
+		{
+			$from_timestamp = static::create_from_string($from_timestamp)->get_timestamp();
+		}
 
 		\Lang::load('date', true);
 
@@ -429,11 +449,6 @@ class Date
  	 */
 	public static function strftime($format, $timestamp = null)
 	{
-		if (function_exists('strftime') and version_compare(PHP_VERSION, '8.1.0', '<'))
-		{
-			return strftime($format, $timestamp);
-		}
-
 		if (is_null($timestamp))
 		{
 			$timestamp = new \DateTime;
@@ -478,6 +493,13 @@ class Date
 				$date_type = \IntlDateFormatter::LONG;
 				$time_type = \IntlDateFormatter::SHORT;
 			}
+			// %Q = Preferred date and time stamp based on locale
+			// Example: Tue Feb 5 00:45:10 2009 for February 5, 2009 at 12:45:10 AM
+			elseif ($format == '%Q')
+			{
+				$date_type = \IntlDateFormatter::LONG;
+				$time_type = \IntlDateFormatter::NONE;
+			}
 			// %x = Preferred date representation based on locale, without the time
 			// Example: 02/05/09 for February 5, 2009
 			elseif ($format == '%x')
@@ -496,7 +518,7 @@ class Date
 				$pattern = $intl_formats[$format];
 			}
 
-			return (new \IntlDateFormatter(null, $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
+			return (new \IntlDateFormatter(setlocale(LC_TIME,0), $date_type, $time_type, $tz, null, $pattern))->format($timestamp);
 		};
 
 		// Same order as https://www.php.net/manual/en/function.strftime.php
@@ -570,6 +592,7 @@ class Date
 
 			// Time and Date Stamps
 			'%c' => $intl_formatter,
+			'%Q' => $intl_formatter,
 			'%D' => 'm/d/Y',
 			'%F' => 'Y-m-d',
 			'%s' => 'U',
@@ -647,13 +670,27 @@ class Date
 	 */
 	protected $timezone;
 
-	public function __construct($timestamp = null, $timezone = null)
+	/**
+	 * @var  string  default format pattern
+	 */
+	protected $pattern = 'local';
+
+	/**
+	 * Create Date object from timestamp, timezone is optional
+	 *
+	 * @param   int     $timestamp  UNIX timestamp from current server
+	 * @param   string  $timezone   valid PHP timezone from www.php.net/timezones
+	 * @param   string  $pattern    valid strftime pattern or date config key
+	 */
+	public function __construct($timestamp = null, $timezone = null, $pattern = null)
 	{
 		is_null($timestamp) and $timestamp = time() + static::$server_gmt_offset;
-		! $timezone and $timezone = \Fuel::$timezone;
+		is_null($timezone) and $timezone = \Fuel::$timezone;
+		is_null($pattern) and $pattern = 'local';
 
 		$this->timestamp = $timestamp;
 		$this->set_timezone($timezone);
+		$this->set_pattern($pattern);
 	}
 
 	/**
@@ -663,10 +700,9 @@ class Date
 	 * @param   mixed 	$timezone     vald timezone, or if true, output the time in local time instead of system time
 	 * @return  string
 	 */
-	public function format($pattern_key = 'local', $timezone = null)
+	public function format($pattern_key = null, $timezone = null)
 	{
-		\Config::load('date', 'date');
-
+		is_null($pattern_key) and $pattern_key = $this->pattern;
 		$pattern = \Config::get('date.patterns.'.$pattern_key, $pattern_key);
 
 		// determine the timezone to switch to
@@ -709,6 +745,16 @@ class Date
 	}
 
 	/**
+	 * Returns the default date pattern
+	 *
+	 * @return  string
+	 */
+	public function get_pattern()
+	{
+		return $this->pattern;
+	}
+
+	/**
 	 * Returns the internal timezone or the display timezone abbreviation
 	 *
 	 * @param boolean $display_timezone
@@ -748,6 +794,21 @@ class Date
 	public function set_timezone($timezone)
 	{
 		$this->timezone = $timezone;
+
+		return $this;
+	}
+
+	/**
+	 * Change the default format pattern
+	 *
+	 * @param   string  $pattern  date format pattern, as defined in the date config
+	 * @return  Date
+	 */
+	public function set_pattern($pattern)
+	{
+		$pattern = \Config::get('date.patterns.'.$pattern, $pattern);
+
+		$this->pattern = $pattern;
 
 		return $this;
 	}

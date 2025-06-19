@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -98,7 +98,7 @@ class Config
 
 					if (class_exists($class))
 					{
-						static::$loaded_files[$file] = true;
+						$cache and static::$loaded_files[$file] = true;
 						$class = new $class($file);
 					}
 					else

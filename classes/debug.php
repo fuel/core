@@ -6,7 +6,7 @@
  * @version    1.9-dev
  * @author     Fuel Development Team
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @link       https://fuelphp.com
  */
 
@@ -180,7 +180,7 @@ JS;
 		if (is_array($var))
 		{
 			$id = 'fuel_debug_'.mt_rand();
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong>";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong>";
 			$return .=  " (Array, ".count($var)." element".(count($var)!=1 ? "s" : "").")";
 			if (count($var) > 0 and static::$max_nesting_level > $level)
 			{
@@ -215,27 +215,27 @@ JS;
 		}
 		elseif (is_string($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (String): <span style=\"color:".$color.";\">\"".\Security::htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (String): <span style=\"color:".$color.";\">\"".\Security::htmlentities($var)."\"</span> (".strlen($var)." characters)\n";
 		}
 		elseif (is_float($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Float): {$var}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Float): {$var}\n";
 		}
 		elseif (is_long($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Integer): {$var}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Integer): {$var}\n";
 		}
 		elseif (is_null($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> : null\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> : null\n";
 		}
 		elseif (is_bool($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
 		}
 		elseif (is_double($var))
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Double): {$var}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Double): {$var}\n";
 		}
 		elseif ($var instanceOf \UnitEnum)
 		{
@@ -247,7 +247,7 @@ JS;
 
 			preg_match('~enum(?:<\/b>)?\((?:<i>)?(.*?)(?:<\/i>)?\)~', $contents, $matches);
 
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong> (Enum): {$matches[1]}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Enum): {$matches[1]}\n";
 		}
 		elseif (is_object($var))
 		{
@@ -277,12 +277,15 @@ JS;
 			$id = 'fuel_debug_'.mt_rand();
 			$rvar = new \ReflectionObject($var);
 			$vars = $rvar->getProperties();
-			$return .= "<i>{$scope}</i> <strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
-			if (count($vars) > 0 and static::$max_nesting_level > $level)
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
+			if (count($vars) > 0)
 			{
-				$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>\n";
+				if (static::$max_nesting_level > $level)
+				{
+					$return .= " <a href=\"javascript:fuel_debug_toggle('$id');\" title=\"Click to ".(static::$js_toggle_open ? "close" : "open")."\">&crarr;</a>";
+				}
+				$return .= "\n";
 			}
-			$return .= "\n";
 
 			$sub_return = '';
 			foreach ($rvar->getProperties() as $prop)
@@ -332,7 +335,7 @@ JS;
 		}
 		else
 		{
-			$return .= "<i>{$scope}</i> <strong>".$name."</strong>: {$var}\n";
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong>: {$var}\n";
 		}
 		return $return;
 	}

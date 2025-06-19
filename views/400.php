@@ -42,7 +42,7 @@
 			<h1>400 - Bad request!</h1>
 		</div>
 		<div id="body">
-			<p>The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).</p>
+			<p><?=(\Str::starts_with(\Fuel::$env, \Fuel::PRODUCTION) or empty($message)) ? 'The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).' : $message?></p>
 		</div>
 	</div>
 </body>

@@ -7,7 +7,7 @@
  * @author     Fuel Development Team
  * @author     cocteau666@gmail.com
  * @license    MIT License
- * @copyright  2010 - 2019 Fuel Development Team
+ * @copyright  2010-2025 Fuel Development Team
  * @copyright  2008 - 2009 Kohana Team
  * @link       https://fuelphp.com
  */
@@ -43,9 +43,24 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	 * @param   ...
 	 * @return  Database_Query_Builder_Select
 	 */
-	public function select(array $args = null)
+	public function select($args = null)
 	{
 		$instance = new \Database_Sqlsrv_Builder_Select($args);
+		return $instance->set_connection($this);
+	}
+
+	/**
+	 * Create a new [Database_Query_Builder_Delete].
+	 *
+	 *     // DELETE FROM users
+	 *     $query = $db->delete('users');
+	 *
+	 * @param   string  table to delete from
+	 * @return  Database_Query_Builder_Delete
+	 */
+	public function delete($table = null)
+	{
+		$instance = new \Database_Sqlsrv_Builder_Delete($table);
 		return $instance->set_connection($this);
 	}
 

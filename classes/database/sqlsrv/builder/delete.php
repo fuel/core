@@ -13,7 +13,7 @@
 
 namespace Fuel\Core;
 
-class Database_SQLite_Builder_Delete extends \Database_Query_Builder_Delete
+class Database_Sqlsrv_Builder_Delete extends \Database_Query_Builder_Delete
 {
 	/**
 	 * Compile the SQL query and return it.
@@ -43,6 +43,11 @@ class Database_SQLite_Builder_Delete extends \Database_Query_Builder_Delete
 		{
 			// Add sorting
 			$query .= ' '.$this->_compile_order_by($db, $this->_order_by);
+		}
+
+		if ($this->_limit !== null)
+		{
+			// SQL Server does not support limiting on DELETE's
 		}
 
 		return $query;
