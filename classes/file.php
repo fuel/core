@@ -529,9 +529,9 @@ class File
 	}
 
 	/**
-	 * Rename directory or file
+	 * Rename (or move) a file
 	 *
-	 * @param   string                 $path         path to file or directory to rename
+	 * @param   string                 $path         path to file to rename
 	 * @param   string                 $new_path     new path (full path, can also cause move)
 	 * @param   string|File_Area|null  $source_area  source path file area name, object or null for non-specific
 	 * @param   string|File_Area|null  $target_area  target path file area name, object or null for non-specific. Defaults to source_area if not set.
@@ -544,11 +544,58 @@ class File
 		$path = static::instance($source_area)->get_path($path);
 		$new_path = static::instance($target_area ?: $source_area)->get_path($new_path);
 
-		return rename($path, $new_path);
+		// for backward compatibility ( this used to support directories according to the docs )
+		if (is_dir($path))
+		{
+			return static::rename_dir($path, $new_path, $source_area, $target_area);
+		}
+
+		// source must exist, destination must not
+		$result = false;
+		if (file_exists($path) and ! file_exists($new_path))
+		{
+			try
+			{
+				$perms = fileperms($path);
+				$result = rename($path, $new_path);
+			}
+			catch (\PHPErrorException $e)
+			{
+				// if we get something else then a chmod error, bail out
+				if (strpos($e->getMessage(), 'Operation not permitted') === false)
+				{
+					throw new $e;
+				}
+
+				// finish the rename after ignoring the chmod error
+				if (file_exists($new_path))
+				{
+					$result = true;
+					unlink($path);
+
+					// in case the original exception was caused by ownership
+					// instead of permissions, retry setting the permissions
+					try
+					{
+						chmod($new_path, $perms);
+					}
+					catch (\PHPErrorException $e)
+					{
+						// if we get something else then a chmod error, bail out
+						if (substr($e->getMessage(), 0, 8) !== 'chmod():')
+						{
+							throw new $e;
+						}
+					}
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	/**
-	 * Alias for rename(), not needed but consistent with other methods
+	 * Rename (or move) a directory
 	 *
 	 * @param string                $path         path to directory to rename
 	 * @param string                $new_path     new path (full path, can also cause move)
@@ -560,7 +607,55 @@ class File
 	 */
 	public static function rename_dir($path, $new_path, $source_area = null, $target_area = null)
 	{
-		return static::rename($path, $new_path, $source_area, $target_area);
+		$target_area = $target_area ?: $source_area;
+
+		// for backward compatibility ( this used to be an alias for rename() )
+		if ( ! is_dir($path) and file_exists($path))
+		{
+			return static::rename($path, $new_path, $source_area, $target_area);
+		}
+
+		$path      = rtrim(static::instance($source_area)->get_path($path), '\\/').DS;
+		$new_path  = rtrim(static::instance($target_area)->get_path($new_path), '\\/').DS;
+
+		if ( ! is_dir($path))
+		{
+			throw new \InvalidPathException('Cannot rename directory: given source path "'.$path.'" is not a directory');
+		}
+		elseif ( ! file_exists($new_path))
+		{
+			$newpath_dirname = pathinfo($new_path, PATHINFO_DIRNAME);
+			static::create_dir($newpath_dirname, pathinfo($new_path, PATHINFO_BASENAME), fileperms($newpath_dirname) ?: 0777, $target_area);
+		}
+		elseif ( ! is_dir($new_path))
+		{
+			throw new \InvalidPathException('Cannot rename directory: given destination path "'.$new_path.'" exists but is not a directory');
+		}
+
+		$files = static::read_dir($path, -1, array(), $source_area);
+		foreach ($files as $dir => $file)
+		{
+			if (is_array($file))
+			{
+				$check = static::create_dir($new_path.DS, substr($dir, 0, -1), fileperms($path.$dir) ?: 0777, $target_area);
+				$check and static::rename_dir($path.$dir.DS, $new_path.$dir, $source_area, $target_area);
+			}
+			else
+			{
+				$check = static::rename($path.$file, $new_path.$file, $source_area, $target_area);
+			}
+
+			// abort if something went wrong
+			if ( ! $check)
+			{
+				throw new \FileAccessException('Directory rename aborted prematurely, part of the operation failed during renaming: '.(is_array($file) ? $dir : $file));
+			}
+		}
+
+		// all done, remove the source directory
+		rmdir($path);
+
+		return true;
 	}
 
 	/**
@@ -628,12 +723,16 @@ class File
 
 		if ( ! is_dir($path))
 		{
-			throw new \InvalidPathException('Cannot copy directory: given path: "'.$path.'" is not a directory: '.$path);
+			throw new \InvalidPathException('Cannot copy directory: given path: "'.$path.'" is not a directory');
 		}
 		elseif ( ! file_exists($new_path))
 		{
 			$newpath_dirname = pathinfo($new_path, PATHINFO_DIRNAME);
 			static::create_dir($newpath_dirname, pathinfo($new_path, PATHINFO_BASENAME), fileperms($newpath_dirname) ?: 0777, $target_area);
+		}
+		elseif ( ! is_dir($new_path))
+		{
+			throw new \InvalidPathException('Cannot copy directory: given destination path "'.$new_path.'" exists but is not a directory');
 		}
 
 		$files = static::read_dir($path, -1, array(), $source_area);
