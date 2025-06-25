@@ -571,7 +571,7 @@ class File
 				if (file_exists($new_path))
 				{
 					$result = true;
-					unlink($path);
+					file_exists($path) and unlink($path);
 
 					// in case the original exception was caused by ownership
 					// instead of permissions, retry setting the permissions
