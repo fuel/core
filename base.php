@@ -407,6 +407,28 @@ if ( ! function_exists('get_common_path'))
 }
 
 /**
+ * Creates a temporary directory with a unique name
+ */
+if ( ! function_exists('tempdir'))
+{
+	function tempdir()
+	{
+		// create a temp file
+		if ($tempdir = tempnam(sys_get_temp_dir(), 'fuel'))
+		{
+			// delete it
+			unlink($tempdir);
+
+			// so we can recreate it as a directory
+			mkdir($tempdir);
+		}
+
+		// return the created path (or false on failure)
+		return $tempdir;
+	}
+}
+
+/**
  * Faster equivalent of call_user_func_array
  */
 if ( ! function_exists('call_fuel_func_array'))
