@@ -143,7 +143,9 @@ class Unzip
 				continue;
 			}
 
-			$file_location = realpath($this->_target_dir . '/' . ($preserve_filepath ? $file : basename($file)));
+			$file_location = $this->_target_dir . '/' . ($preserve_filepath ? $file : basename($file));
+			$file_location = realpath(dirname($file_location)) . '/' . basename($file_location);
+
 			if ($file_location and strpos($file_location, $this->_target_dir) === 0)
 			{
 				$file_locations[] = $file_location;
