@@ -272,7 +272,7 @@ class Request
 	public function __construct($uri, $route = true, $method = null)
 	{
 		// store the raw request uri so input can access it
-		$this->uri = $uri;
+		$this->uri = empty($uri) ? $uri : ltrim(parse_url($uri,  \PHP_URL_PATH), '/');
 
 		// forge a new input instance for this request
 		$this->input = \Input::forge($this, static::$active ? static::$active->input() : null);
