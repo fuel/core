@@ -35,6 +35,7 @@ class Cli
 	protected static $foreground_colors = array(
 		'black'			=> '0;30',
 		'dark_gray'		=> '1;30',
+		'dark_grey'		=> '1;30',
 		'blue'			=> '0;34',
 		'dark_blue'		=> '1;34',
 		'light_blue'	=> '1;34',
@@ -49,6 +50,7 @@ class Cli
 		'light_yellow'	=> '0;33',
 		'yellow'		=> '1;33',
 		'light_gray'	=> '0;37',
+		'light_grey'	=> '0;37',
 		'white'			=> '1;37',
 	);
 
@@ -61,6 +63,7 @@ class Cli
 		'magenta'		=> '45',
 		'cyan'			=> '46',
 		'light_gray'	=> '47',
+		'light_grey'	=> '47',
 	);
 
 	protected static $STDOUT;
