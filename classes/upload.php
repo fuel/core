@@ -47,7 +47,8 @@ class Upload
 	const UPLOAD_ERR_MOVE_FAILED          = 109;
 	const UPLOAD_ERR_DUPLICATE_FILE       = 110;
 	const UPLOAD_ERR_MKDIR_FAILED         = 111;
-	const UPLOAD_ERR_FTP_FAILED           = 112;
+	const UPLOAD_ERR_EXTERNAL_MOVE_FAILED = 112;
+	const UPLOAD_ERR_NO_PATH              = 113;
 
 	/* ---------------------------------------------------------------------------
 	 * STATIC PROPERTIES
