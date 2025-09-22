@@ -166,6 +166,30 @@ class Migrate
 	}
 
 	/**
+	 * To make the up command show in the refine available task list
+	 */
+	public function up()
+	{
+		return $this->__call('up', array());
+	}
+
+	/**
+	 * To make the down command show in the refine available task list
+	 */
+	public function down()
+	{
+		return $this->__call('down', array());
+	}
+
+	/**
+	 * To make the current command show in the refine available task list
+	 */
+	public function current()
+	{
+		return $this->__call('current', array());
+	}
+
+	/**
 	 * catches requested method call and runs as needed
 	 *
 	 * @param string	name of the method to run
