@@ -565,7 +565,7 @@ class View
 	 *     // Create the values $food and $beverage in the view
 	 *     $view->set(array('food' => 'bread', 'beverage' => 'water'));
 	 *
-	 * @param   string   $key     variable name or an array of variables
+	 * @param   string|array   $key     variable name or an array of variables
 	 * @param   mixed    $value   value
 	 * @param   bool     $filter  whether to filter the data or not
 	 * @return  $this
