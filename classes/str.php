@@ -133,7 +133,7 @@ class Str
 	{
 		if (PHP_VERSION_ID >= 80000)
 		{
-			return $ignore_case ? str_starts_with(str_to_lower($str), str_to_lower($start)) : str_starts_with($str, $start);
+			return $ignore_case ? str_starts_with(strtolower($str), strtolower($start)) : str_starts_with($str, $start);
 		}
 
 		return (bool) preg_match('/^'.preg_quote($start, '/').'/m'.($ignore_case ? 'i' : ''), (string) $str);
@@ -151,7 +151,7 @@ class Str
 	{
 		if (PHP_VERSION_ID >= 80000)
 		{
-			return $ignore_case ? str_ends_with(str_to_lower($str), str_to_lower($end)) : str_ends_with($str, $end);
+			return $ignore_case ? str_ends_with(strtolower($str), strtolower($end)) : str_ends_with($str, $end);
 		}
 
 		return (bool) preg_match('/'.preg_quote($end, '/').'$/m'.($ignore_case ? 'i' : ''), $str);
