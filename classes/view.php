@@ -360,7 +360,7 @@ class View
 	 *
 	 *     View::set_global($name, $value);
 	 *
-	 * @param   string  $key     variable name or an array of variables
+	 * @param   string|array  $key     variable name or an array of variables
 	 * @param   mixed   $value   value
 	 * @param   bool    $filter  whether to filter the data or not
 	 * @return  void
