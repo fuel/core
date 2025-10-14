@@ -26,11 +26,6 @@ class Database_MySQLi_Connection extends \Database_Connection
 	protected static $_current_databases = array();
 
 	/**
-	 * @var  bool  Use SET NAMES to set the character set
-	 */
-	protected static $_set_names;
-
-	/**
 	 * @var  string  Identifier for this connection within the PHP driver
 	 */
 	protected $_connection_id;
@@ -73,13 +68,6 @@ class Database_MySQLi_Connection extends \Database_Connection
 		if ($this->_connection)
 		{
 			return;
-		}
-
-		if (static::$_set_names === null)
-		{
-			// Determine if we can use mysqli_set_charset(), which is only
-			// available on PHP 5.2.3+ when compiled against MySQL 5.0+
-			static::$_set_names = ! function_exists('mysqli_set_charset');
 		}
 
 		// Extract the connection parameters, adding required variables
