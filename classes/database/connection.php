@@ -672,13 +672,10 @@ abstract class Database_Connection
 		}
 		elseif (is_int($value))
 		{
-			return (int) $value;
+			return $value;
 		}
 		elseif (is_float($value))
 		{
-			$locale_info = localeconv();
-			$value = str_replace($locale_info["thousands_sep"], "", strval($value));
-			$value = str_replace($locale_info["decimal_point"], ".", $value);
 			return $value;
 		}
 
