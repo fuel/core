@@ -455,33 +455,34 @@ class Migrate
 	public static function help()
 	{
 		echo <<<HELP
+Description:
+    The migrate task can run migrations. You can go up, down or by default go to the current migration marked in the config file.
+
 Usage:
     php oil refine migrate[:command] [--version=X]
 
-Fuel commands:
-    help     shows this text
-    current  migrates to the version defined in the migration configuration file
-    up       migrate up to the next version
-    down     migrate down to the previous version
-    run      run all migrations (default)
+Task commands:
+    help        Shows this text
+    current     Migrates to the version defined in the migration configuration file
+    up          Migrate up to the next version
+    down        Migrate down to the previous version
+    run         Run all migrations (default)
 
-Fuel options:
-    -v, [--version]  # Migrate to a specific version ( only 1 item at a time)
-                     # If no version is given, it lists all installed migrations
-    --catchup        # Use if you have out-of-sequence migrations that can be safely run
-    --installed      # shortcut for --modules=<list> --packages=<list> --default, it will use
-                       your applications' "always_load" configuration to determine what to migrate
-    --all            # shortcut for --modules --packages --default
+Task options:
+    -v, [--version]     Migrate to a specific version ( only 1 item at a time)
+                        If no version is given, it lists all installed migrations
+    --catchup           Use if you have out-of-sequence migrations that can be safely run
+    --installed         Shortcut for --modules=<list> --packages=<list> --default, it will use
+                        Your applications' "always_load" configuration to determine what to migrate
+    --all               Shortcut for --modules --packages --default
+    --default           Re-enables default migration
 
-    # The following disable default migrations unless you add --default to the command
-    --default                               # re-enables default migration
-    --modules -m                            # Migrates all modules
-    --modules=item1,item2 -m=item1,item2    # Migrates specific modules
-    --packages -p                           # Migrates all packages
-    --packages=item1,item2 -p=item1,item2   # Migrates specific modules
+    The following disable default migrations unless you add --default to the command:
 
-Description:
-    The migrate task can run migrations. You can go up, down or by default go to the current migration marked in the config file.
+    --modules -m                              Migrates all modules
+    --modules=item1,item2 -m=item1,item2      Migrates specific modules
+    --packages -p                             Migrates all packages
+    --packages=item1,item2 -p=item1,item2     Migrates specific modules
 
 Examples:
     php oil r migrate

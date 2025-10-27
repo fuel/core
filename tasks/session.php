@@ -161,17 +161,23 @@ class Session
     public static function help()
     {
         echo <<<HELP
-            Usage:
-                php oil refine session
+Description:
+    The session task will create the necessary db tables.
 
-            Description:
-                The session task will create the necessary db tables.
+Usage:
+    php oil refine session[:command]
 
-            Examples:
-                php oil r session:create
-                php oil r session:remove
-                php oil r session:clear
-                php oil r session:help
+Task commands:
+    help       Shows this text
+	create     Creates the session table
+	remove     Deletes the session table
+	clear      Deletes all records in the session table
+
+Examples:
+    php oil r session:create
+    php oil r session:remove
+    php oil r session:clear
+    php oil r session:help
 
 HELP;
     }
