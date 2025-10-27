@@ -92,7 +92,7 @@ class Session
             'created'      => array('constraint' => 10, 'type' => 'int', 'unsigned' => true),
             'updated'      => array('constraint' => 10, 'type' => 'int', 'unsigned' => true),
             'payload'      => array('type' => 'longtext'),
-        ), array('session_id'), false, 'InnoDB', \Config::get('db.default.charset'));
+        ), array('session_id'), false, false, \Config::get('db.default.charset'));
 
         // make previous_id a unique_key. speeds up query and prevents duplicate id's
         \DBUtil::create_index(\Config::get('session.db.table'), 'previous_id', 'previous_id', 'unique');
