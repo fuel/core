@@ -193,12 +193,17 @@ abstract class Lang_File implements Lang_Interface
 		// make sure we have a fallback
 		$path or $path = APPPATH.'lang'.DS.$identifier;
 
+		// update the stored filename
+		$this->file = $path;
+
+		// make sure the directory for this file exists
 		$path = pathinfo($path);
 		if ( ! is_dir($path['dirname']))
 		{
 			mkdir($path['dirname'], 0777, true);
 		}
 
+		// write it
 		return \File::update($path['dirname'], $path['basename'], $output);
 	}
 
