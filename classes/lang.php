@@ -165,8 +165,8 @@ class Lang
 	{
 		($language === null) and $language = static::get_lang();
 
-		// prefix the file with the language
-		if ( ! is_null($language))
+		// if file is not an FQFN, prefix the file with the language
+		if ( ! is_file($file) and ! is_null($language))
 		{
 			$file = explode('::', $file);
 			end($file);
