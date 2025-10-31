@@ -411,26 +411,26 @@ class Fuel
 	 */
 	public static function clean_path($path)
 	{
-		// framework default paths
-		static $paths = array(
-			'APPPATH/' => APPPATH,
-			'COREPATH/' => COREPATH,
-			'PKGPATH/' => PKGPATH,
-			'DOCROOT/' => DOCROOT,
-			'VENDORPATH/' => VENDORPATH,
-		);
+		// storage for all framework paths
+		static $paths = array();
 
 		// storage for the search/replace strings
 		static $search = array();
 		static $replace = array();
 
-		// only do this once
-		if (empty($search))
+		// construct the paths list
+		if (empty($paths))
 		{
-			// additional paths configured than need cleaning
-			$extra = \Config::get('security.clean_paths', array());
+			$paths = array(
+				'DOCROOT/' => DOCROOT,
+				'APPPATH/' => APPPATH,
+				'COREPATH/' => COREPATH,
+				'PKGPATH/' => PKGPATH,
+				'VENDORPATH/' => VENDORPATH,
+			) + \Config::get('security.clean_paths', array());
+			arsort($paths);
 
-			foreach ($paths + $extra as $r => $s)
+			foreach ($paths as $r => $s)
 			{
 				if ($s != '/' and is_dir($s))
 				{
