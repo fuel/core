@@ -130,7 +130,12 @@ class Lang_Php extends \Lang_File
 <?php
 
 CONF;
+		// initial code
 		$output .= 'return '.str_replace(array('  ', 'array (', '\''.APPPATH, '\''.DOCROOT, '\''.COREPATH, '\''.PKGPATH), array("\t", 'array(', 'APPPATH.\'', 'DOCROOT.\'', 'COREPATH.\'', 'PKGPATH.\''), var_export($contents, true)).";\n";
+
+		// fuel standards
+		$output = preg_replace('/=>\s+array\(/', '=> array(', $output);
+
 		return $output;
 	}
 }
