@@ -223,7 +223,7 @@ class File
 					// if we get something else then a chmod error, bail out
 					if (substr($e->getMessage(), 0, 8) !== 'chmod():')
 					{
-						throw new $e;
+						throw $e;
 					}
 				}
 			}
@@ -564,7 +564,7 @@ class File
 				// if we get something else then a chmod error, bail out
 				if (strpos($e->getMessage(), 'Operation not permitted') === false)
 				{
-					throw new $e;
+					throw $e;
 				}
 
 				// finish the rename after ignoring the chmod error
@@ -584,7 +584,7 @@ class File
 						// if we get something else then a chmod error, bail out
 						if (substr($e->getMessage(), 0, 8) !== 'chmod():')
 						{
-							throw new $e;
+							throw $e;
 						}
 					}
 				}
@@ -695,7 +695,7 @@ class File
 				// if we get something else then a chmod error, bail out
 				if (substr($e->getMessage(), 0, 8) !== 'chmod():')
 				{
-					throw new $e;
+					throw $e;
 				}
 			}
 		}
