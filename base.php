@@ -121,12 +121,12 @@ if ( ! function_exists('array_to_attr'))
  *
  * @param	string			The tag name
  * @param	array|string	The tag attributes
- * @param	string|bool		The content to place in the tag, or false for no closing tag
+ * @param	string			The content to place in the tag, or false for no closing tag
  * @return	string
  */
 if ( ! function_exists('html_tag'))
 {
-	function html_tag($tag, $attr = array(), $content = false)
+	function html_tag($tag, $attr = array(), $content = '')
 	{
 		// list of void elements (tags that can not have content)
 		static $void_elements = array(
@@ -151,7 +151,7 @@ if ( ! function_exists('html_tag'))
 		else
 		{
 			// add the content and close the tag
-			$html .= '>'.$content.'</'.$tag.'>';
+			$html .= '>'.(empty($content) ? '' : $content).'</'.$tag.'>';
 		}
 
 		return $html;
@@ -170,20 +170,6 @@ if ( ! function_exists('in_arrayi'))
 	function in_arrayi($needle, $haystack)
 	{
 		return in_array(strtolower($needle), array_map('strtolower', $haystack));
-	}
-}
-
-/**
- * Gets all the public vars for an object.  Use this if you need to get all the
- * public vars of $this inside an object.
- *
- * @return	array
- */
-if ( ! function_exists('get_object_public_vars'))
-{
-	function get_object_public_vars($obj)
-	{
-		return get_object_vars($obj);
 	}
 }
 
@@ -569,6 +555,20 @@ if ( ! function_exists('hash_pbkdf2'))
 	}
 }
 
+if ( ! function_exists('is_uuid'))
+{
+	/**
+	 * Check if a given string is a valid UUID
+	 *
+	 * @param   mixed  $uuid   The string to check
+	 * @return  boolean
+	 */
+	function is_uuid($uuid)
+	{
+		return is_string($uuid) && preg_match('/^[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i', $uuid);
+	}
+}
+
 /**
  * array_key_first for PHP < 7.3.0
  */
@@ -597,6 +597,42 @@ if ( ! function_exists('array_key_last'))
 		}
 
 		return null;
+	}
+}
+
+/**
+ * array_first for PHP < 8.5.0
+ */
+if ( ! function_exists('array_first'))
+{
+	/**
+	 * Returns the first value of a given array.
+	 *
+	 * @param array $array The array to get the first value of.
+	 * @return mixed First value of the array, or null if the array is
+	 *   empty. Note that null itself can also be a valid array value.
+	 */
+	function array_first(array $array)
+	{
+		return $array === [] ? null : $array[array_key_first($array)];
+	}
+}
+
+/**
+ * array_last for PHP < 8.5.0
+ */
+if ( ! function_exists('array_last'))
+{
+	/**
+	 * Returns the last value of a given array.
+	 *
+	 * @param array $array The array to get the last value of.
+	 * @return mixed Last value of the array, or null if the array is
+	 *   empty. Note that null itself can also be a valid array value.
+	 */
+	function array_last(array $array)
+	{
+		return $array === [] ? null : $array[array_key_last($array)];
 	}
 }
 
