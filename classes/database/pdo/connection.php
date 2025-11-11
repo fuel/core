@@ -90,7 +90,7 @@ class Database_PDO_Connection extends \Database_Connection
 				$error_code = 0;
 			}
 
-			throw new \Database_Exception(str_replace($this->_config['connection']['password'], str_repeat('*', 10), $e->getMessage()), $e->getCode(), $e, $error_code);
+			throw new \Database_Exception(str_replace(isset($this->_config['connection']['password']) ? $this->_config['connection']['password'] : '', str_repeat('*', 10), $e->getMessage()), $e->getCode(), $e, $error_code);
 		}
 
 		// set the DB charset if needed
