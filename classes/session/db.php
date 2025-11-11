@@ -253,10 +253,13 @@ class Session_Db extends \Session_Driver
 			{
 				// strip the actual query from the message
 				$msg = $e->getMessage();
-				$msg = substr($msg, 0, strlen($msg)  - strlen(strrchr($msg, ':')));
+				if ($e->getDbCode())
+				{
+					$msg = substr($msg, 0, strlen($msg)  - strlen(strrchr($msg, ':')));
+				}
 
 				// and rethrow it
-				throw new \Database_Exception($msg, $e->getCode(), $e, $e->GetDbCode());
+				throw new \Database_Exception($msg, $e->getCode(), $e, $e->getDbCode());
 			}
 		}
 
