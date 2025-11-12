@@ -804,16 +804,27 @@ class Theme
 			}
 		}
 
-		elseif ($this->config['use_modules'] and class_exists('Request', false) and $request = \Request::active() and $module = $request->module)
+		// if not explicit, check if we need to search for an override
+		elseif ($this->config['use_modules'])
 		{
-			// we're using module name prefixing
-			$path_prefix = $module.DS;
+			// are we in a module?
+			if (class_exists('Request', false) and $request = \Request::active() and $module = $request->module)
+			{
+				// we're using module name prefixing
+				$path_prefix = $module.DS;
 
-			// and modules are in a separate path
-			is_string($this->config['use_modules']) and $path_prefix = trim($this->config['use_modules'], '\\/').DS.$path_prefix;
+				// and modules are in a separate path
+				is_string($this->config['use_modules']) and $path_prefix = trim($this->config['use_modules'], '\\/').DS.$path_prefix;
 
-			// do we need to check the module too?
-			$this->config['use_modules'] === true and $module_path = \Module::exists($module).'themes'.DS;
+				// do we need to check the module too?
+				$this->config['use_modules'] === true and $module_path = \Module::exists($module).'themes'.DS;
+			}
+
+			// not in a module, check the app for an override
+			else
+			{
+				$module_path = APPPATH.'themes'.DS;
+			}
 		}
 
 		foreach ($themes as $theme)
@@ -833,7 +844,7 @@ class Theme
 				{
 					return $path;
 				}
-				elseif (is_file($path = $theme['path'].$path_prefix.$file.$ext))
+				elseif ($path_prefix and is_file($path = $theme['path'].$path_prefix.$file.$ext))
 				{
 					return $path;
 				}
