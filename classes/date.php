@@ -688,6 +688,12 @@ class Date
 		is_null($timezone) and $timezone = \Fuel::$timezone;
 		is_null($pattern) and $pattern = 'local';
 
+		// if timestamp is a DateTime object, convert it to a timestamp
+		if ($timestamp instanceOf \DateTime)
+		{
+			$timestamp = $timestamp->getTimestamp();
+		}
+
 		$this->timestamp = $timestamp;
 		$this->set_timezone($timezone);
 		$this->set_pattern($pattern);
