@@ -151,6 +151,7 @@ class File
 		}
 
 		$file = static::open_file(@fopen($new_file, 'c'), true, $area);
+		ftruncate($file, 0);
 		fwrite($file, $contents);
 		static::close_file($file, $area);
 
