@@ -639,6 +639,63 @@ class Str
 			: ucwords(strtolower($str));
 	}
 
+	/**
+	 * Locale awware version of number_format
+	 *
+	 * @param   mixed        $num                    float, or any value that can be converted to float
+	 * @param   int|null     $decimals               number of decimals, defaults to the number defined by the lcoale
+	 * @param   string|null  $thousands_separator    thousands separator, defaults to the string defined by the lcoale
+	 * @param   string|null  $decimal_separator      decimal separator, defaults to the string defined by the lcoale
+	 * @param   string|null  $currency_symbol        currency symbol, defaults to the string defined by the lcoale, false if no symbol should be added
+	 *
+	 * @return  string
+	 */
+	public static function number_format($num, $decimals = null, $thousands_separator = null, $decimal_separator = null, $currency_symbol = false)
+	{
+		// make sure we have a float value to start with
+		$num = floatval($num);
+
+		// get the locale info
+		$locale_info = localeconv();
+
+		// fill in the defaults
+		is_null($decimals) and $decimals = $locale_info['frac_digits'];
+		is_null($decimal_separator) and $decimal_separator = $locale_info['decimal_point'];
+		is_null($thousands_separator) and $thousands_separator = $locale_info['thousands_sep'];
+		is_null($currency_symbol) and $currency_symbol = $locale_info['currency_symbol'];
+
+		$result = number_format($num, $decimals, $decimal_separator, $thousands_separator);
+
+		if ($currency_symbol !== false)
+		{
+			if ($num >= 0)
+			{
+				if ($locale_info['p_cs_precedes'])
+				{
+					$result = $currency_symbol . ($locale_info['p_sep_by_space'] ? ' ' : '') . $result;
+				}
+				else
+				{
+					$result .= ($locale_info['p_sep_by_space'] ? ' ' : '') . $currency_symbol;
+				}
+			}
+			else
+			{
+				if ($locale_info['n_cs_precedes'])
+				{
+					$result = $currency_symbol . ($locale_info['n_sep_by_space'] ? ' ' : '') . $result;
+				}
+				else
+				{
+					$result .= ($locale_info['n_sep_by_space'] ? ' ' : '') . $currency_symbol;
+				}
+			}
+		}
+
+		return $result;
+	}
+
+
 	// deprecated methods
 
 	public static function length($str, $encoding = null)
