@@ -42,7 +42,7 @@ class File
 		$chmod = \Config::get('file.chmod.files', 0666);
 		is_string($chmod) and \Config::set('file.chmod.files', octdec($chmod));
 
-		static::$areas[null] = \File_Area::forge(\Config::get('file.base_config', array()));
+		static::$areas[''] = \File_Area::forge(\Config::get('file.base_config', array()));
 
 		foreach (\Config::get('file.areas', array()) as $name => $config)
 		{
@@ -66,6 +66,11 @@ class File
 		if ($area instanceof File_Area)
 		{
 			return $area;
+		}
+
+		if (is_null($area))
+		{
+			$area = '';
 		}
 
 		$instance = array_key_exists($area, static::$areas) ? static::$areas[$area] : false;
