@@ -198,7 +198,6 @@ class Request_Curl extends \Request_Driver
 		else
 		{
 			// Request successful
-			curl_close($connection);
 			$this->set_defaults();
 
 			return $this;

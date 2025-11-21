@@ -26,7 +26,6 @@ class Image_Gd extends \Image_Driver
 
 		if ( ! $return_data)
 		{
-			$this->image_data !== null and imagedestroy($this->image_data);
 			$this->image_data = null;
 		}
 
