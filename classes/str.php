@@ -441,8 +441,8 @@ class Str
 		$encoding or $encoding = \Fuel::$encoding;
 
 		return (MBSTRING and $encoding)
-			? mb_strtolower($str, $encoding)
-			: strtolower($str);
+			? mb_strtolower((string) $str, $encoding)
+			: strtolower((string) $str);
 	}
 
 	/**
@@ -458,8 +458,8 @@ class Str
 		$encoding or $encoding = \Fuel::$encoding;
 
 		return (MBSTRING and $encoding)
-			? mb_strtoupper($str, $encoding)
-			: strtoupper($str);
+			? mb_strtoupper((string) $str, $encoding)
+			: strtoupper((string) $str);
 	}
 
 	/**
