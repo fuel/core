@@ -290,7 +290,10 @@ JS;
 			$sub_return = '';
 			foreach ($rvar->getProperties() as $prop)
 			{
-				$prop->isPublic() or $prop->setAccessible(true);
+				if (PHP_VERSION_ID <= 80100)
+				{
+					$prop->isPublic() or $prop->setAccessible(true);
+				}
 				if ($prop->isPrivate())
 				{
 					$scope = 'private';
