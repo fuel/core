@@ -116,8 +116,11 @@ abstract class Controller_Rest extends \Controller
 		// If no (or an invalid) format is given, auto detect the format
 		if (is_null($this->format) or ! array_key_exists($this->format, $this->_supported_formats))
 		{
-			// auto-detect the format
-			$this->format = array_key_exists(\Input::extension(), $this->_supported_formats) ? \Input::extension() : $this->_detect_format();
+			// try to auto-detect the format
+			if ($ext = \Input::extension())
+			{
+				$this->format = array_key_exists($ext, $this->_supported_formats) ? $ext : $this->_detect_format();
+			}
 		}
 
 		// Get the configured auth method if none is defined
