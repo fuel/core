@@ -121,6 +121,10 @@ abstract class Controller_Rest extends \Controller
 			{
 				$this->format = array_key_exists($ext, $this->_supported_formats) ? $ext : $this->_detect_format();
 			}
+			else
+			{
+				$this->format = $this->_detect_format();
+			}
 		}
 
 		// Get the configured auth method if none is defined
