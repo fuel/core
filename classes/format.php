@@ -201,7 +201,7 @@ class Format
 				}
 				$structure->addChild($key, $bool);
 			}
-			else
+			elseif(isset($value))
 			{
 				// add single node.
 				$encoded = htmlspecialchars(html_entity_decode($value, ENT_QUOTES, 'UTF-8'), ENT_QUOTES, "UTF-8");
@@ -216,6 +216,10 @@ class Format
 				{
 					$structure->addChild($key, $encoded);
 				}
+			}
+			else
+			{
+			    $structure->addChild($key, null);
 			}
 		}
 
