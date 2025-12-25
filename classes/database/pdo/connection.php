@@ -47,10 +47,15 @@ class Database_PDO_Connection extends \Database_Connection
 		), $this->_config);
 
 		// enable compression if needed
-		if ($this->_config['connection']['compress'])
+		if (!empty($this->_config['connection']['compress']))
 		{
-			// use client compression with mysql or mysqli (doesn't work with mysqlnd)
-			$this->_config['attrs'][\PDO::MYSQL_ATTR_COMPRESS] = true;
+		    if (class_exists('\Pdo\Mysql')) {
+		        // PHP 8.5+
+		        $this->_config['attrs'][\Pdo\Mysql::ATTR_COMPRESS] = true;
+		    } elseif (defined('\PDO::MYSQL_ATTR_COMPRESS')) {
+		        // PHP <= 8.4
+		        $this->_config['attrs'][\PDO::MYSQL_ATTR_COMPRESS] = true;
+		    }
 		}
 
 		// convert generic config values to specific attributes
