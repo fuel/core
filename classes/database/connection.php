@@ -505,8 +505,14 @@ abstract class Database_Connection
 			'binary varying'    => array('type' => 'string', 'binary' => true),
 			'varbinary'         => array('type' => 'string', 'binary' => true),
 
-			// SQL:2012
+			// SQL:2011
 			'nvarchar'                 => array('type' => 'string'),
+
+			// SQL:2016
+			'decfloat'                 => array('type' => 'float'),
+
+			// SQL:2023
+			'json'                     => array('type' => 'string'),
 		);
 
 		if (isset($types[$type]))
@@ -549,6 +555,22 @@ abstract class Database_Connection
 	 * @return  array
 	 */
 	abstract public function list_columns($table, $like = null);
+
+	/**
+	 * Allows for driver specific additions to column definitions when calling list_columns
+	 *
+	 * @param   array $column generic column definitions
+	 * @param   array $row    raw row data as returned by the driver
+	 * @param   string $type  determined data type
+	 * @param   int   $length determined field length
+	 *
+	 * @return  array
+	 */
+	protected function _list_column($column, $row, $type, $length)
+	{
+		// return the column data unaltered
+		return $column;
+	}
 
 	/**
 	 * Lists all of the indexes in a table. Optionally, a LIKE string can be
