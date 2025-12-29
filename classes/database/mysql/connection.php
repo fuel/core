@@ -122,6 +122,7 @@ class Database_MySQL_Connection extends \Database_PDO_Connection
 			{
 				// try to run the query
 				$result = parent::query($type, $sql, $as_object, $caching);
+				break;
 			}
 			catch (\Database_Exception $e)
 			{
