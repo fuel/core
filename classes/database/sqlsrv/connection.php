@@ -161,7 +161,7 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	 */
 	public function set_charset($charset)
 	{
-		if ($charset == 'utf8' or $charset = 'utf-8')
+		if ($charset == 'utf8' or $charset == 'utf-8')
 		{
 			// use utf8 encoding
 			$this->_connection->setAttribute(\PDO::SQLSRV_ATTR_ENCODING, \PDO::SQLSRV_ENCODING_UTF8);
