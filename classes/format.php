@@ -201,6 +201,10 @@ class Format
 				}
 				$structure->addChild($key, $bool);
 			}
+			elseif (is_null($value))
+			{
+				$structure->addChild($key, null);
+			}
 			else
 			{
 				// add single node.
