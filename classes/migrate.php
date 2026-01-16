@@ -278,6 +278,41 @@ class Migrate
 	}
 
 	/**
+	 * check if a given migration has run
+	 *
+	 * @param	string      $type		type of migration (package, module or app)
+	 * @param	string      $name		name of the package, module or app
+	 * @param   string|int	$seq		optional mingration number
+	 */
+	public static function has($type, $name, $seq = null)
+	{
+		// check for type first
+		if ( ! array_key_exists($type, static::$migrations))
+		{
+			return false;
+		}
+
+		// check for name next
+		if ( ! array_key_exists($name, static::$migrations[$type]))
+		{
+			return false;
+		}
+
+		// need to check a specific migration?
+		if ( ! is_null($seq))
+		{
+			is_numeric($seq) and $seq = (int) $seq;
+			if ( ! array_key_exists($seq, static::$migrations[$type][$name]))
+			{
+				return false;
+			}
+		}
+
+		// yup, has already run
+		return true;
+	}
+
+	/**
 	 * run the action migrations found
 	 *
 	 * @param	array	$migrations	list of files to migrate
