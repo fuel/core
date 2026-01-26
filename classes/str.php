@@ -162,66 +162,53 @@ class Str
 	  *
 	  * @param   string  $type    the type of string
 	  * @param   int     $length  the number of characters
-	  * @return  string  the random string
+	  * @return  string  the random string (or int in case of "basic")
 	  */
 	public static function random($type = 'alnum', $length = 16)
 	{
-		switch($type)
-		{
-			case 'basic':
-				return mt_rand();
-				break;
-
-			default:
-			case 'alnum':
-			case 'numeric':
-			case 'nozero':
-			case 'alpha':
-			case 'distinct':
-			case 'hexdec':
-				switch ($type)
+		// closure to generate a random string
+		$generate = function($length, $pool) {
+			$str = '';
+			for ($i=0; $i < $length; $i++)
+			{
+				if (PHP_VERSION_ID >= 70000)
 				{
-					case 'alpha':
-						$pool = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-						break;
-
-					default:
-					case 'alnum':
-						$pool = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-						break;
-
-					case 'numeric':
-						$pool = '0123456789';
-						break;
-
-					case 'nozero':
-						$pool = '123456789';
-						break;
-
-					case 'distinct':
-						$pool = '2345679ACDEFHJKLMNPRSTUVWXYZ';
-						break;
-
-					case 'hexdec':
-						$pool = '0123456789abcdef';
-						break;
+					$str .= substr($pool, random_int(0, strlen($pool) -1), 1);
 				}
-
-				$str = '';
-				for ($i=0; $i < $length; $i++)
+				else
 				{
 					$str .= substr($pool, mt_rand(0, strlen($pool) -1), 1);
 				}
-				return $str;
-				break;
+			}
+			return $str;
+		};
 
+		switch($type)
+		{
+			case 'basic':
+				return PHP_VERSION_ID >= 70000 ? random_int(0, mt_getrandmax()) : mt_rand();
+
+			case 'numeric':
+				return $generate($length, '0123456789');
+
+			case 'nozero':
+				return $generate($length, '123456789');
+
+			case 'alpha':
+				return $generate($length, 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
+
+			case 'distinct':
+				return $generate($length, '2345679ACDEFHJKLMNPRSTUVWXYZ');
+
+			case 'hexdec':
+				return $generate($length, '0123456789abcdef');
+
+			case 'md5':
 			case 'unique':
-				return md5(uniqid(mt_rand()));
-				break;
+				return static::random('hexdec', 32);
 
 			case 'sha1' :
-				return sha1(uniqid(mt_rand(), true));
-				break;
+				return static::random('hexdec', 40);
 
 			case 'uuid':
 			    $pool = array('8', '9', 'a', 'b');
@@ -229,10 +216,13 @@ class Str
 					static::random('hexdec', 8),
 					static::random('hexdec', 4),
 					static::random('hexdec', 3),
-					$pool[array_rand($pool)],
+					PHP_VERSION_ID >= 70000 ? $pool[random_int(0, count($ppol)-1)] : $pool[array_rand($pool)],
 					static::random('hexdec', 3),
 					static::random('hexdec', 12));
-				break;
+
+			case 'alnum':
+			default:
+				return $generate($length, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 		}
 	}
 
