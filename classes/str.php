@@ -216,7 +216,7 @@ class Str
 					static::random('hexdec', 8),
 					static::random('hexdec', 4),
 					static::random('hexdec', 3),
-					PHP_VERSION_ID >= 70000 ? $pool[random_int(0, count($ppol)-1)] : $pool[array_rand($pool)],
+					PHP_VERSION_ID >= 70000 ? $pool[random_int(0, count($pool)-1)] : $pool[array_rand($pool)],
 					static::random('hexdec', 3),
 					static::random('hexdec', 12));
 
