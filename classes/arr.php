@@ -778,14 +778,19 @@ class Arr
 	 * @param   array  $array        collection of arrays/objects to sort
 	 * @param   array  $conditions   sorting conditions
 	 * @param   bool   $ignore_case  whether to sort case insensitive
+	 * @param   bool   $reindex      for indexed arrays, reindex ( = default multisprt behaviour) or not
 	 * @return  array
 	 */
-	public static function multisort($array, $conditions, $ignore_case = false)
+	public static function multisort($array, $conditions, $ignore_case = false, $reindex = true)
 	{
 		$temp = array();
 		$keys = array_keys($conditions);
 
-		$indexed = ! static::is_assoc($array, false);
+		// only relevant for indexed arrays
+		if ( ! $reindex)
+		{
+			$reindex = static::is_assoc($array, false);
+		}
 
 		foreach($keys as $key)
 		{
@@ -805,7 +810,7 @@ class Arr
 
 		$args[] = &$array;
 
-		if ($indexed)
+		if ( ! $reindex)
 		{
 			$keys = array_keys($array);
 			$args[] = &$keys;
@@ -813,7 +818,7 @@ class Arr
 
 		call_fuel_func_array('array_multisort', $args);
 
-		if ($indexed)
+		if ( ! $reindex)
 		{
 			$array = array_combine($keys, $array);
 		}
