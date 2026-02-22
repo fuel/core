@@ -166,6 +166,10 @@ function setup_autoloader()
 		// Generic Schema builder
 		'Fuel\\Core\\Database_Schema'                  => COREPATH.'classes/database/schema.php',
 		// Specific Schema builders
+		'Fuel\\Core\\Database_Dblib_Schema'            => COREPATH.'classes/database/dblib/schema.php',
+		'Fuel\\Core\\Database_MySQL_Schema'            => COREPATH.'classes/database/mysql/schema.php',
+		'Fuel\\Core\\Database_SQLite_Schema'           => COREPATH.'classes/database/sqlite/schema.php',
+		'Fuel\\Core\\Database_Sqlsrv_Schema'           => COREPATH.'classes/database/sqlsrv/schema.php',
 		// Generic Query builder
 		'Fuel\\Core\\Database_Query'                   => COREPATH.'classes/database/query.php',
 		'Fuel\\Core\\Database_Query_Builder'           => COREPATH.'classes/database/query/builder.php',

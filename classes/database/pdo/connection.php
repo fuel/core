@@ -32,8 +32,8 @@ class Database_PDO_Connection extends \Database_Connection
 	 */
 	protected function __construct($name, array $config)
 	{
-		// example of constructing a custom schema driver
-		# $this->_schema = new \Database_<drivername>_Schema($name, $this);
+		// use the MySQL schema processor for generic PDO connections
+		$this->_schema = new \Database_MYSQL_Schema($name, $this);
 
 		// call the parent consructor
 		parent::__construct($name, $config);

@@ -32,6 +32,9 @@ class Database_Dblib_Connection extends \Database_PDO_Connection
 			throw new \Database_Exception('The "Dblib" database driver does not work well on Windows. Use the "Sqlsrv" driver instead.');
 		}
 
+		// MySQL Dblib processor
+		$this->_schema = new \Database_Dblib_Schema($name, $this);
+
 		parent::__construct($name, $config);
 	}
 

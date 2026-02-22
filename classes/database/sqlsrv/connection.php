@@ -26,6 +26,9 @@ class Database_Sqlsrv_Connection extends \Database_PDO_Connection
 	 */
 	protected function __construct($name, array $config)
 	{
+		// MySQL schema processor
+		$this->_schema = new \Database_Sqlsrv_Schema($name, $this);
+
 		parent::__construct($name, $config);
 	}
 

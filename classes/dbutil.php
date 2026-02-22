@@ -372,6 +372,24 @@ class DBUtil
 	}
 
 	/**
+	 * Checks if a given database exists.
+	 *
+	 * @throws  \Database_Exception
+	 * @param   string  $table  Table name
+	 * @param   string  $db     the database connection to use
+	 * @return  bool
+	 */
+	public static function database_exists($database, $db = null)
+	{
+		return \Database_Connection::instance($db ? $db : static::$connection)->schema(
+			'database_exists',
+			array(
+				$database,
+			)
+		);
+	}
+
+	/**
 	 * Checks if a given table exists.
 	 *
 	 * @throws  \Database_Exception

@@ -12,7 +12,7 @@
 
 namespace Fuel\Core;
 
-class Database_Schema
+abstract class Database_Schema
 {
 	/**
 	 * @var  Database_Connection  database connection instance
@@ -158,6 +158,15 @@ class Database_Schema
 
 		return $this->_connection->query(\DB::DELETE, $sql, false);
 	}
+
+	/**
+	 * Generic check if a given database exists.
+	 *
+	 * @throws  \Database_Exception
+	 * @param   string  $table  Table name
+	 * @return  bool
+	 */
+	abstract public function database_exists($database);
 
 	/**
 	 * Generic check if a given table exists.

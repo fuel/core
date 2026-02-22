@@ -47,7 +47,7 @@ class Database_MySQLi_Connection extends \Database_Connection
 	protected function __construct($name, array $config)
 	{
 		// construct a custom schema driver
-//		$this->_schema = new \Database_Drivername_Schema($name, $this);
+		$this->_schema = new \Database_MySQL_Schema($name, $this);
 
 		// call the parent consructor
 		parent::__construct($name, $config);
