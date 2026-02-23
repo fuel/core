@@ -440,6 +440,16 @@ abstract class Session_Driver
 	// --------------------------------------------------------------------
 
 	/**
+	 * return the current state of this session driver
+	 */
+	public function get_state()
+	{
+		return $this->state;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * generic driver initialisation
 	 *
 	 * @return	void
