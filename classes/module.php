@@ -180,6 +180,44 @@ class Module
 	}
 
 	/**
+	 * Checks if the given module is installed, if no module is given then
+	 * all installed modules are returned.
+	 *
+	 * @param   string|null  $module  The module name or null
+	 * @return  bool|array  Whether the module is loaded, or all modules
+	 */
+	public static function installed($module = null)
+	{
+		// storage for installed modules
+		static $modules;
+
+		// enumerate the modules on first call
+		if (is_null($modules))
+		{
+			// loop through module paths
+			foreach (\Config::get('module_paths') as $path)
+			{
+				// get all modules installed in this path
+				foreach(new \GlobIterator(realpath($path).DS.'*') as $m)
+				{
+					$modules[] = $m->getBasename();
+				}
+			}
+		}
+
+		// return all modules if none is given
+		if ($module === null)
+		{
+			return $modules;
+		}
+
+		// unify the name
+		$module = strtolower($module);
+
+		return array_key_exists($module, $modules);
+	}
+
+	/**
 	 * Checks if the given module exists.
 	 *
 	 * @param   string  $module  The module name
