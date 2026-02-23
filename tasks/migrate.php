@@ -69,100 +69,52 @@ class Migrate
 		$all = \Cli::option('all');
 		$installed = \Cli::option('installed');
 
+		// validate the input
 		if ($all and $installed)
 		{
 			\Cli::write('--all and --installed are mutually exclusive!', 'light_red');
 			exit;
 		}
 
-		if ($all)
+		// all or installed both include all app migrations
+		if ($all or $installed)
 		{
 			$default = true;
-			$modules = true;
-			$packages = true;
 		}
-		elseif ($installed)
+
+		// get the module and package lists
+		static::$modules = empty($modules) ? array() : explode(',', $modules);
+		static::$packages = empty($packages) ? array() : explode(',', $packages);
+
+		if ($installed)
 		{
-			$default = true;
-
-			// fetch defined modules
-			$modules = explode(',', $modules);
-			foreach(\Config::get('always_load.modules', array()) as $module)
-			{
-				$modules[] = $module;
-			}
-			$modules = implode(',', array_unique($modules));
-
-			// fetch defined packages
-			$packages = explode(',', $packages);
-			foreach(\Config::get('always_load.packages', array()) as $name => $package)
-			{
-				$packages[] = is_numeric($name) ? $package : $name;
-			}
-			$packages = implode(',', array_unique($packages));
+			static::$modules = array_merge(static::$modules, \Module::loaded());
+			static::$packages = array_merge(static::$packages, \Package::loaded());
 		}
-
-		// if modules option set
-		if ( ! empty($modules))
+		elseif ($all)
 		{
-			// if true - get all modules
-			if ($modules === true)
-			{
-				// loop through module paths
-				foreach (\Config::get('module_paths') as $path)
-				{
-					// get all modules that have files in the migration folder
-					foreach(new \GlobIterator(realpath($path).DS.'*') as $m)
-					{
-						if (count(glob($m->getPathname().rtrim(DS.\Config::get('migrations.folder'), '\\/').DS.'*.php', GLOB_NOSORT)))
-						{
-							static::$modules[] = $m->getBasename();
-						}
-					}
-				}
-			}
-			// else do selected modules
-			else
-			{
-				static::$modules = explode(',', $modules);
-			}
+			static::$modules = array_merge(static::$modules, \Module::installed());
+			static::$packages = array_merge(static::$packages, \Package::installed());
 		}
 
-		// if packages option set
-		if ( ! empty($packages))
-		{
-			// if true - get all packages
-			if ($packages === true)
-			{
-				// get all packages that have files in the migration folder
-				foreach (\Config::get('package_paths', array(PKGPATH)) as $path)
-				{
-					// get all modules that have files in the migration folder
-					foreach(new \GlobIterator(realpath($path).DS.'*') as $p)
-					{
-						if (count(glob($p->getPathname().rtrim(DS.\Config::get('migrations.folder'), '\\/').DS.'*.php', GLOB_NOSORT)))
-						{
-							static::$packages[] = $p->getBasename();
-						}
-					}
-				}
-			}
-			// else do selected packages
-			else
-			{
-				static::$packages = explode(',', $packages);
-			}
-		}
+		// cleanup the values found
+		array_map('trim', static::$modules);
+		array_map('strtolower', static::$modules);
+		static::$modules = array_unique(static::$modules);
+
+		array_map('trim', static::$packages);
+		array_map('strtolower', static::$packages);
+		static::$packages = array_unique(static::$packages);
+
+		// set the module and package count
+		static::$module_count = count(static::$modules);
+		static::$package_count = count(static::$packages);
 
 		// if packages or modules are specified, and the app isn't, disable app migrations
 		if ( ( ! empty($packages) or ! empty($modules)) and empty($default))
 		{
 			static::$default = false;
 		}
-
-		// set the module and package count
-		static::$module_count = count(static::$modules);
-		static::$package_count = count(static::$packages);
 	}
 
 	/**
@@ -221,6 +173,20 @@ class Migrate
 				static::$name('default', 'app');
 			}
 
+			// run migrations on all specified packages
+			foreach (static::$packages as $package)
+			{
+				// check if the module exists
+				if ( ! \Package::exists($package))
+				{
+					\Cli::write('Requested package "'.$package.'" does not exist!', 'light_red');
+				}
+				else
+				{
+					static::$name($package, 'package');
+				}
+			}
+
 			// run migrations on all specified modules
 			foreach (static::$modules as $module)
 			{
@@ -233,20 +199,6 @@ class Migrate
 				{
 					// run the migration
 					static::$name($module, 'module');
-				}
-			}
-
-			// run migrations on all specified packages
-			foreach (static::$packages as $package)
-			{
-				// check if the module exists
-				if ( ! \Package::exists($package))
-				{
-					\Cli::write('Requested package "'.$package.'" does not exist!', 'light_red');
-				}
-				else
-				{
-					static::$name($package, 'package');
 				}
 			}
 
