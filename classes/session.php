@@ -177,7 +177,7 @@ class Session
 			static::$_instances[$cookie] =& $driver;
 
 			// start the session if needed
-			if (\Config::get('session.auto_start', true))
+			if (\Arr::get($config, 'session.auto_start', true))
 			{
 				$driver->start();
 			}
