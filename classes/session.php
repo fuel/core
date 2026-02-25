@@ -66,12 +66,6 @@ class Session
 		{
 			// create the default instance if required
 			static::$_instance = static::forge();
-
-			// and start it if it wasn't auto-started
-			if ( ! \Config::get('session.auto_start', true))
-			{
-				static::$_instance->start();
-			}
 		}
 
 		if (\Config::get('session.native_emulation', false))
