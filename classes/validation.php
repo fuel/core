@@ -173,7 +173,7 @@ class Validation
 	{
 		$field = $this->add($name, $label);
 
-		is_array($rules) or $rules = explode('|', $rules);
+		is_array($rules) or $rules = explode('|', (string) $rules);
 
 		foreach ($rules as $rule)
 		{
