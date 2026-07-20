@@ -787,9 +787,9 @@ class Arr
 		$keys = array_keys($conditions);
 
 		// only relevant for indexed arrays
-		if ( ! $reindex)
+		if ($reindex)
 		{
-			$reindex = static::is_assoc($array, false);
+			$reindex = ! static::is_assoc($array, false);
 		}
 
 		foreach($keys as $key)
