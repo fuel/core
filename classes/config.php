@@ -38,10 +38,11 @@ class Config
 	 * @param    mixed    $group        null for no group, true for group is filename, false for not storing in the master config
 	 * @param    bool     $reload       true to force a reload even if the file is already loaded
 	 * @param    bool     $overwrite    true for array_merge, false for \Arr::merge
+	 * @param    bool     $appfirst     wether app config files should overrule module configuration
 	 * @return   array                  the (loaded) config array
 	 * @throws  \FuelException
 	 */
-	public static function load($file, $group = null, $reload = false, $overwrite = false)
+	public static function load($file, $group = null, $reload = false, $overwrite = false, $appfirst = false)
 	{
 		// storage for the config
 		$config = array();
@@ -132,7 +133,7 @@ class Config
 				// then load its config
  				try
 				{
-					$config = $class->load($overwrite, ! $reload);
+					$config = $class->load($overwrite, ! $reload, $appfirst);
 				}
 				catch (\ConfigException $e)
 				{

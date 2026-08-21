@@ -44,11 +44,12 @@ abstract class Config_File implements Config_Interface
 	 *
 	 * @param   bool  $overwrite  Whether to overwrite existing values
 	 * @param   bool  $cache      Whether to cache this path or not
+	 * @param   bool  $appfirst   whether or not app files have priority over module files
 	 * @return  array  the config array
 	 */
-	public function load($overwrite = false, $cache = true)
+	public function load($overwrite = false, $cache = true, $appfirst = false)
 	{
-		$paths = $this->find_file($cache);
+		$paths = $this->find_file($cache, $appfirst);
 		$config = array();
 
 		foreach ($paths as $path)
@@ -122,11 +123,12 @@ abstract class Config_File implements Config_Interface
 	/**
 	 * Finds the given config files
 	 *
-	 * @param   bool  $cache  Whether to cache this path or not
+	 * @param   bool  $cache      Whether to cache this path or not
+	 * @param   bool  $appfirst   whether or not app files have priority over module files
 	 * @return  array
 	 * @throws  \ConfigException
 	 */
-	protected function find_file($cache = true)
+	protected function find_file($cache = true, $appfirst = false)
 	{
 		if (($this->file[0] === '/' or (isset($this->file[1]) and $this->file[1] === ':')) and is_file($this->file))
 		{
@@ -135,8 +137,8 @@ abstract class Config_File implements Config_Interface
 		else
 		{
 			$paths = array_merge(
-				\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true, $cache),
-				\Finder::search('config', $this->file, $this->ext, true, $cache)
+				\Finder::search('config/'.\Fuel::$env, $this->file, $this->ext, true, $cache, $appfirst),
+				\Finder::search('config', $this->file, $this->ext, true, $cache, $appfirst)
 			);
 		}
 

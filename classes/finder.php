@@ -44,11 +44,12 @@ class Finder
 	 * @param   string  $ext       File extension
 	 * @param   bool    $multiple  Whether to find multiple files
 	 * @param   bool    $cache     Whether to cache this path or not
+	 * @param   bool    $appfirst  Whether to search app or modules first
 	 * @return  mixed  Path, or paths, or false
 	 */
-	public static function search($dir, $file, $ext = '.php', $multiple = false, $cache = true)
+	public static function search($dir, $file, $ext = '.php', $multiple = false, $cache = true, $appfirst = false)
 	{
-		return static::instance()->locate($dir, $file, $ext, $multiple, $cache);
+		return static::instance()->locate($dir, $file, $ext, $multiple, $cache, $appfirst);
 	}
 
 	/**
@@ -294,9 +295,10 @@ class Finder
 	 * @param   string  $ext       File extension
 	 * @param   bool    $multiple  Whether to find multiple files
 	 * @param   bool    $cache     Whether to cache this path or not
+	 * @param   bool    $appfirst  Whether to search app or modules first
 	 * @return  mixed  Path, or paths, or false
 	 */
-	public function locate($dir, $file, $ext = '.php', $multiple = false, $cache = true)
+	public function locate($dir, $file, $ext = '.php', $multiple = false, $cache = true, $appfirst = false)
 	{
 		$found = $multiple ? array() : false;
 
@@ -346,7 +348,14 @@ class Finder
 			if (class_exists('Request', false) and ($request = \Request::active()))
 			{
 				$request->module and $cache_id .= $request->module;
-				$paths = array_merge($request->get_paths(), $paths);
+				if ($appfirst)
+				{
+					\Arr::insert_after_value($paths, $request->get_paths(), APPPATH);
+				}
+				else
+				{
+					$paths = array_merge($request->get_paths(), $paths);
+				}
 			}
 		}
 

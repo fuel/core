@@ -99,9 +99,10 @@ class Config_Memcached implements Config_Interface
 	 *
 	 * @param   bool  $overwrite  Whether to overwrite existing values
 	 * @param   bool  $cache      This parameter will ignore in this implement.
+	 * @param   bool  $appfirst   Not used here
 	 * @return  array  the config array
 	 */
-	public function load($overwrite = false, $cache = true)
+	public function load($overwrite = false, $cache = true, $appfirst = false)
 	{
 		// fetch the config data from the Memcached server
 		$result = static::$memcached->get(static::$config['identifier'].'_'.$this->identifier);

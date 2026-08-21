@@ -14,7 +14,7 @@ namespace Fuel\Core;
 
 interface Config_Interface
 {
-	public function load($overwrite = false);
+	public function load($overwrite = false, $cache = true, $appfirst = false);
 	public function group();
 	public function save($contents);
 }

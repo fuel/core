@@ -53,10 +53,11 @@ class Config_Db implements Config_Interface
 	 *
 	 * @param   bool  $overwrite  Whether to overwrite existing values
 	 * @param   bool  $cache      This parameter will ignore in this implement.
+	 * @param   bool  $appfirst   Not used here
 	 * @return  array the config array
 	 * @throws  \Database_Exception
 	 */
-	public function load($overwrite = false, $cache = true)
+	public function load($overwrite = false, $cache = true, $appfirst = false)
 	{
 		$config = array();
 
