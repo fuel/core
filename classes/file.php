@@ -1066,4 +1066,71 @@ class File
 		exit;
 	}
 
+	/**
+	 * Convert an absolute path to a path relative to the given path
+	 *
+	 * @param  string                 $reference    file path used as a reference
+	 * @param  string                 $to           file path to be made relative
+	 * @return string
+	 *
+	 * @throws \InvalidPathException  if on Windows and both paths are on different drives
+	 */
+	public static function relativepath($reference, $to)
+	{
+		// if on Windows, check for drive names
+		if (DS === '\\')
+		{
+			$drive = explode(':', $reference);
+			if (count($drive) > 1)
+			{
+				$rdrive = strtoupper($drive[0]);
+				$reference = $drive[1];
+			}
+			$drive = explode(':', $to);
+			if (count($drive) > 1)
+			{
+				$tdrive = strtoupper($drive[0]);
+				$to = $drive[1];
+			}
+
+			if ( ! empty($tdrive) and ! empty($rdrive) and $tdrive != $rdrive)
+			{
+				throw new \InvalidPathException('Both paths are on different drives, no relative path is possible!');
+			}
+		}
+
+		// split the paths in its components
+		$reference = explode(DS, $reference);
+		$to = explode(DS, $to);
+
+		$rel_path  = $to;
+
+		foreach($reference as $depth => $dir)
+		{
+			// find first non-matching dir
+			if ($dir === $to[$depth])
+			{
+				// ignore this directory
+				array_shift($rel_path);
+			}
+			else
+			{
+				// get number of remaining dirs to $from
+				$remaining = count($reference) - $depth;
+				if($remaining > 1)
+				{
+					// add traversals up to first matching dir
+					$pad_length = (count($rel_path) + $remaining - 1) * -1;
+					$rel_path = array_pad($rel_path, $pad_length, '..');
+					break;
+				}
+				else
+				{
+					$rel_path[0] = '.' . DS . $rel_path[0];
+				}
+			}
+		}
+
+		return implode(DS, $rel_path);
+	}
 }
