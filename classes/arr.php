@@ -484,17 +484,23 @@ class Arr
 	 * @param   callback  $callback the callback that determines whether or not a value is filtered
 	 * @return  array
 	 */
-	public static function filter_recursive($array, $callback = null)
+	public static function filter_recursive($array, $callback = null, $mode = 0)
 	{
+		// force a valid mode value
+		if ($mode != ARRAY_FILTER_USE_KEY and $mode != ARRAY_FILTER_USE_BOTH)
+		{
+			$mode = ARRAY_FILTER_USE_KEY;
+		}
+
 		foreach ($array as &$value)
 		{
 			if (is_array($value))
 			{
-				$value = $callback === null ? static::filter_recursive($value) : static::filter_recursive($value, $callback);
+				$value = $callback === null ? static::filter_recursive($value) : static::filter_recursive($value, $callback, $mode);
 			}
 		}
 
-		return $callback === null ? array_filter($array) : array_filter($array, $callback);
+		return $callback === null ? array_filter($array) : array_filter($array, $callback, $mode);
    	}
 
 	/**
