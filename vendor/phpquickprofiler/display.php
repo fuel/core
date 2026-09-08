@@ -80,7 +80,7 @@ function displayPqp($output) {
 #pqp-console .pqp-side td.pqp-alt4 {background-color:#3769a0;border-bottom:1px solid #274b74}
 #pqp-console .pqp-main table {width:100%}
 #pqp-console td div {width:100%;overflow:hidden;background-color:transparent;}
-#pqp-console td.pqp-type {font-family:"Lucida Grande",Tahoma,Arial,sans-serif;text-align:center;text-transform:uppercase;font-size:9px;padding-top:9px;color:#f4fcca;vertical-align:top;width:40px}
+#pqp-console td.pqp-type {font-family:"Lucida Grande",Tahoma,Arial,sans-serif;text-align:center;text-transform:uppercase;font-size:9px;padding-top:9px;color:#f4fcca;vertical-align:top;width:50px}
 .pQp .pqp-log-log td.pqp-type {background:#47740d!important}
 .pQp .pqp-log-error td.pqp-type {background:#9b2700!important}
 .pQp .pqp-log-memory td.pqp-type {background:#d28c00!important}
