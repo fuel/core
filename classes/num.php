@@ -129,7 +129,7 @@ class Num
 
 		foreach ($quant as $unit => $mag )
 		{
-			if (doubleval($bytes) >= $mag)
+			if (floatval($bytes) >= $mag)
 			{
 				return sprintf('%01.'.$decimals.'f', ($bytes / $mag)).' '.$unit;
 			}

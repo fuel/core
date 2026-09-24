@@ -221,7 +221,7 @@ JS;
 		{
 			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Float): {$var}\n";
 		}
-		elseif (is_long($var))
+		elseif (is_int($var))
 		{
 			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Integer): {$var}\n";
 		}
@@ -232,10 +232,6 @@ JS;
 		elseif (is_bool($var))
 		{
 			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Boolean): ".($var ? 'true' : 'false')."\n";
-		}
-		elseif (is_double($var))
-		{
-			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>".$name."</strong> (Double): {$var}\n";
 		}
 		elseif ($var instanceOf \UnitEnum)
 		{
