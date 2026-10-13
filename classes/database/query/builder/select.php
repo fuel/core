@@ -62,10 +62,10 @@ class Database_Query_Builder_Select extends \Database_Query_Builder_Where
 	 */
 	public function __construct($columns = null)
 	{
-		if ( is_array($columns) and  ! empty($columns))
+		if ( ! empty($columns))
 		{
 			// Set the initial columns
-			$this->_select = $columns;
+			is_array($columns) ? $this->select_array($columns) : $this->select($columns);
 		}
 
 		// Start the query with no actual SQL statement
