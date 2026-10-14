@@ -56,7 +56,7 @@ class Security
 		if (\Config::get('security.csrf_autoload', false))
 		{
 			$check_token_methods = \Config::get('security.csrf_autoload_methods', array('post', 'put', 'delete'));
-			if (in_array(strtolower(\Input::method()), $check_token_methods) and ! static::check_token())
+			if (in_array(strtolower((string) \Input::method()), $check_token_methods) and ! static::check_token())
 			{
 				if (\Config::get('security.csrf_bad_request_on_fail', false))
 				{

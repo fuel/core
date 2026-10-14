@@ -138,7 +138,7 @@ abstract class Request_Driver
 	 */
 	public function set_method($method)
 	{
-		$this->method = strtoupper($method);
+		$this->method = strtoupper((string) $method);
 		return $this;
 	}
 
@@ -341,7 +341,7 @@ abstract class Request_Driver
 		}
 
 		// match on generic mime type
-		$mime = substr($mime, 0, strpos($mime, '/')).'/*';
+		$mime = substr((string) $mime, 0, strpos((string) $mime, '/')).'/*';
 		if (in_array($mime, $accept_mimes))
 		{
 			return true;

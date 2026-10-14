@@ -437,9 +437,9 @@ abstract class Controller_Rest extends \Controller
 		// most other servers
 		elseif (\Input::server('HTTP_AUTHORIZATION'))
 		{
-			if (strpos(strtolower(\Input::server('HTTP_AUTHORIZATION')), 'basic') === 0)
+			if (strpos(strtolower((string) \Input::server('HTTP_AUTHORIZATION')), 'basic') === 0)
 			{
-				list($username, $password) = explode(':', base64_decode(substr(\Input::server('HTTP_AUTHORIZATION'), 6)));
+				list($username, $password) = explode(':', base64_decode(substr((string) \Input::server('HTTP_AUTHORIZATION'), 6)));
 			}
 		}
 

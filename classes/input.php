@@ -167,7 +167,7 @@ class Input
 	 */
 	public static function is_ajax()
 	{
-		return (static::server('HTTP_X_REQUESTED_WITH') !== null) and strtolower(static::server('HTTP_X_REQUESTED_WITH')) === 'xmlhttprequest';
+		return (static::server('HTTP_X_REQUESTED_WITH') !== null) and strtolower((string) static::server('HTTP_X_REQUESTED_WITH')) === 'xmlhttprequest';
 	}
 
 	/**
@@ -225,7 +225,7 @@ class Input
 	 */
 	public static function server($index = null, $default = null)
 	{
-		return (func_num_args() === 0) ? $_SERVER : \Arr::get($_SERVER, strtoupper($index), $default);
+		return (func_num_args() === 0) ? $_SERVER : \Arr::get($_SERVER, strtoupper((string) $index), $default);
 	}
 
 	/**
@@ -263,7 +263,7 @@ class Input
 			}
 		}
 
-		return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : \Arr::get(array_change_key_case($headers), strtolower($index), $default));
+		return empty($headers) ? $default : ((func_num_args() === 0) ? $headers : \Arr::get(array_change_key_case($headers), strtolower((string) $index), $default));
 	}
 
 	/**
