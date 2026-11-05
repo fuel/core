@@ -39,7 +39,7 @@ class Html
 	 */
 	public static function anchor($href, $text = null, $attr = array(), $secure = null)
 	{
-		if ( ! preg_match('#^(\w+://|javascript:|\#)# i', $href))
+		if ( ! preg_match('#^(\w+://|javascript:|\#)# i', (string) $href))
 		{
 			$urlparts = explode('?', $href, 2);
 			$href = \Uri::create($urlparts[0], array(), isset($urlparts[1]) ? $urlparts[1] : array(), $secure);
@@ -129,9 +129,9 @@ class Html
 	 */
 	public static function mail_to_safe($email, $text = null, $subject = null, $attr = array())
 	{
-		$text or $text = str_replace('@', '[at]', $email);
+		$text or $text = str_replace('@', '[at]', (string) $email);
 
-		$email = explode("@", $email);
+		$email = explode("@", (string) $email);
 
 		$subject and $subject = '?subject='.$subject;
 
