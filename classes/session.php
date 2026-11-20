@@ -116,10 +116,15 @@ class Session
 					}
 			);
 			}
-			else
+			elseif (PHP_VERSION_ID < 80400)
 			{
 				// use an external file here to avoid parse errors in PHP < 8.4
 				require('sessionhandler84.php');
+			}
+			else
+			{
+				// use an external file here to avoid parse errors in PHP < 8.6
+				require('sessionhandler86.php');
 			}
 		}
 	}

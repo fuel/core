@@ -142,7 +142,14 @@ class Theme
 		$this->add_paths($this->config['paths']);
 
 		// create a unique asset instance for this theme instance...
-		$this->asset = \Asset::forge('theme_'.spl_object_hash($this), array('paths' => array()));
+		if (PHP_VERSION_ID < 80000)
+		{
+			$this->asset = \Asset::forge('theme_'.spl_object_hash($this), array('paths' => array()));
+		}
+		else
+		{
+			$this->asset = \Asset::forge('theme_oid_'.strval(spl_object_id($this)), array('paths' => array()));
+		}
 
 		// and set the active and the fallback theme
 		$this->active($this->config['active']);
