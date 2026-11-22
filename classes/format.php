@@ -404,7 +404,7 @@ class Format
 			static $escape_keys = array();
 			$recursive or $escape_keys = array('_xmlns' => 'xmlns');
 
-			if ( ! $recursive and strpos($string, 'xmlns') !== false and preg_match_all('/(\<.+?\>)/s', $string, $matches))
+			if ( ! $recursive and strpos((string) $string, 'xmlns') !== false and preg_match_all('/(\<.+?\>)/s', (string) $string, $matches))
 			{
 				foreach ($matches[1] as $tag)
 				{
@@ -568,7 +568,7 @@ class Format
 		$new_json = "";
 		$indent_level = 0;
 		$in_string = false;
-		$len = strlen($json);
+		$len = strlen((string) $json);
 
 		for ($c = 0; $c < $len; $c++)
 		{

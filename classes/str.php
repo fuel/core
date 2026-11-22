@@ -45,7 +45,7 @@ class Str
 			// Handle special characters.
 			preg_match_all('/&[a-z]+;/i', strip_tags($string), $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 			// fix preg_match_all broken multibyte support
-			if (MBSTRING and strlen($string !== mb_strlen($string)))
+			if (MBSTRING and strlen((string) $string) !== mb_strlen((string) $string))
 			{
 				$correction = 0;
 				foreach ($matches as $index => $match)
@@ -66,7 +66,7 @@ class Str
 			// Handle all the html tags.
 			preg_match_all('/<[^>]+>([^<]*)/', $string, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
 			// fix preg_match_all broken multibyte support
-			if (MBSTRING and strlen($string !== mb_strlen($string)))
+			if (MBSTRING and strlen((string) $string) !== mb_strlen((string) $string))
 			{
 				$correction = 0;
 				foreach ($matches as $index => $match)
@@ -327,7 +327,7 @@ class Str
 	 */
 	public static function is_html($string)
 	{
-		return strlen(strip_tags($string)) < strlen($string);
+		return strlen(strip_tags((string) $string)) < strlen((string) $string);
 	}
 
 	// multibyte functions
