@@ -135,20 +135,8 @@ class Module
 				// load and add the module routes
 				$module_routes = \Fuel::load($path);
 
-				$route_names = array();
-				foreach($module_routes as $name => $_route)
-				{
-					if ($name === '_root_')
-					{
-						$name = $module;
-					}
-					elseif (strpos($name, $module.'/') !== 0 and $name != $module and $name !== '_404_')
-					{
-						$name = $module.'/'.$name;
-					}
-
-					$route_names[] = $name;
-				};
+				$routes = \Router::parse_module_routes($module_routes, $module);
+				$route_names = array_keys($routes);
 
 				// delete the defined module routes
 				\Router::delete($route_names);

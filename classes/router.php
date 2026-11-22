@@ -201,6 +201,42 @@ class Router
 	}
 
 	/**
+	 * It parses the module routes
+	 *
+	 * @param   array   $module_routes
+	 * @param   string  $module_name
+	 * @return  array
+	 * @see     Fuel\Core\Request::__construct, Fuel\Core\Module::unload
+	 */
+	public static function parse_module_routes(array $module_routes, $module_name)
+	{
+		$routes = array();
+
+		foreach ($module_routes as $name => $path)
+		{
+			if ($name === '_root_')
+			{
+				$name = $module_name;
+			}
+
+			// Exception routings. Redundant condition for short-circuit evaluation
+			elseif ($name[0] === '_' and preg_match('/\A_(4|5)\d{2}_\z/', $name)) {
+				// do nothing
+			}
+
+			// Add if there is no module name
+			elseif (strpos($name, $module_name . '/') !== 0 and $name !== $module_name)
+			{
+				$name = $module_name . '/' . $name;
+			}
+
+			$routes[$name] = $path;
+		};
+
+		return $routes;
+	}
+
+	/**
 	 * Processes the given request using the defined routes
 	 *
 	 * @param   \Request  $request     the given Request object
