@@ -22,18 +22,18 @@ class Test_Form extends TestCase
 {
 	private static $config_security;
 
-	public static function setUpBeforeClass()
+	public static function setUpBeforeClass(): void
 	{
 		Config::load('security');
 		static::$config_security = Config::get('security');
 	}
 
-	public static function tearDownAfterClass()
+	public static function tearDownAfterClass(): void
 	{
 		Config::set('security', static::$config_security);
 	}
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		Config::load('form');
 		Config::set('form', array(
@@ -259,15 +259,15 @@ class Test_Form extends TestCase
 	{
 		$config = \Config::get('form.auto_id');
 		\Config::set('form.auto_id', true);
-		
+
 		$form = \Form::forge(__METHOD__);
-		
+
 		$label = 'label';
 		$id = 'id';
 		$output = $form->label($label, $id);
 		$expected = '<label for="form_id">label</label>';
 		$this->assertEquals($expected, $output);
-		
+
 		\Config::set('form.auto_id', $config);
 	}
 
@@ -280,15 +280,15 @@ class Test_Form extends TestCase
 	{
 		$config = \Config::get('form.auto_id');
 		\Config::set('form.auto_id', false);
-		
+
 		$form = \Form::forge(__METHOD__);
-		
+
 		$label = 'label';
 		$id = 'id';
 		$output = $form->label($label, $id);
 		$expected = '<label for="id">label</label>';
 		$this->assertEquals($expected, $output);
-		
+
 		\Config::set('form.auto_id', $config);
 	}
 
@@ -300,7 +300,7 @@ class Test_Form extends TestCase
 	public function test_open()
 	{
 		$form = \Form::forge(__METHOD__);
-		
+
 		$output = $form->open('uri/to/form');
 		$expected = '<form action="uri/to/form" accept-charset="utf-8" method="post">';
 		$this->assertEquals($expected, $output);
@@ -316,7 +316,7 @@ class Test_Form extends TestCase
 		\Config::set('security.csrf_auto_token', true);
 
 		$form = \Form::forge(__METHOD__);
-		
+
 		$output = $form->open('uri/to/form');
 		$expected = '<form action="uri/to/form" accept-charset="utf-8" method="post">'.PHP_EOL.'<input name="fuel_csrf_token" value="%s" type="hidden" id="form_fuel_csrf_token" />';
 		$this->assertStringMatchesFormat($expected, $output);

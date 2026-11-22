@@ -20,7 +20,7 @@ namespace Fuel\Core;
  */
 class Test_Date extends TestCase
 {
-	protected function setUp()
+	protected function setUp(): void
 	{
 		// make sure the locale and language are is set correctly for the tests
 		setlocale(LC_ALL, 'en_US') === false and setlocale(LC_ALL, 'en_US.UTF8');

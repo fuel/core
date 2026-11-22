@@ -38,12 +38,12 @@ class Test_Pagination extends TestCase
 		$rp->setValue($this->request, $this->request);
 	}
 
-	protected function setUp()
+	protected function setUp(): void
 	{
 		$this->old_base_url = Config::get('base_url');
 	}
 
-	public function tearDown()
+	public function tearDown(): void
 	{
 		// remove the fake uri
 		if (property_exists($this, 'pathinfo'))

@@ -20,14 +20,14 @@ namespace Fuel\Core;
  */
 class Test_Debug extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         // Remember old value, and set to browser mode.
         $this->old_is_cli = \Fuel::$is_cli;
         \Fuel::$is_cli = false;
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         // Restore original value
         \Fuel::$is_cli = $this->old_is_cli;
