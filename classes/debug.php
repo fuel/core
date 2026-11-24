@@ -247,33 +247,43 @@ JS;
 		}
 		elseif (is_object($var))
 		{
-			// dirty hack to get the object id
-			ob_start();
-			var_dump($var);
-			$contents = ob_get_contents();
-			ob_end_clean();
-
-			// process it based on the xdebug presence and configuration
-			if (extension_loaded('xdebug') and ini_get('xdebug.overload_var_dump'))
+			// get the object ID
+			if (PHP_VERSION_ID >= 70200)
 			{
-				if (ini_get('html_errors'))
-				{
-					preg_match('~(.*?)\)\[<i>(\d+)(.*)~', $contents, $matches);
-				}
-				else
-				{
-					preg_match('~class (.*?)#(\d+)(.*)~', $contents, $matches);
-				}
+				$_obj_id = spl_object_id($var);
 			}
 			else
 			{
-				preg_match('~object\((.*?)#(\d+)(.*)~', $contents, $matches);
+				// dirty hack to get the object id
+				ob_start();
+				var_dump($var);
+				$contents = ob_get_contents();
+				ob_end_clean();
+
+				// process it based on the xdebug presence and configuration
+				if (extension_loaded('xdebug') and ini_get('xdebug.overload_var_dump'))
+				{
+					if (ini_get('html_errors'))
+					{
+						preg_match('~(.*?)\)\[<i>(\d+)(.*)~', $contents, $matches);
+					}
+					else
+					{
+						preg_match('~class (.*?)#(\d+)(.*)~', $contents, $matches);
+					}
+				}
+				else
+				{
+					preg_match('~object\((.*?)#(\d+)(.*)~', $contents, $matches);
+				}
+
+				$_obj_id = isset($matches[2]) ? $matches[2] : '?';
 			}
 
 			$id = 'fuel_debug_'.mt_rand();
 			$rvar = new \ReflectionObject($var);
 			$vars = $rvar->getProperties();
-			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>{$name}</strong> (Object #".$matches[2]."): ".get_class($var);
+			$return .= (empty($scope) ? '' : "<i>{$scope}</i> "). "<strong>{$name}</strong> (Object #".$_obj_id."): ".get_class($var);
 			if (count($vars) > 0)
 			{
 				if (static::$max_nesting_level > $level)
