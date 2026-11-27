@@ -215,6 +215,13 @@ class Event_Instance
 				}
 				return $str;
 				break;
+			case 'bool':
+				$bool = true;
+				foreach ($calls as $call)
+				{
+					$bool = $bool && $call;
+				}
+				return $bool;
 			default:
 				return $calls;
 				break;
